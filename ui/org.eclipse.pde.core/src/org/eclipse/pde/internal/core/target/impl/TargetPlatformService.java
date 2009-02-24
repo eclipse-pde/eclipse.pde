@@ -203,7 +203,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
-		if (memento != null && memento.length() != 0) {
+		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
 			return getTarget(memento);
 		}
 		return null;
@@ -429,12 +429,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 		IBundleContainer container = newProfileContainer("${eclipse_home}", configLocation); //$NON-NLS-1$
 		target.setBundleContainers(new IBundleContainer[] {container});
-		try {
-			String location = ((AbstractBundleContainer) container).getLocation(true);
-			target.setName(NLS.bind(Messages.TargetPlatformService_6, location));
-		} catch (CoreException e) {
-			target.setName(Messages.TargetPlatformService_7);
-		}
+		target.setName(Messages.TargetPlatformService_7);
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 
 		// initialize environment with default settings

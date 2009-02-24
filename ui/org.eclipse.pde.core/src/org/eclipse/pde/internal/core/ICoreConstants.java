@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,4 +160,9 @@ public interface ICoreConstants {
 	 * Preference key for the active workspace target platform handle memento 
 	 */
 	public static final String WORKSPACE_TARGET_HANDLE = "workspace_target_handle"; //$NON-NLS-1$
+
+	/**
+	 * Explicit setting when the user chooses no target for the workspace.
+	 */
+	public static final String NO_TARGET = "NO_TARGET"; //$NON-NLS-1$
 }

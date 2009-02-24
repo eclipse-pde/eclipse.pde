@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -427,55 +427,45 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
-	 * Creates initial target platform definition in local metadata if not already created.
+	 * Sets active target definition handle if not yet set. If an existing target
+	 * definition corresponds to workspace target settings, it is selected as the
+	 * active target. If there are no targets that correspond to workspace settings
+	 * a new definition is created. 
 	 */
 	private synchronized void initDefaultTargetPlatformDefinition() {
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (service != null) {
 			String memento = PDECore.getDefault().getPluginPreferences().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
 			if (memento.equals("")) { //$NON-NLS-1$
-				// no workspace target handle set, check for local targets
+				// no workspace target handle set, check if any targets are equivalent to current settings
 				ITargetHandle[] targets = service.getTargets(null);
-				boolean local = false;
-				for (int i = 0; i < targets.length; i++) {
-					if (targets[i] instanceof LocalTargetHandle) {
-						local = true;
-						break;
+				TargetPlatformService ts = (TargetPlatformService) service;
+				// create target platform from current workspace settings
+				TargetDefinition curr = (TargetDefinition) ts.newTarget();
+				ITargetHandle wsHandle = null;
+				try {
+					ts.loadTargetDefinitionFromPreferences(curr);
+					for (int i = 0; i < targets.length; i++) {
+						if (curr.isContentEquivalent(targets[i].getTargetDefinition())) {
+							wsHandle = targets[i];
+							break;
+						}
 					}
-				}
-				if (!local) {
-					// no local targets, no workspace preference > create default target platform
-					ITargetDefinition def = null;
-					TargetPlatformService ts = (TargetPlatformService) service;
-					ITargetDefinition host = ts.newDefaultTargetDefinition();
-					try {
-						service.saveTargetDefinition(host);
-					} catch (CoreException e) {
-						PDECore.log(e);
-					}
-					// create target platform from current workspace settings
-					TargetDefinition curr = (TargetDefinition) ts.newTarget();
-					try {
-						ts.loadTargetDefinitionFromPreferences(curr);
-						if (curr.isContentEquivalent(host)) {
-							// current settings are the same as the default target platform
-							def = host;
+					if (wsHandle == null) {
+						// restore settings from preferences
+						ITargetDefinition def = ts.newDefaultTargetDefinition();
+						if (curr.isContentEquivalent(def)) {
+							curr.setName(Messages.TargetPlatformService_7);
 						} else {
-							// current settings are different than default
-							service.saveTargetDefinition(curr);
-							def = curr;
+							curr.setName(PDECoreMessages.PluginModelManager_0);
 						}
-					} catch (CoreException e) {
-						PDECore.log(e);
+						ts.saveTargetDefinition(curr);
+						wsHandle = curr.getHandle();
 					}
-					if (def != null) {
-						Preferences preferences = PDECore.getDefault().getPluginPreferences();
-						try {
-							preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, def.getHandle().getMemento());
-						} catch (CoreException e) {
-							PDECore.log(e);
-						}
-					}
+					Preferences preferences = PDECore.getDefault().getPluginPreferences();
+					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, wsHandle.getMemento());
+				} catch (CoreException e) {
+					PDECore.log(e);
 				}
 			}
 		}

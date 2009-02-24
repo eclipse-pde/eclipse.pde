@@ -244,7 +244,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		pref.setValue(ICoreConstants.TARGET_PROFILE, ""); //$NON-NLS-1$
 		String memento = fTarget.getHandle().getMemento();
 		if (fNone) {
-			memento = ""; //$NON-NLS-1$
+			memento = ICoreConstants.NO_TARGET;
 		}
 		pref.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
 		IBundleContainer[] containers = fTarget.getBundleContainers();

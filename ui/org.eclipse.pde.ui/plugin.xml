@@ -35,14 +35,6 @@
             <keywordReference id="org.eclipse.pde.ui.MainPreferencePage"/>
       </page>
       <page
-            name="%preferences.target.name"
-            category="org.eclipse.pde.ui.MainPreferencePage"
-            class="org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage"
-            id="org.eclipse.pde.ui.TargetPlatformPreferencePage">
-            <keywordReference id="org.eclipse.pde.ui.pde"/>
-            <keywordReference id="org.eclipse.pde.ui.TargetPlatformPreferencePage"/>
-      </page>
-      <page
             name="%preferences.editor.name"
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.EditorPreferencePage"
@@ -69,7 +61,7 @@
             category="org.eclipse.pde.ui.MainPreferencePage"
             class="org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage2"
             id="org.eclipse.pde.ui.TargetPlatformPreferencePage2"
-            name="%preferences.target.name2">
+            name="%preferences.target.name">
          <keywordReference
                id="org.eclipse.pde.ui.pde">
          </keywordReference>
