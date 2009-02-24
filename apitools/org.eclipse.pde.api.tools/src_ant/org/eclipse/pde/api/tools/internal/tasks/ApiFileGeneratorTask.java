@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -303,8 +304,29 @@ public class ApiFileGeneratorTask extends Task {
 		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, (String) manifestmap.get(Constants.EXPORT_PACKAGE));
 		if (packages != null) {
 			for (int i = 0; i < packages.length; i++) {
-				if(packages[i].getDirectiveKeys() == null) {
-					set.add(packages[i].getValue());
+				ManifestElement packageName = packages[i];
+				Enumeration directiveKeys = packageName.getDirectiveKeys();
+				if(directiveKeys == null) {
+					set.add(packageName.getValue());
+				} else {
+					boolean include = true;
+					loop: for (; directiveKeys.hasMoreElements();) {
+						Object directive = directiveKeys.nextElement();
+						if ("x-internal".equals(directive)) { //$NON-NLS-1$
+							String value = packageName.getDirective((String) directive);
+							if (Boolean.valueOf(value).booleanValue()) {
+								include = false;
+								break loop;
+							}
+						}
+						if ("x-friends".equals(directive)) { //$NON-NLS-1$
+							include = false;
+							break loop;
+						}
+					}
+					if (include) {
+						set.add(packageName.getValue());
+					}
 				}
 			}
 		}
