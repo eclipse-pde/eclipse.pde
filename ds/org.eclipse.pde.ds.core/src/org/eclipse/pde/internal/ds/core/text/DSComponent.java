@@ -42,6 +42,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 		super(model, ELEMENT_COMPONENT);
 		setAttributeName(IDSConstants.ELEMENT_COMPONENT);
 		setNamespace(IDSConstants.NAMESPACE); // hard code namespace to be 1.1
+		setNamespacePrefix("scr"); //$NON-NLS-1$
 		setImmediate(true);
 		setInTheModel(true);
 	}
@@ -354,10 +355,6 @@ public class DSComponent extends DSObject implements IDSComponent {
 
 	public void setDeactivateMethod(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_DEACTIVATE, name);
-	}
-
-	public String getNamespacePrefix() {
-		return "scr"; //$NON-NLS-1$
 	}
 
 }

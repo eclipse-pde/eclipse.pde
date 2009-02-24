@@ -41,6 +41,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	private String fTag;
 	private IDocumentTextNode fTextNode;
 
+	private String fNamespace = EMPTY_VALUE;
+	private String fNamespacePrefix = EMPTY_VALUE;
+
 	// TODO: MP: TEO: LOW: Regenerate comments
 
 	/**
@@ -99,8 +102,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			String namespace = getNamespace();
 			if (namespace != null && namespace.length() > 0) {
 				buffer.append(" "); //$NON-NLS-1$
-				buffer.append("xmlns:"); //$NON-NLS-1$
-				buffer.append(getNamespacePrefix());
+				buffer.append("xmlns"); //$NON-NLS-1$
+				if (prefix != null && prefix.length() > 0) {
+					buffer.append(":"); //$NON-NLS-1$
+					buffer.append(getNamespacePrefix());
+				}
 				buffer.append("="); //$NON-NLS-1$
 				buffer.append("\""); //$NON-NLS-1$
 				buffer.append(namespace);
@@ -850,19 +856,19 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	}
 
 	public String getNamespace() {
-		return EMPTY_VALUE;
+		return fNamespace;
 	}
 
 	public String getNamespacePrefix() {
-		return EMPTY_VALUE;
+		return fNamespacePrefix;
 	}
 
 	public void setNamespace(String namespace) {
-		setXMLAttribute("xmlns", namespace); //$NON-NLS-1$
+		fNamespace = namespace;
 	}
 
 	public void setNamespacePrefix(String prefix) {
-		// TODO
+		fNamespacePrefix = prefix;
 	}
 
 }
