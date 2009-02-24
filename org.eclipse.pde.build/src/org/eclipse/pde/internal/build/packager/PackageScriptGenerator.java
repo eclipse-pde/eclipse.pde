@@ -50,6 +50,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		P2ConfigScriptGenerator p2ConfigGenerator = new P2ConfigScriptGenerator(assemblageInformation, false);
 		p2ConfigGenerator.setProduct(productLocation);
 		p2ConfigGenerator.initialize(directory, featureId);
+		p2ConfigGenerator.setBuildSiteFactory(siteFactory);
 		p2ConfigGenerator.generate();
 
 		script.printTab();

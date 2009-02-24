@@ -100,7 +100,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			List configs = getConfigInfos();
 			for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
 				Config config = (Config) iterator.next();
-
+				if (Config.genericConfig().equals(config))
+					continue;
 				script.printTab();
 				script.print("<eclipse.brand.p2.artifacts "); //$NON-NLS-1$
 				script.printAttribute("launcherName", Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$

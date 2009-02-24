@@ -410,6 +410,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected String findFile(String location, boolean makeRelative) {
 		if (location == null || location.length() == 0)
 			return null;
+
+		//shortcut building the site if we don't need to
+		if (new File(location).exists())
+			return location;
+
 		PDEState state;
 		try {
 			state = getSite(false).getRegistry();

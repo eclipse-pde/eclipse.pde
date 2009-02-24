@@ -122,6 +122,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void generateP2ConfigFileTargetCall() {
 		P2ConfigScriptGenerator p2ConfigGenerator = new P2ConfigScriptGenerator(assemblageInformation, true);
 		p2ConfigGenerator.setProduct(productLocation);
+		p2ConfigGenerator.setBuildSiteFactory(siteFactory);
 		p2ConfigGenerator.initialize(directory, featureId);
 		p2ConfigGenerator.generate();
 

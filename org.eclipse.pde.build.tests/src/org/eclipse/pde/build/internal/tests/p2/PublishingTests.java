@@ -84,6 +84,57 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
+	public void testPublishBundle_p2infCUs() throws Exception {
+		IFolder buildFolder = newTest("PublishBundle_p2infCUs");
+		
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		Utils.generateBundle(bundle, "bundle");
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
+		StringBuffer inf = new StringBuffer();
+		inf.append("requires.1.namespace=my.awesome.namespace                   \n");
+		inf.append("requires.1.name=bundle.cu                                   \n");
+		inf.append("requires.1.range=[1.0.0, 1.0.0]                             \n");
+		inf.append("requires.1.greedy=true                                      \n");
+		inf.append("unit.1.id=bundle.cu                                         \n");
+		inf.append("unit.1.version=1.0.0                                        \n");
+		inf.append("unit.1.hostRequirements.1.namespace=osgi.bundle             \n");
+		inf.append("unit.1.hostRequirements.1.name=bundle                       \n");
+		inf.append("unit.1.hostRequirements.1.range=[1.0.0, 1.0.0]              \n");
+		inf.append("unit.1.hostRequirements.2.namespace=org.eclipse.equinox.p2.eclipse.type\n");
+		inf.append("unit.1.hostRequirements.2.name=bundle                       \n");
+		inf.append("unit.1.hostRequirements.2.range=[1.0.0, 2.0.0)              \n");
+		inf.append("unit.1.hostRequirements.2.greedy=false                      \n");
+		inf.append("unit.1.requires.1.namespace=osgi.bundle                     \n");
+		inf.append("unit.1.requires.1.name=bundle                               \n");
+		inf.append("unit.1.requires.1.range=[1.0.0, 1.0.0]                      \n");
+		inf.append("unit.1.provides.1.namespace=my.awesome.namespace            \n");
+		inf.append("unit.1.provides.1.name=bundle.cu                            \n");
+		inf.append("unit.1.provides.1.version=1.0.0                             \n");
+		inf.append("unit.1.instructions.configure=setStartLevel(startLevel:1);\\\n");
+		inf.append("                              markStarted(started: true);   \n");
+		inf.append("unit.1.instructions.unconfigure=setStartLevel(startLevel:-1);\\\n");
+		inf.append("                                markStarted(started: false);\n");	
+		inf.append("unit.1.instructions.install=installBundle(bundle:${artifact});\n");
+		inf.append("unit.1.instructions.uninstall=uninstallBundle(bundle:${artifact});\n");
+		Utils.writeBuffer(bundle.getFile("META-INF/p2.inf"), inf);
+		
+		IFile productFile = buildFolder.getFile("foo.product");
+		Utils.generateProduct(productFile, "foo", "1.0.0", null, new String[] {"org.eclipse.osgi", "bundle"}, false);
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("configs", "*,*,*");
+		properties.put("includeLaunchers", "false");
+		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("filterP2Base", "true");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"),"bundle_1.0.0.jar@1\\:start");
+	}
+	
 	protected File copyExecutableFeature(File delta, IFolder executableFeature) throws Exception {
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
