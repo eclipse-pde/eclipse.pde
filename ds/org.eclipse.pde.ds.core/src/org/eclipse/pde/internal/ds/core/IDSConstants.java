@@ -19,6 +19,8 @@ package org.eclipse.pde.internal.ds.core;
  */
 public interface IDSConstants {
 
+	public static final String NAMESPACE = "http://www.osgi.org/xmlns/scr/v1.1.0"; //$NON-NLS-1$
+
 	// Elements
 	public static final String ELEMENT_COMPONENT = "component"; //$NON-NLS-1$
 	public static final String ELEMENT_IMPLEMENTATION = "implementation"; //$NON-NLS-1$

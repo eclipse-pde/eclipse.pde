@@ -857,4 +857,12 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		return EMPTY_VALUE;
 	}
 
+	public void setNamespace(String namespace) {
+		setXMLAttribute("xmlns", namespace); //$NON-NLS-1$
+	}
+
+	public void setNamespacePrefix(String prefix) {
+		// TODO
+	}
+
 }

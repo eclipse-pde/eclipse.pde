@@ -41,6 +41,13 @@ public class DSLabelProvider extends LabelProvider {
 		if (obj.getType() == IDSConstants.TYPE_SERVICE) {
 			return Messages.DSService_title;
 		}
+		// if we're a reference and have no name, return the interface
+		if (obj.getType() == IDSConstants.TYPE_REFERENCE) {
+			IDSReference reference = (IDSReference) obj;
+			if (reference.getName() == null
+					|| reference.getName().length() == 0)
+				return reference.getReferenceInterface();
+		}
 		return obj.getName();
 	}
 

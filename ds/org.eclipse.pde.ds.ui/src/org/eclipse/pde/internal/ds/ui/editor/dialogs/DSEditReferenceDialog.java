@@ -168,12 +168,12 @@ public class DSEditReferenceDialog extends FormDialog {
 	}
 
 	private void handleOKPressed() {
-		if (!fNameEntry.getValue().equals("")) { //$NON-NLS-1$
-			if (!fNameEntry.getValue().equals(fReference.getReferenceName())) {
-				fReference.setReferenceName(fNameEntry.getValue());
-			}
+		fNameEntry.commit();
+		if (!fNameEntry.getValue().equals(fReference.getReferenceName())) {
+			fReference.setReferenceName(fNameEntry.getValue());
 		}
 
+		fInterfaceEntry.commit();
 		if (!fInterfaceEntry.getValue().equals("")) { //$NON-NLS-1$
 			if (!fInterfaceEntry.getValue().equals(
 					fReference.getReferenceInterface())) {
@@ -181,12 +181,14 @@ public class DSEditReferenceDialog extends FormDialog {
 			}
 		}
 
+		fBindEntry.commit();
 		if (!fBindEntry.getValue().equals("")) { //$NON-NLS-1$
 			if (!fBindEntry.getValue().equals(fReference.getReferenceBind())) {
 				fReference.setReferenceBind(fBindEntry.getValue());
 			}
 		}
 
+		fUnBindEntry.commit();
 		if (!fUnBindEntry.getValue().equals("")) { //$NON-NLS-1$
 			if (!fUnBindEntry.getValue()
 					.equals(fReference.getReferenceUnbind())) {
@@ -194,6 +196,7 @@ public class DSEditReferenceDialog extends FormDialog {
 			}
 		}
 
+		fTargetEntry.commit();
 		if (!fTargetEntry.getValue().equals("")) { //$NON-NLS-1$
 			if (!fTargetEntry.getValue()
 					.equals(fReference.getReferenceTarget())) {

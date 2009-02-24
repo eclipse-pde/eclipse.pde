@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor;
 
 public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		implements IContentAssistProcessor, ICompletionListener {
@@ -111,19 +110,8 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		} else if (fRange instanceof IDocumentElementNode) {
 			return computeCompletionProposal((IDocumentElementNode) fRange,
 					offset, doc);
-			 } else if (fRange == null && model instanceof IDSModel) {
-				return componentProposal((IDSModel) model, offset);
 		}
-
 		return null;
-	}
-
-	private ICompletionProposal[] componentProposal(IDSModel model,
-		int offset) {
-		return new ICompletionProposal[] {
-				new DSCompletionProposal(
-				model.getDSComponent(),offset) };
-		
 	}
 
 	private ICompletionProposal[] computeCATextProposal(IDocument doc,
@@ -157,7 +145,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		String attribute = guess[1];
 		// Attr value
 		String attrValue = guess[2];
-		
+
 		int attrValueLength = attrValue == null ? 0 : attrValue.length();
 		int startOffset = offests[2] + 1;
 
@@ -225,8 +213,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 				new TypeCompletionProposal(
 						IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, null,
 						IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC,
-						startOffset,
-						attrValueLength) };
+						startOffset, attrValueLength) };
 	}
 
 	private ICompletionProposal[] getReferenceCardinalityValues(
@@ -241,18 +228,15 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 				new TypeCompletionProposal(
 						IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N, null,
 						IDSConstants.VALUE_REFERENCE_CARDINALITY_ZERO_N,
-						startOffset,
-						attrValueLength),
+						startOffset, attrValueLength),
 				new TypeCompletionProposal(
 						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE, null,
 						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_ONE,
-						startOffset,
-						attrValueLength),
+						startOffset, attrValueLength),
 				new TypeCompletionProposal(
 						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N, null,
 						IDSConstants.VALUE_REFERENCE_CARDINALITY_ONE_N,
-						startOffset,
-						attrValueLength) };
+						startOffset, attrValueLength) };
 	}
 
 	private ICompletionProposal[] getPropertyTypeValues(int attrValueLength,
@@ -396,7 +380,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		IDSComponent component = model.getDSComponent();
 
 		int length = filter != null ? filter.length() : 0;
-		
+
 		addFilteredProposal(offset, proposals, new DSCompletionProposal(model
 				.getFactory().createProperty(), offset, length),
 				filter);

@@ -102,11 +102,6 @@ public class DSErrorReporter extends XMLErrorReporter {
 		for (int i = 0; i < references.length; i++) {
 			IDSReference reference = references[i];
 			Element element = (Element) getElements(reference).item(i);
-			// Validate Required Attributes
-			if (reference.getName() == null) {
-				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_REFERENCE_NAME, ERROR);
-			}
 
 			// Validate Required Attributes
 			if (reference.getReferenceInterface() == null) {
@@ -123,10 +118,6 @@ public class DSErrorReporter extends XMLErrorReporter {
 			validateReferenceCardinality(element);
 			// Validate Allowed Values
 			validateReferencePolicy(element);
-
-			// validate non-empty values
-			validateEmpty(element, element
-					.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_NAME));
 
 			// Validate duplicated names
 			validateReferenceElementNames(referencedNames, element);
@@ -164,7 +155,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			Element element) {
 		String name = element
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
-		if (referencedNames.containsKey(name)) {
+		if (name != null && referencedNames.containsKey(name)) {
 			reportDuplicateReferenceElementName(element, name);
 		} else {
 			referencedNames.put(name, name);
@@ -535,12 +526,6 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void validateComponentElement(IDSComponent component) {
 		if (component != null) {
 			Element element = getDocumentRoot();
-			// Validate Required Attributes
-			if (component.getAttributeName() == null) {
-				reportMissingRequiredAttribute(element,
-						IDSConstants.ATTRIBUTE_COMPONENT_NAME, ERROR);
-
-			}
 			// Validate Required Children
 			if (component.getImplementation() == null) {
 				report(NLS.bind(Messages.DSErrorReporter_requiredElement,
@@ -625,8 +610,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	private void validateServiceElement(IDSService service) {
 		if (service != null) {
-			Element element = (Element) getDocumentRoot().getElementsByTagName(
-					service.getXMLTagName()).item(0);
+			Element element = (Element) getElements(service).item(0);
 
 			validateBoolean(element, element
 					.getAttributeNode(IDSConstants.ATTRIBUTE_SERVICE_FACTORY));
@@ -717,6 +701,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 	}
 
+	// TODO this is a hack
 	private NodeList getElements(IDocumentElementNode node) {
 		String name = node.getXMLTagName();
 		String prefix = node.getNamespacePrefix();
@@ -725,41 +710,4 @@ public class DSErrorReporter extends XMLErrorReporter {
 		}
 		return getDocumentRoot().getElementsByTagName(name);
 	}
-
-	// private void validateClassInstanceofProvidedInterface(Element element,
-	// IDSProvide provide) {
-	//		
-	// IDSComponent component = provide.getComponent();
-	//		
-	// String providedInterfaceString = provide.getInterface();
-	// String implementationClassString = component.getImplementation()
-	// .getClassName();
-	//		
-	// Class implementationClass = null;
-	// Class providedInterfaceClass = null;
-	// try {
-	//			
-	// implementationClass = Class.forName(implementationClassString);
-	// providedInterfaceClass = Class.forName(providedInterfaceString);
-	// } catch (ClassNotFoundException e) {
-	// }
-	// if (implementationClass != null && providedInterfaceClass != null) {
-	// try {
-	// // TODO
-	// // implementationClass.asSubclass(providedInterfaceClass);
-	// } catch (ClassCastException e) {
-	// reportUnimplementedProvidedInterface(element,
-	// implementationClassString, providedInterfaceString);
-	// }
-	// }
-	// }
-
-	// private void reportUnimplementedProvidedInterface(Element element,
-	// String implementationClassString, String providedInterfaceString) {
-	// String message = NLS.bind(
-	// Messages.DSErrorReporter_unimplementedProvidedInterface,
-	// (new String[] { implementationClassString,
-	// providedInterfaceString }));
-	// report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
-	// }
 }
