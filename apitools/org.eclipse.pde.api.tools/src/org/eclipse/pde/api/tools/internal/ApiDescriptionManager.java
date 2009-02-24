@@ -202,7 +202,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 							int flags = delta.getFlags();
 							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
 								clean(proj, false, true);
-							} else {
+							} else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
 								projectChanged(proj);
 							}
 							break;

@@ -760,42 +760,40 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
-			if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
-				IPath path = getFilterFilePath();
-				IResourceDelta leafdelta = event.getDelta().findMember(path);
-				if(leafdelta == null) {
-					return;
+			IPath path = getFilterFilePath();
+			IResourceDelta leafdelta = event.getDelta().findMember(path);
+			if(leafdelta == null) {
+				return;
+			}
+			boolean needsbuild = false;
+			if(leafdelta.getKind() == IResourceDelta.REMOVED) {
+				if(fFilterMap != null) {
+					fFilterMap.clear();
+					needsbuild = true;
 				}
-				boolean needsbuild = false;
-				if(leafdelta.getKind() == IResourceDelta.REMOVED) {
-					if(fFilterMap != null) {
-						fFilterMap.clear();
-						needsbuild = true;
-					}
-				}
-				else if(leafdelta.getKind() == IResourceDelta.ADDED || 
-						(leafdelta.getFlags() & IResourceDelta.CONTENT) != 0 || 
-						(leafdelta.getFlags() & IResourceDelta.REPLACED) != 0) {
-					IResource resource = leafdelta.getResource();
-					if(resource != null && resource.getType() == IResource.FILE) {
-						IFile file = (IFile) resource;
-						if(file.isAccessible()) {
-							try {
-								if(fFilterMap != null) {
-									fFilterMap.clear();
-									fFilterMap = null; 
-								}
-								initializeApiFilters();
+			}
+			else if(leafdelta.getKind() == IResourceDelta.ADDED || 
+					(leafdelta.getFlags() & IResourceDelta.CONTENT) != 0 || 
+					(leafdelta.getFlags() & IResourceDelta.REPLACED) != 0) {
+				IResource resource = leafdelta.getResource();
+				if(resource != null && resource.getType() == IResource.FILE) {
+					IFile file = (IFile) resource;
+					if(file.isAccessible()) {
+						try {
+							if(fFilterMap != null) {
+								fFilterMap.clear();
+								fFilterMap = null; 
 							}
-							finally {
-								needsbuild = true;
-							}
+							initializeApiFilters();
+						}
+						finally {
+							needsbuild = true;
 						}
 					}
 				}
-				if(needsbuild && ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-					Util.getBuildJob(new IProject[] {fProject.getProject()}).schedule();
-				}
+			}
+			if(needsbuild && ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+				Util.getBuildJob(new IProject[] {fProject.getProject()}).schedule();
 			}
 		}
 	}

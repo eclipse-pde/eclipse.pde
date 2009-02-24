@@ -140,6 +140,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						switch(delta.getKind()) {
 							case IResourceDelta.REMOVED :
 							case IResourceDelta.REPLACED :
+							case IResourceDelta.CHANGED :
+							case IResourceDelta.ADDED :
 								fRequireFullBuild = true;
 						}
 					}
