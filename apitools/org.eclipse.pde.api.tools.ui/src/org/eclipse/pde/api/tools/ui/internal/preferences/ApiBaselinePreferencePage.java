@@ -118,9 +118,11 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 				IApiBaseline[] state = getCurrentSelection();
 				removebutton.setEnabled(state.length > 0);
 				editbutton.setEnabled(state.length == 1);
-				boolean def = isDefault(state[0]);
-				setdefault.setEnabled(state.length == 1 && !def);
-				removedefault.setEnabled(state.length == 1 && def);
+				if(state.length == 1) {
+					boolean def = isDefault(state[0]);
+					setdefault.setEnabled(!def);
+					removedefault.setEnabled(def);
+				}
 			}
 		});
 		tableviewer.setComparator(new ViewerComparator() {
