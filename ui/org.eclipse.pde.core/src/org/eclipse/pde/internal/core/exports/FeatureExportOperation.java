@@ -20,8 +20,7 @@ import org.eclipse.ant.core.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -428,10 +427,21 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
 
 			IEclipsePreferences prefs = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
+			IEclipsePreferences def = new DefaultScope().getNode(JavaCore.PLUGIN_ID);
 			String source = prefs.get(JavaCore.COMPILER_SOURCE, null);
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, source);
+			if (source == null) {
+				source = def.get(JavaCore.COMPILER_SOURCE, null);
+			}
+			if (source != null) {
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, source);
+			}
 			String target = prefs.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, null);
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, target);
+			if (target == null) {
+				target = def.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, null);
+			}
+			if (target != null) {
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, target);
+			}
 
 			// for the assembler...
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY, fBuildTempLocation + "/assemblyLocation"); //$NON-NLS-1$
