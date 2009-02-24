@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1201,6 +1201,7 @@ public class LogView extends ViewPart implements ILogListener {
 		Listener tableListener = new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
+					case SWT.MouseExit :
 					case SWT.MouseMove :
 						onMouseMove(e);
 						break;
@@ -1213,7 +1214,7 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 			}
 		};
-		int[] tableEvents = new int[] {SWT.MouseDown, SWT.MouseMove, SWT.MouseHover};
+		int[] tableEvents = new int[] {SWT.MouseDown, SWT.MouseMove, SWT.MouseHover, SWT.MouseExit};
 		for (int i = 0; i < tableEvents.length; i++) {
 			fTree.addListener(tableEvents[i], tableListener);
 		}
