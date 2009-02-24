@@ -123,6 +123,10 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 					setdefault.setEnabled(!def);
 					removedefault.setEnabled(def);
 				}
+				else {
+					setdefault.setEnabled(false);
+					removedefault.setEnabled(false);
+				}
 			}
 		});
 		tableviewer.setComparator(new ViewerComparator() {
