@@ -194,7 +194,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 			String home = getLocation(true);
 			manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
-			manipulator.getLauncherData().setLauncherConfigLocation(new File(home + File.separator + "eclipse.ini")); //$NON-NLS-1$
+			File installDirectory = new File(home);
+			if (Platform.getOS().equals(Platform.OS_MACOSX))
+				installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+			manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
 			manipulator.getLauncherData().setHome(new File(home));
 
 			manipulator.setConfigData(configData);
@@ -206,6 +209,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			PDECore.log(e);
 		} catch (IOException e) {
 			PDECore.log(e);
+		}
+		if (jvmArgs.length == 0) {
+			return null;
 		}
 		return jvmArgs;
 	}
