@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 264462
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -24,6 +25,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	private static final long serialVersionUID = 1L;
 	private String fId;
 	private String fVersion;
+	private String fFragment; // Used to cache the fragment attribute value internally in order to not lose it in case the current plugin/fragment is not in the target platform anymore (see bug 264462) 
 
 	public ProductPlugin(IProductModel model) {
 		super(model);
@@ -37,6 +39,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
 			fVersion = element.getAttribute("version"); //$NON-NLS-1$
+			fFragment = element.getAttribute("fragment"); //$NON-NLS-1$
 		}
 	}
 
@@ -48,8 +51,14 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (PluginRegistry.findModel(fId) instanceof IFragmentModel)
-			writer.print(" fragment=\"true\""); //$NON-NLS-1$
+		if (PluginRegistry.findModel(fId) != null) {
+			if (PluginRegistry.findModel(fId) instanceof IFragmentModel) {
+				writer.print(" fragment=\"true\""); //$NON-NLS-1$
+			}
+		} else if (fFragment != null) {
+			// save the cached value (bug 264462)
+			writer.print(" fragment=\"" + fFragment + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
