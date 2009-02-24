@@ -1910,7 +1910,7 @@ public final class Util {
 
 	/**
 	 * Returns an identifier for the given API component including its version identifier
-	 * (component id + _ + major + _ + minor + _ + micro)
+	 * (component id + '(' + major + . + minor + . + micro + ')' )
 	 *  
 	 * @param component API component
 	 * @return API component + version identifier
