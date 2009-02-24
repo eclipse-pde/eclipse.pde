@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931     
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -327,7 +328,7 @@ public class Product extends ProductObject implements IProduct {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("pluginConfiguration")) { //$NON-NLS-1$
+				if (child.getNodeName().equals("plugin")) { //$NON-NLS-1$
 					IPluginConfiguration configuration = getModel().getFactory().createPluginConfiguration();
 					configuration.parse(child);
 					fPluginConfigurations.put(configuration.getId(), configuration);

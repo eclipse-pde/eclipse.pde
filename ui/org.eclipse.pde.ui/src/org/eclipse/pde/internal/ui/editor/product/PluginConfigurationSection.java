@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 240737
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -286,7 +287,7 @@ public class PluginConfigurationSection extends TableSection {
 			combo.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					item.setText(2, combo.getText());
-					ppc.setAutoStart(Boolean.getBoolean(combo.getText()));
+					ppc.setAutoStart(Boolean.valueOf(combo.getText()).booleanValue());
 				}
 			});
 			fAutoColumnEditor.setEditor(combo, item, 2);

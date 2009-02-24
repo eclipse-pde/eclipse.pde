@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 240737
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931     
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -39,7 +40,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
-			fAutoStart = Boolean.getBoolean((element.getAttribute(P_AUTO_START)));
+			fAutoStart = Boolean.valueOf(element.getAttribute(P_AUTO_START)).booleanValue();
 			fStartLevel = Integer.parseInt(element.getAttribute(P_START_LEVEL));
 		}
 
