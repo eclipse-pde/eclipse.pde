@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.runtime;
 
+import java.net.URISyntaxException;
+
 import java.util.*;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -21,9 +23,13 @@ import org.osgi.framework.Constants;
 public abstract class AbstractRegistryModelTest extends TestCase {
 
 	public static class TestModelChangeListener implements ModelChangeListener {
+		
+		private static final int FRAMEWORK_EVENT_TIMEOUT = 5000;
+		
 		private List fDeltas = new ArrayList();
 		private int notificationsCount = 0;
 		private Thread testsThread;
+		private int expected;
 		
 		public TestModelChangeListener() {
 			// get the thread in which tests are run
@@ -31,11 +37,12 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 		}
 		
 		public void modelChanged(ModelChangeDelta[] deltas) {
-			notificationsCount++;
+			notificationsCount += deltas.length;
 			fDeltas.addAll(Arrays.asList(deltas));
 			
 			// notify tests thread if it's waiting in waitForNotifications sleep
-			testsThread.interrupt();
+			if ((expected > 0) && (notificationsCount >= expected))
+				testsThread.interrupt();
 		}
 		
 		public ModelChangeDelta[] getDeltas() {
@@ -43,15 +50,13 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 		}
 		
 		public int waitForNotifications(int count) {
+			expected = count;
 			
-			while (notificationsCount <= count) {
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-				}
-				
-				count--;
+			try {
+				Thread.sleep(expected * FRAMEWORK_EVENT_TIMEOUT);
+			} catch (InterruptedException e) {
 			}
+			
 			return notificationsCount;
 		}
 	}
@@ -62,9 +67,9 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 	
 	protected RegistryModel f;
 	
-	abstract protected RegistryModel createModel();
+	abstract protected RegistryModel createModel() throws URISyntaxException;
 	
-	protected void setUp() {
+	protected void setUp() throws Exception {
 		f = createModel();
 		f.connect(new NullProgressMonitor());
 	}
@@ -103,7 +108,7 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 		bundle.uninstall();
 		
 		listener.waitForNotifications(7);
-
+		
 		f.removeModelChangeListener(listener);
 		
 		ModelChangeDelta[] deltas = listener.getDeltas();
