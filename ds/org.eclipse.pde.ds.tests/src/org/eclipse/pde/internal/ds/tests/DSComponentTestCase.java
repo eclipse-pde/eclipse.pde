@@ -32,8 +32,8 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		assertNotNull(component);
 		
 		assertEquals(component.getName(), COMPONENT_NAME);
-		assertEquals(component.getActivateMethod(), "activate");
-		assertEquals(component.getDeactivateMethod(), "deactivate");
+		assertEquals(component.getActivateMethod(), null);
+		assertEquals(component.getDeactivateMethod(), null);
 		
 		assertTrue(component.getEnabled());
 	}
@@ -51,14 +51,15 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		component.setAttributeName("NewName");
 		component.setFactory("NewFactory");
 		component.setImmediate(true);
+		component.setActivateMethod("start");
+		component.setDeactivateMethod("stop");
 		
 		assertFalse(component.getEnabled());
-		
 		assertEquals(component.getAttributeName(), "NewName");
-		
 		assertEquals(component.getFactory(), "NewFactory");
-		
 		assertTrue(component.getImmediate());
+		assertEquals(component.getActivateMethod(), "start");
+		assertEquals(component.getDeactivateMethod(), "stop");
 	}
 	
 
