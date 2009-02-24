@@ -905,6 +905,7 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_selectedBundles;
 	public static String AdvancedFeatureExportPage_jnlp;
 	public static String AdvancedPluginExportPage_alias;
+	public static String JARSigningTab_keypass;
 	public static String AdvancedLauncherTab_includeOptional;
 	public static String AdvancedFeatureExportPage_siteURL;
 	public static String AdvancedPluginExportPage_keystore;

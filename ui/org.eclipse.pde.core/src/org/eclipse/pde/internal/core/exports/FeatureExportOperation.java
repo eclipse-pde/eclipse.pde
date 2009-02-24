@@ -396,13 +396,14 @@ public class FeatureExportOperation extends Job {
 			}
 
 			if (fInfo.signingInfo != null) {
-				fAntBuildProperties.put("sign.alias", fInfo.signingInfo[0]); //$NON-NLS-1$
-				fAntBuildProperties.put("sign.keystore", fInfo.signingInfo[1]); //$NON-NLS-1$
-				fAntBuildProperties.put("sign.storepass", fInfo.signingInfo[2]); //$NON-NLS-1$
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_SIGN_ALIAS, fInfo.signingInfo[0]);
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_SIGN_KEYSTORE, fInfo.signingInfo[1]);
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_SIGN_STOREPASS, fInfo.signingInfo[2]);
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_SIGN_KEYPASS, fInfo.signingInfo[3]);
 			}
 			if (fInfo.jnlpInfo != null) {
-				fAntBuildProperties.put("jnlp.codebase", fInfo.jnlpInfo[0]); //$NON-NLS-1$
-				fAntBuildProperties.put("jnlp.j2se", fInfo.jnlpInfo[1]); //$NON-NLS-1$
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_JNLP_CODEBASE, fInfo.jnlpInfo[0]);
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_JNLP_J2SE, fInfo.jnlpInfo[1]);
 			}
 
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$

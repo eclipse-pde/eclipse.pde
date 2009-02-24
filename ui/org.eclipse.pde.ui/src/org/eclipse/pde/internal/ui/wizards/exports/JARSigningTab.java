@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
@@ -25,6 +26,7 @@ public class JARSigningTab {
 
 	private static final String S_SIGN_JARS = "signJAR"; //$NON-NLS-1$
 	private static final String S_KEYSTORE = "keystore"; //$NON-NLS-1$
+	private static final String S_KEYPASS = "keypass"; //$NON-NLS-1$ 
 	private static final String S_ALIAS = "alias"; //$NON-NLS-1$
 	private static final String S_PASSWORD = "password"; //$NON-NLS-1$
 
@@ -32,6 +34,9 @@ public class JARSigningTab {
 
 	private Label fKeystoreLabel;
 	private Text fKeystoreText;
+
+	private Label fKeypassLabel;
+	private Text fKeypassText;
 
 	private Label fAliasLabel;
 	private Text fAliasText;
@@ -83,6 +88,9 @@ public class JARSigningTab {
 			}
 		});
 
+		fKeypassLabel = createLabel(comp, PDEUIMessages.JARSigningTab_keypass);
+		fKeypassText = createText(comp, 2);
+
 		fAliasLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_alias);
 		fAliasText = createText(comp, 2);
 
@@ -97,6 +105,7 @@ public class JARSigningTab {
 
 	protected void initialize(IDialogSettings settings) {
 		fKeystoreText.setText(getString(settings, S_KEYSTORE));
+		fKeypassText.setText(getString(settings, S_KEYPASS));
 		fAliasText.setText(getString(settings, S_ALIAS));
 		fPasswordText.setText(getString(settings, S_PASSWORD));
 		fButton.setSelection(settings.getBoolean(S_SIGN_JARS));
@@ -152,6 +161,8 @@ public class JARSigningTab {
 		fAliasText.setEnabled(enabled);
 		fPasswordLabel.setEnabled(enabled);
 		fPasswordText.setEnabled(enabled);
+		fKeypassLabel.setEnabled(enabled);
+		fKeypassText.setEnabled(enabled);
 	}
 
 	protected void saveSettings(IDialogSettings settings) {
@@ -159,11 +170,12 @@ public class JARSigningTab {
 		settings.put(S_KEYSTORE, fKeystoreText.getText().trim());
 		settings.put(S_ALIAS, fAliasText.getText().trim());
 		settings.put(S_PASSWORD, fPasswordText.getText().trim());
+		settings.put(S_KEYPASS, fKeypassText.getText().trim());
 	}
 
 	protected String[] getSigningInfo() {
 		if (fButton.getSelection()) {
-			return new String[] {fAliasText.getText().trim(), fKeystoreText.getText().trim(), fPasswordText.getText().trim()};
+			return new String[] {fAliasText.getText().trim(), fKeystoreText.getText().trim(), fPasswordText.getText().trim(), fKeypassText.getText().trim()};
 		}
 		return null;
 	}
