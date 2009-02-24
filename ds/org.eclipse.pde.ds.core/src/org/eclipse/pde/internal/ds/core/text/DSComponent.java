@@ -43,7 +43,6 @@ public class DSComponent extends DSObject implements IDSComponent {
 		setAttributeName(IDSConstants.ELEMENT_COMPONENT);
 		setNamespace(IDSConstants.NAMESPACE); // hard code namespace to be 1.1
 		setNamespacePrefix("scr"); //$NON-NLS-1$
-		setImmediate(true);
 		setInTheModel(true);
 	}
 
