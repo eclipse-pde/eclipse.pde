@@ -168,6 +168,10 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 
 		// Browser field
 		fBrowser = new Browser(composite, SWT.NONE);
+
+		// Disable javascript for security reasons, see bug 265808
+		fBrowser.setJavascriptEnabled(false);
+
 		fHideScrollBars = (style & SWT.V_SCROLL) == 0 && (style & SWT.H_SCROLL) == 0;
 
 		GridData gd = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
