@@ -278,7 +278,20 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	private void initializeArgumentsInfo(Preferences preferences, ITargetDefinition target) {
 		target.setProgramArguments(getValueOrNull(preferences.getString(ICoreConstants.PROGRAM_ARGS)));
-		target.setVMArguments(getValueOrNull(preferences.getString(ICoreConstants.VM_ARGS)));
+		StringBuffer result = new StringBuffer();
+		String vmArgs = getValueOrNull(preferences.getString(ICoreConstants.VM_ARGS));
+		if (vmArgs != null) {
+			result.append(vmArgs);
+		}
+		if (preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI)) {
+			// hack on the arguments from eclipse.ini
+			result.append(TargetPlatformHelper.getIniVMArgs());
+		}
+		if (result.length() == 0) {
+			target.setVMArguments(null);
+		} else {
+			target.setVMArguments(result.toString());
+		}
 	}
 
 	private void initializeEnvironmentInfo(Preferences preferences, ITargetDefinition target) {

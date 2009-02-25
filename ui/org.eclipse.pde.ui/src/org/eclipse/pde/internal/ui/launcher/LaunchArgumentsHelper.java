@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
@@ -26,9 +27,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
 
@@ -114,53 +114,28 @@ public class LaunchArgumentsHelper {
 	 */
 	public static String getInitialVMArguments() {
 
-		ITargetHandle target;
 		try {
-			target = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
-			if (target != null) {
-				String result = target.getTargetDefinition().getVMArguments();
-				result = result != null ? result : ""; //$NON-NLS-1$
-				return result;
+			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			if (service != null) {
+				ITargetHandle target = service.getWorkspaceTargetHandle();
+				if (target != null) {
+					String result = target.getTargetDefinition().getVMArguments();
+					result = result != null ? result : ""; //$NON-NLS-1$
+					return result;
+				}
 			}
 		} catch (CoreException e) {
 		}
 
+		// TODO: Generally, once the new preference target platform preference page is in use,
+		// this code path will not be used. Once we decide to remove support for old targets/preferences
+		// this code can be removed.
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		StringBuffer result = new StringBuffer(preferences.getString(ICoreConstants.VM_ARGS));
 
 		if (preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI)) {
-			// hack on the args from eclipse.ini
-			File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
-			if (Platform.getOS().equals(Platform.OS_MACOSX))
-				installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
-			File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
-			BufferedReader in = null;
-			if (eclipseIniFile.exists()) {
-				try {
-					in = new BufferedReader(new FileReader(eclipseIniFile));
-					String str;
-					boolean vmargs = false;
-					while ((str = in.readLine()) != null) {
-						if (vmargs) {
-							if (result.length() > 0)
-								result.append(" "); //$NON-NLS-1$
-							result.append(str);
-						}
-						// start concat'ng if we have vmargs
-						if (vmargs == false && str.equals("-vmargs")) //$NON-NLS-1$
-							vmargs = true;
-					}
-				} catch (IOException e) {
-					PDEPlugin.log(e);
-				} finally {
-					if (in != null)
-						try {
-							in.close();
-						} catch (IOException e) {
-							PDEPlugin.log(e);
-						}
-				}
-			}
+			// hack on the arguments from eclipse.ini
+			result.append(TargetPlatformHelper.getIniVMArgs());
 		}
 		return result.toString();
 	}

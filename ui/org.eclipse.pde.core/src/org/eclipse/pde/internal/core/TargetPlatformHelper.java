@@ -475,4 +475,45 @@ public class TargetPlatformHelper {
 		return PluginRegistry.findModel("org.eclipse.equinox.app") != null; //$NON-NLS-1$
 	}
 
+	/**
+	 * Reads and returns the VM arguments specified in the running platform's .ini file,
+	 * or am empty string if none.
+	 *  
+	 * @return VM arguments specified in the running platform's .ini file
+	 */
+	public static String getIniVMArgs() {
+		File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
+		if (Platform.getOS().equals(Platform.OS_MACOSX))
+			installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
+		BufferedReader in = null;
+		StringBuffer result = new StringBuffer();
+		if (eclipseIniFile.exists()) {
+			try {
+				in = new BufferedReader(new FileReader(eclipseIniFile));
+				String str;
+				boolean vmargs = false;
+				while ((str = in.readLine()) != null) {
+					if (vmargs) {
+						if (result.length() > 0)
+							result.append(" "); //$NON-NLS-1$
+						result.append(str);
+					}
+					// start concat'ng if we have vmargs
+					if (vmargs == false && str.equals("-vmargs")) //$NON-NLS-1$
+						vmargs = true;
+				}
+			} catch (IOException e) {
+				PDECore.log(e);
+			} finally {
+				if (in != null)
+					try {
+						in.close();
+					} catch (IOException e) {
+						PDECore.log(e);
+					}
+			}
+		}
+		return result.toString();
+	}
 }
