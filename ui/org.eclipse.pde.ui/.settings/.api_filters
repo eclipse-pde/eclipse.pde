@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component id="org.eclipse.pde.ui" version="2">
+    <resource path="src/org/eclipse/pde/ui/launcher/OSGiLauncherTabGroup.java" type="org.eclipse.pde.ui.launcher.OSGiLauncherTabGroup">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.OSGiLauncherTabGroup"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/ui/IPluginFieldData.java" type="org.eclipse.pde.ui.IPluginFieldData">
         <filter id="403853384">
             <message_arguments>

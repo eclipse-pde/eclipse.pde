@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.ui.IEditorPart;
  * Given the current selection, either a new Eclipse Application launch configuration is created with default settings, or the user is presented
  * with a list of suitable existing Eclipse Application launch configurations to choose from.
  * <p>
- * This class may be substantiated or subclassed by clients.
+ * This class may be instantiated or subclassed by clients.
  * </p>
  * @since 3.3
  */

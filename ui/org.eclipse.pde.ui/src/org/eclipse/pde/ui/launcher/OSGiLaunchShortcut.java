@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * A launch shortcut capable of launching an OSGi frameowrk
  * <p>
- * This class may be substantiated or subclassed by clients.
+ * This class may be instantiated or subclassed by clients.
  * </p>
  * @since 3.3
  */

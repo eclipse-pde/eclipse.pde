@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,12 @@ import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 
 /**
  * Creates and initializes the tabs on the OSGi Framework launch configuration.
+ * This class in not intended to be instantiated by clients - it is an extension
+ * that is instantiated by the platform.
  * <p>
  * Clients may subclass this class.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 3.3
  */
 public class OSGiLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
