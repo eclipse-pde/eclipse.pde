@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
+ *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028, 248226
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -93,7 +94,6 @@ public class DSReferenceSection extends TableSection {
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(Messages.DSReferenceSection_title);
 		section.setDescription(Messages.DSReferenceSection_description);
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -132,6 +132,7 @@ public class DSReferenceSection extends TableSection {
 	public void refresh() {
 		fReferencesTable.refresh();
 		updateButtons();
+		updateTitle();
 	}
 
 	protected void buttonSelected(int index) {
@@ -326,6 +327,7 @@ public class DSReferenceSection extends TableSection {
 				}
 			}
 			updateButtons();
+			updateTitle();
 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			Object[] objects = e.getChangedObjects();
 			if (objects.length > 0) {
@@ -334,6 +336,7 @@ public class DSReferenceSection extends TableSection {
 						objects[objects.length - 1]));
 			}
 			updateButtons();
+			updateTitle();
 		} else {
 			fReferencesTable.refresh();
 			updateButtons();
@@ -367,6 +370,13 @@ public class DSReferenceSection extends TableSection {
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
+	}
+
+	private void updateTitle() {
+		int itemCount = fReferencesTable.getTable().getItemCount();
+		getSection().setText(
+				NLS.bind(Messages.DSReferenceSection_title, new Integer(
+						itemCount)));
 	}
 
 }

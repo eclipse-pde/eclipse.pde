@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -127,6 +128,7 @@ public class DSProvideSection extends TableSection {
 	public void refresh() {
 		fProvidesTable.refresh();
 		updateButtons();
+		updateTitle();
 	}
 
 	protected void buttonSelected(int index) {
@@ -275,6 +277,7 @@ public class DSProvideSection extends TableSection {
 				}
 			}
 			updateButtons();
+			updateTitle();
 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			Object[] objects = e.getChangedObjects();
 			if (objects.length > 0) {
@@ -283,9 +286,11 @@ public class DSProvideSection extends TableSection {
 						objects[objects.length - 1]));
 			}
 			updateButtons();
+			updateTitle();
 		} else {
 			fProvidesTable.refresh();
 			updateButtons();
+			updateTitle();
 		}
 	}
 
@@ -316,6 +321,14 @@ public class DSProvideSection extends TableSection {
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
+	}
+
+	private void updateTitle() {
+		int itemCount = fProvidesTable.getTable().getItemCount();
+		getSection().setText(
+				NLS.bind(Messages.DSProvideSection_title,
+						new Integer(
+						itemCount)));
 	}
 
 }
