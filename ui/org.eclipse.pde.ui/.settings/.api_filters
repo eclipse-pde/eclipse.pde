@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component id="org.eclipse.pde.ui" version="2">
+    <resource path="src/org/eclipse/pde/ui/IPluginFieldData.java" type="org.eclipse.pde.ui.IPluginFieldData">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IPluginFieldData"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IPluginContentWizard.java" type="org.eclipse.pde.ui.IPluginContentWizard">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IPluginContentWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IExtensionEditorWizard.java" type="org.eclipse.pde.ui.IExtensionEditorWizard">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IExtensionEditorWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IProvisionerWizard.java" type="org.eclipse.pde.ui.IProvisionerWizard">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IProvisionerWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IBasePluginWizard.java" type="org.eclipse.pde.ui.IBasePluginWizard">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IBasePluginWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IExtensionWizard.java" type="org.eclipse.pde.ui.IExtensionWizard">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IExtensionWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IBundleContentWizard.java" type="org.eclipse.pde.ui.IBundleContentWizard">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IBundleContentWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IFieldData.java" type="org.eclipse.pde.ui.IFieldData">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IFieldData"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/IFragmentFieldData.java" type="org.eclipse.pde.ui.IFragmentFieldData">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.IFragmentFieldData"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

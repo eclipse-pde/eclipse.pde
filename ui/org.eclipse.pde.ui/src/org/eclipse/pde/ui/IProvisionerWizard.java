@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.io.File;
  * complex sections may span several pages. Also note that in the very simple
  * cases it may not contribute any wizard pages.
  * 
+ * @noextend This interface is not intended to be extended by clients.
  * @since 3.3
  */
 

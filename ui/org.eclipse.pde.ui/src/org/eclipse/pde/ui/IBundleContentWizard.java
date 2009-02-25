@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ package org.eclipse.pde.ui;
  * required for the content generation and is called AFTER the project and vital
  * plug-in files have been already created.
  * 
+ * @noextend This interface is not intended to be extended by clients.
  * @since 3.2
  */
 public interface IBundleContentWizard extends IPluginContentWizard {

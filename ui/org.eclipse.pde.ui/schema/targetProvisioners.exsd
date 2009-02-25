@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde.ui">
+<schema targetNamespace="org.eclipse.pde.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.pde.ui" id="targetProvisioners" name="Target Provisioners"/>
@@ -13,6 +13,11 @@ This extension point is used to register new target plug-in provisioners. Each p
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="provisioner" minOccurs="1" maxOccurs="unbounded"/>
@@ -153,7 +158,7 @@ The following is an example of the extension point:
       </appInfo>
       <documentation>
          &lt;p&gt;
-PDE supplies a File System provisioner extension to add plug-ins from the file system.
+PDE supplies a File System provisioner extension to add plug-ins from the file system, and an update site provisioner to add plug-ins from repositories.
 &lt;/p&gt;
       </documentation>
    </annotation>

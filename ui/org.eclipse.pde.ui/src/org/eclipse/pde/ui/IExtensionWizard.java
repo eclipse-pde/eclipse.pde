@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
  * if they are plugging into PDE using <samp>org.eclipse.pde.ui.newExtension
  * </samp> extension point.
  * 
+ * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
  */
 public interface IExtensionWizard extends IBasePluginWizard {
