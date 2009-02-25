@@ -117,6 +117,8 @@ public class Messages extends NLS {
 	
 	public static String DSSimpPage_title;
 	
+	public static String DSServicesPage_title;
+
 	public static String DSSection_title;
 	public static String DSSection_description;
 	

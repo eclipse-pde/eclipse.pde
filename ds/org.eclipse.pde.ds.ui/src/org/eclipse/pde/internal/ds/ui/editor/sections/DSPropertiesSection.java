@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
+ *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 244997, 248216
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
@@ -58,7 +58,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -121,7 +120,7 @@ public class DSPropertiesSection extends TableSection {
 	}
 
 	public DSPropertiesSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE,
+		super(page, parent, Section.DESCRIPTION,
 				new String[] { Messages.DSPropertiesSection_addProperties,
 						Messages.DSPropertiesSection_addProperty,
 						Messages.DSPropertiesSection_edit,

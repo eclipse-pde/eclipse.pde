@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor;
@@ -20,8 +21,6 @@ import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.pde.internal.ds.ui.editor.sections.DSComponentSection;
 import org.eclipse.pde.internal.ds.ui.editor.sections.DSOptionsSection;
 import org.eclipse.pde.internal.ds.ui.editor.sections.DSPropertiesSection;
-import org.eclipse.pde.internal.ds.ui.editor.sections.DSProvideSection;
-import org.eclipse.pde.internal.ds.ui.editor.sections.DSReferenceSection;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -69,16 +68,6 @@ public class DSOverviewPage extends PDEFormPage implements
 		topRight.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
 				.span(2, 1).create());
 		
-		Composite left = toolkit.createComposite(body);
-		left.setLayout(new GridLayout());
-		left.setLayoutData(GridDataFactory.fillDefaults().grab(true, true)
-				.span(2, 1).create());
-		
-		Composite right = toolkit.createComposite(body);
-		right.setLayout(new GridLayout());
-		right.setLayoutData(GridDataFactory.fillDefaults().grab(true, true)
-				.span(2, 1).create());
-		
 		Composite bottom = toolkit.createComposite(body);
 		bottom.setLayout(new GridLayout());
 		bottom.setLayoutData(GridDataFactory.fillDefaults().grab(true, false)
@@ -87,8 +76,6 @@ public class DSOverviewPage extends PDEFormPage implements
 		// Sections
 		managedForm.addPart(new DSComponentSection(this, topLeft));
 		managedForm.addPart(new DSOptionsSection(this, topRight));
-		managedForm.addPart(new DSReferenceSection(this, left));
-		managedForm.addPart(new DSProvideSection(this, right));
 		managedForm.addPart(new DSPropertiesSection(this, bottom));
 	}
 
