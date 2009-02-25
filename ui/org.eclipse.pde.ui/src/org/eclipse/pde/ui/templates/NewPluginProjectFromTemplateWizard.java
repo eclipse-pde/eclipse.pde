@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
- * API class to allow customisation of the new plug-in project wizard.  Extending
+ * API class to allow customization of the new plug-in project wizard.  Extending
  * this class and implementing the {@link NewPluginProjectFromTemplateWizard#getTemplateID()}
  * method will create a wizard with the same UI components as the standard new plug-in
  * project wizard.  However, instead of asking the user to select a template, the template
