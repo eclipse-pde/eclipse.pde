@@ -46,10 +46,6 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 				return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
 			} else if (element instanceof ProfileBundleContainer) {
 				ProfileBundleContainer container = (ProfileBundleContainer) element;
-				String config = container.getConfigurationLocation();
-				if (config != null) {
-					return MessageFormat.format(Messages.BundleContainerTable_8, new String[] {container.getLocation(false), config, getIncludedBundlesLabel(container)});
-				}
 				return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
 			}
 		} catch (CoreException e) {

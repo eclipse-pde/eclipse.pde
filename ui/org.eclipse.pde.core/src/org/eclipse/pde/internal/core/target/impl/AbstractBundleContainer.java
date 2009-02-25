@@ -137,6 +137,21 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	}
 
 	/**
+	 * Returns the list of resolved bundles in this container.  Does not filter based on any
+	 * includedBundles or optionalBundles set on this container.  Returns <code>null</code> if
+	 * this container has not been resolved.  Use {@link #getBundles()} to get the restricted
+	 * list of bundles.
+	 *  
+	 * @return list of resolved bundles or <code>null</code>
+	 */
+	public IResolvedBundle[] getAllBundles() {
+		if (isResolved()) {
+			return fBundles;
+		}
+		return null;
+	}
+
+	/**
 	 * Resolves all source and executable bundles in this container regardless of any bundle restrictions.
 	 * <p>
 	 * Subclasses must implement this method.

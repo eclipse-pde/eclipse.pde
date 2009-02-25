@@ -14,8 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -45,6 +44,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * Extension point that provides target provisioner wizard
 	 */
 	private static final String PROVISIONER_POINT = "targetProvisioners"; //$NON-NLS-1$
+
+	/**
+	 * Section in the dialog settings for this wizard and the wizards created with selection
+	 * Shared with the EditBundleContainerWizard
+	 */
+	static final String SETTINGS_SECTION = "editBundleContainerWizard"; //$NON-NLS-1$
 
 	private static ITargetPlatformService fTargetService;
 
@@ -150,11 +155,16 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
-						addPage(new AddDirectoryContainerPage("DirectoryPage", fTarget)); //$NON-NLS-1$
+						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
+						if (settings == null) {
+							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
+						}
+						setDialogSettings(settings);
+						addPage(new EditDirectoryContainerPage(fTarget));
 					}
 
 					public boolean performFinish() {
-						IBundleContainer container = ((AddDirectoryContainerPage) getPages()[0]).getBundleContainer();
+						IBundleContainer container = ((EditDirectoryContainerPage) getPages()[0]).getBundleContainer();
 						if (container != null) {
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 							if (oldContainers == null) {
@@ -177,11 +187,16 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
-						addPage(new AddProfileContainerPage("ProfilePage", fTarget)); //$NON-NLS-1$
+						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
+						if (settings == null) {
+							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
+						}
+						setDialogSettings(settings);
+						addPage(new EditProfileContainerPage(fTarget));
 					}
 
 					public boolean performFinish() {
-						IBundleContainer container = ((AddProfileContainerPage) getPages()[0]).getBundleContainer();
+						IBundleContainer container = ((EditProfileContainerPage) getPages()[0]).getBundleContainer();
 						if (container != null) {
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 							if (oldContainers == null) {
@@ -204,12 +219,17 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {
-						addPage(new AddFeatureContainerPage("FeaturePage", fTarget)); //$NON-NLS-1$
+						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
+						if (settings == null) {
+							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
+						}
+						setDialogSettings(settings);
+						addPage(new AddFeatureContainersPage("FeaturePage", fTarget)); //$NON-NLS-1$
 					}
 
 					public boolean performFinish() {
 						try {
-							IBundleContainer[] containers = ((AddFeatureContainerPage) getPages()[0]).getContainers();
+							IBundleContainer[] containers = ((AddFeatureContainersPage) getPages()[0]).getBundleContainers();
 							if (containers != null) {
 								IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 								// TODO: show progress as resolving

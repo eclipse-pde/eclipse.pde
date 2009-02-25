@@ -313,6 +313,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 					BundleInfo[] restrictions = container.getIncludedBundles();
 					if (restrictions != null) {
 						try {
+							// TODO Could use AbstractBundleContainer.getAllBundles()
 							container.setIncludedBundles(null);
 							IResolvedBundle[] all = container.getBundles();
 							for (int j = 0; j < all.length; j++) {

@@ -24,6 +24,15 @@ import org.eclipse.swt.graphics.Image;
  */
 public class BundleInfoLabelProvider extends LabelProvider {
 
+	boolean fShowVersion = true;
+
+	public BundleInfoLabelProvider() {
+	}
+
+	public BundleInfoLabelProvider(boolean showVersion) {
+		fShowVersion = showVersion;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 	 */
@@ -31,12 +40,14 @@ public class BundleInfoLabelProvider extends LabelProvider {
 		if (element instanceof BundleInfo) {
 			StringBuffer buf = new StringBuffer();
 			buf.append(((BundleInfo) element).getSymbolicName());
-			String version = ((BundleInfo) element).getVersion();
-			if (version != null) {
-				buf.append(' ');
-				buf.append('(');
-				buf.append(version);
-				buf.append(')');
+			if (fShowVersion) {
+				String version = ((BundleInfo) element).getVersion();
+				if (version != null) {
+					buf.append(' ');
+					buf.append('(');
+					buf.append(version);
+					buf.append(')');
+				}
 			}
 			return buf.toString();
 		} else if (element instanceof IResolvedBundle) {

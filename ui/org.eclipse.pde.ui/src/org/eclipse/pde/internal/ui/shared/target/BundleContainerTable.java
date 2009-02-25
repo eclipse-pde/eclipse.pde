@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -56,7 +55,7 @@ public class BundleContainerTable {
 	private ViewerFilter fSourceFilter;
 
 	private ITargetDefinition fTarget;
-	private IBundleContainerTableReporter fReporter; // TODO Remove when proper model/editor listening is done
+	private IBundleContainerTableReporter fReporter;
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
@@ -218,6 +217,7 @@ public class BundleContainerTable {
 			}
 		});
 		fEditButton.setLayoutData(new GridData());
+		fEditButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fEditButton);
 
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
@@ -226,6 +226,7 @@ public class BundleContainerTable {
 			}
 		});
 		fRemoveButton.setLayoutData(new GridData());
+		fRemoveButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fRemoveButton);
 
 		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
@@ -314,16 +315,22 @@ public class BundleContainerTable {
 	private void setEnabled(boolean enablement) {
 		fTreeViewer.getControl().setEnabled(enablement);
 		fAddButton.setEnabled(enablement);
-		fRemoveButton.setEnabled(enablement);
-		fRemoveAllButton.setEnabled(enablement);
-		fEditButton.setEnabled(enablement);
+
 		fShowLabel.setEnabled(enablement);
 		fShowPluginsButton.setEnabled(enablement);
 		fShowSourceButton.setEnabled(enablement);
+
+		if (enablement) {
+			updateButtons();
+		} else {
+			fRemoveButton.setEnabled(enablement);
+			fRemoveAllButton.setEnabled(enablement);
+			fEditButton.setEnabled(enablement);
+		}
 	}
 
 	private void handleAdd() {
-		AddBundleContainerWizard wizard = new AddBundleContainerWizard((ITargetDefinition) fTreeViewer.getInput());
+		AddBundleContainerWizard wizard = new AddBundleContainerWizard(fTarget);
 		Shell parent = fTreeViewer.getTree().getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		if (dialog.open() != Window.CANCEL) {
@@ -336,47 +343,40 @@ public class BundleContainerTable {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		if (!selection.isEmpty()) {
 			Object selected = selection.getFirstElement();
-			IBundleContainer container = null;
+			IBundleContainer oldContainer = null;
 			if (selected instanceof IBundleContainer) {
-				container = (IBundleContainer) selected;
-			} else if (selected instanceof BundleInfo) {
-				// TODO Selecting a child should allow editing its parent.
-			}
-			if (container != null) {
-				// We need to get a list of all possible bundles, remove restrictions while resolving
-				BundleInfo[] oldRestrictions = container.getIncludedBundles();
-				IResolvedBundle[] resolvedBundles = null;
-				try {
-					container.setIncludedBundles(null);
-					resolvedBundles = container.getBundles();
-				} finally {
-					container.setIncludedBundles(oldRestrictions);
+				oldContainer = (IBundleContainer) selected;
+			} else if (selected instanceof IResolvedBundle) {
+				TreeItem[] treeSelection = fTreeViewer.getTree().getSelection();
+				if (treeSelection.length > 0) {
+					Object parent = treeSelection[0].getParentItem().getData();
+					if (parent instanceof IBundleContainer) {
+						oldContainer = (IBundleContainer) parent;
+					}
 				}
-
-				RestrictionsListSelectionDialog dialog = new RestrictionsListSelectionDialog(fTreeViewer.getTree().getShell(), resolvedBundles, oldRestrictions);
+			}
+			if (oldContainer != null) {
+				Shell parent = fTreeViewer.getTree().getShell();
+				EditBundleContainerWizard wizard = new EditBundleContainerWizard(fTarget, oldContainer);
+				WizardDialog dialog = new WizardDialog(parent, wizard);
 				if (dialog.open() == Window.OK) {
-					Object[] result = dialog.getResult();
-					if (result != null) {
-						if (result.length == resolvedBundles.length) {
-							container.setIncludedBundles(null);
-							if (oldRestrictions != null) {
-								contentsChanged();
-								refresh();
+					// Replace the old container with the new one
+					IBundleContainer newContainer = wizard.getBundleContainer();
+					if (newContainer != null) {
+						IBundleContainer[] containers = fTarget.getBundleContainers();
+						java.util.List newContainers = new ArrayList(containers.length);
+						for (int i = 0; i < containers.length; i++) {
+							if (!containers[i].equals(oldContainer)) {
+								newContainers.add(containers[i]);
 							}
-						} else {
-							BundleInfo[] selectedRestrictions = new BundleInfo[result.length];
-							for (int i = 0; i < result.length; i++) {
-								IResolvedBundle rb = (IResolvedBundle) result[i];
-								selectedRestrictions[i] = rb.getBundleInfo();
-							}
-							BundleInfo[] newRestrictions = new BundleInfo[selectedRestrictions.length];
-							for (int i = 0; i < selectedRestrictions.length; i++) {
-								newRestrictions[i] = new BundleInfo(selectedRestrictions[i].getSymbolicName(), dialog.isUseVersion() ? selectedRestrictions[i].getVersion() : null, null, BundleInfo.NO_LEVEL, false);
-							}
-							container.setIncludedBundles(newRestrictions);
-							contentsChanged();
-							refresh();
 						}
+						newContainers.add(newContainer);
+						fTarget.setBundleContainers((IBundleContainer[]) newContainers.toArray(new IBundleContainer[newContainers.size()]));
+
+						// Update the table
+						refresh();
+						contentsChanged();
+						fTreeViewer.setSelection(new StructuredSelection(newContainer), true);
 					}
 				}
 			}
@@ -390,19 +390,17 @@ public class BundleContainerTable {
 			IBundleContainer container = null;
 			if (selected instanceof IBundleContainer) {
 				container = (IBundleContainer) selected;
-			} else if (selected instanceof BundleInfo) {
-				// TODO Selecting a child should allow removing its parent?
-			}
-			IBundleContainer[] currentContainers = fTarget.getBundleContainers();
-			ArrayList newBundleContainers = new ArrayList(currentContainers.length);
-			for (int i = 0; i < currentContainers.length; i++) {
-				if (!currentContainers[i].equals(container)) {
-					newBundleContainers.add(currentContainers[i]);
+				IBundleContainer[] currentContainers = fTarget.getBundleContainers();
+				ArrayList newBundleContainers = new ArrayList(currentContainers.length);
+				for (int i = 0; i < currentContainers.length; i++) {
+					if (!currentContainers[i].equals(container)) {
+						newBundleContainers.add(currentContainers[i]);
+					}
 				}
+				fTarget.setBundleContainers((IBundleContainer[]) newBundleContainers.toArray(new IBundleContainer[newBundleContainers.size()]));
+				contentsChanged();
+				refresh();
 			}
-			fTarget.setBundleContainers((IBundleContainer[]) newBundleContainers.toArray(new IBundleContainer[newBundleContainers.size()]));
-			contentsChanged();
-			refresh();
 		}
 	}
 
@@ -414,12 +412,15 @@ public class BundleContainerTable {
 
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		// TODO Support editing and removing of bundles directly
-		fEditButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
+		fEditButton.setEnabled(!selection.isEmpty() && (selection.getFirstElement() instanceof IBundleContainer || selection.getFirstElement() instanceof IResolvedBundle));
 		fRemoveButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
 		fRemoveAllButton.setEnabled(fTarget.getBundleContainers() != null && fTarget.getBundleContainers().length > 0);
 	}
 
+	/**
+	 * Informs the reporter for this table that something has changed
+	 * and is dirty.
+	 */
 	private void contentsChanged() {
 		fReporter.contentsChanged();
 	}

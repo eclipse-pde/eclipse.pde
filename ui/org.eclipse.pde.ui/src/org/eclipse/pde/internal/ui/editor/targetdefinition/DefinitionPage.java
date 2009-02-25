@@ -54,7 +54,7 @@ public class DefinitionPage extends FormPage {
 		toolkit.decorateFormHeading(form.getForm());
 		fillBody(managedForm, toolkit);
 		// TODO Finish help
-		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), "");
+		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), ""); //$NON-NLS-1$
 		((TargetEditor) getEditor()).addForm(managedForm);
 		form.updateToolBar();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TARGET_OVERVIEW_PAGE);

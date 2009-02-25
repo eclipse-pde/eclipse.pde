@@ -49,7 +49,7 @@ public class EnvironmentPage extends FormPage {
 		fillBody(managedForm, toolkit);
 		toolkit.decorateFormHeading(form.getForm());
 		// TODO Fix help URL
-		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), "");
+		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), ""); //$NON-NLS-1$
 		((TargetEditor) getEditor()).addForm(managedForm);
 		form.updateToolBar();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.ENVIRONMENT_PAGE);
