@@ -91,10 +91,23 @@ public class P2Utils {
 	 * @param directory directory to create the bundles.info and source.info files in
 	 * @return URL location of the bundles.info or <code>null</code>
 	 */
-	public static File writeBundlesTxt(Collection bundles, File directory, boolean refactoredRuntime) {
+	public static File writeBundlesTxt(Collection bundles, File directory, ProductFile productFile, boolean refactoredRuntime) {
 		List bundleInfos = new ArrayList(bundles.size());
 		List sourceInfos = new ArrayList(bundles.size());
 		ShapeAdvisor advisor = new ShapeAdvisor();
+
+		int defaultStartLevel = 4;
+		Properties props = productFile != null ? productFile.getConfigProperties() : null;
+		if (props != null && props.containsKey("osgi.bundles.defaultStartLevel")) { //$NON-NLS-1$
+			try {
+				defaultStartLevel = Integer.parseInt(props.getProperty("osgi.bundles.defaultStartLevel")); //$NON-NLS-1$
+			} catch (NumberFormatException e) {
+				//ignore and keep 4
+			}
+		}
+
+		Map userInfos = productFile != null ? productFile.getConfigurationInfo() : null;
+
 		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
 			BundleDescription desc = (BundleDescription) iterator.next();
 			if (desc != null) {
@@ -110,27 +123,38 @@ public class P2Utils {
 				info.setLocation(location);
 				info.setSymbolicName(modelName);
 				info.setVersion(desc.getVersion().toString());
-				if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
-					info.setStartLevel(1);
-					info.setMarkedAsStarted(true);
-				} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
-					info.setStartLevel(2);
-					info.setMarkedAsStarted(true);
-				} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
-					info.setStartLevel(-1);
-					info.setMarkedAsStarted(true);
-				} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
-					info.setStartLevel(3);
-					info.setMarkedAsStarted(true);
-				} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
-					info.setStartLevel(refactoredRuntime ? 4 : 2);
-					info.setMarkedAsStarted(true);
-				} else if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
-					info.setStartLevel(1);
-					info.setMarkedAsStarted(true);
+				if (userInfos != null && userInfos.size() > 0) {
+					if (userInfos.containsKey(modelName)) {
+						BundleInfo userInfo = (BundleInfo) userInfos.get(modelName);
+						info.setStartLevel(userInfo.getStartLevel());
+						info.setMarkedAsStarted(userInfo.isMarkedAsStarted());
+					} else {
+						info.setStartLevel(defaultStartLevel);
+						info.setMarkedAsStarted(false);
+					}
 				} else {
-					info.setStartLevel(4);
-					info.setMarkedAsStarted(false);
+					if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
+						info.setStartLevel(1);
+						info.setMarkedAsStarted(true);
+					} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
+						info.setStartLevel(2);
+						info.setMarkedAsStarted(true);
+					} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
+						info.setStartLevel(-1);
+						info.setMarkedAsStarted(true);
+					} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
+						info.setStartLevel(3);
+						info.setMarkedAsStarted(true);
+					} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
+						info.setStartLevel(refactoredRuntime ? 4 : 2);
+						info.setMarkedAsStarted(true);
+					} else if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
+						info.setStartLevel(1);
+						info.setMarkedAsStarted(true);
+					} else {
+						info.setStartLevel(defaultStartLevel);
+						info.setMarkedAsStarted(false);
+					}
 				}
 				if (Utils.isSourceBundle(desc))
 					sourceInfos.add(info);

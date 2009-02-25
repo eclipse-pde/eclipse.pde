@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.xml.sax.*;
@@ -37,6 +38,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final String VM_ARGS_MAC = "vmArgsMac"; //$NON-NLS-1$
 	private static final String VM_ARGS_SOLARIS = "vmArgsSol"; //$NON-NLS-1$
 	private static final String VM_ARGS_WIN = "vmArgsWin"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_AUTO_START = "autoStart"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_START_LEVEL = "startLevel"; //$NON-NLS-1$
 
 	private static final String SOLARIS_LARGE = "solarisLarge"; //$NON-NLS-1$
 	private static final String SOLARIS_MEDIUM = "solarisMedium"; //$NON-NLS-1$
@@ -57,6 +60,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
 	private static final String FEATURES = "features"; //$NON-NLS-1$
 	private static final String SPLASH = "splash"; //$NON-NLS-1$
+	private static final String CONFIGURATIONS = "configurations"; //$NON-NLS-1$
+	private static final String PROPERTY = "property"; //$NON-NLS-1$
 	private static final String P_USE_ICO = "useIco"; //$NON-NLS-1$
 
 	//These constants form a small state machine to parse the .product file
@@ -77,6 +82,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final int STATE_VM_ARGS_SOLARIS = 14;
 	private static final int STATE_VM_ARGS_WIN = 15;
 	private static final int STATE_CONFIG_INI = 16;
+	private static final int STATE_CONFIGURATIONS = 17;
 
 	private int state = STATE_START;
 
@@ -91,10 +97,9 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String platformConfigPath = null;
 	private String id = null;
 	private boolean useFeatures = false;
-	//	private List plugins = null;
-	//	private List fragments = null;
-	//	private List features = null;
+	private Properties properties = null;
 	private List entries = null;
+	private Map bundleInfos = null;
 	private String splashLocation = null;
 	private String productName = null;
 	private String application = null;
@@ -261,6 +266,18 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		return (version == null) ? "0.0.0" : version; //$NON-NLS-1$
 	}
 
+	public Map getConfigurationInfo() {
+		if (bundleInfos == null)
+			return Collections.EMPTY_MAP;
+		return bundleInfos;
+	}
+
+	public Properties getConfigProperties() {
+		if (properties == null)
+			return new Properties();
+		return properties;
+	}
+
 	public String getVMArguments(String os) {
 		String key = null;
 		if (os.equals(Platform.OS_WIN32)) {
@@ -331,6 +348,8 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 					state = STATE_LAUNCHER_ARGS;
 				} else if (SPLASH.equals(localName)) {
 					splashLocation = attributes.getValue("location"); //$NON-NLS-1$
+				} else if (CONFIGURATIONS.equals(localName)) {
+					state = STATE_CONFIGURATIONS;
 				}
 				break;
 
@@ -388,6 +407,13 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			case STATE_FEATURES :
 				if (FEATURE.equals(localName)) {
 					processFeature(attributes);
+				}
+				break;
+			case STATE_CONFIGURATIONS :
+				if (PLUGIN.equals(localName)) {
+					processPluginConfiguration(attributes);
+				} else if (PROPERTY.equals(localName)) {
+					processPropertyConfiguration(attributes);
 				}
 				break;
 		}
@@ -589,5 +615,35 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		String value = attributes.getValue("icon"); //$NON-NLS-1$
 		if (value != null)
 			iconsMap.put(Platform.OS_MACOSX, new String[] {value});
+	}
+
+	private void processPluginConfiguration(Attributes attributes) {
+		String bundleId = attributes.getValue(ID);
+		if (bundleId != null) {
+			BundleInfo info = new BundleInfo();
+			info.setSymbolicName(bundleId);
+			info.setVersion(attributes.getValue(VERSION));
+			String value = attributes.getValue(ATTRIBUTE_START_LEVEL);
+			if (value != null)
+				info.setStartLevel(Integer.parseInt(value));
+			value = attributes.getValue(ATTRIBUTE_AUTO_START);
+			if (value != null)
+				info.setMarkedAsStarted(Boolean.valueOf(value).booleanValue());
+			if (bundleInfos == null)
+				bundleInfos = new HashMap();
+			bundleInfos.put(bundleId, info);
+		}
+	}
+
+	private void processPropertyConfiguration(Attributes attributes) {
+		String name = attributes.getValue("name"); //$NON-NLS-1$
+		String value = attributes.getValue("value"); //$NON-NLS-1$
+		if (name == null)
+			return;
+		if (value == null)
+			value = ""; //$NON-NLS-1$
+		if (properties == null)
+			properties = new Properties();
+		properties.put(name, value);
 	}
 }

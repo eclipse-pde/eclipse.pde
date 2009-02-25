@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.P2Utils;
@@ -134,8 +135,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			result |= CONFIG_STYLE_SIMPLE;
 		} else {
 			bundle = state.getResolvedBundle(BUNDLE_UPDATE_CONFIGURATOR);
-			if (bundle != null && bundles.contains(bundle))
-				result |= CONFIG_STYLE_UPDATE;
+			if (bundle != null && bundles.contains(bundle)) {
+				Properties props = productFile.getConfigProperties();
+				if (Boolean.valueOf(props.getProperty("org.eclipse.update.reconcile", "true")).booleanValue()) //$NON-NLS-1$ //$NON-NLS-2$
+					result |= CONFIG_STYLE_UPDATE;
+			}
 		}
 
 		bundle = state.getResolvedBundle(BUNDLE_DS);
@@ -183,7 +187,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		else
 			plugins = getBundlesFromProductFile(config);
 
-		File bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, (style & CONFIG_STYLE_REFACTORED) > 0);
+		File bundlesTxt = P2Utils.writeBundlesTxt(plugins, configDir, productFile, (style & CONFIG_STYLE_REFACTORED) > 0);
 		if (bundlesTxt != null) {
 			buffer.append(SIMPLE_CONFIGURATOR_CONFIG_URL);
 			buffer.append("=file:"); //$NON-NLS-1$
@@ -192,37 +196,60 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private void printUpdateBundles(StringBuffer buffer, int style) {
-		buffer.append("osgi.bundles="); //$NON-NLS-1$
-		if ((style & CONFIG_STYLE_REFACTORED) > 0) {
-			//start levels for eclipse 3.2
-			//org.eclipse.equinox.common@2:start,  
-			buffer.append(BUNDLE_EQUINOX_COMMON);
-			buffer.append(START_LEVEL_2);
-			buffer.append(',');
-			//org.eclipse.update.configurator@3:start
-			buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
-			buffer.append(START_LEVEL_3);
-			buffer.append(',');
-			if ((style & CONFIG_INCLUDES_DS) > 0) {
-				//org.eclipse.equinox.ds@1:start
-				buffer.append(BUNDLE_DS);
-				buffer.append(START_LEVEL_1);
-				buffer.append(',');
-			}
-			//org.eclipse.core.runtime
-			buffer.append(BUNDLE_CORE_RUNTIME);
-			buffer.append(START);
-			buffer.append('\n');
-		} else {
-			//start level for 3.1 and 3.0
-			buffer.append(BUNDLE_CORE_RUNTIME);
-			buffer.append(START_LEVEL_2);
-			buffer.append(',');
-			buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
-			buffer.append(START_LEVEL_3);
-			buffer.append('\n');
+	private void printBundleInfo(StringBuffer buffer, BundleInfo info) {
+		buffer.append(info.getSymbolicName());
+		if (info.getStartLevel() != BundleInfo.NO_LEVEL || info.isMarkedAsStarted())
+			buffer.append('@');
+		if (info.getStartLevel() != BundleInfo.NO_LEVEL) {
+			buffer.append(info.getStartLevel());
+			if (info.isMarkedAsStarted())
+				buffer.append(':');
 		}
+		if (info.isMarkedAsStarted())
+			buffer.append("start"); //$NON-NLS-1$
+	}
+
+	private void printUpdateBundles(StringBuffer buffer, int style) {
+		Map infos = productFile.getConfigurationInfo();
+		buffer.append("osgi.bundles="); //$NON-NLS-1$
+		if (infos.size() > 0) {
+			//user specified
+			for (Iterator iterator = infos.values().iterator(); iterator.hasNext();) {
+				BundleInfo info = (BundleInfo) iterator.next();
+				printBundleInfo(buffer, info);
+				if (iterator.hasNext())
+					buffer.append(',');
+			}
+		} else {
+			if ((style & CONFIG_STYLE_REFACTORED) > 0) {
+				//start levels for eclipse 3.2
+				//org.eclipse.equinox.common@2:start,  
+				buffer.append(BUNDLE_EQUINOX_COMMON);
+				buffer.append(START_LEVEL_2);
+				buffer.append(',');
+				//org.eclipse.update.configurator@3:start
+				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
+				buffer.append(START_LEVEL_3);
+				buffer.append(',');
+				if ((style & CONFIG_INCLUDES_DS) > 0) {
+					//org.eclipse.equinox.ds@1:start
+					buffer.append(BUNDLE_DS);
+					buffer.append(START_LEVEL_1);
+					buffer.append(',');
+				}
+				//org.eclipse.core.runtime
+				buffer.append(BUNDLE_CORE_RUNTIME);
+				buffer.append(START);
+			} else {
+				//start level for 3.1 and 3.0
+				buffer.append(BUNDLE_CORE_RUNTIME);
+				buffer.append(START_LEVEL_2);
+				buffer.append(',');
+				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
+				buffer.append(START_LEVEL_3);
+			}
+		}
+		buffer.append('\n');
 	}
 
 	private void printAllBundles(StringBuffer buffer, Config config, byte style) {
@@ -240,6 +267,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		else
 			bundles = getBundlesFromProductFile(config);
 		BundleHelper helper = BundleHelper.getDefault();
+		Map infos = productFile.getConfigurationInfo();
 		boolean first = true;
 		for (Iterator iter = bundles.iterator(); iter.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iter.next();
@@ -251,17 +279,24 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				if (first)
 					first = false;
 				else
-					buffer.append(","); //$NON-NLS-1$
-				buffer.append(bundle.getSymbolicName());
-				if (BUNDLE_EQUINOX_COMMON.equals(id)) {
-					buffer.append(START_LEVEL_2);
-				} else if (BUNDLE_DS.equals(id)) {
-					buffer.append(START_LEVEL_1);
-				} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
-					if ((style & CONFIG_STYLE_REFACTORED) > 0) {
-						buffer.append(START);
-					} else {
+					buffer.append(',');
+				if (infos.size() > 0) {
+					if (infos.containsKey(id))
+						printBundleInfo(buffer, (BundleInfo) infos.get(id));
+					else
+						buffer.append(bundle.getSymbolicName());
+				} else {
+					buffer.append(bundle.getSymbolicName());
+					if (BUNDLE_EQUINOX_COMMON.equals(id)) {
 						buffer.append(START_LEVEL_2);
+					} else if (BUNDLE_DS.equals(id)) {
+						buffer.append(START_LEVEL_1);
+					} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
+						if ((style & CONFIG_STYLE_REFACTORED) > 0) {
+							buffer.append(START);
+						} else {
+							buffer.append(START_LEVEL_2);
+						}
 					}
 				}
 			}
@@ -279,16 +314,29 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#Product Runtime Configuration File\n"); //$NON-NLS-1$
 
+		Properties properties = productFile.getConfigProperties();
 		String splash = getSplashLocation(config);
 		if (splash != null)
-			buffer.append("osgi.splashPath=" + splash + '\n'); //$NON-NLS-1$
+			properties.put("osgi.splashPath", splash); //$NON-NLS-1$
 
 		String application = productFile.getApplication();
 		if (application != null)
-			buffer.append("eclipse.application=" + application + '\n'); //$NON-NLS-1$
+			properties.put("eclipse.application", application); //$NON-NLS-1$
+
 		String productId = productFile.getId();
 		if (productId != null)
-			buffer.append("eclipse.product=" + productId + '\n'); //$NON-NLS-1$
+			properties.put("eclipse.product", productId); //$NON-NLS-1$
+
+		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
+			properties.put("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
+			String key = (String) iterator.next();
+			buffer.append(key);
+			buffer.append('=');
+			buffer.append(properties.getProperty(key));
+			buffer.append('\n');
+		}
 
 		if ((configStyle & CONFIG_STYLE_SIMPLE) > 0) {
 			printSimpleBundles(buffer, config, configDir, configStyle);
@@ -300,7 +348,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				printAllBundles(buffer, config, configStyle);
 			}
 		}
-		buffer.append("osgi.bundles.defaultStartLevel=4\n"); //$NON-NLS-1$ 	
 
 		FileWriter writer = null;
 		try {
@@ -316,7 +363,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				//nothing
 			}
 		}
-
 	}
 
 	private void createEclipseProductFile(String directory) throws CoreException {

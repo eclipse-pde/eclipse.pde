@@ -319,6 +319,7 @@ public class ProductTests extends PDETestCase {
 
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/A_1.0.0.v1.jar");
 	}
+
 	public void testBug246060() throws Exception {
 		IFolder buildFolder = newTest("246060");
 
@@ -360,12 +361,73 @@ public class ProductTests extends PDETestCase {
 		buffer.append("   </plugins>                                        \n");
 		buffer.append("</product>                                           \n");
 		Utils.writeBuffer(product, buffer);
-		
-		Utils.generateFeature(buildFolder, "container", null, new String [] { "org.eclipse.osgi", "org.eclipse.equinox.util"});
+
+		Utils.generateFeature(buildFolder, "container", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.util"});
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "container");
 		properties.put("product", product.getLocation().toOSString());
 		properties.put("includeLaunchers", "false");
 		properties.put("configs", "win32,win32,x86");
 		generateScripts(buildFolder, properties);
+	}
+
+	public void testBug266056() throws Exception {
+		IFolder buildFolder = newTest("266056");
+
+		IFile product = buildFolder.getFile("foo.product");
+
+		StringBuffer extra = new StringBuffer();
+		extra.append("<configurations>                                                                                            \n");
+		extra.append("  <plugin id=\"org.eclipse.equinox.app\" autoStart=\"false\" startLevel=\"0\" />                            \n");
+		extra.append("  <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"1\" />                          \n");
+		extra.append("  <property name=\"org.eclipse.update.reconcile\" value=\"false\" />                                        \n");
+		extra.append("  <property name=\"osgi.bundles.defaultStartLevel\" value=\"3\" />                                          \n");
+		extra.append("</configurations>                                                                                           \n");
+		String[] bundles = new String[] {"org.eclipse.core.runtime", "org.eclipse.equinox.simpleconfigurator", "org.eclipse.equinox.app", "org.eclipse.equinox.common"};
+		Utils.generateProduct(product, "foo.product", "1.0.0", null, bundles, false, extra);
+
+		Utils.generateFeature(buildFolder, "container", null, bundles);
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "container");
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("configs", "win32,win32,x86");
+		generateScripts(buildFolder, properties);
+
+		IFile config = buildFolder.getFile("features/container/productRootFiles/win32.win32.x86/configuration/config.ini");
+		IFile info = buildFolder.getFile("features/container/productRootFiles/win32.win32.x86/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info");
+
+		Properties versions = Utils.loadProperties(buildFolder.getFile("finalPluginsVersions.properties"));
+		assertLogContainsLine(config, "org.eclipse.update.reconcile=false");
+		assertLogContainsLine(config, "osgi.bundles.defaultStartLevel=3");
+		assertLogContainsLine(config, "osgi.bundles=org.eclipse.equinox.simpleconfigurator@1:start");
+		assertLogContainsLine(info, "org.eclipse.core.runtime_" + versions.get("org.eclipse.core.runtime") + ",3,false" );
+		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ",0,false" );
+		assertLogContainsLine(info, "org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ",1,true" );
+	}
+	
+	public void testBug266056_2() throws Exception {
+		IFolder buildFolder = newTest("266056_2");
+
+		IFile product = buildFolder.getFile("foo.product");
+
+		StringBuffer extra = new StringBuffer();
+		extra.append("<configurations>                                                                                \n");
+		extra.append("  <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"-1\" />              \n");
+		extra.append("  <property name=\"org.eclipse.update.reconcile\" value=\"false\" />                            \n");
+		extra.append("</configurations>                                                                               \n");
+		String[] bundles = new String[] {"org.eclipse.core.runtime", "org.eclipse.update.configurator", "org.eclipse.equinox.common"};
+		Utils.generateProduct(product, "foo.product", "1.0.0", null, bundles, false, extra);
+
+		Utils.generateFeature(buildFolder, "container", null, bundles);
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "container");
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("configs", "win32,win32,x86");
+		generateScripts(buildFolder, properties);
+
+		IFile config = buildFolder.getFile("features/container/productRootFiles/win32.win32.x86/configuration/config.ini");
+
+		assertLogContainsLine(config, "org.eclipse.update.reconcile=false");
+		assertLogContainsLine(config, "osgi.bundles=org.eclipse.core.runtime,org.eclipse.update.configurator,org.eclipse.equinox.common@start");
+
 	}
 }
