@@ -45,10 +45,10 @@ public class GatherFeatureAction extends FeaturesAction {
 		return new Feature[0];
 	}
 
-	protected ArrayList generateRootFileIUs(Feature feature, IPublisherResult result, IPublisherInfo info) {
+	protected ArrayList generateRootFileIUs(Feature feature, IPublisherResult result, IPublisherInfo publisherInfo) {
 		ArrayList ius = new ArrayList();
 
-		Collection collection = info.getAdvice(null, false, null, null, FeatureRootAdvice.class);
+		Collection collection = publisherInfo.getAdvice(null, false, null, null, FeatureRootAdvice.class);
 		if (collection.size() == 0)
 			return ius;
 
@@ -65,7 +65,7 @@ public class GatherFeatureAction extends FeaturesAction {
 			File[] files = rootComputer.getFiles();
 			IArtifactKey artifactKey = iu.getArtifacts()[0];
 			ArtifactDescriptor artifactDescriptor = new ArtifactDescriptor(artifactKey);
-			publishArtifact(artifactDescriptor, files, null, info, rootComputer);
+			publishArtifact(artifactDescriptor, files, null, publisherInfo, rootComputer);
 
 			result.addIU(iu, IPublisherResult.NON_ROOT);
 			ius.add(iu);
@@ -73,13 +73,13 @@ public class GatherFeatureAction extends FeaturesAction {
 		return ius;
 	}
 
-	protected IInstallableUnit generateFeatureJarIU(Feature feature, IPublisherInfo info) {
+	protected IInstallableUnit generateFeatureJarIU(Feature feature, IPublisherInfo publisherInfo) {
 		if (computer == null)
 			return null;
-		return createFeatureJarIU(feature, info);
+		return createFeatureJarIU(feature, publisherInfo);
 	}
 
-	protected void publishFeatureArtifacts(Feature feature, IInstallableUnit featureIU, IPublisherInfo info) {
+	protected void publishFeatureArtifacts(Feature feature, IInstallableUnit featureIU, IPublisherInfo publisherInfo) {
 		if (computer == null)
 			return;
 
@@ -89,10 +89,10 @@ public class GatherFeatureAction extends FeaturesAction {
 			//boo!
 		}
 
-		IArtifactDescriptor ad = PublisherHelper.createArtifactDescriptor(artifacts[0], null);
-		addProperties((ArtifactDescriptor) ad, feature, info);
-		((ArtifactDescriptor) ad).setProperty(IArtifactDescriptor.DOWNLOAD_CONTENTTYPE, IArtifactDescriptor.TYPE_ZIP);
+		ArtifactDescriptor ad = (ArtifactDescriptor) PublisherHelper.createArtifactDescriptor(artifacts[0], null);
+		processArtifactPropertiesAdvice(featureIU, ad, publisherInfo);
+		ad.setProperty(IArtifactDescriptor.DOWNLOAD_CONTENTTYPE, IArtifactDescriptor.TYPE_ZIP);
 
-		publishArtifact(ad, computer.getFiles(), null, info, computer);
+		publishArtifact(ad, computer.getFiles(), null, publisherInfo, computer);
 	}
 }
