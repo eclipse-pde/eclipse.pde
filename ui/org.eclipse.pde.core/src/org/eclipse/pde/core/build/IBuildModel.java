@@ -22,6 +22,9 @@ import org.eclipse.pde.core.IModelChangeProvider;
  * true and the model instance will implement IEditable
  * interface. The model is capable of providing
  * change notification for the registered listeners.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IBuildModel extends IModel, IModelChangeProvider {
 	/**

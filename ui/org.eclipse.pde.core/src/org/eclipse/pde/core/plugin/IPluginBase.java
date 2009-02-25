@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,10 @@ import org.eclipse.pde.core.IIdentifiable;
 /**
  * A model object that represents the content of a plug-in or
  * fragment manifest. This object contains data that is common
- * for bo plug-ins and fragments.
+ * for both plug-ins and fragments.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IPluginBase extends IExtensions, IIdentifiable {
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.core;
 
 import java.io.InputStream;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
@@ -27,6 +26,8 @@ import org.eclipse.core.runtime.CoreException;
  * If a model is not created from a workspace resource file, its underlying
  * resource will be <samp>null </samp>.
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since 2.0
  */
 public interface IModel extends IBaseModel {

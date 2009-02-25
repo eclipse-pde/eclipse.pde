@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.core.plugin;
 
 import java.net.URL;
-
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -37,6 +36,9 @@ import org.eclipse.pde.core.build.IBuildModel;
  * The model is capable of notifying listeners
  * about changes. An attempt to change a read-only
  * model will result in a CoreException.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangeProvider {
 	/**
