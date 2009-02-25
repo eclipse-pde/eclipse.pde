@@ -68,6 +68,10 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			return;
 		}
 		fLen = sel.getLength() + sel.getOffset() - fOffset;
+		if (fLen < 0) {
+			// If the cursor is moved after the popup is opened sometimes fLen can be negative, see bug 266083
+			fLen = 0;
+		}
 		String delim = TextUtilities.getDefaultLineDelimiter(document);
 		StringBuffer documentInsertBuffer = new StringBuffer();
 		boolean doInternalWork = false;
@@ -261,7 +265,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append(attName);
 		documentInsertBuffer.append("=\""); //$NON-NLS-1$
 		fSelOffset = fOffset + documentInsertBuffer.length();
-		String value = attName; 
+		String value = attName;
 		if (fSchemaObject instanceof ISchemaAttribute) {
 			value = XMLInsertionComputer.generateAttributeValue((ISchemaAttribute) fSchemaObject, fProcessor.getModel(), attName);
 		}
