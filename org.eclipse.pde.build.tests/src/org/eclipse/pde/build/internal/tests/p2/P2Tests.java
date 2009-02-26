@@ -550,7 +550,7 @@ public class P2Tests extends P2TestCase {
 		test.append("    />                                                                                          \n");
 		test.append("  </target>                                                                                     \n");
 		test.append("</project>                                                                                      \n");
-		
+
 		IFile testXML = buildFolder.getFile("test.xml");
 		Utils.writeBuffer(testXML, test);
 
@@ -559,7 +559,99 @@ public class P2Tests extends P2TestCase {
 		properties.put("compareFrom", repo2Location);
 		properties.put("newLocation", finalLocation);
 		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
-		
+
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
+	}
+
+	public void testBug263272_2() throws Exception {
+		IFolder buildFolder = newTest("263272_2");
+
+		IFolder repo1 = Utils.createFolder(buildFolder, "repo1");
+		String repo1Location = "file:" + repo1.getLocation().toOSString();
+		IFolder repo2 = Utils.createFolder(buildFolder, "repo2");
+		String repo2Location = "file:" + repo2.getLocation().toOSString();
+		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
+		String finalLocation = "file:" + finalRepo.getLocation().toOSString();
+
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false"});
+
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Export-Package"), "a");
+		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
+		Utils.generatePluginBuildProperties(a, null);
+		StringBuffer code = new StringBuffer();
+		code.append("package a;                                   \n");
+		code.append("public class A {                             \n");
+		code.append("  public void f(Object o) {                  \n");
+		code.append("    System.out.println(o.toString());        \n");
+		code.append("  }                                          \n");
+		code.append("  public void f(String o) {                  \n");
+		code.append("    System.out.println(o);                   \n");
+		code.append("  }                                          \n");
+		code.append("}                                            \n");
+		Utils.writeBuffer(a.getFile("src/a/A.java"), code);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repo1Location);
+		properties.put("p2.artifact.repo", repo1Location);
+		properties.put("p2.publish.artifacts", "true");
+		properties.put("baseLocation", "");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runBuild(buildFolder);
+
+		//now change A and recompile
+		code = new StringBuffer();
+		code.append("package a;                                   \n");
+		code.append("public class A {                             \n");
+		code.append("  public void f(String o) {                  \n");
+		code.append("    System.out.println(o);                   \n");
+		code.append("  }                                          \n");
+		code.append("  public void f(Object o) {                  \n");
+		code.append("    System.out.println(o.toString());        \n");
+		code.append("  }                                          \n");
+		code.append("}                                            \n");
+		Utils.writeBuffer(a.getFile("src/a/A.java"), code);
+
+		properties.put("p2.metadata.repo", repo2Location);
+		properties.put("p2.artifact.repo", repo2Location);
+		properties.put("forceContextQualifier", "v2");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		assertResourceFile(buildFolder, "repo1/plugins/a_1.0.0.jar");
+		assertResourceFile(buildFolder, "repo2/plugins/a_1.0.0.jar");
+
+		StringBuffer test = new StringBuffer();
+		test.append("<project default=\"mirror\">                                                                    \n");
+		test.append("  <target name=\"mirror\">                                                                      \n");
+		test.append("    <p2.artifact.mirror baseLine=\"${compareAgainst}\"                                          \n");
+		test.append("                        source=\"${compareFrom}\"                                               \n");
+		test.append("                        destination=\"${newLocation}\"                                          \n");
+		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
+		test.append("    />                                                                                          \n");
+		test.append("  </target>                                                                                     \n");
+		test.append("</project>                                                                                      \n");
+
+		IFile testXML = buildFolder.getFile("test.xml");
+		Utils.writeBuffer(testXML, test);
+
+		properties = new Properties();
+		properties.put("compareAgainst", repo1Location);
+		properties.put("compareFrom", repo2Location);
+		properties.put("newLocation", finalLocation);
+		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
+
+		try {
+			assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
+			fail("we expected no errors/warnings");
+		} catch (AssertionFailedError e) {
+			assertNull(e.getMessage());
+		}
 	}
 }
