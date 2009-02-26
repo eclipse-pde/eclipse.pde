@@ -19,7 +19,7 @@ public class AllTargetTests {
 		TestSuite suite = new TestSuite("Test Suite for testing targets"); //$NON-NLS-1$
 		suite.addTest(TargetEnvironmentTestCase.suite());
 		suite.addTest(TargetPlatformHelperTests.suite());
-		suite.addTest(TargetDefinitionTests.suite());
+		suite.addTest(LocalTargetDefinitionTests.suite());
 		suite.addTest(WorkspaceTargetDefinitionTests.suite());
 		suite.addTest(TargetDefinitionPersistenceTests.suite());
 		suite.addTest(TargetDefinitionResolutionTests.suite());

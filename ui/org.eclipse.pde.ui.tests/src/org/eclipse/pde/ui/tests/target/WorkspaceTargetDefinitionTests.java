@@ -20,10 +20,10 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 /**
  * Tests for target definitions.  The tested targets will be backed by a workspace file.
  * 
- * @see TargetDefinitionTests
+ * @see LocalTargetDefinitionTests
  * @since 3.5 
  */
-public class WorkspaceTargetDefinitionTests extends TargetDefinitionTests {
+public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 	
 	private static final String PROJECT_NAME = "WorkspaceTargetDefinitionTests";
 	

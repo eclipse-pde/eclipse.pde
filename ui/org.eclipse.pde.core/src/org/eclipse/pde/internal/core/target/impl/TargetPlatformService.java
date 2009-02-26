@@ -457,4 +457,61 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 		return target;
 	}
+
+	/**
+	 * Returns a status describing whether the given target definition is synchronized with
+	 * current target platform state. It is possible that bundles could have been added/removed
+	 * from the underlying storage of bundle containers making the current state out of synch
+	 * with the contents of the given definition. The given target definition will be resolved
+	 * if not already.
+	 * <p>
+	 * An <code>OK</code> status is returned when in synch. A status or multi-status is returned
+	 * when there are synchronization issues. 
+	 * </p>
+	 * @param target target definition to compare with target platform state
+	 * @param monitor progress monitor or <code>null</code> if none
+	 * @return status describing whether the target is in synch with target platform state
+	 * @throws CoreException
+	 */
+	public IStatus compareWithTargetPlatform(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
+		// resolve the target if needed
+		if (!target.isResolved()) {
+			target.resolve(null);
+		}
+		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
+		Map stateLocations = new HashMap(models.length);
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase base = models[i];
+			stateLocations.put(base.getInstallLocation(), base);
+		}
+		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
+		IResolvedBundle[] bundles = target.getAllBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle bundle = bundles[i];
+			BundleInfo info = bundle.getBundleInfo();
+			File file = URIUtil.toFile(info.getLocation());
+			String location = file.getAbsolutePath();
+			if (stateLocations.remove(location) == null) {
+				// it's not in the state... if it's not really in the target either (missing) this
+				// is not an error
+				IStatus status = bundle.getStatus();
+				if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
+					// its in the target, missing in the state
+					IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
+					multi.add(s);
+				}
+			}
+		}
+		// left overs are in the state and not the target (have been removed from the target)
+		Iterator iterator = stateLocations.values().iterator();
+		while (iterator.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) iterator.next();
+			IStatus status = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, model.getPluginBase().getId(), null);
+			multi.add(status);
+		}
+		if (multi.isOK()) {
+			return Status.OK_STATUS;
+		}
+		return multi;
+	}
 }

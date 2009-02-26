@@ -74,6 +74,16 @@ public interface IBundleContainer {
 	public IResolvedBundle[] getBundles();
 
 	/**
+	 * Returns the list of resolved bundles in this container.  Does not filter based on any
+	 * includedBundles or optionalBundles set on this container.  Returns <code>null</code> if
+	 * this container has not been resolved.  Use {@link #getBundles()} to get the restricted
+	 * list of bundles.
+	 *  
+	 * @return collection of resolved bundles or <code>null</code>
+	 */
+	public IResolvedBundle[] getAllBundles();
+
+	/**
 	 * Restricts the bundles in this container to the explicit set of bundles specified or
 	 * all bundles in this container when <code>null</code>. When this container resolves
 	 * bundles and source bundles the result will be limited to those bundles matching the

@@ -158,6 +158,16 @@ public interface ITargetDefinition {
 	public IResolvedBundle[] getBundles();
 
 	/**
+	 * Returns the list of resolved bundles in this target definition or <code>null</code>. 
+	 * Does not filter based on any includedBundles or optionalBundles set on bundle containers.
+	 * Returns <code>null</code> if this target has not been resolved. 
+	 * Use {@link #getBundles()} to get the restricted list of bundles.
+	 *  
+	 * @return collection of resolved bundles or <code>null</code>
+	 */
+	public IResolvedBundle[] getAllBundles();
+
+	/**
 	 * Resolves all bundles in this target definition by resolving each
 	 * bundle container in this target definition.
 	 * <p>

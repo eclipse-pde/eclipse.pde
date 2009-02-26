@@ -1,36 +1,28 @@
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
-import junit.framework.*;
+import java.io.File;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.target.provisional.*;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
-import org.osgi.framework.ServiceReference;
 
-public class TargetDefinitionResolutionTests extends TestCase {
+public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	
 	public static Test suite() {
 		return new TestSuite(TargetDefinitionResolutionTests.class);
 	}
 	
-	/**
-	 * Returns the target platform service or <code>null</code> if none
-	 * 
-	 * @return target platform service
-	 */
-	protected ITargetPlatformService getTargetService() {
-		ServiceReference reference = MacroPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
-		assertNotNull("Missing target platform service", reference);
-		if (reference == null)
-			return null;
-		return (ITargetPlatformService) MacroPlugin.getBundleContext().getService(reference);
-	}
-	
 	public void testMissingBundles() throws Exception {
-		ITargetDefinition definition = getTargetService().newTarget();
+		ITargetDefinition definition = getNewTarget();
 		
 		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
 		directoryContainer.setIncludedBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
@@ -68,7 +60,7 @@ public class TargetDefinitionResolutionTests extends TestCase {
 	}
 	
 	public void testMissingOptionalBundles() throws Exception {
-		ITargetDefinition definition = getTargetService().newTarget();
+		ITargetDefinition definition = getNewTarget();
 		
 		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
 		directoryContainer.setOptionalBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
@@ -104,7 +96,7 @@ public class TargetDefinitionResolutionTests extends TestCase {
 	}
 	
 	public void testInvalidBundleContainers() throws Exception {
-		ITargetDefinition definition = getTargetService().newTarget();
+		ITargetDefinition definition = getNewTarget();
 		
 		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer("***SHOULD NOT EXIST***");
 		IStatus status = directoryContainer.resolve(definition, null);
@@ -139,7 +131,7 @@ public class TargetDefinitionResolutionTests extends TestCase {
 	}
 	
 	public void testResolutionCaching() throws Exception {
-		ITargetDefinition definition = getTargetService().newTarget();
+		ITargetDefinition definition = getNewTarget();
 		assertTrue(definition.isResolved());
 		assertNotNull("Bundles not available when resolved", definition.getBundles());
 		assertEquals("Wrong number of bundles", 0, definition.getBundles().length);
@@ -225,5 +217,141 @@ public class TargetDefinitionResolutionTests extends TestCase {
 		assertNotNull("Bundles not available when resolved", definition.getBundles());
 		
 	}
+	
+	/**
+	 * Tests that if users have the old preference to append .ini VM arguments,
+	 * target definitions are migrated properly with the arguments appended. 
+	 */
+	public void testVMArgumentsMigrationAppend() throws Exception {
+		Preferences store = PDECore.getDefault().getPluginPreferences();
+		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI);
+		store.setValue(ICoreConstants.VM_LAUNCHER_INI, true);
+		try {
+			ITargetDefinition target = getNewTarget();
+			((TargetPlatformService)getTargetService()).loadTargetDefinitionFromPreferences(target);
+			String vmArguments = target.getVMArguments();
+			String iniVmArgs = TargetPlatformHelper.getIniVMArgs();
+			assertEquals(vmArguments, iniVmArgs);
+		} finally {
+			store.setValue(ICoreConstants.VM_LAUNCHER_INI, original);
+		}
+	}
+	
+	/**
+	 * Tests that if users *don't* have the old preference to append .ini VM arguments,
+	 * target definitions are migrated properly *without* the arguments appended. 
+	 */
+	public void testVMArgumentsMigrationNoAppend() throws Exception {
+		Preferences store = PDECore.getDefault().getPluginPreferences();
+		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI);
+		store.setValue(ICoreConstants.VM_LAUNCHER_INI, false);
+		try {
+			ITargetDefinition target = getNewTarget();
+			((TargetPlatformService)getTargetService()).loadTargetDefinitionFromPreferences(target);
+			String vmArguments = target.getVMArguments();
+			assertNull("Arguments should be empty", vmArguments);
+		} finally {
+			store.setValue(ICoreConstants.VM_LAUNCHER_INI, original);
+		}
+	}			
+	
+	/**
+	 * Tests that a target definition is in synch with the target platform.
+	 * 
+	 * @throws Exception
+	 */
+	public void testTargetInSynch() throws Exception {
+		IPath location = extractAbcdePlugins();
+		IPath dirPath = location.append("plugins");
+		ITargetDefinition definition = getNewTarget();
+		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.resolve(null);
+		IResolvedBundle[] allBundles = definition.getAllBundles();
+		assertEquals(10, allBundles.length);
+		
+		try {
+			setTargetPlatform(definition);
+			IStatus status = getTargetService().compareWithTargetPlatform(definition, null);
+			assertTrue(status.isOK());
+		} finally {
+			resetTargetPlatform();
+		}
+	}
+	
+	/**
+	 * Tests that a target definition is not in synch with the target platform when a
+	 * bundle is deleted from the underlying files system (target platform).
+	 * 
+	 * @throws Exception
+	 */
+	public void testTargetMissingBundle() throws Exception {
+		IPath location = extractAbcdePlugins();
+		IPath dirPath = location.append("plugins");
+		ITargetDefinition definition = getNewTarget();
+		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		
+		try {
+			setTargetPlatform(definition);
+			// delete a bundle
+			IPath bundle = dirPath.append("bundle.a_1.0.0.jar");
+			assertTrue(bundle.toFile().exists());
+			bundle.toFile().delete();
+			// force definition to re-resolve
+			ITargetDefinition copy = getTargetService().newTarget();
+			getTargetService().copyTargetDefinition(definition, copy);
+			IStatus status = getTargetService().compareWithTargetPlatform(copy, null);
+			assertFalse(status.isOK());
+			IStatus[] children = status.getChildren();
+			assertEquals(1, children.length);
+			assertEquals(ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, children[0].getCode());
+			assertEquals("bundle.a", children[0].getMessage());
+		} finally {
+			resetTargetPlatform();
+		}
+	}	
+	
+	/**
+	 * Tests that a target definition is not in synch with the target platform when a
+	 * bundle is added to the underlying file system (target platform).
+	 * 
+	 * @throws Exception
+	 */
+	public void testTargetPlatformMissingBundle() throws Exception {
+		IPath location = extractAbcdePlugins();
+		IPath dirPath = location.append("plugins");
+		// delete a bundle (by renaming it)
+		IPath bundle = dirPath.append("bundle.a_1.0.0.jar");
+		File jar = bundle.toFile();
+		assertTrue(jar.exists());
+		File xxx = new File(jar.getParentFile(), "bundle.a_1.0.0.xxx");
+		jar.renameTo(xxx);
+		
+		ITargetDefinition definition = getTargetService().newTarget();
+		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.resolve(null);
+		IResolvedBundle[] allBundles = definition.getAllBundles();
+		assertEquals(9, allBundles.length);
+		
+		try {
+			setTargetPlatform(definition);
+			// force definition to re-resolve
+			ITargetDefinition copy = getTargetService().newTarget();
+			getTargetService().copyTargetDefinition(definition, copy);
+			// add the bundle back to the file system
+			xxx.renameTo(jar);
+			
+			IStatus status = getTargetService().compareWithTargetPlatform(copy, null);
+			assertFalse(status.isOK());
+			IStatus[] children = status.getChildren();
+			assertEquals(1, children.length);
+			assertEquals(ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, children[0].getCode());
+			assertEquals("bundle.a", children[0].getMessage());
+		} finally {
+			resetTargetPlatform();
+		}
+	}	
 	
 }

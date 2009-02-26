@@ -258,13 +258,36 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundles()
 	 */
 	public IResolvedBundle[] getBundles() {
+		return getBundles(false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getAllBundles()
+	 */
+	public IResolvedBundle[] getAllBundles() {
+		return getBundles(true);
+	}
+
+	/**
+	 * Gathers and returns all or included bundles in this target or <code>null</code> if
+	 * not resolved.
+	 * 
+	 * @param allBundles whether to consider all bundles, or just those included/optional
+	 * @return bundles or <code>null</code>
+	 */
+	private IResolvedBundle[] getBundles(boolean allBundles) {
 		if (isResolved()) {
 			IBundleContainer[] containers = getBundleContainers();
 			if (containers != null) {
 				List all = new ArrayList();
 				for (int i = 0; i < containers.length; i++) {
 					IBundleContainer container = containers[i];
-					IResolvedBundle[] bundles = container.getBundles();
+					IResolvedBundle[] bundles = null;
+					if (allBundles) {
+						bundles = container.getAllBundles();
+					} else {
+						bundles = container.getBundles();
+					}
 					for (int j = 0; j < bundles.length; j++) {
 						IResolvedBundle rb = bundles[j];
 						all.add(rb);

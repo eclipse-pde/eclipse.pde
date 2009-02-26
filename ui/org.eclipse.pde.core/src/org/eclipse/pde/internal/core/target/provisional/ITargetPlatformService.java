@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.core.target.provisional;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * A service to manage target platform definitions available to the workspace.
@@ -20,6 +19,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.5
  */
 public interface ITargetPlatformService {
+
+	/**
+	 * Status code indicating that a bundle in a target definition is not
+	 * contained in the current target platform state (a bundle has been
+	 * added to the file system that the target platform does not know
+	 * about).
+	 */
+	public static final int STATUS_MISSING_FROM_TARGET_PLATFORM = 1;
+
+	/**
+	 * Status code indicating that a bundle in the current target platform
+	 * state is not contained in a target definition (a bundle has been
+	 * deleted from the file system that the target platform does not
+	 * know about).
+	 */
+	public static final int STATUS_MISSING_FROM_TARGET_DEFINITION = 2;
 
 	/**
 	 * Returns handles to all target definitions known in the workspace.
@@ -123,6 +138,28 @@ public interface ITargetPlatformService {
 	 * @exception CoreException if an error occurs generating the handle
 	 */
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException;
+
+	/**
+	 * Returns a status describing whether the given target definition is synchronized with
+	 * workspace's target platform state. It is possible that bundles could have been added/removed
+	 * from the underlying bundle container storage making the current target platform state out of
+	 * synch with the contents of the a definition. The given target definition will be resolved
+	 * if not already.
+	 * <p>
+	 * An <code>OK</code> status is returned when in synch. A multi-status is returned
+	 * when there are synchronization issues. Each status contains one of the following codes
+	 * and the name of the associated bundle as a message:
+	 * <ul>
+	 * <li>STATUS_MISSING_FROM_STATE</li>
+	 * <li>STATUS_MISSING_FROM_TARGET_DEFINITION</li>
+	 * </ul>
+	 * </p>
+	 * @param target target definition to compare with target platform state
+	 * @param monitor progress monitor or <code>null</code> if none
+	 * @return status describing whether the target is in synch with target platform state
+	 * @throws CoreException if comparison fails
+	 */
+	public IStatus compareWithTargetPlatform(ITargetDefinition target, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Copies all attributes from one target definition to another.
