@@ -105,14 +105,8 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 		}
 
 		BundleInfo[] restrictions = container.getIncludedBundles();
-		if (restrictions != null) {
-			container.setIncludedBundles(null);
-		}
-		int bundleCount = container.getBundles().length;
+		int bundleCount = container.getAllBundles().length;
 		String bundleCountString = Integer.toString(bundleCount);
-		if (restrictions != null) {
-			container.setIncludedBundles(restrictions);
-		}
 
 		if (restrictions != null && restrictions.length > bundleCount) {
 			// If some bundles are missing, the bundleCount is likely wrong, just do the best we can
