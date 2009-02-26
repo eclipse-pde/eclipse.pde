@@ -214,6 +214,12 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
 		};
 		restrictedProfileContainer.setIncludedBundles(restrictions);
+		// Add some optional bundles
+		BundleInfo[] optional = new BundleInfo[]{
+				new BundleInfo("org.eclipse.debug.examples.core", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.debug.examples.ui", null, null, BundleInfo.NO_LEVEL, false)
+		};
+		restrictedProfileContainer.setOptionalBundles(optional);
 		// Profile container restrict to zero bundles
 		IBundleContainer emptyProfileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		BundleInfo[] completeRestrictions = new BundleInfo[0];
@@ -248,7 +254,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	 * @throws Exception
 	 */
 	protected ITargetDefinition readOldTarget(String name) throws Exception {
-		URL url = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".target");
+		URL url = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".trgt");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getTargetService().newTarget();
 		FileInputStream stream = new FileInputStream(file);
@@ -457,4 +463,59 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		}
 	}		
 	
+	/**
+	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve
+	 * the correct contents with optional bundles.
+	 * 
+	 * @throws Exception
+	 */
+	public void testReadOldOptionalTargetFile() throws Exception {
+		ITargetDefinition target = readOldTarget("optional");
+		
+		assertEquals("Wrong name", "Optional", target.getName());
+		assertNull(target.getArch());
+		assertNull(target.getOS());
+		assertNull(target.getNL());
+		assertNull(target.getWS());
+		assertNull(target.getProgramArguments());
+		assertNull(target.getVMArguments());
+		assertNull(target.getImplicitDependencies());
+		assertNull(target.getJREContainer());
+		
+		IBundleContainer[] containers = target.getBundleContainers();
+		assertEquals("Wrong number of bundles", 2, containers.length);
+		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
+		assertTrue("Container should be a profile container", containers[1] instanceof FeatureBundleContainer);
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
+				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong feature location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[1]).getFeatureId());
+		
+		BundleInfo[] included = new BundleInfo[]{
+				new BundleInfo("org.eclipse.debug.core", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false)
+			};
+		BundleInfo[] optional = new BundleInfo[]{
+				new BundleInfo("org.eclipse.debug.examples.core", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.eclipse.debug.examples.ui", null, null, BundleInfo.NO_LEVEL, false)
+			};
+		
+		for (int i = 0; i < containers.length; i++) {
+			IBundleContainer container = containers[i];
+			BundleInfo[] actual = container.getIncludedBundles();
+			assertNotNull(actual);
+			assertEquals("Wrong number of inclusions", included.length, actual.length);
+			for (int j = 0; j < actual.length; j++) {
+				assertEquals("Wrong restriction", included[j], actual[j]);
+			}
+			actual = container.getOptionalBundles();
+			assertNotNull(actual);
+			assertEquals("Wrong number of optionals", optional.length, actual.length);
+			for (int j = 0; j < actual.length; j++) {
+				assertEquals("Wrong restriction", optional[j], actual[j]);
+			} 
+		}
+	}	
 }

@@ -48,6 +48,7 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String ATTR_LOCATION_TYPE = "type"; //$NON-NLS-1$
 	private static final String ATTR_USE_DEFAULT = "useDefault"; //$NON-NLS-1$
 	private static final String INCLUDE_BUNDLES = "includeBundles"; //$NON-NLS-1$
+	private static final String OPTIONAL_BUNDLES = "optionalBundles"; //$NON-NLS-1$
 	private static final String ENVIRONMENT = "environment"; //$NON-NLS-1$
 	private static final String OS = "os"; //$NON-NLS-1$
 	private static final String WS = "ws"; //$NON-NLS-1$
@@ -63,6 +64,7 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String PDE_INSTRUCTION = "pde"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
+	private static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$
@@ -442,19 +444,29 @@ public class TargetDefinitionPersistenceHelper {
 		}
 		BundleInfo[] includedBundles = container.getIncludedBundles();
 		if (includedBundles != null) {
-			Element includeElement = doc.createElement(INCLUDE_BUNDLES);
-			for (int j = 0; j < includedBundles.length; j++) {
-				Element includedBundle = doc.createElement(PLUGIN);
-				includedBundle.setAttribute(ATTR_ID, includedBundles[j].getSymbolicName());
-				String version = includedBundles[j].getVersion();
-				if (version != null) {
-					includedBundle.setAttribute(ATTR_VERSION, version);
-				}
-				includeElement.appendChild(includedBundle);
-			}
-			containerElement.appendChild(includeElement);
+			Element included = doc.createElement(INCLUDE_BUNDLES);
+			serializeBundles(doc, included, includedBundles);
+			containerElement.appendChild(included);
+		}
+		BundleInfo[] optionalBundles = container.getOptionalBundles();
+		if (optionalBundles != null) {
+			Element optional = doc.createElement(OPTIONAL_BUNDLES);
+			serializeBundles(doc, optional, optionalBundles);
+			containerElement.appendChild(optional);
 		}
 		return containerElement;
+	}
+
+	private static void serializeBundles(Document doc, Element parent, BundleInfo[] bundles) {
+		for (int j = 0; j < bundles.length; j++) {
+			Element includedBundle = doc.createElement(PLUGIN);
+			includedBundle.setAttribute(ATTR_ID, bundles[j].getSymbolicName());
+			String version = bundles[j].getVersion();
+			if (version != null) {
+				includedBundle.setAttribute(ATTR_VERSION, version);
+			}
+			parent.appendChild(includedBundle);
+		}
 	}
 
 	private static IBundleContainer deserializeBundleContainer(Element location) throws CoreException {
@@ -495,25 +507,33 @@ public class TargetDefinitionPersistenceHelper {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				if (element.getNodeName().equalsIgnoreCase(INCLUDE_BUNDLES)) {
-					NodeList includedList = element.getChildNodes();
-					List includedBundles = new ArrayList(includedList.getLength());
-					for (int j = 0; j < includedList.getLength(); ++j) {
-						Node include = includedList.item(j);
-						if (include.getNodeType() == Node.ELEMENT_NODE) {
-							Element includeElement = (Element) include;
-							if (includeElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
-								String id = includeElement.getAttribute(ATTR_ID);
-								String version = includeElement.getAttribute(ATTR_VERSION);
-								includedBundles.add(new BundleInfo(id, version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false));
-							}
-						}
-					}
-					container.setIncludedBundles((BundleInfo[]) includedBundles.toArray(new BundleInfo[includedBundles.size()]));
+					BundleInfo[] included = deserializeBundles(element);
+					container.setIncludedBundles(included);
+				} else if (element.getNodeName().equalsIgnoreCase(OPTIONAL_BUNDLES)) {
+					BundleInfo[] optional = deserializeBundles(element);
+					container.setOptionalBundles(optional);
 				}
 			}
 		}
 
 		return container;
+	}
+
+	private static BundleInfo[] deserializeBundles(Element bundleContainer) {
+		NodeList nodes = bundleContainer.getChildNodes();
+		List bundles = new ArrayList(nodes.getLength());
+		for (int j = 0; j < nodes.getLength(); ++j) {
+			Node include = nodes.item(j);
+			if (include.getNodeType() == Node.ELEMENT_NODE) {
+				Element includeElement = (Element) include;
+				if (includeElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
+					String id = includeElement.getAttribute(ATTR_ID);
+					String version = includeElement.getAttribute(ATTR_VERSION);
+					bundles.add(new BundleInfo(id, version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false));
+				}
+			}
+		}
+		return (BundleInfo[]) bundles.toArray(new BundleInfo[bundles.size()]);
 	}
 
 	/**
@@ -526,7 +546,8 @@ public class TargetDefinitionPersistenceHelper {
 	private static List deserializeBundleContainersFromOldStyleElement(Element content, AbstractBundleContainer primaryContainer) throws CoreException {
 		List containers = new ArrayList();
 		NodeList list = content.getChildNodes();
-		List restrictions = new ArrayList(list.getLength());
+		List included = new ArrayList(list.getLength());
+		List optional = new ArrayList();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -538,13 +559,19 @@ public class TargetDefinitionPersistenceHelper {
 						if (lNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element plugin = (Element) lNode;
 							String id = plugin.getAttribute(ATTR_ID);
+							boolean isOptional = plugin.getAttribute(ATTR_OPTIONAL).equalsIgnoreCase(Boolean.toString(true));
 							if (id.length() > 0) {
-								restrictions.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+								BundleInfo info = new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false);
+								if (isOptional) {
+									optional.add(info);
+								} else {
+									included.add(info);
+								}
 							}
 						}
 					}
 					// Primary container is only added by default if useAllPlugins='true'
-					if (restrictions.size() > 0) {
+					if (included.size() > 0 || optional.size() > 0) {
 						containers.add(primaryContainer);
 					}
 				} else if (element.getNodeName().equalsIgnoreCase(EXTRA_LOCATIONS)) {
@@ -578,11 +605,16 @@ public class TargetDefinitionPersistenceHelper {
 			}
 		}
 		// in the old world, the restrictions were global to all containers
-		if (restrictions.size() > 0) {
+		if (included.size() > 0 || optional.size() > 0) {
 			Iterator iterator = containers.iterator();
 			while (iterator.hasNext()) {
 				IBundleContainer container = (IBundleContainer) iterator.next();
-				container.setIncludedBundles((BundleInfo[]) restrictions.toArray(new BundleInfo[restrictions.size()]));
+				if (included.size() > 0) {
+					container.setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
+				}
+				if (optional.size() > 0) {
+					container.setOptionalBundles((BundleInfo[]) optional.toArray(new BundleInfo[optional.size()]));
+				}
 			}
 		}
 		return containers;

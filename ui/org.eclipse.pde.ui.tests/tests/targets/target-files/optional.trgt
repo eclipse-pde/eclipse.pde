@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target name="Optional">
+
+   <location useDefault="true"/>
+
+   <content>
+      <plugins>
+         <plugin id="org.eclipse.debug.core" optional="false"/>
+         <plugin id="org.eclipse.debug.examples.core" optional="true"/>
+         <plugin id="org.eclipse.debug.examples.ui" optional="true"/>
+         <plugin id="org.eclipse.debug.ui"/>
+         <plugin id="org.eclipse.jdt.debug"/>
+         <plugin id="org.eclipse.jdt.debug.ui"/>
+         <plugin id="org.eclipse.jdt.launching"/>
+      </plugins>
+      <features>
+         <feature id="org.eclipse.jdt"/>
+      </features>
+   </content>
+
+</target>

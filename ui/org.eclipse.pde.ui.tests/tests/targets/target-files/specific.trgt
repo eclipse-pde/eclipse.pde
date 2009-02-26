@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target name="Specific Settings">
+
+   <launcherArgs>
+      <programArgs>pgm1 pgm2</programArgs>
+      <vmArgs>-Dfoo=&quot;bar&quot;</vmArgs>
+   </launcherArgs>
+
+   <environment>
+      <os>linux</os>
+      <ws>gtk</ws>
+      <arch>x86</arch>
+      <nl>en_US</nl>
+   </environment>
+
+   <targetJRE>
+      <execEnv>J2SE-1.4</execEnv>
+   </targetJRE>
+
+   <location path="${eclipse_home}/plugins"/>
+
+   <content useAllPlugins="true">
+      <plugins>
+      </plugins>
+      <features>
+      </features>
+   </content>
+
+   <implicitDependencies>
+      <plugin id="org.eclipse.jdt.debug"/>
+      <plugin id="org.eclipse.debug.core"/>
+   </implicitDependencies>
+
+</target>

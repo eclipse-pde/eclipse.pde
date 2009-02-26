@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target name="Directory">
+
+   <location path="${eclipse_home}/plugins"/>
+
+   <content useAllPlugins="true">
+      <plugins>
+      </plugins>
+      <features>
+      </features>
+   </content>
+
+</target>
