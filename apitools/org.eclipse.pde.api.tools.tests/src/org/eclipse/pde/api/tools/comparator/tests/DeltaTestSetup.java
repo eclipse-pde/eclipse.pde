@@ -28,116 +28,39 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 public abstract class DeltaTestSetup extends TestCase {
-	private static final String TESTS_DELTAS_NAME = "tests-deltas";
+	protected static final String AFTER = "after";
 	
+	protected static final String BEFORE = "before";
+
 	protected static final String BUNDLE_NAME = "deltatest";
 
+	private static final boolean DEBUG = false;
+
+	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
+	private static final String TESTS_DELTAS_NAME = "tests-deltas";
+	
 	private static final String WORKSPACE_NAME = "tests_deltas_workspace";
 
 	private static IPath WORKSPACE_ROOT;
-
-	private static final String BEFORE = "before";
-	private static final String AFTER = "after";
-	
-	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
-
-	private static final boolean DEBUG = false;
 
 	static {
 		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		// create workspace root
-		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
-	}
-	
-	protected void tearDown() throws Exception {
-		// remove workspace root
-		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
-		super.tearDown();
-	}
-
 	public DeltaTestSetup(String name) {
 		super(name);
 	}
-
-	public abstract String getTestRoot();
-
-	/**
-	 * The test name must be the folder name inside the tests-deltas resource folder
-	 * <code>name</code> represents either "before" or "after"
-	 * 
-	 * @param testName the given test name
-	 * @param name the given state name
-	 */
-	private void deployBundle(String testName, String name) {
-		String[] sourceFilePaths = new String[] {
-				TestSuiteHelper.getPluginDirectoryPath().append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append(name).toOSString()
-		};
-		IPath destinationPath = WORKSPACE_ROOT.append(name).append(BUNDLE_NAME);
-		String[] compilerOptions = TestSuiteHelper.COMPILER_OPTIONS;
-		assertTrue(TestSuiteHelper.compile(sourceFilePaths, destinationPath.toOSString(), compilerOptions));
-		
-		// copy the MANIFEST in the workspace folder
-		copyResources(testName, name, destinationPath.toOSString());
-	}
-
-	/**
-	 * @param testName the given test name
-	 * @param name either BEFORE or AFTER
-	 * @param destination where to put the resources
-	 */
-	private void copyResources(String testName, String name, String destination) {
-		IPath path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append(TESTS_DELTAS_NAME).append("resources");
-		File file = path.toFile();
-		File dest = new File(destination);
-		TestSuiteHelper.copy(file, dest);
-
-		// check if there is specific local resources to copy
-		path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources").append(name);
-		file = path.toFile();
-		if (file.exists()) {
-			TestSuiteHelper.copy(file, dest);
-			return;
-		}
-
-		// check if there is a global local resources to copy
-		path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources");
-		file = path.toFile();
-		if (file.exists()) {
-			TestSuiteHelper.copy(file, dest);
-		}
-	}
 	
-	protected IApiBaseline getBeforeState() {
-		IApiBaseline state = null;
-		try {
-			state = TestSuiteHelper.createTestingProfile(getBaseLineFolder(BEFORE));
-		} catch (CoreException e) {
-			e.printStackTrace();
-			assertTrue("Should not happen", false);
+	private void collect0(IDelta delta, List<IDelta> collect) {
+		IDelta[] children = delta.getChildren();
+		int length = children.length;
+		if (length != 0) {
+			for (int i = 0; i < length; i++) {
+				collect0(children[i], collect);
+			}
+		} else {
+			collect.add(delta);
 		}
-		return state;
-	}
-	
-	protected IApiBaseline getAfterState() {
-		IApiBaseline state = null;
-		try {
-			state = TestSuiteHelper.createTestingProfile(getBaseLineFolder(AFTER));
-		} catch (CoreException e) {
-			e.printStackTrace();
-			assertTrue("Should not happen", false);
-		}
-		return state;
-	}
-
-	private IPath getBaseLineFolder(String name) {
-		return new Path(WORKSPACE_NAME).append(name);
 	}
 
 	/**
@@ -184,20 +107,109 @@ public abstract class DeltaTestSetup extends TestCase {
 		return result;
 	}
 
-	private void collect0(IDelta delta, List<IDelta> collect) {
-		IDelta[] children = delta.getChildren();
-		int length = children.length;
-		if (length != 0) {
-			for (int i = 0; i < length; i++) {
-				collect0(children[i], collect);
-			}
-		} else {
-			collect.add(delta);
+	/**
+	 * @param testName the given test name
+	 * @param name either BEFORE or AFTER
+	 * @param destination where to put the resources
+	 */
+	private void copyResources(String testName, String name, String destination) {
+		IPath path = TestSuiteHelper.getPluginDirectoryPath();
+		path = path.append(TESTS_DELTAS_NAME).append("resources");
+		File file = path.toFile();
+		File dest = new File(destination);
+		TestSuiteHelper.copy(file, dest);
+
+		// check if there is specific local resources to copy
+		path = TestSuiteHelper.getPluginDirectoryPath();
+		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources").append(name);
+		file = path.toFile();
+		if (file.exists()) {
+			TestSuiteHelper.copy(file, dest);
+			return;
+		}
+
+		// check if there is a global local resources to copy
+		path = TestSuiteHelper.getPluginDirectoryPath();
+		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources");
+		file = path.toFile();
+		if (file.exists()) {
+			TestSuiteHelper.copy(file, dest);
 		}
 	}
-	
+
+	/**
+	 * The test name must be the folder name inside the tests-deltas resource folder
+	 * <code>name</code> represents either "before" or "after"
+	 * 
+	 * @param testName the given test name
+	 * @param name the given state name
+	 */
+	protected void deployBundle(String testName, String name) {
+		deployBundle(testName, name, BUNDLE_NAME);
+	}
+
+	/**
+	 * The test name must be the folder name inside the tests-deltas resource folder
+	 * <code>name</code> represents either "before" or "after"
+	 * 
+	 * @param testName the given test name
+	 * @param name the given state name
+	 * @param bundleName the given bundle name
+	 */
+	protected void deployBundle(String testName, String name, String bundleName) {
+		String[] sourceFilePaths = new String[] {
+				TestSuiteHelper.getPluginDirectoryPath().append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append(name).toOSString()
+		};
+		IPath destinationPath = WORKSPACE_ROOT.append(name).append(bundleName);
+		String[] compilerOptions = TestSuiteHelper.COMPILER_OPTIONS;
+		assertTrue(TestSuiteHelper.compile(sourceFilePaths, destinationPath.toOSString(), compilerOptions));
+		
+		// copy the MANIFEST in the workspace folder
+		copyResources(testName, name, destinationPath.toOSString());
+	}
+
 	protected void deployBundles(String testName) {
 		deployBundle(testName, BEFORE);
 		deployBundle(testName, AFTER);
+	}
+
+	protected IApiBaseline getAfterState() {
+		IApiBaseline state = null;
+		try {
+			state = TestSuiteHelper.createTestingProfile(getBaseLineFolder(AFTER));
+		} catch (CoreException e) {
+			e.printStackTrace();
+			assertTrue("Should not happen", false);
+		}
+		return state;
+	}
+	
+	private IPath getBaseLineFolder(String name) {
+		return new Path(WORKSPACE_NAME).append(name);
+	}
+
+	protected IApiBaseline getBeforeState() {
+		IApiBaseline state = null;
+		try {
+			state = TestSuiteHelper.createTestingProfile(getBaseLineFolder(BEFORE));
+		} catch (CoreException e) {
+			e.printStackTrace();
+			assertTrue("Should not happen", false);
+		}
+		return state;
+	}
+
+	public abstract String getTestRoot();
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		// create workspace root
+		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
+	}
+	
+	protected void tearDown() throws Exception {
+		// remove workspace root
+		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
+		super.tearDown();
 	}
 }

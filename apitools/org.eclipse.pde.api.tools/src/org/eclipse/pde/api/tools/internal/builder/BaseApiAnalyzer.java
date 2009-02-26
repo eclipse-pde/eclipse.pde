@@ -72,6 +72,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.IVersionRange;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
@@ -236,7 +237,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					this.fBuildState.setReexportedComponents(Util.getReexportedComponents(component));
 				} else {
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {component.getId(), baseline.getName()}));
-					checkCompatibility(reference, component);
+					checkCompatibility(null, component);
 					updateMonitor(localMonitor);
 				}
 				//version checks
@@ -446,34 +447,47 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int length = requiredComponents.length;
 		ReexportedBundleVersionInfo info = null;
 		if (length != 0) {
-			IApiBaseline profile = component.getBaseline();
-			IApiBaseline baseline = reference.getBaseline();
 			loop: for (int i = 0; i < length; i++) {
 				IRequiredComponentDescription description = requiredComponents[i];
 				if (description.isExported()) {
+					// get the corresponding IRequiredComponentDescription for the component from the reference baseline
 					String id = description.getId();
-					IApiComponent baselineRequiredApiComponent = baseline.getApiComponent(id);
-					IApiComponent currentRequiredApiComponent = profile.getApiComponent(id);
-					if (baselineRequiredApiComponent == null || currentRequiredApiComponent == null) {
-						// not possible to diagnose anything
+					IRequiredComponentDescription[] requiredComponents2 = reference.getRequiredComponents();
+					// get the corresponding exported bundle
+					IRequiredComponentDescription referenceDescription = null;
+					int length2 = requiredComponents2.length;
+					loop2: for (int j = 0; j < length2; j++) {
+						IRequiredComponentDescription description2 = requiredComponents2[i];
+						if (description2.getId().equals(id)) {
+							if (description2.isExported()) {
+								referenceDescription = description2;
+								break loop2;
+							}
+						}
+					}
+					if (referenceDescription == null) {
 						continue loop;
 					}
-					Version baselineRequiredVersion = new Version(baselineRequiredApiComponent.getVersion());
-					Version currentRequiredVersion = new Version(currentRequiredApiComponent.getVersion());
-					if (DEBUG) {
-						System.out.println("reexported component " + id); //$NON-NLS-1$
-						System.out.println("\t- version in baseline profile : " + baselineRequiredVersion); //$NON-NLS-1$
-						System.out.println("\t- version in current profile : " + currentRequiredVersion); //$NON-NLS-1$
-					}
-					if (baselineRequiredVersion.getMajor() != currentRequiredVersion.getMajor()) {
-						// major version was changed so the current plugin should also update its major version
+					IVersionRange versionRange = description.getVersionRange();
+					IVersionRange versionRange2 = referenceDescription.getVersionRange();
+					
+					Version currentLowerBound = new Version(versionRange.getMinimumVersion());
+					Version referenceLowerBound = new Version(versionRange2.getMinimumVersion());
+					
+					int currentLowerMajorVersion = currentLowerBound.getMajor();
+					int referenceLowerMajorVersion = referenceLowerBound.getMajor();
+					int currentLowerMinorVersion = currentLowerBound.getMinor();
+					int referenceLowerMinorVersion = referenceLowerBound.getMinor();
+					
+					if (currentLowerMajorVersion < referenceLowerMajorVersion
+							|| currentLowerMinorVersion < referenceLowerMinorVersion) {
 						return new ReexportedBundleVersionInfo(id , IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE);
-					} else if (baselineRequiredVersion.getMinor() != currentRequiredVersion.getMinor()) {
-						// minor version was changed so the current plugin should also update its minor version
-						if (info != null) {
-							// already found a reexported minor version change. No need to create a new one
-							continue loop;
-						}
+					}
+					
+					if (currentLowerMajorVersion > referenceLowerMajorVersion) {
+						return new ReexportedBundleVersionInfo(id , IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE);
+					}
+					if (currentLowerMinorVersion > referenceLowerMinorVersion) {
 						info = new ReexportedBundleVersionInfo(id , IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE);
 					}
 				}
@@ -720,6 +734,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			}
 			updateMonitor(localMonitor);
+		} catch(CoreException e) {
+			ApiPlugin.log(e);
 		}
 		finally {
 			if(monitor != null) {
@@ -1490,7 +1506,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					// the minor version should be incremented
 					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
 					problem = createVersionProblem(
-							IApiProblem.MINOR_VERSION_CHANGE, 
+							IApiProblem.MINOR_VERSION_CHANGE,
 							new String[] {
 								compversionval,
 								refversionval
@@ -1516,7 +1532,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				if (!ignoreMinorVersionCheckWithoutApiChange()) {
 					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
 					problem = createVersionProblem(
-							IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, 
+							IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API,
 							new String[] {
 								compversionval,
 								refversionval
@@ -1530,7 +1546,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (problem != null) {
 				switch (problem.getKind()) {
 					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE :
-						// check if there is a version change required due to reexported bundles
+						// check if there is a version change required due to re-exported bundles
 						info = checkBundleVersionsOfReexportedBundles(reference, component);
 						if (info != null) {
 							switch(info.kind) {

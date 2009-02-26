@@ -82,6 +82,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			SinceTagTest.class,
 			VersionTest.class,
 			BundleMergeSplitTests.class,
+			BundleVersionTests.class,
 		};
 		return classes;
 	}
