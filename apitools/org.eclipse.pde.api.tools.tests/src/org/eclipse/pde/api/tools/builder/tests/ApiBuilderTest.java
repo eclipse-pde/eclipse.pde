@@ -1376,7 +1376,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	private static Class[] getAllTestClasses() {
 		Class[] classes = new Class[] {
-			BaselineProblemTests.class,
 			CompatibilityTest.class,
 			UsageTest.class,	
 			LeakTest.class,
