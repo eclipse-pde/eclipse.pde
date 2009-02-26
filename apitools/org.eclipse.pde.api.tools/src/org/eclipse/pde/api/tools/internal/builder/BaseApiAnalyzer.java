@@ -457,7 +457,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IRequiredComponentDescription referenceDescription = null;
 					int length2 = requiredComponents2.length;
 					loop2: for (int j = 0; j < length2; j++) {
-						IRequiredComponentDescription description2 = requiredComponents2[i];
+						IRequiredComponentDescription description2 = requiredComponents2[j];
 						if (description2.getId().equals(id)) {
 							if (description2.isExported()) {
 								referenceDescription = description2;
