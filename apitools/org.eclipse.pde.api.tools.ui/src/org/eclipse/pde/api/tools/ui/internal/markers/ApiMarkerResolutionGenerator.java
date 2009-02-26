@@ -56,7 +56,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				switch(ApiProblemFactory.getProblemKind(problemid)) {
 					case IApiProblem.API_LEAK: {
 						if(flags == IApiProblem.LEAK_METHOD_PARAMETER || 
-						 flags == IApiProblem.LEAK_METHOD_PARAMETER ||
+						 flags == IApiProblem.LEAK_CONSTRUCTOR_PARAMETER ||
 						 flags == IApiProblem.LEAK_RETURN_TYPE) {
 							return new IMarkerResolution[] {new FilterProblemResolution(marker), new AddNoReferenceTagResolution(marker)};
 						}

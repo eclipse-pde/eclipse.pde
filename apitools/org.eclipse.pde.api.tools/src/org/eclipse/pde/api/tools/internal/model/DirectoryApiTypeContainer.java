@@ -40,7 +40,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	/**
 	 * Implementation of an {@link IApiTypeRoot} in the local file system.
 	 */
-	class LocalApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
+	static class LocalApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
 		
 		/**
 		 * Associated file

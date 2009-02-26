@@ -73,7 +73,7 @@ public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPr
 	/**
 	 * Comparator for the viewer to group filters by {@link IElementDescriptor} type
 	 */
-	class ApiFilterComparator extends WorkbenchViewerComparator {
+	static class ApiFilterComparator extends WorkbenchViewerComparator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
 		 */

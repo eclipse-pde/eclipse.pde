@@ -154,13 +154,9 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 * 
 	 * @return the {@link IApiTypeContainer}s
 	 */
-	protected synchronized IApiTypeContainer[] getApiTypeContainers() {
+	protected synchronized IApiTypeContainer[] getApiTypeContainers() throws CoreException {
 		if (fApiTypeContainers == null) {
-			try {
-				fApiTypeContainers = createApiTypeContainers();
-			} catch (CoreException e) {
-				ApiPlugin.log(e);
-			}
+			fApiTypeContainers = createApiTypeContainers();
 		}
 		return (IApiTypeContainer[]) fApiTypeContainers.toArray(new IApiTypeContainer[fApiTypeContainers.size()]);
 	}
@@ -174,11 +170,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 */
 	protected synchronized IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
 		if (fApiTypeContainers == null) {
-			try {
-				fApiTypeContainers = createApiTypeContainers();
-			} catch (CoreException e) {
-				ApiPlugin.log(e);
-			}
+			fApiTypeContainers = createApiTypeContainers();
 		}
 		List containers = new ArrayList();
 		String origin = null;

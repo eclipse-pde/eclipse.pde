@@ -80,7 +80,7 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * 
 	 * @return {@link IApiTypeContainer}s
 	 */
-	public IApiTypeContainer[] getApiTypeContainers();
+	public IApiTypeContainer[] getApiTypeContainers() throws CoreException;
 	
 	/**
 	 * Returns {@link IApiTypeContainer}s containing the {@link IApiTypeRoot}s associated with

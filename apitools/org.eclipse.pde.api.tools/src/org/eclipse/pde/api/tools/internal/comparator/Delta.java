@@ -200,8 +200,18 @@ public class Delta implements IDelta {
 		if (this.datas == null) {
 			if (other.datas != null)
 				return false;
-		} else if (!this.datas.equals(other.datas))
+		} else if (other.datas == null) {
 			return false;
+		} else {
+			if (this.datas.length != other.datas.length) {
+				return false;
+			}
+			for (int i = 0, max = this.datas.length; i < max; i++) {
+				if (!this.datas[i].equals(other.datas[i])) {
+					return false;
+				}
+			}
+		}
 		if (this.componentID == null) {
 			if (other.componentID != null)
 				return false;

@@ -47,10 +47,8 @@ public class APIFreezeReportConversionTask extends Task {
 		private List argumentsList;
 		private String componentID;
 		private boolean debug;
-		private String elementType;
 		private int flags;
 		private String key;
-		private String kind;
 		private Map map;
 		private String typename;
 
@@ -62,10 +60,8 @@ public class APIFreezeReportConversionTask extends Task {
 			throws SAXException {
 			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				Entry entry = new Entry(
-						elementType,
 						flags,
 						key,
-						kind,
 						typename,
 						this.arguments);
 				Object object = this.map.get(this.componentID);
@@ -120,10 +116,7 @@ public class APIFreezeReportConversionTask extends Task {
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				}
 				componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
-				
-				elementType = attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
 				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
-				kind = attributes.getValue(IApiXmlConstants.ATTR_KIND);
 				typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				key = attributes.getValue(IApiXmlConstants.ATTR_KEY);
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
@@ -139,20 +132,17 @@ public class APIFreezeReportConversionTask extends Task {
 	}
 	static class Entry {
 		String[] arguments;
-		String elementType;
 		int flags;
 		String key;
-		String kind;
 		String typeName;
 
 		public Entry(
-				String elementType, int flags, String key, String kind,
+				int flags,
+				String key,
 				String typeName,
 				String[] arguments) {
-			this.elementType = elementType;
 			this.flags = flags;
 			this.key = key.replace('/', '.');
-			this.kind = kind;
 			if (typeName != null) {
 				this.typeName = typeName.replace('/', '.');
 			}

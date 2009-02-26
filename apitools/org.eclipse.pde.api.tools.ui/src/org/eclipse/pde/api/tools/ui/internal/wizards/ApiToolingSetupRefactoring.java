@@ -39,7 +39,7 @@ public class ApiToolingSetupRefactoring extends Refactoring {
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if(fChanges == null && fChanges.size() < 1) {
+		if(fChanges == null || fChanges.size() < 1) {
 			return RefactoringStatus.createErrorStatus(WizardMessages.JavadocTagRefactoring_0);
 		}
 		return RefactoringStatus.create(Status.OK_STATUS);

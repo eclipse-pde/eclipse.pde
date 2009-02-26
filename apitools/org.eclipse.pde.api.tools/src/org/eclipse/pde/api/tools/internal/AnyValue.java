@@ -24,4 +24,7 @@ public class AnyValue {
 	public boolean equals(Object obj) {
 		return true;
 	}
+	public int hashCode() {
+		return 0;
+	}
 }

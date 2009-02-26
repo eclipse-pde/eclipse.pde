@@ -43,7 +43,7 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 	/**
 	 * {@link IApiTypeRoot} implementation within an archive
 	 */
-	class ArchiveApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
+	static class ArchiveApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
 		
 		private String fTypeName;
 

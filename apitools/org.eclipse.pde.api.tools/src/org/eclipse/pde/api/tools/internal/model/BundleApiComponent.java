@@ -139,7 +139,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 		try {
 			super.dispose();
 		} finally {
-			fManifest = null;
+			synchronized(this) {
+				fManifest = null;
+			}
 			fBundleDescription = null;
 		}
 	}
@@ -911,7 +913,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see IApiComponent#isSourceComponent()
 	 */
-	public boolean isSourceComponent() throws CoreException {
+	public synchronized boolean isSourceComponent() throws CoreException {
 		if (this.fManifest == null) {
 			throw new CoreException(
 					new Status(

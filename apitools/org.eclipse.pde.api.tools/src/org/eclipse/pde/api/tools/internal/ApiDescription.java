@@ -141,7 +141,7 @@ public class ApiDescription implements IApiDescription {
 			if(parent != null) {
 				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ? 
 						((IPackageDescriptor)parent.element).getName() : ((IMemberDescriptor)parent.element).getName();
-				buffer.append("\nParent: ").append(parent == null ? null : pname); //$NON-NLS-1$
+				buffer.append("\nParent: ").append(pname); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		}

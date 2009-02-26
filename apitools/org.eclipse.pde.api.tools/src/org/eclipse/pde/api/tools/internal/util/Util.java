@@ -417,9 +417,15 @@ public final class Util {
 		String string = Util.generateEEContents(jre, eeid);
 		File eeFile = File.createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
 		eeFile.deleteOnExit();
-		FileOutputStream outputStream = new FileOutputStream(eeFile);
-		outputStream.write(string.getBytes(IApiCoreConstants.UTF_8));
-		outputStream.close();
+		FileOutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(eeFile);
+			outputStream.write(string.getBytes(IApiCoreConstants.UTF_8));
+		} finally {
+			if (outputStream != null) {
+				outputStream.close();
+			}
+		}
 		return eeFile;
 	}	
 

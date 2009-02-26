@@ -183,6 +183,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			catch(CoreException ce) {
 				ApiPlugin.log(ce);
 			}
+			if (root == null) {
+				return;
+			}
 			if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 				return;
 			}

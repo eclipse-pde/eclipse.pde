@@ -266,7 +266,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Clears the package -> components cache and sets it to <code>null</code>
 	 */
-	private void clearComponentsCache() {
+	private synchronized void clearComponentsCache() {
 		if(fComponentsProvidingPackageCache != null) {
 			fComponentsProvidingPackageCache.clear();
 			fComponentsProvidingPackageCache = null;

@@ -67,7 +67,11 @@ public class ApiField extends ApiMember implements IApiField {
 		}
 		return false;
 	}
-	
+
+	public int hashCode() {
+		return super.hashCode() + (this.fValue != null ? this.fValue.hashCode() : 0);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiField#getConstantValue()
 	 */
@@ -89,7 +93,7 @@ public class ApiField extends ApiMember implements IApiField {
 		if (getConstantValue() != null) {
 			buffer.append(" = ").append(getConstantValue()); //$NON-NLS-1$
 		}
-		buffer.append(';').append(Util.LINE_DELIMITER);		
+		buffer.append(';').append(Util.LINE_DELIMITER);
 		if (getGenericSignature() != null) {
 			buffer
 				.append(" Signature : ") //$NON-NLS-1$

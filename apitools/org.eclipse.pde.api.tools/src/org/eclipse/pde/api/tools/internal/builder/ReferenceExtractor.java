@@ -327,7 +327,6 @@ public class ReferenceExtractor extends ClassAdapter {
 		public void visitLabel(Label label) {
 			this.linePositionTracker.addLabel(label);
 			if (this.localVariableMarker != null) {
-				this.localVariableMarker.label = label;
 				Object object = this.labelsToLocalMarkers.get(label);
 				if (object != null) {
 					// add in the list
@@ -710,7 +709,14 @@ public class ReferenceExtractor extends ClassAdapter {
 		public int compareTo(Object o) {
 			return this.line - ((LineInfo) o).line;
 		}
-
+		public boolean equals(Object obj) {
+			if (obj instanceof LineInfo) {
+				LineInfo lineInfo2 = (LineInfo) obj;
+				return this.line == lineInfo2.line
+						&& this.label.equals(lineInfo2.label);
+			}
+			return super.equals(obj);
+		}
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append('(').append(this.line).append(',').append(this.label).append(')');
@@ -721,15 +727,17 @@ public class ReferenceExtractor extends ClassAdapter {
 	static class LocalLineNumberMarker {
 		int lineNumber;
 		int varIndex;
-		Label label;
 		
 		public LocalLineNumberMarker(int line, int varIndex) {
 			this.lineNumber = line;
 			this.varIndex = varIndex;
 		}
 		public boolean equals(Object obj) {
-			LocalLineNumberMarker marker = (LocalLineNumberMarker) obj;
-			return this.lineNumber == marker.lineNumber && this.varIndex == marker.varIndex;
+			if (obj instanceof LocalLineNumberMarker) {
+				LocalLineNumberMarker marker = (LocalLineNumberMarker) obj;
+				return this.lineNumber == marker.lineNumber && this.varIndex == marker.varIndex;
+			}
+			return false;
 		}
 
 		public int hashCode() {
@@ -864,10 +872,6 @@ public class ReferenceExtractor extends ClassAdapter {
 		}
 		// don't consider references to anonymous types or elements in them
 		String referencedTypeName = ref.getReferencedTypeName();
-		int index = referencedTypeName.lastIndexOf('$');
-		if (index > -1) {
-			
-		}
 		if (ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD || ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
 			return true;
 		}

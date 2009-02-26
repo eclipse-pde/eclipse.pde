@@ -42,7 +42,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	/**
 	 * {@link IApiTypeRoot} implementation within an archive
 	 */
-	class ArchiveApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
+	static class ArchiveApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
 		
 		private String fTypeName;
 		

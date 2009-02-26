@@ -134,8 +134,8 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 	public int hashCode() {
 		IApiType enclosing = (IApiType) getAncestor(IApiElement.TYPE);
 		return getType() + getName().hashCode() + (enclosing == null ? 0 : enclosing.hashCode());
-	}	
-	
+	}
+
 	/**
 	 * Used when building a member type.
 	 * @param access modifiers

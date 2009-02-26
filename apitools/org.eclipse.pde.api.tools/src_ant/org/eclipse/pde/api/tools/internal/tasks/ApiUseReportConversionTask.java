@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -200,7 +201,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	/**
 	 * A group of counters to origin meta-data
 	 */
-	private final class CountGroup {
+	private static final class CountGroup {
 		private int total_api_field_count = 0;
 		private int total_private_field_count = 0;
 		private int total_permissable_field_count = 0;
@@ -259,7 +260,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	/**
 	 * Describes one project with references
 	 */
-	private final class Report {
+	private final static class Report {
 		private File referee = null;
 		private TreeMap origintorefslist = new TreeMap(filesorter);
 		private TreeMap origintocountgroup = new TreeMap(filesorter);
@@ -401,13 +402,15 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 				}
 				counts = new CountGroup();
 				report.origintocountgroup.put(origins[j], counts);
-				for (int k = 0; k < xmlfiles.length; k++) {
-					try {
-						handler = new UseDefaultHandler(report, getTypeFromFileName(xmlfiles[k]), counts);
-						parser.parse(xmlfiles[k], handler);
-					} 
-					catch (SAXException e) {}
-					catch (IOException e) {}
+				if (xmlfiles != null) {
+					for (int k = 0; k < xmlfiles.length; k++) {
+						try {
+							handler = new UseDefaultHandler(report, getTypeFromFileName(xmlfiles[k]), counts);
+							parser.parse(xmlfiles[k], handler);
+						} 
+						catch (SAXException e) {}
+						catch (IOException e) {}
+					}
 				}
 			}
 			this.reports.add(report);
@@ -438,7 +441,6 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		}
 		//dump the reports
 		TreeMap originstorefs = null;
-		File origin = null;
 		for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
 			report = (Report) iter.next();
 			if(this.debug) {
@@ -447,10 +449,11 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			}
 			writeRefereeIndex(report);
 			originstorefs = report.origintorefslist;
-			for(Iterator iter2 = originstorefs.keySet().iterator(); iter2.hasNext();) {
-				origin = (File) iter2.next();
+			for(Iterator iter2 = originstorefs.entrySet().iterator(); iter2.hasNext();) {
+				Map.Entry entry = (Map.Entry) iter2.next();
+				File origin = (File) entry.getKey();
 				writeOriginEntry(report, xmlfiles, origin, (CountGroup) report.origintocountgroup.get(origin));
-				xmlfiles = (File[]) originstorefs.get(origin);
+				xmlfiles = (File[]) entry.getValue();
 				tranformXml(xmlfiles, xsltFile);
 			}
 			if(this.debug) {
@@ -574,9 +577,10 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		CountGroup counts = null;
 		String link = null;
 		File summary = null;
-		for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-			origin = (File) iter.next();
-			counts = (CountGroup) map.get(origin);
+		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry)  iter.next();
+			origin = (File) entry.getKey();
+			counts = (CountGroup) entry.getValue();
 			summary = new File(origin, origin.getName()+".html"); //$NON-NLS-1$
 			link = extractLinkFrom(report.referee, summary.getAbsolutePath());
 			writer.println(MessageFormat.format(Messages.ApiUseReportConversionTask_referee_index_entry, 

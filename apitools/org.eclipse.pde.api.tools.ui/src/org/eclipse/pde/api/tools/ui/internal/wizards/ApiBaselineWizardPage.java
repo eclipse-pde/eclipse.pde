@@ -84,7 +84,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 	/**
 	 * an EE entry (child of an api component in the viewer)
 	 */
-	public class EEEntry {
+	public static class EEEntry {
 		String name = null;
 		/**
 		 * Constructor
@@ -103,7 +103,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 	/**
 	 * Content provider for the viewer
 	 */
-	class ContentProvider implements ITreeContentProvider {
+	static class ContentProvider implements ITreeContentProvider {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -260,7 +260,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 	/**
 	 * Operation that creates a new working copy for an {@link IApiProfile} that is being edited
 	 */
-	class WorkingCopyOperation implements IRunnableWithProgress {
+	static class WorkingCopyOperation implements IRunnableWithProgress {
 		
 		IApiBaseline original = null, 
 					workingcopy = null;

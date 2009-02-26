@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -249,11 +248,22 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 		File file = (File) handlecache.get(baseline.getName());
 		if(file != null && file.exists()) {
+			FileInputStream inputStream = null;
 			try {
-				restoreBaseline(baseline, new FileInputStream(file));
-				hasinfos.add(baseline.getName());
+				inputStream = new FileInputStream(file);
+				restoreBaseline(baseline, inputStream);
+			} catch (IOException e) {
+				ApiPlugin.log(e);
+			} finally {
+				if (inputStream != null) {
+					try {
+						inputStream.close();
+					} catch(IOException e) {
+						// ignore
+					}
+				}
 			}
-			catch(FileNotFoundException fnf) {ApiPlugin.log(fnf);}
+			hasinfos.add(baseline.getName());
 		}
 	}
 	
@@ -412,12 +422,13 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		List comps = null;
 		IApiComponent comp = null;
 		Element celement = null;
-		for(Iterator iter = pools.keySet().iterator(); iter.hasNext();) {
-			dir = (File) iter.next();
+		for(Iterator iter = pools.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			dir = (File) entry.getKey();
 			subroot = document.createElement(IApiXmlConstants.ELEMENT_POOL);
 			root.appendChild(subroot);
 			subroot.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(dir.getAbsolutePath()).toPortableString());
-			comps = (List) pools.get(dir);
+			comps = (List) entry.getValue();
 			for(Iterator iter2 = comps.iterator(); iter2.hasNext();) {
 				comp = (IApiComponent) iter2.next();
 				celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
@@ -591,8 +602,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				}
 				this.baselinecache.clear();
 			}
-			if(this.workspacebaseline != null) {
-				this.workspacebaseline.dispose();
+			synchronized (this) {
+				if(this.workspacebaseline != null) {
+					this.workspacebaseline.dispose();
+				}
 			}
 			if(this.handlecache != null) {
 				this.handlecache.clear();

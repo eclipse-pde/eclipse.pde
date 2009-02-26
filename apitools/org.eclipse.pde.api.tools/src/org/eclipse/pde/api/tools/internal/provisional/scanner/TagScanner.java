@@ -84,7 +84,7 @@ public class TagScanner {
 	 * type or enum declarations as parents, so we have to override the ones we don't care 
 	 * about.
 	 */
-	class Visitor extends ASTVisitor {
+	static class Visitor extends ASTVisitor {
 		
 		private IApiDescription fDescription = null;
 		

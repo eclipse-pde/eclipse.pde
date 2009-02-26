@@ -113,23 +113,21 @@ public final class ReferenceResolver {
 	 * @throws CoreException if something bad happens
 	 */
 	private static void resolveReferenceSets(Map map, IProgressMonitor monitor) throws CoreException {
-		Iterator types = map.keySet().iterator();
-		String key = null;
+		Iterator iterator = map.values().iterator();
 		List refs = null;
 		IReference ref= null;
-		while (types.hasNext()) {
+		while (iterator.hasNext()) {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			key = (String) types.next();
-			refs = (List) map.get(key);
+			refs = (List) iterator.next();
 			ref = (IReference) refs.get(0);
 			((org.eclipse.pde.api.tools.internal.builder.Reference)ref).resolve();
 			IApiMember resolved = ref.getResolvedReference();
 			if (resolved != null) {
-				Iterator iterator = refs.iterator();
-				while (iterator.hasNext()) {
-					Reference ref2 = (Reference) iterator.next();
+				Iterator iterator2 = refs.iterator();
+				while (iterator2.hasNext()) {
+					Reference ref2 = (Reference) iterator2.next();
 					ref2.setResolution(resolved);
 				}
 			}

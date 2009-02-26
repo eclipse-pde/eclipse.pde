@@ -41,7 +41,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  */
 public class StubApiComponent extends SystemLibraryApiComponent {
 	private static final String STUB_PATH = "/org/eclipse/pde/api/tools/internal/api_stubs/"; //$NON-NLS-1$
-	public static Map AllSystemLibraryApiComponents;
+	private static Map AllSystemLibraryApiComponents;
 
 	public static IApiComponent getStubApiComponent(int eeValue) {
 		if (AllSystemLibraryApiComponents == null) {

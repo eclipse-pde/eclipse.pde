@@ -215,7 +215,7 @@ public final class ApiSearchEngine {
 					IApiComponent comp = (IApiComponent) element;
 					comp.accept(visitor);
 					localmonitor.worked(1);
-					break;	
+					break;
 				}
 				case IApiElement.FIELD:
 				case IApiElement.METHOD: {
@@ -230,7 +230,9 @@ public final class ApiSearchEngine {
 								getResolvedReferences(requestor, type, localmonitor.newChild(1)), 
 								localmonitor.newChild(1));
 					}
-					reporter.reportResults(element, (IReference[]) refs.toArray(new IReference[refs.size()]));
+					if (refs != null) {
+						reporter.reportResults(element, (IReference[]) refs.toArray(new IReference[refs.size()]));
+					}
 					break;
 				}
 			}

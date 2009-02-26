@@ -57,7 +57,7 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
  */
 public class ProjectSelectionDialog extends SelectionStatusDialog {
 
-	class ApiJavaElementContentProvider extends StandardJavaElementContentProvider {
+	static class ApiJavaElementContentProvider extends StandardJavaElementContentProvider {
 		public Object[] getChildren(Object element) {
 			if(element instanceof IJavaModel) {
 				IJavaModel model = (IJavaModel) element;

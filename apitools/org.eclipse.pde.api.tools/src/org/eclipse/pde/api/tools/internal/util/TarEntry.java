@@ -53,6 +53,16 @@ public class TarEntry implements Cloneable {
 		this(name, -1);
 	}
 
+	public Object clone() {
+		try {
+			return super.clone();
+		}
+		catch (CloneNotSupportedException e) {
+			// this shouldn't happen, since we are Cloneable
+			throw new IllegalStateException();
+		}
+	}
+
 	/**
 	 * Returns the type of this file, one of FILE, LINK, SYM_LINK,
 	 * CHAR_DEVICE, BLOCK_DEVICE, DIRECTORY or FIFO.

@@ -124,7 +124,7 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeContainer#getApiTypeContainers()
 	 */
-	public synchronized IApiTypeContainer[] getApiTypeContainers() {
+	public synchronized IApiTypeContainer[] getApiTypeContainers() throws CoreException {
 		return super.getApiTypeContainers();
 	}
 

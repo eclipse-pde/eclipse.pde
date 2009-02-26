@@ -26,13 +26,13 @@ public abstract class ElementDescriptorImpl implements IElementDescriptor, Compa
 	/**
 	 * Constant used for controlling tracing in the descriptor framework
 	 */
-	private static boolean DEBUG = Util.DEBUG;
+	private static boolean Debug = Util.DEBUG;
 	
 	/**
 	 * Method used for initializing tracing in the descriptor framework
 	 */
 	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
+		Debug = debugValue || Util.DEBUG;
 	}
 	
 	/* (non-Javadoc)
@@ -63,7 +63,7 @@ public abstract class ElementDescriptorImpl implements IElementDescriptor, Compa
 			ElementDescriptorImpl element = (ElementDescriptorImpl) o;
 			return getComparable().compareTo(element.getComparable());
 		}
-		if (DEBUG) {
+		if (Debug) {
 			System.err.println(o.getClass());
 		}
 		return -1;

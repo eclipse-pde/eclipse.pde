@@ -412,10 +412,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT = 
 		getApiToolsKey(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
 
-	private final int API_SCANNING_USAGE_PAGE_ID = 0;
-	private final int COMPATIBILITY_PAGE_ID = 1;
-	private final int VERSION_MANAGEMENT_PAGE_ID = 2;
-	private final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
+	private static final int API_SCANNING_USAGE_PAGE_ID = 0;
+	private static final int COMPATIBILITY_PAGE_ID = 1;
+	private static final int VERSION_MANAGEMENT_PAGE_ID = 2;
+	private static final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
 
 	private static Key[] fgAllApiComponentResolutionKeys = {
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,

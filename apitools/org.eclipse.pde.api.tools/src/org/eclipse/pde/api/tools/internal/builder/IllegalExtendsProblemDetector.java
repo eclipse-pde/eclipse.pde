@@ -166,7 +166,8 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		ApiType ltype = (ApiType) reference.getMember();
 		IMethod method = null;
 		if(ltype.isAnonymous()) {
-			method = getEnclosingMethod(type, reference, doc);
+			// has a side-effect on reference.getMember().setEnclosingMethodInfo(..)
+			getEnclosingMethod(type, reference, doc);
 			if(reference.getLineNumber() < 0) {
 				return defaultSourcePosition(type, reference);
 			}

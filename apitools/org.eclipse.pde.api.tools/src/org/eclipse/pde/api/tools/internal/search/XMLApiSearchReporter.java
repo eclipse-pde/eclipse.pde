@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -260,31 +261,35 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 		String referee = null;
 		File root = null;
 		File location = null;
-		for(Iterator iter = fReferenceMap.keySet().iterator(); iter.hasNext();) {
-			id = (String) iter.next();
+		for(Iterator iter = fReferenceMap.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			id = (String) entry.getKey();
 			referee = id;
 			location = new File(parent, id);
 			if(!location.exists()) {
 				location.mkdir();
 			}
-			rmap = (HashMap) fReferenceMap.get(id);
-			for(Iterator iter2 = rmap.keySet().iterator(); iter2.hasNext();) {
-				id = (String) iter2.next();
+			rmap = (HashMap) entry.getValue();
+			for(Iterator iter2 = rmap.entrySet().iterator(); iter2.hasNext();) {
+				Map.Entry entry2 = (Map.Entry) iter2.next();
+				id = (String) entry2.getKey();
 				root = new File(location, id);
 				if(!root.exists()) {
 					root.mkdir();
 				}
-				mmap = (HashMap) rmap.get(id);
-				for(Iterator iter4 = mmap.keySet().iterator(); iter4.hasNext();) {
-					vis = (Integer) iter4.next();
+				mmap = (HashMap) entry2.getValue();
+				for(Iterator iter4 = mmap.entrySet().iterator(); iter4.hasNext();) {
+					Map.Entry entry3 = (Map.Entry) iter4.next();
+					vis = (Integer) entry3.getKey();
 					location = new File(root, VisibilityModifiers.getVisibilityName(vis.intValue()));
 					if(!location.exists()) {
 						location.mkdir();
 					}
-					vismap = (HashMap) mmap.get(vis);
-					for(Iterator iter3 = vismap.keySet().iterator(); iter3.hasNext();) {
-						type = (Integer) iter3.next();
-						typemap = (HashMap) vismap.get(type);
+					vismap = (HashMap) entry3.getValue();
+					for(Iterator iter3 = vismap.entrySet().iterator(); iter3.hasNext();) {
+						Map.Entry entry4 = (Map.Entry) iter3.next();
+						type = (Integer) entry4.getKey();
+						typemap = (HashMap) entry4.getValue();
 						writeGroup(id, referee, location, getRefTypeName(type.intValue()), typemap, vis.intValue());
 					}
 				}
@@ -311,7 +316,20 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				File out = new File(parent, name+".xml"); //$NON-NLS-1$
 				if(out.exists()) {
 					try {
-						doc = this.parser.parse(new FileInputStream(out));
+						FileInputStream inputStream = null;
+						try {
+							inputStream = new FileInputStream(out);
+							doc = this.parser.parse(inputStream);
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							if (inputStream != null) {
+								inputStream.close();
+							}
+						}
+						if (doc == null) {
+							return;
+						}
 						root = doc.getDocumentElement();
 						String value = root.getAttribute(IApiXmlConstants.ATTR_REFERENCE_COUNT);
 						count = Integer.parseInt(value);
@@ -335,15 +353,16 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				String tname = null;
 				HashSet refs = null;
 				Element telement = null;
-				for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-					tname = (String) iter.next();
+				for(Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					tname = (String) entry.getKey();
 					telement = findTypeElement(root, tname);
 					if(telement == null) {
 						telement = doc.createElement(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 						telement.setAttribute(IApiXmlConstants.ATTR_NAME, tname);
 						root.appendChild(telement);
 					}
-					refs = (HashSet) map.get(tname);
+					refs = (HashSet) entry.getValue();
 					if(refs != null) {
 						for(Iterator iter2 = refs.iterator(); iter2.hasNext();) {
 							count++;

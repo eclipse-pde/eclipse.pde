@@ -305,7 +305,7 @@ public class ProjectApiDescription extends ApiDescription {
 				ICompilationUnit unit = null;
 				for (int j = 0; j < fragments.length; j++) {
 					if (DEBUG) {
-						System.out.println("\t" + fragments[j].getElementName().toString()); //$NON-NLS-1$
+						System.out.println("\t" + fragments[j].getElementName()); //$NON-NLS-1$
 					}
 					IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
 					// visit package

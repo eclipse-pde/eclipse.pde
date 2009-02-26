@@ -215,7 +215,7 @@ public class ApiFileGeneratorTask extends Task {
 			if (manifestDir.exists() && manifestDir.isDirectory()) {
 				manifestFile = new File(manifestDir, "MANIFEST.MF"); //$NON-NLS-1$
 			}
-			if (manifestFile.exists()) {
+			if (manifestFile != null && manifestFile.exists()) {
 				BufferedInputStream inputStream = null;
 				try {
 					inputStream = new BufferedInputStream(new FileInputStream(manifestFile));

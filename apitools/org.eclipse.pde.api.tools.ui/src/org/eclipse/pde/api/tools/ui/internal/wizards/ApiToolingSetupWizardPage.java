@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -121,7 +122,9 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			if(tableviewer != null) {
 				try {
 					tableviewer.getTable().setRedraw(false);
-					filter.setPattern(pattern + '*');
+					synchronized (this) {
+						filter.setPattern(pattern + '*');
+					}
 					tableviewer.refresh(true);
 					tableviewer.setCheckedElements(checkedset.toArray());
 				}
@@ -137,7 +140,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	/**
 	 * Filter for the viewer, uses a text matcher
 	 */
-	class StringFilter extends ViewerFilter {
+	static class StringFilter extends ViewerFilter {
 
 		private String pattern = null;
 		StringMatcher matcher = null;
@@ -400,12 +403,13 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			MultiTextEdit multiedit = null;
 			HashSet alledits = null;
 			TextEdit edit = null;
-			for(Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-				file = (IFile) iter.next();
+			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				file = (IFile) entry.getKey();
 				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new String[] {file.getName()}), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
-				alledits = (HashSet)map.get(file);
+				alledits = (HashSet) entry.getValue();
 				if(alledits != null) {
 					for(Iterator iter2 = alledits.iterator(); iter2.hasNext();) {
 						edit = (TextEdit) iter2.next();
