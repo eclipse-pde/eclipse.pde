@@ -209,5 +209,15 @@ public class PluggableApiUseTask extends UseTask {
 		catch(CoreException ce) {
 			throw new BuildException(Messages.ApiUseTask_search_engine_problem, ce);
 		}
+		finally {
+			if(baseline != null) {
+				baseline.dispose();
+				deleteBaseline(this.currentBaselineLocation, getBaselineInstallDir(CURRENT_BASELINE_NAME));
+			}
+			if(scope != null && this.scopeLocation != null) {
+				scope.dispose();
+				deleteBaseline(this.scopeLocation, getBaselineInstallDir(SCOPE_BASELINE_NAME));
+			}
+		}
 	}
 }

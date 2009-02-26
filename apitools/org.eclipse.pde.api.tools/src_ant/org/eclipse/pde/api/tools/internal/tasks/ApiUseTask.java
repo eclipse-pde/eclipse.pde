@@ -224,9 +224,11 @@ public class ApiUseTask extends UseTask {
 		finally {
 			if(baseline != null) {
 				baseline.dispose();
+				deleteBaseline(this.currentBaselineLocation, getBaselineInstallDir(CURRENT_BASELINE_NAME));
 			}
-			if(scope != null) {
+			if(scope != null && this.scopeLocation != null) {
 				scope.dispose();
+				deleteBaseline(this.scopeLocation, getBaselineInstallDir(SCOPE_BASELINE_NAME));
 			}
 			this.reporter.reportNotSearched((IApiElement[]) this.notsearched.toArray(new IApiElement[this.notsearched.size()]));
 		}

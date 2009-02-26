@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.tasks;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -84,6 +85,11 @@ public class UseTask extends CommonUtilsTask {
 	 * the actual instantiated {@link IApiSearchReporter} instance that will be reported to 
 	 */
 	protected IApiSearchReporter reporter = null;
+	
+	/**
+	 * Map of baseline name to the dir the were extracted to
+	 */
+	private HashMap baselineinstalldirs = new HashMap(4);
 	
 	/**
 	 * Returns the search scope to use
@@ -169,6 +175,15 @@ public class UseTask extends CommonUtilsTask {
 	}
 	
 	/**
+	 * Returns the directory where the {@link IApiBaseline} was extracted to as an install
+	 * @param name
+	 * @return
+	 */
+	protected File getBaselineInstallDir(String name) {
+		return (File) this.baselineinstalldirs.get(name);
+	}
+	
+	/**
 	 * Prepares and creates and new baseline with the given name from the given location. The
 	 * returned {@link IApiBaseline} is not checked for resolution errors or consistency. If <code>null</code>
 	 * is passed in as a location <code>null</code> is returned.
@@ -203,6 +218,7 @@ public class UseTask extends CommonUtilsTask {
 		if (this.debug) {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		this.baselineinstalldirs.put(name, installdir);
 		return baseline;
 	}
 	
