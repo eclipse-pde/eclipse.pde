@@ -27,6 +27,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String START_LEVEL_3 = "@3:start"; //$NON-NLS-1$
 	private static final String START = "@start"; //$NON-NLS-1$
 
+	private static final String INSTALL_INSTRUCTION = "installBundle(bundle:${artifact});"; //$NON-NLS-1$
+	private static final String UNINSTALL_INSTRUCTION = "uninstallBundle(bundle:${artifact});"; //$NON-NLS-1$
+
 	private static final byte CONFIG_STYLE_ORIGINAL = 1;
 	private static final byte CONFIG_STYLE_REFACTORED = 2;
 	private static final byte CONFIG_STYLE_SIMPLE = 4;
@@ -36,7 +39,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final int INSTRUCTION_INSTALL = 0;
 	private static final int INSTRUCTION_UNINSTALL = 1;
 	private static final int INSTRUCTION_CONFIGURE = 2;
-	private static final int INSTRCUTION_UNCONFIGURE = 3;
+	private static final int INSTRUCTION_UNCONFIGURE = 3;
 
 	private String product = null;
 	private ProductFile productFile = null;
@@ -121,26 +124,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private BundleInfo[] getDefaultStartInfo() {
 		//TODO merge this with config.ini generation
 		//for now just set p2.inf values, implying refactored runtime and simpleconfigurator
-		List configs = getConfigInfos();
-		BundleInfo[] defaults = new BundleInfo[7 + configs.size()];
+		BundleInfo[] defaults = new BundleInfo[6];
 		defaults[0] = new BundleInfo(BUNDLE_SIMPLE_CONFIGURATOR, null, null, 1, true);
 		defaults[1] = new BundleInfo(BUNDLE_EQUINOX_COMMON, null, null, 2, true);
 		defaults[2] = new BundleInfo(BUNDLE_OSGI, null, null, -1, true);
 		defaults[3] = new BundleInfo(BUNDLE_UPDATE_CONFIGURATOR, null, null, 4, true);
 		defaults[4] = new BundleInfo(BUNDLE_CORE_RUNTIME, null, null, 4, true);
 		defaults[5] = new BundleInfo(BUNDLE_DS, null, null, 1, true);
-
-		//launcher and fragments are special
-		defaults[6] = new BundleInfo(BUNDLE_EQUINOX_LAUNCHER, null, null, -1, false);
-		for (int i = 0; i < configs.size(); i++) {
-			Config config = (Config) configs.get(i);
-			if (config.equals(Config.genericConfig()))
-				continue;
-			String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
-			if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
-				fragmentName += '.' + config.getArch();
-			defaults[i + 7] = new BundleInfo(fragmentName, null, null, -1, false);
-		}
 		return defaults;
 	}
 
@@ -153,25 +143,59 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				continue;
 
 			String[] instructions = new String[4];
-			instructions[INSTRUCTION_INSTALL] = "installBundle(bundle:${artifact});"; //$NON-NLS-1$
-			instructions[INSTRUCTION_UNINSTALL] = "uninstallBundle(bundle:${artifact});"; //$NON-NLS-1$
-			if (bundle.getSymbolicName().equals(BUNDLE_EQUINOX_LAUNCHER)) {
-				instructions[INSTRUCTION_CONFIGURE] = "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);"; //$NON-NLS-1$
-				instructions[INSTRCUTION_UNCONFIGURE] = "removeProgramArg(programArg:-startup);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
-			} else if (bundle.getSymbolicName().startsWith(BUNDLE_EQUINOX_LAUNCHER)) {
-				instructions[INSTRUCTION_CONFIGURE] = "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);"; //$NON-NLS-1$
-				instructions[INSTRCUTION_UNCONFIGURE] = "removeProgramArg(programArg:--launcher.library);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
-			} else {
-				instructions[INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				instructions[INSTRCUTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
-			}
+			instructions[INSTRUCTION_INSTALL] = INSTALL_INSTRUCTION;
+			instructions[INSTRUCTION_UNINSTALL] = UNINSTALL_INSTRUCTION;
+			instructions[INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			instructions[INSTRUCTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
 
 			if (bundle.getSymbolicName().equals(BUNDLE_UPDATE_CONFIGURATOR)) {
 				instructions[INSTRUCTION_CONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:false);"; //$NON-NLS-1$
-				instructions[INSTRCUTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
+				instructions[INSTRUCTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
 			}
 			printP2Unit(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
 		}
+
+		BundleDescription launcher = assembly.getPlugin(BUNDLE_EQUINOX_LAUNCHER, null);
+		if (launcher != null) {
+			String[] instructions = new String[4];
+			instructions[INSTRUCTION_INSTALL] = INSTALL_INSTRUCTION;
+			instructions[INSTRUCTION_UNINSTALL] = UNINSTALL_INSTRUCTION;
+			instructions[INSTRUCTION_CONFIGURE] = "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+			instructions[INSTRUCTION_UNCONFIGURE] = "removeProgramArg(programArg:-startup);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+			printP2Unit(buffer, index++, BUNDLE_EQUINOX_LAUNCHER, launcher.getVersion(), null, instructions);
+			printP2Requires(buffer, index++, BUNDLE_EQUINOX_LAUNCHER, launcher.getVersion(), launcher.getPlatformFilter());
+
+			List configs = getConfigInfos();
+			for (int i = 0; i < configs.size(); i++) {
+				Config config = (Config) configs.get(i);
+				if (config.equals(Config.genericConfig()))
+					continue;
+				String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
+				if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
+					fragmentName += '.' + config.getArch();
+				BundleDescription fragment = assembly.getPlugin(fragmentName, null);
+				if (fragment != null) {
+					instructions = new String[4];
+					instructions[INSTRUCTION_INSTALL] = INSTALL_INSTRUCTION;
+					instructions[INSTRUCTION_UNINSTALL] = UNINSTALL_INSTRUCTION;
+					instructions[INSTRUCTION_CONFIGURE] = "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+					instructions[INSTRUCTION_UNCONFIGURE] = "removeProgramArg(programArg:--launcher.library);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+					printP2Unit(buffer, index++, fragment.getSymbolicName(), fragment.getVersion(), fragment.getPlatformFilter(), instructions);
+					printP2Requires(buffer, index++, fragmentName, fragment.getVersion(), fragment.getPlatformFilter());
+					//printP2Requires(buffer, index++, productFile.getId() + "_root." + config.toString("."), new Version(productFile.getVersion()), config.getPlatformFilter()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+		}
+	}
+
+	private void printP2Requires(StringBuffer buffer, int i, String name, Version version, String filter) {
+		VersionRange range = new VersionRange(version, true, version, true);
+		buffer.append("requires." + i + ".namespace=org.eclipse.equinox.p2.iu\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("requires." + i + ".name=" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("requires." + i + ".range=" + range.toString() + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("requires." + i + ".greedy=true\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (filter != null)
+			buffer.append("requires." + i + ".filter=" + filter + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -182,9 +206,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	 */
 	private void printP2Unit(StringBuffer buffer, int i, String name, Version version, String filter, String[] instructions) {
 		VersionRange range = new VersionRange(version, true, version, true);
+		printP2Requires(buffer, i, "@FLAVOR@" + name, version, filter); //$NON-NLS-1$
 		buffer.append("units." + i + ".id=@FLAVOR@" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("units." + i + ".version=" + version + '\n'); //$NON-NLS-1$//$NON-NLS-2$
-		buffer.append("units." + i + ".properties.org.eclipse.pde.build.default=true\n"); //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("units." + i + ".properties.1.name=org.eclipse.pde.build.default\n"); //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("units." + i + ".properties.1.value=true\n"); //$NON-NLS-1$//$NON-NLS-2$
 		if (filter != null)
 			buffer.append("units." + i + ".filter=" + filter + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("units." + i + ".hostRequirements.1.namespace=osgi.bundle\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -207,10 +233,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		buffer.append("units." + i + ".provides.2.namespace=org.eclipse.equinox.p2.flavor\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("units." + i + ".provides.2.name=@FLAVOR@\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("units." + i + ".provides.2.version=1.0.0\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append("units." + i + "instructions.install=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append("units." + i + "instructions.uninstall=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append("units." + i + "instructions.unconfigure=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append("units." + i + "instructions.configure=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".instructions.install=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".instructions.uninstall=" + instructions[INSTRUCTION_UNINSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".instructions.unconfigure=" + instructions[INSTRUCTION_UNCONFIGURE] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".instructions.configure=" + instructions[INSTRUCTION_CONFIGURE] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private String findConfigFile(String os) {
