@@ -146,6 +146,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void generateP2InfCUs(StringBuffer buffer) {
 		BundleInfo[] infos = getDefaultStartInfo();
+		int index = 1;
 		for (int i = 0; i < infos.length && infos[i] != null; i++) {
 			BundleDescription bundle = assembly.getPlugin(infos[i].getSymbolicName(), infos[i].getVersion());
 			if (bundle == null)
@@ -169,7 +170,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				instructions[INSTRUCTION_CONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:false);"; //$NON-NLS-1$
 				instructions[INSTRCUTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
 			}
-			printP2Unit(buffer, i, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
+			printP2Unit(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
 		}
 	}
 
