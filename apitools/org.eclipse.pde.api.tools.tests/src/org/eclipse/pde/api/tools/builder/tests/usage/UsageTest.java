@@ -106,7 +106,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 				typename, 
 				true, 
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				getExpectedProblemIds().length > 0);
+				true);
 	}
 
 	protected void deployReplacementTest(IPath before, IPath after, IPath filterpath, String sourcename, boolean inc) {
