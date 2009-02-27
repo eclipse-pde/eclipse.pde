@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -48,6 +50,8 @@ import org.eclipse.ui.progress.UIJob;
  * @see EditTargetDefinitionWizard
  */
 public class TargetDefinitionContentPage extends TargetDefinitionPage {
+
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private Text fNameText;
 	private BundleContainerTable fTable;
@@ -114,14 +118,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		TabItem pluginsTab = new TabItem(tabs, SWT.NONE);
 		pluginsTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
-		Composite pluginTabContainer = new Composite(tabs, SWT.NONE);
-		pluginTabContainer.setLayout(new GridLayout());
-		pluginTabContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Composite pluginTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
 
-		Label label = SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 400;
-		label.setLayoutData(gd);
+		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
 
 		fTable = BundleContainerTable.createTableInDialog(pluginTabContainer, new IBundleContainerTableReporter() {
 			public void runResolveOperation(final IRunnableWithProgress operation) {
@@ -158,9 +158,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		TabItem envTab = new TabItem(tabs, SWT.NONE);
 		envTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_3);
-		Composite envTabContainer = new Composite(tabs, SWT.NONE);
-		envTabContainer.setLayout(new GridLayout());
-		envTabContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite envTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
 		createTargetEnvironmentGroup(envTabContainer);
 		createJREGroup(envTabContainer);
 		envTab.setControl(envTabContainer);
@@ -185,18 +183,18 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		if (definition != null) {
 			String name = definition.getName();
 			if (name == null) {
-				name = ""; //$NON-NLS-1$
+				name = EMPTY_STRING;
 			}
 			fNameText.setText(name);
 			fTable.setInput(definition);
 
-			String presetValue = (definition.getOS() == null) ? "" : definition.getOS(); //$NON-NLS-1$
+			String presetValue = (definition.getOS() == null) ? EMPTY_STRING : definition.getOS();
 			fOSCombo.setText(presetValue);
-			presetValue = (definition.getWS() == null) ? "" : definition.getWS(); //$NON-NLS-1$
+			presetValue = (definition.getWS() == null) ? EMPTY_STRING : definition.getWS();
 			fWSCombo.setText(presetValue);
-			presetValue = (definition.getArch() == null) ? "" : definition.getArch(); //$NON-NLS-1$
+			presetValue = (definition.getArch() == null) ? EMPTY_STRING : definition.getArch();
 			fArchCombo.setText(presetValue);
-			presetValue = (definition.getNL() == null) ? "" : LocaleUtil.expandLocaleName(definition.getNL()); //$NON-NLS-1$
+			presetValue = (definition.getNL() == null) ? EMPTY_STRING : LocaleUtil.expandLocaleName(definition.getNL());
 			fNLCombo.setText(presetValue);
 
 			IPath jrePath = definition.getJREContainer();
@@ -224,9 +222,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 			updateJREWidgets();
 
-			presetValue = (definition.getProgramArguments() == null) ? "" : definition.getProgramArguments(); //$NON-NLS-1$
+			presetValue = (definition.getProgramArguments() == null) ? EMPTY_STRING : definition.getProgramArguments();
 			fProgramArgs.setText(presetValue);
-			presetValue = (definition.getVMArguments() == null) ? "" : definition.getVMArguments(); //$NON-NLS-1$
+			presetValue = (definition.getVMArguments() == null) ? EMPTY_STRING : definition.getVMArguments();
 			fVMArgs.setText(presetValue);
 
 			fElementViewer.refresh();
@@ -234,61 +232,40 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	private void createTargetEnvironmentGroup(Composite container) {
-		Group group = new Group(container, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.EnvironmentBlock_targetEnv);
+		Group group = SWTFactory.createGroup(container, PDEUIMessages.EnvironmentBlock_targetEnv, 2, 1, GridData.FILL_HORIZONTAL);
 
 		initializeChoices();
 
-		Label label = new Label(group, SWT.NULL);
-		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_os);
+		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_os, 1);
 
-		fOSCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
-		fOSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fOSCombo.setItems((String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
-		fOSCombo.setVisibleItemCount(30);
+		fOSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
 		fOSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setOS(getModelValue(fOSCombo.getText()));
 			}
 		});
 
-		label = new Label(group, SWT.NULL);
-		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_ws);
+		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_ws, 1);
 
-		fWSCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
-		fWSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fWSCombo.setItems((String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
-		fWSCombo.setVisibleItemCount(30);
+		fWSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
 		fWSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setWS(getModelValue(fWSCombo.getText()));
 			}
 		});
 
-		label = new Label(group, SWT.NULL);
-		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_arch);
+		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_arch, 1);
 
-		fArchCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
-		fArchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fArchCombo.setItems((String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
-		fArchCombo.setVisibleItemCount(30);
+		fArchCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
 		fArchCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setArch(getModelValue(fArchCombo.getText()));
 			}
 		});
 
-		label = new Label(group, SWT.NULL);
-		label.setText(PDEUIMessages.Preferences_TargetEnvironmentPage_nl);
+		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_nl, 1);
 
-		fNLCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
-		fNLCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
-		fNLCombo.setVisibleItemCount(30);
+		fNLCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
 		fNLCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String value = fNLCombo.getText();
@@ -306,7 +283,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * Used when setting a value in the target definition.
 	 * 
 	 * @param value
-	 * @return given string or <code>null</code>
+	 * @return trimmed value or <code>null</code>
 	 */
 	private String getModelValue(String value) {
 		if (value != null) {
@@ -318,6 +295,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		return value;
 	}
 
+	/**
+	* Delimits a comma separated preference and add the items to the given set
+	* @param set
+	* @param preference
+	*/
 	private void addExtraChoices(Set set, String preference) {
 		StringTokenizer tokenizer = new StringTokenizer(preference, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
@@ -325,61 +307,61 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		}
 	}
 
+	/**
+	 * Loads combo choices fromt he platform and from PDE core preferences
+	 */
 	private void initializeChoices() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		IEclipsePreferences node = new InstanceScope().getNode(PDECore.PLUGIN_ID);
 
 		fOSChoices = new TreeSet();
 		String[] os = Platform.knownOSValues();
-		for (int i = 0; i < os.length; i++)
+		for (int i = 0; i < os.length; i++) {
 			fOSChoices.add(os[i]);
-		addExtraChoices(fOSChoices, preferences.getString(ICoreConstants.OS_EXTRA));
+		}
+		String pref = node.get(ICoreConstants.OS_EXTRA, EMPTY_STRING);
+		if (!EMPTY_STRING.equals(pref)) {
+			addExtraChoices(fOSChoices, pref);
+		}
 
 		fWSChoices = new TreeSet();
 		String[] ws = Platform.knownWSValues();
-		for (int i = 0; i < ws.length; i++)
+		for (int i = 0; i < ws.length; i++) {
 			fWSChoices.add(ws[i]);
-		addExtraChoices(fWSChoices, preferences.getString(ICoreConstants.WS_EXTRA));
+		}
+		pref = node.get(ICoreConstants.WS_EXTRA, EMPTY_STRING);
+		if (!EMPTY_STRING.equals(pref)) {
+			addExtraChoices(fWSChoices, pref);
+		}
 
 		fArchChoices = new TreeSet();
 		String[] arch = Platform.knownOSArchValues();
-		for (int i = 0; i < arch.length; i++)
+		for (int i = 0; i < arch.length; i++) {
 			fArchChoices.add(arch[i]);
-		addExtraChoices(fArchChoices, preferences.getString(ICoreConstants.ARCH_EXTRA));
+		}
+		pref = node.get(ICoreConstants.ARCH_EXTRA, EMPTY_STRING);
+		if (!EMPTY_STRING.equals(pref)) {
+			addExtraChoices(fArchChoices, pref);
+		}
 
 		fNLChoices = new TreeSet();
-		initializeAllLocales();
-	}
-
-	private void initializeAllLocales() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String[] nl = LocaleUtil.getLocales();
-		for (int i = 0; i < nl.length; i++)
+		for (int i = 0; i < nl.length; i++) {
 			fNLChoices.add(nl[i]);
-		addExtraChoices(fNLChoices, preferences.getString(ICoreConstants.NL_EXTRA));
+		}
+		pref = node.get(ICoreConstants.NL_EXTRA, EMPTY_STRING);
+		if (!EMPTY_STRING.equals(pref)) {
+			addExtraChoices(fNLChoices, pref);
+		}
 	}
 
 	private void createJREGroup(Composite container) {
-		Group group = new Group(container, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.EnvironmentBlock_jreTitle);
+		Group group = SWTFactory.createGroup(container, PDEUIMessages.EnvironmentBlock_jreTitle, 2, 1, GridData.FILL_HORIZONTAL);
 
 		initializeJREValues();
 
-		Label label = new Label(group, SWT.WRAP);
-		label.setText(PDEUIMessages.JRESection_description);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.verticalAlignment = SWT.TOP;
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
+		SWTFactory.createWrapLabel(group, PDEUIMessages.JRESection_description, 2);
 
-		fDefaultJREButton = new Button(group, SWT.RADIO);
-		fDefaultJREButton.setText(PDEUIMessages.JRESection_defaultJRE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fDefaultJREButton.setLayoutData(gd);
+		fDefaultJREButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_defaultJRE, 2);
 		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateJREWidgets();
@@ -387,8 +369,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 
-		fNamedJREButton = new Button(group, SWT.RADIO);
-		fNamedJREButton.setText(PDEUIMessages.JRESection_JREName);
+		fNamedJREButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_JREName);
 		fNamedJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateJREWidgets();
@@ -396,19 +377,14 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 
-		fNamedJREsCombo = new Combo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		fNamedJREsCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		String[] installs = VMUtil.getVMInstallNames();
-		fNamedJREsCombo.setItems(installs);
-		fNamedJREsCombo.setVisibleItemCount(30);
+		fNamedJREsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, VMUtil.getVMInstallNames());
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText())));
 			}
 		});
 
-		fExecEnvButton = new Button(group, SWT.RADIO);
-		fExecEnvButton.setText(PDEUIMessages.JRESection_ExecutionEnv);
+		fExecEnvButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_ExecutionEnv);
 		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateJREWidgets();
@@ -416,10 +392,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 
-		fExecEnvsCombo = new Combo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-		fExecEnvsCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fExecEnvsCombo.setItems((String[]) fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
-		fExecEnvsCombo.setVisibleItemCount(30);
+		fExecEnvsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, (String[]) fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));
@@ -429,7 +402,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	/**
-	 * Initializes the combo with possible execution enviroments
+	 * Initializes the combo with possible execution environments
 	 */
 	protected void initializeJREValues() {
 		fExecEnvChoices = new TreeSet();
@@ -445,21 +418,13 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	private Control createArgumentsGroup(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout());
+		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 
 		SWTFactory.createWrapLabel(container, PDEUIMessages.JavaArgumentsTab_description, 1);
 
-		Group programGroup = new Group(container, SWT.NONE);
-		programGroup.setLayout(new GridLayout());
-		programGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		programGroup.setText(PDEUIMessages.JavaArgumentsTab_progamArgsGroup);
+		Group programGroup = SWTFactory.createGroup(container, PDEUIMessages.JavaArgumentsTab_progamArgsGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
-		fProgramArgs = new Text(programGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 200;
-		gd.heightHint = 60;
-		fProgramArgs.setLayoutData(gd);
+		fProgramArgs = SWTFactory.createText(programGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
 		fProgramArgs.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setProgramArguments(fProgramArgs.getText().trim());
@@ -476,20 +441,14 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		vmGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		vmGroup.setText(PDEUIMessages.JavaArgumentsTab_vmArgsGroup);
 
-		fVMArgs = new Text(vmGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 200;
-		gd.heightHint = 60;
-		fVMArgs.setLayoutData(gd);
+		fVMArgs = SWTFactory.createText(vmGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
 		fVMArgs.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setVMArguments(fVMArgs.getText().trim());
 			}
 		});
 
-		Composite buttons = new Composite(vmGroup, SWT.NONE);
-		buttons.setLayout(new GridLayout(2, false));
-		buttons.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		Composite buttons = SWTFactory.createComposite(vmGroup, 2, 1, GridData.HORIZONTAL_ALIGN_END, 0, 0);
 
 		Button vmArgs = SWTFactory.createPushButton(buttons, PDEUIMessages.JavaArgumentsTab_addVMArgs, null, GridData.HORIZONTAL_ALIGN_END);
 		vmArgs.addSelectionListener(getVMArgsListener(fVMArgs));
@@ -571,6 +530,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void createImpTable(Composite container) {
 		fElementViewer = new TableViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint=250;
 		fElementViewer.getControl().setLayoutData(gd);
 		fElementViewer.setContentProvider(new DefaultTableProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -605,15 +565,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				}
 			}
 		});
-
 	}
 
 	private void createImpButtons(Composite container) {
-		Composite buttonContainer = new Composite(container, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		buttonContainer.setLayout(layout);
-		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		Composite buttonContainer = SWTFactory.createComposite(container, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 
 		fAddButton = new Button(buttonContainer, SWT.PUSH);
 		fAddButton.setText(PDEUIMessages.SourceBlock_add);
