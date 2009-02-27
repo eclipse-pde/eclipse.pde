@@ -191,8 +191,7 @@ public class BundleContainerTable {
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()) {
-					Object selectedElement = ((IStructuredSelection) event.getSelection()).getFirstElement();
-					fTreeViewer.setExpandedState(selectedElement, !fTreeViewer.getExpandedState(selectedElement));
+					handleEdit();
 				}
 			}
 		});

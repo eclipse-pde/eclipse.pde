@@ -13,47 +13,111 @@ package org.eclipse.pde.internal.ui.preferences;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
-import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.target.EditTargetDefinitionWizard;
-import org.eclipse.pde.internal.ui.wizards.target.NewTargetDefinitionWizard2;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.target.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 public class TargetPlatformPreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private class TargetLabelProvider extends LabelProvider {
-		public Image getImage(Object element) {
-			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION);
-		}
+	private class TargetLabelProvider extends StyledCellLabelProvider {
 
-		public String getText(Object element) {
-			String name = ((ITargetDefinition) element).getName();
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
+		 */
+		public void update(ViewerCell cell) {
+			final Object element = cell.getElement();
+			Styler style = new Styler() {
+
+				public void applyStyles(TextStyle textStyle) {
+					Object[] defaultElement = fTableViewer.getCheckedElements();
+					if (defaultElement == null || defaultElement.length == 0) {
+						textStyle.font = null;
+						return;
+					}
+
+					if (defaultElement[0].equals(element)) {
+
+						Font dialogFont = JFaceResources.getDialogFont();
+						FontData[] fontData = dialogFont.getFontData();
+						for (int i = 0; i < fontData.length; i++) {
+							FontData data = fontData[i];
+							data.setStyle(SWT.BOLD);
+						}
+						Display display = getShell().getDisplay();
+						textStyle.font = new Font(display, fontData);
+					}
+				}
+			};
+
+			ITargetDefinition targetDef = (ITargetDefinition) element;
+			ITargetHandle targetHandle = targetDef.getHandle();
+			String name = targetDef.getName();
 			if (name == null || name.length() == 0) {
-				return ((ITargetDefinition) element).getHandle().toString();
+				name = targetHandle.toString();
 			}
-			return name;
+
+			StyledString styledString = new StyledString(name, style);
+			if (targetHandle instanceof WorkspaceFileTargetHandle) {
+				IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
+				String location = " " + file.getFullPath(); //$NON-NLS-1$
+				styledString.append(location, StyledString.DECORATIONS_STYLER);
+			} else {
+				String location = (String) cell.getItem().getData(CELLDATA_NEWLOCATION);
+				if (location != null) {
+					location = " " + location; //$NON-NLS-1$
+					styledString = new StyledString(name, style);
+					styledString.append(location, StyledString.QUALIFIER_STYLER);
+				}
+			}
+
+			cell.setText(styledString.toString());
+			cell.setStyleRanges(styledString.getStyleRanges());
+			cell.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
+			super.update(cell);
 		}
 	}
 
+	/**
+	 * Sorts the Targets in ascending (SWT.UP) or descending order (SWT.DOWN)
+	 *
+	 */
+	class TargetSorter extends ViewerSorter {
+
+		public TargetSorter() {
+			super();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			return ((TargetDefinition) e1).getName().compareToIgnoreCase(((TargetDefinition) e2).getName());
+		}
+	}
+
+	private String CELLDATA_NEWLOCATION = "newloc"; //$NON-NLS-1$
 	// Table viewer
 	private CheckboxTableViewer fTableViewer = null;
 
@@ -62,12 +126,14 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	private Button fEditButton = null;
 	//private Button fDuplicateButton = null;
 	private Button fRemoveButton = null;
+	private Button fMoveButton = null;
 
 	// Initial collection of targets (handles are realized into definitions as working copies)
 	private List fTargets = new ArrayList();
 
 	// Removed definitions (to be removed on apply)
 	private List fRemoved = new ArrayList();
+	private Map fMoved = new HashMap(1);
 
 	// Handle that was previous selected on this page or null
 	private ITargetHandle fPrevious;
@@ -100,10 +166,10 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		SWTFactory.createVerticalSpacer(comp, 1);
 
 		Composite tableComposite = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH, 0, 0);
-		SWTFactory.createWrapLabel(tableComposite, PDEUIMessages.TargetPlatformPreferencePage2_2, 2);
-		Table table = new Table(tableComposite, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTableViewer = new CheckboxTableViewer(table);
+		SWTFactory.createLabel(tableComposite, PDEUIMessages.TargetPlatformPreferencePage2_2, 2);
+
+		fTableViewer = CheckboxTableViewer.newCheckList(tableComposite, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
+		fTableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer.setLabelProvider(new TargetLabelProvider());
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -113,15 +179,16 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		});
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				if (event.getSource() instanceof CheckboxTableViewer) {
-					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-					if (!((CheckboxTableViewer) event.getSource()).getChecked(selection.getFirstElement())) {
-						fTableViewer.setCheckedElements(new Object[] {selection.getFirstElement()});
-					}
+				handleEdit();
+			}
+		});
+		fTableViewer.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.character == SWT.DEL) {
+					handleRemove();
 				}
 			}
 		});
-		fTableViewer.setComparator(new ViewerComparator());
 
 		// add the targets
 		ITargetPlatformService service = getTargetService();
@@ -137,7 +204,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			fTableViewer.setInput(fTargets);
 		}
 
-		// Single check behavior
+		fTableViewer.setSorter(new TargetSorter());
+
+		// Single check behaviour
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getChecked()) {
@@ -145,6 +214,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				} else {
 					fTableViewer.setCheckedElements(new Object[0]);
 				}
+				fTableViewer.refresh(true);
 			}
 		});
 
@@ -158,7 +228,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				if (dialog.open() == Window.OK) {
 					ITargetDefinition def = wizard.getTargetDefinition();
 					fTargets.add(def);
-					fTableViewer.refresh();
+					fTableViewer.refresh(true);
 					fTableViewer.setSelection(new StructuredSelection(def));
 				}
 			}
@@ -167,13 +237,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		fEditButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_5, null);
 		fEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ITargetDefinition def = (ITargetDefinition) ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
-				EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(def);
-				wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_6);
-				WizardDialog dialog = new WizardDialog(fEditButton.getShell(), wizard);
-				if (dialog.open() == Window.OK) {
-					fTableViewer.refresh();
-				}
+				handleEdit();
 			}
 		});
 
@@ -203,12 +267,26 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		fRemoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_7, null);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
-				List selected = selection.toList();
-				fRemoved.addAll(selected);
-				fTargets.removeAll(selected);
-				fTableViewer.refresh();
-				// TODO: update selection
+				handleRemove();
+			}
+		});
+
+		fMoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_13, null);
+		fMoveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				NewTargetDefinitionFileWizard wizard = new NewTargetDefinitionFileWizard();
+				WizardDialog dialog = new WizardDialog(getShell(), wizard);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 400, 450);
+				if (dialog.open() == Window.OK) {
+					TableItem ti = fTableViewer.getTable().getItem(fTableViewer.getTable().getSelectionIndex());
+					IPath newTargetLoc = wizard.getTargetFileLocation();
+					IFile file = PDECore.getWorkspace().getRoot().getFile(newTargetLoc);
+					ti.setData(CELLDATA_NEWLOCATION, file.getFullPath().toString());
+					IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+					fMoved.put(selection.getFirstElement(), wizard.getTargetFileLocation());
+					fTableViewer.refresh(true);
+				}
 			}
 		});
 
@@ -222,12 +300,44 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 					ITargetDefinition target = (ITargetDefinition) iterator.next();
 					if (target.getHandle().equals(fPrevious)) {
 						fTableViewer.setCheckedElements(new Object[] {target});
+						fTableViewer.refresh(target);
 						break;
 					}
 				}
 			} catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 			}
+		}
+	}
+
+	/**
+	 * Opens the selected target for editing
+	 */
+	private void handleEdit() {
+		if (!fTableViewer.getSelection().isEmpty()) {
+			ITargetDefinition def = (ITargetDefinition) ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
+			EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(def);
+			wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_6);
+			WizardDialog dialog = new WizardDialog(fEditButton.getShell(), wizard);
+			if (dialog.open() == Window.OK) {
+				fTableViewer.refresh();
+			}
+		}
+	}
+
+	/**
+	 * Removes the selected targets
+	 */
+	private void handleRemove() {
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		if (!selection.isEmpty()) {
+			List selected = selection.toList();
+			fRemoved.addAll(selected);
+			fTargets.removeAll(selected);
+			// Quick hack because the first refresh loses the checkedState, which is being used to bold the active target
+			fTableViewer.refresh(false);
+			fTableViewer.refresh(true);
+			// TODO: update selection
 		}
 	}
 
@@ -241,6 +351,10 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		fRemoveButton.setEnabled(size > 0);
 		fEditButton.setEnabled(size == 1);
 		//fDuplicateButton.setEnabled(size == 1);
+		fMoveButton.setEnabled(false);
+		if (selection.getFirstElement() != null) {
+			fMoveButton.setEnabled(((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
+		}
 	}
 
 	/**
@@ -283,9 +397,10 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				deflt = reuse;
 			} else {
 				fTargets.add(deflt);
+				fTableViewer.refresh(false);
 			}
-			fTableViewer.refresh();
 			fTableViewer.setCheckedElements(new Object[] {deflt});
+			fTableViewer.refresh(true);
 		}
 		super.performDefaults();
 	}
@@ -301,41 +416,69 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		// determine if default target has changed
 		ITargetDefinition toLoad = null;
+		ITargetDefinition activeDefinition = null;
 		boolean load = false;
 		try {
-			ITargetHandle currH = null;
-			ITargetDefinition currD = null;
+			ITargetHandle activeHandle = null;
 			Object[] elements = fTableViewer.getCheckedElements();
 			if (elements.length > 0) {
-				currD = (ITargetDefinition) elements[0];
-				currH = currD.getHandle();
+				activeDefinition = (ITargetDefinition) elements[0];
+				activeHandle = activeDefinition.getHandle();
 			}
 			if (fPrevious == null) {
-				if (currH != null) {
-					toLoad = currD;
+				if (activeHandle != null) {
+					toLoad = activeDefinition;
 					load = true;
 				}
 			} else {
-				if (currH == null) {
+				if (activeHandle == null) {
 					// load empty
 					load = true;
-				} else if (!fPrevious.equals(currH)) {
-					toLoad = currD;
+				} else if (!fPrevious.equals(activeHandle)) {
+					toLoad = activeDefinition;
 					load = true;
 				} else {
 					ITargetDefinition original = fPrevious.getTargetDefinition();
 					// TODO: should just check for structural changes
-					if (((TargetDefinition) original).isContentEquivalent(currD)) {
+					if (((TargetDefinition) original).isContentEquivalent(activeDefinition)) {
 						load = false;
 					} else {
 						load = true;
-						toLoad = currD;
+						toLoad = activeDefinition;
 					}
 				}
 			}
 		} catch (CoreException e) {
 			ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_8, PDEUIMessages.TargetPlatformPreferencePage2_9, e.getStatus());
 			return false;
+		}
+
+		// Move the marked definitions to workspace
+		if (fMoved.size() > 0) {
+			Iterator iterator = fMoved.keySet().iterator();
+			while (iterator.hasNext()) {
+				try {
+					ITargetDefinition target = (ITargetDefinition) iterator.next();
+					//IPath path = Path.fromPortableString((String) fMoved.get(target));
+					IFile targetFile = PDECore.getWorkspace().getRoot().getFile((IPath) fMoved.get(target));
+
+					WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);
+					ITargetDefinition newTarget = service.newTarget();
+					service.copyTargetDefinition(target, newTarget);
+					wrkspcTargetHandle.save(newTarget);
+					fRemoved.add(target);
+					fTargets.remove(target);
+					ITargetDefinition workspaceTarget = wrkspcTargetHandle.getTargetDefinition();
+					fTargets.add(workspaceTarget);
+					fTableViewer.refresh(false);
+					if (target == activeDefinition) {
+						load = true;
+						toLoad = workspaceTarget;
+					}
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
+			}
 		}
 
 		// Remove any definitions that have been removed
@@ -424,6 +567,12 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		}
 
+		fMoved.clear();
+		fRemoved.clear();
+		if (toLoad != null) {
+			fTableViewer.setCheckedElements(new Object[] {toLoad});
+		}
+		fTableViewer.refresh(true);
 		return super.performOk();
 	}
 

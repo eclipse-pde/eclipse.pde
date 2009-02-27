@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
  * 
  * @since 3.5
  */
-class WorkspaceFileTargetHandle extends AbstractTargetHandle {
+public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 
 	private IFile fFile;
 
@@ -52,7 +52,7 @@ class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	 * 
 	 * @param file underlying file - may or may not exist
 	 */
-	WorkspaceFileTargetHandle(IFile file) {
+	public WorkspaceFileTargetHandle(IFile file) {
 		fFile = file;
 	}
 
@@ -112,7 +112,7 @@ class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
 	 */
-	void save(ITargetDefinition definition) throws CoreException {
+	public void save(ITargetDefinition definition) throws CoreException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		((TargetDefinition) definition).write(outputStream);
 		ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
@@ -135,5 +135,14 @@ class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	 */
 	public String toString() {
 		return fFile.getName();
+	}
+
+	/**
+	 * Returns the target file.
+	 * 
+	 * @return target file
+	 */
+	public IFile getTargetFile() {
+		return fFile;
 	}
 }
