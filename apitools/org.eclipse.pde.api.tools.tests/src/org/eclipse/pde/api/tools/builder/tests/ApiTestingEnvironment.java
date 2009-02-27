@@ -215,7 +215,19 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		if(!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
-		return resource.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		IMarker[] javaModelMarkers = resource.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		IMarker[] buildpathMarkers = resource.findMarkers(IJavaModelMarker.BUILDPATH_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		int javaModelMarkersLength = javaModelMarkers.length;
+		int buildpathMarkersLength = buildpathMarkers.length;
+		if (javaModelMarkersLength == 0) {
+			return buildpathMarkers;
+		} else if (buildpathMarkersLength == 0) {
+			return javaModelMarkers;
+		}
+		IMarker[] allMarkers = new IMarker[javaModelMarkersLength + buildpathMarkersLength];
+		System.arraycopy(javaModelMarkers, 0, allMarkers, 0, javaModelMarkersLength);
+		System.arraycopy(buildpathMarkers, 0, allMarkers, javaModelMarkersLength, buildpathMarkersLength);
+		return allMarkers;
 	}
 	/**
 	 * Returns all of the unsupported Javadoc tag markers on the specified resource

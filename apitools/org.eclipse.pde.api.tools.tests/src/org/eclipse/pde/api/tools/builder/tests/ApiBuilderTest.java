@@ -205,14 +205,14 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(resource);
 		int length = jdtMarkers.length;
 		if (length != 0) {
+			boolean condition = false;
 			for (int i = 0; i < length; i++) {
-				boolean condition = jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
+				condition = condition || jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
 				if (condition) {
-					System.err.println("workspace file : " + resource.toOSString());
 					System.err.println(jdtMarkers[i].getAttribute(IMarker.MESSAGE));
 				}
-				assertFalse("Should not be a JDT error: "+jdtMarkers[i].getAttribute(IMarker.MESSAGE), condition);
 			}
+			assertFalse("Should not be a JDT error", condition);
 		}
 	}
 	
