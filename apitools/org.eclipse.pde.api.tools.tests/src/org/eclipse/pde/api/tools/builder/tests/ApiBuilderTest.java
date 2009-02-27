@@ -190,18 +190,18 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 	/**
 	 * Asserts that there are no compilation problems in the environment
-	 * @throws Exception
+	 * @throws CoreException
 	 */
-	protected void expectingNoJDTProblems() throws Exception {
+	protected void expectingNoJDTProblems() throws CoreException {
 		expectingNoJDTProblemsFor(getEnv().getWorkspaceRootPath());
 	}
 	
 	/**
 	 * Asserts that there are no compilation problems on the given resource path
 	 * @param resource
-	 * @throws Exception
+	 * @throws CoreException
 	 */
-	protected void expectingNoJDTProblemsFor(IPath resource) throws Exception {
+	protected void expectingNoJDTProblemsFor(IPath resource) throws CoreException {
 		IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(resource);
 		int length = jdtMarkers.length;
 		if (length != 0) {
@@ -423,6 +423,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			assertNotNull("the testing project "+getTestingProjectName()+" must be in the workspace", project);
 			assertSource(project, packagename, sourcename);
 			doBuild(buildtype, (buildworkspace ? null : project.getFullPath()));
+			expectingNoJDTProblems();
 			IJavaProject jproject = getEnv().getJavaProject(getTestingProjectName());
 			IType type = jproject.findType(packagename, sourcename);
 			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
