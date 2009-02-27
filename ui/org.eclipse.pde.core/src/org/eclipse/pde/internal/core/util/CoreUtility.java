@@ -19,7 +19,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class CoreUtility {
@@ -109,6 +111,12 @@ public class CoreUtility {
 
 		if (new File(bundle.getLocation()).isFile())
 			return false;
+
+		// at this point always make sure launcher fragments are flat; or else you will have launching problems
+		HostSpecification host = bundle.getHost();
+		if (host != null && host.getName().equals(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER)) {
+			return true;
+		}
 
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IContainer container = root.getContainerForLocation(new Path(bundle.getLocation()));

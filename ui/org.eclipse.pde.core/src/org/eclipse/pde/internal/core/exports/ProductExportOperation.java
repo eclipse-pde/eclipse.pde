@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import org.eclipse.pde.internal.core.PDECoreMessages;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -22,7 +20,6 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.*;
@@ -472,10 +469,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
-		// always make sure launcher fragments are flat; or else you will have launching problems
-		HostSpecification host = bundle.getHost();
-		boolean unpack = (host != null && host.getName().equals(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER)) ? true : CoreUtility.guessUnpack(bundle);
-		plugin.setAttribute("unpack", Boolean.toString(unpack)); //$NON-NLS-1$
+		plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
 	}
-
 }
