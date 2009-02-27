@@ -16,9 +16,7 @@ import java.util.Set;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -354,18 +352,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	}
 	private void performMergeSplit() throws CoreException {
 		fullBuild();
-		IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(ResourcesPlugin.getWorkspace().getRoot().getLocation());
-		int length = jdtMarkers.length;
-		if (length != 0) {
-			boolean condition = false;
-			for (int i = 0; i < length; i++) {
-				condition = condition || jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
-				if (condition) {
-					System.err.println(jdtMarkers[i].getAttribute(IMarker.MESSAGE));
-				}
-			}
-			assertFalse("Should not be a JDT error", condition);
-		}
+		expectingNoJDTProblems();
 		IPath manifestPath = new Path("a.b.c").append("META-INF").append("MANIFEST.MF");
 		ApiProblem[] problems = getEnv().getProblemsFor(manifestPath, null);
 		assertProblems(problems);
