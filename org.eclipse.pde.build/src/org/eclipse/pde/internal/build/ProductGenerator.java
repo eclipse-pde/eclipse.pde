@@ -162,9 +162,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				instructions[INSTRCUTION_UNCONFIGURE] = "removeProgramArg(programArg:--launcher.library);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
 			} else {
 				instructions[INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				instructions[INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
+				instructions[INSTRCUTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
 			}
 
+			if (bundle.getSymbolicName().equals(BUNDLE_UPDATE_CONFIGURATOR)) {
+				instructions[INSTRUCTION_CONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:false);"; //$NON-NLS-1$
+				instructions[INSTRCUTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
+			}
 			printP2Unit(buffer, i, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
 		}
 	}
