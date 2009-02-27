@@ -17,6 +17,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	//	key: string[] representing the tuple of a config 
 	// value: (AssemblyLevelConfigInfo) representing the info for the given config
 	private final Map assembleInformation = new HashMap(8);
+	private final Map bundleMap = new HashMap();
 
 	public AssemblyInformation() {
 		// Initialize the content of the assembly information with the configurations 
@@ -38,6 +39,18 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	public void addPlugin(Config config, BundleDescription plugin) {
 		AssemblyLevelConfigInfo entry = (AssemblyLevelConfigInfo) assembleInformation.get(config);
 		entry.addPlugin(plugin);
+
+		String id = plugin.getSymbolicName();
+		BundleDescription existing = (BundleDescription) bundleMap.get(id);
+		if (existing == null || existing.getVersion().compareTo(plugin.getVersion()) < 0)
+			bundleMap.put(id, plugin);
+		bundleMap.put(id + '_' + plugin.getVersion().toString(), plugin);
+	}
+
+	public BundleDescription getPlugin(String id, String version) {
+		if (version != null && !GENERIC_VERSION_NUMBER.equals(version))
+			return (BundleDescription) bundleMap.get(id + '_' + version);
+		return (BundleDescription) bundleMap.get(id);
 	}
 
 	public Collection getPlugins(Config config) {

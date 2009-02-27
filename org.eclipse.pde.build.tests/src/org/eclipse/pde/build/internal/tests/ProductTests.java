@@ -23,7 +23,6 @@ import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.internal.tests.ant.TestBrandTask;
 import org.eclipse.pde.build.tests.*;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.eclipse.pde.internal.swt.tools.IconExe;
 import org.osgi.framework.Version;
@@ -234,9 +233,8 @@ public class ProductTests extends PDETestCase {
 		assembly.addPlugin(linux, factory.createBundleDescription(3, "c", Version.emptyVersion, null, null, null, null, null, true, true, true, "(& (osgi.ws=gtk) (osgi.os=linux) (osgi.arch=x86))", null, null, null));
 		assembly.addPlugin(win32, factory.createBundleDescription(4, "d", Version.emptyVersion, null, null, null, null, null, true, true, true, "(& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))", null, null, null));
 
-		BuildDirector director = new BuildDirector(assembly);
 		ProductGenerator generator = new ProductGenerator();
-		generator.setDirector(director);
+		generator.setAssemblyInfo(assembly);
 		generator.setWorkingDirectory(buildFolder.getLocation().toOSString());
 		generator.setRoot(buildFolder.getLocation().toOSString() + "/");
 		generator.setProduct(product.getLocation().toOSString());

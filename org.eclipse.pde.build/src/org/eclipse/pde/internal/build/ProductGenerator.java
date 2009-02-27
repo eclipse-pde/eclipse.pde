@@ -14,9 +14,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.site.P2Utils;
 import org.eclipse.pde.internal.build.site.PDEState;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.osgi.framework.Version;
 
 public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String SIMPLE_CONFIGURATOR_CONFIG_URL = "org.eclipse.equinox.simpleconfigurator.configUrl"; //$NON-NLS-1$
@@ -31,11 +33,16 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final byte CONFIG_STYLE_UPDATE = 8;
 	private static final byte CONFIG_INCLUDES_DS = 16;
 
+	private static final int INSTRUCTION_INSTALL = 0;
+	private static final int INSTRUCTION_UNINSTALL = 1;
+	private static final int INSTRUCTION_CONFIGURE = 2;
+	private static final int INSTRCUTION_UNCONFIGURE = 3;
+
 	private String product = null;
 	private ProductFile productFile = null;
 	private String root = null;
 	private Properties buildProperties;
-	private BuildDirector director = null;
+	private AssemblyInformation assembly = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
@@ -88,6 +95,119 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	}
 
+	public void generateP2Info() throws CoreException {
+		initialize();
+
+		//For now, do nothing if there is alreayd a p2.inf
+		File p2Inf = new File(root, "p2.inf"); //$NON-NLS-1$
+		if (p2Inf.exists())
+			return;
+
+		//only generate if the .product said nothing
+		if (productFile.getConfigurationInfo().size() > 0)
+			return;
+
+		StringBuffer buffer = new StringBuffer();
+		generateP2InfCUs(buffer);
+
+		try {
+			Utils.writeBuffer(buffer, p2Inf);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private BundleInfo[] getDefaultStartInfo() {
+		//TODO merge this with config.ini generation
+		//for now just set p2.inf values, implying refactored runtime and simpleconfigurator
+		List configs = getConfigInfos();
+		BundleInfo[] defaults = new BundleInfo[7 + configs.size()];
+		defaults[0] = new BundleInfo(BUNDLE_SIMPLE_CONFIGURATOR, null, null, 1, true);
+		defaults[1] = new BundleInfo(BUNDLE_EQUINOX_COMMON, null, null, 2, true);
+		defaults[2] = new BundleInfo(BUNDLE_OSGI, null, null, -1, true);
+		defaults[3] = new BundleInfo(BUNDLE_UPDATE_CONFIGURATOR, null, null, 4, true);
+		defaults[4] = new BundleInfo(BUNDLE_CORE_RUNTIME, null, null, 4, true);
+		defaults[5] = new BundleInfo(BUNDLE_DS, null, null, 1, true);
+
+		//launcher and fragments are special
+		defaults[6] = new BundleInfo(BUNDLE_EQUINOX_LAUNCHER, null, null, -1, false);
+		for (int i = 0; i < configs.size(); i++) {
+			Config config = (Config) configs.get(i);
+			if (config.equals(Config.genericConfig()))
+				continue;
+			String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
+			if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
+				fragmentName += '.' + config.getArch();
+			defaults[i + 7] = new BundleInfo(fragmentName, null, null, -1, false);
+		}
+		return defaults;
+	}
+
+	private void generateP2InfCUs(StringBuffer buffer) {
+		BundleInfo[] infos = getDefaultStartInfo();
+		for (int i = 0; i < infos.length && infos[i] != null; i++) {
+			BundleDescription bundle = assembly.getPlugin(infos[i].getSymbolicName(), infos[i].getVersion());
+			if (bundle == null)
+				continue;
+
+			String[] instructions = new String[4];
+			instructions[INSTRUCTION_INSTALL] = "installBundle(bundle:${artifact});"; //$NON-NLS-1$
+			instructions[INSTRUCTION_UNINSTALL] = "uninstallBundle(bundle:${artifact});"; //$NON-NLS-1$
+			if (bundle.getSymbolicName().equals(BUNDLE_EQUINOX_LAUNCHER)) {
+				instructions[INSTRUCTION_CONFIGURE] = "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+				instructions[INSTRCUTION_UNCONFIGURE] = "removeProgramArg(programArg:-startup);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+			} else if (bundle.getSymbolicName().startsWith(BUNDLE_EQUINOX_LAUNCHER)) {
+				instructions[INSTRUCTION_CONFIGURE] = "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+				instructions[INSTRCUTION_UNCONFIGURE] = "removeProgramArg(programArg:--launcher.library);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+			} else {
+				instructions[INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				instructions[INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
+			}
+
+			printP2Unit(buffer, i, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
+		}
+	}
+
+	/*
+	 * Print a CU to the given string buffer.
+	 * CUs are generated with a property "org.eclipse.pde.build.default" which can be used as a hint to give 
+	 * others priority in the event of conflicts with other CUs
+	 * We expect post-processing to be performed on these results to replace the @FLAVOR@ with the actual flavor
+	 */
+	private void printP2Unit(StringBuffer buffer, int i, String name, Version version, String filter, String[] instructions) {
+		VersionRange range = new VersionRange(version, true, version, true);
+		buffer.append("units." + i + ".id=@FLAVOR@" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".version=" + version + '\n'); //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("units." + i + ".properties.org.eclipse.pde.build.default=true\n"); //$NON-NLS-1$//$NON-NLS-2$
+		if (filter != null)
+			buffer.append("units." + i + ".filter=" + filter + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".hostRequirements.1.namespace=osgi.bundle\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".hostRequirements.1.name=" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".hostRequirements.1.range=" + range.toString() + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".hostRequirements.2.namespace=org.eclipse.equinox.p2.eclipse.type\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".hostRequirements.2.name=bundle\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".hostRequirements.2.range=[1.0.0, 2.0.0)\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".hostRequirements.2.greedy=false\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".requires.1.namespace=osgi.bundle\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".requires.1.name=" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".requires.1.range=" + range.toString() + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".requires.2.namespace=org.eclipse.equinox.p2.eclipse.type\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".requires.2.name=bundle\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".requires.2.range=[1.0.0, 2.0.0)\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".requires.2.greedy=false\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".provides.1.namespace=org.eclipse.equinox.p2.iu\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".provides.1.name=@FLAVOR@" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".provides.1.version=" + version + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".provides.2.namespace=org.eclipse.equinox.p2.flavor\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".provides.2.name=@FLAVOR@\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + ".provides.2.version=1.0.0\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + "instructions.install=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + "instructions.uninstall=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + "instructions.unconfigure=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("units." + i + "instructions.configure=" + instructions[INSTRUCTION_INSTALL] + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	private String findConfigFile(String os) {
 		String path = productFile.getConfigIniPath(os);
 		if (path == null)
@@ -124,53 +244,38 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		productFile = loadProduct(product);
 	}
 
-	private byte determineConfigStyle(Config config) throws CoreException {
+	private byte determineConfigStyle(Config config) {
 		byte result = 0;
 
-		PDEState state = getSite(false).getRegistry();
-		Collection bundles = director.getAssemblyData().getPlugins(config);
-
-		BundleDescription bundle = state.getResolvedBundle(BUNDLE_SIMPLE_CONFIGURATOR);
-		if (bundle != null && bundles.contains(bundle)) {
+		if (assembly.getPlugin(BUNDLE_SIMPLE_CONFIGURATOR, null) != null) {
 			result |= CONFIG_STYLE_SIMPLE;
-		} else {
-			bundle = state.getResolvedBundle(BUNDLE_UPDATE_CONFIGURATOR);
-			if (bundle != null && bundles.contains(bundle)) {
-				Properties props = productFile.getConfigProperties();
-				if (Boolean.valueOf(props.getProperty("org.eclipse.update.reconcile", "true")).booleanValue()) //$NON-NLS-1$ //$NON-NLS-2$
-					result |= CONFIG_STYLE_UPDATE;
-			}
+		} else if (assembly.getPlugin(BUNDLE_UPDATE_CONFIGURATOR, null) != null) {
+			Properties props = productFile.getConfigProperties();
+			if (Boolean.valueOf(props.getProperty("org.eclipse.update.reconcile", "true")).booleanValue()) //$NON-NLS-1$ //$NON-NLS-2$
+				result |= CONFIG_STYLE_UPDATE;
 		}
 
-		bundle = state.getResolvedBundle(BUNDLE_DS);
-		if (bundle != null && bundles.contains(bundle))
+		if (assembly.getPlugin(BUNDLE_DS, null) != null)
 			result |= CONFIG_INCLUDES_DS;
 
-		bundle = state.getResolvedBundle(BUNDLE_EQUINOX_COMMON);
-		if (bundle != null && bundles.contains(bundle)) {
+		if (assembly.getPlugin(BUNDLE_EQUINOX_COMMON, null) != null)
 			return (byte) (result | CONFIG_STYLE_REFACTORED);
-		}
 
 		return (byte) (result | CONFIG_STYLE_ORIGINAL);
 	}
 
 	private List getBundlesFromProductFile(Config config) {
-		Collection assembledPlugins = director.getAssemblyData().getPlugins(config);
-		HashMap map = new HashMap();
-		for (Iterator iterator = assembledPlugins.iterator(); iterator.hasNext();) {
-			BundleDescription bundle = (BundleDescription) iterator.next();
-			map.put(bundle.getName(), bundle);
-		}
-
-		List pluginList = productFile.getPlugins();
+		List pluginList = productFile.getProductEntries();
 		List results = new ArrayList(pluginList.size());
 		for (Iterator iter = pluginList.iterator(); iter.hasNext();) {
-			BundleDescription bundle = (BundleDescription) map.get(iter.next());
-			if (bundle == null) {
-				//TODO error?
+			FeatureEntry entry = (FeatureEntry) iter.next();
+			if (!entry.isPlugin())
 				continue;
+
+			BundleDescription bundle = assembly.getPlugin(entry.getId(), entry.getVersion());
+			if (bundle != null) {
+				results.add(bundle);
 			}
-			results.add(bundle);
 		}
 		return results;
 	}
@@ -183,7 +288,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		Collection plugins = null;
 		if (productFile.useFeatures())
-			plugins = director.getAssemblyData().getPlugins(config);
+			plugins = assembly.getPlugins(config);
 		else
 			plugins = getBundlesFromProductFile(config);
 
@@ -263,7 +368,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		Collection bundles = null;
 		if (productFile.useFeatures())
-			bundles = director.getAssemblyData().getPlugins(config);
+			bundles = assembly.getPlugins(config);
 		else
 			bundles = getBundlesFromProductFile(config);
 		BundleHelper helper = BundleHelper.getDefault();
@@ -530,8 +635,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		this.buildProperties = buildProperties;
 	}
 
-	public void setDirector(BuildDirector director) {
-		this.director = director;
+	public void setAssemblyInfo(AssemblyInformation info) {
+		this.assembly = info;
 	}
 
 }

@@ -388,14 +388,14 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
 		String product = generateProductFiles ? director.getProduct() : null;
-		if (product != null) {
+		if (product != null && !BuildDirector.p2Gathering) {
 			ProductGenerator generator = new ProductGenerator();
 			generator.setProduct(product);
 			generator.setBuildSiteFactory(siteFactory);
 			generator.setBuildProperties(getBuildProperties());
 			generator.setRoot(featureRootLocation);
 			generator.setWorkingDirectory(getWorkingDirectory());
-			generator.setDirector(director);
+			generator.setAssemblyInfo(director.getAssemblyData());
 			try {
 				generator.generate();
 			} catch (CoreException e) {

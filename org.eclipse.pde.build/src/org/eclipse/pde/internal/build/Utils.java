@@ -431,8 +431,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			stream = new FileOutputStream(outputFile);
 			stream.write(buffer.toString().getBytes());
 		} finally {
-			if (stream != null)
-				stream.close();
+			close(stream);
 		}
 	}
 
