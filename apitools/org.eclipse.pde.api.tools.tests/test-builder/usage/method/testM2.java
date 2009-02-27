@@ -19,7 +19,6 @@ public class testM2 extends MethodUsageClass {
 	/**
 	 * @see x.y.z.MethodUsageClass#m2()
 	 */
-	@Override
 	public void m2() {
 		super.m2();
 	}
@@ -28,7 +27,6 @@ public class testM2 extends MethodUsageClass {
 		/**
 		 * @see x.y.z.MethodUsageClass#m2()
 		 */
-		@Override
 		public void m2() {
 			super.m2();
 		}
@@ -38,7 +36,6 @@ public class testM2 extends MethodUsageClass {
 		/**
 		 * @see x.y.z.MethodUsageClass#m2()
 		 */
-		@Override
 		public void m2() {
 			super.m2();
 		}
@@ -49,7 +46,6 @@ class outer extends MethodUsageClass {
 	/**
 	 * @see x.y.z.MethodUsageClass#m2()
 	 */
-	@Override
 	public void m2() {
 		super.m2();
 	}
