@@ -21,7 +21,6 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -118,7 +117,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		TabItem pluginsTab = new TabItem(tabs, SWT.NONE);
 		pluginsTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
-		
+
 		Composite pluginTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
 
 		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
@@ -471,7 +470,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		return new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getShell(), getTargetDefinition());
-				if (dialog.open() == Dialog.OK) {
+				if (dialog.open() == Window.OK) {
 					String[] args = dialog.getSelectedArguments();
 					if (args != null && args.length > 0) {
 						StringBuffer resultBuffer = new StringBuffer();
@@ -530,7 +529,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void createImpTable(Composite container) {
 		fElementViewer = new TableViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint=250;
+		gd.heightHint = 250;
 		fElementViewer.getControl().setLayoutData(gd);
 		fElementViewer.setContentProvider(new DefaultTableProvider() {
 			public Object[] getElements(Object inputElement) {
