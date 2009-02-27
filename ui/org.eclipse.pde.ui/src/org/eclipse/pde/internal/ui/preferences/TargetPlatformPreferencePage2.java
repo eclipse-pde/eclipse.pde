@@ -81,12 +81,12 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			StyledString styledString = new StyledString(name, style);
 			if (targetHandle instanceof WorkspaceFileTargetHandle) {
 				IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
-				String location = " " + file.getFullPath(); //$NON-NLS-1$
+				String location = " [" + file.getFullPath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				styledString.append(location, StyledString.DECORATIONS_STYLER);
 			} else {
 				String location = (String) cell.getItem().getData(CELLDATA_NEWLOCATION);
 				if (location != null) {
-					location = " " + location; //$NON-NLS-1$
+					location = " [" + location + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 					styledString = new StyledString(name, style);
 					styledString.append(location, StyledString.QUALIFIER_STYLER);
 				}
