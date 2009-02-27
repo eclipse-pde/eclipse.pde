@@ -29,6 +29,7 @@ import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.osgi.framework.BundleContext;
@@ -44,6 +45,7 @@ public abstract class PDETestCase extends TestCase {
 		BuildTimeSiteFactory.setInstalledBaseSite(null);
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		QualifierReplacer.setGlobalQualifier(null);
+		BuildDirector.p2Gathering = false;
 	}
 
 	protected void runTest() throws Throwable {
