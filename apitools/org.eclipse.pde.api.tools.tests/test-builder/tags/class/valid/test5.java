@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+package a.b.c;
 
 /**
  * Test valid tags on class in the default package

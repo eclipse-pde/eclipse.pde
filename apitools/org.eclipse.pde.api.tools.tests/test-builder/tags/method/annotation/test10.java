@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package a.b.c;
 
 /**
  * Test unsupported @noreference tag on methods in outer / inner annotations

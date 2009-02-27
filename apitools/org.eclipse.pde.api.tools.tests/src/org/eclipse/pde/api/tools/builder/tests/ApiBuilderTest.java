@@ -459,6 +459,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		try {
 			IPath path = assertProject(sourcename, packagename);
 			doBuild(buildtype, (buildworkspace ? null : path));
+			expectingNoJDTProblems();
 			IJavaProject jproject = getEnv().getJavaProject(path);
 			IType type = jproject.findType(packagename, sourcename);
 			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
@@ -767,17 +768,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			IPath path = assertProject(sourcenames, packagenames, internalpnames);
 			doBuild(buildtype, (buildworkspace ? null : path));
 			// should be no compilation problems
-			IMarker[] markers = getEnv().getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", false, IResource.DEPTH_INFINITE);
-			if (markers.length > 0) {
-				List errors = new ArrayList<IMarker>(markers.length);
-				for (int i = 0; i < markers.length; i++) {
-					if (markers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
-						System.out.println(markers[i].getAttribute(IMarker.MESSAGE));
-						errors.add(markers[i]);
-					}
-				}
-				assertEquals("Should be no compilation errors", 0, errors.size());
-			}
+			expectingNoJDTProblems();
 			if(expectingproblems || expectingproblemson != null) {
 				IJavaProject jproject = getEnv().getJavaProject(path);
 				for(int i = 0; i < expectingproblemson.length; i++) {

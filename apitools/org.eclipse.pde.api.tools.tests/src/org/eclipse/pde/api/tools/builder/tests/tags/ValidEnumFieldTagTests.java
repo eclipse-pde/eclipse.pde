@@ -88,7 +88,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an inner enum using an incremental build
 	 */
 	public void testValidEnumFieldTag4I() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an inner enum using a full build
 	 */
 	public void testValidEnumFieldTag4F() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an enum in the default package using an incremental build
 	 */
 	public void testValidEnumFieldTag3I() {
-		deployTagTest("", "test1", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		deployTagTest("", "test3", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in an enum in the default package using a full build
 	 */
 	public void testValidEnumFieldTag3F() {
-		deployTagTest("", "test1", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		deployTagTest("", "test3", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in a variety of inner / outer enums using an incremental build
 	 */
 	public void testValidEnumFieldTag5I() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		deployTagTest(TESTING_PACKAGE, "test5", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 	}
 	
 	/**
@@ -128,6 +128,6 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	 * in a variety of inner / outer enums using a full build
 	 */
 	public void testValidEnumFieldTag5F() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		deployTagTest(TESTING_PACKAGE, "test5", false, IncrementalProjectBuilder.FULL_BUILD, true);
 	}
 }

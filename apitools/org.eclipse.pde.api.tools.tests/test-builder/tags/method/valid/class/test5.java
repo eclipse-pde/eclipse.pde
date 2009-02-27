@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package a.b.c;
 
 /**
  * Test supported @noreference tag on class methods in the default package

@@ -8,8 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-
 /**
  * Test unsupported @noinstantiate tag on an annotation in the default package
  * @noinstantiate

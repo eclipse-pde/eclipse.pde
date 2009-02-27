@@ -15,7 +15,7 @@ package a.b.c;
  * 
  * @since 3.4
  */
-public enum test4 {
+public enum test5 {
 	
 	A,
 	B;

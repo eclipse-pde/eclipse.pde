@@ -96,8 +96,8 @@ public abstract class TagTest extends ApiBuilderTest {
 //		while (indexManager.awaitingJobsCount() > 0) {
 //			Thread.sleep(100);
 //		}
-		super.tearDown();
 		getEnv().setRevert(false);
+		super.tearDown();
 	}
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite

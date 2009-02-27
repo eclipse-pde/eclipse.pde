@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package x.y.z;
+package a.b.c;
 
 /**
  * 

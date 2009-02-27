@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+package a.b.c;
 
 /**
  * Test supported @noextend tag on an interface in the default package
