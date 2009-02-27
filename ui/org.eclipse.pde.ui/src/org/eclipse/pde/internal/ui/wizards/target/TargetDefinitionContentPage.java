@@ -250,6 +250,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fOSCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fOSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fOSCombo.setItems((String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
+		fOSCombo.setVisibleItemCount(30);
 		fOSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setOS(getModelValue(fOSCombo.getText()));
@@ -262,6 +263,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fWSCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fWSCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fWSCombo.setItems((String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
+		fWSCombo.setVisibleItemCount(30);
 		fWSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setWS(getModelValue(fWSCombo.getText()));
@@ -274,6 +276,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fArchCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fArchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fArchCombo.setItems((String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
+		fArchCombo.setVisibleItemCount(30);
 		fArchCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setArch(getModelValue(fArchCombo.getText()));
@@ -286,6 +289,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fNLCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fNLCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
+		fNLCombo.setVisibleItemCount(30);
 		fNLCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String value = fNLCombo.getText();
@@ -397,6 +401,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fNamedJREsCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		String[] installs = VMUtil.getVMInstallNames();
 		fNamedJREsCombo.setItems(installs);
+		fNamedJREsCombo.setVisibleItemCount(30);
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText())));
@@ -415,6 +420,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fExecEnvsCombo = new Combo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fExecEnvsCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fExecEnvsCombo.setItems((String[]) fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
+		fExecEnvsCombo.setVisibleItemCount(30);
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));

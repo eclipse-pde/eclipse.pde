@@ -138,4 +138,11 @@ public class ComboPart {
 			return ((Combo) combo).getItems();
 		return ((CCombo) combo).getItems();
 	}
+
+	public void setVisibleItemCount(int count) {
+		if (combo instanceof Combo)
+			((Combo) combo).setVisibleItemCount(count);
+		else
+			((CCombo) combo).setVisibleItemCount(count);
+	}
 }

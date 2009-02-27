@@ -101,6 +101,7 @@ public class EnvironmentSection extends SectionPart {
 		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fOSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fOSCombo.setItems((String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
+		fOSCombo.setVisibleItemCount(30);
 
 		label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_windowingSystem);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -109,6 +110,7 @@ public class EnvironmentSection extends SectionPart {
 		fWSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fWSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fWSCombo.setItems((String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
+		fWSCombo.setVisibleItemCount(30);
 
 		Composite right = toolkit.createComposite(client);
 		layout = FormLayoutFactory.createClearGridLayout(false, 2);
@@ -123,6 +125,7 @@ public class EnvironmentSection extends SectionPart {
 		fArchCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER);
 		fArchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fArchCombo.setItems((String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
+		fArchCombo.setVisibleItemCount(30);
 
 		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_locale);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -131,6 +134,7 @@ public class EnvironmentSection extends SectionPart {
 		fNLCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
 		fNLCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
+		fNLCombo.setVisibleItemCount(30);
 
 		refresh();
 

@@ -114,6 +114,7 @@ public class JRESection extends SectionPart {
 		fNamedJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		String[] installs = VMUtil.getVMInstallNames();
 		fNamedJREsCombo.setItems(installs);
+		fNamedJREsCombo.setVisibleItemCount(30);
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges) {
@@ -147,6 +148,7 @@ public class JRESection extends SectionPart {
 		fExecEnvsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fExecEnvsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fExecEnvsCombo.setItems((String[]) fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
+		fExecEnvsCombo.setVisibleItemCount(30);
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges) {
