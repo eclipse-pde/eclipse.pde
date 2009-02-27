@@ -113,14 +113,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 				return bundles;
 			}
 		});
-		fViewer.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-				if (element instanceof BundleInfo) {
-					return ((BundleInfo) element).getSymbolicName();
-				}
-				return super.getText(element);
-			}
-		});
+		fViewer.setLabelProvider(new BundleInfoLabelProvider(true));
 		fViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				BundleInfo bundle1 = (BundleInfo) e1;
@@ -196,7 +189,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	}
 
 	protected void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new BundleInfoLabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new BundleInfoLabelProvider(false));
 		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
@@ -229,7 +222,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 * Gets a list of all the bundles that can be added as implicit dependencies
 	 * @return list of possible dependencies
 	 */
-	protected IResolvedBundle[] getValidBundles() throws CoreException {
+	protected BundleInfo[] getValidBundles() throws CoreException {
 		BundleInfo[] current = getTarget().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
@@ -245,11 +238,11 @@ public class ImplicitDependenciesSection extends SectionPart {
 		}
 		for (int i = 0; i < allTargetBundles.length; i++) {
 			if (!currentBundles.contains(allTargetBundles[i].getBundleInfo().getSymbolicName())) {
-				targetBundles.add(allTargetBundles[i]);
+				targetBundles.add(allTargetBundles[i].getBundleInfo());
 			}
 		}
 
-		return (IResolvedBundle[]) targetBundles.toArray(new IResolvedBundle[targetBundles.size()]);
+		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
 	}
 
 	private void handleRemove() {

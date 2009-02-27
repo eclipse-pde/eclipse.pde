@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.target;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
@@ -22,11 +23,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
@@ -570,7 +569,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	private void createImpTable(Composite container) {
-		fElementViewer = new TableViewer(container, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		fElementViewer = new TableViewer(container, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fElementViewer.getControl().setLayoutData(gd);
 		fElementViewer.setContentProvider(new DefaultTableProvider() {
@@ -585,15 +584,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				return new BundleInfo[0];
 			}
 		});
-		fElementViewer.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-				if (element instanceof BundleInfo) {
-					return ((BundleInfo) element).getSymbolicName();
-				}
-				return super.getText(element);
-			}
-			// TODO: labels
-		});
+		fElementViewer.setLabelProvider(new BundleInfoLabelProvider(false));
 		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -657,17 +648,23 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	protected void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new BundleInfoLabelProvider(false));
 
-		dialog.setElements(getValidBundles());
+		try {
+			dialog.setElements(getValidBundles());
+		} catch (CoreException e) {
+			dialog.setMessage(e.getMessage());
+		}
+
 		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
 		if (dialog.open() == Window.OK) {
+
 			Object[] models = dialog.getResult();
 			ArrayList pluginsToAdd = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
-				BundleDescription desc = ((BundleDescription) models[i]);
+				BundleInfo desc = ((BundleInfo) models[i]);
 				pluginsToAdd.add(new BundleInfo(desc.getSymbolicName(), null, null, BundleInfo.NO_LEVEL, false));
 			}
 			Set allDependencies = new HashSet();
@@ -678,7 +675,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 			getTargetDefinition().setImplicitDependencies((BundleInfo[]) allDependencies.toArray(new BundleInfo[allDependencies.size()]));
 			fElementViewer.refresh();
-			// update target
 		}
 	}
 
@@ -686,7 +682,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * Gets a list of all the bundles that can be added as implicit dependencies
 	 * @return list of possible dependencies
 	 */
-	protected BundleDescription[] getValidBundles() {
+	protected BundleInfo[] getValidBundles() throws CoreException {
 		BundleInfo[] current = getTargetDefinition().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
@@ -695,18 +691,18 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		}
 
-		// TODO Do we want to get the possible models from the plugin registry?  Would be better to get the bundles from the editor's target definition?
-		IPluginModelBase[] models = PluginRegistry.getActiveModels(false);
-		Set result = new HashSet();
-		for (int i = 0; i < models.length; i++) {
-			BundleDescription desc = models[i].getBundleDescription();
-			if (desc != null) {
-				if (!currentBundles.contains(desc.getSymbolicName()))
-					result.add(desc);
+		List targetBundles = new ArrayList();
+		IResolvedBundle[] allTargetBundles = getTargetDefinition().getBundles();
+		if (allTargetBundles == null || allTargetBundles.length == 0) {
+			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+		}
+		for (int i = 0; i < allTargetBundles.length; i++) {
+			if (!currentBundles.contains(allTargetBundles[i].getBundleInfo().getSymbolicName())) {
+				targetBundles.add(allTargetBundles[i].getBundleInfo());
 			}
 		}
 
-		return (BundleDescription[]) result.toArray((new BundleDescription[result.size()]));
+		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
 	}
 
 	private void handleRemove() {
