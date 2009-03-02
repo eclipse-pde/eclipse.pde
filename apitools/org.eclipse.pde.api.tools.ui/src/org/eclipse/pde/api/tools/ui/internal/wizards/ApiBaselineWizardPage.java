@@ -311,6 +311,13 @@ public class ApiBaselineWizardPage extends WizardPage {
 	
 	private IApiBaseline fProfile = null;
 	private String originalname = null;
+	/**
+	 * We need to know if we are initializing the page to not respond to changed events
+	 * causing validation when the wizard opens.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=266597
+	 */
+	private boolean initializing = false;
 	
 	/**
 	 * widgets
@@ -449,46 +456,52 @@ public class ApiBaselineWizardPage extends WizardPage {
 	 * Initializes the controls of the page if the profile is not <code>null</code>
 	 */
 	protected void initialize() {
-		if(fProfile != null) {
-			originalname = fProfile.getName();
-			WorkingCopyOperation op = new WorkingCopyOperation(fProfile);
-			try {
-				getContainer().run(false, false, op);
-			} catch (InvocationTargetException e) {
-				ApiUIPlugin.log(e);
-			} catch (InterruptedException e) {
-				ApiUIPlugin.log(e);
-			}
-			fProfile = op.getWorkingCopy();
-			nametext.setText(fProfile.getName());
-			IApiComponent[] components = fProfile.getApiComponents();
-			HashSet locations = new HashSet();
-			IPath location = null;
-			for(int i = 0; i < components.length; i++) {
-				if(!components[i].isSystemComponent()) {
-					location = new Path(components[i].getLocation()).removeLastSegments(1);
-					if(location.toFile().isDirectory()) {
-						locations.add(location.removeTrailingSeparator().toOSString());
+		initializing = true;
+		try {
+			if(fProfile != null) {
+				originalname = fProfile.getName();
+				WorkingCopyOperation op = new WorkingCopyOperation(fProfile);
+				try {
+					getContainer().run(false, false, op);
+				} catch (InvocationTargetException e) {
+					ApiUIPlugin.log(e);
+				} catch (InterruptedException e) {
+					ApiUIPlugin.log(e);
+				}
+				fProfile = op.getWorkingCopy();
+				nametext.setText(fProfile.getName());
+				IApiComponent[] components = fProfile.getApiComponents();
+				HashSet locations = new HashSet();
+				IPath location = null;
+				for(int i = 0; i < components.length; i++) {
+					if(!components[i].isSystemComponent()) {
+						location = new Path(components[i].getLocation()).removeLastSegments(1);
+						if(location.toFile().isDirectory()) {
+							locations.add(location.removeTrailingSeparator().toOSString());
+						}
 					}
 				}
-			}
-			if(locations.size() > 0) {
-				locationcombo.setItems((String[]) locations.toArray(new String[locations.size()]));
-				locationcombo.select(0);
-			}
-		}
-		else {
-			//try to set the default location to be the current install directory
-			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=258969
-			Location location = Platform.getInstallLocation();
-			if(location != null) {
-				URL url = location.getURL();
-				IPath path = new Path(url.getFile()).removeTrailingSeparator();
-				if(path.toFile().exists()) {
-					locationcombo.add(path.toOSString());
+				if(locations.size() > 0) {
+					locationcombo.setItems((String[]) locations.toArray(new String[locations.size()]));
 					locationcombo.select(0);
 				}
 			}
+			else {
+				//try to set the default location to be the current install directory
+				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=258969
+				Location location = Platform.getInstallLocation();
+				if(location != null) {
+					URL url = location.getURL();
+					IPath path = new Path(url.getFile()).removeTrailingSeparator();
+					if(path.toFile().exists()) {
+						locationcombo.add(path.toOSString());
+						locationcombo.select(0);
+					}
+				}
+			}
+		}
+		finally {
+			initializing = false;
 		}
 	}
 	
@@ -511,6 +524,9 @@ public class ApiBaselineWizardPage extends WizardPage {
 	 * @return if the page is valid, such that it is considered complete and can be 'finished'
 	 */
 	protected boolean pageValid() {
+		if(initializing) {
+			return false;
+		}
 		setErrorMessage(null);
 		if(!isNameValid(nametext.getText().trim())) {
 			return false;
