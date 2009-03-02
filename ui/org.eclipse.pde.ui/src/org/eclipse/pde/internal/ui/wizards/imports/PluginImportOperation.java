@@ -65,11 +65,17 @@ public class PluginImportOperation extends WorkspaceJob {
 	private Hashtable fProjectClasspaths = new Hashtable();
 	private boolean fForceAutobuild;
 
+	/**
+	 * Used to find source locations when not found in default locations.
+	 * Possibly <code>null</code>
+	 */
+	private SourceLocationManager fAlternateSource;
+
 	private boolean fPluginsAreInUse = false;
 
 	/**
 	 * Constructor
-	 * @param models models of plugins to import
+	 * @param models models of plug-ins to import
 	 * @param importType one of three types specified by constants, binary, binary with links, source
 	 * @param replaceQuery defines what to do if the project already exists in the workspace
 	 * @param executionQuery defines what to do if the project requires an unsupported execution environment
@@ -92,6 +98,17 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	public void setPluginsInUse(boolean pluginsInUse) {
 		fPluginsAreInUse = pluginsInUse;
+	}
+
+	/**
+	 * Sets a source location manager to use to find source attachments. This should
+	 * be specified when importing plug-ins that are not from the active target platform
+	 * so source attachments can be found.
+	 * 
+	 * @param alternate source location manager.
+	 */
+	public void setAlternateSource(SourceLocationManager alternate) {
+		fAlternateSource = alternate;
 	}
 
 	/* (non-Javadoc)
@@ -525,7 +542,13 @@ public class PluginImportOperation extends WorkspaceJob {
 			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 			for (int i = 0; i < libraries.length; i++) {
 				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-				IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+				IPluginBase pluginBase = model.getPluginBase();
+				// check default locations
+				IPath srcPath = manager.findSourcePath(pluginBase, new Path(zipName));
+				// check alternate locations
+				if (srcPath == null && fAlternateSource != null) {
+					srcPath = fAlternateSource.findSourcePath(pluginBase, new Path(zipName));
+				}
 				if (srcPath != null) {
 					zipName = srcPath.lastSegment();
 					IPath dstPath = new Path(zipName);

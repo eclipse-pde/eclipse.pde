@@ -213,7 +213,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 */
 	private BundleManifestSourceLocationManager getBundleManifestLocator() {
 		if (fBundleManifestLocator == null) {
-			fBundleManifestLocator = processBundleManifestLocations();
+			fBundleManifestLocator = initializeBundleManifestLocations();
 		}
 		return fBundleManifestLocator;
 	}
@@ -381,7 +381,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 * platform.
 	 * @return bundle manifest source location manager
 	 */
-	private BundleManifestSourceLocationManager processBundleManifestLocations() {
+	protected BundleManifestSourceLocationManager initializeBundleManifestLocations() {
 		BundleManifestSourceLocationManager manager = new BundleManifestSourceLocationManager();
 		manager.setPlugins(PDECore.getDefault().getModelManager().getExternalModels());
 		return manager;

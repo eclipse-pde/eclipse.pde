@@ -20,6 +20,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.swt.widgets.Shell;
@@ -82,7 +83,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				return false;
 
 		}
-		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0);
+		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0, page1.getAlternateSourceLocations());
 		return true;
 	}
 
@@ -126,12 +127,24 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		return count;
 	}
 
-	public static void doImportOperation(final Shell shell, final int importType, final IPluginModelBase[] models, final boolean forceAutobuild) {
-		doImportOperation(shell, importType, models, forceAutobuild, false);
+	public static void doImportOperation(Shell shell, int importType, IPluginModelBase[] models, boolean forceAutobuild) {
+		doImportOperation(shell, importType, models, forceAutobuild, false, null);
 	}
 
-	private static void doImportOperation(final Shell shell, final int importType, final IPluginModelBase[] models, final boolean forceAutobuild, final boolean launchedConfiguration) {
+	/**
+	 * 
+	 * @param shell
+	 * @param importType
+	 * @param models
+	 * @param forceAutobuild
+	 * @param launchedConfiguration
+	 * @param alternateSource used to locate source attachments or <code>null</code> if default
+	 * 	source locations should be used (from active target platform).
+	 *  
+	 */
+	private static void doImportOperation(Shell shell, int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource) {
 		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);
+		job.setAlternateSource(alternateSource);
 		job.setPluginsInUse(launchedConfiguration);
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		job.setUser(true);

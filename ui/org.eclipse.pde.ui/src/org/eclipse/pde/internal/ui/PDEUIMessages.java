@@ -1325,7 +1325,6 @@ public class PDEUIMessages extends NLS {
 	public static String ImportWizard_messages_title;
 	public static String ImportWizard_messages_exists;
 	public static String ImportWizard_FirstPage_title;
-	public static String ImportWizard_FirstPage_warning;
 	public static String ImportWizard_FirstPage_desc;
 	public static String ImportWizard_FirstPage_importGroup;
 	public static String ImportWizard_FirstPage_importPrereqs;
@@ -1334,10 +1333,6 @@ public class PDEUIMessages extends NLS {
 	public static String ImportWizard_FirstPage_binary;
 	public static String ImportWizard_FirstPage_binaryLinks;
 	public static String ImportWizard_FirstPage_source;
-	public static String ImportWizard_FirstPage_codeLocations;
-	public static String ImportWizard_FirstPage_source_label;
-	public static String ImportWizard_FirstPage_variables;
-	public static String ImportWizard_FirstPage_env;
 	public static String ImportWizard_FirstPage_importFrom;
 	public static String ImportWizard_FirstPage_target;
 	public static String ImportWizard_FirstPage_goToTarget;
@@ -2334,6 +2329,10 @@ public class PDEUIMessages extends NLS {
 	public static String PluginImportWizard_runningConfigsTitle;
 
 	public static String PluginImportWizardDetailedPage_Show_source_plugins;
+
+	public static String PluginImportWizardFirstPage_0;
+
+	public static String PluginImportWizardFirstPage_1;
 
 	public static String LauncherUtils_title;
 

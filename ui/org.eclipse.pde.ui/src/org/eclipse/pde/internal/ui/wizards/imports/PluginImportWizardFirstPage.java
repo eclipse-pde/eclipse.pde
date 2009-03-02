@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,41 +10,53 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.preferences.*;
+import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
+import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Version;
 
 /**
- * The first page of the import plugins wizard
+ * The first page of the import plug-ins wizard
  */
 public class PluginImportWizardFirstPage extends WizardPage {
 
-	private static String SETTINGS_IMPORTTYPE = "importType"; //$NON-NLS-1$
-	private static String SETTINGS_DOOTHER = "doother"; //$NON-NLS-1$
-	private static String SETTINGS_DROPLOCATION = "droplocation"; //$NON-NLS-1$
-	private static String SETTINGS_SCAN_ALL = "scanAll"; //$NON-NLS-1$
+	private static final String SETTINGS_IMPORTTYPE = "importType"; //$NON-NLS-1$
+	private static final String SETTINGS_FROM = "importFrom"; //$NON-NLS-1$
+	private static final String SETTINGS_DROPLOCATION = "droplocation"; //$NON-NLS-1$
+	private static final String SETTINGS_SCAN_ALL = "scanAll"; //$NON-NLS-1$
+	private static final int FROM_ACTIVE_PLATFORM = 1;
+	private static final int FROM_TARGET_DEFINITION = 2;
+	private static final int FROM_DIRECTORY = 3;
 
 	private Button runtimeLocationButton;
 	private Button browseButton;
-	private Label otherLocationLabel;
+	private Button directoryButton;
+	private Button targetDefinitionButton;
+	private Combo targetDrop;
+	private java.util.List targetDefinitions;
 	private Combo dropLocation;
 	private Button changeButton;
 
@@ -57,6 +69,10 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	public static String TARGET_PLATFORM = "targetPlatform"; //$NON-NLS-1$
 	private IPluginModelBase[] models = new IPluginModelBase[0];
+	/**
+	 * When importing from a directory or target platform, use alternate source locations.
+	 */
+	private SourceLocationManager alternateSource;
 	private PDEState state;
 	private boolean canceled = false;
 
@@ -121,18 +137,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		}
 		dropLocation.setItems((String[]) items.toArray(new String[items.size()]));
+		refreshTargetDropDown();
 
-		if (settings.getBoolean(SETTINGS_DOOTHER)) {
-			runtimeLocationButton.setSelection(false);
-			changeButton.setEnabled(false);
-			dropLocation.setText(items.get(0).toString());
-		} else {
-			runtimeLocationButton.setSelection(true);
-			otherLocationLabel.setEnabled(false);
-			dropLocation.setEnabled(false);
-			browseButton.setEnabled(false);
-			dropLocation.setText(getTargetHome());
+		int source = FROM_ACTIVE_PLATFORM;
+		try {
+			source = settings.getInt(SETTINGS_FROM);
+		} catch (NumberFormatException e) {
 		}
+		dropLocation.select(0);
+		targetDrop.select(0);
+		updateSourceGroup(source);
 
 		int importType = PluginImportOperation.IMPORT_BINARY;
 		try {
@@ -157,38 +171,111 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	/**
+	 * Updates enabled state of the radio buttons/controls used to select the source
+	 * of the import.
+	 *  
+	 * @param source one of the source constants
+	 */
+	private void updateSourceGroup(int source) {
+		runtimeLocationButton.setSelection(source == FROM_ACTIVE_PLATFORM);
+		targetDefinitionButton.setSelection(source == FROM_TARGET_DEFINITION);
+		targetDrop.setEnabled(source == FROM_TARGET_DEFINITION);
+		directoryButton.setSelection(source == FROM_DIRECTORY);
+		dropLocation.setEnabled(source == FROM_DIRECTORY);
+		browseButton.setEnabled(source == FROM_DIRECTORY);
+		if (source == FROM_ACTIVE_PLATFORM) {
+			dropLocation.setText(getTargetHome());
+		}
+	}
+
+	/**
+	 * Loads the target definition drop down with all available targets
+	 */
+	private void refreshTargetDropDown() {
+		ITargetPlatformService service = getTargetPlatformService();
+		if (service != null) {
+			ITargetHandle[] targets = service.getTargets(null);
+			targetDefinitions = new ArrayList();
+			for (int i = 0; i < targets.length; i++) {
+				try {
+					targetDefinitions.add(targets[i].getTargetDefinition());
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
+			}
+			Collections.sort(targetDefinitions, new Comparator() {
+
+				public int compare(Object o1, Object o2) {
+					ITargetDefinition td1 = (ITargetDefinition) o1;
+					ITargetDefinition td2 = (ITargetDefinition) o2;
+					String name1 = td1.getName() == null ? "" : td1.getName(); //$NON-NLS-1$
+					String name2 = td2.getName() == null ? "" : td2.getName(); //$NON-NLS-1$
+					return name1.compareTo(name2);
+				}
+			});
+			String[] names = new String[targetDefinitions.size()];
+			for (int i = 0; i < targetDefinitions.size(); i++) {
+				String name = ((ITargetDefinition) targetDefinitions.get(i)).getName();
+				names[i] = name == null ? "" : name; //$NON-NLS-1$
+			}
+			targetDrop.setItems(names);
+			if (names.length == 0) {
+				targetDrop.setEnabled(false);
+			}
+		}
+	}
+
+	/**
+	 * Returns the target platform service or <code>null</code> if none.
+	 * 
+	 * @return target platform service or <code>null</code>
+	 */
+	private ITargetPlatformService getTargetPlatformService() {
+		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		return service;
+	}
+
+	/**
 	 * Creates the directory group
 	 * @param parent
 	 */
 	private void createDirectoryGroup(Composite parent) {
 		Group composite = SWTFactory.createGroup(parent, PDEUIMessages.ImportWizard_FirstPage_importFrom, 3, 1, GridData.FILL_HORIZONTAL);
 
-		runtimeLocationButton = SWTFactory.createCheckButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, null, false, 2);
+		runtimeLocationButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, 3);
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean selected = runtimeLocationButton.getSelection();
-				if (selected) {
-					dropLocation.setText(getTargetHome());
-				}
-				otherLocationLabel.setEnabled(!selected);
-				dropLocation.setEnabled(!selected);
-				browseButton.setEnabled(!selected);
-				changeButton.setEnabled(selected);
+				updateSourceGroup(getImportOrigin());
 				validateDropLocation();
 			}
 		});
 
+		targetDefinitionButton = SWTFactory.createRadioButton(composite, PDEUIMessages.PluginImportWizardFirstPage_0, 1);
+		targetDefinitionButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateSourceGroup(getImportOrigin());
+				validateDropLocation();
+			}
+		});
+		targetDrop = SWTFactory.createCombo(composite, SWT.DROP_DOWN | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, null);
 		changeButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_goToTarget, null);
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 				if (PDEPreferencesUtil.showPreferencePage(targetNode, getShell())) {
+					refreshTargetDropDown();
 					dropLocation.setText(TargetPlatform.getLocation());
 				}
 			}
 		});
 
-		otherLocationLabel = SWTFactory.createLabel(composite, PDEUIMessages.ImportWizard_FirstPage_otherFolder, 1);
+		directoryButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_otherFolder, 1);
+		directoryButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateSourceGroup(getImportOrigin());
+				validateDropLocation();
+			}
+		});
 
 		dropLocation = SWTFactory.createCombo(composite, SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, null);
 		dropLocation.addModifyListener(new ModifyListener() {
@@ -206,23 +293,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		});
 
-		SWTFactory.createLabel(composite, PDEUIMessages.ImportWizard_FirstPage_source_label, 2);
-
-		Button button = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_codeLocations, null, GridData.HORIZONTAL_ALIGN_END);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				PDEPreferencesUtil.showPreferencePage(new SourceCodeLocationsPreferenceNode(), getShell());
-			}
-		});
-
-		SWTFactory.createLabel(composite, PDEUIMessages.ImportWizard_FirstPage_variables, 2);
-
-		button = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_env, null, GridData.HORIZONTAL_ALIGN_END);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				PDEPreferencesUtil.showPreferencePage(new TargetEnvironmentPreferenceNode(), getShell());
-			}
-		});
 	}
 
 	/**
@@ -249,7 +319,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	/**
-	 * @return the selection state of the scan all plugins button
+	 * @return the selection state of the scan all plug-ins button
 	 */
 	public boolean getScanAllPlugins() {
 		return scanButton.getSelection();
@@ -277,6 +347,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	/**
+	 * Returns alternate source locations to use when importing, or <code>null</code>
+	 * if default locations are to be used.
+	 * 
+	 * @return alternate source locations or <code>null</code>
+	 */
+	public SourceLocationManager getAlternateSourceLocations() {
+		return alternateSource;
+	}
+
+	/**
 	 * @return the location specified as the drop location for the target platform
 	 */
 	public String getDropLocation() {
@@ -297,9 +377,24 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				settings.put(SETTINGS_DROPLOCATION + String.valueOf(i + 1), items[i]);
 			}
 		}
-		settings.put(SETTINGS_DOOTHER, other);
+		settings.put(SETTINGS_FROM, getImportOrigin());
 		settings.put(SETTINGS_IMPORTTYPE, getImportType());
 		settings.put(SETTINGS_SCAN_ALL, getScanAllPlugins());
+	}
+
+	/**
+	 * Returns a constant indicating what the import is performed on.
+	 *  
+	 * @return source of import
+	 */
+	private int getImportOrigin() {
+		int source = FROM_ACTIVE_PLATFORM;
+		if (targetDefinitionButton.getSelection()) {
+			source = FROM_TARGET_DEFINITION;
+		} else if (directoryButton.getSelection()) {
+			source = FROM_DIRECTORY;
+		}
+		return source;
 	}
 
 	/* (non-Javadoc)
@@ -331,12 +426,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				setPageComplete(false);
 				return;
 			}
-			if (!curr.equals(new Path(getTargetHome()))) {
-				setErrorMessage(null);
-				setMessage(PDEUIMessages.ImportWizard_FirstPage_warning, IMessageProvider.WARNING);
-				setPageComplete(true);
-				return;
-			}
 		}
 		setErrorMessage(null);
 		setPageComplete(true);
@@ -351,6 +440,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			public void run(IProgressMonitor monitor) {
 				models = PluginRegistry.getExternalModels();
 				state = PDECore.getDefault().getModelManager().getState();
+				alternateSource = null;
 				monitor.done();
 			}
 		};
@@ -363,26 +453,72 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	/**
-	 * Resolves the plugin locations given the base location. Uses {@link PluginPathFinder#scanLocations(File[])}
-	 * to find plugins
+	 * Resolves the plug-ins at the given the base location. Uses plug-ins directory if present.
+	 * 
 	 * @param location
 	 */
-	private void resolveArbitraryLocation(final String location) {
+	private void resolveArbitraryLocation(String location) {
+		ITargetPlatformService service = getTargetPlatformService();
+		if (service != null) {
+			File plugins = new File(location, "plugins"); //$NON-NLS-1$
+			IBundleContainer container = null;
+			if (plugins.exists()) {
+				container = service.newDirectoryContainer(plugins.getAbsolutePath());
+			} else {
+				container = service.newDirectoryContainer(location);
+			}
+			ITargetDefinition target = service.newTarget(); // temporary target
+			target.setBundleContainers(new IBundleContainer[] {container});
+			resolveTargetDefinition(target);
+		}
+	}
+
+	/**
+	 * Resolves the plug-in locations for a target definition.
+	 * 
+	 * @param target target definition
+	 */
+	private void resolveTargetDefinition(final ITargetDefinition target) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				File[] files = new File[2];
-				files[0] = new File(location);
-				files[1] = new File(location, "plugins"); //$NON-NLS-1$
-				URL[] urls = PluginPathFinder.scanLocations(files);
-				URL[] all = new URL[urls.length + 1];
-				try {
-					all[0] = new URL("file:" + files[0].getAbsolutePath()); //$NON-NLS-1$
-					System.arraycopy(urls, 0, all, 1, urls.length);
-				} catch (MalformedURLException e) {
-					all = urls;
+				monitor.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
+				SubProgressMonitor pm = new SubProgressMonitor(monitor, 50);
+				target.resolve(pm);
+				pm.done();
+				if (monitor.isCanceled()) {
+					return;
 				}
-				state = new PDEState(all, false, monitor);
+				IResolvedBundle[] bundles = target.getBundles();
+				Map sourceMap = new HashMap();
+				URL[] all = new URL[bundles.length];
+				for (int i = 0; i < bundles.length; i++) {
+					IResolvedBundle bundle = bundles[i];
+					try {
+						all[i] = URIUtil.toURL(bundle.getBundleInfo().getLocation());
+						if (bundle.isSourceBundle()) {
+							sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
+						}
+					} catch (MalformedURLException e) {
+						setErrorMessage(e.getMessage());
+						monitor.setCanceled(true);
+						return;
+					}
+				}
+				pm = new SubProgressMonitor(monitor, 50);
+				state = new PDEState(all, false, pm);
 				models = state.getTargetModels();
+				List sourceModels = new ArrayList();
+				List sourceBundles = new ArrayList();
+				for (int i = 0; i < models.length; i++) {
+					IPluginBase base = models[i].getPluginBase();
+					IResolvedBundle bundle = (IResolvedBundle) sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
+					if (bundle != null) {
+						sourceModels.add(models[i]);
+						sourceBundles.add(bundle);
+					}
+				}
+				alternateSource = new AlternateSourceLocations((IPluginModelBase[]) sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), (IResolvedBundle[]) sourceBundles.toArray(new IResolvedBundle[sourceBundles.size()]));
+				pm.done();
 				canceled = monitor.isCanceled();
 				monitor.done();
 			}
@@ -399,11 +535,16 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return the complete set of {@link IPluginModelBase}s for the given drop location
 	 */
 	public IPluginModelBase[] getModels() {
-		String dropLocation = getDropLocation();
-		if (dropLocation.equals(TARGET_PLATFORM)) {
-			resolveTargetPlatform();
-		} else {
-			resolveArbitraryLocation(dropLocation);
+		switch (getImportOrigin()) {
+			case FROM_ACTIVE_PLATFORM :
+				resolveTargetPlatform();
+				break;
+			case FROM_TARGET_DEFINITION :
+				resolveTargetDefinition(getTargetDefinition());
+				break;
+			case FROM_DIRECTORY :
+				resolveArbitraryLocation(getDropLocation());
+				break;
 		}
 		return models;
 	}
@@ -414,6 +555,15 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 */
 	public PDEState getState() {
 		return state;
+	}
+
+	/**
+	 * Returns the selected target definition.
+	 * 
+	 * @return selected target definition
+	 */
+	private ITargetDefinition getTargetDefinition() {
+		return (ITargetDefinition) targetDefinitions.get(targetDrop.getSelectionIndex());
 	}
 
 	/* (non-Javadoc)
@@ -432,5 +582,21 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns an object representing what will be imported.
+	 * 
+	 * @return source of the import
+	 */
+	public Object getImportSource() {
+		switch (getImportOrigin()) {
+			case FROM_TARGET_DEFINITION :
+				return getTargetDefinition();
+			case FROM_ACTIVE_PLATFORM :
+			case FROM_DIRECTORY :
+			default :
+				return getDropLocation();
+		}
 	}
 }

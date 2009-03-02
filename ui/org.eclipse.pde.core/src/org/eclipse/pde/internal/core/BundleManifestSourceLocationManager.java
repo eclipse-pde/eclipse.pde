@@ -10,26 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
+import org.osgi.framework.*;
 
 /**
  * Stores location information about bundles that provide source for
@@ -236,48 +224,6 @@ public class BundleManifestSourceLocationManager {
 					}
 				}
 			}
-		}
-	}
-
-	/**
-	 * Used as the key for the bundle manifest location map.  Contains
-	 * both the bundle name and the version.  The version attribute can
-	 * be null.
-	 * @since 3.4
-	 */
-	class SourceLocationKey {
-		private String fBundleName;
-		private Version fVersion;
-
-		public SourceLocationKey(String bundleName, Version version) {
-			fBundleName = bundleName;
-			fVersion = version;
-		}
-
-		public SourceLocationKey(String bundleName) {
-			this(bundleName, null);
-		}
-
-		public boolean equals(Object obj) {
-			if (obj instanceof SourceLocationKey) {
-				SourceLocationKey key = (SourceLocationKey) obj;
-				if (fVersion != null && key.fVersion != null) {
-					return fBundleName.equals(((SourceLocationKey) obj).fBundleName) && fVersion.equals(((SourceLocationKey) obj).fVersion);
-				} else if (fVersion == null && key.fVersion == null) {
-					return fBundleName.equals(((SourceLocationKey) obj).fBundleName);
-				}
-			}
-			return false;
-		}
-
-		public int hashCode() {
-			if (fVersion == null) {
-				return fBundleName.hashCode();
-			}
-			int result = 1;
-			result = 31 * result + fBundleName.hashCode();
-			result = 31 * result + fVersion.hashCode();
-			return result;
 		}
 	}
 

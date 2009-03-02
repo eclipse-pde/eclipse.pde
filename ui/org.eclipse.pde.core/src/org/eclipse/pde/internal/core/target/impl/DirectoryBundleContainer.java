@@ -48,6 +48,11 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	private IExtensionRegistry fRegistry;
 
 	/**
+	 * Most recent source patch detected from an old-style source bundle extension.
+	 */
+	private String fSourcePath;
+
+	/**
 	 * Constructs a directory bundle container at the given location.
 	 * 
 	 * @param path directory location in the local file system, may contain string substitution variables
@@ -109,7 +114,9 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 											}
 											boolean source = isSourceBundle(files[i], name, manifest);
 											boolean fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
-											bundles.add(new ResolvedBundle(info, null, source, false, fragment));
+											ResolvedBundle rb = new ResolvedBundle(info, null, source, false, fragment);
+											rb.setSourcePath(fSourcePath);
+											bundles.add(rb);
 										}
 									}
 								}
@@ -136,6 +143,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns whether the given bundle is a source bundle.
+	 * Sets the last source path detected in an old-style source bundle.
 	 * 
 	 * @param bundle location of the bundle in the file system
 	 * @param symbolicName symbolic name of the bundle
@@ -143,6 +151,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	 * @return whether the given bundle is a source bundle
 	 */
 	private boolean isSourceBundle(File bundle, String symbolicName, Map manifest) {
+		fSourcePath = null;
 		if (manifest.containsKey(ICoreConstants.ECLIPSE_SOURCE_BUNDLE)) {
 			// this is the new source bundle identifier
 			return true;
@@ -166,6 +175,10 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 				for (int i = 0; i < extensions.length; i++) {
 					IExtension extension = extensions[i];
 					if (ICoreConstants.EXTENSION_POINT_SOURCE.equals(extension.getExtensionPointUniqueIdentifier())) {
+						IConfigurationElement[] elements = extension.getConfigurationElements();
+						if (elements.length == 1) {
+							fSourcePath = elements[0].getAttribute("path"); //$NON-NLS-1$
+						}
 						return true;
 					}
 				}

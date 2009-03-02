@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.graphics.Image;
 
 public class TargetPlatformPreferenceNode implements IPreferenceNode {
-	protected TargetPlatformPreferencePage fPage;
+	protected TargetPlatformPreferencePage2 fPage;
 
 	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#add(org.eclipse.jface.preference.IPreferenceNode)
@@ -29,11 +29,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#createPage()
 	 */
 	public void createPage() {
-		fPage = new TargetPlatformPreferencePage(getIndex());
-	}
-
-	protected int getIndex() {
-		return TargetPlatformPreferencePage.PLUGINS_INDEX;
+		fPage = new TargetPlatformPreferencePage2();
 	}
 
 	/**
@@ -56,7 +52,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.TargetPlatformPreferencePage"; //$NON-NLS-1$
+		return "org.eclipse.pde.ui.TargetPlatformPreferencePage2"; //$NON-NLS-1$
 	}
 
 	/**

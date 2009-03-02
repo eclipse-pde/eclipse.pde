@@ -37,7 +37,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	protected PluginImportWizardFirstPage fPage1;
 	protected IPluginModelBase[] fModels = new IPluginModelBase[0];
-	private String fLocation;
+	private Object fImportSource;
 	protected Button fAddFragmentsButton;
 	private Button fAutoBuildButton;
 	protected TableViewer fImportListViewer;
@@ -123,12 +123,12 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	protected boolean isRefreshNeeded() {
 		if (fRefreshNeeded) {
 			fRefreshNeeded = false;
-			fLocation = fPage1.getDropLocation();
+			fImportSource = fPage1.getImportSource();
 			return true;
 		}
-		String currLocation = fPage1.getDropLocation();
-		if (fLocation == null || !fLocation.equals(currLocation)) {
-			fLocation = fPage1.getDropLocation();
+		Object currSource = fPage1.getImportSource();
+		if (fImportSource == null || !fImportSource.equals(currSource)) {
+			fImportSource = fPage1.getImportSource();
 			return true;
 		}
 		return fPage1.isRefreshNeeded();

@@ -20,13 +20,15 @@ import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
  * 
  * @since 3.5
  */
-class ResolvedBundle implements IResolvedBundle {
+public class ResolvedBundle implements IResolvedBundle {
 
 	private BundleInfo fInfo;
 	private boolean fIsSource = false;
 	private IStatus fStatus;
 	private boolean fIsOptional = false;
 	private boolean fIsFragment = false;
+	// when this bundle is an old-style source bundle, the "path" attribute of its extension is known 
+	private String fSourcePath = null;
 
 	/**
 	 * Constructs a resolved bundle 
@@ -93,4 +95,22 @@ class ResolvedBundle implements IResolvedBundle {
 		return fIsFragment;
 	}
 
+	/**
+	 * Used to set the path attribute of an old-style source bundle.
+	 * 
+	 * @param path bundle relative path to source folders
+	 */
+	void setSourcePath(String path) {
+		fSourcePath = path;
+	}
+
+	/**
+	 * Returns bundle relative path to old-style source folders, or <code>null</code>
+	 * if not applicable.
+	 * 
+	 * @return bundle relative path to old-style source folders, or <code>null</code>
+	 */
+	public String getSourcePath() {
+		return fSourcePath;
+	}
 }
