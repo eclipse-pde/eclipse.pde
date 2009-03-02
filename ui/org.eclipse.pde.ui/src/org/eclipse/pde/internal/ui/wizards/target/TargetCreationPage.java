@@ -51,6 +51,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	private Combo fTargets;
 	private String[] fTargetIds;
 	private Button fPreviewButton;
+	private String templateTargetId;
 
 	public TargetCreationPage(String pageName) {
 		super(pageName);
@@ -91,6 +92,13 @@ public class TargetCreationPage extends WizardSelectionPage {
 		fTargets = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.READ_ONLY, 1, null);
 		fTargets.setEnabled(false);
 		initializeTargetCombo();
+		fTargets.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				templateTargetId = fTargetIds[fTargets.getSelectionIndex()];
+
+			}
+		});
 
 		fPreviewButton = SWTFactory.createPushButton(comp, PDEUIMessages.TargetCreationPage_5, null);
 		fPreviewButton.setEnabled(false);
@@ -126,7 +134,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 
 	private URL getExternalTargetURL() {
 		TargetDefinitionManager manager = PDECore.getDefault().getTargetProfileManager();
-		IConfigurationElement elem = manager.getTarget(fTargetIds[fTargets.getSelectionIndex()]);
+		IConfigurationElement elem = manager.getTarget(getTargetId());
 		if (elem != null) {
 			String path = elem.getAttribute("definition"); //$NON-NLS-1$
 			String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
@@ -159,14 +167,18 @@ public class TargetCreationPage extends WizardSelectionPage {
 	}
 
 	protected String getTargetId() {
-		return fTargetIds[fTargets.getSelectionIndex()];
+		return templateTargetId;
 	}
 
-	private ITargetDefinition createTarget() {
+	protected void setTargetId(String targetId) {
+		templateTargetId = targetId;
+	}
+
+	protected ITargetDefinition createTarget(int targetOption) {
 		ITargetPlatformService service = getTargetService();
 		if (service != null) {
 			ITargetDefinition definition = service.newTarget();
-			switch (getInitializationOption()) {
+			switch (targetOption) {
 				case USE_EMPTY :
 					definition.setName(PDEUIMessages.TargetCreationPage_6);
 					break;
@@ -247,7 +259,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#getNextPage()
 	 */
 	public IWizardPage getNextPage() {
-		ITargetDefinition target = createTarget();
+		ITargetDefinition target = createTarget(getInitializationOption());
 		if (target != null) {
 			((NewTargetDefinitionWizard2) getWizard()).setTargetDefinition(target);
 			((EditTargetNode) getSelectedNode()).setTargetDefinition(target);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,25 +20,24 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 
-	protected static final int USE_DEFAULT = 0;
-	protected static final int USE_CURRENT_TP = 1;
-	protected static final int USE_EXISTING_TARGET = 2;
+	protected static final int USE_EMPTY = 0;
+	protected static final int USE_DEFAULT = 1;
+	protected static final int USE_CURRENT_TP = 2;
+	protected static final int USE_EXISTING_TARGET = 3;
 
+	private Button fEmptyButton;
 	private Button fDefaultButton;
 	private Button fCurrentTPButton;
 	private Button fExistingTargetButton;
@@ -63,27 +62,13 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 	}
 
 	protected void createAdvancedControls(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.TargetProfileWizardPage_groupTitle);
-		group.setLayout(new GridLayout(3, false));
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Composite comp = SWTFactory.createComposite(parent, 3, 1, GridData.FILL_BOTH);
+		SWTFactory.createLabel(comp, PDEUIMessages.TargetCreationPage_0, 3);
 
-		fDefaultButton = new Button(group, SWT.RADIO);
-		fDefaultButton.setText(PDEUIMessages.TargetProfileWizardPage_blankTarget);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		fDefaultButton.setLayoutData(gd);
-		fDefaultButton.setSelection(true);
-
-		fCurrentTPButton = new Button(group, SWT.RADIO);
-		fCurrentTPButton.setText(PDEUIMessages.TargetProfileWizardPage_currentPlatform);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		fCurrentTPButton.setLayoutData(gd);
-
-		fExistingTargetButton = new Button(group, SWT.RADIO);
-		fExistingTargetButton.setText(PDEUIMessages.TargetProfileWizardPage_existingTarget);
-		fExistingTargetButton.setLayoutData(new GridData());
+		fEmptyButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_1, 3);
+		fDefaultButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_2, 3);
+		fCurrentTPButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_3, 3);
+		fExistingTargetButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_4, 1);
 		fExistingTargetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fExistingTargetButton.getSelection();
@@ -92,15 +77,13 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 			}
 		});
 
-		fTargets = new Combo(group, SWT.SINGLE | SWT.READ_ONLY);
-		fTargets.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fEmptyButton.setSelection(true);
+
+		fTargets = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.READ_ONLY, 1, null);
 		fTargets.setEnabled(false);
 		initializeTargetCombo();
 
-		fPreviewButton = new Button(group, SWT.PUSH);
-		fPreviewButton.setText(PDEUIMessages.TargetProfileWizardPage_viewProfile);
-		fPreviewButton.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(fPreviewButton);
+		fPreviewButton = SWTFactory.createPushButton(comp, PDEUIMessages.TargetCreationPage_5, null);
 		fPreviewButton.setEnabled(false);
 		fPreviewButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -126,7 +109,9 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 			}
 		});
 
-		Dialog.applyDialogFont(group);
+		Dialog.applyDialogFont(comp);
+		setControl(comp);
+
 	}
 
 	private URL getExternalTargetURL() {
@@ -154,6 +139,8 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 	}
 
 	protected int getInitializationOption() {
+		if (fEmptyButton.getSelection())
+			return USE_EMPTY;
 		if (fDefaultButton.getSelection())
 			return USE_DEFAULT;
 		else if (fCurrentTPButton.getSelection())

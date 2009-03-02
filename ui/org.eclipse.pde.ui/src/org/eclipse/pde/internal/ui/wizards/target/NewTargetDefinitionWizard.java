@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.impl.WorkspaceFileTargetHandle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.*;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 
 	TargetDefinitionWizardPage fPage;
+	TargetCreationPage ftargetCreationPage;
 	IPath fInitialPath = null;
 	IPath fFilePath = null;
 
 	public void addPages() {
+		ftargetCreationPage = new TargetCreationPage("profile"); //$NON-NLS-1$
 		fPage = new TargetDefinitionWizardPage("profile", getSelection()); //$NON-NLS-1$
 		if (fInitialPath != null)
 			fPage.setContainerFullPath(fInitialPath);
@@ -32,12 +39,27 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 
 	public boolean performFinish() {
 		try {
-			getContainer().run(false, true, getOperation());
+			int option = fPage.getInitializationOption();
+			ftargetCreationPage.setTargetId(fPage.getTargetId());
+			ITargetDefinition targetDef = ftargetCreationPage.createTarget(option);
 			fFilePath = fPage.getContainerFullPath().append(fPage.getFileName());
-		} catch (InvocationTargetException e) {
+			IFile targetFile = PDECore.getWorkspace().getRoot().getFile(fFilePath);
+			WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);
+			wrkspcTargetHandle.save(targetDef);
+
+			// Open the editor
+			IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+			if (ww != null) {
+				IWorkbenchPage page = ww.getActivePage();
+				IFile file = wrkspcTargetHandle.getTargetFile();
+				if (page != null && file.exists())
+					try {
+						IDE.openEditor(page, file);
+					} catch (PartInitException e) {
+					}
+			}
+		} catch (CoreException e) {
 			PDEPlugin.logException(e);
-			return false;
-		} catch (InterruptedException e) {
 			return false;
 		}
 		return true;
@@ -51,15 +73,6 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
-	}
-
-	private BaseTargetDefinitionOperation getOperation() {
-		int option = fPage.getInitializationOption();
-		if (option == TargetDefinitionWizardPage.USE_DEFAULT)
-			return new BaseTargetDefinitionOperation(fPage.createNewFile());
-		else if (option == TargetDefinitionWizardPage.USE_CURRENT_TP)
-			return new TargetDefinitionFromPlatformOperation(fPage.createNewFile());
-		return new TargetDefinitionFromTargetOperation(fPage.createNewFile(), fPage.getTargetId());
 	}
 
 	public void setInitialPath(IPath path) {
