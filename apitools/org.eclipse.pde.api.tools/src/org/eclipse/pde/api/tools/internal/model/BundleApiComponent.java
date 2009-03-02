@@ -386,7 +386,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 				//there could have been directives that have nothing to do with
 				//visibility, so we need to add the package as API in that case
 				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.API);
-			}			
+			}
 		}
 	}
 	
