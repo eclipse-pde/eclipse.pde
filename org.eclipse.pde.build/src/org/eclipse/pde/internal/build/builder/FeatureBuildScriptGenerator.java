@@ -303,21 +303,34 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
 
+		Map callbackParams = null;
+		if (customFeatureCallbacks != null) {
+			callbackParams = new HashMap(1);
+			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
+			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER));
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null);
+		}
+
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
 
 		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER));
 
-		//if (include != null) {
 		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 		script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER), new FileSet[] {fileSet}, true, false);
 		generateIdReplacerCall(Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER));
-		//}
+
+		if (customFeatureCallbacks != null) {
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null);
+		}
 
 		script.println("<eclipse.gatherFeature "); //$NON-NLS-1$
 		script.println("   metadataRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
 		script.println("   artifactRepository=\"file:${buildDirectory}/buildRepo\""); //$NON-NLS-1$
-		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (customFeatureCallbacks != null && include != null)
+			script.println("   targetFolder=\"" + Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		else
+			script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 

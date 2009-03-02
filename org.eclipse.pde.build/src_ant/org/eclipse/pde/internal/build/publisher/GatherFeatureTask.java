@@ -22,11 +22,18 @@ import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 
 public class GatherFeatureTask extends AbstractPublisherTask {
 	private String buildResultFolder = null;
+	private String targetFolder = null;
 
 	public void execute() throws BuildException {
 		GatheringComputer computer = createFeatureComputer();
 
-		GatherFeatureAction action = new GatherFeatureAction(new File(baseDirectory), new File(buildResultFolder));
+		GatherFeatureAction action = null;
+		if (targetFolder == null)
+			action = new GatherFeatureAction(new File(baseDirectory), new File(buildResultFolder));
+		else {
+			File folder = new File(targetFolder);
+			action = new GatherFeatureAction(folder, folder);
+		}
 		action.setComputer(computer);
 
 		PublisherInfo info = getPublisherInfo();
@@ -43,6 +50,22 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 
 	protected GatheringComputer createFeatureComputer() {
 		Properties properties = getBuildProperties();
+
+		if (targetFolder != null) {
+			FileSet fileSet = new FileSet();
+			fileSet.setProject(getProject());
+			fileSet.setDir(new File(targetFolder));
+			NameEntry include = fileSet.createInclude();
+			include.setName("**"); //$NON-NLS-1$
+
+			String[] files = fileSet.getDirectoryScanner().getIncludedFiles();
+			if (files != null && files.length > 0) {
+				GatheringComputer computer = new GatheringComputer();
+				computer.addFiles(targetFolder, files);
+				return computer;
+			}
+			return null;
+		}
 
 		String include = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		String exclude = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
@@ -68,6 +91,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 				NameEntry fileExclude = fileSet.createExclude();
 				fileExclude.setName(splitIncludes[i]);
 			}
+			computer.addFiles(baseDirectory, fileSet.getDirectoryScanner().getIncludedFiles());
 			return computer;
 		}
 		return null;
@@ -156,6 +180,12 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	}
 
 	public void setBuildResultFolder(String buildResultFolder) {
-		this.buildResultFolder = buildResultFolder;
+		if (buildResultFolder != null && buildResultFolder.length() > 0 && !buildResultFolder.startsWith(ANT_PREFIX))
+			this.buildResultFolder = buildResultFolder;
+	}
+
+	public void setTargetFolder(String targetFolder) {
+		if (targetFolder != null && targetFolder.length() > 0 && !targetFolder.startsWith(ANT_PREFIX))
+			this.targetFolder = targetFolder;
 	}
 }

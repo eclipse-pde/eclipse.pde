@@ -86,7 +86,7 @@ public class PublishingTests extends P2TestCase {
 
 	public void testPublishBundle_customCallbacks() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_callbacks");
-		
+
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
 		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); }"));
 		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { int i = 0; }"));
@@ -98,7 +98,7 @@ public class PublishingTests extends P2TestCase {
 		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.osgi");
 		Utils.generateBundleManifest(bundle, "bundle", "1.0.0.qualifier", manifestAdditions);
 		Utils.generatePluginBuildProperties(bundle, properties);
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<project name=\"customGather\" default=\"noDefault\">			\n");
 		buffer.append("   <target name=\"pre.gather.bin.parts\">						\n");
@@ -112,7 +112,7 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("   </target>														\n");
 		buffer.append("</project>														\n");
 		Utils.writeBuffer(bundle.getFile("customBuildCallbacks.xml"), buffer);
-		
+
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
 		properties.put("forceContextQualifier", "v1234");
 		try {
@@ -124,16 +124,16 @@ public class PublishingTests extends P2TestCase {
 
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
 		runAntScript(buildXMLPath, new String[] {"build.jars", "gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
-		
+
 		HashSet contents = new HashSet();
 		contents.add("a.txt");
 		contents.add("b.txt");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
 	}
-	
+
 	public void testPublishBundle_p2infCUs() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_p2infCUs");
-		
+
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
 		Utils.generateBundle(bundle, "bundle");
 		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
@@ -160,14 +160,14 @@ public class PublishingTests extends P2TestCase {
 		inf.append("units.1.instructions.configure=setStartLevel(startLevel:1);\\\n");
 		inf.append("                              markStarted(started: true);    \n");
 		inf.append("units.1.instructions.unconfigure=setStartLevel(startLevel:-1);\\\n");
-		inf.append("                                markStarted(started: false); \n");	
+		inf.append("                                markStarted(started: false); \n");
 		inf.append("units.1.instructions.install=installBundle(bundle:${artifact});\n");
 		inf.append("units.1.instructions.uninstall=uninstallBundle(bundle:${artifact});\n");
 		Utils.writeBuffer(bundle.getFile("META-INF/p2.inf"), inf);
-		
+
 		IFile productFile = buildFolder.getFile("foo.product");
 		Utils.generateProduct(productFile, "foo", "1.0.0", null, new String[] {"org.eclipse.osgi", "bundle"}, false);
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", "*,*,*");
@@ -179,9 +179,9 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
-		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"),"bundle_1.0.0.jar@1\\:start");
+		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "bundle_1.0.0.jar@1\\:start");
 	}
-	
+
 	protected File copyExecutableFeature(File delta, IFolder executableFeature) throws Exception {
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
@@ -195,8 +195,45 @@ public class PublishingTests extends P2TestCase {
 		return features[0];
 	}
 
+	public void testPublishFeature_customCallbacks() throws Exception {
+		IFolder buildFolder = newTest("PublishFeature_custom");
+		IFolder f = buildFolder.getFolder("features/f");
+
+		Utils.generateFeature(buildFolder, "f", null, null);
+		Properties properties = new Properties();
+		properties.put("bin.includes", "feature.xml");
+		properties.put("customBuildCallbacks", "customBuildCallbacks.xml");
+		Utils.storeBuildProperties(f, properties);
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<project name=\"customGather\" default=\"noDefault\">			\n");
+		buffer.append("   <target name=\"pre.gather.bin.parts\">						\n");
+		buffer.append("      <concat destfile=\"${feature.directory}/a.txt\">			\n");
+		buffer.append("        Mary had a little lamb.									\n");
+		buffer.append("      </concat>													\n");
+		buffer.append("   </target>														\n");
+		buffer.append("</project>														\n");
+		Utils.writeBuffer(f.getFile("customBuildCallbacks.xml"), buffer);
+
+		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
+		try {
+			BuildDirector.p2Gathering = true;
+			generateScripts(buildFolder, properties);
+		} finally {
+			BuildDirector.p2Gathering = false;
+		}
+
+		String buildXMLPath = f.getFile("build.xml").getLocation().toOSString();
+		runAntScript(buildXMLPath, new String[] {"gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+
+		HashSet contents = new HashSet();
+		contents.add("a.txt");
+		contents.add("feature.xml");
+		assertZipContents(buildFolder, "buildRepo/features/f_1.0.0.jar", contents);
+	}
+
 	public void testPublishFeature_ExecutableFeature() throws Exception {
-		IFolder buildFolder = newTest("PublishBundle_Executable");
+		IFolder buildFolder = newTest("PublishFeature_Executable");
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 

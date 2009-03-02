@@ -22,6 +22,8 @@ import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 public abstract class AbstractPublisherTask extends Task {
+	static final protected String ANT_PREFIX = "${"; //$NON-NLS-1$
+
 	protected URI metadataLocation;
 	protected String metadataRepoName;
 	protected URI artifactLocation;
@@ -104,7 +106,8 @@ public abstract class AbstractPublisherTask extends Task {
 	}
 
 	public void setBaseDirectory(String baseDirectory) {
-		this.baseDirectory = baseDirectory;
+		if (baseDirectory != null && baseDirectory.length() > 0 && !baseDirectory.startsWith(ANT_PREFIX))
+			this.baseDirectory = baseDirectory;
 	}
 
 	protected PublisherInfo getPublisherInfo() {

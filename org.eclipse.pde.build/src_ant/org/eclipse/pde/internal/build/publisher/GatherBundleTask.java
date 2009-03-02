@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.Compiled
 
 public class GatherBundleTask extends AbstractPublisherTask {
 	static final private String API_DESCRIPTION = ".api_description"; //$NON-NLS-1$
-	static final private String ANT_PREFIX = "${"; //$NON-NLS-1$
 
 	static public class OutputFileSet extends FileSet {
 		private String library;
@@ -58,8 +57,8 @@ public class GatherBundleTask extends AbstractPublisherTask {
 
 		GatherBundleAction action = null;
 		if (targetFolder != null) {
-			File target = new File(targetFolder);
-			action = new GatherBundleAction(target, target);
+			File targetFile = new File(targetFolder);
+			action = new GatherBundleAction(targetFile, targetFile);
 		} else
 			action = new GatherBundleAction(new File(baseDirectory), new File(buildResultFolder));
 		action.setComputer(computer);
