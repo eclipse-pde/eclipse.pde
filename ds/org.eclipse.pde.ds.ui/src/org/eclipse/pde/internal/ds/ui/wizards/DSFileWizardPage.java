@@ -290,7 +290,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 				}
 			}
 		});
-		validatePage();
 	}
 
 	public String getDSComponentNameValue() {
@@ -324,7 +323,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	}
 
 	public boolean isPageComplete() {
-		return checkPageComplete() & validatePage();
+		return checkPageComplete() && validatePage();
 	}
 
 	public void saveSettings(IDialogSettings settings) {
