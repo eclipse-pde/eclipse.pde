@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="$packageName$">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="$packageName$">
    <implementation class="$packageName$.ServiceComponent"/>
    <service>
       <provide interface="org.eclipse.osgi.framework.console.CommandProvider"/>
    </service>
-</component>
+</scr:component>
