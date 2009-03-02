@@ -14,12 +14,18 @@ package org.eclipse.pde.internal.ds.ui.editor.sections;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,13 +54,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DSReferenceSection extends TableSection {
+public class DSReferenceSection extends TableSection implements
+		IDoubleClickListener {
 
 	private TableViewer fReferencesTable;
 	private Action fRemoveAction;
@@ -111,6 +119,7 @@ public class DSReferenceSection extends TableSection {
 
 		fReferencesTable.setContentProvider(new ContentProvider());
 		fReferencesTable.setLabelProvider(new DSLabelProvider());
+		fReferencesTable.addDoubleClickListener(this);
 
 		makeActions();
 
@@ -377,6 +386,26 @@ public class DSReferenceSection extends TableSection {
 		getSection().setText(
 				NLS.bind(Messages.DSReferenceSection_title, new Integer(
 						itemCount)));
+	}
+
+	public void doubleClick(DoubleClickEvent event) {
+		IDSReference reference = (IDSReference) ((IStructuredSelection) fReferencesTable
+				.getSelection()).getFirstElement();
+		String value = reference.getReferenceInterface();
+		IProject project = getProject();
+		try {
+			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject javaProject = JavaCore.create(project);
+				IJavaElement element = javaProject.findType(value.replace('$',
+						'.'));
+				if (element != null)
+					JavaUI.openInEditor(element);
+			}
+		} catch (PartInitException e) {
+			Activator.logException(e);
+		} catch (CoreException e) {
+			Activator.logException(e);
+		}
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,25 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
+ *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -50,13 +56,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class DSProvideSection extends TableSection {
+public class DSProvideSection extends TableSection implements
+		IDoubleClickListener {
 
 	private TableViewer fProvidesTable;
 	private Action fRemoveAction;
@@ -89,7 +97,6 @@ public class DSProvideSection extends TableSection {
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(Messages.DSProvideSection_title);
 		section.setDescription(Messages.DSProvideSection_description);
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -107,6 +114,7 @@ public class DSProvideSection extends TableSection {
 		fProvidesTable.setContentProvider(new ContentProvider());
 		fProvidesTable.setLabelProvider(new DSLabelProvider());
 		fProvidesTable.setComparator(new ViewerComparator());
+		fProvidesTable.addDoubleClickListener(this);
 
 		makeActions();
 
@@ -290,7 +298,6 @@ public class DSProvideSection extends TableSection {
 		} else {
 			fProvidesTable.refresh();
 			updateButtons();
-			updateTitle();
 		}
 	}
 
@@ -329,6 +336,26 @@ public class DSProvideSection extends TableSection {
 				NLS.bind(Messages.DSProvideSection_title,
 						new Integer(
 						itemCount)));
+	}
+
+	public void doubleClick(DoubleClickEvent event) {
+		IDSProvide provide = (IDSProvide) ((IStructuredSelection) fProvidesTable
+				.getSelection()).getFirstElement();
+		String value = provide.getInterface();
+		IProject project = getProject();
+		try {
+			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject javaProject = JavaCore.create(project);
+				IJavaElement element = javaProject.findType(value.replace('$',
+						'.'));
+				if (element != null)
+					JavaUI.openInEditor(element);
+			}
+		} catch (PartInitException e) {
+			Activator.logException(e);
+		} catch (CoreException e) {
+			Activator.logException(e);
+		}
 	}
 
 }
