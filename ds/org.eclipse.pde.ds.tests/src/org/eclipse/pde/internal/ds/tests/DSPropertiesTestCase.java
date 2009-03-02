@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
-import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
-import org.eclipse.pde.internal.ds.core.IDSProvide;
-import org.eclipse.pde.internal.ds.core.IDSService;
 
 public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	

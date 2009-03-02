@@ -15,7 +15,6 @@ import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
-import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
 
@@ -110,8 +109,6 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 		IDocumentElementNode child = component.getChildAt(0);
 
 		assertTrue(child instanceof IDSService);
-
-		IDSService service = (IDSService) child;
 
 		assertTrue(child.getChildCount() == 6);
 
