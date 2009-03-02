@@ -64,12 +64,12 @@ public abstract class AbstractDSModelTestCase extends TestCase {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		sb.append(newline);
-		sb.append("<component name=\"" + COMPONENT_NAME + "\">");
+		sb.append("<scr:component xmlns:scr=\"http://www.osgi.org/xmlns/scr/v1.1.0\" name=\"" + COMPONENT_NAME + "\">");
 		sb.append(newline);
 		if (body != null)
 			sb.append(body.toString());
 		sb.append(newline);
-		sb.append("</component>");
+		sb.append("</scr:component>");
 		sb.append(newline);
 		fDocument.set(sb.toString());
 	}

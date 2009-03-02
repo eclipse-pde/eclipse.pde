@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
@@ -16,7 +17,7 @@ import junit.framework.TestSuite;
 public class AllDSModelTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for testing the ds model"); //$NON-NLS-1$
+		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ds.core"); //$NON-NLS-1$
 		suite.addTestSuite(DSComponentTestCase.class);
 		suite.addTestSuite(DSServiceTestCase.class);
 		suite.addTestSuite(DSReferenceTestCase.class);
@@ -25,6 +26,7 @@ public class AllDSModelTests {
 		suite.addTestSuite(DSPropertiesTestCase.class);
 		suite.addTestSuite(DSImplementationTestCase.class);
 		suite.addTestSuite(DSObjectTestCase.class);
+		suite.addTestSuite(DSv10tov11TestCase.class);
 		return suite;
 	}
 
