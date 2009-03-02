@@ -288,16 +288,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				// TODO Support cancellation?
 			}
 
-			IStatus status = fTarget.getBundleStatus();
-
-			if (status == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1));
-			}
-			if (!status.isOK()) {
-				// TODO Support prompting for differing levels of errors/warnings/info
-				throw new CoreException(status);
-			}
-
 			IResolvedBundle[] resolved = fTarget.getBundles();
 			for (int i = 0; i < resolved.length; i++) {
 				infos.add(resolved[i].getBundleInfo());

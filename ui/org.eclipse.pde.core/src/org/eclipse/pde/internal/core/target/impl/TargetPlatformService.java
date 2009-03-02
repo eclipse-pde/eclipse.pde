@@ -458,32 +458,23 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return target;
 	}
 
-	/**
-	 * Returns a status describing whether the given target definition is synchronized with
-	 * current target platform state. It is possible that bundles could have been added/removed
-	 * from the underlying storage of bundle containers making the current state out of synch
-	 * with the contents of the given definition. The given target definition will be resolved
-	 * if not already.
-	 * <p>
-	 * An <code>OK</code> status is returned when in synch. A status or multi-status is returned
-	 * when there are synchronization issues. 
-	 * </p>
-	 * @param target target definition to compare with target platform state
-	 * @param monitor progress monitor or <code>null</code> if none
-	 * @return status describing whether the target is in synch with target platform state
-	 * @throws CoreException
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#compareWithTargetPlatform(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
 	 */
-	public IStatus compareWithTargetPlatform(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
-		// resolve the target if needed
+	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException {
 		if (!target.isResolved()) {
-			target.resolve(null);
+			return null;
 		}
+
+		// Get the current models from the target platform
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
 		Map stateLocations = new HashMap(models.length);
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase base = models[i];
 			stateLocations.put(base.getInstallLocation(), base);
 		}
+
+		// Compare the platform bundles against the definition ones and collect any missing bundles
 		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
 		IResolvedBundle[] bundles = target.getAllBundles();
 		for (int i = 0; i < bundles.length; i++) {
@@ -502,16 +493,19 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 		}
-		// left overs are in the state and not the target (have been removed from the target)
+
+		// Anything left over is in the state and not the target (have been removed from the target)
 		Iterator iterator = stateLocations.values().iterator();
 		while (iterator.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iterator.next();
 			IStatus status = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, model.getPluginBase().getId(), null);
 			multi.add(status);
 		}
+
 		if (multi.isOK()) {
 			return Status.OK_STATUS;
 		}
 		return multi;
+
 	}
 }

@@ -272,7 +272,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		
 		try {
 			setTargetPlatform(definition);
-			IStatus status = getTargetService().compareWithTargetPlatform(definition, null);
+			IStatus status = getTargetService().compareWithTargetPlatform(definition);
 			assertTrue(status.isOK());
 		} finally {
 			resetTargetPlatform();
@@ -301,7 +301,9 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			// force definition to re-resolve
 			ITargetDefinition copy = getTargetService().newTarget();
 			getTargetService().copyTargetDefinition(definition, copy);
-			IStatus status = getTargetService().compareWithTargetPlatform(copy, null);
+			copy.resolve(null);
+			IStatus status = getTargetService().compareWithTargetPlatform(copy);
+			assertNotNull(status);
 			assertFalse(status.isOK());
 			IStatus[] children = status.getChildren();
 			assertEquals(1, children.length);
@@ -343,7 +345,9 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			// add the bundle back to the file system
 			xxx.renameTo(jar);
 			
-			IStatus status = getTargetService().compareWithTargetPlatform(copy, null);
+			copy.resolve(null);
+			IStatus status = getTargetService().compareWithTargetPlatform(copy);
+			assertNotNull(status);
 			assertFalse(status.isOK());
 			IStatus[] children = status.getChildren();
 			assertEquals(1, children.length);

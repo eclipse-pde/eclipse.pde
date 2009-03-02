@@ -193,7 +193,7 @@ public class TargetDefinition implements ITargetDefinition {
 					if (subMonitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
-					subMonitor.subTask(MessageFormat.format(Messages.TargetDefinition_4, new String[] {Integer.toString(i), Integer.toString(containers.length)}));
+					subMonitor.subTask(MessageFormat.format(Messages.TargetDefinition_4, new String[] {Integer.toString(i + 1), Integer.toString(containers.length)}));
 					IStatus s = containers[i].resolve(this, subMonitor.newChild(10));
 					if (!s.isOK()) {
 						status.add(s);

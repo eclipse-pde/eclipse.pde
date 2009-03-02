@@ -143,23 +143,23 @@ public interface ITargetPlatformService {
 	 * Returns a status describing whether the given target definition is synchronized with
 	 * workspace's target platform state. It is possible that bundles could have been added/removed
 	 * from the underlying bundle container storage making the current target platform state out of
-	 * synch with the contents of the a definition. The given target definition will be resolved
-	 * if not already.
+	 * synch with the contents of the a definition. The given target definition must already be 
+	 * resolved or this method will return <code>null</code>.
 	 * <p>
 	 * An <code>OK</code> status is returned when in synch. A multi-status is returned
-	 * when there are synchronization issues. Each status contains one of the following codes
+	 * when there are synchronization issues. <code>Null</code> is returned if the target
+	 * has not been resolved. Each status contains one of the following codes
 	 * and the name of the associated bundle as a message:
 	 * <ul>
 	 * <li>STATUS_MISSING_FROM_STATE</li>
 	 * <li>STATUS_MISSING_FROM_TARGET_DEFINITION</li>
 	 * </ul>
 	 * </p>
-	 * @param target target definition to compare with target platform state
-	 * @param monitor progress monitor or <code>null</code> if none
+	 * @param target resolved target definition to compare with target platform state
 	 * @return status describing whether the target is in synch with target platform state
 	 * @throws CoreException if comparison fails
 	 */
-	public IStatus compareWithTargetPlatform(ITargetDefinition target, IProgressMonitor monitor) throws CoreException;
+	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException;
 
 	/**
 	 * Copies all attributes from one target definition to another.
