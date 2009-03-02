@@ -84,6 +84,53 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
+	public void testPublishBundle_customCallbacks() throws Exception {
+		IFolder buildFolder = newTest("PublishBundle_callbacks");
+		
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); }"));
+		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { int i = 0; }"));
+		Utils.writeBuffer(bundle.getFile("META-INF/p2.inf"), new StringBuffer("instructions.install=myRandomAction(foo: bar);"));
+		Properties properties = new Properties();
+		properties.put("bin.includes", "META-INF/, .");
+		properties.put("customBuildCallbacks", "customBuildCallbacks.xml");
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.osgi");
+		Utils.generateBundleManifest(bundle, "bundle", "1.0.0.qualifier", manifestAdditions);
+		Utils.generatePluginBuildProperties(bundle, properties);
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<project name=\"customGather\" default=\"noDefault\">			\n");
+		buffer.append("   <target name=\"pre.gather.bin.parts\">						\n");
+		buffer.append("      <concat destfile=\"${target.folder}/a.txt\">				\n");
+		buffer.append("        Mary had a little lamb.									\n");
+		buffer.append("      </concat>													\n");
+		buffer.append("   </target>														\n");
+		buffer.append("   <target name=\"post.gather.bin.parts\">						\n");
+		buffer.append("      <copy file=\"${build.result.folder}/@dot/A.class\"			\n");
+		buffer.append("            tofile=\"${target.folder}/b.txt\" />					\n");
+		buffer.append("   </target>														\n");
+		buffer.append("</project>														\n");
+		Utils.writeBuffer(bundle.getFile("customBuildCallbacks.xml"), buffer);
+		
+		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
+		properties.put("forceContextQualifier", "v1234");
+		try {
+			BuildDirector.p2Gathering = true;
+			generateScripts(buildFolder, properties);
+		} finally {
+			BuildDirector.p2Gathering = false;
+		}
+
+		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
+		runAntScript(buildXMLPath, new String[] {"build.jars", "gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+		
+		HashSet contents = new HashSet();
+		contents.add("a.txt");
+		contents.add("b.txt");
+		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
+	}
+	
 	public void testPublishBundle_p2infCUs() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_p2infCUs");
 		

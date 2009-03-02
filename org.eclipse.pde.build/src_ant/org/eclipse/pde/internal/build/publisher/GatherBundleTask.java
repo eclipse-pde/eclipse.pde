@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.Compiled
 
 public class GatherBundleTask extends AbstractPublisherTask {
 	static final private String API_DESCRIPTION = ".api_description"; //$NON-NLS-1$
+	static final private String ANT_PREFIX = "${"; //$NON-NLS-1$
 
 	static public class OutputFileSet extends FileSet {
 		private String library;
@@ -47,6 +48,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	}
 
 	private String buildResultFolder = null;
+	private String targetFolder = null;
 	private String gatheredSource = null;
 	private String unpack = null;
 	private final Map sourceMap = new HashMap();
@@ -54,7 +56,12 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	public void execute() throws BuildException {
 		GatheringComputer computer = createComputer();
 
-		GatherBundleAction action = new GatherBundleAction(new File(baseDirectory), new File(buildResultFolder));
+		GatherBundleAction action = null;
+		if (targetFolder != null) {
+			File target = new File(targetFolder);
+			action = new GatherBundleAction(target, target);
+		} else
+			action = new GatherBundleAction(new File(baseDirectory), new File(buildResultFolder));
 		action.setComputer(computer);
 		action.setUnpack(unpack);
 
@@ -72,6 +79,21 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	protected GatheringComputer createComputer() {
 		Properties properties = getBuildProperties();
 		GatheringComputer computer = new GatheringComputer();
+
+		if (targetFolder != null) {
+			FileSet fileSet = new FileSet();
+			fileSet.setProject(getProject());
+			fileSet.setDir(new File(targetFolder));
+			NameEntry includes = fileSet.createInclude();
+			includes.setName("**"); //$NON-NLS-1$
+			NameEntry excludes = fileSet.createExclude();
+			excludes.setName(JarFile.MANIFEST_NAME);
+
+			if (new File(targetFolder, JarFile.MANIFEST_NAME).exists())
+				computer.addFile(targetFolder, JarFile.MANIFEST_NAME);
+			computer.addFiles(targetFolder, fileSet.getDirectoryScanner().getIncludedFiles());
+			return computer;
+		}
 
 		CompiledEntry[] entries = null;
 		try {
@@ -232,13 +254,18 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	}
 
 	public void setUnpack(String unpack) {
-		if (unpack != null && unpack.length() > 0 && !unpack.startsWith("${")) //$NON-NLS-1$
+		if (unpack != null && unpack.length() > 0 && !unpack.startsWith(ANT_PREFIX))
 			this.unpack = unpack;
 	}
 
 	public void setGatheredSource(String gatheredSource) {
-		if (gatheredSource != null && gatheredSource.length() > 0 && !gatheredSource.startsWith("${")) //$NON-NLS-1$
+		if (gatheredSource != null && gatheredSource.length() > 0 && !gatheredSource.startsWith(ANT_PREFIX))
 			this.gatheredSource = gatheredSource;
+	}
+
+	public void setTargetFolder(String targetFolder) {
+		if (targetFolder != null && targetFolder.length() > 0 && !targetFolder.startsWith(ANT_PREFIX))
+			this.targetFolder = targetFolder;
 	}
 
 	public void addConfiguredOutputFolder(OutputFileSet output) {

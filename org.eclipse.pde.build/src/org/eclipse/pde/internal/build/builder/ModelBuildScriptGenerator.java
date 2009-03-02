@@ -582,62 +582,85 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
 
-		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
-		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
+		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+		destination = destination.append(fullName);
+		String root = destination.toString();
+		script.printMkdirTask(root);
 
-		String files = JarFile.MANIFEST_NAME + "," + Constants.PLUGIN_FILENAME_DESCRIPTOR + "," + Constants.FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$
-		FileSet metadata = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, files, null, exclude, null, null);
-		script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), new FileSet[] {metadata}, true, true);
+		Map params = null;
+		if (customBuildCallbacks != null) {
+			params = new HashMap(3);
+			params.put(PROPERTY_TARGET_FOLDER, root);
+			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 
-		if (Utils.isSourceBundle(model)) {
-			Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
-			if (pluginsToGatherSourceFrom != null) {
-				for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
-					BundleDescription plugin = (BundleDescription) iter.next();
-					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-					HashMap taskParams = new HashMap(1);
-					taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources"); //$NON-NLS-1$
-					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
+			generateGatherBinParts(destination);
+
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
+		} else {
+			String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
+			String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
+
+			String files = JarFile.MANIFEST_NAME + "," + Constants.PLUGIN_FILENAME_DESCRIPTOR + "," + Constants.FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$
+			FileSet metadata = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, files, null, exclude, null, null);
+			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), new FileSet[] {metadata}, true, true);
+
+			if (Utils.isSourceBundle(model)) {
+				Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
+				if (pluginsToGatherSourceFrom != null) {
+					for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
+						BundleDescription plugin = (BundleDescription) iter.next();
+						IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
+						HashMap taskParams = new HashMap(1);
+						taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources"); //$NON-NLS-1$
+						script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
+					}
 				}
 			}
-		}
 
-		String[] splitIncludes = Utils.getArrayFromString(include);
-		genarateIdReplacementCall(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
-		generateAPIToolsCall(getCompiledLocations(), Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/') != -1, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+			String[] splitIncludes = Utils.getArrayFromString(include);
+			genarateIdReplacementCall(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+			generateAPIToolsCall(getCompiledLocations(), Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/') != -1, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+		}
 
 		script.println("<eclipse.gatherBundle "); //$NON-NLS-1$
 		script.println("   metadataRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   artifactRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
-		if (associatedEntry != null && associatedEntry.unpackSet())
-			script.println("   unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (Utils.isSourceBundle(model)) {
-			script.println("   gatheredSource=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources\""); //$NON-NLS-1$//$NON-NLS-2$
-		}
 
-		if (workspaceOutputFolders == null || workspaceOutputFolders.size() == 0) {
+		if (customBuildCallbacks != null) {
+			script.println("   targetFolder=\"" + root + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 		} else {
-			//reuse workspace compiled classes
-			script.println(">"); //$NON-NLS-1$
-
-			for (Iterator iterator = workspaceOutputFolders.keySet().iterator(); iterator.hasNext();) {
-				String key = (String) iterator.next();
-				Set paths = (Set) workspaceOutputFolders.get(key);
-
-				for (Iterator pathIterator = paths.iterator(); pathIterator.hasNext();) {
-					IPath path = (IPath) pathIterator.next();
-					script.printTabs();
-					script.print("   <outputFolder "); //$NON-NLS-1$ 
-					script.printAttribute("library", key, true); //$NON-NLS-1$
-					script.printAttribute("dir", Utils.getPropertyFormat(PROPERTY_BASEDIR), true); //$NON-NLS-1$
-					script.printAttribute("includes", path.toString() + "/**", true); //$NON-NLS-1$ //$NON-NLS-2$
-					script.println("/>"); //$NON-NLS-1$
-				}
+			script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
+			if (associatedEntry != null && associatedEntry.unpackSet())
+				script.println("   unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (Utils.isSourceBundle(model)) {
+				script.println("   gatheredSource=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources\""); //$NON-NLS-1$//$NON-NLS-2$
 			}
-			script.printEndTag("eclipse.gatherBundle"); //$NON-NLS-1$
+
+			if (workspaceOutputFolders == null || workspaceOutputFolders.size() == 0 || customBuildCallbacks != null) {
+				script.println("/>"); //$NON-NLS-1$
+			} else {
+				//reuse workspace compiled classes
+				script.println(">"); //$NON-NLS-1$
+
+				for (Iterator iterator = workspaceOutputFolders.keySet().iterator(); iterator.hasNext();) {
+					String key = (String) iterator.next();
+					Set paths = (Set) workspaceOutputFolders.get(key);
+
+					for (Iterator pathIterator = paths.iterator(); pathIterator.hasNext();) {
+						IPath path = (IPath) pathIterator.next();
+						script.printTabs();
+						script.print("   <outputFolder "); //$NON-NLS-1$ 
+						script.printAttribute("library", key, true); //$NON-NLS-1$
+						script.printAttribute("dir", Utils.getPropertyFormat(PROPERTY_BASEDIR), true); //$NON-NLS-1$
+						script.printAttribute("includes", path.toString() + "/**", true); //$NON-NLS-1$ //$NON-NLS-2$
+						script.println("/>"); //$NON-NLS-1$
+					}
+				}
+				script.printEndTag("eclipse.gatherBundle"); //$NON-NLS-1$
+			}
 		}
 		script.printTargetEnd();
 	}
@@ -677,6 +700,17 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 
+		generateGatherBinParts(destination);
+
+		if (customBuildCallbacks != null) {
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
+		}
+
+		script.printTargetEnd();
+	}
+
+	private void generateGatherBinParts(IPath destination) throws CoreException {
+		String root = destination.toString();
 		List destinations = new ArrayList(5);
 		destinations.add(destination);
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
@@ -727,12 +761,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		generatePermissionProperties(root);
 		genarateIdReplacementCall(destination.toString());
 		generateAPIToolsCall(fileSetValues, dotIncluded, root);
-
-		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
-		}
-
-		script.printTargetEnd();
 	}
 
 	private void genarateIdReplacementCall(String location) {
@@ -1253,7 +1281,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String outputKey = name.equals(EXPANDED_DOT) ? DOT : name;
 		if (workspaceOutputFolders != null && workspaceOutputFolders.containsKey(outputKey)) {
 			// this is a no-op when using p2Gathering, GatherBundleTask will collect the class files from where they are.
-			if (!BuildDirector.p2Gathering) {
+			// unless we are using custom callbacks, then we need to gather everything as before
+			if (!BuildDirector.p2Gathering || customBuildCallbacks != null) {
 				Set paths = (Set) workspaceOutputFolders.get(outputKey);
 				workspaceFiles = new FileSet[paths.size()];
 
