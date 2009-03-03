@@ -44,6 +44,7 @@ public class EnvironmentPage extends FormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEUIMessages.EnvironmentPage_title);
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_ENVIRONMENT));
 		FormToolkit toolkit = managedForm.getToolkit();
 		fillBody(managedForm, toolkit);
@@ -53,6 +54,14 @@ public class EnvironmentPage extends FormPage {
 		((TargetEditor) getEditor()).addForm(managedForm);
 		form.updateToolBar();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.ENVIRONMENT_PAGE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
+	 */
+	public void dispose() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {

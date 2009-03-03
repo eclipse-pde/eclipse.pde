@@ -27,6 +27,12 @@ public class BundleInfoLabelProvider extends LabelProvider {
 	boolean fShowVersion = true;
 
 	public BundleInfoLabelProvider() {
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
+	}
+
+	public void dispose() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	public BundleInfoLabelProvider(boolean showVersion) {

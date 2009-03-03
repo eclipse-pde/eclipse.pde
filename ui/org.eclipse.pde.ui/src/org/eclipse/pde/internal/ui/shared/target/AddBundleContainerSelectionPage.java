@@ -60,6 +60,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		super("SelectionPage"); //$NON-NLS-1$
 		setTitle(Messages.AddBundleContainerSelectionPage_1);
 		setMessage(Messages.AddBundleContainerSelectionPage_2);
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fTarget = target;
 	}
 
@@ -76,6 +77,14 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			}
 		}
 		return fTargetService;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardSelectionPage#dispose()
+	 */
+	public void dispose() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	/* (non-Javadoc)
