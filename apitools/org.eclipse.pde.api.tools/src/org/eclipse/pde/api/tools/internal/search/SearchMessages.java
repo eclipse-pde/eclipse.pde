@@ -32,7 +32,7 @@ public class SearchMessages extends NLS {
 	public static String ApiUseReportConverter_no_bundles;
 	public static String ApiUseReportConverter_not_searched_component_list;
 	public static String ApiUseReportConverter_table_end;
-	public static String ApiUseReportConversionTask_that_were_not_searched;
+	public static String ApiUseReportConverter_that_were_not_searched;
 	public static String ApiUseReportConverter_no_xstl_specified;
 	public static String ioexception_writing_html_file;
 	public static String W3C_page_footer;
@@ -66,6 +66,7 @@ public class SearchMessages extends NLS {
 	public static String ApiUseReportConverter_xslt_file_not_valid;
 	public static String ApiUseReportConverter_referee_index_entry;
 	public static String ApiUseReportConverter_origin_summary_header;
+	public static String ApiUseReportConverter_bundle_list_table_header;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);

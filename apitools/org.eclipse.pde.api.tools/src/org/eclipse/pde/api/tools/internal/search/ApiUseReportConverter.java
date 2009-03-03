@@ -593,11 +593,19 @@ public final class ApiUseReportConverter {
 			if(!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
+			
 			FileWriter fileWriter = new FileWriter(originhtml);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_bundle_list_header, new String[] {SearchMessages.ApiUseReportConversionTask_that_were_not_searched}));
-			writeComponentList(writer, filename);
-			writeTableEnd(writer);
+			File xml = new File(this.reportsRoot, filename+".xml"); //$NON-NLS-1$
+			writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_bundle_list_header, new String[] {SearchMessages.ApiUseReportConverter_that_were_not_searched}));
+			if(!xml.exists()) {
+				writer.println(SearchMessages.ApiUseReportConverter_no_bundles);
+			}
+			else {
+				writer.println(SearchMessages.ApiUseReportConverter_bundle_list_table_header);
+				writeComponentList(writer, xml);
+				writeTableEnd(writer);
+			}
 			writeBackToBundleIndex(writer, "./index"); //$NON-NLS-1$
 			writeW3Footer(writer);
 		}
@@ -645,26 +653,20 @@ public final class ApiUseReportConverter {
 	 * @param writer
 	 * @param filename
 	 */
-	private void writeComponentList(PrintWriter writer, String filename) throws CoreException {
-		File xml = new File(this.reportsRoot, filename+".xml"); //$NON-NLS-1$
-		if(!xml.exists()) {
-			writer.println(SearchMessages.ApiUseReportConverter_no_bundles);
-		}
-		else {
-			Element root = Util.parseDocument(Util.getFileContentAsString(xml));
-			NodeList components = root.getElementsByTagName(IApiXmlConstants.ELEMENT_COMPONENT);
-			Element component = null;
-			String id = null, nodesc = null, excluded = null, resolveerrors = null;
-			for (int i = 0; i < components.getLength(); i++) {
-				component = (Element) components.item(i);
-				id = component.getAttribute(IApiXmlConstants.ATTR_ID);
-				nodesc = component.getAttribute(IApiXmlConstants.NO_API_DESCRIPTION);
-				excluded = component.getAttribute(IApiXmlConstants.EXCLUDED);
-				resolveerrors = component.getAttribute(IApiXmlConstants.RESOLUTION_ERRORS);
-				if(!"".equals(id)) { //$NON-NLS-1$
-					writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_not_searched_component_list, 
-									new String[] {id, nodesc, excluded, resolveerrors}));
-				}
+	private void writeComponentList(PrintWriter writer, File xml) throws CoreException {
+		Element root = Util.parseDocument(Util.getFileContentAsString(xml));
+		NodeList components = root.getElementsByTagName(IApiXmlConstants.ELEMENT_COMPONENT);
+		Element component = null;
+		String id = null, nodesc = null, excluded = null, resolveerrors = null;
+		for (int i = 0; i < components.getLength(); i++) {
+			component = (Element) components.item(i);
+			id = component.getAttribute(IApiXmlConstants.ATTR_ID);
+			nodesc = component.getAttribute(IApiXmlConstants.NO_API_DESCRIPTION);
+			excluded = component.getAttribute(IApiXmlConstants.EXCLUDED);
+			resolveerrors = component.getAttribute(IApiXmlConstants.RESOLUTION_ERRORS);
+			if(!"".equals(id)) { //$NON-NLS-1$
+				writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_not_searched_component_list, 
+								new String[] {id, nodesc, excluded, resolveerrors}));
 			}
 		}
 	}
