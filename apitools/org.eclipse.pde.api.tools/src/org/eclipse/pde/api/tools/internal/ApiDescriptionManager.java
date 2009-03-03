@@ -43,6 +43,7 @@ import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ScannerMessages;
@@ -317,6 +318,9 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 		IElementDescriptor elementDesc = null;
 		if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE)) {
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
+			if (!VisibilityModifiers.isAPI(vis)) {
+				return;
+			}
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			// collect fragments
 			List fragments = new ArrayList();

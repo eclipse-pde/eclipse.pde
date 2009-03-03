@@ -347,20 +347,33 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 		if (res != null) {
 			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);
 			if (root.exists()) {
-				IClasspathEntry entry = root.getRawClasspathEntry();
-				IPath outputLocation = entry.getOutputLocation();
-				if (outputLocation == null) {
-					outputLocation = fProject.getOutputLocation();
-				}
-				IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(outputLocation);
-				if (cfc == null) {
-					IContainer container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
-					if (container.exists()) {
-						cfc = new FolderApiTypeContainer(component, container);
-						fOutputLocationToContainer.put(outputLocation, cfc);
+				if (root.getKind() == IPackageFragmentRoot.K_BINARY) {
+					if (res.getType() == IResource.FOLDER) {
+						// class file folder
+						IPath location2 = res.getLocation();
+						IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(location2);
+						if (cfc == null) {
+							cfc = new FolderApiTypeContainer(component, (IContainer) res);
+							fOutputLocationToContainer.put(location2, cfc);
+						}
+						return cfc;
 					}
+				} else {
+					IClasspathEntry entry = root.getRawClasspathEntry();
+					IPath outputLocation = entry.getOutputLocation();
+					if (outputLocation == null) {
+						outputLocation = fProject.getOutputLocation();
+					}
+					IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(outputLocation);
+					if (cfc == null) {
+						IContainer container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
+						if (container.exists()) {
+							cfc = new FolderApiTypeContainer(component, container);
+							fOutputLocationToContainer.put(outputLocation, cfc);
+						}
+					}
+					return cfc;
 				}
-				return cfc;
 			}
 		}
 		return null;

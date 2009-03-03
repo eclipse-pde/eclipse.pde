@@ -178,7 +178,7 @@ public class ApiDescription implements IApiDescription {
 		 * @param component component the description is for or <code>null</code>
 		 */
 		void persistXML(Document document, Element parent) {
-			if(restrictions == RestrictionModifiers.NO_RESTRICTIONS) { 
+			if(RestrictionModifiers.isUnrestricted(this.restrictions)) { 
 				return;
 			}
 			switch (element.getElementType()) {

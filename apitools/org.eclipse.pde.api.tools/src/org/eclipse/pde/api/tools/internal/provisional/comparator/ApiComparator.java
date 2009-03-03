@@ -488,7 +488,13 @@ public class ApiComparator {
 				return NO_DELTA;
 			}
 			String typeName = typeRoot2.getTypeName();
-			IApiTypeRoot typeRoot = component.findTypeRoot(typeName);
+			IApiTypeRoot typeRoot = null;
+			String id = component.getId();
+			if ("org.eclipse.swt".equals(id)) { //$NON-NLS-1$
+				typeRoot = component.findTypeRoot(typeName);
+			} else {
+				typeRoot = component.findTypeRoot(typeName, id);
+			}
 			final IApiDescription apiDescription2 = component2.getApiDescription();
 			IApiAnnotations elementDescription2 = apiDescription2.resolveAnnotations(typeDescriptor2.getHandle());
 			int visibility = 0;
@@ -759,10 +765,11 @@ public class ApiComparator {
 									while (typeRoot2 == null && index < providers.length) {
 										IApiComponent p = providers[index];
 										if (!p.equals(component2)) {
-											if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+											String id2 = p.getId();
+											if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
 												typeRoot2 = p.findTypeRoot(typeName);
 											} else {
-												typeRoot2 = p.findTypeRoot(typeName, p.getId());
+												typeRoot2 = p.findTypeRoot(typeName, id2);
 											}
 											if (typeRoot2 != null) {
 												provider = p;
@@ -770,7 +777,7 @@ public class ApiComparator {
 												IRequiredComponentDescription[] required = component2.getRequiredComponents();
 												for (int k = 0; k < required.length; k++) {
 													IRequiredComponentDescription description = required[k];
-													if (description.getId().equals(p.getId())) {
+													if (description.getId().equals(id2)) {
 														reexported = description.isExported();
 														break;
 													}
@@ -922,10 +929,11 @@ public class ApiComparator {
 												while (typeRoot2 == null && index < providers.length) {
 													IApiComponent p = providers[index];
 													if (!p.equals(component2)) {
-														if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+														String id2 = p.getId();
+														if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
 															typeRoot2 = p.findTypeRoot(typeName);
 														} else {
-															typeRoot2 = p.findTypeRoot(typeName, p.getId());
+															typeRoot2 = p.findTypeRoot(typeName, id2);
 														}
 														if (typeRoot2 != null) {
 															providerApiDesc = p.getApiDescription();

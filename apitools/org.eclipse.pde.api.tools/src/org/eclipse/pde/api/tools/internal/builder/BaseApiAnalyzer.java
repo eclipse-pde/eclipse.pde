@@ -866,15 +866,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component
 	 */
 	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component) throws CoreException {
+		String id = component.getId();
 		if (DEBUG) {
-			System.out.println("comparing profiles ["+reference.getId()+"] and ["+component.getId()+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			System.out.println("comparing profiles ["+reference.getId()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		IApiTypeRoot classFile = null;
 		try {
-			if ("org.eclipse.swt".equals(component.getId())) { //$NON-NLS-1$
+			if ("org.eclipse.swt".equals(id)) { //$NON-NLS-1$
 				classFile = component.findTypeRoot(typeName);
 			} else {
-				classFile = component.findTypeRoot(typeName, component.getId());
+				classFile = component.findTypeRoot(typeName, id);
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -889,10 +890,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			while (classFile == null && index < providers.length) {
 				IApiComponent p = providers[index];
 				if (!p.equals(component)) {
-					if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+					String id2 = p.getId();
+					if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
 						classFile = p.findTypeRoot(typeName);
 					} else {
-						classFile = p.findTypeRoot(typeName, p.getId());
+						classFile = p.findTypeRoot(typeName, id2);
 					}
 					if (classFile != null) {
 						provider = p;
@@ -1351,10 +1353,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							IApiTypeRoot typeRoot = null;
 							IApiType type = null;
 							try {
-								if ("org.eclipse.swt".equals(component.getId())) { //$NON-NLS-1$
+								String id = component.getId();
+								if ("org.eclipse.swt".equals(id)) { //$NON-NLS-1$
 									typeRoot = component.findTypeRoot(typeName);
 								} else {
-									typeRoot = component.findTypeRoot(typeName, component.getId());
+									typeRoot = component.findTypeRoot(typeName, id);
 								}
 								if (typeRoot == null) {
 									String packageName = Util.getPackageName(typeName);
@@ -1364,10 +1367,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									while (typeRoot == null && index < providers.length) {
 										IApiComponent p = providers[index];
 										if (!p.equals(component)) {
-											if ("org.eclipse.swt".equals(p.getId())) { //$NON-NLS-1$
+											String id2 = p.getId();
+											if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
 												typeRoot = p.findTypeRoot(typeName);
 											} else {
-												typeRoot = p.findTypeRoot(typeName, p.getId());
+												typeRoot = p.findTypeRoot(typeName, id2);
 											}
 										}
 										index++;
