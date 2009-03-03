@@ -187,6 +187,14 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		super.generateDirectorTarget(false);
 	}
 
+	protected void generateMirrorTask(boolean assembling) {
+		super.generateMirrorTask(false);
+	}
+
+	protected void generateCleanupAssembly(boolean assembling) {
+		super.generateCleanupAssembly(false);
+	}
+
 	protected void generateArchivingTarget(boolean assembling) {
 		super.generateArchivingTarget(false);
 	}

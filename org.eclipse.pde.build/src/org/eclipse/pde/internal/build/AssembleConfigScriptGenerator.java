@@ -122,7 +122,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		generateMainBegin();
 		generateInitializationSteps();
 		if (BuildDirector.p2Gathering) {
-			generateDirectorCall();
+			generateP2Assembling();
 		} else {
 			generateGatherCalls();
 			generateProcessingCalls();
@@ -145,9 +145,63 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 	}
 
-	protected void generateDirectorCall() {
+	protected void generateP2Assembling() {
 		if (productFile != null)
 			script.printAntCallTask(TARGET_RUN_DIRECTOR, true, null);
+		else
+			script.printAntCallTask(TARGET_MIRROR_ARCHIVE, true, null);
+	}
+
+	protected void generateMirrorTask(boolean assembling) {
+		script.printTargetDeclaration(TARGET_MIRROR_ARCHIVE, null, null, null, null);
+		if (features.length + plugins.length > 0) {
+			script.printTab();
+			script.print("<p2.mirror "); //$NON-NLS-1$
+			script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
+			script.println(">"); //$NON-NLS-1$
+			script.printTab();
+			script.print("\t<destination "); //$NON-NLS-1$
+			script.printAttribute("location", "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
+			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
+			script.printAttribute("append", Boolean.toString(!assembling), true); //$NON-NLS-1$
+			script.printAttribute("kind", "metadata", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.println("/>"); //$NON-NLS-1$
+			script.printTab();
+			script.print("\t<destination "); //$NON-NLS-1$
+			script.printAttribute("location", "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
+			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
+			script.printAttribute("append", Boolean.toString(!assembling), true); //$NON-NLS-1$
+			script.printAttribute("kind", "artifact", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.println("/>"); //$NON-NLS-1$
+			script.printTab();
+			script.print("\t<slicingOptions "); //$NON-NLS-1$
+			script.printAttribute("platformFilter", configInfo.toString(","), true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("followStrict", TRUE, true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
+
+			for (int i = 0; i < plugins.length; i++) {
+				BundleDescription plugin = plugins[i];
+				script.printTab();
+				script.print("\t<iu "); //$NON-NLS-1$
+				script.printAttribute(ID, plugin.getSymbolicName(), true);
+				script.printAttribute(VERSION, plugin.getVersion().toString(), true);
+				script.println("/>"); //$NON-NLS-1$
+			}
+
+			for (int i = 0; i < features.length; i++) {
+				BuildTimeFeature feature = features[i];
+				script.printTab();
+				script.print("\t<iu "); //$NON-NLS-1$
+				script.printAttribute(ID, feature.getId() + ".feature.group", true); //$NON-NLS-1$
+				script.printAttribute(VERSION, feature.getVersion(), true);
+				script.println("/>"); //$NON-NLS-1$
+			}
+			script.println("</p2.mirror>"); //$NON-NLS-1$
+		}
+		script.printTargetEnd();
+		script.println();
 	}
 
 	protected void generateDirectorTarget(boolean assembling) {
@@ -163,6 +217,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printAntTask(Utils.getPropertyFormat(PROPERTY_GENERIC_TARGETS), null, TARGET_RUN_DIRECTOR, null, TRUE, parameters);
 		script.println();
 		script.printTargetEnd();
+		script.println();
 	}
 
 	private void generateProcessingCalls() {
@@ -171,7 +226,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateArchivingCalls() {
-		if (!BuildDirector.p2Gathering || productFile != null)
+		if (!BuildDirector.p2Gathering || productFile != null || (features.length + plugins.length > 0))
 			script.printAntCallTask(TARGET_ASSEMBLE_ARCHIVE, true, null);
 	}
 
@@ -180,9 +235,17 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateMainEnd() {
+		script.printAntCallTask(TARGET_CLEANUP_ASSEMBLY, true, null);
+		script.printTargetEnd();
+		script.println();
+	}
+
+	protected void generateCleanupAssembly(boolean assembling) {
+		script.printTargetDeclaration(TARGET_CLEANUP_ASSEMBLY, null, null, assembling ? PROPERTY_RUN_PACKAGER : null, null);
 		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
+		script.println();
 	}
 
 	/**
@@ -202,7 +265,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateArchivingTarget(boolean assembling) {
-		script.printTargetDeclaration(TARGET_ASSEMBLE_ARCHIVE, null, null, assembling && BuildDirector.p2Gathering ? PROPERTY_RUN_PACKAGER : null, null);
+		script.printTargetDeclaration(TARGET_ASSEMBLE_ARCHIVE, null, null, (assembling && BuildDirector.p2Gathering) ? PROPERTY_RUN_PACKAGER : null, null);
 		Map properties = new HashMap();
 		properties.put(PROPERTY_ROOT_FOLDER, rootFolder);
 		printCustomAssemblyAntCall(PROPERTY_PRE + "archive", properties); //$NON-NLS-1$
@@ -531,13 +594,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			generateGatherSourceTarget();
 		generatePostProcessingTarget();
 		generateArchivingTarget(true);
-
+		generateCleanupAssembly(true);
 		if (FORMAT_TAR.equalsIgnoreCase(archiveFormat))
 			generateGZipTarget(true);
 
 		generateCustomAssemblyTarget();
 		generateMetadataTarget();
 		generateDirectorTarget(true);
+		generateMirrorTask(true);
 
 		script.printProjectEnd();
 		script.close();
@@ -659,6 +723,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateZipTarget() {
 		final int parameterSize = 15;
 		List parameters = new ArrayList(parameterSize + 1);
+
+		if (BuildDirector.p2Gathering) {
+			parameters.add(Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX));
+			createZipExecCommand(parameters);
+			return;
+		}
+
 		for (int i = 0; i < plugins.length; i++) {
 			parameters.add(Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shapeAdvisor.getFinalShape(plugins[i])[0]);
 			if (i % parameterSize == 0) {
@@ -727,8 +798,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 		parameters.clear();
 		String tarArgs = assembling ? "-cvf '" : "-rvf '"; //$NON-NLS-1$//$NON-NLS-2$
-		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
-		script.printExecTask("tar", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
+		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + ((BuildDirector.p2Gathering && productFile == null) ? "." : Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX)) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
+		String folder = (BuildDirector.p2Gathering && productFile == null) ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) : Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP);
+		script.printExecTask("tar", folder, parameters, null); //$NON-NLS-1$ 
 
 		script.printAntCallTask(TARGET_GZIP_RESULTS, true, null);
 
@@ -744,7 +816,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		if (BuildDirector.p2Gathering) {
 			//TODO permissions
-			fileSets.add(new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), false, null, "**/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null)); //$NON-NLS-1$
+			fileSets.add(new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), false, null, "**/**", null, null, null, productFile != null ? Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) : null, null, null)); //$NON-NLS-1$
 		} else {
 			for (int i = 0; i < plugins.length; i++) {
 				Object[] shape = shapeAdvisor.getFinalShape(plugins[i]);
@@ -822,30 +894,32 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	//TODO this code andn the generateAntZipTarget() should be refactored using a factory or something like that.
 	private void generateAntTarTarget() {
-		FileSet[] filesPlugins = new FileSet[plugins.length];
-		for (int i = 0; i < plugins.length; i++) {
-			Object[] shape = shapeAdvisor.getFinalShape(plugins[i]);
-			filesPlugins[i] = new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
+		List fileSets = new ArrayList();
+
+		if (BuildDirector.p2Gathering) {
+			fileSets.add(new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), false, null, "**/**", null, null, null, productFile != null ? Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) : null, null, null)); //$NON-NLS-1$
+		} else {
+			//FileSet[] filesPlugins = new FileSet[plugins.length];
+			for (int i = 0; i < plugins.length; i++) {
+				Object[] shape = shapeAdvisor.getFinalShape(plugins[i]);
+				fileSets.add(new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null));
+			}
+
+			for (int i = 0; i < features.length; i++) {
+				Object[] shape = shapeAdvisor.getFinalShape(features[i]);
+				fileSets.add(new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null));
+			}
+
+			if (rootFileProviders.size() > 0) {
+				FileSet[] permissionSets = generatePermissions(false);
+				fileSets.add(new TarFileSet(rootFolder, false, null, "**/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null)); //$NON-NLS-1$
+				fileSets.add(Arrays.asList(permissionSets));
+			}
 		}
-		if (plugins.length != 0)
-			script.printTarTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesPlugins);
-
-		FileSet[] filesFeatures = new FileSet[features.length];
-		for (int i = 0; i < features.length; i++) {
-			Object[] shape = shapeAdvisor.getFinalShape(features[i]);
-			filesFeatures[i] = new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null);
+		if (fileSets.size() > 0) {
+			FileSet[] sets = (FileSet[]) fileSets.toArray(new FileSet[fileSets.size()]);
+			script.printTarTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, sets);
 		}
-		if (features.length != 0)
-			script.printTarTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, filesFeatures);
-
-		if (rootFileProviders.size() == 0)
-			return;
-
-		FileSet[] permissionSets = generatePermissions(false);
-		FileSet[] rootFiles = new FileSet[permissionSets.length + 1];
-		System.arraycopy(permissionSets, 0, rootFiles, 1, permissionSets.length);
-		rootFiles[0] = new TarFileSet(rootFolder, false, null, "**/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$
-		script.printTarTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
 	}
 
 	public void setGenerateJnlp(boolean value) {

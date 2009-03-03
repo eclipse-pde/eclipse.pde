@@ -312,6 +312,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
+		if (include == null || include.indexOf("feature.xml") == -1) //$NON-NLS-1$
+			include = (include != null ? include + "," : "") + "feature.xml"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
 
 		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER));

@@ -377,8 +377,8 @@ public class P2Tests extends P2TestCase {
 
 		assertResourceFile(buildFolder, "outRepo/plugins/b_1.0.0/B.class");
 		assertResourceFile(buildFolder, "outRepo/plugins/a_1.0.0.jar");
-		assertResourceFile(buildFolder, "outRepo/artifacts.xml");
-		assertResourceFile(buildFolder, "outRepo/content.xml");
+		assertResourceFile(buildFolder, "outRepo/artifacts.jar");
+		assertResourceFile(buildFolder, "outRepo/content.jar");
 
 		//part 2, zipped repos
 		IFolder zipped = Utils.createFolder(buildFolder, "zipped");
@@ -394,8 +394,8 @@ public class P2Tests extends P2TestCase {
 
 		assertResourceFile(outRepo2, "plugins/b_1.0.0/B.class");
 		assertResourceFile(outRepo2, "plugins/a_1.0.0.jar");
-		assertResourceFile(outRepo2, "artifacts.xml");
-		assertResourceFile(outRepo2, "content.xml");
+		assertResourceFile(outRepo2, "artifacts.jar");
+		assertResourceFile(outRepo2, "content.jar");
 	}
 
 	public void testBug265564() throws Exception {

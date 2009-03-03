@@ -155,6 +155,10 @@ public class Utils {
 	}
 	
 	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
+		generateProduct(productFile, id, version, application, null, entryList, features, extra);
+	}
+	
+	static public void generateProduct(IFile productFile, String id, String version, String application, String launcher, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<product ");
 		if (id != null) {
@@ -178,7 +182,7 @@ public class Utils {
 		buffer.append(new Boolean(features).toString());
 		buffer.append("\">\n");
 		buffer.append("  <configIni use=\"default\"/>\n");
-		buffer.append("  <launcher name=\"eclipse\"/>");
+		buffer.append("  <launcher name=\"" + (launcher != null ? launcher : "eclipse") + "\"/>\n");
 		if (features) {
 			buffer.append("  <features>\n");
 			for (int i = 0; i < entryList.length; i++) {

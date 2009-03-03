@@ -42,6 +42,7 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_INDIVIDUAL_SOURCES = "gather.individual.sources"; //$NON-NLS-1$
 	public static final String TARGET_JAR_PROCESSING = "jar.processing"; //$NON-NLS-1$
 	public static final String TARGET_ASSEMBLE_ARCHIVE = "assemble.archive"; //$NON-NLS-1$
+	public static final String TARGET_CLEANUP_ASSEMBLY = "cleanup.assembly"; //$NON-NLS-1$
 	public static final String TARGET_COPY_SRC_INCLUDES = "copy.src.includes"; //$NON-NLS-1$
 	public static final String TARGET_INIT = "init"; //$NON-NLS-1$
 	public static final String TARGET_MAIN = "main"; //$NON-NLS-1$
@@ -66,6 +67,7 @@ public interface IXMLConstants {
 	public static final String TARGET_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
 	public static final String TARGET_P2_METADATA = "generate.p2.metadata"; //$NON-NLS-1$
 	public static final String TARGET_RUN_DIRECTOR = "runDirector"; //$NON-NLS-1$
+	public static final String TARGET_MIRROR_ARCHIVE = "mirrorArchive"; //$NON-NLS-1$
 
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$

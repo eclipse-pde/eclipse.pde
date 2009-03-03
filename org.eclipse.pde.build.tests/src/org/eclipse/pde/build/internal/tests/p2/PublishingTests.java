@@ -18,6 +18,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.osgi.util.ManifestElement;
@@ -355,37 +356,49 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
 
+		HashSet entries = new HashSet();
+
 		IInstallableUnit iu = getIU(repository, "a");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		iu = getIU(repository, "org.eclipse.team.cvs.ssh");
 		assertNotNull(iu);
+		entries.add("plugins/org.eclipse.team.cvs.ssh_" + iu.getVersion() + ".jar");
 		IFile file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.ssh_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
 
 		iu = getIU(repository, "org.eclipse.team.cvs.core");
 		assertNotNull(iu);
+		entries.add("plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
 		file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
 
 		iu = getIU(repository, "org.eclipse.cvs");
 		assertNotNull(iu);
+		entries.add("plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar");
 		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar");
 
 		iu = getIU(repository, "org.eclipse.team.cvs.ui");
 		assertNotNull(iu);
+		entries.add("plugins/org.eclipse.team.cvs.ui_" + iu.getVersion() + ".jar");
 		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ui_" + iu.getVersion() + ".jar");
 
 		iu = getIU(repository, "org.eclipse.team.cvs.ssh2");
 		assertNotNull(iu);
+		entries.add("plugins/org.eclipse.team.cvs.ssh2_" + iu.getVersion() + ".jar");
 		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ssh2_" + iu.getVersion() + ".jar");
 
 		iu = getIU(repository, "org.eclipse.cvs.feature.jar");
 		file = buildFolder.getFile("buildRepo/features/org.eclipse.cvs_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
+		entries.add("features/org.eclipse.cvs_" + iu.getVersion() + ".jar");
 		assertJarVerifies(file.getLocation().toFile());
+
+		entries.add("artifacts.xml");
+		entries.add("content.xml");
+		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", entries);
 	}
 
 	public void testPublish_Source_1() throws Exception {
@@ -486,5 +499,50 @@ public class PublishingTests extends P2TestCase {
 
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
+	}
+
+	public void testAssemblePackage() throws Exception {
+		IFolder buildFolder = newTest("publishAssemblePackage");
+
+		IFolder p = Utils.createFolder(buildFolder, "plugins/p");
+		Utils.writeBuffer(p.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
+		Utils.writeBuffer(p.getFile("src/b/B.java"), new StringBuffer("package b; public class B { public int i = 0; public void Foo(){}}"));
+		Utils.generateBundle(p, "p");
+
+		IFolder f = Utils.createFolder(buildFolder, "features/f");
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"p", "org.eclipse.osgi"});
+		Utils.writeBuffer(f.getFile("about.html"), new StringBuffer("about!\n"));
+		Utils.writeBuffer(f.getFile("rootFiles/license.html"), new StringBuffer("license"));
+		Properties properties = new Properties();
+		properties.put("bin.includes", "about.html, feature.xml");
+		properties.put("root", "rootFiles");
+		Utils.storeBuildProperties(f, properties);
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		if (Platform.getOS().equals("linux"))
+			properties.put("archivesFormat", "*,*,*-tar");
+		else
+			properties.put("archivesFormat", "*,*,*-antTar");
+		properties.put("p2.metadata.repo.name", "MyMeta");
+		properties.put("p2.metadata.repo.name", "MyArtifact");
+		properties.put("p2.compress", "true");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		IInstallableUnit osgi = getIU(repository, "org.eclipse.osgi");
+
+		IFile tar = buildFolder.getFile("I.TestBuild/f-TestBuild.tar.gz");
+		assertResourceFile(tar);
+		File untarred = new File(buildFolder.getLocation().toFile(), "untarred");
+		FileUtils.unzipFile(tar.getLocation().toFile(), untarred);
+
+		assertResourceFile(buildFolder, "untarred/plugins/org.eclipse.osgi_" + osgi.getVersion() + ".jar");
+		assertResourceFile(buildFolder, "untarred/plugins/p_1.0.0.jar");
+		assertResourceFile(buildFolder, "untarred/features/f_1.0.0.jar");
+		assertResourceFile(buildFolder, "untarred/artifacts.jar");
+		assertResourceFile(buildFolder, "untarred/content.jar");
 	}
 }
