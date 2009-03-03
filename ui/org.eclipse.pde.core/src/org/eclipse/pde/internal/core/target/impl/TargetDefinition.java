@@ -185,7 +185,11 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public IStatus resolve(IProgressMonitor monitor) {
 		IBundleContainer[] containers = getBundleContainers();
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, containers.length * 10);
+		int num = 0;
+		if (containers != null) {
+			num = containers.length;
+		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 10);
 		try {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
 			if (containers != null) {

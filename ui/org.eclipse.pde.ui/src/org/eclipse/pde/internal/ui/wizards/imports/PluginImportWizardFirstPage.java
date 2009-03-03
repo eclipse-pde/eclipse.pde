@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -56,7 +54,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private Button directoryButton;
 	private Button targetDefinitionButton;
 	private Combo targetDrop;
-	private java.util.List targetDefinitions;
+	private List targetDefinitions;
 	private Combo dropLocation;
 	private Button changeButton;
 
@@ -261,9 +259,31 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		changeButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_goToTarget, null);
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				ITargetDefinition selected = getTargetDefinition();
+				ITargetHandle handle = null;
+				if (selected != null) {
+					handle = selected.getHandle();
+				}
 				IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 				if (PDEPreferencesUtil.showPreferencePage(targetNode, getShell())) {
 					refreshTargetDropDown();
+					// reselect same target, if possible
+					int index = -1;
+					if (handle != null) {
+						for (int i = 0; i < targetDefinitions.size(); i++) {
+							ITargetHandle h = ((ITargetDefinition) targetDefinitions.get(i)).getHandle();
+							if (h.equals(handle)) {
+								index = i;
+								break;
+							}
+						}
+					}
+					if (index == -1 && targetDefinitions.size() > 0) {
+						index = 0;
+					}
+					if (index >= 0) {
+						targetDrop.select(index);
+					}
 					dropLocation.setText(TargetPlatform.getLocation());
 				}
 			}
@@ -494,7 +514,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				for (int i = 0; i < bundles.length; i++) {
 					IResolvedBundle bundle = bundles[i];
 					try {
-						all[i] = URIUtil.toURL(bundle.getBundleInfo().getLocation());
+						all[i] = new File(bundle.getBundleInfo().getLocation()).toURL();
 						if (bundle.isSourceBundle()) {
 							sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
 						}
@@ -558,12 +578,17 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	/**
-	 * Returns the selected target definition.
+	 * Returns the selected target definition or <code>null</code>
+	 * if there are none.
 	 * 
-	 * @return selected target definition
+	 * @return selected target definition or <code>null</code>
 	 */
 	private ITargetDefinition getTargetDefinition() {
-		return (ITargetDefinition) targetDefinitions.get(targetDrop.getSelectionIndex());
+		int index = targetDrop.getSelectionIndex();
+		if (index >= 0 && targetDefinitions.size() > 0) {
+			return (ITargetDefinition) targetDefinitions.get(targetDrop.getSelectionIndex());
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
