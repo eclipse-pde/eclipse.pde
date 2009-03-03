@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.comparator.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -1326,7 +1327,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
-		assertTrue("Not private", Util.isPrivate(child.getModifiers()));
+		assertTrue("Not private", Flags.isPrivate(child.getModifiers()));
 	}
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=228209
@@ -1877,7 +1878,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child));
-		assertTrue("Not protected", Util.isProtected(child.getModifiers()));
+		assertTrue("Not protected", Flags.isProtected(child.getModifiers()));
 		assertTrue("Not @extend restriction", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
