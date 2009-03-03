@@ -50,6 +50,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 		generateGatherBinPartsTarget();
 		generateCustomAssemblyTarget();
+		generateSigningTarget();
 		generateMetadataTarget();
 		generateEpilogue();
 		closeScript();
@@ -81,6 +82,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		}
 		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printProperty(PROPERTY_ASSEMBLY_TMP, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/tmp"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_SIGN, (signJars ? Boolean.TRUE : Boolean.FALSE).toString());
 		script.println();
 		generateCustomGatherMacro();
 	}
@@ -92,6 +94,13 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 	protected void generateMetadataCalls() {
 		script.printAntCallTask(TARGET_P2_METADATA, true, null);
+	}
+
+	protected void generateGatherCalls() {
+		super.generateGatherCalls();
+
+		script.printAntCallTask(TARGET_P2_SIGN_REPO, true, null);
+		script.println();
 	}
 
 	protected void generateBrandingCalls() {
@@ -116,6 +125,41 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			}
 		}
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + "/p2.branding", null, null); //$NON-NLS-1$
+		script.println();
+	}
+
+	protected void generateSigningTarget() {
+		script.printTargetDeclaration(TARGET_P2_SIGN_REPO, null, null, null, null);
+		if (signJars && plugins.length + features.length > 0) {
+			script.printTab();
+			script.print("<p2.process.artifacts"); //$NON-NLS-1$
+			script.printAttribute("repositoryPath", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
+			script.println(">"); //$NON-NLS-1$
+			script.printTab();
+			script.print("\t<sign"); //$NON-NLS-1$
+			script.printAttribute("keystore", Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE), true); //$NON-NLS-1$
+			script.printAttribute("storepass", Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS), true); //$NON-NLS-1$
+			script.printAttribute("keypass", Utils.getPropertyFormat(PROPERTY_SIGN_KEYPASS), true); //$NON-NLS-1$
+			script.printAttribute("alias", Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS), true); //$NON-NLS-1$
+			script.printAttribute("unsign", Utils.getPropertyFormat(PROPERTY_UNSIGN), true); //$NON-NLS-1$
+			script.print(" />\n"); //$NON-NLS-1$
+			for (int i = 0; i < plugins.length; i++) {
+				script.printTab();
+				script.print("\t<plugin"); //$NON-NLS-1$
+				script.printAttribute("id", plugins[i].getSymbolicName(), true); //$NON-NLS-1$
+				script.printAttribute("version", plugins[i].getVersion().toString(), true); //$NON-NLS-1$
+				script.print(" /> \n"); //$NON-NLS-1$
+			}
+			for (int i = 0; i < features.length; i++) {
+				script.printTab();
+				script.print("\t<feature"); //$NON-NLS-1$
+				script.printAttribute("id", features[i].getId(), true); //$NON-NLS-1$
+				script.printAttribute("version", features[i].getVersion(), true); //$NON-NLS-1$
+				script.print(" />\n"); //$NON-NLS-1$
+			}
+			script.println("</p2.process.artifacts>"); //$NON-NLS-1$
+		}
+		script.printTargetEnd();
 		script.println();
 	}
 

@@ -124,6 +124,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		p2ConfigGenerator.setProduct(productLocation);
 		p2ConfigGenerator.setBuildSiteFactory(siteFactory);
 		p2ConfigGenerator.initialize(directory, featureId);
+		p2ConfigGenerator.setSignJars(configScriptGenerator.isSigning());
 		p2ConfigGenerator.generate();
 
 		script.printTab();

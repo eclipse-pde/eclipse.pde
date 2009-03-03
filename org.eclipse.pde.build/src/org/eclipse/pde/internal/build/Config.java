@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.build;
 public class Config {
 
 	public static String ANY = "*"; //$NON-NLS-1$
-	private String ws;
-	private String os;
-	private String arch;
+	private final String ws;
+	private final String os;
+	private final String arch;
 
 	private static Config genericConfig; //singleton
 
@@ -94,6 +94,10 @@ public class Config {
 			newArch = value;
 
 		return newOs + separator + newWs + separator + newArch;
+	}
+
+	public String getPlatformFilter() {
+		return "(& (osgi.ws=" + ws + ") (osgi.os=" + os + ") (osgi.arch=" + arch + "))"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	public static Config genericConfig() {

@@ -42,12 +42,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 	private static final String PROPERTY_ELEMENT_NAME = "elementName"; //$NON-NLS-1$
 
-	private static final byte BUNDLE = 0;
-	private static final byte FEATURE = 1;
+	private static final byte BUNDLE_TYPE = 0;
+	private static final byte FEATURE_TYPE = 1;
 
 	protected String PROPERTY_ECLIPSE_PLUGINS = "eclipse.plugins"; //$NON-NLS-1$
 	protected String PROPERTY_ECLIPSE_FEATURES = "eclipse.features"; //$NON-NLS-1$
-	private boolean signJars;
+	protected boolean signJars;
 	private boolean generateJnlp;
 
 	private String archiveFormat;
@@ -241,7 +241,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateCleanupAssembly(boolean assembling) {
-		script.printTargetDeclaration(TARGET_CLEANUP_ASSEMBLY, null, null, assembling ? PROPERTY_RUN_PACKAGER : null, null);
+		String condition = (FORMAT_ANTTAR.equalsIgnoreCase(archiveFormat) && assembling) ? PROPERTY_RUN_PACKAGER : null;
+		script.printTargetDeclaration(TARGET_CLEANUP_ASSEMBLY, null, null, condition, null);
 		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
@@ -505,12 +506,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_JAR_PROCESSING, null, null, null, null);
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
-			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), (String) shapeAdvisor.getFinalShape(plugin)[1], BUNDLE);
+			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), (String) shapeAdvisor.getFinalShape(plugin)[1], BUNDLE_TYPE);
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
-			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) shapeAdvisor.getFinalShape(feature)[1], FEATURE);
+			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) shapeAdvisor.getFinalShape(feature)[1], FEATURE_TYPE);
 		}
 		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_JARUP, null);
 		script.printTargetEnd();
@@ -553,7 +554,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (!signJars)
 			return;
 		Map properties = new HashMap(2);
-		properties.put(PROPERTY_SOURCE, type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
+		properties.put(PROPERTY_SOURCE, type == BUNDLE_TYPE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
 		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
 		script.printAntCallTask(TARGET_JARSIGNING, true, properties);
 	}
@@ -573,17 +574,17 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private void generateJNLPCall(String name, String version, byte type) {
 		if (generateJnlp == false)
 			return;
-		if (type != FEATURE)
+		if (type != FEATURE_TYPE)
 			return;
 
-		String dir = type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
+		String dir = type == BUNDLE_TYPE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
 		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
 		script.println("<eclipse.jnlpGenerator feature=\"" + AntScript.getEscaped(location) + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\" generateOfflineAllowed=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_GENOFFLINE) + "\" configInfo=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CONFIGS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	}
 
 	private void generateJarUpCall(String name, String version, byte type) {
 		Map properties = new HashMap(2);
-		properties.put(PROPERTY_SOURCE, type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
+		properties.put(PROPERTY_SOURCE, type == BUNDLE_TYPE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
 		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
 		script.printAntCallTask(TARGET_JARUP, true, properties);
 	}
@@ -928,6 +929,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	public void setSignJars(boolean value) {
 		signJars = value;
+	}
+
+	public boolean isSigning() {
+		return signJars;
 	}
 
 	public void setProduct(String value) {

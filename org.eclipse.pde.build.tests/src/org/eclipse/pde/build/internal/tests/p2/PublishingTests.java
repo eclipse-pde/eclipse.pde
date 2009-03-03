@@ -545,4 +545,136 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "untarred/artifacts.jar");
 		assertResourceFile(buildFolder, "untarred/content.jar");
 	}
+	
+	public void testPublishAndRunSimpleProduct() throws Exception {
+		IFolder buildFolder = newTest("PublishAndRunSimpleProduct");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
+		copyExecutableFeature(delta, executableFeature);
+		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
+		properties.remove("custom");
+		Utils.storeBuildProperties(executableFeature, properties);
+		
+		//headless rcp hello world
+		IFolder headless = Utils.createFolder(buildFolder, "plugins/headless");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("package rcp.headless;													\n");
+		buffer.append("import org.eclipse.equinox.app.IApplication;								\n");
+		buffer.append("import org.eclipse.equinox.app.IApplicationContext;						\n");
+		buffer.append("public class Application implements IApplication {						\n");
+		buffer.append("   public Object start(IApplicationContext context) throws Exception {	\n");
+		buffer.append("      System.out.println(\"Hello RCP World!\");							\n");
+		buffer.append("      return IApplication.EXIT_OK;										\n");
+		buffer.append("   }																		\n");
+		buffer.append("   public void stop() {													\n");
+		buffer.append("   }																		\n");
+		buffer.append("}																		\n");
+		Utils.writeBuffer(headless.getFile("src/headless/Application.java"), buffer);
+		
+		buffer = new StringBuffer();
+		buffer.append("<plugin>																			\n");
+		buffer.append("   <extension id=\"application\" point=\"org.eclipse.core.runtime.applications\">\n");
+		buffer.append("      <application>																\n");
+		buffer.append("         <run class=\"headless.Application\"/>									\n");
+		buffer.append("      </application>																\n");
+		buffer.append("   </extension>																	\n");
+		buffer.append("</plugin>																		\n");
+		Utils.writeBuffer(headless.getFile("plugin.xml"), buffer);
+		
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Require-Bundle"), "org.eclipse.core.runtime");
+		additionalAttributes.put(new Attributes.Name("Bundle-ActivationPolicy"), "lazy");
+		Utils.generateBundleManifest(headless, "headless", "1.0.0", additionalAttributes);
+		properties = new Properties();
+		properties.put("bin.includes", "META-INF/, ., plugin.xml");
+		Utils.generatePluginBuildProperties(headless, properties);
+		
+		IFile productFile = buildFolder.getFile("headless.product");
+		String [] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", "org.eclipse.equinox.app", "org.eclipse.equinox.common", "org.eclipse.equinox.preferences", "org.eclipse.equinox.registry", "org.eclipse.osgi"};
+		Utils.generateProduct(productFile, "headless.product", "1.0.0", "headless.application", "headless", bundles, false, null);
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		String config = Platform.getWS() + ',' + Platform.getOS() + ',' + Platform.getOSArch();
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath() + "/plugins");
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("configs", config);
+		properties.put("archivesFormat", config + "-folder");
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+	}
+	
+	public void testBug265726() throws Exception {
+		IFolder buildFolder = newTest("265726");
+
+		IFolder p = Utils.createFolder(buildFolder, "plugins/p");
+		Utils.writeBuffer(p.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
+		Utils.writeBuffer(p.getFile("src/b/B.java"), new StringBuffer("package b; public class B { public int i = 0; public void Foo(){}}"));
+		Utils.generateBundle(p, "p");
+
+		IFolder f = Utils.createFolder(buildFolder, "features/f");
+		Utils.generateFeature(buildFolder, "f", new String [] { "org.eclipse.rcp" }, new String[] {"p"});
+		Utils.writeBuffer(f.getFile("about.html"), new StringBuffer("about!\n"));
+		Properties properties = new Properties();
+		properties.put("bin.includes", "about.html, feature.xml");
+		Utils.storeBuildProperties(f, properties);
+		
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+		assertNotNull(resource);
+		String keystorePath = FileLocator.toFileURL(resource).getPath();
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("p2.gathering", "true");
+		properties.put("signJars", "true");
+		properties.put("sign.alias", "pde.build");
+		properties.put("sign.keystore", keystorePath);
+		properties.put("sign.storepass", "storepass");
+		properties.put("sign.keypass", "keypass");
+		properties.put("jarProcessor.unsign", "true");
+		properties.put("filteredDependencyCheck", "true");
+		
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString());
+		assertNotNull(repository);
+
+		File buildFile = buildFolder.getLocation().toFile();
+		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/p_1.0.0.jar"), true);
+		assertJarVerifies(new File(buildFile, "tmp/eclipse/features/f_1.0.0.jar"), true);
+		
+		HashSet entries = new HashSet();
+		entries.add("META-INF/PDE_BUIL.SF");
+		entries.add("META-INF/PDE_BUIL.DSA");
+		
+		IInstallableUnit iu = getIU(repository, "com.ibm.icu");
+		assertNotNull(iu);
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/com.ibm.icu_" + iu.getVersion() + ".jar", entries);
+		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/com.ibm.icu_" + iu.getVersion() + ".jar"));
+		iu = getIU(repository, "org.eclipse.core.commands");
+		assertNotNull(iu);
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.core.commands_" + iu.getVersion() + ".jar", entries);
+		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/org.eclipse.core.commands_" + iu.getVersion() + ".jar"));
+		iu = getIU(repository, "org.eclipse.equinox.app");
+		assertNotNull(iu);
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.equinox.app_" + iu.getVersion() + ".jar", entries);
+		iu = getIU(repository, "org.eclipse.help");
+		assertNotNull(iu);
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.help_" + iu.getVersion() + ".jar", entries);
+		iu = getIU(repository, "org.eclipse.swt");
+		assertNotNull(iu);
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.swt_" + iu.getVersion() + ".jar", entries);
+		iu = getIU(repository, "org.eclipse.ui");
+		assertNotNull(iu);
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.ui_" + iu.getVersion() + ".jar", entries);
+	}
 }
