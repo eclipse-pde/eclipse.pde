@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.tasks;
 import java.io.File;
 
 import org.apache.tools.ant.BuildException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.search.ApiUseReportConverter;
 
 /**
@@ -94,10 +95,9 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			ApiUseReportConverter.setDebug(this.debug);
 			converter.convert(this.xsltFileLocation, null);
 			File index = converter.getReportIndex();
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(Messages.ApiUseReportConversionTask_conversion_complete);
-			buffer.append(index.getAbsolutePath());
-			System.out.println(buffer.toString());
+			System.out.println(NLS.bind(
+					Messages.ApiUseReportConversionTask_conversion_complete,
+					index.getAbsolutePath()));
 		}
 		catch(Exception e) {
 			throw new BuildException(e);
