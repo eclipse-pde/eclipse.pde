@@ -30,8 +30,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -68,6 +71,42 @@ public class DSReferenceSection extends TableSection implements
 	private Action fRemoveAction;
 	private Action fAddAction;
 	private Action fEditAction;
+
+	class ReferenceLabelProvider extends StyledCellLabelProvider {
+
+		private DSLabelProvider labelProvider = new DSLabelProvider();
+
+		public void update(ViewerCell cell) {
+			final Object element = cell.getElement();
+			IDSReference reference = (IDSReference) element;
+			String name = reference.getReferenceName();
+			StyledString styledString = new StyledString(name);
+
+			String bind = reference.getReferenceBind();
+			String unbind = reference.getReferenceUnbind();
+			bind = (bind == null ? "<none>" : bind); //$NON-NLS-1$
+			unbind = (unbind == null ? "<none>" : unbind); //$NON-NLS-1$
+			styledString
+					.append(
+							" [" + bind + "," + unbind + "]", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+			String target = reference.getReferenceTarget();
+			if (target != null)
+				styledString.append(" " + target, //$NON-NLS-1$
+						StyledString.QUALIFIER_STYLER);
+
+			cell.setText(styledString.toString());
+			cell.setStyleRanges(styledString.getStyleRanges());
+			cell.setImage(labelProvider.getImage(reference));
+			super.update(cell);
+		}
+
+		public void dispose() {
+			super.dispose();
+			labelProvider.dispose();
+		}
+
+	}
 
 	class ContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
@@ -118,7 +157,7 @@ public class DSReferenceSection extends TableSection implements
 		fReferencesTable = tablePart.getTableViewer();
 
 		fReferencesTable.setContentProvider(new ContentProvider());
-		fReferencesTable.setLabelProvider(new DSLabelProvider());
+		fReferencesTable.setLabelProvider(new ReferenceLabelProvider());
 		fReferencesTable.addDoubleClickListener(this);
 
 		makeActions();
@@ -130,6 +169,7 @@ public class DSReferenceSection extends TableSection implements
 		}
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+		updateTitle();
 	}
 
 	public void dispose() {
