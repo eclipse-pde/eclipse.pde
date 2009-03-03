@@ -257,15 +257,12 @@ public class ProjectApiDescription extends ApiDescription {
 		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
 		void persistXML(Document document, Element parent) {
-			if (VisibilityModifiers.isAPI(this.visibility)
-					|| this.visibility == VISIBILITY_INHERITED) {
-				Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
-				type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
-				persistAnnotations(type);
-				type.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
-				persistChildren(document, type, children);
-				parent.appendChild(type);
-			}
+			Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
+			type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
+			persistAnnotations(type);
+			type.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
+			persistChildren(document, type, children);
+			parent.appendChild(type);
 		}
 		
 		/* (non-Javadoc)
