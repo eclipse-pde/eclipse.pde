@@ -10,24 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.tasks;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -36,7 +25,6 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -49,9 +37,9 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public abstract class CommonUtilsTask extends Task {
 	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
 	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
-	protected static final String ISO_8859_1 = "ISO-8859-1"; //$NON-NLS-1$
+	public static final String ISO_8859_1 = "ISO-8859-1"; //$NON-NLS-1$
 	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
-	protected static final String REGULAR_EXPRESSION_START = "R:"; //$NON-NLS-1$
+	public static final String REGULAR_EXPRESSION_START = "R:"; //$NON-NLS-1$
 
 	protected static final String CURRENT = "currentBaseline"; //$NON-NLS-1$
 	protected static final String CURRENT_BASELINE_NAME = "current_baseline"; //$NON-NLS-1$
@@ -65,39 +53,6 @@ public abstract class CommonUtilsTask extends Task {
 	protected String excludeListLocation;
 	
 	protected String reportLocation;
-	
-	/**
-	 * Default comparator that orders {@link IApiComponent} by their ID 
-	 */
-	protected static final Comparator componentsorter = new Comparator(){
-		public int compare(Object o1, Object o2) {
-			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-				try {
-					return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
-				}
-				catch (CoreException ce) {}
-			}
-			if(o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
-				return ((SkippedComponent)o1).getComponentId().compareTo(((SkippedComponent)o2).getComponentId());
-			}
-			if(o1 instanceof String && o2 instanceof String) {
-				return ((String)o1).compareTo((String)o2);
-			}
-			return -1;
-		}
-	};
-	
-	/**
-	 * Default comparator that orders {@link File}s by their name
-	 */
-	protected static final Comparator filesorter = new Comparator(){
-		public int compare(Object o1, Object o2) {
-			if(o1 instanceof File && o2 instanceof File) {
-				return ((File)o1).getName().compareTo(((File)o2).getName());
-			}
-			return 0;
-		}
-	};
 	
 	/**
 	 * Creates a baseline with the given name and ee file location in the given directory
@@ -286,96 +241,7 @@ public abstract class CommonUtilsTask extends Task {
 	 * @return the set of project names to be excluded
 	 */
 	protected static Set initializeExcludedElement(String excludeListLocation) {
-		return initializeRegexExcludeList(excludeListLocation, null);
-	}
-	
-	/**
-	 * Initializes the exclude set with regex support. The API baseline is used to determine which
-	 * bundles should be added to the list when processing regex expressions.
-	 * 
-	 * @param location
-	 * @param baseline
-	 * @return the list of bundles to be excluded
-	 */
-	protected static Set initializeRegexExcludeList(String location, IApiBaseline baseline) {
-		HashSet list = new HashSet();
-		if (location != null) {
-			File file = new File(location);
-			if (file.exists()) {
-				InputStream stream = null;
-				char[] contents = null;
-				try {
-					stream = new BufferedInputStream(new FileInputStream(file));
-					contents = Util.getInputStreamAsCharArray(stream, -1, CommonUtilsTask.ISO_8859_1);
-				} 
-				catch (FileNotFoundException e) {} 
-				catch (IOException e) {} 
-				finally {
-					if (stream != null) {
-						try {
-							stream.close();
-						} catch (IOException e) {}
-					}
-				}
-				if (contents != null) {
-					LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
-					String line = null;
-					try {
-						while ((line = reader.readLine()) != null) {
-							if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
-								continue; 
-							}
-							if(line.startsWith(REGULAR_EXPRESSION_START)) {
-								if(baseline != null) {
-									collectRegexIds(line, list, baseline.getApiComponents());
-								}
-							}
-							else {
-								list.add(line);
-							}
-						}
-					} 
-					catch (IOException e) {} 
-					finally {
-						try {
-							reader.close();
-						} catch (IOException e) {}
-					}
-				}
-			}
-		}
-		return list;
-	}
-
-	/**
-	 * Collects the set of component ids that match a given regex in the exclude file
-	 * @param line
-	 * @param list
-	 * @param components
-	 */
-	private static void collectRegexIds(String line, Set list, IApiComponent[] components) {
-		if (line.startsWith(REGULAR_EXPRESSION_START)) {
-			String componentname = line;
-			// regular expression
-			componentname = componentname.substring(2);
-			Pattern pattern = null;
-			try {
-				pattern = Pattern.compile(componentname);
-				String componentid = null;
-				for (int j = 0, max2 = components.length; j < max2; j++) {
-					componentid = components[j].getId();
-					Matcher matcher = pattern.matcher(componentid);
-					if (matcher.matches()) {
-						list.add(componentid);
-					}
-				}
-			} catch (PatternSyntaxException e) {
-				throw new BuildException(Messages.bind(
-						Messages.comparison_invalidRegularExpression,
-						componentname));
-			}
-			catch(CoreException ce) {}
-		}
+		return Util.initializeRegexExcludeList(excludeListLocation, null);
 	}
 	
 	/**

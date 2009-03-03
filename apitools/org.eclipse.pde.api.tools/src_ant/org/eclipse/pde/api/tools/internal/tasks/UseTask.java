@@ -98,7 +98,7 @@ public class UseTask extends CommonUtilsTask {
 	 * @throws CoreException
 	 */
 	protected IApiElement[] getScope(IApiBaseline baseline) throws CoreException {
-		TreeSet scope = new TreeSet(CommonUtilsTask.componentsorter);
+		TreeSet scope = new TreeSet(Util.componentsorter);
 		if(baseline != null) {
 			IApiComponent[] components = baseline.getApiComponents();
 			boolean isapibundle = false;
@@ -127,7 +127,7 @@ public class UseTask extends CommonUtilsTask {
 	 */
 	protected Set getBaselineIds(IApiBaseline baseline) throws CoreException {
 		IApiComponent[] components = baseline.getApiComponents();
-		TreeSet comps = new TreeSet(componentsorter);
+		TreeSet comps = new TreeSet(Util.componentsorter);
 		for (int i = 0; i < components.length; i++) {
 			if(!components[i].isSystemComponent()) {
 				if(Util.isApiToolsComponent(components[i]) || this.includenonapi) {
@@ -251,8 +251,8 @@ public class UseTask extends CommonUtilsTask {
 			start = System.currentTimeMillis();
 			System.out.println("Preparing exclude set..."); //$NON-NLS-1$
 		}
-		this.excludeset = CommonUtilsTask.initializeRegexExcludeList(this.excludeListLocation, baseline);
-		this.notsearched = new TreeSet(componentsorter);
+		this.excludeset = Util.initializeRegexExcludeList(this.excludeListLocation, baseline);
+		this.notsearched = new TreeSet(Util.componentsorter);
 		if(this.excludeset != null) {
 			for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
 				this.notsearched.add(new SkippedComponent((String) iter.next(), false, true, false));

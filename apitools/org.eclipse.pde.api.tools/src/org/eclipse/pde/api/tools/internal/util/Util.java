@@ -24,7 +24,9 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -34,6 +36,7 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,6 +45,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -109,6 +115,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.eclipse.pde.api.tools.internal.tasks.CommonUtilsTask;
+import org.eclipse.pde.api.tools.internal.tasks.Messages;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
@@ -2097,4 +2106,127 @@ public final class Util {
 		}
 		return resource;
 	}
+
+	/**
+	 * Default comparator that orders {@link IApiComponent} by their ID 
+	 */
+	public static final Comparator componentsorter = new Comparator(){
+		public int compare(Object o1, Object o2) {
+			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
+				try {
+					return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
+				}
+				catch (CoreException ce) {}
+			}
+			if(o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
+				return ((SkippedComponent)o1).getComponentId().compareTo(((SkippedComponent)o2).getComponentId());
+			}
+			if(o1 instanceof String && o2 instanceof String) {
+				return ((String)o1).compareTo((String)o2);
+			}
+			return -1;
+		}
+	};
+
+	/**
+	 * Initializes the exclude set with regex support. The API baseline is used to determine which
+	 * bundles should be added to the list when processing regex expressions.
+	 * 
+	 * @param location
+	 * @param baseline
+	 * @return the list of bundles to be excluded
+	 */
+	public static Set initializeRegexExcludeList(String location, IApiBaseline baseline) {
+		HashSet list = new HashSet();
+		if (location != null) {
+			File file = new File(location);
+			if (file.exists()) {
+				InputStream stream = null;
+				char[] contents = null;
+				try {
+					stream = new BufferedInputStream(new FileInputStream(file));
+					contents = getInputStreamAsCharArray(stream, -1, CommonUtilsTask.ISO_8859_1);
+				} 
+				catch (FileNotFoundException e) {} 
+				catch (IOException e) {} 
+				finally {
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (IOException e) {}
+					}
+				}
+				if (contents != null) {
+					LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
+					String line = null;
+					try {
+						while ((line = reader.readLine()) != null) {
+							if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
+								continue; 
+							}
+							if(line.startsWith(CommonUtilsTask.REGULAR_EXPRESSION_START)) {
+								if(baseline != null) {
+									Util.collectRegexIds(line, list, baseline.getApiComponents());
+								}
+							}
+							else {
+								list.add(line);
+							}
+						}
+					} 
+					catch (IOException e) {} 
+					catch (Exception e) {} 
+					finally {
+						try {
+							reader.close();
+						} catch (IOException e) {}
+					}
+				}
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * Collects the set of component ids that match a given regex in the exclude file
+	 * @param line
+	 * @param list
+	 * @param components
+	 */
+	public static void collectRegexIds(String line, Set list, IApiComponent[] components) throws Exception {
+		if (line.startsWith(CommonUtilsTask.REGULAR_EXPRESSION_START)) {
+			String componentname = line;
+			// regular expression
+			componentname = componentname.substring(2);
+			Pattern pattern = null;
+			try {
+				pattern = Pattern.compile(componentname);
+				String componentid = null;
+				for (int j = 0, max2 = components.length; j < max2; j++) {
+					componentid = components[j].getId();
+					Matcher matcher = pattern.matcher(componentid);
+					if (matcher.matches()) {
+						list.add(componentid);
+					}
+				}
+			} catch (PatternSyntaxException e) {
+				throw new Exception(Messages.bind(
+						Messages.comparison_invalidRegularExpression,
+						componentname));
+			}
+			catch(CoreException ce) {}
+		}
+	}
+
+	/**
+	 * Default comparator that orders {@link File}s by their name
+	 */
+	public static final Comparator filesorter = new Comparator(){
+		public int compare(Object o1, Object o2) {
+			if(o1 instanceof File && o2 instanceof File) {
+				return ((File)o1).getName().compareTo(((File)o2).getName());
+			}
+			return 0;
+		}
+	};
 }

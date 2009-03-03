@@ -80,87 +80,15 @@ public class Messages extends NLS {
 	public static String api_generation_invalidBinaryLocation;
 
 	public static String ApiUseDBTask_access_denied_to_class;
-
 	public static String ApiUseDBTask_class_could_not_be_instantaited;
-
 	public static String ApiUseDBTask_class_could_not_be_loaded;
-
-	public static String ApiUseDBTask_connection_could_not_be_established;
-
-	public static String ApiUseDBTask_driver_class_not_found;
-
-	public static String ApiUseDBTask_driver_instantiation_exception;
-
-	public static String ApiUseDBTask_illegal_access_loading_driver;
-
 	public static String ApiUseDBTask_must_provide_reporter_class;
 
-	public static String ApiUseDBTask_sql_connection_exception;
-
-	public static String ApiUseReportConversionTask_api;
-
-	public static String ApiUseReportConversionTask_back_to_bundle_index;
-
-	public static String ApiUseReportConversionTask_bundle_list_header;
-
-	public static String ApiUseReportConversionTask_coreexception_writing_html_file;
-
-	public static String ApiUseReportConversionTask_field;
-
-	public static String ApiUseReportConversionTask_fragment_permissible;
-
-	public static String ApiUseReportConversionTask_internal;
-
-	public static String ApiUseReportConversionTask_internal_permissable;
-
-	public static String ApiUseReportConversionTask_method;
-
-	public static String ApiUseReportConversionTask_no_bundles;
-
-	public static String ApiUseReportConversionTask_no_xslt_found;
-
-	public static String ApiUseReportConversionTask_not_searched_component_list;
-
-	public static String ApiUseReportConversionTask_origin_html_header;
-
-	public static String ApiUseReportConversionTask_origin_summary_count_link;
-
-	public static String ApiUseReportConversionTask_origin_summary_header;
-
-	public static String ApiUseReportConversionTask_origin_summary_table_entry;
-
-	public static String ApiUseReportConversionTask_origin_summary_table_entry_bold;
-
-	public static String ApiUseReportConversionTask_other;
-
-	public static String ApiUseReportConversionTask_referee_index_entry;
-
-	public static String ApiUseReportConversionTask_referee_index_header;
-
-	public static String ApiUseReportConversionTask_search_html_index_file_header;
-
-	public static String ApiUseReportConversionTask_table_end;
-
-	public static String ApiUseReportConversionTask_that_were_not_searched;
-
-	public static String ApiUseReportConversionTask_type;
-
-	public static String ApiUseReportConversionTask_visibility;
-
-	public static String ApiUseReportConversionTask_with_no_api_description;
-
-	public static String ApiUseReportConversionTask_xslt_file_not_valid;
-
+	public static String ApiUseReportConversionTask_conversion_complete;
 	public static String ApiUseTask_missing_baseline_argument;
-
 	public static String ApiUseTask_missing_report_location;
-
 	public static String ApiUseTask_search_engine_problem;
-
 	public static String comparison_invalidRegularExpression;
-
-	public static String DatabaseTask_missing_db_connect_arguments;
-
 	public static String UseTask_no_scan_both_types_not_searched_for;
 
 	static {
