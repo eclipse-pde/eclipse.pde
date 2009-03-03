@@ -290,8 +290,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			IResolvedBundle[] resolved = fTarget.getBundles();
 			for (int i = 0; i < resolved.length; i++) {
-				infos.add(resolved[i].getBundleInfo());
-				included.add(resolved[i].getBundleInfo());
+				if (resolved[i].getStatus().getSeverity() != IStatus.ERROR) {
+					infos.add(resolved[i].getBundleInfo());
+					included.add(resolved[i].getBundleInfo());
+				}
 			}
 
 			// Compute missing bundles (preference need to know disabled/missing bundles)
