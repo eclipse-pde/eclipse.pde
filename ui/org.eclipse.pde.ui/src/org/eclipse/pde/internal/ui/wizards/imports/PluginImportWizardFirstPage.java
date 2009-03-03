@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -427,7 +429,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void validateDropLocation() {
 		if (importTargetDefinitionButton.getSelection() && targetDefinitionCombo.getText().length() == 0) {
 			setPageComplete(false);
-			setErrorMessage("A target definition must be selected");
+			setErrorMessage(PDEUIMessages.PluginImportWizardFirstPage_2);
 			return;
 		}
 		if (importDirectoryButton.getSelection()) {
