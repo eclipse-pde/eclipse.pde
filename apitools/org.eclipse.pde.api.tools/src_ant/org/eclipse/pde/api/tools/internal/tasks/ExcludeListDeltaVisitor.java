@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
@@ -98,7 +99,7 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 			switch(delta.getKind()) {
 				case IDelta.ADDED :
 					int modifiers = delta.getModifiers();
-					if (Util.isPublic(modifiers)) {
+					if (Flags.isPublic(modifiers)) {
 						// if public, we always want to check @since tags
 						switch(delta.getFlags()) {
 							case IDelta.TYPE_MEMBER :
@@ -114,7 +115,7 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 								}
 								break;
 						}
-					} else if (Util.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
+					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
 						// if protected, we only want to check @since tags if the enclosing class can be subclassed
 						switch(delta.getFlags()) {
 							case IDelta.TYPE_MEMBER :

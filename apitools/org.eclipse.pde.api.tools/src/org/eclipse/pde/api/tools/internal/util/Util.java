@@ -78,6 +78,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
@@ -1197,15 +1198,6 @@ public final class Util {
 		String type = index == -1 ? fullyQualifiedName : fullyQualifiedName.substring(index + 1);
 		return Factory.packageDescriptor(pkg).getType(type);
 	}
-	
-	public static boolean isAbstract(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_ABSTRACT) != 0;
-	}
-	
-	public static boolean isAnnotation(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_ANNOTATION) != 0;
-	}
-	
 	/**
 	 * Returns if the given project is API enabled
 	 * @param project
@@ -1298,15 +1290,7 @@ public final class Util {
 		|	Opcodes.ACC_PROTECTED
 		|	Opcodes.ACC_PUBLIC)) == 0;
 	}
-	
-	public static boolean isEnum(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_ENUM) != 0;
-	}
 
-	public static boolean isFinal(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_FINAL) != 0;
-	}
-	
 	public static final boolean isDifferentVersion(String versionToBeChecked, String referenceVersion) {
 		SinceTagVersion sinceTagVersion1 = null;
 		SinceTagVersion sinceTagVersion2 = null;
@@ -1330,10 +1314,6 @@ public final class Util {
 			return true;
 		}
 		return false;
-	}
-
-	public static boolean isInterface(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_INTERFACE) != 0;
 	}
 
 	/**
@@ -1364,50 +1344,9 @@ public final class Util {
 	public static boolean isJavaLangRuntimeException(String name) {
 		return name != null && name.equals(JAVA_LANG_RUNTIMEEXCEPTION);
 	}
-
-	public static boolean isNative(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_NATIVE) != 0;
-	}
-
-	public static boolean isPrivate(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_PRIVATE) != 0;
-	}
-
-	public static boolean isProtected(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_PROTECTED) != 0;
-	}
-
-	public static boolean isPublic(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_PUBLIC) != 0;
-	}
-
-	public static boolean isStatic(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_STATIC) != 0;
-	}
-
-	public static boolean isSynchronized(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_SYNCHRONIZED) != 0;
-	}
-	
-	public static boolean isSynthetic(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_SYNTHETIC) != 0;
-	}
-
-	public static boolean isTransient(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_TRANSIENT) != 0;
-	}
-	
-	public static boolean isVarargs(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_VARARGS) != 0;
-	}
-	
-	public static boolean isVolatile(int accessFlags) {
-		return (accessFlags & Opcodes.ACC_VOLATILE) != 0;
-	}
-	
 	public static boolean isVisible(IDelta delta) {
 		int modifiers = delta.getModifiers();
-		return isProtected(modifiers) || isPublic(modifiers);
+		return Flags.isProtected(modifiers) || Flags.isPublic(modifiers);
 	}
 	public static boolean isBinaryProject(IProject project) {
 		return org.eclipse.pde.internal.core.WorkspaceModelManager.isBinaryProject(project);

@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -929,7 +930,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						}
 						// if the visibility is API, we only consider public and protected types
 						if (Util.isDefault(type.getModifiers())
-									|| Util.isPrivate(type.getModifiers())) {
+									|| Flags.isPrivate(type.getModifiers())) {
 							return;
 						}
 						if (VisibilityModifiers.isAPI(visibility)) {
@@ -1347,7 +1348,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			int modifiers = delta.getModifiers();
 			if (!RestrictionModifiers.isReferenceRestriction(delta.getRestrictions())) {
 				if (Util.isVisible(delta)) {
-					if (Util.isProtected(modifiers)) {
+					if (Flags.isProtected(modifiers)) {
 						String typeName = delta.getTypeName();
 						if (typeName != null) {
 							IApiTypeRoot typeRoot = null;
@@ -1384,7 +1385,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							} catch (CoreException e) {
 								// ignore
 							}
-							if (type == null || Util.isFinal(type.getModifiers())) {
+							if (type == null || Flags.isFinal(type.getModifiers())) {
 								// no @since tag to report for new protected methods inside a final class
 								return;
 							}

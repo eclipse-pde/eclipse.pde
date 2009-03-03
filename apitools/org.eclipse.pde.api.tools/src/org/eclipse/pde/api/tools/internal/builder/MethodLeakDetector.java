@@ -34,7 +34,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -184,15 +183,15 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 							if(annot != null) {
 								pres = annot.getRestrictions();
 							}
-							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && (!Util.isFinal(method.getModifiers())
-									&& !Util.isStatic(method.getModifiers())
-									&& !Util.isFinal(method.getEnclosingType().getModifiers())
+							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && (!Flags.isFinal(method.getModifiers())
+									&& !Flags.isStatic(method.getModifiers())
+									&& !Flags.isFinal(method.getEnclosingType().getModifiers())
 									&& ((pres & RestrictionModifiers.NO_EXTEND) == 0));
 						}
 						return  (ares & RestrictionModifiers.NO_REFERENCE) == 0; 
 					}
 					else {
-						return !(Util.isProtected(method.getModifiers()) && Util.isFinal(method.getEnclosingType().getModifiers()));
+						return !(Flags.isProtected(method.getModifiers()) && Flags.isFinal(method.getEnclosingType().getModifiers()));
 					}
 				}
 			} else {
@@ -212,7 +211,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	protected boolean matchesSourceModifiers(IApiMember member) {
 		while (member != null) {
 			int modifiers = member.getModifiers();
-			if (Util.isPublic(modifiers) || Util.isProtected(modifiers)) {
+			if (Flags.isPublic(modifiers) || Flags.isProtected(modifiers)) {
 				try {
 					member = member.getEnclosingType();
 				} catch (CoreException e) {

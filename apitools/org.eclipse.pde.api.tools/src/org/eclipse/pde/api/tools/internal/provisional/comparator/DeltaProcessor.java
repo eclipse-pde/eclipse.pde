@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -226,10 +227,10 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.VALUE :
-						if (Util.isProtected(delta.getModifiers())) {
+						if (Flags.isProtected(delta.getModifiers())) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
-						if (Util.isPublic(delta.getModifiers())) {
+						if (Flags.isPublic(delta.getModifiers())) {
 							return false;
 						}
 						// not visible
@@ -242,7 +243,7 @@ public class DeltaProcessor {
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
-						if (Util.isProtected(delta.getModifiers())) {
+						if (Flags.isProtected(delta.getModifiers())) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
 						return !Util.isVisible(delta);
@@ -253,10 +254,10 @@ public class DeltaProcessor {
 						return !Util.isVisible(delta);
 					case IDelta.VALUE :
 					case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
-						if (Util.isProtected(delta.getModifiers())) {
+						if (Flags.isProtected(delta.getModifiers())) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
-						if (Util.isPublic(delta.getModifiers())) {
+						if (Flags.isPublic(delta.getModifiers())) {
 							return false;
 						}
 						// not visible
@@ -370,7 +371,7 @@ public class DeltaProcessor {
 						return true; 
 					case IDelta.METHOD :
 						if (Util.isVisible(delta)) {
-							if (Util.isAbstract(delta.getModifiers())) {
+							if (Flags.isAbstract(delta.getModifiers())) {
 								// case where the implementation is provided and the class cannot be instantiated by the client
 								return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 							}
@@ -390,14 +391,14 @@ public class DeltaProcessor {
 					case IDelta.TYPE_MEMBER :
 						if (Util.isVisible(delta)) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
-									&& Util.isProtected(delta.getModifiers());
+									&& Flags.isProtected(delta.getModifiers());
 						}
 						return true;
 					case IDelta.CONSTRUCTOR :
 					case IDelta.API_CONSTRUCTOR :
 						if (Util.isVisible(delta)) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
-									&& (Util.isProtected(delta.getModifiers()) ||
+									&& (Flags.isProtected(delta.getModifiers()) ||
 											RestrictionModifiers.isInstantiateRestriction(delta.getRestrictions()));
 						}
 						return true;

@@ -16,10 +16,10 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -138,18 +138,18 @@ public class Messages extends NLS {
 							case IDelta.CONSTRUCTOR :
 								return 8;
 							case IDelta.FIELD :
-								if (Util.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getModifiers())) {
 									return 9;
 								}
-								if (Util.isStatic(delta.getModifiers())) {
+								if (Flags.isStatic(delta.getModifiers())) {
 									return 10;
 								}
-								if (Util.isPublic(delta.getModifiers())) {
+								if (Flags.isPublic(delta.getModifiers())) {
 									return 11;
 								}
 								return 80;
 							case IDelta.METHOD :
-								if (!Util.isAbstract(delta.getModifiers())) {
+								if (!Flags.isAbstract(delta.getModifiers())) {
 									return 12;
 								}
 								return 13;
@@ -198,7 +198,7 @@ public class Messages extends NLS {
 								return 27;
 							case IDelta.FIELD :
 							case IDelta.API_FIELD :
-								if (Util.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getModifiers())) {
 									return 28;
 								}
 								return 29;
@@ -206,12 +206,12 @@ public class Messages extends NLS {
 								return 30;
 							case IDelta.METHOD :
 							case IDelta.API_METHOD :
-								if (Util.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getModifiers())) {
 									return 31;
 								}
 								return 32;
 							case IDelta.TYPE_MEMBER :
-								if (Util.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getModifiers())) {
 									return 33;
 								}
 								return 34;
@@ -260,7 +260,7 @@ public class Messages extends NLS {
 							case IDelta.FINAL_TO_NON_FINAL_NON_STATIC :
 								return 41;
 							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
-								if (Util.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getModifiers())) {
 									return 42;
 								}
 								return 43;
@@ -275,7 +275,7 @@ public class Messages extends NLS {
 							case IDelta.TRANSIENT_TO_NON_TRANSIENT :
 								return 48;
 							case IDelta.VALUE :
-								if (Util.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getModifiers())) {
 									return 50;
 								}
 								return 51;
@@ -295,7 +295,7 @@ public class Messages extends NLS {
 						break;
 					case IDelta.REMOVED :
 						if (delta.getFlags() == IDelta.VALUE) {
-							if (Util.isProtected(delta.getModifiers())) {
+							if (Flags.isProtected(delta.getModifiers())) {
 								return 52;
 							}
 							return 53;

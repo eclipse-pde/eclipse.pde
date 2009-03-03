@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -459,7 +460,7 @@ public class ClassFileComparator {
 						if (visibilityModifiers == VisibilityModifiers.API) {
 							// if the visibility is API, we only consider public and protected types
 							if (Util.isDefault(typeMember.getModifiers())
-										|| Util.isPrivate(typeMember.getModifiers())) {
+										|| Flags.isPrivate(typeMember.getModifiers())) {
 								continue loop;
 							}
 						}
@@ -508,7 +509,7 @@ public class ClassFileComparator {
 						}
 						String deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 						int restrictions = memberTypeElementDescription2 != null ? memberTypeElementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
-						if (Util.isFinal(this.type2.getModifiers())) {
+						if (Flags.isFinal(this.type2.getModifiers())) {
 							restrictions |= RestrictionModifiers.NO_EXTEND;
 						}
 						if (isAPI(memberTypeVisibility, typeMember) && !isAPI(memberTypeVisibility2, typeMember2)) {
@@ -542,7 +543,7 @@ public class ClassFileComparator {
 						if (this.visibilityModifiers == VisibilityModifiers.API) {
 							// if the visibility is API, we only consider public and protected types
 							if (Util.isDefault(typeMember2.getModifiers())
-										|| Util.isPrivate(typeMember2.getModifiers())) {
+										|| Flags.isPrivate(typeMember2.getModifiers())) {
 								continue loop;
 							}
 						}
@@ -574,7 +575,7 @@ public class ClassFileComparator {
 					if (this.visibilityModifiers == VisibilityModifiers.API) {
 						// if the visibility is API, we only consider public and protected types
 						if (Util.isDefault(typeMember.getModifiers())
-									|| Util.isPrivate(typeMember.getModifiers())) {
+									|| Flags.isPrivate(typeMember.getModifiers())) {
 							continue loop;
 						}
 					}
@@ -613,7 +614,7 @@ public class ClassFileComparator {
 				if (this.visibilityModifiers == VisibilityModifiers.API) {
 					// if the visibility is API, we only consider public and protected types
 					if (Util.isDefault(typeMember.getModifiers())
-								|| Util.isPrivate(typeMember.getModifiers())) {
+								|| Flags.isPrivate(typeMember.getModifiers())) {
 						continue loop;
 					}
 				}
@@ -1014,7 +1015,7 @@ public class ClassFileComparator {
 							}
 						} else {
 							boolean reportChangedRestrictions = false;
-							if (!Util.isFinal(typeAccess2) && !Util.isFinal(typeAccess)) {
+							if (!Flags.isFinal(typeAccess2) && !Flags.isFinal(typeAccess)) {
 								if (RestrictionModifiers.isExtendRestriction(restrictions2)
 										&& !RestrictionModifiers.isExtendRestriction(restrictions)) {
 									reportChangedRestrictions = true;
@@ -1030,8 +1031,8 @@ public class ClassFileComparator {
 								}
 							}
 							if (!reportChangedRestrictions
-									&& !Util.isAbstract(typeAccess2)
-									&& !Util.isAbstract(typeAccess)) {
+									&& !Flags.isAbstract(typeAccess2)
+									&& !Flags.isAbstract(typeAccess)) {
 								if (RestrictionModifiers.isInstantiateRestriction(restrictions2)
 											&& !RestrictionModifiers.isInstantiateRestriction(restrictions)) {
 									this.addDelta(
@@ -1052,15 +1053,15 @@ public class ClassFileComparator {
 			}
 			// first make sure that we compare interface with interface, class with class,
 			// annotation with annotation and enum with enums
-			if (Util.isFinal(typeAccess2)) {
+			if (Flags.isFinal(typeAccess2)) {
 				this.currentDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
 			}
-			if (Util.isFinal(typeAccess)) {
+			if (Flags.isFinal(typeAccess)) {
 				this.initialDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
 			}
 
-			if (Util.isProtected(typeAccess)) {
-				if (Util.isPrivate(typeAccess2) || Util.isDefault(typeAccess2)) {
+			if (Flags.isProtected(typeAccess)) {
+				if (Flags.isPrivate(typeAccess2) || Util.isDefault(typeAccess2)) {
 					// report delta - decrease access: protected to default or private
 					this.addDelta(
 							getElementType(this.type1),
@@ -1072,7 +1073,7 @@ public class ClassFileComparator {
 							this.type1.getName(),
 							Util.getDescriptorName(type1));
 					return this.delta;
-				} else if (Util.isPublic(typeAccess2)) {
+				} else if (Flags.isPublic(typeAccess2)) {
 					// report delta - increase access: protected to public
 					this.addDelta(
 							getElementType(this.type1),
@@ -1085,9 +1086,9 @@ public class ClassFileComparator {
 							Util.getDescriptorName(type1));
 					return this.delta;
 				}
-			} else if (Util.isPublic(typeAccess)
-					&& (Util.isProtected(typeAccess2)
-							|| Util.isPrivate(typeAccess2)
+			} else if (Flags.isPublic(typeAccess)
+					&& (Flags.isProtected(typeAccess2)
+							|| Flags.isPrivate(typeAccess2)
 							|| Util.isDefault(typeAccess2))) {
 				// report delta - decrease access: public to protected, default or private
 				this.addDelta(
@@ -1101,8 +1102,8 @@ public class ClassFileComparator {
 						Util.getDescriptorName(type1));
 				return this.delta;
 			} else if (Util.isDefault(typeAccess)
-					&& (Util.isPublic(typeAccess2)
-							|| Util.isProtected(typeAccess2))) {
+					&& (Flags.isPublic(typeAccess2)
+							|| Flags.isProtected(typeAccess2))) {
 				this.addDelta(
 						getElementType(this.type1),
 						IDelta.CHANGED,
@@ -1113,10 +1114,10 @@ public class ClassFileComparator {
 						this.type1.getName(),
 						Util.getDescriptorName(type1));
 				return this.delta;
-			} else if (Util.isPrivate(typeAccess)
+			} else if (Flags.isPrivate(typeAccess)
 					&& (Util.isDefault(typeAccess2)
-							|| Util.isPublic(typeAccess2)
-							|| Util.isProtected(typeAccess2))) {
+							|| Flags.isPublic(typeAccess2)
+							|| Flags.isProtected(typeAccess2))) {
 				this.addDelta(
 						getElementType(this.type1),
 						IDelta.CHANGED,
@@ -1129,9 +1130,9 @@ public class ClassFileComparator {
 				return this.delta;
 			}
 			
-			if (Util.isAnnotation(typeAccess)) {
-				if (!Util.isAnnotation(typeAccess2)) {
-					if (Util.isInterface(typeAccess2)) {
+			if (Flags.isAnnotation(typeAccess)) {
+				if (!Flags.isAnnotation(typeAccess2)) {
+					if (Flags.isInterface(typeAccess2)) {
 						// report conversion from annotation to interface
 						this.addDelta(
 								IDelta.ANNOTATION_ELEMENT_TYPE,
@@ -1146,7 +1147,7 @@ public class ClassFileComparator {
 										Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE),
 										Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE)
 									});
-					} else if (Util.isEnum(typeAccess2)) {
+					} else if (Flags.isEnum(typeAccess2)) {
 						// report conversion from annotation to enum
 						this.addDelta(
 								IDelta.ANNOTATION_ELEMENT_TYPE,
@@ -1179,8 +1180,8 @@ public class ClassFileComparator {
 					}
 					return this.delta;
 				}
-			} else if (Util.isInterface(typeAccess)) {
-				if (Util.isAnnotation(typeAccess2)) {
+			} else if (Flags.isInterface(typeAccess)) {
+				if (Flags.isAnnotation(typeAccess2)) {
 					// conversion from interface to annotation
 					this.addDelta(
 							IDelta.INTERFACE_ELEMENT_TYPE,
@@ -1196,8 +1197,8 @@ public class ClassFileComparator {
 								Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)
 							});
 					return this.delta;
-				} else if (!Util.isInterface(typeAccess2)) {
-					if (Util.isEnum(typeAccess2)) {
+				} else if (!Flags.isInterface(typeAccess2)) {
+					if (Flags.isEnum(typeAccess2)) {
 						// conversion from interface to enum
 						this.addDelta(
 								IDelta.INTERFACE_ELEMENT_TYPE,
@@ -1230,9 +1231,9 @@ public class ClassFileComparator {
 					}
 					return this.delta;
 				}
-			} else if (Util.isEnum(typeAccess)) {
-				if (!Util.isEnum(typeAccess2)) {
-					if (Util.isAnnotation(typeAccess2)) {
+			} else if (Flags.isEnum(typeAccess)) {
+				if (!Flags.isEnum(typeAccess2)) {
+					if (Flags.isAnnotation(typeAccess2)) {
 						// report conversion from enum to annotation
 						this.addDelta(
 								IDelta.ENUM_ELEMENT_TYPE,
@@ -1247,7 +1248,7 @@ public class ClassFileComparator {
 										Integer.toString(IDelta.ENUM_ELEMENT_TYPE),
 										Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)
 								});
-					} else if (Util.isInterface(typeAccess2)) {
+					} else if (Flags.isInterface(typeAccess2)) {
 						// report conversion from enum to interface
 						this.addDelta(
 								IDelta.ENUM_ELEMENT_TYPE,
@@ -1281,7 +1282,7 @@ public class ClassFileComparator {
 					return this.delta;
 				}
 			} else if (!Util.isClass(typeAccess2)) {
-				if (Util.isAnnotation(typeAccess2)) {
+				if (Flags.isAnnotation(typeAccess2)) {
 					// report conversion from class to annotation
 					this.addDelta(
 							IDelta.CLASS_ELEMENT_TYPE,
@@ -1296,7 +1297,7 @@ public class ClassFileComparator {
 									Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
 									Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)
 							});
-				} else if (Util.isInterface(typeAccess2)) {
+				} else if (Flags.isInterface(typeAccess2)) {
 					// report conversion from class to interface
 					this.addDelta(
 							IDelta.CLASS_ELEMENT_TYPE,
@@ -1330,8 +1331,8 @@ public class ClassFileComparator {
 				return this.delta;
 			}
 
-			if (Util.isStatic(typeAccess)) {
-				if (!Util.isStatic(typeAccess2)) {
+			if (Flags.isStatic(typeAccess)) {
+				if (!Flags.isStatic(typeAccess2)) {
 					this.addDelta(
 							getElementType(this.type1),
 							IDelta.CHANGED,
@@ -1342,7 +1343,7 @@ public class ClassFileComparator {
 							this.type1.getName(),
 							Util.getDescriptorName(type1));
 				}
-			} else if (Util.isStatic(typeAccess2)) {
+			} else if (Flags.isStatic(typeAccess2)) {
 				this.addDelta(
 						getElementType(this.type1),
 						IDelta.CHANGED,
@@ -1394,8 +1395,8 @@ public class ClassFileComparator {
 				IApiMethod method = this.type2.getMethod(md.getName(), md.getSignature());
 				reportMethodAddition(method, this.type2);
 			}
-			if (Util.isAbstract(typeAccess)) {
-				if (!Util.isAbstract(typeAccess2)) {
+			if (Flags.isAbstract(typeAccess)) {
+				if (!Flags.isAbstract(typeAccess2)) {
 					// report delta - changed from abstract to non-abstract
 					this.addDelta(
 							getElementType(this.type1),
@@ -1407,7 +1408,7 @@ public class ClassFileComparator {
 							this.type1.getName(),
 							Util.getDescriptorName(type1));
 				}
-			} else if (Util.isAbstract(typeAccess2)){
+			} else if (Flags.isAbstract(typeAccess2)){
 				// report delta - changed from non-abstract to abstract
 				if(!RestrictionModifiers.isInstantiateRestriction(initialDescriptorRestrictions)) {
 					this.addDelta(
@@ -1422,8 +1423,8 @@ public class ClassFileComparator {
 				}
 			}
 
-			if (Util.isFinal(typeAccess)) {
-				if (!Util.isFinal(typeAccess2)) {
+			if (Flags.isFinal(typeAccess)) {
+				if (!Flags.isFinal(typeAccess2)) {
 					// report delta - changed from final to non-final
 					this.addDelta(
 							getElementType(this.type1),
@@ -1435,7 +1436,7 @@ public class ClassFileComparator {
 							this.type1.getName(),
 							Util.getDescriptorName(type1));
 				}
-			} else if (Util.isFinal(typeAccess2)){
+			} else if (Flags.isFinal(typeAccess2)){
 				// report delta - changed from non-final to final
 				this.addDelta(
 						getElementType(this.type1),
@@ -1463,14 +1464,14 @@ public class ClassFileComparator {
 
 	private void getDeltaForField(IApiField field) {
 		int access = field.getModifiers();
-		if (Util.isSynthetic(access)) {
+		if (Flags.isSynthetic(access)) {
 			// we ignore synthetic fields
 			return;
 		}
 		String name = field.getName();
 		IApiField field2 = this.type2.getField(name);
 		if (field2 == null) {
-			if (Util.isPrivate(access)
+			if (Flags.isPrivate(access)
 					|| Util.isDefault(access)) {
 				this.addDelta(
 						getElementType(this.type1),
@@ -1519,8 +1520,8 @@ public class ClassFileComparator {
 									continue;
 								} else {
 									int access3 = field3.getModifiers();
-									if (Util.isPublic(access3)
-											|| Util.isProtected(access3)) {
+									if (Flags.isPublic(access3)
+											|| Flags.isProtected(access3)) {
 										// method has been move up in the hierarchy - report the delta and abort loop
 										this.addDelta(
 												getElementType(this.type1),
@@ -1645,7 +1646,7 @@ public class ClassFileComparator {
 					return;
 				}
 			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
-				if (((Util.isPublic(access2) || Util.isProtected(access2)) && (Util.isPublic(access) || Util.isProtected(access)))
+				if (((Flags.isPublic(access2) || Flags.isProtected(access2)) && (Flags.isPublic(access) || Flags.isProtected(access)))
 						&& (this.visibilityModifiers == VisibilityModifiers.API)) {
 					// report that it is no longer an API field
 					this.addDelta(
@@ -1682,8 +1683,8 @@ public class ClassFileComparator {
 			checkGenericSignature(signature1, signature2, field, field2);
 		}
 		boolean changeFinalToNonFinal = false;
-		if (Util.isProtected(access)) {
-			if (Util.isPrivate(access2) || Util.isDefault(access2)) {
+		if (Flags.isProtected(access)) {
+			if (Flags.isPrivate(access2) || Util.isDefault(access2)) {
 				// report delta - decrease access: protected to default or private
 				this.addDelta(
 						IDelta.FIELD_ELEMENT_TYPE,
@@ -1694,7 +1695,7 @@ public class ClassFileComparator {
 						this.type1,
 						name,
 						new String[] {Util.getDescriptorName(this.type1), name});
-			} else if (Util.isPublic(access2)) {
+			} else if (Flags.isPublic(access2)) {
 				// report delta - increase access: protected to public
 				this.addDelta(
 						IDelta.FIELD_ELEMENT_TYPE,
@@ -1706,9 +1707,9 @@ public class ClassFileComparator {
 						name,
 						new String[] {Util.getDescriptorName(this.type1), name});
 			}
-		} else if (Util.isPublic(access)
-				&& (Util.isProtected(access2)
-						|| Util.isPrivate(access2)
+		} else if (Flags.isPublic(access)
+				&& (Flags.isProtected(access2)
+						|| Flags.isPrivate(access2)
 						|| Util.isDefault(access2))) {
 			// report delta - decrease access: public to protected, default or private
 			this.addDelta(
@@ -1720,10 +1721,10 @@ public class ClassFileComparator {
 					this.type1,
 					name,
 					new String[] {Util.getDescriptorName(this.type1), name});
-		} else if (Util.isPrivate(access)
-				&& (Util.isProtected(access2)
+		} else if (Flags.isPrivate(access)
+				&& (Flags.isProtected(access2)
 						|| Util.isDefault(access2)
-						|| Util.isPublic(access2))) {
+						|| Flags.isPublic(access2))) {
 			this.addDelta(
 					IDelta.FIELD_ELEMENT_TYPE,
 					IDelta.CHANGED,
@@ -1734,8 +1735,8 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(this.type1), name});
 		} else if (Util.isDefault(access)
-				&& (Util.isProtected(access2)
-						|| Util.isPublic(access2))) {
+				&& (Flags.isProtected(access2)
+						|| Flags.isPublic(access2))) {
 			this.addDelta(
 					IDelta.FIELD_ELEMENT_TYPE,
 					IDelta.CHANGED,
@@ -1746,9 +1747,9 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(this.type1), name});
 		}
-		if (Util.isFinal(access)) {
-			if (!Util.isFinal(access2)) {
-				if (!Util.isStatic(access2)) {
+		if (Flags.isFinal(access)) {
+			if (!Flags.isFinal(access2)) {
+				if (!Flags.isStatic(access2)) {
 					// report delta - final to non-final for a non static field
 					this.addDelta(
 							IDelta.FIELD_ELEMENT_TYPE,
@@ -1784,7 +1785,7 @@ public class ClassFileComparator {
 							new String[] {Util.getDescriptorName(this.type1), name});
 				}
 			}
-		} else if (Util.isFinal(access2)) {
+		} else if (Flags.isFinal(access2)) {
 			// report delta - non-final to final
 			this.addDelta(
 					IDelta.FIELD_ELEMENT_TYPE,
@@ -1796,8 +1797,8 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(this.type1), name});
 		}
-		if (Util.isStatic(access)) {
-			if (!Util.isStatic(access2)) {
+		if (Flags.isStatic(access)) {
+			if (!Flags.isStatic(access2)) {
 				// report delta - static to non-static
 				this.addDelta(
 						IDelta.FIELD_ELEMENT_TYPE,
@@ -1809,7 +1810,7 @@ public class ClassFileComparator {
 						name,
 						new String[] {Util.getDescriptorName(this.type1), name});
 			}
-		} else if (Util.isStatic(access2)) {
+		} else if (Flags.isStatic(access2)) {
 			// report delta - non-static to static
 			this.addDelta(
 					IDelta.FIELD_ELEMENT_TYPE,
@@ -1821,8 +1822,8 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(this.type1), name});
 		}
-		if (Util.isTransient(access)) {
-			if (!Util.isTransient(access2)) {
+		if (Flags.isTransient(access)) {
+			if (!Flags.isTransient(access2)) {
 				// report delta - transient to non-transient
 				this.addDelta(
 						IDelta.FIELD_ELEMENT_TYPE,
@@ -1834,7 +1835,7 @@ public class ClassFileComparator {
 						name,
 						new String[] {Util.getDescriptorName(this.type1), name});
 			}
-		} else if (Util.isTransient(access2)) {
+		} else if (Flags.isTransient(access2)) {
 			// report delta - non-transient to transient
 			this.addDelta(
 					IDelta.FIELD_ELEMENT_TYPE,
@@ -1846,8 +1847,8 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(this.type1), name});
 		}
-		if (Util.isVolatile(access)) {
-			if (!Util.isVolatile(access2)) {
+		if (Flags.isVolatile(access)) {
+			if (!Flags.isVolatile(access2)) {
 				// report delta - volatile to non-volatile
 				this.addDelta(
 						IDelta.FIELD_ELEMENT_TYPE,
@@ -1859,7 +1860,7 @@ public class ClassFileComparator {
 						name,
 						new String[] {Util.getDescriptorName(this.type1), name});
 			}
-		} else if (Util.isVolatile(access2)) {
+		} else if (Flags.isVolatile(access2)) {
 			// report delta - non-volatile to volatile
 			this.addDelta(
 					IDelta.FIELD_ELEMENT_TYPE,
@@ -1912,7 +1913,7 @@ public class ClassFileComparator {
 	}
 	private void getDeltaForMethod(IApiMethod method) {
 		int access = method.getModifiers();
-		if (Util.isSynthetic(access)) {
+		if (Flags.isSynthetic(access)) {
 			// we ignore synthetic methods
 			return;
 		}
@@ -1934,13 +1935,13 @@ public class ClassFileComparator {
 						this.type1.getName(),
 						Util.getDescriptorName(type1));
 				return;
-			} else if (Util.isPrivate(access)
+			} else if (Flags.isPrivate(access)
 					|| Util.isDefault(access)) {
 				this.addDelta(
 						getElementType(this.type1),
 						IDelta.REMOVED,
 						getTargetType(method),
-						Util.isAbstract(this.type2.getModifiers()) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
+						Flags.isAbstract(this.type2.getModifiers()) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
 						access,
 						this.type1,
 						this.type1.getName(),
@@ -1985,8 +1986,8 @@ public class ClassFileComparator {
 								continue;
 							} else {
 								int access3 = method3.getModifiers();
-								if (Util.isPublic(access3)
-										|| Util.isProtected(access3)) {
+								if (Flags.isPublic(access3)
+										|| Flags.isProtected(access3)) {
 									// method has been move up in the hierarchy - report the delta and abort loop
 									// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
 									this.addDelta(
@@ -2047,7 +2048,7 @@ public class ClassFileComparator {
 							getElementType(this.type1),
 							IDelta.REMOVED,
 							getTargetType(method),
-							Util.isAbstract(this.type2.getModifiers()) ? restrictions | RestrictionModifiers.NO_INSTANTIATE : restrictions,
+							Flags.isAbstract(this.type2.getModifiers()) ? restrictions | RestrictionModifiers.NO_INSTANTIATE : restrictions,
 							access,
 							this.type1,
 							this.type1.getName(),
@@ -2154,8 +2155,8 @@ public class ClassFileComparator {
 											continue;
 										} else {
 											int access3 = method3.getModifiers();
-											if (Util.isPublic(access3)
-													|| Util.isProtected(access3)) {
+											if (Flags.isPublic(access3)
+													|| Flags.isProtected(access3)) {
 												// method has been move up in the hierarchy - report the delta and abort loop
 												// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
 												found = true;
@@ -2179,7 +2180,7 @@ public class ClassFileComparator {
 					return;
 				}
 			} else if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
-				if (Util.isPublic(access2) || Util.isProtected(access2)) {
+				if (Flags.isPublic(access2) || Flags.isProtected(access2)) {
 					// report that it is no longer an API method
 					if (this.type2.isAnnotation()) {
 						this.addDelta(
@@ -2191,12 +2192,12 @@ public class ClassFileComparator {
 								this.type1,
 								getKeyForMethod(method2, this.type2),
 								new String[] {Util.getDescriptorName(this.type2), methodDisplayName});
-					} else if (Util.isPublic(access) || Util.isProtected(access)) {
+					} else if (Flags.isPublic(access) || Flags.isProtected(access)) {
 						this.addDelta(
 								getElementType(this.type2),
 								IDelta.REMOVED,
 								method.isConstructor() ? IDelta.API_CONSTRUCTOR : IDelta.API_METHOD,
-								Util.isAbstract(this.type2.getModifiers()) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
+								Flags.isAbstract(this.type2.getModifiers()) ? this.currentDescriptorRestrictions | RestrictionModifiers.NO_INSTANTIATE : this.currentDescriptorRestrictions,
 								access2,
 								this.type1,
 								getKeyForMethod(method2, this.type2),
@@ -2209,7 +2210,7 @@ public class ClassFileComparator {
 		if (this.component.hasApiDescription() && !method.isConstructor() && !method.isClassInitializer()
 				&& !(type1.isInterface() || type1.isAnnotation())) {
 			if (restrictions != referenceRestrictions) {
-				if (!Util.isFinal(access2)) {
+				if (!Flags.isFinal(access2)) {
 					if (RestrictionModifiers.isOverrideRestriction(restrictions)
 							&& !RestrictionModifiers.isOverrideRestriction(referenceRestrictions)) {
 							this.addDelta(
@@ -2373,8 +2374,8 @@ public class ClassFileComparator {
 				}
 			}
 		}
-		if (Util.isVarargs(access)) {
-			if (!Util.isVarargs(access2)) {
+		if (Flags.isVarargs(access)) {
+			if (!Flags.isVarargs(access2)) {
 				// report delta: conversion from T... to T[] - break compatibility 
 				this.addDelta(
 						getElementType(method),
@@ -2386,7 +2387,7 @@ public class ClassFileComparator {
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 			}
-		} else if (Util.isVarargs(access2)) {
+		} else if (Flags.isVarargs(access2)) {
 			// report delta: conversion from T[] to T... compatible
 			this.addDelta(
 					getElementType(method),
@@ -2398,8 +2399,8 @@ public class ClassFileComparator {
 					key,
 					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 		}
-		if (Util.isProtected(access)) {
-			if (Util.isPrivate(access2) || Util.isDefault(access2)) {
+		if (Flags.isProtected(access)) {
+			if (Flags.isPrivate(access2) || Util.isDefault(access2)) {
 				// report delta - decrease access: protected to default or private
 				this.addDelta(
 						getElementType(method),
@@ -2410,7 +2411,7 @@ public class ClassFileComparator {
 						this.type1,
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
-			} else if (Util.isPublic(access2)) {
+			} else if (Flags.isPublic(access2)) {
 				// report delta - increase access: protected to public
 				this.addDelta(
 						getElementType(method),
@@ -2422,9 +2423,9 @@ public class ClassFileComparator {
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 			}
-		} else if (Util.isPublic(access)
-				&& (Util.isProtected(access2)
-						|| Util.isPrivate(access2)
+		} else if (Flags.isPublic(access)
+				&& (Flags.isProtected(access2)
+						|| Flags.isPrivate(access2)
 						|| Util.isDefault(access2))) {
 			// report delta - decrease access: public to protected, default or private
 			this.addDelta(
@@ -2437,8 +2438,8 @@ public class ClassFileComparator {
 					key,
 					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 		} else if (Util.isDefault(access)
-				&& (Util.isPublic(access2)
-						|| Util.isProtected(access2))) {
+				&& (Flags.isPublic(access2)
+						|| Flags.isProtected(access2))) {
 			this.addDelta(
 					getElementType(method),
 					IDelta.CHANGED,
@@ -2448,10 +2449,10 @@ public class ClassFileComparator {
 					this.type1,
 					key,
 					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
-		} else if (Util.isPrivate(access)
+		} else if (Flags.isPrivate(access)
 				&& (Util.isDefault(access2)
-						|| Util.isPublic(access2)
-						|| Util.isProtected(access2))) {
+						|| Flags.isPublic(access2)
+						|| Flags.isProtected(access2))) {
 			this.addDelta(
 					getElementType(method),
 					IDelta.CHANGED,
@@ -2462,8 +2463,8 @@ public class ClassFileComparator {
 					key,
 					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 		}
-		if (Util.isAbstract(access)) {
-			if (!Util.isAbstract(access2)) {
+		if (Flags.isAbstract(access)) {
+			if (!Flags.isAbstract(access2)) {
 				// report delta - changed from abstract to non-abstract
 				this.addDelta(
 						getElementType(method),
@@ -2475,7 +2476,7 @@ public class ClassFileComparator {
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 			}
-		} else if (Util.isAbstract(access2)){
+		} else if (Flags.isAbstract(access2)){
 			// report delta - changed from non-abstract to abstract
 			this.addDelta(
 					getElementType(method),
@@ -2487,8 +2488,8 @@ public class ClassFileComparator {
 					key,
 					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 		}
-		if (Util.isFinal(access)) {
-			if (!Util.isFinal(access2)) {
+		if (Flags.isFinal(access)) {
+			if (!Flags.isFinal(access2)) {
 				// report delta - changed from final to non-final
 				this.addDelta(
 						getElementType(method),
@@ -2500,7 +2501,7 @@ public class ClassFileComparator {
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 			}
-		} else if (Util.isFinal(access2)) {
+		} else if (Flags.isFinal(access2)) {
 			int res = restrictions;
 			if (!RestrictionModifiers.isOverrideRestriction(res)) {
 				if (RestrictionModifiers.isExtendRestriction(this.currentDescriptorRestrictions)) {
@@ -2523,8 +2524,8 @@ public class ClassFileComparator {
 					key,
 					new String[] {Util.getDescriptorName(this.type2), getMethodDisplayName(method2, this.type2)});
 		}
-		if (Util.isStatic(access)) {
-			if (!Util.isStatic(access2)) {
+		if (Flags.isStatic(access)) {
+			if (!Flags.isStatic(access2)) {
 				// report delta: change from static to non-static
 				this.addDelta(
 						getElementType(method),
@@ -2536,7 +2537,7 @@ public class ClassFileComparator {
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 			}
-		} else if (Util.isStatic(access2)){
+		} else if (Flags.isStatic(access2)){
 			// report delta: change from non-static to static
 			this.addDelta(
 					getElementType(method),
@@ -2548,8 +2549,8 @@ public class ClassFileComparator {
 					key,
 					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 		}
-		if (Util.isNative(access)) {
-			if (!Util.isNative(access2)) {
+		if (Flags.isNative(access)) {
+			if (!Flags.isNative(access2)) {
 				// report delta: change from native to non-native
 				this.addDelta(
 						getElementType(method),
@@ -2561,7 +2562,7 @@ public class ClassFileComparator {
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 			}
-		} else if (Util.isNative(access2)){
+		} else if (Flags.isNative(access2)){
 			// report delta: change from non-native to native
 			this.addDelta(
 					getElementType(method),
@@ -2573,8 +2574,8 @@ public class ClassFileComparator {
 					key,
 					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 		}
-		if (Util.isSynchronized(access)) {
-			if (!Util.isSynchronized(access2)) {
+		if (Flags.isSynchronized(access)) {
+			if (!Flags.isSynchronized(access2)) {
 				// report delta: change from synchronized to non-synchronized
 				this.addDelta(
 						getElementType(method),
@@ -2586,7 +2587,7 @@ public class ClassFileComparator {
 						key,
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 			}
-		} else if (Util.isSynchronized(access2)){
+		} else if (Flags.isSynchronized(access2)){
 			// report delta: change from non-synchronized to synchronized
 			this.addDelta(
 					getElementType(method),
@@ -2726,7 +2727,7 @@ public class ClassFileComparator {
 		int access = field.getModifiers();
 		String name = field.getName();
 	
-		if (Util.isSynthetic(access)) {
+		if (Flags.isSynthetic(access)) {
 			// we ignore synthetic fields 
 			return;
 		}
@@ -2787,7 +2788,7 @@ public class ClassFileComparator {
 			return;
 		}
 		int access = method.getModifiers();
-		if (Util.isSynthetic(access)) {
+		if (Flags.isSynthetic(access)) {
 			// we ignore synthetic method
 			return;
 		}
@@ -2814,10 +2815,10 @@ public class ClassFileComparator {
 		}
 		String methodDisplayName = getMethodDisplayName(method, type);
 		int restrictionsForMethodAddition = this.currentDescriptorRestrictions;
-		if (Util.isFinal(this.type2.getModifiers())) {
+		if (Flags.isFinal(this.type2.getModifiers())) {
 			restrictionsForMethodAddition |= RestrictionModifiers.NO_EXTEND;
 		}
-		if (Util.isPublic(access) || Util.isProtected(access)) {
+		if (Flags.isPublic(access) || Flags.isProtected(access)) {
 			if (method.isConstructor()) {
 				this.addDelta(
 						getElementType(type),
@@ -2883,8 +2884,8 @@ public class ClassFileComparator {
 									continue;
 								} else {
 									int access3 = method3.getModifiers();
-									if (Util.isPublic(access3)
-											|| Util.isProtected(access3)) {
+									if (Flags.isPublic(access3)
+											|| Flags.isProtected(access3)) {
 										// method has been move up in the hierarchy - report the delta and abort loop
 										// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
 										found = true;
@@ -2927,8 +2928,8 @@ public class ClassFileComparator {
 										continue;
 									} else {
 										int access3 = method3.getModifiers();
-										if (Util.isPublic(access3)
-												|| Util.isProtected(access3)) {
+										if (Flags.isPublic(access3)
+												|| Flags.isProtected(access3)) {
 											// method has been pushed down in the hierarchy - report the delta and abort loop
 											// TODO need to make the distinction between methods that need to be re-implemented and methods that don't
 											found = true;
@@ -2995,7 +2996,7 @@ public class ClassFileComparator {
 			IApiType memberTypeDescriptor) {
 		int access = memberTypeDescriptor.getModifiers();
 		return VisibilityModifiers.isAPI(visibility)
-			&& (Util.isPublic(access) || Util.isProtected(access));
+			&& (Flags.isPublic(access) || Flags.isProtected(access));
 	}
 	
 	private IApiTypeRoot getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {

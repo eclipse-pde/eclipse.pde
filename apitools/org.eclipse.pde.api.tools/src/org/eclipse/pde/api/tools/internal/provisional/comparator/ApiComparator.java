@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -557,10 +558,10 @@ public class ApiComparator {
 			if (visibilityModifiers == VisibilityModifiers.API) {
 				// if the visibility is API, we only consider public and protected types
 				if (Util.isDefault(typeDescriptor2.getModifiers())
-							|| Util.isPrivate(typeDescriptor2.getModifiers())) {
+							|| Flags.isPrivate(typeDescriptor2.getModifiers())) {
 					// we need to check if the reference contains the type to report a reduced visibility
-					if (Util.isPublic(typeDescriptor.getModifiers())
-							|| Util.isProtected(typeDescriptor.getModifiers())) {
+					if (Flags.isPublic(typeDescriptor.getModifiers())
+							|| Flags.isProtected(typeDescriptor.getModifiers())) {
 						return new Delta(
 							deltaComponentID,
 							IDelta.API_COMPONENT_ELEMENT_TYPE,
@@ -699,7 +700,7 @@ public class ApiComparator {
 		if (visibilityModifiers == VisibilityModifiers.API) {
 			// if the visibility is API, we only consider public and protected types
 			if (Util.isDefault(typeDescriptor.getModifiers())
-						|| Util.isPrivate(typeDescriptor.getModifiers())) {
+						|| Flags.isPrivate(typeDescriptor.getModifiers())) {
 				return true;
 			}
 		}
@@ -799,7 +800,7 @@ public class ApiComparator {
 									if (visibilityModifiers == VisibilityModifiers.API) {
 										// if the visibility is API, we only consider public and protected types
 										if (Util.isDefault(typeDescriptor.getModifiers())
-													|| Util.isPrivate(typeDescriptor.getModifiers())) {
+													|| Flags.isPrivate(typeDescriptor.getModifiers())) {
 											return;
 										}
 									}
@@ -828,7 +829,7 @@ public class ApiComparator {
 									if (visibilityModifiers == VisibilityModifiers.API) {
 										// if the visibility is API, we only consider public and protected types
 										if (Util.isDefault(typeDescriptor.getModifiers())
-												|| Util.isPrivate(typeDescriptor.getModifiers())) {
+												|| Flags.isPrivate(typeDescriptor.getModifiers())) {
 											return;
 										}
 									}
@@ -952,7 +953,7 @@ public class ApiComparator {
 												if (visibilityModifiers == VisibilityModifiers.API) {
 													// if the visibility is API, we only consider public and protected types
 													if (Util.isDefault(typeDescriptor.getModifiers())
-																|| Util.isPrivate(typeDescriptor.getModifiers())) {
+																|| Flags.isPrivate(typeDescriptor.getModifiers())) {
 														return;
 													}
 												}
@@ -977,7 +978,7 @@ public class ApiComparator {
 												}
 												// if the visibility is API, we only consider public and protected types
 												if (Util.isDefault(typeDescriptor.getModifiers())
-														|| Util.isPrivate(typeDescriptor.getModifiers())) {
+														|| Flags.isPrivate(typeDescriptor.getModifiers())) {
 													return;
 												}
 												if (isAPI(visibility, typeDescriptor)) {
@@ -1121,7 +1122,7 @@ public class ApiComparator {
 			IApiType typeDescriptor) {
 		int access = typeDescriptor.getModifiers();
 		return VisibilityModifiers.isAPI(visibility)
-			&& (Util.isPublic(access) || Util.isProtected(access));
+			&& (Flags.isPublic(access) || Flags.isProtected(access));
 	}
 	
 	/**
