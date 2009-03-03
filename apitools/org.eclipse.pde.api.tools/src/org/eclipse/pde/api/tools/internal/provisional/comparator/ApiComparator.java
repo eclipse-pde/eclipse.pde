@@ -698,9 +698,11 @@ public class ApiComparator {
 			return true;
 		}
 		if (visibilityModifiers == VisibilityModifiers.API) {
-			// if the visibility is API, we only consider public and protected types
-			if (Util.isDefault(typeDescriptor.getModifiers())
-						|| Flags.isPrivate(typeDescriptor.getModifiers())) {
+			// if the visibility is API, we only consider public and protected types or types 
+			// without element description
+			if (elementDescription == null
+					|| Util.isDefault(typeDescriptor.getModifiers())
+					|| Flags.isPrivate(typeDescriptor.getModifiers())) {
 				return true;
 			}
 		}
