@@ -49,14 +49,14 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private static final int FROM_TARGET_DEFINITION = 2;
 	private static final int FROM_DIRECTORY = 3;
 
-	private Button runtimeLocationButton;
+	private Button importActiveTargetButton;
 	private Button browseButton;
-	private Button directoryButton;
-	private Button targetDefinitionButton;
-	private Combo targetDrop;
+	private Button importDirectoryButton;
+	private Button importTargetDefinitionButton;
+	private Combo targetDefinitionCombo;
 	private List targetDefinitions;
-	private Combo dropLocation;
-	private Button changeButton;
+	private Combo importDirectory;
+	private Button openTargetPrefsButton;
 
 	private Button importButton;
 	private Button scanButton;
@@ -90,7 +90,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		layout.verticalSpacing = 15;
 		container.setLayout(layout);
 
-		createDirectoryGroup(container);
+		createImportFromGroup(container);
 		createImportChoicesGroup(container);
 		createImportOptionsGroup(container);
 
@@ -134,7 +134,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				items.add(curr);
 			}
 		}
-		dropLocation.setItems((String[]) items.toArray(new String[items.size()]));
+		importDirectory.setItems((String[]) items.toArray(new String[items.size()]));
 		refreshTargetDropDown();
 
 		int source = FROM_ACTIVE_PLATFORM;
@@ -142,8 +142,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			source = settings.getInt(SETTINGS_FROM);
 		} catch (NumberFormatException e) {
 		}
-		dropLocation.select(0);
-		targetDrop.select(0);
+		importDirectory.select(0);
+		targetDefinitionCombo.select(0);
 		updateSourceGroup(source);
 
 		int importType = PluginImportOperation.IMPORT_BINARY;
@@ -175,14 +175,14 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @param source one of the source constants
 	 */
 	private void updateSourceGroup(int source) {
-		runtimeLocationButton.setSelection(source == FROM_ACTIVE_PLATFORM);
-		targetDefinitionButton.setSelection(source == FROM_TARGET_DEFINITION);
-		targetDrop.setEnabled(source == FROM_TARGET_DEFINITION);
-		directoryButton.setSelection(source == FROM_DIRECTORY);
-		dropLocation.setEnabled(source == FROM_DIRECTORY);
+		importActiveTargetButton.setSelection(source == FROM_ACTIVE_PLATFORM);
+		importTargetDefinitionButton.setSelection(source == FROM_TARGET_DEFINITION);
+		targetDefinitionCombo.setEnabled(source == FROM_TARGET_DEFINITION);
+		importDirectoryButton.setSelection(source == FROM_DIRECTORY);
+		importDirectory.setEnabled(source == FROM_DIRECTORY);
 		browseButton.setEnabled(source == FROM_DIRECTORY);
 		if (source == FROM_ACTIVE_PLATFORM) {
-			dropLocation.setText(getTargetHome());
+			importDirectory.setText(getTargetHome());
 		}
 	}
 
@@ -216,10 +216,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				String name = ((ITargetDefinition) targetDefinitions.get(i)).getName();
 				names[i] = name == null ? "" : name; //$NON-NLS-1$
 			}
-			targetDrop.setItems(names);
-			if (names.length == 0) {
-				targetDrop.setEnabled(false);
-			}
+			targetDefinitionCombo.setItems(names);
 		}
 	}
 
@@ -237,27 +234,27 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * Creates the directory group
 	 * @param parent
 	 */
-	private void createDirectoryGroup(Composite parent) {
+	private void createImportFromGroup(Composite parent) {
 		Group composite = SWTFactory.createGroup(parent, PDEUIMessages.ImportWizard_FirstPage_importFrom, 3, 1, GridData.FILL_HORIZONTAL);
 
-		runtimeLocationButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, 3);
-		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
+		importActiveTargetButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, 3);
+		importActiveTargetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateSourceGroup(getImportOrigin());
 				validateDropLocation();
 			}
 		});
 
-		targetDefinitionButton = SWTFactory.createRadioButton(composite, PDEUIMessages.PluginImportWizardFirstPage_0, 1);
-		targetDefinitionButton.addSelectionListener(new SelectionAdapter() {
+		importTargetDefinitionButton = SWTFactory.createRadioButton(composite, PDEUIMessages.PluginImportWizardFirstPage_0, 1);
+		importTargetDefinitionButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateSourceGroup(getImportOrigin());
 				validateDropLocation();
 			}
 		});
-		targetDrop = SWTFactory.createCombo(composite, SWT.DROP_DOWN | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, null);
-		changeButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_goToTarget, null);
-		changeButton.addSelectionListener(new SelectionAdapter() {
+		targetDefinitionCombo = SWTFactory.createCombo(composite, SWT.DROP_DOWN | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, null);
+		openTargetPrefsButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_goToTarget, null);
+		openTargetPrefsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ITargetDefinition selected = getTargetDefinition();
 				ITargetHandle handle = null;
@@ -282,23 +279,23 @@ public class PluginImportWizardFirstPage extends WizardPage {
 						index = 0;
 					}
 					if (index >= 0) {
-						targetDrop.select(index);
+						targetDefinitionCombo.select(index);
 					}
-					dropLocation.setText(TargetPlatform.getLocation());
+					importDirectory.setText(TargetPlatform.getLocation());
 				}
 			}
 		});
 
-		directoryButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_otherFolder, 1);
-		directoryButton.addSelectionListener(new SelectionAdapter() {
+		importDirectoryButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_otherFolder, 1);
+		importDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateSourceGroup(getImportOrigin());
 				validateDropLocation();
 			}
 		});
 
-		dropLocation = SWTFactory.createCombo(composite, SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, null);
-		dropLocation.addModifyListener(new ModifyListener() {
+		importDirectory = SWTFactory.createCombo(composite, SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, null);
+		importDirectory.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validateDropLocation();
 			}
@@ -309,7 +306,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
 				if (chosen != null)
-					dropLocation.setText(chosen.toOSString());
+					importDirectory.setText(chosen.toOSString());
 			}
 		});
 
@@ -320,7 +317,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 */
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setFilterPath(dropLocation.getText());
+		dialog.setFilterPath(importDirectory.getText());
 		dialog.setText(PDEUIMessages.ImportWizard_messages_folder_title);
 		dialog.setMessage(PDEUIMessages.ImportWizard_messages_folder_message);
 		String res = dialog.open();
@@ -380,7 +377,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return the location specified as the drop location for the target platform
 	 */
 	public String getDropLocation() {
-		return runtimeLocationButton.getSelection() ? TARGET_PLATFORM : dropLocation.getText().trim();
+		return importActiveTargetButton.getSelection() ? TARGET_PLATFORM : importDirectory.getText().trim();
 	}
 
 	/**
@@ -388,10 +385,10 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 */
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
-		boolean other = !runtimeLocationButton.getSelection();
-		if (dropLocation.getText().length() > 0 && other) {
-			settings.put(SETTINGS_DROPLOCATION + String.valueOf(0), dropLocation.getText().trim());
-			String[] items = dropLocation.getItems();
+		boolean other = !importActiveTargetButton.getSelection();
+		if (importDirectory.getText().length() > 0 && other) {
+			settings.put(SETTINGS_DROPLOCATION + String.valueOf(0), importDirectory.getText().trim());
+			String[] items = importDirectory.getItems();
 			int nEntries = Math.min(items.length, 5);
 			for (int i = 0; i < nEntries; i++) {
 				settings.put(SETTINGS_DROPLOCATION + String.valueOf(i + 1), items[i]);
@@ -409,9 +406,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 */
 	private int getImportOrigin() {
 		int source = FROM_ACTIVE_PLATFORM;
-		if (targetDefinitionButton.getSelection()) {
+		if (importTargetDefinitionButton.getSelection()) {
 			source = FROM_TARGET_DEFINITION;
-		} else if (directoryButton.getSelection()) {
+		} else if (importDirectoryButton.getSelection()) {
 			source = FROM_DIRECTORY;
 		}
 		return source;
@@ -428,14 +425,19 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * Validates the drop location
 	 */
 	private void validateDropLocation() {
-		if (!runtimeLocationButton.getSelection()) {
-			IPath curr = new Path(dropLocation.getText());
+		if (importTargetDefinitionButton.getSelection() && targetDefinitionCombo.getText().length() == 0) {
+			setPageComplete(false);
+			setErrorMessage("A target definition must be selected");
+			return;
+		}
+		if (importDirectoryButton.getSelection()) {
+			IPath curr = new Path(importDirectory.getText());
 			if (curr.segmentCount() == 0 && curr.getDevice() == null) {
 				setErrorMessage(PDEUIMessages.ImportWizard_errors_locationMissing);
 				setPageComplete(false);
 				return;
 			}
-			if (!Path.ROOT.isValidPath(dropLocation.getText())) {
+			if (!Path.ROOT.isValidPath(importDirectory.getText())) {
 				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderInvalid);
 				setPageComplete(false);
 				return;
@@ -584,9 +586,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return selected target definition or <code>null</code>
 	 */
 	private ITargetDefinition getTargetDefinition() {
-		int index = targetDrop.getSelectionIndex();
+		int index = targetDefinitionCombo.getSelectionIndex();
 		if (index >= 0 && targetDefinitions.size() > 0) {
-			return (ITargetDefinition) targetDefinitions.get(targetDrop.getSelectionIndex());
+			return (ITargetDefinition) targetDefinitions.get(targetDefinitionCombo.getSelectionIndex());
 		}
 		return null;
 	}

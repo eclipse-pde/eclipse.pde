@@ -2334,6 +2334,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginImportWizardFirstPage_1;
 
+	public static String PluginImportWizardFirstPage_2;
+
 	public static String LauncherUtils_title;
 
 	public static String RemoveLazyLoadingDirectiveResolution_remove;
