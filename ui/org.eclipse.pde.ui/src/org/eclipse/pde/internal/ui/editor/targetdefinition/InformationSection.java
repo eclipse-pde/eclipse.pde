@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.pde.internal.core.target.impl.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
+import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -33,8 +38,12 @@ public class InformationSection extends SectionPart {
 	private Text fNameText;
 	private TargetEditor fEditor;
 
+	private TextValidator fNameTextValidator;
+	private FormPage fPage;
+
 	public InformationSection(FormPage page, Composite parent) {
 		super(parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		fPage = page;
 		fEditor = (TargetEditor) page.getEditor();
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
@@ -76,6 +85,14 @@ public class InformationSection extends SectionPart {
 			}
 		});
 
+		IFile targetFile = ((WorkspaceFileTargetHandle) getTarget().getHandle()).getTargetFile();
+
+		fNameTextValidator = new TextValidator(fPage.getManagedForm(), fNameText, targetFile.getProject(), true) {
+
+			protected boolean validateControl() {
+				return ControlValidationUtility.validateRequiredField(fNameText.getText(), fNameTextValidator, IMessageProvider.ERROR);
+			}
+		};
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}

@@ -2512,6 +2512,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetDefinitionContentPage_6;
 
+	public static String TargetDefinitionContentPage_7;
+
+	public static String TargetDefinitionContentPage_8;
+
 	public static String TargetDefinitionEnvironmentPage_1;
 
 	public static String TargetDefinitionEnvironmentPage_2;

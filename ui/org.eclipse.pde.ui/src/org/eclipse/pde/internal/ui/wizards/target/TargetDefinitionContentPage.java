@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -108,7 +110,15 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fNameText = SWTFactory.createSingleText(nameComp, 1);
 		fNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getTargetDefinition().setName(fNameText.getText().trim());
+				String name = fNameText.getText().trim();
+				if (name.length() == 0) {
+					setErrorMessage(PDEUIMessages.TargetDefinitionContentPage_7);
+				} else {
+					setErrorMessage(null);
+					setMessage(PDEUIMessages.TargetDefinitionContentPage_2);
+				}
+				getTargetDefinition().setName(name);
+				setPageComplete(isPageComplete());
 			}
 		});
 
@@ -184,7 +194,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			if (name == null) {
 				name = EMPTY_STRING;
 			}
-			fNameText.setText(name);
+
+			if (name.trim().length() > 0)
+				fNameText.setText(name);
+			else
+				setMessage(PDEUIMessages.TargetDefinitionContentPage_8);
+
 			fTable.setInput(definition);
 
 			String presetValue = (definition.getOS() == null) ? EMPTY_STRING : definition.getOS();
@@ -684,5 +699,14 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fRemoveButton.setEnabled(!empty);
 		boolean hasElements = fElementViewer.getTable().getItemCount() > 0;
 		fRemoveAllButton.setEnabled(hasElements);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+	 */
+	public boolean isPageComplete() {
+		if (fNameText.getText().trim().length() == 0)
+			return false;
+		return true;
 	}
 }
