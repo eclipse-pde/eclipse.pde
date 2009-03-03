@@ -99,7 +99,7 @@ public class FeatureRootAdvice extends AbstractAdvice {
 			descriptor = (FileSetDescriptor) configAdvice[IDX_DESCRIPTOR];
 		else {
 			String key = "root"; //$NON-NLS-1$
-			if (!config.equals(Config.ANY))
+			if (!config.equals(Config.ANY) && config.length() > 0)
 				key += "." + config; //$NON-NLS-1$
 			descriptor = new FileSetDescriptor(key, config.equals(Config.ANY) ? null : config);
 			descriptor.setFiles(""); //$NON-NLS-1$

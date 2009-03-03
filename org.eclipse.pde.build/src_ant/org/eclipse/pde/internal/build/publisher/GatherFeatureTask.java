@@ -103,9 +103,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		Map configMap = Utils.processRootProperties(getBuildProperties(), false);
 		for (Iterator iterator = configMap.keySet().iterator(); iterator.hasNext();) {
 			String config = (String) iterator.next();
-			if (config.equals(Utils.ROOT_COMMON))
-				continue;
 			Map rootMap = (Map) configMap.get(config);
+			if (config.equals(Utils.ROOT_COMMON))
+				config = ""; //$NON-NLS-1$
 
 			GatheringComputer computer = new GatheringComputer();
 			Set configFileSets = new HashSet();

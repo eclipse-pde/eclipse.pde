@@ -540,10 +540,15 @@ public class PublishingTests extends P2TestCase {
 		FileUtils.unzipFile(tar.getLocation().toFile(), untarred);
 
 		assertResourceFile(buildFolder, "untarred/plugins/org.eclipse.osgi_" + osgi.getVersion() + ".jar");
+		assertResourceFile(buildFolder, "untarred/binary/f_root_1.0.0");
 		assertResourceFile(buildFolder, "untarred/plugins/p_1.0.0.jar");
 		assertResourceFile(buildFolder, "untarred/features/f_1.0.0.jar");
 		assertResourceFile(buildFolder, "untarred/artifacts.jar");
 		assertResourceFile(buildFolder, "untarred/content.jar");
+		
+		HashSet entries = new HashSet();
+		entries.add("license.html");
+		assertZipContents(buildFolder, "untarred/binary/f_root_1.0.0", entries);
 	}
 	
 	public void testPublishAndRunSimpleProduct() throws Exception {
