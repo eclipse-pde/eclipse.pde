@@ -18,6 +18,7 @@ public class UtilMessages extends NLS {
 	public static String Util_4;
 	public static String Util_5;
 	public static String Util_6;
+	public static String comparison_invalidRegularExpression;
 
 	static {
 		// initialize resource bundle

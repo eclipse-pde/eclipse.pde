@@ -116,8 +116,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-import org.eclipse.pde.api.tools.internal.tasks.CommonUtilsTask;
-import org.eclipse.pde.api.tools.internal.tasks.Messages;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
@@ -246,6 +244,8 @@ public final class Util {
 	public static final String UNKNOWN_FLAGS = "UNKNOWN_FLAGS"; //$NON-NLS-1$
 	public static final String UNKNOWN_KIND = "UNKNOWN_KIND"; //$NON-NLS-1$
 	public static final String UNKNOWN_VISIBILITY = "UNKNOWN_VISIBILITY"; //$NON-NLS-1$
+	public static final String ISO_8859_1 = "ISO-8859-1"; //$NON-NLS-1$
+	public static final String REGULAR_EXPRESSION_START = "R:"; //$NON-NLS-1$
 
 	// Trace for delete operation
 	/*
@@ -2145,7 +2145,7 @@ public final class Util {
 				char[] contents = null;
 				try {
 					stream = new BufferedInputStream(new FileInputStream(file));
-					contents = getInputStreamAsCharArray(stream, -1, CommonUtilsTask.ISO_8859_1);
+					contents = getInputStreamAsCharArray(stream, -1, ISO_8859_1);
 				} 
 				catch (FileNotFoundException e) {} 
 				catch (IOException e) {} 
@@ -2164,7 +2164,7 @@ public final class Util {
 							if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
 								continue; 
 							}
-							if(line.startsWith(CommonUtilsTask.REGULAR_EXPRESSION_START)) {
+							if(line.startsWith(REGULAR_EXPRESSION_START)) {
 								if(baseline != null) {
 									Util.collectRegexIds(line, list, baseline.getApiComponents());
 								}
@@ -2194,7 +2194,7 @@ public final class Util {
 	 * @param components
 	 */
 	public static void collectRegexIds(String line, Set list, IApiComponent[] components) throws Exception {
-		if (line.startsWith(CommonUtilsTask.REGULAR_EXPRESSION_START)) {
+		if (line.startsWith(REGULAR_EXPRESSION_START)) {
 			String componentname = line;
 			// regular expression
 			componentname = componentname.substring(2);
@@ -2210,8 +2210,8 @@ public final class Util {
 					}
 				}
 			} catch (PatternSyntaxException e) {
-				throw new Exception(Messages.bind(
-						Messages.comparison_invalidRegularExpression,
+				throw new Exception(UtilMessages.bind(
+						UtilMessages.comparison_invalidRegularExpression,
 						componentname));
 			}
 			catch(CoreException ce) {}

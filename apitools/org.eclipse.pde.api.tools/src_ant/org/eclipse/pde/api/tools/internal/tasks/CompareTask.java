@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Ant task to compare API scopes.
@@ -96,7 +97,7 @@ public class CompareTask extends CommonUtilsTask {
 				for (int i = 0, max = componentsNames.length; i < max; i++) {
 					String componentName = componentsNames[i];
 					componentName = componentName.trim();
-					if (componentName.startsWith(REGULAR_EXPRESSION_START)) {
+					if (componentName.startsWith(Util.REGULAR_EXPRESSION_START)) {
 						// regular expression
 						componentName = componentName.substring(2);
 						Pattern pattern = null;

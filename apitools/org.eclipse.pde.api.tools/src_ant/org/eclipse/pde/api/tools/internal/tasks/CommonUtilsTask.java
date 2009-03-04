@@ -37,9 +37,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public abstract class CommonUtilsTask extends Task {
 	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
 	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
-	public static final String ISO_8859_1 = "ISO-8859-1"; //$NON-NLS-1$
 	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
-	public static final String REGULAR_EXPRESSION_START = "R:"; //$NON-NLS-1$
 
 	protected static final String CURRENT = "currentBaseline"; //$NON-NLS-1$
 	protected static final String CURRENT_BASELINE_NAME = "current_baseline"; //$NON-NLS-1$
