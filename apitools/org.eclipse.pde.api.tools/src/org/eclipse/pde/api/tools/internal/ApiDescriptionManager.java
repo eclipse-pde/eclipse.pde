@@ -43,7 +43,6 @@ import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
-import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ScannerMessages;
@@ -183,7 +182,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 */
 	public void elementChanged(ElementChangedEvent event) {
 		IJavaElementDelta delta = event.getDelta();
-		processJavaElementDeltas(delta.getAffectedChildren());
+		processJavaElementDeltas(delta.getAffectedChildren(), null);
 	}
 	
 	/**
@@ -191,20 +190,27 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 * 
 	 * @param deltas
 	 */
-	private synchronized void processJavaElementDeltas(IJavaElementDelta[] deltas) {
+	private synchronized boolean processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject proj) {
 		IJavaElementDelta delta = null;
 		for(int i = 0; i < deltas.length; i++) {
 			delta = deltas[i];
 			switch(delta.getElement().getElementType()) {
 				case IJavaElement.JAVA_PROJECT: {
-					IJavaProject proj = (IJavaProject) delta.getElement();
+					proj = (IJavaProject) delta.getElement();
 					switch (delta.getKind()) {
 						case IJavaElementDelta.CHANGED:
 							int flags = delta.getFlags();
 							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
 								clean(proj, false, true);
 							} else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
-								projectChanged(proj);
+								if (proj != null) {
+									projectChanged(proj);
+									return true;
+								}
+							} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
+								if (processJavaElementDeltas(delta.getAffectedChildren(), proj)) {
+									return true;
+								}
 							}
 							break;
 						case IJavaElementDelta.REMOVED:
@@ -213,8 +219,41 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 					}
 					break;
 				}
+				case IJavaElement.PACKAGE_FRAGMENT :
+				case IJavaElement.PACKAGE_FRAGMENT_ROOT : {
+					int flags = delta.getFlags();
+					if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
+						if (processJavaElementDeltas(delta.getAffectedChildren(), proj)) {
+							return true;
+						}
+					}
+					break;
+				}
+				case IJavaElement.COMPILATION_UNIT : {
+					int flags = delta.getFlags();
+					switch (delta.getKind()) {
+						case IJavaElementDelta.CHANGED: {
+							if ((flags & IJavaElementDelta.F_CONTENT) != 0
+									|| (flags & IJavaElementDelta.F_FINE_GRAINED) != 0) {
+								if (proj != null) {
+									projectChanged(proj);
+									return true;
+								}
+							}
+							break;
+						}
+						case IJavaElementDelta.ADDED :
+						case IJavaElementDelta.REMOVED : {
+							if (proj != null) {
+								projectChanged(proj);
+								return true;
+							}
+						}
+					}
+				}
 			}
 		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -318,9 +357,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 		IElementDescriptor elementDesc = null;
 		if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE)) {
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
-			if (!VisibilityModifiers.isAPI(vis)) {
-				return;
-			}
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			// collect fragments
 			List fragments = new ArrayList();
