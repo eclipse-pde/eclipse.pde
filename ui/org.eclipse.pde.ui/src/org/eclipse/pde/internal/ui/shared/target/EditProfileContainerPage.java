@@ -59,14 +59,27 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 
 	public EditProfileContainerPage(ITargetDefinition target) {
 		super(target);
-		setTitle(Messages.AddProfileContainerPage_0);
-		setMessage(Messages.AddProfileContainerPage_1);
 	}
 
 	public EditProfileContainerPage(ITargetDefinition target, IBundleContainer container) {
 		super(target, container);
-		setTitle(Messages.AddProfileContainerPage_0);
-		setMessage(Messages.AddProfileContainerPage_1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
+	 */
+	protected String getDefaultTitle() {
+		if (fContainer != null) {
+			return Messages.EditProfileContainerPage_3;
+		}
+		return Messages.AddProfileContainerPage_0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
+	 */
+	protected String getDefaultMessage() {
+		return Messages.AddProfileContainerPage_1;
 	}
 
 	/* (non-Javadoc)
@@ -251,7 +264,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 					setMessage(Messages.AddProfileContainerPage_8, IMessageProvider.WARNING);
 					setPageComplete(true);
 				} else {
-					setMessage(Messages.AddProfileContainerPage_1);
+					setMessage(getDefaultMessage());
 					setPageComplete(true);
 				}
 			}

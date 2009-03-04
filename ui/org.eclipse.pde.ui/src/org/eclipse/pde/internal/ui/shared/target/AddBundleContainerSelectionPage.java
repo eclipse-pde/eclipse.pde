@@ -233,7 +233,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
 						}
 						setDialogSettings(settings);
-						addPage(new AddFeatureContainersPage("FeaturePage", fTarget)); //$NON-NLS-1$
+						addPage(new AddFeatureContainersPage(fTarget));
 					}
 
 					public boolean performFinish() {

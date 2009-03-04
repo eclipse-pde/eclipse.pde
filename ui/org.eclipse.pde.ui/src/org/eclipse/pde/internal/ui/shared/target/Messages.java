@@ -74,6 +74,7 @@ public class Messages extends NLS {
 	public static String EditProfileContainerPage_0;
 	public static String EditProfileContainerPage_1;
 	public static String EditProfileContainerPage_2;
+	public static String EditProfileContainerPage_3;
 	public static String Errors_CreationError;
 	public static String Errors_CreationError_NoWizard;
 	public static String FeatureImportWizard_DetailedPage_problemsLoading;

@@ -46,7 +46,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 	private static ITargetPlatformService fTargetService;
 	protected Combo fInstallLocation;
 	protected IncludedBundlesTree fBundleTree;
-	private IBundleContainer fContainer;
+	protected IBundleContainer fContainer;
 	private ITargetDefinition fTarget;
 	private Job fTextChangedJob;
 
@@ -73,23 +73,36 @@ public class EditDirectoryContainerPage extends WizardPage {
 	protected EditDirectoryContainerPage(ITargetDefinition target) {
 		super("EditDirectoryContainer"); //$NON-NLS-1$
 		fTarget = target;
-		if (target == null) {
-			setTitle(Messages.AddDirectoryContainerPage_0);
-		} else {
-			setTitle(Messages.EditDirectoryContainerPage_0);
-		}
-		setMessage(Messages.AddDirectoryContainerPage_1);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		setMessage(getDefaultMessage());
+		setTitle(getDefaultTitle());
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		createLocationArea(comp);
 		createTableArea(comp);
 		setControl(comp);
 		initializeInputFields(fContainer);
+	}
+
+	/**
+	 * @return the default title for this wizard page
+	 */
+	protected String getDefaultTitle() {
+		if (fContainer == null) {
+			return Messages.AddDirectoryContainerPage_0;
+		}
+		return Messages.EditDirectoryContainerPage_0;
+	}
+
+	/**
+	 * @return the default message for this wizard page
+	 */
+	protected String getDefaultMessage() {
+		return Messages.AddDirectoryContainerPage_1;
 	}
 
 	/**
@@ -289,7 +302,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 		// Check if the text field is blank
 		if (fInstallLocation.getText().trim().length() == 0) {
 			fBundleTree.setInput(null);
-			setMessage(Messages.AddDirectoryContainerPage_1);
+			setMessage(getDefaultMessage());
 			setPageComplete(false);
 			return false;
 		}
@@ -304,7 +317,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 			setMessage(Messages.AddDirectoryContainerPage_6, IMessageProvider.WARNING);
 			setPageComplete(true);
 		} else {
-			setMessage(Messages.AddDirectoryContainerPage_1);
+			setMessage(getDefaultMessage());
 			setPageComplete(true);
 		}
 		return true;

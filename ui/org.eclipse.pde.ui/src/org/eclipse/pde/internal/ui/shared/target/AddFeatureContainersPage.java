@@ -44,10 +44,22 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	private Button fIncludeVersionButton;
 	private CheckboxTableViewer fFeatureTable;
 
-	protected AddFeatureContainersPage(String pageName, ITargetDefinition target) {
+	protected AddFeatureContainersPage(ITargetDefinition target) {
 		super(target);
-		setTitle(Messages.AddFeatureContainerPage_0);
-		setMessage(Messages.AddFeatureContainerPage_1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
+	 */
+	protected String getDefaultTitle() {
+		return Messages.AddFeatureContainerPage_0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
+	 */
+	protected String getDefaultMessage() {
+		return Messages.AddFeatureContainerPage_1;
 	}
 
 	/* (non-Javadoc)

@@ -15,8 +15,20 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 
 	public EditFeatureContainerPage(ITargetDefinition target, IBundleContainer container) {
 		super(target, container);
-		setTitle(Messages.EditFeatureContainerPage_0);
-		setMessage(Messages.EditFeatureContainerPage_1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
+	 */
+	protected String getDefaultTitle() {
+		return Messages.EditFeatureContainerPage_0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
+	 */
+	protected String getDefaultMessage() {
+		return Messages.EditFeatureContainerPage_1;
 	}
 
 	/* (non-Javadoc)
