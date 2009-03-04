@@ -31,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.api.tools.internal.util.UtilMessages;
 
 /**
  * Ant task to compare API scopes.
@@ -117,7 +118,7 @@ public class CompareTask extends CommonUtilsTask {
 							}
 						} catch (PatternSyntaxException e) {
 							throw new BuildException(Messages.bind(
-									Messages.comparison_invalidRegularExpression,
+									UtilMessages.comparison_invalidRegularExpression,
 									componentName));
 						}
 					} else {
