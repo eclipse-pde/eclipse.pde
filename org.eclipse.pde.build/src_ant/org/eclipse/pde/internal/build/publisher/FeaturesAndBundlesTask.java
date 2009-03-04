@@ -35,7 +35,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 		if (b.length > 0)
 			application.addAction(new BundlesAction(b));
 		if (siteXML != null)
-			application.addAction(new SiteXMLAction(siteXML));
+			application.addAction(new SiteXMLAction(siteXML, null));
 
 		try {
 			application.run(getPublisherInfo());
