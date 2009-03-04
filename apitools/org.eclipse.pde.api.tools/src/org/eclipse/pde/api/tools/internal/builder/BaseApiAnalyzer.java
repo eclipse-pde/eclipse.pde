@@ -326,10 +326,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private void checkUnusedProblemFilters(ApiFilterStore store,
 			IProject project, String typeName) throws JavaModelException,
 			CoreException {
-		IType element;
-		IResource resource;
-		element = fJavaProject.findType(typeName);
-		resource = Util.getResource(project, element);
+		IType element = fJavaProject.findType(typeName);
+		IResource resource = Util.getResource(project, element);
 		if(resource != null) {
 			if (!Util.isManifest(resource.getProjectRelativePath())) {
 				resource.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
@@ -1182,7 +1180,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private IApiProblem createSinceTagProblem(int kind, final String[] messageargs, final Delta info, final IMember member, final String version) {
 		try {
 			// create a marker on the member for missing @since tag
-			IResource resource = Util.getResource(this.fJavaProject.getProject(), member.getDeclaringType());
+			IType declaringType = null;
+			if (member.getElementType() == IJavaElement.TYPE) {
+				declaringType = (IType) member;
+			} else {
+				declaringType = member.getDeclaringType();
+			}
+			IResource resource = Util.getResource(this.fJavaProject.getProject(), declaringType);
 			if (resource == null) {
 				return null;
 			}
@@ -1193,7 +1197,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (member instanceof IType) {
 				qtn = ((IType)member).getFullyQualifiedName();
 			} else {
-				qtn = member.getDeclaringType().getFullyQualifiedName();
+				qtn = declaringType.getFullyQualifiedName();
 			}
 			String[] messageArguments = null;
 			if (!Util.isManifest(resource.getProjectRelativePath())) {
