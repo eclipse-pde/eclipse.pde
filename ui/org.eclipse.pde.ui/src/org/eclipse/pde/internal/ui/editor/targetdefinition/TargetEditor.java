@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.internal.core.PDECore;
@@ -140,15 +139,15 @@ public class TargetEditor extends FormEditor {
 						PDEPlugin.log(e);
 					}
 				} /*else if (input instanceof IURIEditorInput){
-						IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
-						store.
-						is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
-						model = createStorageModel(is);
-					}
-					ResourcesPlugin.getPlugin().getWorkspace().getRoot().findFilesForLocationURI(URI)
-					
-					ITargetHandle fileHandle = service.getTarget(file)
-				}*/
+									IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+									store.
+									is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
+									model = createStorageModel(is);
+								}
+								ResourcesPlugin.getPlugin().getWorkspace().getRoot().findFilesForLocationURI(URI)
+								
+								ITargetHandle fileHandle = service.getTarget(file)
+							}*/
 				// TODO Support storage editor input?
 				if (fTarget == null) {
 					fTarget = service.newTarget();
@@ -184,8 +183,7 @@ public class TargetEditor extends FormEditor {
 				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
 					public void linkActivated(HyperlinkEvent e) {
-						Job job = new LoadTargetDefinitionJob(getTarget());
-						job.schedule();
+						LoadTargetDefinitionJob.load(getTarget());
 					}
 
 					public void linkEntered(HyperlinkEvent e) {

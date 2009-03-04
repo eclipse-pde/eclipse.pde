@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -600,8 +597,8 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		// set workspace target if required
 		if (load) {
-			Job job = new LoadTargetDefinitionJob(toLoad);
-			job.schedule();
+			LoadTargetDefinitionJob.load(toLoad);
+			fPrevious = toLoad.getHandle();
 		}
 
 		fMoved.clear();

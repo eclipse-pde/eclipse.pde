@@ -34,6 +34,8 @@ import org.eclipse.pde.internal.core.target.impl.*;
  */
 public class LoadTargetDefinitionJob extends WorkspaceJob {
 
+	private static final String JOB_FAMILY_ID = "LoadTargetDefinitionJob"; //$NON-NLS-1$
+
 	/**
 	 * Target definition being loaded
 	 */
@@ -47,8 +49,27 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	/**
 	 * Constructs a new operation to load the specified target definition
 	 * as the current target platform. When <code>null</code> is specified
-	 * the target platform is empty and all other settings are default.
+	 * the target platform is empty and all other settings are default.  This
+	 * method will cancel all existing LoadTargetDefinitionJob instances then
+	 * schedules the operation as a user job.
 	 * 
+	 * @param target target definition or <code>null</code> if none
+	 */
+	public static void load(ITargetDefinition target) {
+		Job.getJobManager().cancel(JOB_FAMILY_ID);
+		Job job = new LoadTargetDefinitionJob(target);
+		job.setUser(true);
+		job.schedule();
+	}
+
+	/**
+	 * Constructs a new operation to load the specified target definition
+	 * as the current target platform. When <code>null</code> is specified
+	 * the target platform is empty and all other settings are default.
+	 *<p>
+	 * Clients should use {@link #getLoadJob(ITargetDefinition)} instead to ensure
+	 * any existing jobs are cancelled.
+	 * </p>
 	 * @param target target definition or <code>null</code> if none
 	 */
 	public LoadTargetDefinitionJob(ITargetDefinition target) {
@@ -62,19 +83,54 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+	 */
+	public boolean belongsTo(Object family) {
+		return JOB_FAMILY_ID.equals(family);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
 			Preferences preferences = PDECore.getDefault().getPluginPreferences();
 			monitor.beginTask(Messages.LoadTargetOperation_mainTaskName, 100);
+
 			loadEnvironment(preferences, new SubProgressMonitor(monitor, 5));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
 			loadArgs(preferences, new SubProgressMonitor(monitor, 5));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
 			loadJRE(preferences, new SubProgressMonitor(monitor, 15));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
 			loadImplicitPlugins(preferences, new SubProgressMonitor(monitor, 15));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
 			loadPlugins(preferences, new SubProgressMonitor(monitor, 60));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
 			loadAdditionalPreferences(preferences);
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
 			PDECore.getDefault().savePluginPreferences();
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 		} finally {
 			monitor.done();
 		}
@@ -282,10 +338,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				fTarget.resolve(subMon.newChild(20));
 			} else {
 				subMon.worked(20);
-			}
-
-			if (subMon.isCanceled()) {
-				// TODO Support cancellation?
 			}
 
 			IResolvedBundle[] resolved = fTarget.getBundles();
