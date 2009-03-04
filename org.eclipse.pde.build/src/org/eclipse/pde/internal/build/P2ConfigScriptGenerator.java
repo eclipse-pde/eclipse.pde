@@ -99,7 +99,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	protected void generateGatherCalls() {
 		super.generateGatherCalls();
 
-		script.printAntCallTask(TARGET_P2_SIGN_REPO, true, null);
+		if (signJars)
+			script.printAntCallTask(TARGET_P2_SIGN_REPO, true, null);
 		script.println();
 	}
 
