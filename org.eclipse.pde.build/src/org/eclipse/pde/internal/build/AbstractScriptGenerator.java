@@ -71,9 +71,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public abstract void generate() throws CoreException;
 
 	protected static void setStaticAntProperties(Properties properties) {
-		if (properties == null)
+		if (properties == null) {
 			immutableAntProperties = new Properties();
-		else
+			BuildDirector.p2Gathering = false;
+		} else
 			immutableAntProperties = properties;
 		if (getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == null) {
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "false"); //$NON-NLS-1$
@@ -83,7 +84,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			immutableAntProperties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true"); //$NON-NLS-1$
 		}
 
-		if (getPropertyAsBoolean("p2.gathering")) //$NON-NLS-1$
+		if (getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_P2_GATHERING))
 			BuildDirector.p2Gathering = true;
 	}
 

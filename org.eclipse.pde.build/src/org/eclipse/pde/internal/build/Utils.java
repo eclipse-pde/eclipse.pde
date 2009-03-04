@@ -638,7 +638,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 
 		//and also add the common properties independently
-		map.put(ROOT_COMMON, common);
+		if (mergeCommon || common.size() > 0)
+			map.put(ROOT_COMMON, common);
 		return map;
 	}
 

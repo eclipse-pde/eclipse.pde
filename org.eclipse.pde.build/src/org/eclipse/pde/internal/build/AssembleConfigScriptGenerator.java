@@ -154,6 +154,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateMirrorTask(boolean assembling) {
 		script.printTargetDeclaration(TARGET_MIRROR_ARCHIVE, null, null, null, null);
+		script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 		if (features.length + plugins.length > 0) {
 			script.printTab();
 			script.print("<p2.mirror "); //$NON-NLS-1$
@@ -164,7 +165,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("location", "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
-			script.printAttribute("append", Boolean.toString(!assembling), true); //$NON-NLS-1$
+			script.printAttribute("append", assembling ? Utils.getPropertyFormat(PROPERTY_P2_APPEND) : TRUE, true); //$NON-NLS-1$
 			script.printAttribute("kind", "metadata", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 			script.printTab();
@@ -172,7 +173,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("location", "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
-			script.printAttribute("append", Boolean.toString(!assembling), true); //$NON-NLS-1$
+			script.printAttribute("append", assembling ? Utils.getPropertyFormat(PROPERTY_P2_APPEND) : TRUE, true); //$NON-NLS-1$
 			script.printAttribute("kind", "artifact", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 			script.printTab();
@@ -287,7 +288,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateMoveRootFiles() {
-		if (rootFileProviders.size() == 0)
+		if (rootFileProviders.size() == 0 || BuildDirector.p2Gathering)
 			return;
 
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
@@ -526,6 +527,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
+		Set featureSet = BuildDirector.p2Gathering ? new HashSet() : null;
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
 			String placeToGather = feature.getURL().getPath();
@@ -534,11 +536,15 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				placeToGather = placeToGather.substring(0, j);
 			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+			if (BuildDirector.p2Gathering)
+				featureSet.add(feature);
 		}
 
 		//This will generate gather.bin.parts call to features that provides files for the root
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
+			if (BuildDirector.p2Gathering && featureSet.contains(feature))
+				continue;
 			String placeToGather = feature.getURL().getPath();
 			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)

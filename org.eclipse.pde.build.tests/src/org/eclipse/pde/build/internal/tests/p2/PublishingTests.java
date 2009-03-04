@@ -469,14 +469,10 @@ public class PublishingTests extends P2TestCase {
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath() + "/plugins");
 		properties.put("configs", "win32,win32,x86 & macosx, carbon, ppc");
+		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 
-		try {
-			BuildDirector.p2Gathering = true;
-			runProductBuild(buildFolder);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		runProductBuild(buildFolder);
 
 		Set entries = new HashSet();
 		entries.add("branded.app/Contents/Info.plist");
