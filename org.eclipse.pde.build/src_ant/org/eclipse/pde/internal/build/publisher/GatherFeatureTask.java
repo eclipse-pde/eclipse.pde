@@ -97,6 +97,11 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		return null;
 	}
 
+	private String reorderConfig(String config) {
+		String[] parsed = Utils.getArrayFromString(config, "."); //$NON-NLS-1$
+		return parsed[1] + '.' + parsed[0] + '.' + parsed[2];
+	}
+
 	protected FeatureRootAdvice createRootAdvice() {
 		FeatureRootAdvice advice = new FeatureRootAdvice();
 
@@ -106,7 +111,8 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			Map rootMap = (Map) configMap.get(config);
 			if (config.equals(Utils.ROOT_COMMON))
 				config = ""; //$NON-NLS-1$
-
+			else
+				config = reorderConfig(config);
 			GatheringComputer computer = new GatheringComputer();
 			Set configFileSets = new HashSet();
 			ArrayList permissionsKeys = new ArrayList();

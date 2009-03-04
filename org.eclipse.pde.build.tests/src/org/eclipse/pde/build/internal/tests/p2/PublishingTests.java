@@ -262,24 +262,24 @@ public class PublishingTests extends P2TestCase {
 		String version = fileName.substring(fileName.indexOf('_') + 1);
 		Set entries = new HashSet();
 		entries.add("launcher");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.aix.motif.ppc_" + version, entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.motif.aix.ppc_" + version, entries);
 
 		entries.add("about.html");
 		entries.add("libcairo-swt.so");
 		entries.add("about_files/about_cairo.html");
 		entries.add("about_files/mpl-v11.txt");
 		entries.add("about_files/pixman-licenses.txt");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.linux.gtk.x86_" + version, entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.gtk.linux.x86_" + version, entries);
 
 		entries.add("Eclipse.app/Contents/Info.plist");
 		entries.add("Eclipse.app/Contents/MacOS/eclipse.ini");
 		entries.add("Eclipse.app/Contents/MacOS/launcher");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.macosx.carbon.ppc_" + version, entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.carbon.macosx.ppc_" + version, entries);
 
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
 
-		IInstallableUnit iu = getIU(repository, "org.eclipse.equinox.executable_root.linux.gtk.ppc");
+		IInstallableUnit iu = getIU(repository, "org.eclipse.equinox.executable_root.gtk.linux.ppc");
 		assertEquals(iu.getVersion().toString(), version);
 		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:libcairo-swt.so, permissions:755);");
 	}
@@ -483,7 +483,7 @@ public class PublishingTests extends P2TestCase {
 		entries.add("branded.app/Contents/MacOS/branded.ini");
 		entries.add("branded.app/Contents/MacOS/branded");
 		entries.add("branded.app/Contents/Resources/mail.icns");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.macosx.carbon.ppc_1.0.0", entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.carbon.macosx.ppc_1.0.0", entries);
 
 		entries.clear();
 		entries.add("branded.exe");

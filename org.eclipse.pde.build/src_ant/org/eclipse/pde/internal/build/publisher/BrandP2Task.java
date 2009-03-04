@@ -127,7 +127,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	protected String getProviderIUName() {
-		return launcherProvider + "_root." + config.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
+		return launcherProvider + "_root." + getConfigString(); //$NON-NLS-1$
 	}
 
 	protected List prepareIUs() {
@@ -160,8 +160,12 @@ public class BrandP2Task extends Repo2RunnableTask {
 		return tempFolder + "/p2.branding/" + getProviderIUName(); //$NON-NLS-1$
 	}
 
+	private String getConfigString() {
+		return config.getWs() + '.' + config.getOs() + '.' + config.getArch();
+	}
+
 	protected void publishBrandedIU(IMetadataRepository metadataRepo, IArtifactRepository artifactRepo, IInstallableUnit originalIU) {
-		String id = productId + "_root." + config.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
+		String id = productId + "_root." + getConfigString(); //$NON-NLS-1$
 		Version version = new Version(productVersion);
 		if (version.equals(Version.emptyVersion))
 			version = originalIU.getVersion();
@@ -191,6 +195,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 			File root = new File(getRootFolder());
 			new File(root, "content.xml").delete(); //$NON-NLS-1$
 			new File(root, "artifacts.xml").delete(); //$NON-NLS-1$
+			new File(root, "content.jar").delete(); //$NON-NLS-1$
+			new File(root, "artifacts.jar").delete(); //$NON-NLS-1$
 			FileUtils.zip(output, root, Collections.EMPTY_SET, FileUtils.createRootPathComputer(root));
 		} catch (ProvisionException e) {
 			throw new BuildException(e.getMessage(), e);
