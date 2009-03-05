@@ -43,6 +43,11 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 	private class TargetLabelProvider extends StyledCellLabelProvider {
 
+		public TargetLabelProvider() {
+			super(NO_FOCUS);
+			PDEPlugin.getDefault().getLabelProvider().connect(this);
+		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 		 */
@@ -104,6 +109,14 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				}
 			}
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION, flag);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#dispose()
+		 */
+		public void dispose() {
+			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+			super.dispose();
 		}
 	}
 
