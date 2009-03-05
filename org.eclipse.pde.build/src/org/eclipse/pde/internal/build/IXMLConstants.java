@@ -37,6 +37,7 @@ public interface IXMLConstants {
 	public static final String TARGET_FETCH = "fetch"; //$NON-NLS-1$
 	public static final String TARGET_API_GENERATION = "apitools.generation"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_BIN_PARTS = "gather.bin.parts"; //$NON-NLS-1$
+	public static final String TARGET_PUBLISH_BIN_PARTS = "publish.bin.parts"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_LOGS = "gather.logs"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_SOURCES = "gather.sources"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_INDIVIDUAL_SOURCES = "gather.individual.sources"; //$NON-NLS-1$
@@ -69,6 +70,7 @@ public interface IXMLConstants {
 	public static final String TARGET_P2_SIGN_REPO = "sign.p2.repository"; //$NON-NLS-1$
 	public static final String TARGET_RUN_DIRECTOR = "runDirector"; //$NON-NLS-1$
 	public static final String TARGET_MIRROR_ARCHIVE = "mirrorArchive"; //$NON-NLS-1$
+	public static final String TARGET_MIRROR_PRODUCT = "mirrorProduct"; //$NON-NLS-1$
 
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$

@@ -47,15 +47,11 @@ public class PublishingTests extends P2TestCase {
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
 		properties.put("forceContextQualifier", "v1234");
-		try {
-			BuildDirector.p2Gathering = true;
-			generateScripts(buildFolder, properties);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		properties.put("p2.gathering", "true");
+		generateScripts(buildFolder, properties);
 
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
-		runAntScript(buildXMLPath, new String[] {"build.jars", "gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] {"build.jars", "publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		assertResourceFile(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar");
 		IFile jar = buildFolder.getFile("buildRepo/plugins/bundle_1.0.0.v1234.jar");
@@ -116,15 +112,11 @@ public class PublishingTests extends P2TestCase {
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
 		properties.put("forceContextQualifier", "v1234");
-		try {
-			BuildDirector.p2Gathering = true;
-			generateScripts(buildFolder, properties);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		properties.put("p2.gathering", "true");
+		generateScripts(buildFolder, properties);
 
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
-		runAntScript(buildXMLPath, new String[] {"build.jars", "gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] {"build.jars", "publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		HashSet contents = new HashSet();
 		contents.add("a.txt");
@@ -217,15 +209,11 @@ public class PublishingTests extends P2TestCase {
 		Utils.writeBuffer(f.getFile("customBuildCallbacks.xml"), buffer);
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
-		try {
-			BuildDirector.p2Gathering = true;
-			generateScripts(buildFolder, properties);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		properties.put("p2.gathering", "true");
+		generateScripts(buildFolder, properties);
 
 		String buildXMLPath = f.getFile("build.xml").getLocation().toOSString();
-		runAntScript(buildXMLPath, new String[] {"gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		HashSet contents = new HashSet();
 		contents.add("a.txt");
@@ -247,15 +235,11 @@ public class PublishingTests extends P2TestCase {
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.equinox.executable");
 		properties.put("launcherName", "eclipse");
-		try {
-			BuildDirector.p2Gathering = true;
-			generateScripts(buildFolder, properties);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		properties.put("p2.gathering", "true");
+		generateScripts(buildFolder, properties);
 
 		String buildXMLPath = executableFeature.getFile("build.xml").getLocation().toOSString();
-		runAntScript(buildXMLPath, new String[] {"gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		String executable = "org.eclipse.equinox.executable";
 		String fileName = originalExecutable.getName();
@@ -314,16 +298,11 @@ public class PublishingTests extends P2TestCase {
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
 		properties.put("forceContextQualifier", "v1234");
 		properties.put("generateAPIDescription", "true");
-
-		try {
-			BuildDirector.p2Gathering = true;
-			generateScripts(buildFolder, properties);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		properties.put("p2.gathering", "true");
+		generateScripts(buildFolder, properties);
 
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
-		runAntScript(buildXMLPath, new String[] {"build.jars", "gather.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] {"build.jars", "publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		assertResourceFile(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar");
 		HashSet contents = new HashSet();
@@ -342,14 +321,10 @@ public class PublishingTests extends P2TestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
+		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 
-		try {
-			BuildDirector.p2Gathering = true;
-			runBuild(buildFolder);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		runBuild(buildFolder);
 
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
 
@@ -398,7 +373,7 @@ public class PublishingTests extends P2TestCase {
 
 		entries.add("artifacts.xml");
 		entries.add("content.xml");
-		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", entries);
+		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild-group.group.group.zip", entries);
 	}
 
 	public void testPublish_Source_1() throws Exception {
@@ -417,13 +392,9 @@ public class PublishingTests extends P2TestCase {
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
+		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
-		try {
-			BuildDirector.p2Gathering = true;
-			runBuild(buildFolder);
-		} finally {
-			BuildDirector.p2Gathering = false;
-		}
+		runBuild(buildFolder);
 
 		assertResourceFile(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar");
 		Set entries = new HashSet();
@@ -517,9 +488,9 @@ public class PublishingTests extends P2TestCase {
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		if (Platform.getOS().equals("linux"))
-			properties.put("archivesFormat", "*,*,*-tar");
+			properties.put("archivesFormat", "group,group,group-tar");
 		else
-			properties.put("archivesFormat", "*,*,*-antTar");
+			properties.put("archivesFormat", "group,group,group-antTar");
 		properties.put("p2.metadata.repo.name", "MyMeta");
 		properties.put("p2.metadata.repo.name", "MyArtifact");
 		properties.put("p2.compress", "true");
@@ -530,7 +501,7 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		IInstallableUnit osgi = getIU(repository, "org.eclipse.osgi");
 
-		IFile tar = buildFolder.getFile("I.TestBuild/f-TestBuild.tar.gz");
+		IFile tar = buildFolder.getFile("I.TestBuild/f-TestBuild-group.group.group.tar.gz");
 		assertResourceFile(tar);
 		File untarred = new File(buildFolder.getLocation().toFile(), "untarred");
 		FileUtils.unzipFile(tar.getLocation().toFile(), untarred);
@@ -541,24 +512,24 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "untarred/features/f_1.0.0.jar");
 		assertResourceFile(buildFolder, "untarred/artifacts.jar");
 		assertResourceFile(buildFolder, "untarred/content.jar");
-		
+
 		HashSet entries = new HashSet();
 		entries.add("license.html");
 		assertZipContents(buildFolder, "untarred/binary/f_root_1.0.0", entries);
 	}
-	
+
 	public void testPublishAndRunSimpleProduct() throws Exception {
 		IFolder buildFolder = newTest("PublishAndRunSimpleProduct");
-		
+
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
+
 		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
 		copyExecutableFeature(delta, executableFeature);
 		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
 		properties.remove("custom");
 		Utils.storeBuildProperties(executableFeature, properties);
-		
+
 		//headless rcp hello world
 		IFolder headless = Utils.createFolder(buildFolder, "plugins/headless");
 		StringBuffer buffer = new StringBuffer();
@@ -574,7 +545,7 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("   }																		\n");
 		buffer.append("}																		\n");
 		Utils.writeBuffer(headless.getFile("src/headless/Application.java"), buffer);
-		
+
 		buffer = new StringBuffer();
 		buffer.append("<plugin>																			\n");
 		buffer.append("   <extension id=\"application\" point=\"org.eclipse.core.runtime.applications\">\n");
@@ -584,7 +555,7 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("   </extension>																	\n");
 		buffer.append("</plugin>																		\n");
 		Utils.writeBuffer(headless.getFile("plugin.xml"), buffer);
-		
+
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Require-Bundle"), "org.eclipse.core.runtime");
@@ -593,11 +564,11 @@ public class PublishingTests extends P2TestCase {
 		properties = new Properties();
 		properties.put("bin.includes", "META-INF/, ., plugin.xml");
 		Utils.generatePluginBuildProperties(headless, properties);
-		
+
 		IFile productFile = buildFolder.getFile("headless.product");
-		String [] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", "org.eclipse.equinox.app", "org.eclipse.equinox.common", "org.eclipse.equinox.preferences", "org.eclipse.equinox.registry", "org.eclipse.osgi"};
+		String[] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", "org.eclipse.equinox.app", "org.eclipse.equinox.common", "org.eclipse.equinox.preferences", "org.eclipse.equinox.registry", "org.eclipse.osgi"};
 		Utils.generateProduct(productFile, "headless.product", "1.0.0", "headless.application", "headless", bundles, false, null);
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
@@ -611,7 +582,7 @@ public class PublishingTests extends P2TestCase {
 
 		runProductBuild(buildFolder);
 	}
-	
+
 	public void testBug265726() throws Exception {
 		IFolder buildFolder = newTest("265726");
 
@@ -621,19 +592,19 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateBundle(p, "p");
 
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
-		Utils.generateFeature(buildFolder, "f", new String [] { "org.eclipse.rcp" }, new String[] {"p"});
+		Utils.generateFeature(buildFolder, "f", new String[] {"org.eclipse.rcp"}, new String[] {"p"});
 		Utils.writeBuffer(f.getFile("about.html"), new StringBuffer("about!\n"));
 		Properties properties = new Properties();
 		properties.put("bin.includes", "about.html, feature.xml");
 		Utils.storeBuildProperties(f, properties);
-		
+
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
-		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("archivesFormat", "group,group,group-folder");
 		properties.put("p2.gathering", "true");
 		properties.put("signJars", "true");
 		properties.put("sign.alias", "pde.build");
@@ -642,7 +613,7 @@ public class PublishingTests extends P2TestCase {
 		properties.put("sign.keypass", "keypass");
 		properties.put("jarProcessor.unsign", "true");
 		properties.put("filteredDependencyCheck", "true");
-		
+
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
@@ -652,11 +623,11 @@ public class PublishingTests extends P2TestCase {
 		File buildFile = buildFolder.getLocation().toFile();
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/p_1.0.0.jar"), true);
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/features/f_1.0.0.jar"), true);
-		
+
 		HashSet entries = new HashSet();
 		entries.add("META-INF/PDE_BUIL.SF");
 		entries.add("META-INF/PDE_BUIL.DSA");
-		
+
 		IInstallableUnit iu = getIU(repository, "com.ibm.icu");
 		assertNotNull(iu);
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/com.ibm.icu_" + iu.getVersion() + ".jar", entries);
@@ -677,5 +648,32 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(repository, "org.eclipse.ui");
 		assertNotNull(iu);
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.ui_" + iu.getVersion() + ".jar", entries);
+	}
+
+	public void testMultiConfig() throws Exception {
+		IFolder buildFolder = newTest("multiConfig");
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.osgi;os=win32", "org.eclipse.equinox.common;os=linux"});
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("configs", "win32,win32,x86 & linux,gtk,x86");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		IFile tar = buildFolder.getFile("I.TestBuild/f-TestBuild-group.group.group.zip");
+		assertResourceFile(tar);
+		File untarred = new File(buildFolder.getLocation().toFile(), "unzipped");
+		FileUtils.unzipFile(tar.getLocation().toFile(), untarred);
+
+		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("unzipped").getLocation().toOSString());
+		IInstallableUnit osgi = getIU(repository, "org.eclipse.osgi");
+		IInstallableUnit common = getIU(repository, "org.eclipse.equinox.common");
+
+		assertResourceFile(buildFolder, "unzipped/plugins/org.eclipse.osgi_" + osgi.getVersion() + ".jar");
+		assertResourceFile(buildFolder, "unzipped/plugins/org.eclipse.equinox.common_" + common.getVersion() + ".jar");
+		assertResourceFile(buildFolder, "unzipped/artifacts.xml");
+		assertResourceFile(buildFolder, "unzipped/content.xml");
 	}
 }

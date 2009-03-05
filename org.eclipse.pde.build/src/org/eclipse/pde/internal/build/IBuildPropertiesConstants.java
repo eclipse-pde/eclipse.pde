@@ -105,6 +105,9 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_DIRECTOR_IU = "p2.director.iu"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_DIRECTOR_VERSION = "p2.director.version"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_DIRECTOR_INSTALLPATH = "p2.director.installPath"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_METADATA_DEST = "p2.mirror.metadata.destination"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_ARTIFACT_DEST = "p2.mirror.artifact.destination"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_PUBLISH_PARTS = "p2.publish.parts"; //$NON-NLS-1$
 
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 

@@ -146,15 +146,30 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateP2Assembling() {
-		if (productFile != null)
+		if (productFile != null) {
 			script.printAntCallTask(TARGET_RUN_DIRECTOR, true, null);
-		else
+			script.printAntCallTask(TARGET_MIRROR_PRODUCT, true, null);
+		} else {
 			script.printAntCallTask(TARGET_MIRROR_ARCHIVE, true, null);
+		}
+	}
+
+	protected void generateMirrorProductTask() {
+		Map mirrorArgs = new HashMap();
+		mirrorArgs.put(PROPERTY_P2_MIRROR_METADATA_DEST, Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO));
+		mirrorArgs.put(PROPERTY_P2_MIRROR_ARTIFACT_DEST, Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO));
+
+		script.printTargetDeclaration(TARGET_MIRROR_PRODUCT, null, PROPERTY_P2_METADATA_REPO, null, null);
+		script.printAntCallTask(TARGET_MIRROR_ARCHIVE, true, mirrorArgs);
+		script.printTargetEnd();
+		script.println();
 	}
 
 	protected void generateMirrorTask(boolean assembling) {
 		script.printTargetDeclaration(TARGET_MIRROR_ARCHIVE, null, null, null, null);
 		script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_P2_MIRROR_METADATA_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
+		script.printProperty(PROPERTY_P2_MIRROR_ARTIFACT_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
 		if (features.length + plugins.length > 0) {
 			script.printTab();
 			script.print("<p2.mirror "); //$NON-NLS-1$
@@ -162,7 +177,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.println(">"); //$NON-NLS-1$
 			script.printTab();
 			script.print("\t<destination "); //$NON-NLS-1$
-			script.printAttribute("location", "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_METADATA_DEST), true); //$NON-NLS-1$ 
 			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
 			script.printAttribute("append", assembling ? Utils.getPropertyFormat(PROPERTY_P2_APPEND) : TRUE, true); //$NON-NLS-1$
@@ -170,7 +185,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 			script.printTab();
 			script.print("\t<destination "); //$NON-NLS-1$
-			script.printAttribute("location", "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_ARTIFACT_DEST), true); //$NON-NLS-1$ 
 			script.printAttribute("name", Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO_NAME), true); //$NON-NLS-1$
 			script.printAttribute("compressed", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$
 			script.printAttribute("append", assembling ? Utils.getPropertyFormat(PROPERTY_P2_APPEND) : TRUE, true); //$NON-NLS-1$
@@ -178,7 +193,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 			script.printTab();
 			script.print("\t<slicingOptions "); //$NON-NLS-1$
-			script.printAttribute("platformFilter", configInfo.toString(","), true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("followStrict", TRUE, true); //$NON-NLS-1$
 			script.println("/>"); //$NON-NLS-1$
 
@@ -197,6 +211,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.print("\t<iu "); //$NON-NLS-1$
 				script.printAttribute(ID, feature.getId() + ".feature.group", true); //$NON-NLS-1$
 				script.printAttribute(VERSION, feature.getVersion(), true);
+				script.println("/>"); //$NON-NLS-1$
+			}
+			if (productFile != null) {
+				script.printTab();
+				script.print("\t<iu"); //$NON-NLS-1$
+				script.printAttribute(ID, productFile.getId(), true);
+				script.printAttribute(VERSION, productFile.getVersion(), true);
 				script.println("/>"); //$NON-NLS-1$
 			}
 			script.println("</p2.mirror>"); //$NON-NLS-1$
@@ -608,7 +629,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		generateCustomAssemblyTarget();
 		generateMetadataTarget();
 		generateDirectorTarget(true);
-		generateMirrorTask(true);
+		if (BuildDirector.p2Gathering) {
+			generateMirrorTask(true);
+			generateMirrorProductTask();
+		}
 
 		script.printProjectEnd();
 		script.close();
@@ -628,7 +652,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		return (featureId.equals("") ? "" : featureId); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private void printCustomAssemblyAntCall(String customTarget, Map properties) {
+	protected void printCustomAssemblyAntCall(String customTarget, Map properties) {
 		Map params = (properties != null) ? new HashMap(properties) : new HashMap(1);
 		params.put(PROPERTY_CUSTOM_TARGET, customTarget);
 		script.printAntCallTask(TARGET_CUSTOM_ASSEMBLY, true, params);

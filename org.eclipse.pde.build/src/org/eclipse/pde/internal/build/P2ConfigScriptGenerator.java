@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.FileSet;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeSite;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
@@ -62,10 +64,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		Collection r = new LinkedHashSet();
 		for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
 			Config config = (Config) iterator.next();
-			p.addAll(assembling ? assemblyInformation.getCompiledPlugins(config) : assemblyInformation.getBinaryPlugins(config));
-			f.addAll(assembling ? assemblyInformation.getCompiledFeatures(config) : assemblyInformation.getBinaryFeatures(config));
-			if (assembling)
-				r.addAll(assemblyInformation.getRootFileProviders(config));
+			p.addAll(assemblyInformation.getPlugins(config));
+			f.addAll(assemblyInformation.getFeatures(config));
+			r.addAll(assemblyInformation.getRootFileProviders(config));
 		}
 
 		this.plugins = (BundleDescription[]) p.toArray(new BundleDescription[p.size()]);
@@ -165,7 +166,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	protected void generateMetadataTarget() {
-		script.printTargetDeclaration(TARGET_P2_METADATA, null, null, assembling ? PROPERTY_RUN_PACKAGER : null, null);
+		script.printTargetDeclaration(TARGET_P2_METADATA, null, null, null, null);
 		script.printProperty(PROPERTY_P2_FLAVOR, "tooling"); //$NON-NLS-1$
 		generateBrandingCalls();
 
@@ -247,30 +248,66 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printProjectEnd();
 	}
 
+	protected void generateCustomGatherMacro() {
+		List attributes = new ArrayList(5);
+		attributes.add("dir"); //$NON-NLS-1$
+		attributes.add("propertyName"); //$NON-NLS-1$
+		attributes.add("propertyValue"); //$NON-NLS-1$
+		attributes.add("subFolder"); //$NON-NLS-1$
+		attributes.add(PROPERTY_PROJECT_NAME);
+		script.printMacroDef(PROPERTY_CUSTOM_GATHER, attributes);
+
+		Map params = new HashMap();
+		params.put("@{propertyName}", "@{propertyValue}"); //$NON-NLS-1$//$NON-NLS-2$
+		script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, "@{dir}", TARGET_PUBLISH_BIN_PARTS, null, null, params); //$NON-NLS-1$
+
+		params.put(PROPERTY_PROJECT_LOCATION, "${basedir}/@{dir}"); //$NON-NLS-1$
+		params.put(PROPERTY_PROJECT_NAME, "@{projectName}"); //$NON-NLS-1$
+		params.put(PROPERTY_TARGET_FOLDER, "@{propertyValue}@{subFolder}"); //$NON-NLS-1$
+		printCustomAssemblyAntCall(TARGET_GATHER_BIN_PARTS, params);
+
+		script.printEndMacroDef();
+		script.println();
+	}
+
 	protected void generateGatherBinPartsTarget() {
-		if (assembling) {
-			super.generateGatherBinPartsTarget();
-			return;
-		}
-
+		ArrayList binaryFeatures = new ArrayList();
+		ArrayList binaryBundles = new ArrayList();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
-
-		ArrayList p2Features = new ArrayList();
-		ArrayList p2Bundles = new ArrayList();
 		for (int i = 0; i < plugins.length; i++) {
-			Path pluginLocation = new Path(plugins[i].getLocation());
-			p2Bundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
-
+			BundleDescription plugin = plugins[i];
+			Path pluginLocation = new Path(plugin.getLocation());
+			if (Utils.isBinary(plugin))
+				binaryBundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
+			else
+				printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(pluginLocation, new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
+		Set featureSet = BuildDirector.p2Gathering ? new HashSet() : null;
 		for (int i = 0; i < features.length; i++) {
-			IPath featureLocation = new Path(features[i].getURL().getPath());
-			featureLocation = featureLocation.removeLastSegments(1);
-			p2Features.add(new FileSet(featureLocation.removeLastSegments(1).toOSString(), null, featureLocation.lastSegment(), null, null, null, null));
+			BuildTimeFeature feature = features[i];
+			IPath featureLocation = new Path(feature.getURL().getPath()).removeLastSegments(1);
+			if (feature.isBinary()) {
+				binaryFeatures.add(new FileSet(featureLocation.removeLastSegments(1).toOSString(), null, featureLocation.lastSegment(), null, null, null, null));
+			} else {
+				String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
+				printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+				featureSet.add(feature);
+			}
+		}
+
+		//This will generate gather.bin.parts call to features that provides files for the root
+		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
+			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
+			if (featureSet.contains(feature))
+				continue;
+			IPath featureLocation = new Path(feature.getURL().getPath()).removeLastSegments(1);
+			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
+			printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 		}
 
 		String repo = Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO);
-		script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) p2Bundles.toArray(new FileSet[p2Bundles.size()]), (FileSet[]) p2Features.toArray(new FileSet[p2Features.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE));
+		script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) binaryBundles.toArray(new FileSet[binaryBundles.size()]), (FileSet[]) binaryFeatures.toArray(new FileSet[binaryFeatures.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE));
 
 		script.printTargetEnd();
 		script.println();

@@ -911,6 +911,18 @@ public class AntScript implements IAntScript {
 		printEndTag("condition"); //$NON-NLS-1$
 	}
 
+	public void printConditionIsTrue(String property, String value, String testValue) {
+		printTab();
+		print("<condition"); //$NON-NLS-1$
+		printAttribute("property", property, true); //$NON-NLS-1$
+		printAttribute("value", value, true); //$NON-NLS-1$
+		println(">"); //$NON-NLS-1$
+		indent++;
+		println("<istrue value=\"" + testValue + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		indent--;
+		printEndTag("condition"); //$NON-NLS-1$
+	}
+
 	public void printMacroDef(String macroName, List attributes) {
 		println("<macrodef name=\"" + macroName + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent++;

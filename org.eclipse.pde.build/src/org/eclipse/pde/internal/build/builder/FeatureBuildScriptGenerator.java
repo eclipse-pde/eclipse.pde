@@ -147,10 +147,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		generateBuildZipsTarget();
 		generateBuildUpdateJarTarget();
 
-		if (BuildDirector.p2Gathering)
-			generatePublishBinPartsTarget();
-		else
-			generateGatherBinPartsTarget();
+		generatePublishBinPartsTarget();
+		generateGatherBinPartsTarget();
 		generateZipDistributionWholeTarget();
 		generateZipSourcesTarget();
 		generateZipLogsTarget();
@@ -301,7 +299,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		script.println();
-		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
+		script.printTargetDeclaration(TARGET_PUBLISH_BIN_PARTS, TARGET_INIT, PROPERTY_P2_PUBLISH_PARTS, null, null);
 
 		String featureTemp = Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
 		Map callbackParams = null;
@@ -677,6 +675,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_FEATURE_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_FEATURE_TEMP_FOLDER);
 		script.printProperty(PROPERTY_FEATURE_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printConditionIsTrue(PROPERTY_P2_PUBLISH_PARTS, TRUE, Utils.getPropertyFormat(PROPERTY_P2_GATHERING));
 		if (customFeatureCallbacks != null) {
 			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customCallbacksBuildpath + '/' + customFeatureCallbacks, customFeatureCallbacks);
 		}

@@ -278,10 +278,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generateEmptyBuildSourcesTarget();
 		}
 
-		if (BuildDirector.p2Gathering)
-			generatePublishGatherBinPartsTarget();
-		else
-			generateGatherBinPartsTarget();
+		generatePublishBinPartsTarget();
+		generateGatherBinPartsTarget();
 		generateBuildZipsTarget();
 		generateGatherSourcesTarget();
 		generateGatherIndividualSourcesTarget();
@@ -578,10 +576,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printAntCallTask(TARGET_API_GENERATION, true, params);
 	}
 
-	private void generatePublishGatherBinPartsTarget() throws CoreException {
+	private void generatePublishBinPartsTarget() throws CoreException {
 		script.println();
-		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, null, null, null);
-
+		script.printTargetDeclaration(TARGET_PUBLISH_BIN_PARTS, TARGET_INIT, PROPERTY_P2_PUBLISH_PARTS, null, null);
 		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 		destination = destination.append(fullName);
 		String root = destination.toString();
@@ -905,9 +902,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		script.printConditionIsSet(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + model.getSymbolicName() + '_' + model.getVersion(), PROPERTY_BUILD_TEMP);
 		script.printProperty(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR));
-
 		script.printProperty(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
 		script.printProperty(PROPERTY_PLUGIN_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
+		script.printConditionIsTrue(PROPERTY_P2_PUBLISH_PARTS, TRUE, Utils.getPropertyFormat(PROPERTY_P2_GATHERING));
 		script.printTargetEnd();
 		script.println();
 		script.printTargetDeclaration(TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);

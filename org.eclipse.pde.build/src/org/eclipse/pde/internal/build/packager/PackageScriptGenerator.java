@@ -47,20 +47,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	}
 
 	protected void generateP2ConfigFileTargetCall() {
-		P2ConfigScriptGenerator p2ConfigGenerator = new P2ConfigScriptGenerator(assemblageInformation, false);
-		p2ConfigGenerator.setProduct(productLocation);
-		p2ConfigGenerator.initialize(directory, featureId);
-		p2ConfigGenerator.setBuildSiteFactory(siteFactory);
-		p2ConfigGenerator.setSignJars(configScriptGenerator.isSigning());
-		p2ConfigGenerator.generate();
-
-		script.printTab();
-		script.print("<assemble "); //$NON-NLS-1$
-		script.printAttribute("config", "p2", true); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printAttribute("element", p2ConfigGenerator.getTargetElement(), true); //$NON-NLS-1$
-		script.printAttribute("dot", ".", true); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printAttribute("scriptPrefix", "package", true); //$NON-NLS-1$ //$NON-NLS-2$
-		script.println("/>"); //$NON-NLS-1$
+		//empty
 	}
 
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {

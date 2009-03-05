@@ -90,7 +90,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			generateP2ConfigFileTargetCall();
 		}
 
-		if (groupConfigs) {
+		if (shouldGroupConfigs()) {
 			Collection allPlugins = new LinkedHashSet();
 			Collection allFeatures = new LinkedHashSet();
 			Collection features = new LinkedHashSet();
@@ -113,6 +113,18 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		if (configScriptGenerator.haveP2Bundles() && !BuildDirector.p2Gathering)
 			script.printAntCallTask(TARGET_P2_METADATA, true, null);
 		script.printTargetEnd();
+	}
+
+	protected boolean shouldGroupConfigs() {
+		if (!BuildDirector.p2Gathering)
+			return groupConfigs;
+
+		// product builds are not grouped.
+		if (configScriptGenerator.getProductFile() != null)
+			return false;
+
+		//export from UI can't be grouped
+		return !havePDEUIState();
 	}
 
 	protected Collection[] getConfigInfos(Config aConfig) {

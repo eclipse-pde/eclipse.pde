@@ -520,7 +520,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			}
 
 			Config aConfig = new Config(configElements[0], configElements[1], archAndFormat[0]);
-			if (getConfigInfos().contains(aConfig) || (groupConfigs == true && configElements[0].equals("group"))) { //$NON-NLS-1$
+			if (getConfigInfos().contains(aConfig) || configElements[0].equals("group")) { //$NON-NLS-1$
 				archivesFormat.put(aConfig, archAndFormat[1]);
 			}
 		}
