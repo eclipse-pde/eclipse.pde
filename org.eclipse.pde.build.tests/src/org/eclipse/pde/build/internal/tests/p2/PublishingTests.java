@@ -599,7 +599,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateProduct(productFile, "headless.product", "1.0.0", "headless.application", "headless", bundles, false, null);
 		
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
-		String config = Platform.getWS() + ',' + Platform.getOS() + ',' + Platform.getOSArch();
+		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath() + "/plugins");
 		properties.put("product", productFile.getLocation().toOSString());

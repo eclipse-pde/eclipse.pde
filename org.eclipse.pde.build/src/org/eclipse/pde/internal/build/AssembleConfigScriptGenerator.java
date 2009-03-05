@@ -242,7 +242,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateCleanupAssembly(boolean assembling) {
-		String condition = (FORMAT_ANTTAR.equalsIgnoreCase(archiveFormat) && assembling) ? PROPERTY_RUN_PACKAGER : null;
+		String condition = assembling ? PROPERTY_RUN_PACKAGER : null;
 		script.printTargetDeclaration(TARGET_CLEANUP_ASSEMBLY, null, null, condition, null);
 		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
