@@ -413,6 +413,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
 		definition.setBundleContainers(new IBundleContainer[]{container});
 		Set urls = getAllBundleURLs(definition);
+		assertTrue("Must be bundles", urls.size() > 0);
 		
 		Preferences store = PDECore.getDefault().getPluginPreferences();
 		boolean restore = store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
@@ -457,12 +458,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			}
 		}
 		
-		assertEquals("Wrong number of source bundles", 3, source.size());
+		assertEquals("Wrong number of source bundles", 4, source.size());
 		Set names = new HashSet();
 		for (int i = 0; i < source.size(); i++) {
 			names.add(((IResolvedBundle)source.get(i)).getBundleInfo().getSymbolicName());
 		}
-		String[] expected = new String[]{"org.eclipse.platform.source", "org.eclipse.jdt.source", "org.eclipse.pde.source"};
+		String[] expected = new String[]{"org.eclipse.platform.source", "org.eclipse.jdt.source", "org.eclipse.pde.source", "org.eclipse.platform.source.win32.win32.x86"};
 		for (int i = 0; i < expected.length; i++) {
 			assertTrue("Missing source for " + expected[i], names.contains(expected[i]));	
 		}

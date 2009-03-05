@@ -1,18 +1,14 @@
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-
 import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class TargetDefinitionResolutionTests extends AbstractTargetTest {
@@ -358,4 +354,43 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		}
 	}	
 	
+	/**
+	 * Tests that a pre-p2 installation can be read/parsed properly.
+	 * 
+	 * @throws Exception
+	 */
+	public void testClassicInstallResolution() throws Exception {
+		// extract the 3.0.2 skeleton
+		IPath location = extractClassicPlugins();
+		
+		// the new way
+		ITargetDefinition definition = getNewTarget();
+		String home = location.removeLastSegments(1).toOSString();
+		IBundleContainer container = getTargetService().newProfileContainer(home, null);
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.resolve(null);
+		IResolvedBundle[] bundles = definition.getAllBundles();
+		
+		int source = 0;
+		int frag = 0;
+		int bin = 0;
+		
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle bundle = bundles[i];
+			if (bundle.isFragment()) {
+				frag++;
+				if (bundle.isSourceBundle()) {
+					source++; // fragment && source
+				} 
+			} else if (bundle.isSourceBundle()) {
+				source++;
+			} else {
+				bin++;
+			}
+		}
+		// there should be 80 plug-ins and 4 source plug-ins (win 32)
+		assertEquals("Wrong number of bundles", 84, bundles.length);
+		assertEquals("Wrong number of source bundles", 4, source);
+		assertEquals("Wrong number of fragments", 6, frag);
+	}
 }

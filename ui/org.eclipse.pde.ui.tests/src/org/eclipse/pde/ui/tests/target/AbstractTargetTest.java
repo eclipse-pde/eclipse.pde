@@ -69,12 +69,12 @@ public abstract class AbstractTargetTest extends TestCase {
 	protected IPath extractClassicPlugins() throws Exception {
 		// extract the 3.0.2 skeleton
 		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("classic-plugins");
+		IPath location = stateLocation.append("eclipse");
 		if (location.toFile().exists()) {
-			return location;
+			return location.append("plugins");
 		}
 		doUnZip(location,"/tests/targets/classic-plugins.zip");
-		return location;
+		return location.append("plugins");
 	}	
 
 	/**
