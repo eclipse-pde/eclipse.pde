@@ -14,9 +14,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
@@ -96,6 +99,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}
 		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
 		if (infos == null) {
+			IResolvedBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
+			if (platformXML != null) {
+				return platformXML;
+			}
 			infos = new BundleInfo[0];
 		}
 		BundleInfo[] source = P2Utils.readSourceBundles(home, configUrl);
@@ -114,6 +121,37 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			index++;
 		}
 		return all;
+	}
+
+	/**
+	 * Resolves installed bundles based on update manager's platform XML.
+	 * 
+	 * @param definition
+	 * @param home
+	 * @param monitor
+	 * @return resolved bundles or <code>null</code> if none
+	 * @throws CoreException
+	 */
+	protected IResolvedBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
+		File[] files = PluginPathFinder.getPaths(home, false, false);
+		if (files.length > 0) {
+			List all = new ArrayList(files.length);
+			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
+			for (int i = 0; i < files.length; i++) {
+				if (localMonitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				IResolvedBundle rb = generateBundle(files[i]);
+				if (rb != null) {
+					all.add(rb);
+				}
+				localMonitor.worked(1);
+			}
+			if (!all.isEmpty()) {
+				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
+			}
+		}
+		return null;
 	}
 
 	/**
