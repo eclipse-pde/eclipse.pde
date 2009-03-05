@@ -361,17 +361,6 @@
             class="org.eclipse.pde.internal.ui.samples.SampleEditor"
             id="org.eclipse.pde.ui.sampleEditor">
       </editor>
-      <editor
-            class="org.eclipse.pde.internal.ui.editor.target.TargetEditor"
-            contributorClass="org.eclipse.pde.internal.ui.editor.target.TargetEditorContributor"
-            default="false"
-            icon="$nl$/icons/obj16/target_profile_xml_obj.gif"
-            id="org.eclipse.pde.ui.targetEditorOld"
-            name="%editor.profile.name">
-         <contentTypeBinding
-               contentTypeId="org.eclipse.pde.targetFile">
-         </contentTypeBinding>
-      </editor>
 <!--      <editor
             class="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"

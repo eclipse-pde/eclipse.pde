@@ -15,7 +15,7 @@ This extension point is used to register new target plug-in provisioners. Each p
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element />
+            <meta.element deprecated="true" />
          </appInfo>
       </annotation>
       <complexType>
