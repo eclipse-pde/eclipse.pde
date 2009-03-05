@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 
@@ -232,7 +233,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 *         <samp>null </samp> if none found.
 	 */
 
-	protected IFolder getSourceFolder(IProgressMonitor monitor) throws CoreException {
+	protected IFolder getSourceFolder(IProgressMonitor monitor) {
 		IFolder sourceFolder = null;
 
 		try {
@@ -248,6 +249,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 				}
 			}
 		} catch (JavaModelException e) {
+			PDEPlugin.logException(e);
 		}
 		return sourceFolder;
 	}
