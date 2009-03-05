@@ -310,7 +310,7 @@ public final class ApiUseReportConverter {
 		if (this.htmlLocation == null) {
 			return;
 		}
-		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.ApiUseReportConverter_preparing_report_metadata, 4);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.ApiUseReportConverter_preparing_report_metadata, 8);
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser parser = null;
@@ -374,45 +374,53 @@ public final class ApiUseReportConverter {
 			}
 			localmonitor.worked(1);
 			File[] referees = getDirectories(this.reportsRoot);
-			this.reports = new HashSet(referees.length);
+			this.reports = new HashSet(referees.length+1);
 			Report report = null;
 			File[] origins = null;
 			File[] xmlfiles = null;
 			UseDefaultHandler handler = null;
 			CountGroup counts = null;
-			localmonitor.setWorkRemaining(referees.length);
-			for (int i = 0; i < referees.length; i++) {
-				report = new Report();
-				report.referee = referees[i];
-				localmonitor.setTaskName(SearchMessages.bind(SearchMessages.ApiUseReportConverter_preparing_report_info_for, new String[] {referees[i].getName()}));
-				origins = getDirectories(referees[i]);
-				for (int j = 0; j < origins.length; j++) {
-					xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
-						public boolean accept(File pathname) {
-							return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
+			SubMonitor smonitor = localmonitor.newChild(1);
+			smonitor.setWorkRemaining(referees.length);
+			try {
+				for (int i = 0; i < referees.length; i++) {
+					report = new Report();
+					report.referee = referees[i];
+					smonitor.setTaskName(SearchMessages.bind(SearchMessages.ApiUseReportConverter_preparing_report_info_for, new String[] {referees[i].getName()}));
+					origins = getDirectories(referees[i]);
+					for (int j = 0; j < origins.length; j++) {
+						xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
+							public boolean accept(File pathname) {
+								return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
+							}
+						});
+						if(xmlfiles != null) {
+							report.origintorefslist.put(origins[j], xmlfiles);
 						}
-					});
-					if(xmlfiles != null) {
-						report.origintorefslist.put(origins[j], xmlfiles);
-					}
-					counts = new CountGroup();
-					report.origintocountgroup.put(origins[j], counts);
-					if (xmlfiles != null) {
-						for (int k = 0; k < xmlfiles.length; k++) {
-							try {
-								handler = new UseDefaultHandler(report, getTypeFromFileName(xmlfiles[k]), counts);
-								parser.parse(xmlfiles[k], handler);
-							} 
-							catch (SAXException e) {}
-							catch (IOException e) {}
+						counts = new CountGroup();
+						report.origintocountgroup.put(origins[j], counts);
+						if (xmlfiles != null) {
+							for (int k = 0; k < xmlfiles.length; k++) {
+								try {
+									handler = new UseDefaultHandler(report, getTypeFromFileName(xmlfiles[k]), counts);
+									parser.parse(xmlfiles[k], handler);
+								} 
+								catch (SAXException e) {}
+								catch (IOException e) {}
+							}
 						}
 					}
+					this.reports.add(report);
+					if(smonitor.isCanceled()) {
+						return;
+					}
+					smonitor.worked(1);
 				}
-				this.reports.add(report);
-				if(localmonitor.isCanceled()) {
-					return;
+			}
+			finally {
+				if(!smonitor.isCanceled()) {
+					smonitor.done();
 				}
-				localmonitor.worked(1);
 			}
 			ArrayList sortedreports = new ArrayList(this.reports); 
 			Collections.sort(sortedreports, new Comparator() {
@@ -428,7 +436,6 @@ public final class ApiUseReportConverter {
 				System.out.println("Writing not searched index..."); //$NON-NLS-1$
 				start = System.currentTimeMillis();
 			}
-			localmonitor.setWorkRemaining(sortedreports.size()+2);
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_writing_not_searched);
 			writeNotSearched(htmlRoot);
 			if(localmonitor.isCanceled()) {
@@ -451,29 +458,38 @@ public final class ApiUseReportConverter {
 			}
 			//dump the reports
 			TreeMap originstorefs = null;
-			for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
-				report = (Report) iter.next();
-				localmonitor.setTaskName(SearchMessages.bind(SearchMessages.ApiUseReportConverter_writing_group_reports_for, new String[] {report.referee.getName()}));
-				if(DEBUG) {
-					start = System.currentTimeMillis();
-					System.out.println("Writing report for "+report.referee.getName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
+			smonitor = localmonitor.newChild(1);
+			smonitor.setWorkRemaining(sortedreports.size());
+			try {
+				for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
+					report = (Report) iter.next();
+					localmonitor.setTaskName(SearchMessages.bind(SearchMessages.ApiUseReportConverter_writing_group_reports_for, new String[] {report.referee.getName()}));
+					if(DEBUG) {
+						start = System.currentTimeMillis();
+						System.out.println("Writing report for "+report.referee.getName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					writeRefereeIndex(report);
+					originstorefs = report.origintorefslist;
+					for(Iterator iter2 = originstorefs.entrySet().iterator(); iter2.hasNext();) {
+						Map.Entry entry = (Map.Entry) iter2.next();
+						File origin = (File) entry.getKey();
+						writeOriginEntry(report, xmlfiles, origin, (CountGroup) report.origintocountgroup.get(origin));
+						xmlfiles = (File[]) entry.getValue();
+						tranformXml(xmlfiles, xsltFile);
+					}
+					if(DEBUG) {
+						System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					if(smonitor.isCanceled()) {
+						return;
+					}
+					smonitor.worked(1);
 				}
-				writeRefereeIndex(report);
-				originstorefs = report.origintorefslist;
-				for(Iterator iter2 = originstorefs.entrySet().iterator(); iter2.hasNext();) {
-					Map.Entry entry = (Map.Entry) iter2.next();
-					File origin = (File) entry.getKey();
-					writeOriginEntry(report, xmlfiles, origin, (CountGroup) report.origintocountgroup.get(origin));
-					xmlfiles = (File[]) entry.getValue();
-					tranformXml(xmlfiles, xsltFile);
+			}
+			finally {
+				if(!smonitor.isCanceled()) {
+					smonitor.done();
 				}
-				if(DEBUG) {
-					System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				if(localmonitor.isCanceled()) {
-					return;
-				}
-				localmonitor.worked(1);
 			}
 		}
 		finally {
