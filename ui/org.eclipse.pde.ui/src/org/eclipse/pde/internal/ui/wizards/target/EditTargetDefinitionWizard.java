@@ -35,7 +35,23 @@ public class EditTargetDefinitionWizard extends Wizard {
 	 * @param definition
 	 */
 	public EditTargetDefinitionWizard(ITargetDefinition definition) {
-		setTargetDefinition(definition);
+		ITargetDefinition workingCopy = null;
+		try {
+			ITargetPlatformService service = TargetDefinitionPage.getTargetService();
+			if (service != null) {
+				if (definition.getHandle().exists()) {
+					// Make a copy from the handle
+					workingCopy = definition.getHandle().getTargetDefinition();
+				} else {
+					// If no handle use the service to create a new one
+					workingCopy = service.newTarget();
+				}
+				service.copyTargetDefinition(definition, workingCopy);
+			}
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
+		setTargetDefinition(workingCopy);
 		setNeedsProgressMonitor(true);
 	}
 
@@ -62,24 +78,10 @@ public class EditTargetDefinitionWizard extends Wizard {
 	 * @param definition target definition
 	 */
 	public void setTargetDefinition(ITargetDefinition definition) {
-		try {
-			ITargetPlatformService service = TargetDefinitionPage.getTargetService();
-			if (service != null) {
-				if (definition.getHandle().exists()) {
-					// Make a copy from the handle
-					fDefinition = definition.getHandle().getTargetDefinition();
-				} else {
-					// If no handle use the service to create a new one
-					fDefinition = service.newTarget();
-				}
-				service.copyTargetDefinition(definition, fDefinition);
-				IWizardPage[] pages = getPages();
-				for (int i = 0; i < pages.length; i++) {
-					((TargetDefinitionPage) pages[i]).targetChanged(fDefinition);
-				}
-			}
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
+		fDefinition = definition;
+		IWizardPage[] pages = getPages();
+		for (int i = 0; i < pages.length; i++) {
+			((TargetDefinitionPage) pages[i]).targetChanged(definition);
 		}
 	}
 
