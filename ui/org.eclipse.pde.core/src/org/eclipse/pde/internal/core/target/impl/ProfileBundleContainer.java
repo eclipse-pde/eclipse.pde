@@ -110,16 +110,20 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			source = new BundleInfo[0];
 		}
 		IResolvedBundle[] all = new IResolvedBundle[infos.length + source.length];
+		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, all.length);
 		for (int i = 0; i < infos.length; i++) {
 			BundleInfo info = infos[i];
 			all[i] = resolveBundle(info, false);
+			localMonitor.worked(1);
 		}
 		int index = 0;
 		for (int i = infos.length; i < all.length; i++) {
 			BundleInfo info = source[index];
 			all[i] = resolveBundle(info, true);
 			index++;
+			localMonitor.worked(1);
 		}
+		localMonitor.done();
 		return all;
 	}
 
@@ -147,6 +151,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 				}
 				localMonitor.worked(1);
 			}
+			localMonitor.done();
 			if (!all.isEmpty()) {
 				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
 			}
