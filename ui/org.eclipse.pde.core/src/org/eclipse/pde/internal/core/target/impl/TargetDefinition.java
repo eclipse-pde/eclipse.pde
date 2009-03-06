@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -197,7 +196,7 @@ public class TargetDefinition implements ITargetDefinition {
 					if (subMonitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
-					subMonitor.subTask(MessageFormat.format(Messages.TargetDefinition_4, new String[] {Integer.toString(i + 1), Integer.toString(containers.length)}));
+					subMonitor.subTask(Messages.TargetDefinition_4);
 					IStatus s = containers[i].resolve(this, subMonitor.newChild(10));
 					if (!s.isOK()) {
 						status.add(s);
