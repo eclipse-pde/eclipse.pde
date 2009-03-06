@@ -98,9 +98,52 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (manager != null) {
 			IJavaObject data = getObject(manager, "data", false); //$NON-NLS-1$
 			if (data != null) {
-				String location = getValue(data, "fileName"); //$NON-NLS-1$
 				String id = getValue(data, "symbolicName"); //$NON-NLS-1$
-				return getSourceElement(location, id, typeName);
+				// search manager's class path for location
+				Object result = searchClasspathEntries(manager, id, typeName);
+				if (result != null) {
+					return result;
+				}
+				// then check its fragments
+				IJavaObject frgArray = getObject(manager, "fragments", false); //$NON-NLS-1$
+				if (frgArray instanceof IJavaArray) {
+					IJavaArray fragments = (IJavaArray) frgArray;
+					for (int i = 0; i < fragments.getLength(); i++) {
+						IJavaObject fragment = (IJavaObject) fragments.getValue(i);
+						if (!fragment.isNull()) {
+							// search fragment class path
+							result = searchClasspathEntries(fragment, id, typeName);
+							if (result != null) {
+								return result;
+							}
+						}
+
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private Object searchClasspathEntries(IJavaObject entriesOwner, String id, String typeName) throws CoreException {
+		IJavaObject cpeArray = getObject(entriesOwner, "entries", false); //$NON-NLS-1$
+		if (cpeArray instanceof IJavaArray) {
+			IJavaArray entries = (IJavaArray) cpeArray;
+			for (int i = 0; i < entries.getLength(); i++) {
+				IJavaObject entry = (IJavaObject) entries.getValue(i);
+				if (!entry.isNull()) {
+					IJavaObject baseData = getObject(entry, "data", false); //$NON-NLS-1$
+					if (baseData != null && !baseData.isNull()) {
+						IJavaObject fileName = getObject(baseData, "fileName", false); //$NON-NLS-1$
+						if (fileName != null && !fileName.isNull()) {
+							String location = fileName.getValueString();
+							Object el = getSourceElement(location, id, typeName);
+							if (el != null) {
+								return el;
+							}
+						}
+					}
+				}
 			}
 		}
 		return null;
