@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
@@ -112,7 +113,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	protected void initializeProductInfo(IProductModelFactory factory, IProduct product, String id) {
-		product.setId(id);
+		product.setProductId(id);
 		product.setVersion("1.0.0"); //$NON-NLS-1$
 		IPluginElement element = getProductExtension(id);
 		if (element != null) {

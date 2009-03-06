@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -579,7 +580,7 @@ public class SplashConfigurationSection extends PDESection {
 		// (1) Product ID is defined
 		// (2) Progress geometry is defined
 		// (3) Splash handler type is NOT defined
-		if ((PDETextHelper.isDefined(getProduct().getId()) == false) || ((info.isDefinedGeometry() == false) && (info.isDefinedSplashHandlerType() == true))) {
+		if ((PDETextHelper.isDefined(getProduct().getProductId()) == false) || ((info.isDefinedGeometry() == false) && (info.isDefinedSplashHandlerType() == true))) {
 			fAddBarButton.setEnabled(false);
 			fAddMessageButton.setEnabled(false);
 			updateFieldProgressBarEnablement(false);
@@ -622,7 +623,7 @@ public class SplashConfigurationSection extends PDESection {
 		// (1) Product ID is defined
 		// (2) Progress geometry is NOT defined
 		// (3) Progress geometry is defined and splash handler type is defined
-		if ((PDETextHelper.isDefined(getProduct().getId()) == false) || ((info.isDefinedGeometry() == true) && (info.isDefinedSplashHandlerType() == false))) {
+		if ((PDETextHelper.isDefined(getProduct().getProductId()) == false) || ((info.isDefinedGeometry() == true) && (info.isDefinedSplashHandlerType() == false))) {
 			fFieldTemplateCombo.setEnabled(false);
 		} else {
 			fFieldTemplateCombo.setEnabled(true);

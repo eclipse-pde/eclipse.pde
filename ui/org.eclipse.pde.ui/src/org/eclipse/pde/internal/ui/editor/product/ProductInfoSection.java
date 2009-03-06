@@ -236,7 +236,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fProductCombo.add(""); //$NON-NLS-1$
 		fProductCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				getProduct().setId(fProductCombo.getSelection());
+				getProduct().setProductId(fProductCombo.getSelection());
 			}
 		});
 
@@ -257,7 +257,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		if (dialog.open() == Window.OK) {
 			String id = wizard.getProductId();
 			IProduct product = getProduct();
-			product.setId(id);
+			product.setProductId(id);
 			product.setApplication(wizard.getApplication());
 		}
 	}
@@ -380,8 +380,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		if (product.getVersion() != null) {
 			fVersionEntry.setValue(product.getVersion(), true);
 		}
-		if (product.getId() != null) {
-			refreshProductCombo(product.getId());
+		if (product.getProductId() != null) {
+			refreshProductCombo(product.getProductId());
 		}
 		if (product.getApplication() != null) {
 			fAppCombo.setText(product.getApplication());

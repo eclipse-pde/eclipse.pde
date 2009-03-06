@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
@@ -178,7 +179,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		operation.setModel(model);
 		operation.setShowProgress(isProgressDefined());
 		operation.setProject(fProject);
-		operation.setProductID(fProduct.getId());
+		operation.setProductID(fProduct.getProductId());
 		operation.setPluginID(fPluginId);
 		// Execute the action
 		operation.run(monitor);
@@ -279,7 +280,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		// Create the remove splash handler action
 		fRemoveSplashAction = new RemoveSplashHandlerBindingAction();
 		// Configure the action
-		fRemoveSplashAction.setFieldProductID(fProduct.getId());
+		fRemoveSplashAction.setFieldProductID(fProduct.getProductId());
 		fRemoveSplashAction.setFieldTargetPackage(createTargetPackage());
 
 		fRemoveSplashAction.setModel(model);
@@ -304,7 +305,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		fUpdateSplashAction.setFieldID(id);
 		fUpdateSplashAction.setFieldClass(createAttributeValueClass());
 		fUpdateSplashAction.setFieldSplashID(id);
-		fUpdateSplashAction.setFieldProductID(fProduct.getId());
+		fUpdateSplashAction.setFieldProductID(fProduct.getProductId());
 		fUpdateSplashAction.setFieldTemplate(splashHandlerType);
 		fUpdateSplashAction.setFieldPluginID(fPluginId);
 

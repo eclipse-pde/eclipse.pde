@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
@@ -98,7 +99,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 	private IPluginElement createIntroBindingExtensionContent(IPluginExtension extension) throws CoreException {
 		IPluginElement element = extension.getModel().getFactory().createElement(extension);
 		element.setName("introProductBinding"); //$NON-NLS-1$
-		element.setAttribute("productId", fProduct.getId()); //$NON-NLS-1$
+		element.setAttribute("productId", fProduct.getProductId()); //$NON-NLS-1$
 		element.setAttribute("introId", fIntroId); //$NON-NLS-1$
 		return element;
 	}

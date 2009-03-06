@@ -303,8 +303,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 			try {
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, NLS.bind(PDECoreMessages.ProductExportOperation_0, fProduct.getId()));
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, NLS.bind(PDECoreMessages.ProductExportOperation_0, fProduct.getId()));
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, NLS.bind(PDECoreMessages.ProductExportOperation_0, fProduct.getProductId()));
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, NLS.bind(PDECoreMessages.ProductExportOperation_0, fProduct.getProductId()));
 			} catch (MalformedURLException e) {
 				PDECore.log(e);
 			}

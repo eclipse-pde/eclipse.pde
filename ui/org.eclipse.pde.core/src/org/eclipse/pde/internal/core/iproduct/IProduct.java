@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Code 9 Corporation - ongoing enhancements
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
 public interface IProduct extends IProductObject {
 
 	String P_ID = "id"; //$NON-NLS-1$
+	String P_UID = "uid"; //$NON-NLS-1$
 	String P_NAME = "name"; //$NON-NLS-1$
 	String P_APPLICATION = "application"; //$NON-NLS-1$
 	String P_USEFEATURES = "useFeatures"; //$NON-NLS-1$
@@ -22,6 +23,8 @@ public interface IProduct extends IProductObject {
 	String P_VERSION = "version"; //$NON-NLS-1$
 
 	String getId();
+
+	String getProductId();
 
 	String getName();
 
@@ -72,6 +75,8 @@ public interface IProduct extends IProductObject {
 	IPluginConfiguration[] getPluginConfigurations();
 
 	void setId(String id);
+
+	void setProductId(String id);
 
 	void setVersion(String version);
 

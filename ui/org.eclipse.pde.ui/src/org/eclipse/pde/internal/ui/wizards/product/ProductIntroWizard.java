@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
@@ -54,7 +55,7 @@ public class ProductIntroWizard extends Wizard {
 				String newProductName = fProductDefinitionPage.getProductName();
 				if (newProductName != null)
 					fProduct.setName(newProductName);
-				fProduct.setId(getProductId());
+				fProduct.setProductId(getProductId());
 				fProduct.setApplication(fApplication);
 				getContainer().run(false, true, new ProductDefinitionOperation(fProduct, fPluginId, fProductId, fApplication, getContainer().getShell()));
 			}

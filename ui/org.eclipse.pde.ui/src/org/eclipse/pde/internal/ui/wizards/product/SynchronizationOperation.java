@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
@@ -27,13 +28,13 @@ public class SynchronizationOperation extends ProductDefinitionOperation {
 	}
 
 	private static String getProductId(IProduct product) {
-		String full = product.getId();
+		String full = product.getProductId();
 		int index = full.lastIndexOf('.');
 		return index != -1 ? full.substring(index + 1) : full;
 	}
 
 	private static String getPluginId(IProduct product) {
-		String full = product.getId();
+		String full = product.getProductId();
 		int index = full.lastIndexOf('.');
 		return index != -1 ? full.substring(0, index) : full;
 	}
