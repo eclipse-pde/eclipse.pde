@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	private AssemblyInformation assemblyInformation = null;
 	private boolean assembling = false;
+	private boolean versionsList = false;
 
 	public P2ConfigScriptGenerator(AssemblyInformation assemblyInformation, boolean assembling) {
 		this.assemblyInformation = assemblyInformation;
@@ -213,7 +214,18 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				script.printAttribute("arch", config.getArch(), true); //$NON-NLS-1$
 				script.println("/>"); //$NON-NLS-1$
 			}
-			script.printTab();
+			if (versionsList) {
+				script.printTab();
+				script.print("\t<advice"); //$NON-NLS-1$
+				script.printAttribute("kind", "featureVersions", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("file", getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
+				script.println("/>"); //$NON-NLS-1$
+				script.printTab();
+				script.print("\t<advice"); //$NON-NLS-1$
+				script.printAttribute("kind", "pluginVersions", true); //$NON-NLS-1$ //$NON-NLS-2$
+				script.printAttribute("file", getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$
+				script.println("/>"); //$NON-NLS-1$
+			}
 			script.println("</p2.publish.product>"); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
@@ -325,5 +337,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 		script.printTargetEnd();
 		script.println();
+	}
+
+	public void setVersionsList(boolean versionsList) {
+		this.versionsList = versionsList;
 	}
 }
