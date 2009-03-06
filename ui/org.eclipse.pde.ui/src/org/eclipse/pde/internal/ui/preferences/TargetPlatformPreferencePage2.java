@@ -44,7 +44,6 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	private class TargetLabelProvider extends StyledCellLabelProvider {
 
 		public TargetLabelProvider() {
-			super(NO_FOCUS);
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
 		}
 
@@ -186,7 +185,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		Composite tableComposite = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createLabel(tableComposite, PDEUIMessages.TargetPlatformPreferencePage2_2, 2);
 
-		fTableViewer = new TableViewer(tableComposite, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
+		fTableViewer = new TableViewer(tableComposite, SWT.MULTI | SWT.BORDER);
 		fTableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer.setLabelProvider(new TargetLabelProvider());
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
