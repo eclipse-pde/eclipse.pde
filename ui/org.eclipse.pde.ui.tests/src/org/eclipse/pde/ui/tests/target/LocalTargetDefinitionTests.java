@@ -862,24 +862,57 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}	
 	
 	/**
+	 * A directory of bundles should not have VM arguments.
+	 * 
+	 * @throws Exception
+	 */
+	public void testArgumentsPluginsDirectory() throws Exception {
+		// test bundle containers for known arguments
+		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		assertNull("Plugins directory containers should not have arguments", directoryContainer.getVMArguments());
+	}
+	
+	/**
+	 * A directory that points to an installation should have VM arguments.
+	 * 
+	 * @throws Exception
+	 */
+	public void testArgumentsInstallDirectory() throws Exception {
+		IBundleContainer installDirectory = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation());
+		String[] installArgs = installDirectory.getVMArguments();
+		assertNotNull("Install directory should have arguments", installArgs);
+		assertTrue("Install directory should have arguments", installArgs.length > 0);
+	}
+	
+	/**
+	 * A feature container should not have VM arguments.
+	 * 
+	 * @throws Exception
+	 */
+	public void testArgumentsFeatureContainer() throws Exception {		
+		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "DOES NOT EXIST", "DOES NOT EXIST");
+		assertNull("Feature containers should not have arguments", featureContainer.getVMArguments());
+	}
+	
+	/**
+	 * A profile container should have VM arguments.
+	 * 
+	 * @throws Exception
+	 */
+	public void testArgumentsProfileContainer() throws Exception {
+		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		String[] arguments = profileContainer.getVMArguments();
+		assertNotNull("Profile containers should have arguments", arguments);
+		assertTrue("Profile containers should have arguments", arguments.length > 0);		
+	}
+	
+	/**
 	 * Tests the ability to add arguments to a target platform and have them show up on new configs
 	 * 
 	 * @throws Exception
 	 */
 	public void testArguments() throws Exception {
 		ITargetDefinition definition = getNewTarget();
-		
-		// test bundle containers for known arguments
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
-		assertNull("Directory containers should not have arguments", directoryContainer.getVMArguments());
-		
-		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "DOES NOT EXIST", "DOES NOT EXIST");
-		assertNull("Feature containers should not have arguments", featureContainer.getVMArguments());
-		
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		String[] arguments = profileContainer.getVMArguments();
-		assertNotNull("Profile containers should have arguments", arguments);
-		assertTrue("Profile containers should have arguments", arguments.length > 0);
 		
 		// Add program arguments
 		String programArgs = "-testProgramArgument -testProgramArgument2";
