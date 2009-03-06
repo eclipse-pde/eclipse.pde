@@ -173,13 +173,6 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultLocation()
-	 */
-	protected String getDefaultLocation() {
-		return "${eclipse_home}"; //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#storeSettings()
 	 */
 	protected void storeSettings() {

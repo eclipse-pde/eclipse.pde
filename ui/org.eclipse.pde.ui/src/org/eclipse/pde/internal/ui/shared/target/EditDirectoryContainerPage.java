@@ -241,7 +241,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 	 * @return the default text to add as a combo item to the location combo
 	 */
 	protected String getDefaultLocation() {
-		return "${eclipse_home}/plugins"; //$NON-NLS-1$
+		return "${eclipse_home}"; //$NON-NLS-1$
 	}
 
 	/**
