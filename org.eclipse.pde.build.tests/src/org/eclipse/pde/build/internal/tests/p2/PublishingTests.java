@@ -553,6 +553,9 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("         <run class=\"headless.Application\"/>									\n");
 		buffer.append("      </application>																\n");
 		buffer.append("   </extension>																	\n");
+		buffer.append("   <extension id=\"product\" point=\"org.eclipse.core.runtime.products\">		\n");
+		buffer.append("      <product application=\"headless.application\" name=\"Headless Name\"/>		\n");
+		buffer.append("   </extension>		                                                            \n");
 		buffer.append("</plugin>																		\n");
 		Utils.writeBuffer(headless.getFile("plugin.xml"), buffer);
 
@@ -581,6 +584,14 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
+
+		IFile configFile = buildFolder.getFile("/tmp/eclipse/configuration/config.ini");
+		IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.ini");
+		assertLogContainsLine(configFile, "eclipse.application=headless.application");
+		assertLogContainsLine(configFile, "eclipse.product=headless.product");
+		char slash = Platform.getOS().equals("win32") ? '\\' : '/';
+		assertLogContainsLines(iniFile, new String[] {"-startup", "plugins" + slash + "org.eclipse.equinox.launcher_"});
+		assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins" + slash + "org.eclipse.equinox.launcher."});
 	}
 
 	public void testBug265726() throws Exception {

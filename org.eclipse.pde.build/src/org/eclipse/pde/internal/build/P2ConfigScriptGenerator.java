@@ -196,11 +196,25 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			productPath = newProduct;
 
 			script.printTab();
-			script.print("<p2.publish.product "); //$NON-NLS-1$
+			script.print("<p2.publish.product"); //$NON-NLS-1$
 			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 			script.printAttribute("repository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
 			script.printAttribute("productFile", newProduct, true); //$NON-NLS-1$
-			script.println("/>"); //$NON-NLS-1$
+			script.println(">"); //$NON-NLS-1$
+			for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
+				Config config = (Config) iterator.next();
+				if (Config.genericConfig().equals(config))
+					continue;
+
+				script.printTab();
+				script.print("\t<config"); //$NON-NLS-1$
+				script.printAttribute("os", config.getOs(), true); //$NON-NLS-1$
+				script.printAttribute("ws", config.getWs(), true); //$NON-NLS-1$
+				script.printAttribute("arch", config.getArch(), true); //$NON-NLS-1$
+				script.println("/>"); //$NON-NLS-1$
+			}
+			script.printTab();
+			script.println("</p2.publish.product>"); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 	}
