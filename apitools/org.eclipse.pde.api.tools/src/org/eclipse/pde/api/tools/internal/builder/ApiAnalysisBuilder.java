@@ -497,7 +497,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 				return IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER;
 			}
-			case IApiProblem.CATEGORY_API_PROFILE: {
+			case IApiProblem.CATEGORY_API_BASELINE: {
 				return IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER;
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {
@@ -538,7 +538,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			int line = problem.getLineNumber();
 			switch(category) {
 				case IApiProblem.CATEGORY_VERSION :
-				case IApiProblem.CATEGORY_API_PROFILE :
+				case IApiProblem.CATEGORY_API_BASELINE :
 				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
 					break;
 				default :

@@ -239,7 +239,7 @@ public final class Util {
 	private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException"; //$NON-NLS-1$
 	public static final String LINE_DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$
 	
-	public static final String UNKNOWN_ELEMENT_TYPE = "UNKNOWN_ELEMENT_KIND"; //$NON-NLS-1$
+	public static final String UNKNOWN_ELEMENT_KIND = "UNKNOWN_ELEMENT_KIND"; //$NON-NLS-1$
 
 	public static final String UNKNOWN_FLAGS = "UNKNOWN_FLAGS"; //$NON-NLS-1$
 	public static final String UNKNOWN_KIND = "UNKNOWN_KIND"; //$NON-NLS-1$
@@ -559,7 +559,7 @@ public final class Util {
 	
 	/**
 	 * Return a string that represents the element type of the given delta.
-	 * Returns {@link #UNKNOWN_ELEMENT_TYPE} if the element type cannot be determined.
+	 * Returns {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
 	 * 
 	 * @param delta the given delta
 	 * @return a string that represents the element type of the given delta.
@@ -592,7 +592,7 @@ public final class Util {
 	
 	/**
 	 * Return a string that represents the given element type
-	 * Returns {@link #UNKNOWN_ELEMENT_TYPE} if the element type cannot be determined.
+	 * Returns {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
 	 * 
 	 * @param elementType the given element type
 	 * @return a string that represents the given element type.
@@ -620,7 +620,7 @@ public final class Util {
 			case IDelta.TYPE_PARAMETER_ELEMENT_TYPE :
 				return "TYPE_PARAMETER_ELEMENT_TYPE"; //$NON-NLS-1$
 		}
-		return UNKNOWN_ELEMENT_TYPE;
+		return UNKNOWN_ELEMENT_KIND;
 	}
 	
 	/**

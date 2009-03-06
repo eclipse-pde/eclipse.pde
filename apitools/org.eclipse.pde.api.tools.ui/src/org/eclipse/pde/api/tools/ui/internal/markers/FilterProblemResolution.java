@@ -96,7 +96,7 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 					fCategory = MarkerMessages.FilterProblemResolution_compatible;
 					break;
 				}
-				case IApiProblem.CATEGORY_API_PROFILE: {
+				case IApiProblem.CATEGORY_API_BASELINE: {
 					fCategory = MarkerMessages.FilterProblemResolution_default_profile;
 					break;
 				}

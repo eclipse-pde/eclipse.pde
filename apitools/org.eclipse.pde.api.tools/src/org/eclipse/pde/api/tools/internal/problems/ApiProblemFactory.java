@@ -130,7 +130,7 @@ public class ApiProblemFactory {
 	 * @return a new {@link IApiProblem} for API usage
 	 */
 	public static IApiProblem newApiProfileProblem(String resourcepath, String[] argumentids, Object[] arguments, int element, int kind) {
-		int id = createProblemId(IApiProblem.CATEGORY_API_PROFILE, element, kind, IApiProblem.NO_FLAGS);
+		int id = createProblemId(IApiProblem.CATEGORY_API_BASELINE, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, null, null, argumentids, arguments, -1, -1, -1, id);
 	}
 	/**
@@ -362,9 +362,9 @@ public class ApiProblemFactory {
 	 */
 	public static int getProblemMessageId(int category, int element, int kind, int flags) {
 		switch(category) {
-			case IApiProblem.CATEGORY_API_PROFILE: {
+			case IApiProblem.CATEGORY_API_BASELINE: {
 				switch(kind) {
-					case IApiProblem.API_PROFILE_MISSING: return 1;
+					case IApiProblem.API_BASELINE_MISSING: return 1;
 				}
 				break;
 			}
@@ -586,9 +586,9 @@ public class ApiProblemFactory {
 					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
 			}
 			break;
-			case IApiProblem.CATEGORY_API_PROFILE: {
+			case IApiProblem.CATEGORY_API_BASELINE: {
 				switch(problem.getKind()) {
-					case IApiProblem.API_PROFILE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
+					case IApiProblem.API_BASELINE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
 				}
 				break;
 			}

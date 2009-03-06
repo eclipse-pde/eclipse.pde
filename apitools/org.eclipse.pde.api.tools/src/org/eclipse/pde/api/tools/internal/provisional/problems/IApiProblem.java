@@ -42,7 +42,7 @@ public interface IApiProblem {
 	/**
 	 * Constant representing the api profile problem category
 	 */
-	public static final int CATEGORY_API_PROFILE = 0x50000000;
+	public static final int CATEGORY_API_BASELINE = 0x50000000;
 	
 	/**
 	 * Constant representing the api component resolution problem category
@@ -366,7 +366,7 @@ public interface IApiProblem {
 	 * 
 	 * @see #getKind()
 	 */
-	public static final int API_PROFILE_MISSING = 1;
+	public static final int API_BASELINE_MISSING = 1;
 
 	/**
 	 * Constant representing the value of a API component resolution {@link IApiProblem} kind.
@@ -461,7 +461,7 @@ public interface IApiProblem {
 	 * <li>{@link #CATEGORY_SINCETAGS}</li>
 	 * <li>{@link #CATEGORY_USAGE}</li>
 	 * <li>{@link #CATEGORY_VERSION}</li>
-	 * <li>{@link #CATEGORY_API_PROFILE}</li>
+	 * <li>{@link #CATEGORY_API_BASELINE}</li>
 	 * </ul> 
 	 * @return the category for the problem
 	 */

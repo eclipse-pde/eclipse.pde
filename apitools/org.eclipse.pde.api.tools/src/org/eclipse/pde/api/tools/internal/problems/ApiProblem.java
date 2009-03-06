@@ -361,7 +361,7 @@ public class ApiProblem implements IApiProblem {
 				return "RESOURCE"; //$NON-NLS-1$
 			}
 		}
-		return "UNKOWN_ELEMENT_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_ELEMENT_KIND;
 	}
 
 	/**
@@ -376,7 +376,7 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.SINCE_TAG_MALFORMED: return "MALFORMED_SINCE_TAGS"; //$NON-NLS-1$
 			case IApiProblem.SINCE_TAG_MISSING: return "MISSING_SINCE_TAGS"; //$NON-NLS-1$
 		}
-		return "UNKNOWN_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -397,7 +397,7 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
 			case IApiProblem.UNUSED_PROBLEM_FILTERS: return "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
 		}
-		return "UNKNOWN_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: return "REEXPORTED_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
 			case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: return "REEXPORTED_MINOR_VERSION_CHANGE"; //$NON-NLS-1$
 		}
-		return "UNKNOWN_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -428,7 +428,7 @@ public class ApiProblem implements IApiProblem {
 				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
 			}
 		}
-		return "UNKOWN_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -438,9 +438,9 @@ public class ApiProblem implements IApiProblem {
 	 */
 	public static String getApiBaselineProblemKindName(int kind) {
 		switch(kind) {
-			case IApiProblem.API_PROFILE_MISSING: return "API_PROFILE_MISSING"; //$NON-NLS-1$
+			case IApiProblem.API_BASELINE_MISSING: return "API_BASELINE_MISSING"; //$NON-NLS-1$
 		}
-		return "UNKOWN_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -464,14 +464,14 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.CATEGORY_VERSION: {
 				return ApiProblem.getVersionProblemKindName(kind);
 			}
-			case IApiProblem.CATEGORY_API_PROFILE: {
+			case IApiProblem.CATEGORY_API_BASELINE: {
 				return ApiProblem.getApiBaselineProblemKindName(kind);
 			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				return ApiProblem.getApiComponentResolutionProblemKindName(kind);
 			}
 		}
-		return "UNKNOWN_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -488,7 +488,7 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.CATEGORY_SINCETAGS:
 			case IApiProblem.CATEGORY_USAGE:
 			case IApiProblem.CATEGORY_VERSION:
-			case IApiProblem.CATEGORY_API_PROFILE:
+			case IApiProblem.CATEGORY_API_BASELINE:
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				switch(flags) {
 					case IApiProblem.LEAK_EXTENDS: {
@@ -527,7 +527,7 @@ public class ApiProblem implements IApiProblem {
 				}
 			}
 		}
-		return "UNKNOWN_FLAG"; //$NON-NLS-1$
+		return Util.UNKNOWN_FLAGS;
 	}
 
 	/**
@@ -545,12 +545,12 @@ public class ApiProblem implements IApiProblem {
 			}
 			case IApiProblem.CATEGORY_USAGE:
 			case IApiProblem.CATEGORY_VERSION:
-			case IApiProblem.CATEGORY_API_PROFILE:
+			case IApiProblem.CATEGORY_API_BASELINE:
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				return ApiProblem.getDescriptorKind(kind);
 			}
 		}
-		return "UNKNOWN_KIND"; //$NON-NLS-1$
+		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -568,8 +568,8 @@ public class ApiProblem implements IApiProblem {
 				return "USAGE"; //$NON-NLS-1$
 			case IApiProblem.CATEGORY_VERSION :
 				return "VERSION"; //$NON-NLS-1$
-			case IApiProblem.CATEGORY_API_PROFILE :
-				return "API_PROFILE"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_BASELINE :
+				return "API_BASELINE"; //$NON-NLS-1$
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
 				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
 			default :

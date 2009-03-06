@@ -1804,7 +1804,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
 				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)},
 				IElementDescriptor.RESOURCE,
-				IApiProblem.API_PROFILE_MISSING);
+				IApiProblem.API_BASELINE_MISSING);
 		addProblem(problem);
 	}
 	
