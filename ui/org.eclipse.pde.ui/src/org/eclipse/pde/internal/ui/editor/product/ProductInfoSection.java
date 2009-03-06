@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -27,7 +28,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.wizards.product.ProductDefinitionWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -45,8 +45,6 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class ProductInfoSection extends PDESection implements IRegistryChangeListener, IStateDeltaListener {
 
-	private FormEntry fNameEntry;
-	private FormEntry fVersionEntry;
 	private ExtensionIdComboPart fAppCombo;
 	private ExtensionIdComboPart fProductCombo;
 	private Button fPluginButton;
@@ -166,9 +164,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 
-		createNameEntry(client, toolkit, actionBars);
-		createIdEntry(client, toolkit, actionBars);
-		createVersionEntry(client, toolkit, actionBars);
+		// product section
+		createProductEntry(client, toolkit, actionBars);
 		createApplicationEntry(client, toolkit, actionBars);
 		createConfigurationOption(client, toolkit);
 
@@ -189,44 +186,10 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		super.dispose();
 	}
 
-	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_titleLabel);
-
-		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ProductInfoSection_productname, null, false);
-		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getProduct().setName(entry.getValue().trim());
-			}
-		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 2;
-		fNameEntry.getText().setLayoutData(gd);
-		fNameEntry.setEditable(isEditable());
-	}
-
-	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		createLabel(client, toolkit, ""); //$NON-NLS-1$
-		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_versionTitle);
-
-		fVersionEntry = new FormEntry(client, toolkit, PDEUIMessages.ProductInfoSection_version, null, false);
-		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getProduct().setVersion(entry.getValue().trim());
-			}
-		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 2;
-		fVersionEntry.getText().setLayoutData(gd);
-		fVersionEntry.setEditable(isEditable());
-	}
-
-	private void createIdEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		createLabel(client, toolkit, ""); //$NON-NLS-1$
+	private void createProductEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_prodIdLabel);
 
-		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_id);
+		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_product);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fProductCombo = new ExtensionIdComboPart();
@@ -343,24 +306,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		label.setLayoutData(gd);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
-	public void commit(boolean onSave) {
-		fNameEntry.commit();
-		fVersionEntry.commit();
-		super.commit(onSave);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#cancelEdit()
-	 */
-	public void cancelEdit() {
-		fNameEntry.cancelEdit();
-		fVersionEntry.cancelEdit();
-		super.cancelEdit();
-	}
-
 	private IProductModel getModel() {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
@@ -374,12 +319,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	 */
 	public void refresh() {
 		IProduct product = getProduct();
-		if (product.getName() != null) {
-			fNameEntry.setValue(product.getName(), true);
-		}
-		if (product.getVersion() != null) {
-			fVersionEntry.setValue(product.getVersion(), true);
-		}
 		if (product.getProductId() != null) {
 			refreshProductCombo(product.getProductId());
 		}
@@ -403,10 +342,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			return;
 		if (prop.equals(IProduct.P_ID)) {
 			refreshProductCombo(e.getNewValue().toString());
-		} else if (prop.equals(IProduct.P_NAME)) {
-			fNameEntry.setValue(e.getNewValue().toString(), true);
-		} else if (prop.equals(IProduct.P_VERSION)) {
-			fVersionEntry.setValue(e.getNewValue().toString(), true);
 		} else if (prop.equals(IProduct.P_APPLICATION)) {
 			fAppCombo.setText(e.getNewValue().toString());
 		}
@@ -420,15 +355,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		boolean previousFeatureSelected = fFeatureButton.getSelection();
 		// Perform the refresh
 		refresh();
-		// Note:  A deferred selection event is fired from radio buttons when
-		// their value is toggled, the user switches to another page, and the
-		// user switches back to the same page containing the radio buttons
-		// This appears to be a result of a SWT bug.
-		// If the radio button is the last widget to have focus when leaving 
-		// the page, an event will be fired when entering the page again.
-		// An event is not fired if the radio button does not have focus.
-		// The solution is to redirect focus to a stable widget.
-		getPage().setLastFocusControl(fNameEntry.getText());
 		// Revert the configuration page if necessary
 		revertConfigurationPage(previousFeatureSelected);
 	}
@@ -513,6 +439,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	}
 
 	public void stateResolved(StateDelta delta) {
+		// do nothing
 	}
 
 }

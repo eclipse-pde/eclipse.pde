@@ -1821,9 +1821,7 @@ public class PDEUIMessages extends NLS {
 	//Product Editor#####################
 	public static String Product_overview_configuration;
 	public static String Product_PluginSection_working;
-	public static String ProductInfoSection_titleLabel;
 	public static String ProductInfoSection_version;
-	public static String ProductInfoSection_versionTitle;
 	public static String Product_PluginSection_required;
 	public static String ProductInfoSection_prodIdLabel;
 	public static String ProductExportWizardPage_title;
@@ -1837,6 +1835,7 @@ public class PDEUIMessages extends NLS {
 	public static String Product_PluginSection_newFragment;
 	public static String Product_overview_testing;
 	public static String ProductInfoSection_title;
+	public static String GeneralInfoSection_title;
 	public static String Product_PluginSection_add;
 	public static String Product_PluginSection_title;
 	public static String Product_FeatureSection_desc;
@@ -1874,8 +1873,10 @@ public class PDEUIMessages extends NLS {
 	public static String ProductFileWizadPage_title;
 	public static String ProductFileWizadPage_basic;
 	public static String Product_overview_exporting;
+	public static String GeneralInfoSection_desc;
 	public static String ProductInfoSection_desc;
 	public static String ProductInfoSection_id;
+	public static String ProductInfoSection_product;
 	public static String ProductInfoSection_new;
 	public static String ProductInfoSection_app;
 	public static String SplashSection_title;

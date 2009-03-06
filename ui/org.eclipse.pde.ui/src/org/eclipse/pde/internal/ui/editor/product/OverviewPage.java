@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -51,9 +52,11 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
-		ProductInfoSection section = new ProductInfoSection(this, body);
+		GeneralInfoSection generalSection = new GeneralInfoSection(this, body);
+		ProductInfoSection productSection = new ProductInfoSection(this, body);
 
-		managedForm.addPart(section);
+		managedForm.addPart(generalSection);
+		managedForm.addPart(productSection);
 		if (getModel().isEditable()) {
 			createTestingSection(body, toolkit);
 			createExportingSection(body, toolkit);
