@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -129,6 +131,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 	// Buttons
 	private Button fActivateButton;
+	private Button fReloadButton;
 	private Button fAddButton;
 	private Button fEditButton;
 	//private Button fDuplicateButton;
@@ -244,20 +247,19 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			}
 		});
 
+		fReloadButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_16, null);
+		fReloadButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleReload();
+			}
+		});
+
 		SWTFactory.createVerticalSpacer(buttonComposite, 1);
 
 		fAddButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_3, null);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				NewTargetDefinitionWizard2 wizard = new NewTargetDefinitionWizard2();
-				wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_4);
-				WizardDialog dialog = new WizardDialog(fAddButton.getShell(), wizard);
-				if (dialog.open() == Window.OK) {
-					ITargetDefinition def = wizard.getTargetDefinition();
-					fTargets.add(def);
-					fTableViewer.refresh(true);
-					fTableViewer.setSelection(new StructuredSelection(def));
-				}
+				handleAdd();
 			}
 		});
 
@@ -301,19 +303,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		fMoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_13, null);
 		fMoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				NewTargetDefinitionFileWizard wizard = new NewTargetDefinitionFileWizard(fMoved.values());
-				WizardDialog dialog = new WizardDialog(getShell(), wizard);
-				dialog.create();
-				SWTUtil.setDialogSize(dialog, 400, 450);
-				if (dialog.open() == Window.OK) {
-					TableItem ti = fTableViewer.getTable().getItem(fTableViewer.getTable().getSelectionIndex());
-					IPath newTargetLoc = wizard.getTargetFileLocation();
-					IFile file = PDECore.getWorkspace().getRoot().getFile(newTargetLoc);
-					ti.setData(DATA_KEY_MOVED_LOCATION, file.getFullPath().toString());
-					IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
-					fMoved.put(selection.getFirstElement(), wizard.getTargetFileLocation());
-					fTableViewer.refresh(true);
-				}
+				handleMove();
 			}
 		});
 
@@ -343,8 +333,16 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	private void handleActivate() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
-			isOutOfSynch = false;
 			fActiveTarget = (ITargetDefinition) selection.getFirstElement();
+			fTableViewer.refresh(true);
+			fTableViewer.setSelection(new StructuredSelection(fActiveTarget));
+		}
+	}
+
+	private void handleReload() {
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		if (!selection.isEmpty()) {
+			isOutOfSynch = false;
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell()) {
 				protected void configureShell(Shell shell) {
 					super.configureShell(shell);
@@ -379,22 +377,35 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				}
 
 				// Compare the target to the existing platform
-				// TODO It appears most target platforms are always out of synch
-				//			if (bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious)) {
-				//				try {
-				//					IStatus compare = getTargetService().compareWithTargetPlatform(fActiveTarget);
-				//					if (!compare.isOK()) {
-				//						MessageDialog.openInformation(getShell(), "Target Definition Out Of Synch", "The active target platform is out of synch with the file system.  Pressing ok on the preference page will reload the target platform.");
-				//						isOutOfSynch = true;
-				//					}
-				//				} catch (CoreException e) {
-				//					PDEPlugin.log(e);
-				//					setErrorMessage(e.getMessage());
-				//				}
-				//			}
+				try {
+					if (bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious) && ((TargetDefinition) fPrevious.getTargetDefinition()).isContentEquivalent(fActiveTarget)) {
+						IStatus compare = getTargetService().compareWithTargetPlatform(fActiveTarget);
+						if (!compare.isOK()) {
+							MessageDialog.openInformation(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_17, PDEUIMessages.TargetPlatformPreferencePage2_18);
+							isOutOfSynch = true;
+						}
+					}
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+					setErrorMessage(e.getMessage());
+				}
 			}
-
 			fTableViewer.refresh(true);
+		}
+	}
+
+	/**
+	 * Open the new target platform wizard
+	 */
+	private void handleAdd() {
+		NewTargetDefinitionWizard2 wizard = new NewTargetDefinitionWizard2();
+		wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_4);
+		WizardDialog dialog = new WizardDialog(fAddButton.getShell(), wizard);
+		if (dialog.open() == Window.OK) {
+			ITargetDefinition def = wizard.getTargetDefinition();
+			fTargets.add(def);
+			fTableViewer.refresh(true);
+			fTableViewer.setSelection(new StructuredSelection(def));
 		}
 	}
 
@@ -403,12 +414,28 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	 */
 	private void handleEdit() {
 		if (!fTableViewer.getSelection().isEmpty()) {
-			ITargetDefinition def = (ITargetDefinition) ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
-			EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(def);
+			ITargetDefinition original = (ITargetDefinition) ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
+			EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(original);
 			wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_6);
 			WizardDialog dialog = new WizardDialog(fEditButton.getShell(), wizard);
 			if (dialog.open() == Window.OK) {
-				fTableViewer.refresh();
+				// Replace all references to the original with the new target
+				ITargetDefinition newTarget = wizard.getTargetDefinition();
+				int index = fTargets.indexOf(original);
+				fTargets.add(index, newTarget);
+				fTargets.remove(original);
+
+				if (fMoved.containsKey(original)) {
+					Object moveLocation = fMoved.remove(original);
+					fMoved.put(newTarget, moveLocation);
+				}
+
+				if (original == fActiveTarget) {
+					fActiveTarget = newTarget;
+				}
+
+				fTableViewer.refresh(true);
+				fTableViewer.setSelection(new StructuredSelection(newTarget));
 			}
 		}
 	}
@@ -430,19 +457,41 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	}
 
 	/**
+	 * Move the selected target to a workspace location
+	 */
+	private void handleMove() {
+		NewTargetDefinitionFileWizard wizard = new NewTargetDefinitionFileWizard(fMoved.values());
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.create();
+		SWTUtil.setDialogSize(dialog, 400, 450);
+		if (dialog.open() == Window.OK) {
+			TableItem ti = fTableViewer.getTable().getItem(fTableViewer.getTable().getSelectionIndex());
+			IPath newTargetLoc = wizard.getTargetFileLocation();
+			IFile file = PDECore.getWorkspace().getRoot().getFile(newTargetLoc);
+			ti.setData(DATA_KEY_MOVED_LOCATION, file.getFullPath().toString());
+			IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+			fMoved.put(selection.getFirstElement(), wizard.getTargetFileLocation());
+			fTableViewer.refresh(true);
+		}
+	}
+
+	/**
 	 * Update enabled state of buttons
 	 */
 	protected void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		int size = selection.size();
-		fActivateButton.setEnabled(size == 1);
 		fEditButton.setEnabled(size == 1);
 		fRemoveButton.setEnabled(size > 0);
 		//fDuplicateButton.setEnabled(size == 1);
 		if (selection.getFirstElement() != null) {
 			fMoveButton.setEnabled(((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
+			fActivateButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) != fActiveTarget);
+			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious));
 		} else {
 			fMoveButton.setEnabled(false);
+			fActivateButton.setEnabled(false);
+			fReloadButton.setEnabled(false);
 		}
 	}
 

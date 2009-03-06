@@ -18,7 +18,9 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
- * Wizard to edit a target definition
+ * Wizard to edit a target definition, creates a working copy to edit.  Any changes are
+ * not saved by this wizard and must be done by the client.  The edited target 
+ * can be accessed using {@link #getTargetDefinition()}
  */
 public class EditTargetDefinitionWizard extends Wizard {
 
@@ -28,29 +30,6 @@ public class EditTargetDefinitionWizard extends Wizard {
 	private ITargetDefinition fDefinition;
 
 	/**
-	 * The original target definition that was to be edited. We create
-	 * a copy in case the user cancels the operation.
-	 */
-	private ITargetDefinition fOriginal;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
-	public boolean performFinish() {
-		// TODO check if any changes first
-		ITargetPlatformService service = TargetDefinitionPage.getTargetService();
-		if (service != null) {
-			try {
-				service.copyTargetDefinition(fDefinition, fOriginal);
-			} catch (CoreException e) {
-				// TODO set error message
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Constructs a wizard to edit the given definition.
 	 * 
 	 * @param definition
@@ -58,6 +37,15 @@ public class EditTargetDefinitionWizard extends Wizard {
 	public EditTargetDefinitionWizard(ITargetDefinition definition) {
 		setTargetDefinition(definition);
 		setNeedsProgressMonitor(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
+	 */
+	public boolean performFinish() {
+		// Do nothing, edited target is available 
+		return true;
+
 	}
 
 	/* (non-Javadoc)
@@ -74,20 +62,24 @@ public class EditTargetDefinitionWizard extends Wizard {
 	 * @param definition target definition
 	 */
 	public void setTargetDefinition(ITargetDefinition definition) {
-		fOriginal = definition;
-		ITargetPlatformService service = TargetDefinitionPage.getTargetService();
-		if (service != null) {
-			fDefinition = service.newTarget();
-			try {
+		try {
+			ITargetPlatformService service = TargetDefinitionPage.getTargetService();
+			if (service != null) {
+				if (definition.getHandle().exists()) {
+					// Make a copy from the handle
+					fDefinition = definition.getHandle().getTargetDefinition();
+				} else {
+					// If no handle use the service to create a new one
+					fDefinition = service.newTarget();
+				}
 				service.copyTargetDefinition(definition, fDefinition);
 				IWizardPage[] pages = getPages();
 				for (int i = 0; i < pages.length; i++) {
 					((TargetDefinitionPage) pages[i]).targetChanged(fDefinition);
 				}
-			} catch (CoreException e) {
-				// TODO: show error message
-				PDEPlugin.log(e);
 			}
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
 		}
 	}
 

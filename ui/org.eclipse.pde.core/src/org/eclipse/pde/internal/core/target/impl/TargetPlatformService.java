@@ -468,9 +468,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 		// Get the current models from the target platform
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
+		Set allLocations = new HashSet(models.length);
 		Map stateLocations = new HashMap(models.length);
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase base = models[i];
+			allLocations.add(base.getInstallLocation());
 			stateLocations.put(base.getInstallLocation(), base);
 		}
 
@@ -482,7 +484,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 			BundleInfo info = bundle.getBundleInfo();
 			File file = URIUtil.toFile(info.getLocation());
 			String location = file.getAbsolutePath();
-			if (stateLocations.remove(location) == null) {
+			stateLocations.remove(location);
+			if (!allLocations.contains(location)) {
 				// it's not in the state... if it's not really in the target either (missing) this
 				// is not an error
 				IStatus status = bundle.getStatus();
