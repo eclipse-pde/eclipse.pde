@@ -62,10 +62,10 @@ public class SWTFactory {
 		Assert.isNotNull(button);
 		Object gd = button.getLayoutData();
 		if (gd instanceof GridData) {
-			((GridData)gd).widthHint = getButtonWidthHint(button);	
-			((GridData)gd).horizontalAlignment = GridData.FILL;	 
+			((GridData)gd).widthHint = getButtonWidthHint(button);
+			((GridData)gd).horizontalAlignment = GridData.FILL;
 		}
-	}		
+	}
 	
 	/**
 	 * Creates a check box button using the parents' font
@@ -112,7 +112,7 @@ public class SWTFactory {
 			button.setText(label);
 		}
 		GridData gd = new GridData();
-		button.setLayoutData(gd);	
+		button.setLayoutData(gd);
 		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
@@ -137,7 +137,7 @@ public class SWTFactory {
 			button.setText(label);
 		}
 		GridData gd = new GridData(fill);
-		button.setLayoutData(gd);	
+		button.setLayoutData(gd);
 		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
@@ -157,7 +157,7 @@ public class SWTFactory {
 			button.setText(label);
 		}
 		GridData gd = new GridData();
-		button.setLayoutData(gd);	
+		button.setLayoutData(gd);
 		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
@@ -508,12 +508,12 @@ public class SWTFactory {
 		GridLayout layout = new GridLayout(columns, false);
 		layout.marginWidth = marginwidth;
 		layout.marginHeight = marginheight;
-    	g.setLayout(layout);
-    	g.setFont(parent.getFont());
-    	GridData gd = new GridData(fill);
+		g.setLayout(layout);
+		g.setFont(parent.getFont());
+		GridData gd = new GridData(fill);
 		gd.horizontalSpan = hspan;
-    	g.setLayoutData(gd);
-    	return g;
+		g.setLayoutData(gd);
+		return g;
 	}
 	
 	/**
