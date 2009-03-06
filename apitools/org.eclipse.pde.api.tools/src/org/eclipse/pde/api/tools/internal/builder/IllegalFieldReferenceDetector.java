@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.model.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
@@ -74,10 +73,10 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 */
 	public int getReferenceKinds() {
 		return
-			ReferenceModifiers.REF_GETFIELD |
-			ReferenceModifiers.REF_GETSTATIC |
-			ReferenceModifiers.REF_PUTFIELD |
-			ReferenceModifiers.REF_PUTSTATIC;
+			IReference.REF_GETFIELD |
+			IReference.REF_GETSTATIC |
+			IReference.REF_PUTFIELD |
+			IReference.REF_PUTSTATIC;
 	}	
 	
 	/* (non-Javadoc)

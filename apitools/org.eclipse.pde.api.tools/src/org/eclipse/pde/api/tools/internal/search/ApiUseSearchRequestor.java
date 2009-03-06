@@ -21,7 +21,6 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -150,7 +149,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getReferenceKinds()
 	 */
 	public int getReferenceKinds() {
-		int kinds = ReferenceModifiers.MASK_REF_ALL & ~ReferenceModifiers.REF_CONSTANTPOOL;
+		int kinds = IReference.MASK_REF_ALL & ~IReference.REF_CONSTANTPOOL;
 		return kinds;
 	}
 	

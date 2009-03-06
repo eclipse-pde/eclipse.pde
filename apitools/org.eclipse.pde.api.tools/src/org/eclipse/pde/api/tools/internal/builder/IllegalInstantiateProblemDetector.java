@@ -16,7 +16,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 
@@ -32,7 +31,7 @@ public class IllegalInstantiateProblemDetector extends AbstractIllegalTypeRefere
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#getReferenceKinds()
 	 */
 	public int getReferenceKinds() {
-		return ReferenceModifiers.REF_INSTANTIATE;
+		return IReference.REF_INSTANTIATE;
 	}
 	
 	/* (non-Javadoc)

@@ -25,7 +25,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -58,7 +57,7 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#getReferenceKinds()
 	 */
 	public int getReferenceKinds() {
-		return ReferenceModifiers.REF_FIELDDECL;
+		return IReference.REF_FIELDDECL;
 	}
 	
 	/* (non-Javadoc)

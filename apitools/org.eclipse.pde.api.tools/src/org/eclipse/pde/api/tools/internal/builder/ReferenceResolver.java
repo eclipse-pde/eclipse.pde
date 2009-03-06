@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -68,7 +67,7 @@ public final class ReferenceResolver {
 		Iterator iterator = references.iterator();
 		while (iterator.hasNext()) {
 			ref = (IReference) iterator.next();
-			if (ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
+			if (ref.getReferenceKind() == IReference.REF_OVERRIDE) {
 				methodDecls.add(ref);
 			} else {
 				key = createSignatureKey(ref);

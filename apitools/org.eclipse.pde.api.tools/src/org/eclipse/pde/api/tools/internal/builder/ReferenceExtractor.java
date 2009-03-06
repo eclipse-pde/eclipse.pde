@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -152,21 +152,21 @@ public class ReferenceExtractor extends ClassAdapter {
 		 */
 		public SignatureVisitor visitParameterType() {
 			this.argumentcount++;
-			this.kind = ReferenceModifiers.REF_PARAMETER;
+			this.kind = IReference.REF_PARAMETER;
 			return this;
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitInterface()
 		 */
 		public SignatureVisitor visitInterface() {
-			this.kind = ReferenceModifiers.REF_IMPLEMENTS;
+			this.kind = IReference.REF_IMPLEMENTS;
 			return this;
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitExceptionType()
 		 */
 		public SignatureVisitor visitExceptionType() {
-			this.kind = ReferenceModifiers.REF_THROWS;
+			this.kind = IReference.REF_THROWS;
 			return this;
 		}
 		/* (non-Javadoc)
@@ -179,28 +179,28 @@ public class ReferenceExtractor extends ClassAdapter {
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitReturnType()
 		 */
 		public SignatureVisitor visitReturnType() {
-			this.kind = ReferenceModifiers.REF_RETURNTYPE;
+			this.kind = IReference.REF_RETURNTYPE;
 			return this;
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitClassBound()
 		 */
 		public SignatureVisitor visitClassBound() {
-			this.kind = ReferenceModifiers.REF_PARAMETERIZED_TYPEDECL;
+			this.kind = IReference.REF_PARAMETERIZED_TYPEDECL;
 			return this;
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitInterfaceBound()
 		 */
 		public SignatureVisitor visitInterfaceBound() {
-			this.kind = ReferenceModifiers.REF_PARAMETERIZED_TYPEDECL;
+			this.kind = IReference.REF_PARAMETERIZED_TYPEDECL;
 			return this;
 		}
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitSuperclass()
 		 */
 		public SignatureVisitor visitSuperclass() {
-			this.kind = ReferenceModifiers.REF_EXTENDS;
+			this.kind = IReference.REF_EXTENDS;
 			return this;
 		}
 		/* (non-Javadoc)
@@ -287,16 +287,16 @@ public class ReferenceExtractor extends ClassAdapter {
 			int refType = -1;
 			switch (opcode) {
 			case Opcodes.PUTSTATIC:
-				refType = ReferenceModifiers.REF_PUTSTATIC;
+				refType = IReference.REF_PUTSTATIC;
 				break;
 			case Opcodes.PUTFIELD:
-				refType = ReferenceModifiers.REF_PUTFIELD;
+				refType = IReference.REF_PUTFIELD;
 				break;
 			case Opcodes.GETSTATIC:
-				refType = ReferenceModifiers.REF_GETSTATIC;
+				refType = IReference.REF_GETSTATIC;
 				break;
 			case Opcodes.GETFIELD:
-				refType = ReferenceModifiers.REF_GETFIELD;
+				refType = IReference.REF_GETFIELD;
 				break;
 			}
 			if (refType != -1) {
@@ -313,7 +313,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
 			if(type != null) {
 				Type ctype = Type.getObjectType(type);
-				Reference reference = ReferenceExtractor.this.addTypeReference(ctype, ReferenceModifiers.REF_CATCHEXCEPTION);
+				Reference reference = ReferenceExtractor.this.addTypeReference(ctype, IReference.REF_CATCHEXCEPTION);
 				if (reference != null) {
 					this.linePositionTracker.addCatchLabelInfos(reference, handler);
 					this.linePositionTracker.addLocation(reference);
@@ -353,14 +353,14 @@ public class ReferenceExtractor extends ClassAdapter {
 			int kind = -1;
 			switch(opcode){
 				case Opcodes.INVOKESPECIAL: {
-					kind = ("<init>".equals(name) ? ReferenceModifiers.REF_CONSTRUCTORMETHOD : ReferenceModifiers.REF_SPECIALMETHOD); //$NON-NLS-1$
-					if (kind == ReferenceModifiers.REF_CONSTRUCTORMETHOD) {
+					kind = ("<init>".equals(name) ? IReference.REF_CONSTRUCTORMETHOD : IReference.REF_SPECIALMETHOD); //$NON-NLS-1$
+					if (kind == IReference.REF_CONSTRUCTORMETHOD) {
 						if(!implicitConstructor && this.methodName.equals("<init>") && !fSuperStack.isEmpty() && (fSuperStack.peek()).equals(declaringType.getClassName())) { //$NON-NLS-1$
 							implicitConstructor = true;
-							kind = ReferenceModifiers.REF_SUPER_CONSTRUCTORMETHOD;
+							kind = IReference.REF_SUPER_CONSTRUCTORMETHOD;
 						}
 						else {
-							Reference reference = ReferenceExtractor.this.addTypeReference(declaringType, ReferenceModifiers.REF_INSTANTIATE);
+							Reference reference = ReferenceExtractor.this.addTypeReference(declaringType, IReference.REF_INSTANTIATE);
 							if (reference != null) {
 								this.linePositionTracker.addLocation(reference);
 							}
@@ -369,13 +369,13 @@ public class ReferenceExtractor extends ClassAdapter {
 					break;
 				}
 				case Opcodes.INVOKESTATIC: {
-					kind = ReferenceModifiers.REF_STATICMETHOD;
+					kind = IReference.REF_STATICMETHOD;
 					// check for reference to a class literal
 					if (name.equals("forName")) { //$NON-NLS-1$
 						if (ReferenceExtractor.this.processName(owner).equals("java.lang.Class")) { //$NON-NLS-1$
 							if (this.stringLiteral != null) {
 								Type classLiteral = Type.getObjectType(this.stringLiteral);
-								Reference reference = ReferenceExtractor.this.addTypeReference(classLiteral, ReferenceModifiers.REF_CONSTANTPOOL);
+								Reference reference = ReferenceExtractor.this.addTypeReference(classLiteral, IReference.REF_CONSTANTPOOL);
 								if (reference != null) {
 									this.linePositionTracker.addLocation(reference);
 								}
@@ -385,11 +385,11 @@ public class ReferenceExtractor extends ClassAdapter {
 					break;
 				}
 				case Opcodes.INVOKEVIRTUAL: {
-					kind = ReferenceModifiers.REF_VIRTUALMETHOD;
+					kind = IReference.REF_VIRTUALMETHOD;
 					break;
 				}
 				case Opcodes.INVOKEINTERFACE: {
-					kind = ReferenceModifiers.REF_INTERFACEMETHOD;
+					kind = IReference.REF_INTERFACEMETHOD;
 					break;
 				}
 			}
@@ -407,7 +407,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		 */
 		public void visitMultiANewArrayInsn(String desc, int dims) {
 			Type type = this.getTypeFromDescription(desc);
-			Reference reference = ReferenceExtractor.this.addTypeReference(type, ReferenceModifiers.REF_ARRAYALLOC);
+			Reference reference = ReferenceExtractor.this.addTypeReference(type, IReference.REF_ARRAYALLOC);
 			if (reference != null) {
 				this.linePositionTracker.addLocation(reference);
 			}
@@ -470,15 +470,15 @@ public class ReferenceExtractor extends ClassAdapter {
 				//we can omit the NEW case as it is caught by the constructor call
 				switch(opcode) {
 					case Opcodes.ANEWARRAY: {
-						kind = ReferenceModifiers.REF_ARRAYALLOC;
+						kind = IReference.REF_ARRAYALLOC;
 						break;
 					}
 					case Opcodes.CHECKCAST: {
-						kind = ReferenceModifiers.REF_CHECKCAST;
+						kind = IReference.REF_CHECKCAST;
 						break;
 					}
 					case Opcodes.INSTANCEOF: {
-						kind = ReferenceModifiers.REF_INSTANCEOF;
+						kind = IReference.REF_INSTANCEOF;
 						break;
 					}
 					case Opcodes.NEW: {
@@ -540,7 +540,7 @@ public class ReferenceExtractor extends ClassAdapter {
 				}
 				if (lineNumber == -1) return;
 				if(signature != null) {
-					List references = ReferenceExtractor.this.processSignature(name, signature, ReferenceModifiers.REF_PARAMETERIZED_VARIABLE, METHOD);
+					List references = ReferenceExtractor.this.processSignature(name, signature, IReference.REF_PARAMETERIZED_VARIABLE, METHOD);
 					for (Iterator iterator = references.iterator(); iterator.hasNext();) {
 						Reference reference = (Reference) iterator.next();
 						reference.setLineNumber(lineNumber);
@@ -548,7 +548,7 @@ public class ReferenceExtractor extends ClassAdapter {
 				} else {
 					Type type = Type.getType(desc);
 					if(type.getSort() == Type.OBJECT) {
-						Reference reference = ReferenceExtractor.this.addTypeReference(type, ReferenceModifiers.REF_LOCALVARIABLEDECL);
+						Reference reference = ReferenceExtractor.this.addTypeReference(type, IReference.REF_LOCALVARIABLEDECL);
 						if (reference != null) {
 							reference.setLineNumber(lineNumber);
 						}
@@ -563,7 +563,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		public void visitLdcInsn(Object cst) {
 			if(cst instanceof Type) {
 				Type type = (Type) cst;
-				Reference reference = ReferenceExtractor.this.addTypeReference(type, ReferenceModifiers.REF_CONSTANTPOOL);
+				Reference reference = ReferenceExtractor.this.addTypeReference(type, IReference.REF_CONSTANTPOOL);
 				if (reference != null) {
 					this.linePositionTracker.addLocation(reference);
 				}
@@ -795,8 +795,8 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * Bit mask that determines if we need to visit members
 	 */
 	private static final int VISIT_MEMBERS_MASK = 
-		ReferenceModifiers.MASK_REF_ALL ^
-			(ReferenceModifiers.REF_EXTENDS | ReferenceModifiers.REF_IMPLEMENTS);
+		IReference.MASK_REF_ALL ^
+			(IReference.REF_EXTENDS | IReference.REF_IMPLEMENTS);
 	
 	/**
 	 * If members should be visited for type visits
@@ -872,7 +872,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		}
 		// don't consider references to anonymous types or elements in them
 		String referencedTypeName = ref.getReferencedTypeName();
-		if (ref.getReferenceKind() == ReferenceModifiers.REF_VIRTUALMETHOD || ref.getReferenceKind() == ReferenceModifiers.REF_OVERRIDE) {
+		if (ref.getReferenceKind() == IReference.REF_VIRTUALMETHOD || ref.getReferenceKind() == IReference.REF_OVERRIDE) {
 			return true;
 		}
 		if (referencedTypeName.startsWith(fType.getName())) {
@@ -994,7 +994,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		this.signaturevisitor.originalkind = kind;
 		this.signaturevisitor.argumentcount = 0;
 		this.signaturevisitor.type = type;
-		if(kind == ReferenceModifiers.REF_PARAMETERIZED_TYPEDECL || kind == ReferenceModifiers.REF_PARAMETERIZED_METHODDECL) {
+		if(kind == IReference.REF_PARAMETERIZED_TYPEDECL || kind == IReference.REF_PARAMETERIZED_METHODDECL) {
 			reader.accept(this.signaturevisitor);
 		} else {
 			reader.acceptType(this.signaturevisitor);
@@ -1038,7 +1038,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		this.enterMember(this.fType);
 		//if there is a signature we get more information from it, so we don't need to do both
 		if(signature != null) {
-			this.processSignature(name, signature, ReferenceModifiers.REF_PARAMETERIZED_TYPEDECL, TYPE);
+			this.processSignature(name, signature, IReference.REF_PARAMETERIZED_TYPEDECL, TYPE);
 		}
 		else {
 			if((access & Opcodes.ACC_INTERFACE) != 0) {
@@ -1046,7 +1046,7 @@ public class ReferenceExtractor extends ClassAdapter {
 				Type supertype = null;
 				for(int i = 0; i < interfaces.length; i++) {
 					supertype = Type.getObjectType(interfaces[i]);
-					this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
+					this.addTypeReference(supertype, IReference.REF_EXTENDS);
 					this.fSuperStack.add(supertype.getClassName());
 				}
 			}
@@ -1054,12 +1054,12 @@ public class ReferenceExtractor extends ClassAdapter {
 				Type supertype = null;
 				if(superName != null) {
 					supertype = Type.getObjectType(superName);
-					this.addTypeReference(supertype, ReferenceModifiers.REF_EXTENDS);
+					this.addTypeReference(supertype, IReference.REF_EXTENDS);
 					this.fSuperStack.add(supertype.getClassName());
 				}
 				for(int i = 0; i < interfaces.length; i++) {
 					supertype = Type.getObjectType(interfaces[i]);
-					this.addTypeReference(supertype, ReferenceModifiers.REF_IMPLEMENTS);
+					this.addTypeReference(supertype, IReference.REF_IMPLEMENTS);
 				}
 			}
 		}
@@ -1088,9 +1088,9 @@ public class ReferenceExtractor extends ClassAdapter {
 			this.enterMember(field);
 			if((access & Opcodes.ACC_SYNTHETIC) == 0) {
 				if(signature != null) {
-					this.processSignature(name, signature, ReferenceModifiers.REF_PARAMETERIZED_FIELDDECL, FIELD);
+					this.processSignature(name, signature, IReference.REF_PARAMETERIZED_FIELDDECL, FIELD);
 				} else {
-					this.addTypeReference(Type.getType(desc), ReferenceModifiers.REF_FIELDDECL);
+					this.addTypeReference(Type.getType(desc), IReference.REF_FIELDDECL);
 				}
 			}
 			this.exitMember();
@@ -1117,7 +1117,7 @@ public class ReferenceExtractor extends ClassAdapter {
 				Set refs = null;
 				if(type.isAnonymous() || type.isLocal()) {
 					//visit the class files for the dependent anonymous and local inner types
-					refs = processInnerClass(type, ReferenceModifiers.REF_EXTENDS);
+					refs = processInnerClass(type, IReference.REF_EXTENDS);
 					if(refs.iterator().hasNext()) {
 						fAnonymousTypes.put(pname, refs.iterator().next());
 					}
@@ -1172,26 +1172,26 @@ public class ReferenceExtractor extends ClassAdapter {
 				if (!this.fSuperStack.isEmpty()) {
 					String superTypeName = (String) this.fSuperStack.peek();
 					addReference(
-						Reference.methodReference(method, superTypeName, method.getName(), method.getSignature(), ReferenceModifiers.REF_OVERRIDE));
+						Reference.methodReference(method, superTypeName, method.getName(), method.getSignature(), IReference.REF_OVERRIDE));
 				}
 			}
 			if((access & Opcodes.ACC_SYNTHETIC) == 0 && !"<clinit>".equals(name)) { //$NON-NLS-1$
 				int argumentcount = 0;
 				if(signature != null) {
-					this.processSignature(name, signature, ReferenceModifiers.REF_PARAMETERIZED_METHODDECL, METHOD);
+					this.processSignature(name, signature, IReference.REF_PARAMETERIZED_METHODDECL, METHOD);
 					argumentcount = this.signaturevisitor.argumentcount;
 				}
 				else {
 					Type[] arguments = Type.getArgumentTypes(desc);
 					for(int i = 0; i < arguments.length; i++) {
 						Type type = arguments[i];
-						this.addTypeReference(type, ReferenceModifiers.REF_PARAMETER);
+						this.addTypeReference(type, IReference.REF_PARAMETER);
 						argumentcount += type.getSize();
 					}
-					this.addTypeReference(Type.getReturnType(desc), ReferenceModifiers.REF_RETURNTYPE);
+					this.addTypeReference(Type.getReturnType(desc), IReference.REF_RETURNTYPE);
 					if(exceptions != null) {
 						for(int i = 0; i < exceptions.length; i++) {
-							this.addTypeReference(Type.getObjectType(exceptions[i]), ReferenceModifiers.REF_THROWS);
+							this.addTypeReference(Type.getObjectType(exceptions[i]), IReference.REF_THROWS);
 						}
 					}
 				}

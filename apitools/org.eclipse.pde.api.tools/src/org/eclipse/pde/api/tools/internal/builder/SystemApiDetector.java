@@ -31,7 +31,6 @@ import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -399,8 +398,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				case 1 : {
 					if (resolvePackages[0].isSystemComponent()) {
 						switch(reference.getReferenceKind()) {
-							case ReferenceModifiers.REF_OVERRIDE :
-							case ReferenceModifiers.REF_CONSTANTPOOL :
+							case IReference.REF_OVERRIDE :
+							case IReference.REF_CONSTANTPOOL :
 								return false;
 						}
 						((Reference) reference).setResolveStatus(false);
@@ -419,7 +418,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector#getReferenceKinds()
 	 */
 	public int getReferenceKinds() {
-		return ReferenceModifiers.MASK_REF_ALL & ~ReferenceModifiers.REF_OVERRIDE;
+		return IReference.MASK_REF_ALL & ~IReference.REF_OVERRIDE;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#createProblems()

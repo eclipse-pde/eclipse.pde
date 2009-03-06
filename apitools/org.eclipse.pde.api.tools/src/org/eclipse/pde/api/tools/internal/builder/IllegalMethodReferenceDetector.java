@@ -16,7 +16,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.builder.ReferenceModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -34,11 +33,11 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	 */
 	public int getReferenceKinds() {
 		return
-			ReferenceModifiers.REF_INTERFACEMETHOD |
-			ReferenceModifiers.REF_SPECIALMETHOD |
-			ReferenceModifiers.REF_STATICMETHOD |
-			ReferenceModifiers.REF_VIRTUALMETHOD |
-			ReferenceModifiers.REF_CONSTRUCTORMETHOD;
+			IReference.REF_INTERFACEMETHOD |
+			IReference.REF_SPECIALMETHOD |
+			IReference.REF_STATICMETHOD |
+			IReference.REF_VIRTUALMETHOD |
+			IReference.REF_CONSTRUCTORMETHOD;
 	}
 	
 	/* (non-Javadoc)
