@@ -11,21 +11,18 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 
 /**
  * A bundle container representing an installed profile.
@@ -216,47 +213,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 */
 	public String toString() {
 		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getVMArguments()
-	 */
-	public String[] getVMArguments() {
-		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
-
-		String[] jvmArgs = null;
-		try {
-			FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
-			if (fwAdmin == null) {
-				Bundle fwAdminBundle = Platform.getBundle(FWK_ADMIN_EQ);
-				fwAdminBundle.start();
-				fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
-			}
-			Manipulator manipulator = fwAdmin.getManipulator();
-			ConfigData configData = new ConfigData(null, null, null, null);
-
-			String home = getLocation(true);
-			manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
-			File installDirectory = new File(home);
-			if (Platform.getOS().equals(Platform.OS_MACOSX))
-				installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
-			manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
-			manipulator.getLauncherData().setHome(new File(home));
-
-			manipulator.setConfigData(configData);
-			manipulator.load();
-			jvmArgs = manipulator.getLauncherData().getJvmArgs();
-		} catch (BundleException e) {
-			PDECore.log(e);
-		} catch (CoreException e) {
-			PDECore.log(e);
-		} catch (IOException e) {
-			PDECore.log(e);
-		}
-		if (jvmArgs.length == 0) {
-			return null;
-		}
-		return jvmArgs;
 	}
 
 }

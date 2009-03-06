@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -69,7 +70,8 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		File dir = getDirectory();
 		if (dir.isDirectory()) {
-			File[] files = dir.listFiles();
+			File site = getSite(dir);
+			File[] files = site.listFiles();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
 			List bundles = new ArrayList(files.length);
 			for (int i = 0; i < files.length; i++) {
@@ -120,10 +122,18 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		return new StringBuffer().append("Directory ").append(fPath).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getVMArguments()
+	/**
+	 * Returns the directory to scan for bundles - a "plug-ins" sub directory if present.
+	 * 
+	 * @param root the location the container specifies as a root directory
+	 * @return the given directory or its plug-ins sub directory if present
 	 */
-	public String[] getVMArguments() {
-		return null;
+	private File getSite(File root) {
+		File file = new File(root, IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
+		if (file.exists()) {
+			return file;
+		}
+		return root;
 	}
+
 }

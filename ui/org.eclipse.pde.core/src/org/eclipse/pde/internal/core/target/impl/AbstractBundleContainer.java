@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.*;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.util.ManifestElement;
@@ -27,8 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
+import org.osgi.framework.*;
 
 /**
  * Common function for bundle containers.
@@ -615,5 +614,46 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			fRegistry.addContribution(new ByteArrayInputStream(bogusDef.getBytes()), contributor, false, null, null, this);
 		}
 		return fRegistry;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getVMArguments()
+	 */
+	public String[] getVMArguments() {
+		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
+
+		String[] jvmArgs = null;
+		try {
+			FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+			if (fwAdmin == null) {
+				Bundle fwAdminBundle = Platform.getBundle(FWK_ADMIN_EQ);
+				fwAdminBundle.start();
+				fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+			}
+			Manipulator manipulator = fwAdmin.getManipulator();
+			ConfigData configData = new ConfigData(null, null, null, null);
+
+			String home = getLocation(true);
+			manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
+			File installDirectory = new File(home);
+			if (Platform.getOS().equals(Platform.OS_MACOSX))
+				installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+			manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
+			manipulator.getLauncherData().setHome(new File(home));
+
+			manipulator.setConfigData(configData);
+			manipulator.load();
+			jvmArgs = manipulator.getLauncherData().getJvmArgs();
+		} catch (BundleException e) {
+			PDECore.log(e);
+		} catch (CoreException e) {
+			PDECore.log(e);
+		} catch (IOException e) {
+			PDECore.log(e);
+		}
+		if (jvmArgs.length == 0) {
+			return null;
+		}
+		return jvmArgs;
 	}
 }
