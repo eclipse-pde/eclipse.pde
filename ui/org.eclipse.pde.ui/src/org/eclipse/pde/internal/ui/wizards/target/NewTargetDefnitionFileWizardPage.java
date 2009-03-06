@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import java.util.Collection;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.widgets.Composite;
@@ -23,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 public class NewTargetDefnitionFileWizardPage extends PDEWizardNewFileCreationPage {
 
 	private static String EXTENSION = "target"; //$NON-NLS-1$
+	private Collection fFilterList;
 
 	public NewTargetDefnitionFileWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
@@ -39,4 +43,28 @@ public class NewTargetDefnitionFileWizardPage extends PDEWizardNewFileCreationPa
 		//Hide the advanced control buttons
 	}
 
+	/**
+	 * The list of filenames that are not allowed
+	 * 
+	 * @param fFilterList <code>Collection</code> of filenames as <code>IPath</code>
+	 */
+	protected void setFilter(Collection filterFileList) {
+		fFilterList = filterFileList;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage#validatePage()
+	 */
+	protected boolean validatePage() {
+		IPath path = getContainerFullPath();
+		if (fFilterList != null && path != null) {
+			path = path.append(getFileName());
+			if (fFilterList.contains(path)) {
+				setErrorMessage(NLS.bind(PDEUIMessages.NewTargetDefnitionFileWizardPage_0, getFileName()));
+				return false;
+			}
+			setErrorMessage(null);
+		}
+		return super.validatePage();
+	}
 }

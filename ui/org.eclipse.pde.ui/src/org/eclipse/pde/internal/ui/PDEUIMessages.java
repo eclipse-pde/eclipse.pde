@@ -2448,6 +2448,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String JavaArgumentsTab_vmVariables;
 
+	public static String NewTargetDefnitionFileWizardPage_0;
+
 	public static String NewTargetProfileWizard_title;
 
 	public static String TargetProfileWizardPage_description;

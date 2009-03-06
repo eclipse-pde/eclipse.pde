@@ -302,7 +302,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		fMoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_13, null);
 		fMoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				NewTargetDefinitionFileWizard wizard = new NewTargetDefinitionFileWizard();
+				NewTargetDefinitionFileWizard wizard = new NewTargetDefinitionFileWizard(fMoved.values());
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 450);
