@@ -2988,7 +2988,12 @@ public class ClassFileComparator {
 		} else {
 			buffer.append(method.getName());
 		}
-		buffer.append(method.getSignature());
+		String genericSignature = method.getGenericSignature();
+		if (genericSignature != null) {
+			buffer.append(genericSignature);
+		} else {
+			buffer.append(method.getSignature());
+		}
 		return String.valueOf(buffer);
 	}
 

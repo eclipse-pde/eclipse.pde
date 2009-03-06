@@ -976,14 +976,7 @@ public final class Util {
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 							case IDelta.METHOD :
 							case IDelta.CONSTRUCTOR :
-								int indexOf = key.indexOf('(');
-								if (indexOf == -1) {
-									return null;
-								}
-								int index = indexOf;
-								String selector = key.substring(0, index);
-								String descriptor = key.substring(index, key.length());
-								return getMethod(type, selector, descriptor);
+								return getMethod(type, key);
 							case IDelta.TYPE_MEMBER :
 								IType type2 = type.getType(key);
 								if (type2.exists()) {
@@ -1004,27 +997,13 @@ public final class Util {
 							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
 							case IDelta.API_METHOD :
 							case IDelta.API_CONSTRUCTOR :
-								int indexOf = key.indexOf('(');
-								if (indexOf == -1) {
-									return null;
-								}
-								int index = indexOf;
-								String selector = key.substring(0, index);
-								String descriptor = key.substring(index, key.length());
-								return getMethod(type, selector, descriptor);
+								return getMethod(type, key);
 						}
 				}
 				return type;
 			case IDelta.METHOD_ELEMENT_TYPE :
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
-					int indexOf = key.indexOf('(');
-					if (indexOf == -1) {
-						return null;
-					}
-					int index = indexOf;
-					String selector = key.substring(0, index);
-					String descriptor = key.substring(index, key.length());
-					return getMethod(type, selector, descriptor);
+					return getMethod(type, key);
 				}
 			case IDelta.API_COMPONENT_ELEMENT_TYPE :
 				return type;
@@ -1032,10 +1011,40 @@ public final class Util {
 		return null;
 	}
 
-	private static IMember getMethod(IType type, String selector, String descriptor) {
+	private static IMember getMethod(IType type, String key) {
+		boolean isGeneric = false;
+		int indexOfTypeVariable = key.indexOf('<');
+		int index = 0;
+		if (indexOfTypeVariable == -1) {
+			int indexOfParen = key.indexOf('(');
+			if (indexOfParen == -1) {
+				return null;
+			}
+			index = indexOfParen;
+		} else {
+			int indexOfParen = key.indexOf('(');
+			if (indexOfParen == -1) {
+				return null;
+			}
+			if (indexOfParen < indexOfTypeVariable) {
+				index = indexOfParen;
+			} else {
+				index = indexOfTypeVariable;
+				isGeneric = true;
+			}
+		}
+		String selector = key.substring(0, index);
+		String descriptor = key.substring(index, key.length());
 		IMethod method = null;
 		String signature = descriptor.replace('/', '.');
-		String[] parameterTypes = Signature.getParameterTypes(signature);
+		String[] parameterTypes = null;
+		if (isGeneric) {
+			// remove all type variables first
+			signature = signature.substring(signature.indexOf('('));
+			parameterTypes = Signature.getParameterTypes(signature);
+		} else {
+			parameterTypes = Signature.getParameterTypes(signature);
+		}
 
 		try {
 			method = type.getMethod(selector, parameterTypes);
