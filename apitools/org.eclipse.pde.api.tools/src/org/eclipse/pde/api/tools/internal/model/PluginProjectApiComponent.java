@@ -366,7 +366,14 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 					}
 					IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(outputLocation);
 					if (cfc == null) {
-						IContainer container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
+						IPath projectFullPath = fProject.getProject().getFullPath();
+						IContainer container = null;
+						if (projectFullPath.equals(outputLocation)) {
+							// The project is its own output location
+							container = fProject.getProject();
+						} else {
+							container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
+						}
 						if (container.exists()) {
 							cfc = new FolderApiTypeContainer(component, container);
 							fOutputLocationToContainer.put(outputLocation, cfc);
