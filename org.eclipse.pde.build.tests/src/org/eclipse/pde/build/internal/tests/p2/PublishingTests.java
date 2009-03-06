@@ -9,7 +9,8 @@
 
 package org.eclipse.pde.build.internal.tests.p2;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
@@ -25,7 +26,6 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.build.tests.BuildConfiguration;
-import org.eclipse.pde.internal.build.builder.*;
 import org.osgi.framework.Constants;
 
 public class PublishingTests extends P2TestCase {
@@ -596,6 +596,10 @@ public class PublishingTests extends P2TestCase {
 
 	public void testBug265726() throws Exception {
 		IFolder buildFolder = newTest("265726");
+		if(Platform.getOS().equals("win32") && buildFolder.getLocation().toOSString().length() > 70) {
+			System.out.println("Skipping PublishingTests.testBug265726() because of path length issues.\n");
+			return;
+		}
 
 		IFolder p = Utils.createFolder(buildFolder, "plugins/p");
 		Utils.writeBuffer(p.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
