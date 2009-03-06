@@ -32,26 +32,11 @@ public class EditTargetDefinitionWizard extends Wizard {
 	/**
 	 * Constructs a wizard to edit the given definition.
 	 * 
-	 * @param definition
+	 * @param definition target definition being edited
+	 * @param createWorkingCopy if true, a copy of the definition will be created to edit, if false the definition will be edited directly 
 	 */
-	public EditTargetDefinitionWizard(ITargetDefinition definition) {
-		ITargetDefinition workingCopy = null;
-		try {
-			ITargetPlatformService service = TargetDefinitionPage.getTargetService();
-			if (service != null) {
-				if (definition.getHandle().exists()) {
-					// Make a copy from the handle
-					workingCopy = definition.getHandle().getTargetDefinition();
-				} else {
-					// If no handle use the service to create a new one
-					workingCopy = service.newTarget();
-				}
-				service.copyTargetDefinition(definition, workingCopy);
-			}
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		}
-		setTargetDefinition(workingCopy);
+	public EditTargetDefinitionWizard(ITargetDefinition definition, boolean createWorkingCopy) {
+		setTargetDefinition(definition, createWorkingCopy);
 		setNeedsProgressMonitor(true);
 	}
 
@@ -76,12 +61,33 @@ public class EditTargetDefinitionWizard extends Wizard {
 	 * refresh controls if already created.
 	 * 
 	 * @param definition target definition
+	 * @param createWorkingCopy if true, a copy of the definition will be created to edit, if false the definition will be edited directly
 	 */
-	public void setTargetDefinition(ITargetDefinition definition) {
-		fDefinition = definition;
+	public void setTargetDefinition(ITargetDefinition definition, boolean createWorkingCopy) {
+		ITargetDefinition workingCopy = null;
+		if (createWorkingCopy) {
+			try {
+				ITargetPlatformService service = TargetDefinitionPage.getTargetService();
+				if (service != null) {
+					if (definition.getHandle().exists()) {
+						// Make a copy from the handle
+						workingCopy = definition.getHandle().getTargetDefinition();
+					} else {
+						// If no handle use the service to create a new one
+						workingCopy = service.newTarget();
+					}
+					service.copyTargetDefinition(definition, workingCopy);
+				}
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+			}
+		} else {
+			workingCopy = definition;
+		}
+		fDefinition = workingCopy;
 		IWizardPage[] pages = getPages();
 		for (int i = 0; i < pages.length; i++) {
-			((TargetDefinitionPage) pages[i]).targetChanged(definition);
+			((TargetDefinitionPage) pages[i]).targetChanged(workingCopy);
 		}
 	}
 

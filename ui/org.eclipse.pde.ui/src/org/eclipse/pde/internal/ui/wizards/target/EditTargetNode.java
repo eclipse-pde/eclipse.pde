@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -48,7 +47,7 @@ public class EditTargetNode implements IWizardNode {
 	 */
 	public IWizard getWizard() {
 		if (fWizard == null) {
-			fWizard = new EditTargetDefinitionWizard(fDefinition);
+			fWizard = new EditTargetDefinitionWizard(fDefinition, false);
 			fWizard.setWindowTitle(PDEUIMessages.EditTargetNode_0);
 		}
 		return fWizard;
@@ -69,7 +68,7 @@ public class EditTargetNode implements IWizardNode {
 	public void setTargetDefinition(ITargetDefinition definition) {
 		fDefinition = definition;
 		if (fWizard != null) {
-			fWizard.setTargetDefinition(definition);
+			fWizard.setTargetDefinition(definition, false);
 		}
 	}
 

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -415,7 +413,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	private void handleEdit() {
 		if (!fTableViewer.getSelection().isEmpty()) {
 			ITargetDefinition original = (ITargetDefinition) ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
-			EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(original);
+			EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(original, true);
 			wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_6);
 			WizardDialog dialog = new WizardDialog(fEditButton.getShell(), wizard);
 			if (dialog.open() == Window.OK) {
