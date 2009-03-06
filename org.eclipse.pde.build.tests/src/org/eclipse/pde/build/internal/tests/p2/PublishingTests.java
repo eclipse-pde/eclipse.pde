@@ -533,7 +533,7 @@ public class PublishingTests extends P2TestCase {
 		//headless rcp hello world
 		IFolder headless = Utils.createFolder(buildFolder, "plugins/headless");
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("package rcp.headless;													\n");
+		buffer.append("package headless;													\n");
 		buffer.append("import org.eclipse.equinox.app.IApplication;								\n");
 		buffer.append("import org.eclipse.equinox.app.IApplicationContext;						\n");
 		buffer.append("public class Application implements IApplication {						\n");
@@ -563,7 +563,7 @@ public class PublishingTests extends P2TestCase {
 		additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Require-Bundle"), "org.eclipse.core.runtime");
 		additionalAttributes.put(new Attributes.Name("Bundle-ActivationPolicy"), "lazy");
-		Utils.generateBundleManifest(headless, "headless", "1.0.0", additionalAttributes);
+		Utils.generateBundleManifest(headless, "headless;singleton:=true", "1.0.0", additionalAttributes);
 		properties = new Properties();
 		properties.put("bin.includes", "META-INF/, ., plugin.xml");
 		Utils.generatePluginBuildProperties(headless, properties);
@@ -581,6 +581,8 @@ public class PublishingTests extends P2TestCase {
 		properties.put("archivesFormat", config + "-folder");
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("p2.gathering", "true");
+		properties.put("p2.metadata.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
+		properties.put("p2.artifact.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -591,6 +593,11 @@ public class PublishingTests extends P2TestCase {
 		assertLogContainsLine(configFile, "eclipse.product=headless.product");
 		assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
 		assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
+		
+		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString()); 
+		getIU(finalRepo, "a.jre.javase");
+		getIU(finalRepo, "headless.product");
+		getIU(finalRepo, "toolingorg.eclipse.equinox.common");
 	}
 
 	public void testBug265726() throws Exception {
