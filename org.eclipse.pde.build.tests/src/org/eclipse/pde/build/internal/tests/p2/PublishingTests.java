@@ -588,12 +588,18 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		IFile configFile = buildFolder.getFile("/tmp/eclipse/configuration/config.ini");
-		IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.ini");
 		assertLogContainsLine(configFile, "eclipse.application=headless.application");
 		assertLogContainsLine(configFile, "eclipse.product=headless.product");
-		assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
-		assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
-		
+
+		if (Platform.getOS().equals("macosx")) {
+			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.app/Contents/MacOS/headless.ini");
+			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
+			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
+		} else {
+			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.ini");
+			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
+			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
+		}
 		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString()); 
 		getIU(finalRepo, "a.jre.javase");
 		getIU(finalRepo, "headless.product");
