@@ -22,6 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * Utility class for creating new {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}s
@@ -81,21 +82,18 @@ public class ApiModelFactory {
 		if (location == null) {
 			return null;
 		}
-		IPath pathForLocation = new Path(location);
 		BundleApiComponent component = null;
-		IPath path = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		if (path != null && path.isPrefixOf(pathForLocation)) {
-			if(isValidProject(location)) {
-				if (isBinaryProject(location)) {
-					component = new BundleApiComponent(profile, location);
-				} else {
-					component = new PluginProjectApiComponent(profile, location, model);
-				}
+		IPluginModelBase model2 = getProjectModel(location);
+		if (model2 != null && model == model2) {
+			if (isBinaryProject(location)) {
+				component = new BundleApiComponent(profile, location);
+			} else {
+				component = new PluginProjectApiComponent(profile, location, model);
 			}
 		} else {
 			component = new BundleApiComponent(profile, location);
 		}
-		if(component != null && component.isValidBundle()) {
+		if(component.isValidBundle()) {
 			component.init(getBundleID());
 			return component;
 		}
@@ -103,20 +101,19 @@ public class ApiModelFactory {
 	}
 	
 	/**
-	 * Returns if the specified location is a valid API project or not.
-	 * <p>
-	 * We accept projects that are plug-ins even if not API enabled (i.e.
-	 * with API nature), as we still need them to make a complete
-	 * API profile without resolution errors.
-	 * </p> 
-	 * @param location
-	 * @return true if the location is valid, false otherwise
-	 * @throws CoreException
+	 * Returns the plug-in model associated with the project at the specified location
+	 * or <code>null</code> if none (i.e. if its an external model).
+	 * 
+	 * @param project location
+	 * @return plug-in model or <code>null</code> if none
 	 */
-	private static boolean isValidProject(String location) throws CoreException {
-		IPath path = new Path(location);
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-		return project != null && project.exists();
+	private static IPluginModelBase getProjectModel(String location) {
+		String projectName = (new Path(location)).lastSegment();
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		if (project != null) {
+			return PluginRegistry.findModel(project); 
+		}
+		return null;
 	}
 	
 	/**
