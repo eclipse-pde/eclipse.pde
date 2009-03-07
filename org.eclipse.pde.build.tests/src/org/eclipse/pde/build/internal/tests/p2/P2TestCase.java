@@ -66,13 +66,18 @@ public class P2TestCase extends PDETestCase {
 		if (metadataLocation == null)
 			return null;
 
+		URI location = URIUtil.fromString(metadataLocation);
+		return loadMetadataRepository(location);
+	}
+	
+	public IMetadataRepository loadMetadataRepository(URI location) throws Exception {
+		if (location == null)
+			return null;
 		if (metadataManager == null)
 			initialize();
-
-		URI location = URIUtil.fromString(metadataLocation);
 		IMetadataRepository repository = metadataManager.loadRepository(location, null);
 		assertNotNull(repository);
-		return repository;
+		return repository;		
 	}
 
 	public IArtifactRepository loadArtifactRepository(String artifactLocation) throws Exception {

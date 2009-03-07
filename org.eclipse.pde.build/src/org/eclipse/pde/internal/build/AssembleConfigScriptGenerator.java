@@ -248,8 +248,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateArchivingCalls() {
-		if (!BuildDirector.p2Gathering || productFile != null || (features.length + plugins.length > 0))
-			script.printAntCallTask(TARGET_ASSEMBLE_ARCHIVE, true, null);
+		script.printAntCallTask(TARGET_ASSEMBLE_ARCHIVE, true, null);
 	}
 
 	protected void generateMainBegin() {

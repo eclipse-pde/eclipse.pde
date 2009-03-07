@@ -24,6 +24,8 @@ public class BuildPublisherApplication extends AbstractPublisherApplication {
 	}
 
 	protected IPublisherAction[] createActions() {
+		if (actions == null)
+			return new IPublisherAction[0];
 		return (IPublisherAction[]) actions.toArray(new IPublisherAction[actions.size()]);
 	}
 

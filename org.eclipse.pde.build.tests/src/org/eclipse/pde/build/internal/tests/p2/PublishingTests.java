@@ -11,6 +11,7 @@ package org.eclipse.pde.build.internal.tests.p2;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
@@ -702,5 +703,40 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "unzipped/plugins/org.eclipse.equinox.common_" + common.getVersion() + ".jar");
 		assertResourceFile(buildFolder, "unzipped/artifacts.xml");
 		assertResourceFile(buildFolder, "unzipped/content.xml");
+	}
+	
+	public void testShape_267506() throws Exception {
+		IFolder buildFolder = newTest("publishShape");
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;unpack=true", "b;unpack=false"});
+		
+		Utils.generateBundle(a, "a");
+		Utils.writeBuffer(a.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
+		
+		Properties includes = new Properties();
+		includes.put("bin.includes", "META-INF/MANIFEST.MF, .");
+		Utils.generateBundleManifest(b, "b", "1.0.0", null);
+		Utils.generatePluginBuildProperties(b, includes);
+		Utils.writeBuffer(b.getFile("src/B.java"), new StringBuffer("public class B { int i; }"));
+		StringBuffer p2Inf = new StringBuffer();
+		p2Inf.append("properties.1.name=pde.build\n"); //$NON-NLS-1$
+		p2Inf.append("properties.1.value=true\n"); //$NON-NLS-1$
+		Utils.writeBuffer(b.getFile("META-INF/p2.inf"), p2Inf);
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		
+		runBuild(buildFolder);
+		
+		URI uri = URIUtil.fromString("file:" + buildFolder.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());
+		IMetadataRepository repo = loadMetadataRepository(URIUtil.toJarURI(uri, new Path("")));
+		IInstallableUnit iuA = getIU(repo, "a");
+		assertTouchpoint(iuA, "zipped", "true");
+		
+		IInstallableUnit iuB = getIU(repo, "b");
+		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
 	}
 }
