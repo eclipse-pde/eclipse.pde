@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     EclipseSource Corporation - ongoing enhancements
+ *     Code 9 Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931     
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
@@ -22,7 +22,6 @@ public class Product extends ProductObject implements IProduct {
 
 	private static final long serialVersionUID = 1L;
 	private String fId;
-	private String fProductId;
 	private String fName;
 	private String fApplication;
 	private String fVersion;
@@ -53,13 +52,6 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getProductId()
-	 */
-	public String getProductId() {
-		return fProductId;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getName()
 	 */
 	public String getName() {
@@ -84,10 +76,10 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getDefiningPluginId()
 	 */
 	public String getDefiningPluginId() {
-		if (fProductId == null)
+		if (fId == null)
 			return null;
-		int dot = fProductId.lastIndexOf('.');
-		return (dot != -1) ? fProductId.substring(0, dot) : null;
+		int dot = fId.lastIndexOf('.');
+		return (dot != -1) ? fId.substring(0, dot) : null;
 	}
 
 	/* (non-Javadoc)
@@ -97,17 +89,7 @@ public class Product extends ProductObject implements IProduct {
 		String old = fId;
 		fId = id;
 		if (isEditable())
-			firePropertyChanged(P_UID, old, fId);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setProductId(java.lang.String)
-	 */
-	public void setProductId(String id) {
-		String old = fProductId;
-		fProductId = id;
-		if (isEditable())
-			firePropertyChanged(P_ID, old, fProductId);
+			firePropertyChanged(P_ID, old, fId);
 	}
 
 	/* (non-Javadoc)
@@ -155,9 +137,7 @@ public class Product extends ProductObject implements IProduct {
 		if (fName != null && fName.length() > 0)
 			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fId != null && fId.length() > 0)
-			writer.print(" " + P_UID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fProductId != null && fProductId.length() > 0)
-			writer.print(" " + P_ID + "=\"" + fProductId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print(" " + P_ID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fApplication != null && fApplication.length() > 0)
 			writer.print(" " + P_APPLICATION + "=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fVersion != null && fVersion.length() > 0)
@@ -259,7 +239,6 @@ public class Product extends ProductObject implements IProduct {
 	public void reset() {
 		fApplication = null;
 		fId = null;
-		fProductId = null;
 		fName = null;
 		fUseFeatures = false;
 		fAboutInfo = null;
@@ -283,8 +262,7 @@ public class Product extends ProductObject implements IProduct {
 		if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("product")) { //$NON-NLS-1$
 			Element element = (Element) node;
 			fApplication = element.getAttribute(P_APPLICATION);
-			fProductId = element.getAttribute(P_ID);
-			fId = element.getAttribute(P_UID);
+			fId = element.getAttribute(P_ID);
 			fName = element.getAttribute(P_NAME);
 			fVersion = element.getAttribute(P_VERSION);
 			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
