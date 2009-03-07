@@ -10,7 +10,9 @@
 package org.eclipse.pde.internal.build.ant;
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.build.IAntScript;
 
 /**
@@ -83,7 +85,7 @@ public class AntScript implements IAntScript {
 		}
 	}
 
-	public void printP2PublishFeaturesAndBundles(String metadataRepository, String artifactRepository, FileSet[] bundles, FileSet[] features, String siteXML) {
+	public void printP2PublishFeaturesAndBundles(String metadataRepository, String artifactRepository, FileSet[] bundles, FileSet[] features, String siteXML, URI[] contextMetadata) {
 		printTab();
 		output.print("<eclipse.publish.featuresAndBundles"); //$NON-NLS-1$
 		if (metadataRepository.equals(artifactRepository)) {
@@ -101,6 +103,15 @@ public class AntScript implements IAntScript {
 		for (int i = 0; i < bundles.length; i++) {
 			bundles[i].printAs("bundles", this); //$NON-NLS-1$
 		}
+
+		for (int i = 0; contextMetadata != null && i < contextMetadata.length; i++) {
+			printTab();
+			print("<contextRepository"); //$NON-NLS-1$
+			printAttribute("metadata", "true", true); //$NON-NLS-1$ //$NON-NLS-2$
+			printAttribute("location", URIUtil.toUnencodedString(contextMetadata[i]), true); //$NON-NLS-1$
+			println("/>"); //$NON-NLS-1$
+		}
+
 		indent--;
 		printTab();
 		output.println("</eclipse.publish.featuresAndBundles>"); //$NON-NLS-1$

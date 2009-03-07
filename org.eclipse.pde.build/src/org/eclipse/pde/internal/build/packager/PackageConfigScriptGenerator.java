@@ -99,7 +99,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 		if (BuildDirector.p2Gathering) {
 			String repo = "file:" + getWorkingDirectory() + "/buildRepo"; //$NON-NLS-1$ //$NON-NLS-2$
-			script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) p2Bundles.toArray(new FileSet[p2Bundles.size()]), (FileSet[]) p2Features.toArray(new FileSet[p2Features.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE));
+			script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) p2Bundles.toArray(new FileSet[p2Bundles.size()]), (FileSet[]) p2Features.toArray(new FileSet[p2Features.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), contextMetadata);
 		}
 
 		if (packagingProperties.size() != 0) {

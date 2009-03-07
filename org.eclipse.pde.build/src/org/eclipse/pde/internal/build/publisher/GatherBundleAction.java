@@ -26,7 +26,6 @@ public class GatherBundleAction extends BundlesAction {
 	private GatheringComputer computer = null;
 	private String unpack = null;
 	private File manifestRoot = null;
-	private IPublisherInfo publisherInfo = null;
 
 	/**
 	 * @param location
@@ -36,14 +35,13 @@ public class GatherBundleAction extends BundlesAction {
 		this.manifestRoot = manifestRoot;
 	}
 
-	public IStatus perform(IPublisherInfo info, IPublisherResult results, IProgressMonitor monitor) {
-		this.publisherInfo = info;
-		return super.perform(info, results, monitor);
+	public IStatus perform(IPublisherInfo publisherInfo, IPublisherResult results, IProgressMonitor monitor) {
+		return super.perform(publisherInfo, results, monitor);
 	}
 
-	protected void publishArtifact(IArtifactDescriptor descriptor, File base, File[] inclusions, IPublisherInfo info) {
+	protected void publishArtifact(IArtifactDescriptor descriptor, File base, File[] inclusions, IPublisherInfo publisherInfo) {
 		//ignore passed in inclusions, publish according to our computer
-		publishArtifact(descriptor, computer.getFiles(), null, info, computer);
+		publishArtifact(descriptor, computer.getFiles(), null, publisherInfo, computer);
 	}
 
 	protected BundleDescription[] getBundleDescriptions(File[] bundleLocations, IProgressMonitor monitor) {
@@ -67,7 +65,7 @@ public class GatherBundleAction extends BundlesAction {
 			}
 		}
 		BundleShapeAdvice advice = new BundleShapeAdvice(bundle.getSymbolicName(), Version.fromOSGiVersion(bundle.getVersion()), shape);
-		publisherInfo.addAdvice(advice);
+		info.addAdvice(advice);
 	}
 
 	public void setComputer(GatheringComputer computer) {

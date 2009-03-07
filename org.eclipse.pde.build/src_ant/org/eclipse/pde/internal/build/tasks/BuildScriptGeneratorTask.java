@@ -9,10 +9,13 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.*;
 
@@ -296,6 +299,19 @@ public class BuildScriptGeneratorTask extends Task {
 			generator.setThreadsPerProcessor(Integer.parseInt(threads));
 		} catch (NumberFormatException e) {
 			//ignore
+		}
+	}
+
+	public void setContextRepository(String location) {
+		if (location == null || location.startsWith("${") || location.length() == 0) //$NON-NLS-1$
+			return;
+		if (!location.startsWith("file:")) //$NON-NLS-1$
+			location = "file:" + location; //$NON-NLS-1$
+		try {
+			URI uri = URIUtil.fromString(location);
+			generator.setContextMetadataRepositories(new URI[] {uri});
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Invalid repository location:" + location); //$NON-NLS-1$
 		}
 	}
 }

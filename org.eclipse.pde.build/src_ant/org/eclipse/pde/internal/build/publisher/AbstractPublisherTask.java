@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.build.publisher;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.publisher.IPublisherInfo;
@@ -23,6 +22,57 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 public abstract class AbstractPublisherTask extends Task {
 	static final protected String ANT_PREFIX = "${"; //$NON-NLS-1$
+
+	/**
+	 * Support nested repository elements that looking something like
+	 *    <repo location="file:/foo" metadata="true" artifact="true" />
+	 * Both metadata and artifact are optional:
+	 *  1) if neither are set, the repo is used for both metadata and artifacts
+	 *  2) if only one is true, the repo is that type and not the other 
+	 */
+	static public class RepoEntry {
+		private URI repoLocation;
+		private Boolean metadata = null;
+		private Boolean artifact = null;
+
+		/**
+		 * If not set, default is true if we aren't set as an artifact repo 
+		 */
+		public boolean isMetadataRepository() {
+			if (metadata != null)
+				return metadata.booleanValue();
+			return !Boolean.TRUE.equals(artifact);
+		}
+
+		/**
+		 * If not set, default is true if we aren't set as an metadata repo 
+		 */
+		public boolean isArtifactRepository() {
+			if (artifact != null)
+				return artifact.booleanValue();
+			return !Boolean.TRUE.equals(metadata);
+		}
+
+		public URI getRepositoryLocation() {
+			return repoLocation;
+		}
+
+		public void setLocation(String location) {
+			try {
+				repoLocation = URIUtil.fromString(location);
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException("Repository location (" + location + ") must be a URL."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		public void setMetadata(boolean metadata) {
+			this.metadata = Boolean.valueOf(metadata);
+		}
+
+		public void setArtifact(boolean artifact) {
+			this.artifact = Boolean.valueOf(artifact);
+		}
+	}
 
 	protected URI metadataLocation;
 	protected String metadataRepoName;
@@ -34,6 +84,8 @@ public abstract class AbstractPublisherTask extends Task {
 	protected boolean reusePackedFiles = false;
 	protected PublisherInfo publisherInfo = null;
 	private Properties buildProperties = null;
+	protected List contextMetadataRepositories = new ArrayList();
+	protected List contextArtifactRepositories = new ArrayList();
 
 	protected Properties getBuildProperties() {
 		if (buildProperties != null)
@@ -61,6 +113,11 @@ public abstract class AbstractPublisherTask extends Task {
 		application.setMetadataLocation(metadataLocation);
 		application.setArtifactLocation(artifactLocation);
 		application.setAppend(append);
+
+		URI[] metadata = (URI[]) contextMetadataRepositories.toArray(new URI[contextMetadataRepositories.size()]);
+		URI[] artifacts = (URI[]) contextArtifactRepositories.toArray(new URI[contextArtifactRepositories.size()]);
+		application.setContextRepositories(metadata, artifacts);
+
 		return application;
 	}
 
@@ -116,5 +173,13 @@ public abstract class AbstractPublisherTask extends Task {
 			publisherInfo.setArtifactOptions(IPublisherInfo.A_PUBLISH);
 		}
 		return publisherInfo;
+	}
+
+	// nested <contextRepository/> elements
+	public void addConfiguredContextRepository(RepoEntry repo) {
+		if (repo.isMetadataRepository())
+			contextMetadataRepositories.add(repo.getRepositoryLocation());
+		if (repo.isArtifactRepository())
+			contextArtifactRepositories.add(repo.getRepositoryLocation());
 	}
 }

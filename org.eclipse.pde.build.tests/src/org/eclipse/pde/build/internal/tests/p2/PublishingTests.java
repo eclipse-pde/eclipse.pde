@@ -738,5 +738,30 @@ public class PublishingTests extends P2TestCase {
 		
 		IInstallableUnit iuB = getIU(repo, "b");
 		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
+		
+		
+		/*
+		 * Part 2. Use the above zipped repo as input to a build to test reusing IUs (bug 259792) 
+		 */
+		IFolder build2 = Utils.createFolder(buildFolder, "build2");
+		Utils.generateFeature(build2, "f", null, new String[] {"a;unpack=false", "b;unpack=false"});
+		
+		properties = BuildConfiguration.getBuilderProperties(build2);
+		properties.put("topLevelElementId", "f");
+		properties.put("p2.gathering", "true");
+		properties.put("repoBaseLocation", buildFolder.getFolder("I.TestBuild").getLocation().toOSString());
+		//space here tries bug 267509, bug 267219
+		properties.put("transformedRepoLocation", build2.getFolder("trans formed").getLocation().toOSString());
+		Utils.storeBuildProperties(build2, properties);
+		
+		runBuild(build2);
+		
+		//reusing the metadata from part 1
+		uri = URIUtil.fromString("file:" + build2.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());
+		repo = loadMetadataRepository(URIUtil.toJarURI(uri, new Path("")));
+		
+		iuB = getIU(repo, "b");
+		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
 	}
+
 }

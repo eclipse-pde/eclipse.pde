@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -32,6 +33,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private static List configInfos;
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
+	protected URI[] contextMetadata = null;
 	protected AntScript script;
 	protected Properties platformProperties;
 
@@ -465,6 +467,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	public void setFilterP2Base(boolean filter) {
 		filterP2Base = filter;
+	}
+
+	public void setContextMetadataRepositories(URI[] uris) {
+		this.contextMetadata = uris;
 	}
 
 	/*

@@ -92,6 +92,7 @@
 		parallelThreadCount="${parallelThreadCount}"
 		parallelThreadsPerProcessor="${parallelThreadsPerProcessor}"
 		customEESources="${customEESources}"
+		contextRepository="${transformedRepoLocation}"
 	/>
 </target>
 
