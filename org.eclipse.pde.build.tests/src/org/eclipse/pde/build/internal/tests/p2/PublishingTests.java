@@ -605,6 +605,9 @@ public class PublishingTests extends P2TestCase {
 		getIU(finalRepo, "a.jre.javase");
 		getIU(finalRepo, "headless.product");
 		getIU(finalRepo, "toolingorg.eclipse.equinox.common");
+		
+		IInstallableUnit iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
+		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
 	}
 
 	public void testBug265726() throws Exception {
@@ -764,4 +767,34 @@ public class PublishingTests extends P2TestCase {
 		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
 	}
 
+	public void testBug267461_2() throws Exception {
+		IFolder buildFolder = newTest("267461_2");
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		IFile productFile = buildFolder.getFile("rcp.product");
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("configs", "win32,win32,x86");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "eclipse.product=rcp.product");
+		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "eclipse.application=my.app");
+		
+		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
+		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
+		IInstallableUnit iu = getIU(metadata, "uid.product");
+		
+		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
+	}
 }

@@ -170,7 +170,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_P2_MIRROR_METADATA_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
 		script.printProperty(PROPERTY_P2_MIRROR_ARTIFACT_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
-		if (features.length + plugins.length > 0) {
+		if (features.length + plugins.length > 0 || productFile != null) {
 			script.printTab();
 			script.print("<p2.mirror "); //$NON-NLS-1$
 			script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$

@@ -204,7 +204,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-
 	private String findConfigFile(String os) {
 		String path = productFile.getConfigIniPath(os);
 		if (path == null)
@@ -425,7 +424,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (application != null)
 			properties.put("eclipse.application", application); //$NON-NLS-1$
 
-		String productId = productFile.getId();
+		String productId = productFile.getProductId();
 		if (productId != null)
 			properties.put("eclipse.product", productId); //$NON-NLS-1$
 
@@ -475,8 +474,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		Properties properties = new Properties();
 		if (productFile.getProductName() != null)
 			properties.put("name", productFile.getProductName()); //$NON-NLS-1$
-		if (productFile.getId() != null)
-			properties.put(ID, productFile.getId());
+		if (productFile.getProductId() != null)
+			properties.put(ID, productFile.getProductId());
 
 		if (properties.size() == 0)
 			return;
@@ -507,7 +506,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	}
 
 	private String getBrandingPlugin() {
-		String id = productFile.getId();
+		String id = productFile.getProductId();
 		if (id == null)
 			return null;
 		int dot = id.lastIndexOf('.');

@@ -155,12 +155,21 @@ public class Utils {
 	}
 	
 	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
-		generateProduct(productFile, id, version, application, null, entryList, features, extra);
+		generateProduct(productFile, null, id, version, application, null, entryList, features, extra);
 	}
 	
 	static public void generateProduct(IFile productFile, String id, String version, String application, String launcher, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
+		generateProduct(productFile, null, id, version, application, launcher, entryList, features, extra);
+	}
+
+	static public void generateProduct(IFile productFile, String uid, String id, String version, String application, String launcher, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<product ");
+		if (uid != null) {
+			buffer.append(" uid=\"");
+			buffer.append(uid);
+			buffer.append("\"");
+		}
 		if (id != null) {
 			buffer.append(" name=\"");
 			buffer.append(id);

@@ -63,6 +63,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final String CONFIGURATIONS = "configurations"; //$NON-NLS-1$
 	private static final String PROPERTY = "property"; //$NON-NLS-1$
 	private static final String P_USE_ICO = "useIco"; //$NON-NLS-1$
+	private static final String UID = "uid"; //$NON-NLS-1$
 
 	//These constants form a small state machine to parse the .product file
 	private static final int STATE_START = 0;
@@ -96,6 +97,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String configPlatform = null;
 	private String platformConfigPath = null;
 	private String id = null;
+	private String uid = null;
 	private boolean useFeatures = false;
 	private Properties properties = null;
 	private List entries = null;
@@ -247,6 +249,12 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 
 	public String getId() {
+		if (uid != null)
+			return uid;
+		return id;
+	}
+
+	public String getProductId() {
 		return id;
 	}
 
@@ -537,6 +545,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 
 	private void processProduct(Attributes attributes) {
 		id = attributes.getValue(ID);
+		uid = attributes.getValue(UID);
 		productName = attributes.getValue("name"); //$NON-NLS-1$
 		application = attributes.getValue("application"); //$NON-NLS-1$
 		String use = attributes.getValue("useFeatures"); //$NON-NLS-1$

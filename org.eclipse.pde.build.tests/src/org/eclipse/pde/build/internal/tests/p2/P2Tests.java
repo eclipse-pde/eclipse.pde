@@ -657,4 +657,36 @@ public class P2Tests extends P2TestCase {
 			assertNull(e.getMessage());
 		}
 	}
+
+	public void testBug267461() throws Exception {
+		IFolder buildFolder = newTest("267461");
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		IFile productFile = buildFolder.getFile("rcp.product");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("configs", "win32,win32,x86");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
+		IInstallableUnit iu = getIU(metadata, "uid.product");
+		
+		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
+	}
 }
