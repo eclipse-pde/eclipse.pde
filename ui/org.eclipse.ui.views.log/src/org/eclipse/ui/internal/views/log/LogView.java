@@ -477,7 +477,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 		if (visible) {
 			filterControl.selectAll();
-			fFilteredTree.setFocus();
+			setFocus();
 		}
 
 		fFilteredTree.layout(false);
@@ -1073,8 +1073,16 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	public void setFocus() {
-		if (fFilteredTree != null && !fFilteredTree.isDisposed())
-			fFilteredTree.setFocus();
+		if (fFilteredTree != null) {
+			if (fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue()) {
+				Text filterControl = fFilteredTree.getFilterControl();
+				if (filterControl != null && !filterControl.isDisposed()) {
+					filterControl.setFocus();
+				}
+			} else if (!fFilteredTree.isDisposed()) {
+				fFilteredTree.setFocus();
+			}
+		}
 	}
 
 	private void handleSelectionChanged(ISelection selection) {
