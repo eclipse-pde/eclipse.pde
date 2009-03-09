@@ -227,6 +227,11 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void reportIllegalCardinality(Element element, String cardinality) {
 		String name = element
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+		// if we don't have a name, use the interface
+		if (name == null) {
+			name = element
+					.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE);
+		}
 		String message = NLS.bind(
 				Messages.DSErrorReporter_invalidCardinalityValue, name,
 				cardinality);
