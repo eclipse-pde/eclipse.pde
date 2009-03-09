@@ -354,12 +354,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		} else {
 			primary = newDirectoryContainer(home);
 		}
-		try {
-			String location = ((AbstractBundleContainer) primary).getLocation(true);
-			target.setName(location);
-		} catch (CoreException e) {
-			target.setName(Messages.TargetPlatformService_5);
-		}
+		target.setName(Messages.TargetPlatformService_5);
 		target.setBundleContainers(new IBundleContainer[] {primary});
 	}
 
