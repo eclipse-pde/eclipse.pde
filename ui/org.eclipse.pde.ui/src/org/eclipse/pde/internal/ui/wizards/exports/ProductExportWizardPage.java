@@ -156,10 +156,11 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportSourceCombo.setText(sourceComboValue);
 		fExportSourceCombo.setEnabled(fExportSourceButton.getSelection());
 
-		fExportMetadata.setSelection(settings.getBoolean(S_EXPORT_METADATA));
+		String selected = settings.get(S_EXPORT_METADATA);
+		fExportMetadata.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
 
-		String selected = settings.get(S_ALLOW_BINARY_CYCLES);
-		fAllowBinaryCycles.setSelection(selected == null ? true : "true".equals(selected)); //$NON-NLS-1$
+		selected = settings.get(S_ALLOW_BINARY_CYCLES);
+		fAllowBinaryCycles.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
 
 		if (fMultiPlatform != null)
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));

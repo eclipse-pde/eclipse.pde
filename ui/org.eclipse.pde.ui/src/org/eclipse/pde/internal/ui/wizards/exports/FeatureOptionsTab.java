@@ -54,10 +54,6 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 
 	}
 
-	protected boolean getInitialJarButtonSelection(IDialogSettings settings) {
-		return settings.getBoolean(S_JAR_FORMAT);
-	}
-
 	protected String getJarButtonText() {
 		return PDEUIMessages.BaseExportWizardPage_fPackageJARs;
 	}
@@ -74,7 +70,9 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		if (fMultiPlatform != null) {
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
 		}
-		fExportMetadata.setSelection(settings.getBoolean(S_EXPORT_METADATA));
+
+		String selected = settings.get(S_EXPORT_METADATA);
+		fExportMetadata.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
 		fExportMetadata.setEnabled(fJarButton.getSelection());
 	}
 
