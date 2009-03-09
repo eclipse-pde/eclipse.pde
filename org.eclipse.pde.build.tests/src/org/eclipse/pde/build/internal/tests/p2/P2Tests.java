@@ -102,6 +102,9 @@ public class P2Tests extends P2TestCase {
 		assertRequires(iu, "toolingtest.product", "test.product.ini");
 		assertRequires(iu, "toolingtest.product", "test.product.config");
 		assertRequires(iu, ius, true);
+		
+		iu = getIU(repository, "test.product.launcher." + p2Config + ".test" + (Platform.getOS().equals("win32") ? ".exe" : ""));
+		assertTouchpoint(iu, "configure", "setLauncherName(name:test");
 	}
 
 	public void testBug237096() throws Exception {
