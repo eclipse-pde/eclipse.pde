@@ -98,7 +98,7 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 		if (DeltaProcessor.isCompatible(delta)) {
 			switch(delta.getKind()) {
 				case IDelta.ADDED :
-					int modifiers = delta.getModifiers();
+					int modifiers = delta.getNewModifiers();
 					if (Flags.isPublic(modifiers)) {
 						// if public, we always want to check @since tags
 						switch(delta.getFlags()) {
@@ -152,7 +152,7 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 					case IDelta.FIELD :
 						// ensure that there is a @since tag for the corresponding member
-						if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta)) {
+						if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta.getNewModifiers())) {
 							if (!checkExclude(delta)) {
 								super.processLeafDelta(delta);
 							}

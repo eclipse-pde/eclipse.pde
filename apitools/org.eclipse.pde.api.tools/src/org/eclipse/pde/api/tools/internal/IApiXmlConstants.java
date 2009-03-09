@@ -135,10 +135,15 @@ public interface IApiXmlConstants {
 	 */
 	public static final String ATTR_CHAR_END = "charend"; //$NON-NLS-1$
 	/**
-	 * Constant representing the modifiers attribute of a delta in xml report.
-	 * Value is: <code>modifiers</code>
+	 * Constant representing the new modifiers attribute of a delta in xml report.
+	 * Value is: <code>newModifiers</code>
 	 */
-	public static final String ATTR_NAME_MODIFIERS = "modifiers"; //$NON-NLS-1$
+	public static final String ATTR_NAME_NEW_MODIFIERS = "newModifiers"; //$NON-NLS-1$
+	/**
+	 * Constant representing the old modifiers attribute of a delta in xml report.
+	 * Value is: <code>oldModifiers</code>
+	 */
+	public static final String ATTR_NAME_OLD_MODIFIERS = "oldModifiers"; //$NON-NLS-1$
 	/**
 	 * Constant representing the type name attribute of a delta in xml report.
 	 * Value is: <code>type_name</code>

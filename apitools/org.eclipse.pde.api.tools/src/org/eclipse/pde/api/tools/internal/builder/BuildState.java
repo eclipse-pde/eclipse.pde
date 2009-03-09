@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 public class BuildState {
 	private static final IDelta[] EMPTY_DELTAS = new IDelta[0];
 	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
-	private static final int VERSION = 0x07;
+	private static final int VERSION = 0x08;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
@@ -120,7 +120,9 @@ public class BuildState {
 			datas = new String[1];
 			datas[0] = typeName.replace('$', '.');
 		}
-		return new Delta(componentID, elementType, kind, flags, restrictions, modifiers, typeName, key, datas);
+		int oldModifiers = modifiers & Delta.MODIFIERS_MASK;
+		int newModifiers = modifiers >>> Delta.NEW_MODIFIERS_OFFSET;
+		return new Delta(componentID, elementType, kind, flags, restrictions, oldModifiers, newModifiers, typeName, key, datas);
 	}
 	private static void writeDelta(IDelta delta, DataOutputStream out) throws IOException {
 		// encode a delta into the build state
@@ -135,7 +137,8 @@ public class BuildState {
 		out.writeInt(delta.getKind());
 		out.writeInt(delta.getFlags());
 		out.writeInt(delta.getRestrictions());
-		out.writeInt(delta.getModifiers());
+		int modifiers = (delta.getNewModifiers() << Delta.NEW_MODIFIERS_OFFSET) | delta.getOldModifiers();
+		out.writeInt(modifiers);
 		out.writeUTF(delta.getTypeName());
 		out.writeUTF(delta.getKey());
 		String[] arguments = delta.getArguments();

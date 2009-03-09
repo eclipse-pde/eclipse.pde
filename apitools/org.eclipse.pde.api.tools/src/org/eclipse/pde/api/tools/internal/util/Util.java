@@ -1362,8 +1362,7 @@ public final class Util {
 	public static boolean isJavaLangRuntimeException(String name) {
 		return name != null && name.equals(JAVA_LANG_RUNTIMEEXCEPTION);
 	}
-	public static boolean isVisible(IDelta delta) {
-		int modifiers = delta.getModifiers();
+	public static boolean isVisible(int modifiers) {
 		return Flags.isProtected(modifiers) || Flags.isPublic(modifiers);
 	}
 	public static boolean isBinaryProject(IProject project) {

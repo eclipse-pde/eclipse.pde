@@ -937,13 +937,21 @@ public interface IDelta {
 	public int getRestrictions();
 
 	/**
-	 * Returns the delta's modifiers. This corresponds to the modifiers of the affected element.
+	 * Returns the delta's new modifiers. This corresponds to the new modifiers of the affected element.
 	 * by the delta.
 	 * 
-	 * @return the delta's modifiers
+	 * @return the delta's new modifiers
 	 */
-	public int getModifiers();
-	
+	public int getNewModifiers();
+
+	/**
+	 * Returns the delta's old modifiers. This corresponds to the old modifiers of the affected element.
+	 * by the delta.
+	 * 
+	 * @return the delta's old modifiers
+	 */
+	public int getOldModifiers();
+
 	/**
 	 * Returns the component identifier including its version identifier in which the given delta is
 	 * reported, or <code>null</code>. Can be <code>null</code> if the delta is reported against an

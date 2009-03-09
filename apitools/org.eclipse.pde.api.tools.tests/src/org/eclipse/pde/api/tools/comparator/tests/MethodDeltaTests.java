@@ -29,10 +29,10 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class MethodDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-		return new TestSuite(MethodDeltaTests.class);
-//		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-//		suite.addTest(new MethodDeltaTests("test110"));
-//		return suite;
+//		return new TestSuite(MethodDeltaTests.class);
+		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
+		suite.addTest(new MethodDeltaTests("test26"));
+		return suite;
 	}
 
 	public MethodDeltaTests(String name) {
@@ -449,7 +449,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -494,7 +494,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -628,6 +628,8 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertTrue("Is visible", Util.isVisible(child.getNewModifiers()));
+		assertTrue("Was visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong flag", IDelta.NON_STATIC_TO_STATIC, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
@@ -1115,13 +1117,13 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
-		assertTrue("Is visible", !Util.isVisible(child));
+		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -1144,7 +1146,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
-		assertTrue("Is visible", !Util.isVisible(child));
+		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong flag", IDelta.CHECKED_EXCEPTION, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
@@ -1167,7 +1169,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
@@ -1278,7 +1280,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong flag", IDelta.NON_STATIC_TO_STATIC, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -1302,7 +1304,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1327,7 +1329,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
-		assertTrue("Not private", Flags.isPrivate(child.getModifiers()));
+		assertTrue("Not private", Flags.isPrivate(child.getNewModifiers()));
 	}
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=228209
@@ -1348,7 +1350,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1371,7 +1373,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1436,7 +1438,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1459,7 +1461,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1481,7 +1483,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1503,7 +1505,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.API_METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1540,7 +1542,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1562,7 +1564,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1584,7 +1586,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.API_CONSTRUCTOR, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1621,7 +1623,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1643,7 +1645,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_WITH_DEFAULT_VALUE, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1665,7 +1667,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.API_METHOD_WITH_DEFAULT_VALUE, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1702,7 +1704,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_WITH_DEFAULT_VALUE, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1724,7 +1726,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1746,7 +1748,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1783,7 +1785,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1805,19 +1807,19 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.SUPERCLASS, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[2];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_DOWN, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1854,7 +1856,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @noreferece restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -1877,8 +1879,8 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
-		assertTrue("Not protected", Flags.isProtected(child.getModifiers()));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
+		assertTrue("Not protected", Flags.isProtected(child.getNewModifiers()));
 		assertTrue("Not @extend restriction", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -1901,7 +1903,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1923,7 +1925,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1945,7 +1947,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -1968,7 +1970,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -1991,7 +1993,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2014,7 +2016,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.CONSTRUCTOR_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2037,7 +2039,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_STATIC_TO_STATIC, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2060,7 +2062,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.STATIC_TO_NON_STATIC, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2083,7 +2085,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2106,7 +2108,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2129,7 +2131,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2152,7 +2154,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -2174,7 +2176,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -2196,7 +2198,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -2218,7 +2220,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -2240,7 +2242,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -2262,7 +2264,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @override restriction", RestrictionModifiers.isOverrideRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
@@ -2345,7 +2347,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags());
-		assertFalse("Is visible", Util.isVisible(child));
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
 		assertTrue("Not @override restriction", RestrictionModifiers.isOverrideRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -2353,7 +2355,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=228209
 	 */
-	public void test1105() {
+	public void test105() {
 		deployBundles("test105");
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
@@ -2369,7 +2371,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.OVERRIDEN_METHOD, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -2393,7 +2395,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags());
-		assertTrue("Not visible", Util.isVisible(child));
+		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", !DeltaProcessor.isCompatible(child));
 	}
@@ -2472,6 +2474,33 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=267545
+	 */
+	public void test111() {
+		deployBundles("test111");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(before, after, VisibilityModifiers.API, true);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags());
+		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 }

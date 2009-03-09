@@ -25,7 +25,9 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class Delta implements IDelta {
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
 	private static final int INITIAL_SIZE = 4;
-	
+	public static final int MODIFIERS_MASK = 0xFFFF;
+	public static final int NEW_MODIFIERS_OFFSET = 16;
+
 	/**
 	 * Writes the delta to the given {@link PrintWriter}
 	 * @param delta
@@ -102,16 +104,16 @@ public class Delta implements IDelta {
 	 * @param key
 	 * @param data
 	 */
-	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, String data) {
-		this(componentID, elementType, kind, flags, restrictions, modifiers, typeName, key, new String[] {data});
+	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int oldModifiers, int newModifiers, String typeName, String key, String data) {
+		this(componentID, elementType, kind, flags, restrictions, oldModifiers, newModifiers, typeName, key, new String[] {data});
 	}
 
-	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, String[] datas) {
+	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int oldModifiers, int newModifiers, String typeName, String key, String[] datas) {
 		this.componentID = componentID;
 		this.elementType = elementType;
 		this.kind = kind;
 		this.flags = flags;
-		this.modifiers = modifiers;
+		this.modifiers = (newModifiers & MODIFIERS_MASK) << 16 | (oldModifiers & MODIFIERS_MASK);
 		this.typeName = typeName == null ? Util.EMPTY_STRING : typeName;
 		this.restrictions = restrictions;
 		this.key = key;
@@ -128,7 +130,7 @@ public class Delta implements IDelta {
 	 * @param data
 	 */
 	public Delta(String componentID, int elementType, int kind, int flags, String typeName, String key, String data) {
-		this(componentID, elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, typeName, key, data);
+		this(componentID, elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, 0, typeName, key, data);
 	}
 
 	/* (non-Javadoc)
@@ -289,10 +291,12 @@ public class Delta implements IDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getModifiers()
 	 */
-	public int getModifiers() {
-		return this.modifiers;
+	public int getNewModifiers() {
+		return (this.modifiers >>> NEW_MODIFIERS_OFFSET);
 	}
-	
+	public int getOldModifiers() {
+		return this.modifiers & MODIFIERS_MASK;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getRestrictions()
 	 */

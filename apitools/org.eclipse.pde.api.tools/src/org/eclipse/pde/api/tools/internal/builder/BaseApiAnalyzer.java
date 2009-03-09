@@ -940,6 +940,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									IDelta.TYPE,
 									restrictions,
 									type.getModifiers(),
+									0,
 									typeName,
 									typeName,
 									new String[] { typeName, Util.getComponentVersionsId(reference)});
@@ -1348,10 +1349,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private void processDelta(final IDelta delta, final IApiComponent reference, final IApiComponent component) {
 		int flags = delta.getFlags();
 		int kind = delta.getKind();
+		int modifiers = delta.getNewModifiers();
 		if (DeltaProcessor.isCompatible(delta)) {
-			int modifiers = delta.getModifiers();
 			if (!RestrictionModifiers.isReferenceRestriction(delta.getRestrictions())) {
-				if (Util.isVisible(delta)) {
+				if (Util.isVisible(modifiers)) {
 					if (Flags.isProtected(modifiers)) {
 						String typeName = delta.getTypeName();
 						if (typeName != null) {
@@ -1442,7 +1443,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 						case IDelta.FIELD :
 							// ensure that there is a @since tag for the corresponding member
-							if (Util.isVisible(delta)) {
+							if (Util.isVisible(modifiers)) {
 								if (DEBUG) {
 									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 									System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$

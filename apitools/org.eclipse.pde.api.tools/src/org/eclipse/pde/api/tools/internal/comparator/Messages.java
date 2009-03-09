@@ -138,18 +138,18 @@ public class Messages extends NLS {
 							case IDelta.CONSTRUCTOR :
 								return 8;
 							case IDelta.FIELD :
-								if (Flags.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getNewModifiers())) {
 									return 9;
 								}
-								if (Flags.isStatic(delta.getModifiers())) {
+								if (Flags.isStatic(delta.getNewModifiers())) {
 									return 10;
 								}
-								if (Flags.isPublic(delta.getModifiers())) {
+								if (Flags.isPublic(delta.getNewModifiers())) {
 									return 11;
 								}
 								return 80;
 							case IDelta.METHOD :
-								if (!Flags.isAbstract(delta.getModifiers())) {
+								if (!Flags.isAbstract(delta.getNewModifiers())) {
 									return 12;
 								}
 								return 13;
@@ -198,7 +198,7 @@ public class Messages extends NLS {
 								return 27;
 							case IDelta.FIELD :
 							case IDelta.API_FIELD :
-								if (Flags.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getNewModifiers())) {
 									return 28;
 								}
 								return 29;
@@ -206,12 +206,12 @@ public class Messages extends NLS {
 								return 30;
 							case IDelta.METHOD :
 							case IDelta.API_METHOD :
-								if (Flags.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getNewModifiers())) {
 									return 31;
 								}
 								return 32;
 							case IDelta.TYPE_MEMBER :
-								if (Flags.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getNewModifiers())) {
 									return 33;
 								}
 								return 34;
@@ -260,7 +260,7 @@ public class Messages extends NLS {
 							case IDelta.FINAL_TO_NON_FINAL_NON_STATIC :
 								return 41;
 							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
-								if (Flags.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getNewModifiers())) {
 									return 42;
 								}
 								return 43;
@@ -275,7 +275,7 @@ public class Messages extends NLS {
 							case IDelta.TRANSIENT_TO_NON_TRANSIENT :
 								return 48;
 							case IDelta.VALUE :
-								if (Flags.isProtected(delta.getModifiers())) {
+								if (Flags.isProtected(delta.getNewModifiers())) {
 									return 50;
 								}
 								return 51;
@@ -295,7 +295,7 @@ public class Messages extends NLS {
 						break;
 					case IDelta.REMOVED :
 						if (delta.getFlags() == IDelta.VALUE) {
-							if (Flags.isProtected(delta.getModifiers())) {
+							if (Flags.isProtected(delta.getNewModifiers())) {
 								return 52;
 							}
 							return 53;

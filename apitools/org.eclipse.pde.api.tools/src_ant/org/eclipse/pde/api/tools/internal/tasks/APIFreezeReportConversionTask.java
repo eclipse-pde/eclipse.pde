@@ -102,7 +102,8 @@ public class APIFreezeReportConversionTask extends Task {
 					 *  flags="25"
 					 *  key="schedule(Lorg/eclipse/equinox/internal/provisional/p2/ui/operations/ProvisioningOperation;Lorg/eclipse/swt/widgets/Shell;I)Lorg/eclipse/core/runtime/jobs/Job;"
 					 *  kind="ADDED"
-					 *  modifiers="9"
+					 *  oldModifiers="9"
+					 *  newModifiers="9"
 					 *  restrictions="0"
 					 *  type_name="org.eclipse.equinox.internal.provisional.p2.ui.ProvisioningOperationRunner"/>
 					 */
@@ -111,7 +112,8 @@ public class APIFreezeReportConversionTask extends Task {
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
 					printAttribute(attributes, IApiXmlConstants.ATTR_FLAGS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_KEY);
-					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_MODIFIERS);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_NEW_MODIFIERS);
+					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_OLD_MODIFIERS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_RESTRICTIONS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				}

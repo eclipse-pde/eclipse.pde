@@ -140,7 +140,7 @@ public class DeltaProcessor {
 					case IDelta.FIELD :
 					case IDelta.METHOD :
 						return RestrictionModifiers.isImplementRestriction(delta.getRestrictions()) &&
-							   RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+								RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 					case IDelta.TYPE_PARAMETER :
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 						return false;
@@ -185,27 +185,30 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.ANNOTATION_DEFAULT_VALUE :
 					case IDelta.TYPE_PARAMETER :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getOldModifiers());
 				}
 				break;
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE_PARAMETER :
 					case IDelta.RESTRICTIONS :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 				}
 				break;
 			case IDelta.CHANGED :
+				if (!Util.isVisible(delta.getOldModifiers())) {
+					return true;
+				}
 				switch(delta.getFlags()) {
 					case IDelta.VARARGS_TO_ARRAY :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.NON_STATIC_TO_STATIC :
 					case IDelta.STATIC_TO_NON_STATIC :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(restrictions);
 					case IDelta.NON_FINAL_TO_FINAL :
-						return !Util.isVisible(delta)
+						return !Util.isVisible(delta.getNewModifiers())
 							|| RestrictionModifiers.isExtendRestriction(restrictions);
 				}
 				break;
@@ -223,41 +226,46 @@ public class DeltaProcessor {
 		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
 			return true;
 		}
+		int newModifiers = delta.getNewModifiers();
+		int oldModifiers = delta.getOldModifiers();
 		switch(delta.getKind()) {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.VALUE :
-						if (Flags.isProtected(delta.getModifiers())) {
+						if (Flags.isProtected(oldModifiers)) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
-						if (Flags.isPublic(delta.getModifiers())) {
+						if (Flags.isPublic(oldModifiers)) {
 							return false;
 						}
 						// not visible
 						return true;
 					case IDelta.TYPE_ARGUMENTS :
 					case IDelta.TYPE_ARGUMENT :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(oldModifiers);
 				}
 				break;
 			case IDelta.CHANGED :
+				if (!Util.isVisible(oldModifiers)) {
+					return true;
+				}
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
-						if (Flags.isProtected(delta.getModifiers())) {
+						if (Flags.isProtected(newModifiers)) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
-						return !Util.isVisible(delta);
+						return !Util.isVisible(newModifiers);
 					case IDelta.TYPE_ARGUMENT :
 					case IDelta.NON_FINAL_TO_FINAL :
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(newModifiers);
 					case IDelta.VALUE :
 					case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
-						if (Flags.isProtected(delta.getModifiers())) {
+						if (Flags.isProtected(newModifiers)) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
-						if (Flags.isPublic(delta.getModifiers())) {
+						if (Flags.isPublic(newModifiers)) {
 							return false;
 						}
 						// not visible
@@ -269,7 +277,7 @@ public class DeltaProcessor {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE_ARGUMENT :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(newModifiers);
 				}
 		}
 		return true;
@@ -289,13 +297,13 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE_PARAMETER :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 				}
 				break;
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE_PARAMETER :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 				}
 				break;
 			case IDelta.CHANGED :
@@ -304,11 +312,11 @@ public class DeltaProcessor {
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.NON_STATIC_TO_STATIC :
 					case IDelta.STATIC_TO_NON_STATIC :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(restrictions);
 					case IDelta.NON_FINAL_TO_FINAL :
-						return !Util.isVisible(delta) || RestrictionModifiers.isOverrideRestriction(restrictions);
+						return !Util.isVisible(delta.getNewModifiers()) || RestrictionModifiers.isOverrideRestriction(restrictions);
 				}
 				break;
 		}
@@ -326,7 +334,7 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
 					case IDelta.METHOD :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 				}
 				break;
 			case IDelta.REMOVED :
@@ -336,7 +344,7 @@ public class DeltaProcessor {
 					case IDelta.METHOD :
 					case IDelta.CONSTRUCTOR :
 					case IDelta.TYPE_MEMBER :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getOldModifiers());
 					case IDelta.API_FIELD :
 					case IDelta.API_ENUM_CONSTANT :
 					case IDelta.API_METHOD :
@@ -345,11 +353,14 @@ public class DeltaProcessor {
 				}
 				break;
 			case IDelta.CHANGED :
+				if (!Util.isVisible(delta.getOldModifiers())) {
+					return true;
+				}
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.TYPE_CONVERSION :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 				}
@@ -366,12 +377,13 @@ public class DeltaProcessor {
 	private static boolean isClassCompatible(IDelta delta) {
 		switch(delta.getKind()) {
 			case IDelta.ADDED:
-				switch(delta.getFlags()) {
+			int newModifiers = delta.getNewModifiers();
+			switch(delta.getFlags()) {
 					case IDelta.FIELD :
 						return true; 
 					case IDelta.METHOD :
-						if (Util.isVisible(delta)) {
-							if (Flags.isAbstract(delta.getModifiers())) {
+						if (Util.isVisible(newModifiers)) {
+							if (Flags.isAbstract(newModifiers)) {
 								// case where the implementation is provided and the class cannot be instantiated by the client
 								return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 							}
@@ -379,7 +391,7 @@ public class DeltaProcessor {
 						return true; 
 					case IDelta.TYPE_PARAMETER :
 					case IDelta.RESTRICTIONS :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(newModifiers);
 				}
 				break;
 			case IDelta.REMOVED :
@@ -389,28 +401,28 @@ public class DeltaProcessor {
 					case IDelta.API_METHOD :
 					case IDelta.METHOD :
 					case IDelta.TYPE_MEMBER :
-						if (Util.isVisible(delta)) {
+						if (Util.isVisible(delta.getOldModifiers())) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
-									&& Flags.isProtected(delta.getModifiers());
+									&& Flags.isProtected(delta.getOldModifiers());
 						}
 						return true;
 					case IDelta.CONSTRUCTOR :
 					case IDelta.API_CONSTRUCTOR :
-						if (Util.isVisible(delta)) {
+						if (Util.isVisible(delta.getOldModifiers())) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
-									&& (Flags.isProtected(delta.getModifiers()) ||
+									&& (Flags.isProtected(delta.getOldModifiers()) ||
 											RestrictionModifiers.isInstantiateRestriction(delta.getRestrictions()));
 						}
 						return true;
 					case IDelta.TYPE_PARAMETER :
 					case IDelta.SUPERCLASS :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getOldModifiers());
 				}
 				break;
 			case IDelta.CHANGED :
 				switch(delta.getFlags()) {
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
-						if (Util.isVisible(delta)) {
+						if (Util.isVisible(delta.getNewModifiers())) {
 							return RestrictionModifiers.isInstantiateRestriction(delta.getRestrictions());
 						}
 						return true;
@@ -418,9 +430,9 @@ public class DeltaProcessor {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.STATIC_TO_NON_STATIC :
 					case IDelta.NON_STATIC_TO_STATIC :
-						return !Util.isVisible(delta);
+						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.NON_FINAL_TO_FINAL:
-						if (Util.isVisible(delta)) {
+						if (Util.isVisible(delta.getNewModifiers())) {
 							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 						}
 						return true; 
