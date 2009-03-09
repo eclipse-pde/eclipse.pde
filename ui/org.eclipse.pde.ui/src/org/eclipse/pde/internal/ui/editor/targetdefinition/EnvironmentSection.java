@@ -258,9 +258,11 @@ public class EnvironmentSection extends SectionPart {
 	private String getText(ComboPart combo) {
 		String text;
 		Control control = combo.getControl();
-		if (control instanceof Combo)
+		if (control instanceof Combo) {
 			text = ((Combo) control).getText();
-		text = ((CCombo) control).getText();
+		} else {
+			text = ((CCombo) control).getText();
+		}
 		text = text.trim();
 		if (text.length() == 0) {
 			return null;
