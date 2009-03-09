@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
@@ -138,7 +139,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 	}
 
-	class StateLabelProvider extends LabelProvider {
+	class StateLabelProvider extends StyledCellLabelProvider {
 		private PDELabelProvider fSharedProvider;
 
 		public StateLabelProvider() {
@@ -149,6 +150,41 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		public void dispose() {
 			fSharedProvider.disconnect(this);
 			super.dispose();
+		}
+
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			StyledString styledString = new StyledString();
+			if (element instanceof ImportPackageSpecification) {
+				ImportPackageSpecification spec = (ImportPackageSpecification) element;
+				styledString.append(spec.getName());
+				ExportPackageDescription supplier = (ExportPackageDescription) spec.getSupplier();
+				if (isJREPackage(supplier)) {
+					styledString.append(PDEUIMessages.StateViewPage_suppliedByJRE);
+				} else {
+					element = supplier.getSupplier();
+					styledString.append(PDEUIMessages.StateViewPage_suppliedBy);
+				}
+			} else if (element instanceof BundleSpecification) {
+				styledString.append(((BundleSpecification) element).getSupplier().toString());
+			} else if (element instanceof BundleDescription) {
+				BundleDescription description = (BundleDescription) element;
+				styledString.append(fSharedProvider.getObjectText(description));
+				Version version = description.getVersion();
+				// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
+				// Use the PDELabelProvider.formatVersion function to properly format the version for all languages including bidi
+				styledString.append(' ').append(PDELabelProvider.formatVersion(version.toString())).toString();
+				if (description.getLocation() != null) {
+					styledString.append(" - " + description.getLocation(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+				}
+			} else {
+				styledString.append(element.toString());
+			}
+
+			cell.setText(styledString.toString());
+			cell.setStyleRanges(styledString.getStyleRanges());
+			cell.setImage(getImage(element));
+			super.update(cell);
 		}
 
 		public Image getImage(Object element) {
@@ -168,29 +204,6 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				return fSharedProvider.getImage(element);
 			}
 			return null;
-		}
-
-		public String getText(Object element) {
-			StringBuffer buffer = new StringBuffer();
-			if (element instanceof ImportPackageSpecification) {
-				ImportPackageSpecification spec = (ImportPackageSpecification) element;
-				buffer.append(spec.getName());
-				ExportPackageDescription supplier = (ExportPackageDescription) spec.getSupplier();
-				if (isJREPackage(supplier))
-					return buffer.append(PDEUIMessages.StateViewPage_suppliedByJRE).toString();
-				element = supplier.getSupplier();
-				buffer.append(PDEUIMessages.StateViewPage_suppliedBy);
-			}
-			if (element instanceof BundleSpecification)
-				element = ((BundleSpecification) element).getSupplier();
-			if (element instanceof BundleDescription) {
-				buffer.append(fSharedProvider.getObjectText((BundleDescription) element));
-				Version version = ((BundleDescription) element).getVersion();
-				// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
-				// Use the PDELabelProvider.formatVersion function to properly format the version for all languages including bidi
-				return buffer.append(' ').append(PDELabelProvider.formatVersion(version.toString())).toString();
-			}
-			return element.toString();
 		}
 
 	}
