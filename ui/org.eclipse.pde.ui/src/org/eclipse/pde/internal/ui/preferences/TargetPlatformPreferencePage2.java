@@ -458,7 +458,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	 * Move the selected target to a workspace location
 	 */
 	private void handleMove() {
-		NewTargetDefinitionFileWizard wizard = new NewTargetDefinitionFileWizard(fMoved.values());
+		MoveTargetDefinitionWizard wizard = new MoveTargetDefinitionWizard(fMoved.values());
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 450);

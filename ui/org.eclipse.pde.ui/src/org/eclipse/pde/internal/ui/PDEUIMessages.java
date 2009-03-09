@@ -2162,6 +2162,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String ModelChangeLabelProvider_instances;
 
+	public static String MoveTargetDefinitionPage_0;
+
+	public static String MoveTargetDefinitionPage_1;
+
+	public static String MoveTargetDefinitionWizard_0;
+
 	public static String GetNonExternalizedStringsOperation_taskMessage;
 
 	public static String ExternalizeStringsWizard_title;
