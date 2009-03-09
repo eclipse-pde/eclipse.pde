@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -241,10 +241,10 @@ public class TracingBlock {
 			config.setAttribute(IPDELauncherConstants.TRACING_SELECTED_PLUGIN, (String) null);
 		}
 		Object[] checked = fPluginViewer.getCheckedElements();
-		if (checked.length == fPluginViewer.getTable().getItemCount()) {
-			config.setAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
-		} else if (checked.length == 0) {
+		if (checked.length == 0) {
 			config.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
+		} else if (checked.length == fPluginViewer.getTable().getItemCount()) {
+			config.setAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 		} else {
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < checked.length; i++) {
