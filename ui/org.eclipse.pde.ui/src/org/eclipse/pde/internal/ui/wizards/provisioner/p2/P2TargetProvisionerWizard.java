@@ -176,7 +176,7 @@ public class P2TargetProvisionerWizard extends Wizard implements IProvisionerWiz
 					monitor.worked(1);
 
 					// Execute the provisioning plan
-					IStatus result = ProvisioningUtil.performProvisioningPlan(plan, new DownloadPhaseSet(), newProfile, monitor);
+					IStatus result = ProvisioningUtil.performProvisioningPlan(plan, new DownloadPhaseSet(), newProfile, new ProvisioningContext(), monitor);
 
 					if (result.isOK()) {
 						fLocations = new File[] {fInstallDir};
