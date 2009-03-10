@@ -176,7 +176,7 @@ public class PublishingTests extends P2TestCase {
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "bundle_1.0.0.jar@1\\:start");
 	}
 
-	protected File copyExecutableFeature(File delta, IFolder executableFeature) throws Exception {
+	protected File findExecutableFeature(File delta) throws Exception {
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.startsWith("org.eclipse.equinox.executable");
@@ -184,8 +184,7 @@ public class PublishingTests extends P2TestCase {
 		};
 
 		File[] features = new File(delta, "features").listFiles(filter);
-		Utils.copy(features[0], executableFeature.getLocation().toFile());
-		executableFeature.refreshLocal(IResource.DEPTH_INFINITE, null);
+		assertTrue(features.length > 0);
 		return features[0];
 	}
 
@@ -227,19 +226,16 @@ public class PublishingTests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
-		File originalExecutable = copyExecutableFeature(delta, executableFeature);
+		File originalExecutable = findExecutableFeature(delta);
 
-		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
-		properties.remove("custom");
-		Utils.storeBuildProperties(executableFeature, properties);
-
-		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.equinox.executable");
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.equinox.executable");
 		properties.put("launcherName", "eclipse");
 		properties.put("p2.gathering", "true");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
 		generateScripts(buildFolder, properties);
 
-		String buildXMLPath = executableFeature.getFile("build.xml").getLocation().toOSString();
+		String buildXMLPath = new File(originalExecutable, "build.xml").getAbsolutePath();
 		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
 		String executable = "org.eclipse.equinox.executable";
@@ -411,12 +407,6 @@ public class PublishingTests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
-		copyExecutableFeature(delta, executableFeature);
-		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
-		properties.remove("custom");
-		Utils.storeBuildProperties(executableFeature, properties);
-
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer branding = new StringBuffer();
 		branding.append("<launcher name=\"branded\">           \n");
@@ -436,10 +426,10 @@ public class PublishingTests extends P2TestCase {
 		//cheat and spoof a icns file for mac
 		Utils.copy(icoFile.getLocation().toFile(), new File(rcp.getLocation().toFile(), "mail.icns"));
 
-		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath() + "/plugins");
+			properties.put("pluginPath", delta.getAbsolutePath());
 		properties.put("configs", "win32,win32,x86 & macosx, carbon, ppc");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
@@ -525,12 +515,6 @@ public class PublishingTests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		IFolder executableFeature = buildFolder.getFolder("features/org.eclipse.equinox.executable");
-		copyExecutableFeature(delta, executableFeature);
-		Properties properties = Utils.loadProperties(executableFeature.getFile("build.properties"));
-		properties.remove("custom");
-		Utils.storeBuildProperties(executableFeature, properties);
-
 		//headless rcp hello world
 		IFolder headless = Utils.createFolder(buildFolder, "plugins/headless");
 		StringBuffer buffer = new StringBuffer();
@@ -565,7 +549,7 @@ public class PublishingTests extends P2TestCase {
 		additionalAttributes.put(new Attributes.Name("Require-Bundle"), "org.eclipse.core.runtime");
 		additionalAttributes.put(new Attributes.Name("Bundle-ActivationPolicy"), "lazy");
 		Utils.generateBundleManifest(headless, "headless;singleton:=true", "1.0.0", additionalAttributes);
-		properties = new Properties();
+		Properties properties = new Properties();
 		properties.put("bin.includes", "META-INF/, ., plugin.xml");
 		Utils.generatePluginBuildProperties(headless, properties);
 
@@ -576,7 +560,7 @@ public class PublishingTests extends P2TestCase {
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath() + "/plugins");
+			properties.put("pluginPath", delta.getAbsolutePath());
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", config);
 		properties.put("archivesFormat", config + "-folder");
@@ -796,5 +780,25 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
+	}
+	
+	public void testBug267972() throws Exception {
+		IFolder buildFolder = newTest("267972");
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		IFile productFile = buildFolder.getFile("rcp.product");
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String [] { "org.eclipse.osgi", "org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86"}, false);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("configs", "win32,win32,x86");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
 	}
 }
