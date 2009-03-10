@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.product.SynchronizationOperation;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.osgi.framework.Version;
 
 public class ProductExportWizard extends BaseExportWizard {
 
@@ -110,7 +111,14 @@ public class ProductExportWizard extends BaseExportWizard {
 		State state = TargetPlatformHelper.getState();
 		IProductPlugin[] plugins = fProductModel.getProduct().getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription bundle = state.getBundle(plugins[i].getId(), null);
+			BundleDescription bundle = null;
+			String v = plugins[i].getVersion();
+			if (v != null && v.length() > 0) {
+				bundle = state.getBundle(plugins[i].getId(), Version.parseVersion(v));
+			}
+			// if there's no version, just grab a bundle like before
+			if (bundle == null)
+				bundle = state.getBundle(plugins[i].getId(), null);
 			if (bundle != null)
 				list.add(bundle);
 		}
