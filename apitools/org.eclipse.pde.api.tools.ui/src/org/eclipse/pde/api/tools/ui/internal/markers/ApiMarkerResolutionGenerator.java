@@ -62,11 +62,8 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 						}
 						break;
 					}
-					default: {
-						return new IMarkerResolution[] {new FilterProblemResolution(marker)};
-					}
 				}
-				return NO_RESOLUTIONS;
+				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
 			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
