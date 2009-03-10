@@ -869,6 +869,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			updateMonitor(localmonitor, 1);
 		}
 		finally {
+			clearLastState();
 			localmonitor.done();
 		}
 	}
