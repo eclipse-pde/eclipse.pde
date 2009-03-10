@@ -157,6 +157,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 		}
 		file = getTestSourcePath("usagetests").toFile();
 		createExistingProject(file, true, true);
+		fullBuild();
 	}
 	
 	/**
