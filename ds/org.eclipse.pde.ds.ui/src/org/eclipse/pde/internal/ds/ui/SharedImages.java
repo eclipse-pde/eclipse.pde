@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
@@ -27,7 +26,8 @@ public final class SharedImages {
 	public final static String ICONS_PATH = "icons/"; //$NON-NLS-1$
 
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/"; //$NON-NLS-1$
-	private static final String OVERLAY_OBJ = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
+	private static final String PATH_OVR = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
+	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //$NON-NLS-1$
 
 	public static final String DESC_IMPLEMENTATION = PATH_OBJ + "class_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_PROPERTY = PATH_OBJ + "property_obj.gif"; //$NON-NLS-1$
@@ -48,7 +48,9 @@ public final class SharedImages {
 	public static final String DESC_ATTR = PATH_OBJ + "attribute_obj.gif"; //$NON-NLS-1$
 	public static final String DESC_DETAILS = PATH_OBJ + "details_obj.gif"; //$NON-NLS-1$
 
-	public static final String OVR_DYNAMIC = OVERLAY_OBJ + "synch_co.gif"; //$NON-NLS-1$
+	public static final String OVR_DYNAMIC = PATH_OVR + "synch_co.gif"; //$NON-NLS-1$
+
+	public static final String DESC_DS_WIZ = PATH_WIZBAN + "defcon_wiz.png"; //$NON-NLS-1$
 
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return Activator.getDefault().getImageRegistry().getDescriptor(key);

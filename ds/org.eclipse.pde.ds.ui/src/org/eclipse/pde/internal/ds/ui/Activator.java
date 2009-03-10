@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
@@ -100,10 +99,10 @@ public class Activator extends AbstractUIPlugin {
 				createImageDescriptor(SharedImages.DESC_ATTR));
 		registry.put(SharedImages.OVR_DYNAMIC,
 				createImageDescriptor(SharedImages.OVR_DYNAMIC));
-		
 		registry.put(SharedImages.DESC_DETAILS,
 				createImageDescriptor(SharedImages.DESC_DETAILS));
-		
+		registry.put(SharedImages.DESC_DS_WIZ,
+				createImageDescriptor(SharedImages.DESC_DS_WIZ));
 	}
 	
 	private ImageDescriptor createImageDescriptor(String id) {

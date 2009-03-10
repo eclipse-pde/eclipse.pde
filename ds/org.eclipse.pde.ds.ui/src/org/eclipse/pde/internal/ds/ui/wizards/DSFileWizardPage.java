@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *     Simon Archer <sarcher@us.ibm.com> - bug 248519
  *******************************************************************************/
@@ -37,6 +36,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
+import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -95,6 +95,8 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	protected void initialize() {
 		setTitle(Messages.DSFileWizardPage_title);
 		setDescription(Messages.DSFileWizardPage_description);
+		setImageDescriptor(SharedImages
+				.getImageDescriptor(SharedImages.DESC_DS_WIZ));
 		// Force the file extension to be 'xml'
 		setFileExtension(F_FILE_EXTENSION);
 	}
