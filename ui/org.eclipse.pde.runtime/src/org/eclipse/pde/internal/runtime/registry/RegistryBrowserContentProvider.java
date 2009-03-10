@@ -80,6 +80,8 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 				folders.add(new Folder(Folder.F_REGISTERED_SERVICES, bundle));
 			if (bundle.getServicesInUse().length > 0)
 				folders.add(new Folder(Folder.F_SERVICES_IN_USE, bundle));
+			if (bundle.getFragments().length > 0)
+				folders.add(new Folder(Folder.F_FRAGMENTS, bundle));
 
 			return folders.toArray();
 		}

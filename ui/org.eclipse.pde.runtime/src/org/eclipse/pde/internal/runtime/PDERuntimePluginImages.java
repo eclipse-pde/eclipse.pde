@@ -77,6 +77,7 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_SERVICE_OBJ = create(PATH_OBJ, "int_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROPERTY_OBJ = create(PATH_OBJ, "property_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGINS_OBJ = create(PATH_OBJ, "plugins_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FRAGMENT_OBJ = create(PATH_OBJ, "frgmt_obj.gif"); //$NON-NLS-1$
 
 	/*
 	 * Overlays

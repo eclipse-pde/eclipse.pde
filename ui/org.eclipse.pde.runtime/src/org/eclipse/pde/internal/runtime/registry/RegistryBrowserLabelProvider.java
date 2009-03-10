@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 	private Image fServiceImage;
 	private Image fPropertyImage;
 	private Image fServicePropertyImage;
+	private Image fFragmentImage;
 	private RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserLabelProvider(RegistryBrowser browser) {
@@ -65,6 +66,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fServiceImage = PDERuntimePluginImages.DESC_SERVICE_OBJ.createImage();
 		fPropertyImage = PDERuntimePluginImages.DESC_PROPERTY_OBJ.createImage();
 		fPluginsImage = PDERuntimePluginImages.DESC_PLUGINS_OBJ.createImage();
+		fFragmentImage = PDERuntimePluginImages.DESC_FRAGMENT_OBJ.createImage();
 
 		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
@@ -106,11 +108,15 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		fPropertyImage.dispose();
 		fServicePropertyImage.dispose();
 		fPluginsImage.dispose();
+		fFragmentImage.dispose();
 	}
 
 	public Image getImage(Object element) {
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
+
+			if (bundle.getFragmentHost() != null)
+				return fFragmentImage;
 
 			if (!bundle.isEnabled())
 				return fDisabledImage;
@@ -168,6 +174,8 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return fPropertyImage;
 				case Folder.F_USING_BUNDLES :
 					return fPluginsImage;
+				case Folder.F_FRAGMENTS :
+					return fPluginsImage;
 			}
 			return null;
 		}
@@ -203,11 +211,15 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 
 	public String getText(Object element) {
 		if (element instanceof Bundle) {
-			String id = ((Bundle) element).getSymbolicName();
-			String version = ((Bundle) element).getVersion();
-			if (version == null)
-				return id;
-			return id + " (" + version + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			Bundle bundle = ((Bundle) element);
+			StringBuffer sb = new StringBuffer(bundle.getSymbolicName());
+			String version = bundle.getVersion();
+			if (version != null)
+				sb.append(" (").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			String host = bundle.getFragmentHost();
+			if (host != null)
+				sb.append("; ").append(host).append(PDERuntimeMessages.RegistryBrowserLabelProvider_fragment);// XXX NLSize //$NON-NLS-1$
+			return sb.toString();
 		}
 
 		if (element instanceof ServiceRegistration) {
@@ -244,6 +256,8 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					return PDERuntimeMessages.RegistryBrowserLabelProvider_Properties;
 				case Folder.F_USING_BUNDLES :
 					return PDERuntimeMessages.RegistryBrowserLabelProvider_UsingBundles;
+				case Folder.F_FRAGMENTS :
+					return PDERuntimeMessages.RegistryBrowserLabelProvider_Fragments;
 			}
 		}
 		if (element instanceof Extension) {

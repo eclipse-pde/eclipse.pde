@@ -111,10 +111,8 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			if (monitor.isCanceled())
 				return;
 
-			if (newBundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null) {
-				Bundle ba = createBundleAdapter(newBundles[i]);
-				listener.addBundle(ba);
-			}
+			Bundle ba = createBundleAdapter(newBundles[i]);
+			listener.addBundle(ba);
 		}
 	}
 
@@ -164,6 +162,25 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		adapter.setId(bundle.getBundleId());
 		adapter.setEnabled(getIsEnabled(bundle));
 		adapter.setLocation(createLocation(bundle));
+
+		String fragmentHost = (String) bundle.getHeaders().get(Constants.FRAGMENT_HOST);
+		if (fragmentHost != null) {
+			ManifestElement[] header;
+			try {
+				header = ManifestElement.parseHeader(Constants.FRAGMENT_HOST, fragmentHost);
+
+				if (header.length > 0) {
+					ManifestElement host = header[0];
+					adapter.setFragmentHost(host.getValue());
+					String version = host.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+					if (version != null) {
+						adapter.setFragmentHostVersion(version);
+					}
+				}
+			} catch (BundleException e) {
+				PDERuntimePlugin.log(e);
+			}
+		}
 
 		BundlePrerequisite[] imports = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.REQUIRE_BUNDLE);
 		if (imports != null)

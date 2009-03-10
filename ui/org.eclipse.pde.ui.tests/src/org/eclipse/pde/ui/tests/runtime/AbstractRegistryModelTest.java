@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
 
 public abstract class AbstractRegistryModelTest extends TestCase {
 
@@ -82,19 +81,10 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 	 * Verifies that model provides correct list of installed bundles 
 	 */
 	public void testInstalledBundles() {
-		int bundlesCount = 0;
 		org.osgi.framework.Bundle[] origBundles = MacroPlugin.getBundleContext().getBundles();
-		
-		// ignore all bundle fragments
-		for (int i = 0; i < origBundles.length; i++) {
-			if (origBundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null) {
-				bundlesCount++;
-			}
-		}
-		
 		Bundle[] bundles = f.getBundles();
 		
-		assertEquals(bundlesCount, bundles.length);
+		assertEquals(origBundles.length, bundles.length);
 	}
 	
 	public void testBundleChangedNotification() throws BundleException {

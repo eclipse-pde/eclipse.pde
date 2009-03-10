@@ -20,6 +20,7 @@ public class Folder {
 	public static final int F_SERVICES_IN_USE = 6;
 	public static final int F_PROPERTIES = 7;
 	public static final int F_USING_BUNDLES = 8;
+	public static final int F_FRAGMENTS = 9;
 
 	private int id;
 	private Object parent;
@@ -55,6 +56,8 @@ public class Folder {
 				return ((ServiceRegistration) parent).getProperties();
 			case F_USING_BUNDLES :
 				return ((ServiceRegistration) parent).getUsingBundles();
+			case F_FRAGMENTS :
+				return ((Bundle) parent).getFragments();
 		}
 
 		return null;

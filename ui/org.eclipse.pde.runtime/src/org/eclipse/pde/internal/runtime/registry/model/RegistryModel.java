@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.runtime.registry.model;
 
 import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.service.resolver.VersionRange;
+import org.osgi.framework.Version;
 
 /**
  * Model entry point for Eclipse runtime. Provides information about runtime bundles, services and extension points.
@@ -25,6 +27,17 @@ public class RegistryModel {
 
 			bundles.put(new Long(adapter.getId()), adapter);
 
+			if (adapter.getFragmentHost() != null) {
+				addFragment(adapter);
+
+				Bundle host = getBundle(adapter.getFragmentHost(), adapter.getFragmentHostVersion());
+				if (host != null) {
+					ModelChangeDelta d2 = new ModelChangeDelta(host, ModelChangeDelta.UPDATED);
+					fireModelChangeEvent(new ModelChangeDelta[] {delta, d2});
+					return;
+				}
+			}
+
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 		}
 
@@ -32,6 +45,17 @@ public class RegistryModel {
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, ModelChangeDelta.REMOVED);
 
 			bundles.remove(new Long(adapter.getId()));
+
+			if (adapter.getFragmentHost() != null) {
+				removeFragment(adapter);
+
+				Bundle host = getBundle(adapter.getFragmentHost(), adapter.getFragmentHostVersion());
+				if (host != null) {
+					ModelChangeDelta d2 = new ModelChangeDelta(host, ModelChangeDelta.UPDATED);
+					fireModelChangeEvent(new ModelChangeDelta[] {delta, d2});
+					return;
+				}
+			}
 
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 			adapter.setModel(null);
@@ -42,6 +66,10 @@ public class RegistryModel {
 			ModelChangeDelta delta = new ModelChangeDelta(adapter, updated);
 
 			bundles.put(new Long(adapter.getId()), adapter); // replace old with new one
+
+			if (adapter.getFragmentHost() != null) {
+				addFragment(adapter);
+			}
 
 			fireModelChangeEvent(new ModelChangeDelta[] {delta});
 		}
@@ -167,6 +195,7 @@ public class RegistryModel {
 	private Map services;
 	private Map extensionPoints;
 	private Set serviceNames;
+	private Map fragments;
 
 	protected RegistryBackend backend;
 
@@ -175,9 +204,33 @@ public class RegistryModel {
 		services = Collections.synchronizedMap(new HashMap());
 		extensionPoints = Collections.synchronizedMap(new HashMap());
 		serviceNames = Collections.synchronizedSet(new HashSet());
+		fragments = Collections.synchronizedMap(new HashMap());
 
 		this.backend = backend;
 		backend.setRegistryListener(backendListener);
+	}
+
+	protected void addFragment(Bundle fragment) {
+		Set hostFragments = (Set) fragments.get(fragment.getFragmentHost());
+		if (hostFragments == null) {
+			hostFragments = Collections.synchronizedSet(new HashSet());
+			fragments.put(fragment.getFragmentHost(), hostFragments);
+		}
+
+		if (!hostFragments.add(fragment)) {
+			// not added if element already exists. So remove old and add it again.
+			hostFragments.remove(fragment);
+			hostFragments.add(fragment);
+		}
+	}
+
+	protected void removeFragment(Bundle fragment) {
+		Set hostFragments = (Set) fragments.get(fragment.getFragmentHost());
+		if (hostFragments == null) {
+			return;
+		}
+
+		hostFragments.remove(fragment);
 	}
 
 	public void connect(IProgressMonitor monitor) {
@@ -245,8 +298,83 @@ public class RegistryModel {
 		return (Bundle) bundles.get(id);
 	}
 
+	public Bundle getBundle(String symbolicName, String versionRange) {
+		for (Iterator i = bundles.values().iterator(); i.hasNext();) {
+			Bundle bundle = (Bundle) i.next();
+
+			if (bundle.getSymbolicName().equals(symbolicName)) {
+				if (versionMatches(bundle.getVersion(), versionRange))
+					return bundle;
+			}
+		}
+
+		return null;
+	}
+
 	public ExtensionPoint getExtensionPoint(String extensionPointUniqueIdentifier) {
 		return (ExtensionPoint) extensionPoints.get(extensionPointUniqueIdentifier);
+	}
+
+	public Bundle[] getFragments(Bundle bundle) {
+		Set set = (Set) fragments.get(bundle.getSymbolicName());
+		if (set == null)
+			return new Bundle[0];
+
+		List result = new ArrayList(set.size());
+		Version hostVersion = Version.parseVersion(bundle.getVersion());
+		for (Iterator i = set.iterator(); i.hasNext();) {
+			Bundle fragment = (Bundle) i.next();
+			String fragmentVersionOrRange = fragment.getFragmentHostVersion();
+
+			if (versionMatches(hostVersion, fragmentVersionOrRange))
+				result.add(fragment);
+		}
+
+		return (Bundle[]) result.toArray(new Bundle[result.size()]);
+	}
+
+	private boolean versionMatches(String hostVersion, String versionOrRange) {
+		try {
+			Version version = Version.parseVersion(hostVersion);
+			return versionMatches(version, versionOrRange);
+
+		} catch (IllegalArgumentException e) {
+			// ignore
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if hostVersion is greater or equal fragmentVersion, or is included in fragment version range
+	 * @param hostVersion Version
+	 * @param versionOrRange Version or VersionRange
+	 * @return true if matches, false otherwise
+	 */
+	private boolean versionMatches(Version hostVersion, String versionOrRange) {
+		if (versionOrRange == null) {
+			return true;
+		}
+
+		try {
+			Version version = Version.parseVersion(versionOrRange);
+			if (hostVersion.compareTo(version) >= 0)
+				return true;
+
+		} catch (IllegalArgumentException e) {
+			// wrong formatting, try VersionRange
+		}
+
+		try {
+			VersionRange range = new VersionRange(versionOrRange);
+			if (range.isIncluded(hostVersion))
+				return true;
+
+		} catch (IllegalArgumentException e2) {
+			// wrong range formatting
+		}
+
+		return false;
 	}
 
 	/*	void setEnabled(Bundle bundle, boolean enabled);

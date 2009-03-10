@@ -29,6 +29,25 @@ public class Bundle extends ModelObject {
 	private long id;
 	private BundleLibrary[] libraries = new BundleLibrary[0];
 
+	private String fragmentHost;
+	private String fragmentHostVersion;
+
+	public void setFragmentHost(String fragmentHost) {
+		this.fragmentHost = fragmentHost;
+	}
+
+	public String getFragmentHost() {
+		return fragmentHost;
+	}
+
+	public String getFragmentHostVersion() {
+		return fragmentHostVersion;
+	}
+
+	public void setFragmentHostVersion(String fragmentHostVersion) {
+		this.fragmentHostVersion = fragmentHostVersion;
+	}
+
 	public void setSymbolicName(String symbolicName) {
 		this.symbolicName = symbolicName;
 	}
@@ -195,5 +214,11 @@ public class Bundle extends ModelObject {
 
 	public int hashCode() {
 		return (int) id;
+	}
+
+	public Bundle[] getFragments() {
+		if (model == null)
+			return new Bundle[0];
+		return model.getFragments(this);
 	}
 }
