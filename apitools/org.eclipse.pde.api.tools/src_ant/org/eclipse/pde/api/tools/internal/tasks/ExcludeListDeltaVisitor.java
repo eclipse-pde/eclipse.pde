@@ -100,7 +100,6 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 				case IDelta.ADDED :
 					int modifiers = delta.getNewModifiers();
 					if (Flags.isPublic(modifiers)) {
-						// if public, we always want to check @since tags
 						switch(delta.getFlags()) {
 							case IDelta.TYPE_MEMBER :
 							case IDelta.METHOD :
@@ -116,7 +115,6 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 								break;
 						}
 					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
-						// if protected, we only want to check @since tags if the enclosing class can be subclassed
 						switch(delta.getFlags()) {
 							case IDelta.TYPE_MEMBER :
 							case IDelta.METHOD :
@@ -141,23 +139,23 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 					}
 			}
 		} else {
-			if (delta.getKind() == IDelta.ADDED) {
-				// if public, we always want to check @since tags
-				switch(delta.getFlags()) {
-					case IDelta.TYPE_MEMBER :
-					case IDelta.METHOD :
-					case IDelta.CONSTRUCTOR :
-					case IDelta.ENUM_CONSTANT :
-					case IDelta.METHOD_WITH_DEFAULT_VALUE :
-					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-					case IDelta.FIELD :
-						// ensure that there is a @since tag for the corresponding member
-						if (delta.getKind() == IDelta.ADDED && Util.isVisible(delta.getNewModifiers())) {
-							if (!checkExclude(delta)) {
-								super.processLeafDelta(delta);
+			switch(delta.getKind()) {
+				case IDelta.ADDED :
+				case IDelta.REMOVED :
+					switch(delta.getFlags()) {
+						case IDelta.TYPE_MEMBER :
+						case IDelta.METHOD :
+						case IDelta.CONSTRUCTOR :
+						case IDelta.ENUM_CONSTANT :
+						case IDelta.METHOD_WITH_DEFAULT_VALUE :
+						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+						case IDelta.FIELD :
+							if (Util.isVisible(delta.getNewModifiers())) {
+								if (!checkExclude(delta)) {
+									super.processLeafDelta(delta);
+								}
 							}
-						}
-				}
+					}
 			}
 		}
 	}
