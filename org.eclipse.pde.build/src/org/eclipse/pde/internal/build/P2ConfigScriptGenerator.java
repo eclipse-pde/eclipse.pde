@@ -13,13 +13,10 @@ import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.pde.internal.build.site.BuildTimeSite;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	private AssemblyInformation assemblyInformation = null;
@@ -85,6 +82,10 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printProperty(PROPERTY_ASSEMBLY_TMP, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/tmp"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_SIGN, (signJars ? Boolean.TRUE : Boolean.FALSE).toString());
+
+		if (productQualifier != null)
+			script.printProperty(PROPERTY_P2_PRODUCT_QUALIFIER, productQualifier);
+
 		script.println();
 		generateCustomGatherMacro();
 	}
@@ -244,30 +245,6 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			//problem with the .product file
 			//TODO Log warning/error
 		}
-	}
-
-	//TODO this is duplicated from AssembleScriptGenerator
-	protected void generateProductReplaceTask(ProductFile product, String productDirectory) {
-		if (product == null)
-			return;
-
-		BuildTimeSite site = null;
-		try {
-			site = getSite(false);
-		} catch (CoreException e1) {
-			return;
-		}
-
-		List productEntries = product.getProductEntries();
-		String mappings = Utils.getEntryVersionMappings((FeatureEntry[]) productEntries.toArray(new FeatureEntry[productEntries.size()]), site);
-		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productDirectory) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		script.println("                    selfVersion=\"" + product.getVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		if (product.useFeatures())
-			script.println("                    featureIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		else
-			script.println("                    pluginIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
-
-		return;
 	}
 
 	protected void generateEpilogue() {

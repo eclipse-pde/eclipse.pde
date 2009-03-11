@@ -57,6 +57,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		configScriptGenerator.setGroupConfigs(groupConfigs || BuildDirector.p2Gathering);
 		setForceUpdateJar(forceUpdateJarFormat);
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
+		configScriptGenerator.setProductQualifier(productQualifier);
 		configScriptGenerator.generate();
 
 		script.printTab();

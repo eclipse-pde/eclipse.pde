@@ -151,7 +151,7 @@ public class P2Tests extends P2TestCase {
 		IFile productFile = buildFolder.getFile("rcp.product");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false);
 
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
@@ -165,6 +165,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.artifact.repo", repoLocation);
 		properties.put("p2.flavor", "tooling");
 		properties.put("p2.publish.artifacts", "true");
+		properties.put("p2.product.qualifier", "v1234"); //bug 246060
 		Utils.storeBuildProperties(buildFolder, properties);
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
@@ -178,6 +179,9 @@ public class P2Tests extends P2TestCase {
 		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86");
 		//testing relative paths, just check that the value starts with org.eclipse.equinox..., don't bother worrying about dir separator
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:org.eclipse.equinox.simpleconfigurator.configUrl, propValue:file:org.eclipse.equinox.simpleconfigurator");
+		
+		iu = getIU(repository, "rcp.product");
+		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
 	}
 
 	public void testBug222962() throws Exception {

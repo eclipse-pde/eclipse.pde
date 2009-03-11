@@ -11,10 +11,7 @@ package org.eclipse.pde.internal.build;
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
-import org.eclipse.pde.internal.build.site.BuildTimeSite;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected String directory; // representing the directory where to generate the file
@@ -139,6 +136,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		p2ConfigGenerator.setSignJars(configScriptGenerator.isSigning());
 		p2ConfigGenerator.setVersionsList(versionsList);
 		p2ConfigGenerator.setContextMetadataRepositories(contextMetadata);
+		p2ConfigGenerator.setProductQualifier(productQualifier);
 		p2ConfigGenerator.generate();
 
 		script.printTab();
@@ -156,6 +154,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.setGroupConfigs(groupConfigs);
+		configScriptGenerator.setProductQualifier(productQualifier);
 		configScriptGenerator.generate();
 
 		script.printTab();
@@ -221,29 +220,6 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 			script.printTargetEnd();
 		}
-	}
-
-	protected void generateProductReplaceTask(ProductFile product, String productDirectory) {
-		if (product == null)
-			return;
-
-		BuildTimeSite site = null;
-		try {
-			site = getSite(false);
-		} catch (CoreException e1) {
-			return;
-		}
-
-		List productEntries = product.getProductEntries();
-		String mappings = Utils.getEntryVersionMappings((FeatureEntry[]) productEntries.toArray(new FeatureEntry[productEntries.size()]), site);
-		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productDirectory) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		script.println("                    selfVersion=\"" + product.getVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		if (product.useFeatures())
-			script.println("                    featureIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		else
-			script.println("                    pluginIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
-
-		return;
 	}
 
 	public void setSignJars(boolean value) {

@@ -90,6 +90,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_CATEGORY_SITE = "p2.category.site"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_NAME = "p2.root.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_VERSION = "p2.root.version"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_PRODUCT_QUALIFIER = "p2.product.qualifier"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_FINAL_MODE_OVERRIDE = "p2.final.mode.override"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_FLAVOR = "p2.flavor"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_APPEND = "p2.append"; //$NON-NLS-1$

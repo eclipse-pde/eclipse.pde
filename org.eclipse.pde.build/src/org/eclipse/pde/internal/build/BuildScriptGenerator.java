@@ -15,8 +15,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
-import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.Feature;
 import org.osgi.framework.Version;
 
@@ -191,6 +190,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		AssemblyInformation assemblageInformation = null;
 		BuildDirector generator = null;
 
+		if (product != null) {
+			String replacement = QualifierReplacer.replaceQualifierInVersion("1.0.0.qualifier", "", null, null); //$NON-NLS-1$ //$NON-NLS-2$
+			productQualifier = new Version(replacement).getQualifier();
+		}
+
 		if (features.size() > 0) {
 			assemblageInformation = new AssemblyInformation();
 
@@ -212,6 +216,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setGenerateJnlp(generateJnlp);
 			generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
 			generator.setProduct(product);
+			generator.setProductQualifier(productQualifier);
 			generator.setUseWorkspaceBinaries(workspaceBinaries);
 			generator.setContextMetadataRepositories(contextMetadata);
 		}
@@ -361,6 +366,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setProduct(product);
+		assembler.setProductQualifier(productQualifier);
 		assembler.setBuildSiteFactory(factory);
 		assembler.setGroupConfigs(groupConfigs);
 		assembler.setVersionsList(generateVersionsList);
@@ -374,6 +380,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setProduct(product);
+		assembler.setProductQualifier(productQualifier);
 		assembler.setBuildSiteFactory(factory);
 		assembler.setGroupConfigs(groupConfigs);
 		assembler.setVersionsList(generateVersionsList);

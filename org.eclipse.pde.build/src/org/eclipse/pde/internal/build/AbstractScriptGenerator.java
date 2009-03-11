@@ -20,7 +20,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.eclipse.pde.internal.build.site.compatibility.SiteManager;
+import org.osgi.framework.Version;
 
 /**
  * Generic super-class for all script generator classes. 
@@ -36,6 +38,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected URI[] contextMetadata = null;
 	protected AntScript script;
 	protected Properties platformProperties;
+	protected String productQualifier;
 
 	private static PDEUIStateWrapper pdeUIState;
 
@@ -473,6 +476,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		this.contextMetadata = uris;
 	}
 
+	public void setProductQualifier(String value) {
+		productQualifier = value;
+	}
+
 	/*
 	 * If the user has specified a platform properties then load it.
 	 */
@@ -502,4 +509,33 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 	}
 
+	protected void generateProductReplaceTask(ProductFile product, String productDirectory) {
+		if (product == null)
+			return;
+
+		BuildTimeSite site = null;
+		try {
+			site = getSite(false);
+		} catch (CoreException e1) {
+			return;
+		}
+
+		String version = product.getVersion();
+		if (version.endsWith(PROPERTY_QUALIFIER)) {
+			Version oldVersion = new Version(version);
+			version = oldVersion.getMajor() + "." + oldVersion.getMinor() + "." + oldVersion.getMicro() + "." + Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_QUALIFIER); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+
+		List productEntries = product.getProductEntries();
+		String mappings = Utils.getEntryVersionMappings((FeatureEntry[]) productEntries.toArray(new FeatureEntry[productEntries.size()]), site);
+
+		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productDirectory) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("                    selfVersion=\"" + version + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		if (product.useFeatures())
+			script.println("                    featureIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		else
+			script.println("                    pluginIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+		return;
+	}
 }

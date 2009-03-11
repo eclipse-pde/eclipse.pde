@@ -27,6 +27,7 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.build.tests.BuildConfiguration;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.osgi.framework.Constants;
 
 public class PublishingTests extends P2TestCase {
@@ -555,7 +556,7 @@ public class PublishingTests extends P2TestCase {
 
 		IFile productFile = buildFolder.getFile("headless.product");
 		String[] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", "org.eclipse.equinox.app", "org.eclipse.equinox.common", "org.eclipse.equinox.preferences", "org.eclipse.equinox.registry", "org.eclipse.osgi"};
-		Utils.generateProduct(productFile, "headless.product", "1.0.0", "headless.application", "headless", bundles, false, null);
+		Utils.generateProduct(productFile, "headless.product", "1.0.0.qualifier", "headless.application", "headless", bundles, false, null);
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
@@ -587,10 +588,14 @@ public class PublishingTests extends P2TestCase {
 		}
 		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString()); 
 		getIU(finalRepo, "a.jre.javase");
-		getIU(finalRepo, "headless.product");
+		IInstallableUnit iu = getIU(finalRepo, "headless.product");
+		assertFalse(iu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
+		//check up to the date on the timestamp, don't worry about hours/mins
+		assertTrue(iu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8))); 
+		
 		getIU(finalRepo, "toolingorg.eclipse.equinox.common");
 		
-		IInstallableUnit iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
+		iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
 		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
 	}
 
@@ -757,7 +762,7 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(delta);
 		
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86");
@@ -766,6 +771,7 @@ public class PublishingTests extends P2TestCase {
 			properties.put("pluginPath", delta.getAbsolutePath());
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("p2.gathering", "true");
+		properties.put("p2.product.qualifier", "I10232"); //bug 246060
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -776,6 +782,7 @@ public class PublishingTests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
 		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
 		IInstallableUnit iu = getIU(metadata, "uid.product");
+		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
 		
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
@@ -786,9 +793,9 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("267972");
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
+
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String [] { "org.eclipse.osgi", "org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {"org.eclipse.osgi", "org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86"}, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86");
@@ -796,10 +803,16 @@ public class PublishingTests extends P2TestCase {
 			properties.put("pluginPath", delta.getAbsolutePath());
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("filteredDependencyCheck", "true");
-		properties.put("includeLaunchers", "false");
+		properties.put("includeLaunchers", "false"); //bug 268119
 		properties.put("p2.gathering", "true");
+		properties.put("forceContextQualifier", "v1234"); //bug 246060
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
+
+		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
+		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
+		IInstallableUnit iu = getIU(metadata, "rcp.product");
+		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
 	}
 }

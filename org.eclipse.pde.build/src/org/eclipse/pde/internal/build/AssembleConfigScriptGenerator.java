@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 /**
  * Generate an assemble script for a given feature and a given config. It
@@ -217,13 +218,31 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.printTab();
 				script.print("\t<iu"); //$NON-NLS-1$
 				script.printAttribute(ID, productFile.getId(), true);
-				script.printAttribute(VERSION, productFile.getVersion(), true);
+				script.printAttribute(VERSION, getReplacedProductVersion(), true);
 				script.println("/>"); //$NON-NLS-1$
 			}
 			script.println("</p2.mirror>"); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 		script.println();
+	}
+
+	private String getReplacedProductVersion() {
+		String productVersion = productFile.getVersion();
+		if (productVersion.endsWith(PROPERTY_QUALIFIER)) {
+			Version version = new Version(productVersion);
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(version.getMajor());
+			buffer.append('.');
+			buffer.append(version.getMinor());
+			buffer.append('.');
+			buffer.append(version.getMicro());
+			buffer.append('.');
+			buffer.append(Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_QUALIFIER));
+
+			productVersion = buffer.toString();
+		}
+		return productVersion;
 	}
 
 	protected void generateDirectorTarget(boolean assembling) {
@@ -234,7 +253,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		parameters.put(PROPERTY_ARCH, Utils.getPropertyFormat(PROPERTY_ARCH));
 		parameters.put(PROPERTY_P2_REPO, Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO));
 		parameters.put(PROPERTY_P2_DIRECTOR_IU, productFile != null ? productFile.getId() : Utils.getPropertyFormat(PROPERTY_P2_ROOT_NAME));
-		parameters.put(PROPERTY_P2_DIRECTOR_VERSION, productFile != null ? productFile.getVersion() : Utils.getPropertyFormat(PROPERTY_P2_ROOT_VERSION));
+		parameters.put(PROPERTY_P2_DIRECTOR_VERSION, productFile != null ? getReplacedProductVersion() : Utils.getPropertyFormat(PROPERTY_P2_ROOT_VERSION));
 		parameters.put(PROPERTY_P2_DIRECTOR_INSTALLPATH, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		script.printAntTask(Utils.getPropertyFormat(PROPERTY_GENERIC_TARGETS), null, TARGET_RUN_DIRECTOR, null, TRUE, parameters);
 		script.println();
@@ -448,6 +467,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		printLauncherJarProperty();
 		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printAvailableTask(PROPERTY_CUSTOM_ASSEMBLY, "${builder}/customAssembly.xml", "${builder}/customAssembly.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (productQualifier != null)
+			script.printProperty(PROPERTY_P2_PRODUCT_QUALIFIER, productQualifier);
 
 		if (productFile != null && productFile.getLauncherName() != null)
 			script.printProperty(PROPERTY_LAUNCHER_NAME, productFile.getLauncherName());
