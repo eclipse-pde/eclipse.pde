@@ -11,6 +11,7 @@ package org.eclipse.pde.internal.build;
 import java.util.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.osgi.framework.Version;
 
 public class AssemblyInformation implements IPDEBuildConstants {
 	// List all the features and plugins to assemble sorted on a per config basis 
@@ -18,6 +19,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	// value: (AssemblyLevelConfigInfo) representing the info for the given config
 	private final Map assembleInformation = new HashMap(8);
 	private final Map bundleMap = new HashMap();
+	private final Map rootMap = new HashMap();
 
 	public AssemblyInformation() {
 		// Initialize the content of the assembly information with the configurations 
@@ -51,6 +53,12 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		if (version != null && !GENERIC_VERSION_NUMBER.equals(version))
 			return (BundleDescription) bundleMap.get(id + '_' + version);
 		return (BundleDescription) bundleMap.get(id);
+	}
+
+	public BuildTimeFeature getRootProvider(String id, String version) {
+		if (version != null && !GENERIC_VERSION_NUMBER.equals(version))
+			return (BuildTimeFeature) rootMap.get(id + '_' + version);
+		return (BuildTimeFeature) rootMap.get(id);
 	}
 
 	public Collection getPlugins(Config config) {
@@ -138,6 +146,12 @@ public class AssemblyInformation implements IPDEBuildConstants {
 
 	public void addRootFileProvider(Config config, BuildTimeFeature feature) {
 		((AssemblyLevelConfigInfo) assembleInformation.get(config)).addRootFileProvider(feature);
+
+		String id = feature.getId();
+		BuildTimeFeature existing = (BuildTimeFeature) rootMap.get(id);
+		if (existing == null || new Version(existing.getVersion()).compareTo(new Version(feature.getVersion())) < 0)
+			rootMap.put(id, feature);
+		rootMap.put(id + '_' + feature.getVersion(), feature);
 	}
 
 	// All the information that will go into the assemble file for a specific info

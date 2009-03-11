@@ -15,8 +15,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.eclipse.pde.internal.build.site.P2Utils;
-import org.eclipse.pde.internal.build.site.PDEState;
+import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
@@ -168,6 +167,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "removeProgramArg(programArg:-startup);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
 			P2InfUtils.printBundleCU(buffer, index++, BUNDLE_EQUINOX_LAUNCHER, launcher.getVersion(), null, instructions);
 
+			BuildTimeFeature executableFeature = assembly.getRootProvider(FEATURE_EQUINOX_EXECUTABLE, null);
 			List configs = getConfigInfos();
 			for (int i = 0; i < configs.size(); i++) {
 				Config config = (Config) configs.get(i);
@@ -190,15 +190,17 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "removeProgramArg(programArg:--launcher.library);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
 					P2InfUtils.printBundleCU(buffer, index++, fragment.getSymbolicName(), fragment.getVersion(), fragment.getPlatformFilter(), instructions);
 
-					//include the branded executable 
-					String brandedIU = productFile.getId() + "_root." + config.getWs() + '.' + config.getOs() + '.' + config.getArch(); //$NON-NLS-1$ 
-					P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, brandedIU, productRange, config.getPlatformFilter(), true);
+					if (executableFeature != null) {
+						//include the branded executable 
+						String brandedIU = productFile.getId() + "_root." + config.getWs() + '.' + config.getOs() + '.' + config.getArch(); //$NON-NLS-1$ 
+						P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, brandedIU, productRange, config.getPlatformFilter(), true);
 
-					//include a CU for the branded exe
-					instructions = new String[4];
-					instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setLauncherName(name:" + productFile.getLauncherName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-					instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setLauncherName()"; //$NON-NLS-1$
-					P2InfUtils.printIU(buffer, index++, brandedIU, new Version(productFile.getVersion()), config.getPlatformFilter(), instructions);
+						//include a CU for the branded exe
+						instructions = new String[4];
+						instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setLauncherName(name:" + productFile.getLauncherName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+						instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setLauncherName()"; //$NON-NLS-1$
+						P2InfUtils.printIU(buffer, index++, brandedIU, new Version(productFile.getVersion()), config.getPlatformFilter(), instructions);
+					}
 				}
 			}
 		}

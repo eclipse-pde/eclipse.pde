@@ -80,6 +80,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 				publishBrandedIU(metadataRepo, artifactRepo, (IInstallableUnit) ius.get(0));
 				FileUtils.deleteAll(new File(getRootFolder()));
 			}
+		} catch (BuildException e) {
+			getProject().log(e.getMessage(), Project.MSG_WARN);
 		} finally {
 			ius = null;
 		}

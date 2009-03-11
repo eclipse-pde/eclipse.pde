@@ -796,6 +796,7 @@ public class PublishingTests extends P2TestCase {
 			properties.put("pluginPath", delta.getAbsolutePath());
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("filteredDependencyCheck", "true");
+		properties.put("includeLaunchers", "false");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 
