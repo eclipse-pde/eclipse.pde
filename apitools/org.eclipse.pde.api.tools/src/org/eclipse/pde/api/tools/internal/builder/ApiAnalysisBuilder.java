@@ -648,14 +648,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private void build(final State state, IApiBaseline baseline, IProgressMonitor monitor) throws CoreException {
 		IApiBaseline wsprofile = null;
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
 		try {
 			clearLastState(); // so if the build fails, a full build will be triggered
-			int typesToCheckSize = fTypesToCheck.size();
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 2 + (typesToCheckSize != 0 ? 3 : 0));
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, fCurrentProject.getName()));
 			updateMonitor(localMonitor, 0);
 			collectAffectedSourceFiles(state, fTypesToCheck);
 			updateMonitor(localMonitor, 1);
+			final int typesToCheckSize = fTypesToCheck.size();
 			if (typesToCheckSize != 0) {
 				IPluginModelBase currentModel = getCurrentModel();
 				if (currentModel != null) {
@@ -693,8 +693,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(wsprofile != null) {
 				wsprofile.close();
 			}
-			if(monitor != null) {
-				monitor.done();
+			if(!localMonitor.isCanceled()) {
+				localMonitor.done();
 			}
 		}
 	}
