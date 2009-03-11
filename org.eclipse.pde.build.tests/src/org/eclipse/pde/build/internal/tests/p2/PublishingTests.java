@@ -839,4 +839,40 @@ public class PublishingTests extends P2TestCase {
 		}
 		assertNull(iu);
 	}
+	
+	public void testBug266488() throws Exception {
+		IFolder buildFolder = newTest("266488");
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/e");
+		IFolder f = Utils.createFolder(buildFolder, "features/f");
+		IFolder e = Utils.createFolder(buildFolder, "features/e");
+		
+		Utils.generateFeature(buildFolder, "f", new String[] {"e", "e.source"}, null);
+		Properties properties = new Properties();
+		properties.put("generate.feature@e.source", "e");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(f, properties);
+		
+		Utils.generateFeature(buildFolder, "e", null, new String[] {"e"});
+		Utils.writeBuffer(e.getFile("sourceTemplatePlugin/license.html"), new StringBuffer("important stuff!\n"));
+
+		Utils.generateBundle(bundle, "e");
+		properties = new Properties();
+		properties.put("bin.includes", "META-INF/, .");
+		Utils.storeBuildProperties(bundle, properties);
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("p2.gathering", "true");
+		properties.put("archivesFormat", "group,group,group-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		assertResourceFile(buildFolder.getFile("tmp/eclipse/plugins/e.source_1.0.0.jar"));
+		assertResourceFile(buildFolder.getFile("tmp/eclipse/plugins/e_1.0.0.jar"));
+		assertResourceFile(buildFolder.getFile("tmp/eclipse/features/e.source_1.0.0.jar"));
+		
+		Set entries = new HashSet();
+		entries.add("license.html");
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/e.source_1.0.0.jar", entries);
+	}
 }

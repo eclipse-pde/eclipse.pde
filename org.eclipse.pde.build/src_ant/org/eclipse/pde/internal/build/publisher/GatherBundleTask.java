@@ -216,12 +216,15 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		}
 
 		if (gatheredSource != null) {
-			fileSet = new FileSet();
-			fileSet.setProject(getProject());
-			fileSet.setDir(new File(gatheredSource));
-			NameEntry fileInclude = fileSet.createInclude();
-			fileInclude.setName("**"); //$NON-NLS-1$
-			computer.addFiles(gatheredSource, fileSet.getDirectoryScanner().getIncludedFiles());
+			File sourceFile = new File(gatheredSource);
+			if (sourceFile.exists()) {
+				fileSet = new FileSet();
+				fileSet.setProject(getProject());
+				fileSet.setDir(sourceFile);
+				NameEntry fileInclude = fileSet.createInclude();
+				fileInclude.setName("**"); //$NON-NLS-1$
+				computer.addFiles(gatheredSource, fileSet.getDirectoryScanner().getIncludedFiles());
+			}
 		}
 
 		return computer;
