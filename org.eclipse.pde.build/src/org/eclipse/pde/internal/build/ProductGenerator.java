@@ -10,8 +10,7 @@ package org.eclipse.pde.internal.build;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
@@ -28,6 +27,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private static final String INSTALL_INSTRUCTION = "installBundle(bundle:${artifact});"; //$NON-NLS-1$
 	private static final String UNINSTALL_INSTRUCTION = "uninstallBundle(bundle:${artifact});"; //$NON-NLS-1$
+
+	private static final String P2_INF_APPEND = "org.eclipse.pde.build.append"; //$NON-NLS-1$
+	private static final String P2_INF_START_LEVELS = "org.eclipse.pde.build.append.startlevels"; //$NON-NLS-1$
+	private static final String P2_INF_LAUNCHERS = "org.eclipse.pde.build.append.launchers"; //$NON-NLS-1$
 
 	private static final byte CONFIG_STYLE_ORIGINAL = 1;
 	private static final byte CONFIG_STYLE_REFACTORED = 2;
@@ -92,27 +95,49 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	}
 
-	public void generateP2Info() throws CoreException {
+	public boolean generateP2Info() throws CoreException {
 		initialize();
 
-		//For now, do nothing if there is alreayd a p2.inf
-		File p2Inf = new File(root, "p2.inf"); //$NON-NLS-1$
-		if (p2Inf.exists())
-			return;
+		int startIndex = 1;
+		boolean cus = true;
+		boolean launchers = true;
 
-		//only generate if the .product said nothing
+		File initialInf = new File(new File(productFile.getLocation()).getParent(), "p2.inf"); //$NON-NLS-1$
+		if (initialInf.exists()) {
+			Properties properties = readProperties(initialInf.getParent(), "p2.inf", IStatus.OK); //$NON-NLS-1$
+			if (!Boolean.valueOf(properties.getProperty(P2_INF_APPEND, TRUE)).booleanValue())
+				return false;
+
+			cus = Boolean.valueOf(properties.getProperty(P2_INF_START_LEVELS, TRUE)).booleanValue();
+			launchers = Boolean.valueOf(properties.getProperty(P2_INF_LAUNCHERS, TRUE)).booleanValue();
+			startIndex = properties.size() + 1;
+		}
+
+		//only do start level cus if the .product said nothing
 		if (productFile.getConfigurationInfo().size() > 0)
-			return;
+			cus = false;
 
 		StringBuffer buffer = new StringBuffer();
-		generateP2InfCUs(buffer);
+		if (initialInf.exists()) {
+			//copy over initial contents
+			try {
+				StringBuffer inf = Utils.readFile(initialInf);
+				buffer.append(inf);
+				buffer.append('\n');
+			} catch (IOException e) {
+				return false;
+			}
+		}
+
+		generateP2InfCUs(buffer, startIndex, cus, launchers);
 
 		try {
+			File p2Inf = new File(root, "p2.inf"); //$NON-NLS-1$
 			Utils.writeBuffer(buffer, p2Inf);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 	private BundleInfo[] getDefaultStartInfo() {
@@ -128,30 +153,32 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		return defaults;
 	}
 
-	private void generateP2InfCUs(StringBuffer buffer) {
-		BundleInfo[] infos = getDefaultStartInfo();
-		int index = 1;
-		for (int i = 0; i < infos.length && infos[i] != null; i++) {
-			BundleDescription bundle = assembly.getPlugin(infos[i].getSymbolicName(), infos[i].getVersion());
-			if (bundle == null)
-				continue;
+	private void generateP2InfCUs(StringBuffer buffer, int startIndex, boolean cus, boolean launchers) {
+		int index = startIndex;
+		if (cus) {
+			BundleInfo[] infos = getDefaultStartInfo();
+			for (int i = 0; i < infos.length && infos[i] != null; i++) {
+				BundleDescription bundle = assembly.getPlugin(infos[i].getSymbolicName(), infos[i].getVersion());
+				if (bundle == null)
+					continue;
 
-			String[] instructions = new String[4];
-			instructions[P2InfUtils.INSTRUCTION_INSTALL] = INSTALL_INSTRUCTION;
-			instructions[P2InfUtils.INSTRUCTION_UNINSTALL] = UNINSTALL_INSTRUCTION;
-			instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
+				String[] instructions = new String[4];
+				instructions[P2InfUtils.INSTRUCTION_INSTALL] = INSTALL_INSTRUCTION;
+				instructions[P2InfUtils.INSTRUCTION_UNINSTALL] = UNINSTALL_INSTRUCTION;
+				instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setStartLevel(startLevel:" + infos[i].getStartLevel() + ");markStarted(started:" + Boolean.toString(infos[i].isMarkedAsStarted()) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setStartLevel(startLevel:-1);markStarted(started:false);"; //$NON-NLS-1$
 
-			if (bundle.getSymbolicName().equals(BUNDLE_UPDATE_CONFIGURATOR)) {
-				instructions[P2InfUtils.INSTRUCTION_CONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:false);"; //$NON-NLS-1$
-				instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
+				if (bundle.getSymbolicName().equals(BUNDLE_UPDATE_CONFIGURATOR)) {
+					instructions[P2InfUtils.INSTRUCTION_CONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:false);"; //$NON-NLS-1$
+					instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
+				}
+				P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
+
 			}
-			P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
-
 		}
 
 		BundleDescription launcher = assembly.getPlugin(BUNDLE_EQUINOX_LAUNCHER, null);
-		if (launcher != null) {
+		if (launcher != null && launchers) {
 			VersionRange launcherRange = new VersionRange(launcher.getVersion(), true, launcher.getVersion(), true);
 			Version productVersion = new Version(productFile.getVersion());
 			VersionRange productRange = new VersionRange(productVersion, true, productVersion, true);

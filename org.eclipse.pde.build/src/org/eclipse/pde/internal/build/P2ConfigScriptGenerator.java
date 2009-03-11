@@ -181,19 +181,21 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			String newProduct = new File(productDir, productFile.getName()).getAbsolutePath();
 			script.printCopyFileTask(productPath, newProduct, true);
 
-			File parent = new File(productPath).getParentFile();
-			File p2Inf = new File(parent, "p2.inf"); //$NON-NLS-1$
-			if (p2Inf.exists())
-				script.printCopyTask(p2Inf.getAbsolutePath(), productDir, null, false, true);
-			else {
-				generateProductP2Inf(productFile, productDir);
-				script.printTab();
-				script.print("<replace "); //$NON-NLS-1$
-				script.printAttribute("file", new File(productDir, "p2.inf").getAbsolutePath(), true); //$NON-NLS-1$ //$NON-NLS-2$
-				script.printAttribute("token", "@FLAVOR@", true); //$NON-NLS-1$ //$NON-NLS-2$
-				script.printAttribute("value", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
-				script.println("/>"); //$NON-NLS-1$
+			if (!generateProductP2Inf(productFile, productDir)) {
+				//if we didn't generate the file, copy over the provided one
+				File parent = new File(productPath).getParentFile();
+				File p2Inf = new File(parent, "p2.inf"); //$NON-NLS-1$
+				if (p2Inf.exists())
+					script.printCopyTask(p2Inf.getAbsolutePath(), productDir, null, false, true);
 			}
+
+			script.printTab();
+			script.print("<replace "); //$NON-NLS-1$
+			script.printAttribute("file", new File(productDir, "p2.inf").getAbsolutePath(), true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("token", "@FLAVOR@", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printAttribute("value", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
+
 			generateProductReplaceTask(product, newProduct);
 			productPath = newProduct;
 
@@ -232,7 +234,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printTargetEnd();
 	}
 
-	private void generateProductP2Inf(File productFile, String root) {
+	private boolean generateProductP2Inf(File productFile, String root) {
 		ProductGenerator generator = new ProductGenerator();
 		generator.setProduct(productFile.getAbsolutePath());
 		generator.setBuildSiteFactory(siteFactory);
@@ -240,10 +242,10 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		generator.setWorkingDirectory(getWorkingDirectory());
 		generator.setAssemblyInfo(assemblyInformation);
 		try {
-			generator.generateP2Info();
+			return generator.generateP2Info();
 		} catch (CoreException e) {
 			//problem with the .product file
-			//TODO Log warning/error
+			return false;
 		}
 	}
 

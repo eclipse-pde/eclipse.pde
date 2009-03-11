@@ -18,6 +18,8 @@ import java.util.jar.Attributes;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import junit.framework.AssertionFailedError;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
@@ -557,7 +559,10 @@ public class PublishingTests extends P2TestCase {
 		IFile productFile = buildFolder.getFile("headless.product");
 		String[] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", "org.eclipse.equinox.app", "org.eclipse.equinox.common", "org.eclipse.equinox.preferences", "org.eclipse.equinox.registry", "org.eclipse.osgi"};
 		Utils.generateProduct(productFile, "headless.product", "1.0.0.qualifier", "headless.application", "headless", bundles, false, null);
-
+		Properties p2Inf = new Properties(); // bug 268223
+		p2Inf.put("instructions.configure", "addRepository(type:0,location:file${#58}//foo/bar);");
+		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
+		
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
@@ -592,6 +597,7 @@ public class PublishingTests extends P2TestCase {
 		assertFalse(iu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
 		//check up to the date on the timestamp, don't worry about hours/mins
 		assertTrue(iu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8))); 
+		assertTouchpoint(iu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
 		
 		getIU(finalRepo, "toolingorg.eclipse.equinox.common");
 		
@@ -763,7 +769,10 @@ public class PublishingTests extends P2TestCase {
 		
 		IFile productFile = buildFolder.getFile("rcp.product");
 		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
-
+		Properties p2Inf = new Properties(); // bug 268223
+		p2Inf.put("org.eclipse.pde.build.append.launchers", "false");
+		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
+		
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86");
 		properties.put("archivesFormat", "win32,win32,x86-folder");
@@ -787,6 +796,10 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
+		
+		iu = getIU(metadata, "toolingorg.eclipse.equinox.simpleconfigurator");
+		assertTouchpoint(iu, "configure",  "setStartLevel(startLevel:1);markStarted(started:true);");
+		assertFalse(buildFolder.getFile("tmp/eclipse/eclipse.exe").exists());
 	}
 	
 	public void testBug267972() throws Exception {
@@ -795,8 +808,11 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(delta);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {"org.eclipse.osgi", "org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86"}, false);
-
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common", "org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86"}, false);
+		Properties p2Inf = new Properties(); // bug 268223
+		p2Inf.put("org.eclipse.pde.build.append.startlevels", "false");
+		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
+		
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
@@ -814,5 +830,13 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
 		IInstallableUnit iu = getIU(metadata, "rcp.product");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
+		
+		iu = null;
+		try {
+			//don't want to find this
+			iu = getIU(metadata, "toolingorg.eclipse.equinox.common");	
+		} catch (AssertionFailedError e) {
+		}
+		assertNull(iu);
 	}
 }
