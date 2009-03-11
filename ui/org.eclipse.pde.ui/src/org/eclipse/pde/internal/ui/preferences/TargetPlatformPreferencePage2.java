@@ -445,6 +445,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
 			List selected = selection.toList();
+			if (fActiveTarget != null && selected.contains(fActiveTarget)) {
+				fActiveTarget = null;
+			}
 			fRemoved.addAll(selected);
 			fTargets.removeAll(selected);
 			// Quick hack because the first refresh loses the checkedState, which is being used to bold the active target
@@ -657,7 +660,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		// set workspace target if required
 		if (load) {
 			LoadTargetDefinitionJob.load(toLoad);
-			fPrevious = toLoad.getHandle();
+			fPrevious = toLoad == null ? null : toLoad.getHandle();
 		}
 
 		fMoved.clear();
