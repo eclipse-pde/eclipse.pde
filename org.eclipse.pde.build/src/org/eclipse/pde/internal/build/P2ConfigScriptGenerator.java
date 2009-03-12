@@ -122,7 +122,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				script.printAttribute("iconsList", computeIconsList(config.getOs()), true); //$NON-NLS-1$
 				script.printAttribute("launcherProvider", Utils.getPropertyFormat(PROPERTY_LAUNCHER_PROVIDER), true); //$NON-NLS-1$
 				script.printAttribute("productId", product.getId(), true); //$NON-NLS-1$
-				script.printAttribute("productVersion", product.getVersion(), true); //$NON-NLS-1$
+				script.printAttribute("productVersion", getReplacedProductVersion(), true); //$NON-NLS-1$
 				script.printAttribute("repository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
 				script.printAttribute("tempDirectory", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), true); //$NON-NLS-1$
 				script.println("/>"); //$NON-NLS-1$

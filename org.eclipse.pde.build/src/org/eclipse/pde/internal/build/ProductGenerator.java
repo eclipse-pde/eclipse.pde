@@ -180,8 +180,15 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		BundleDescription launcher = assembly.getPlugin(BUNDLE_EQUINOX_LAUNCHER, null);
 		if (launcher != null && launchers) {
 			VersionRange launcherRange = new VersionRange(launcher.getVersion(), true, launcher.getVersion(), true);
-			Version productVersion = new Version(productFile.getVersion());
-			VersionRange productRange = new VersionRange(productVersion, true, productVersion, true);
+			String versionString = productFile.getVersion();
+			String rangeString = null;
+			if (versionString.endsWith(PROPERTY_QUALIFIER)) {
+				Version productVersion = new Version(versionString);
+				versionString = productVersion.getMajor() + "." + productVersion.getMinor() + "." + productVersion.getMicro() + ".$qualifier$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				rangeString = "[" + versionString + "," + versionString + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			} else {
+				rangeString = new VersionRange(new Version(versionString), true, new Version(versionString), true).toString();
+			}
 
 			// include the launcher jar
 			P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, BUNDLE_EQUINOX_LAUNCHER, launcherRange, launcher.getPlatformFilter(), true);
@@ -220,13 +227,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					if (executableFeature != null) {
 						//include the branded executable 
 						String brandedIU = productFile.getId() + "_root." + config.getWs() + '.' + config.getOs() + '.' + config.getArch(); //$NON-NLS-1$ 
-						P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, brandedIU, productRange, config.getPlatformFilter(), true);
+						P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, brandedIU, rangeString, config.getPlatformFilter(), true);
 
 						//include a CU for the branded exe
 						instructions = new String[4];
 						instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setLauncherName(name:" + productFile.getLauncherName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 						instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setLauncherName()"; //$NON-NLS-1$
-						P2InfUtils.printIU(buffer, index++, brandedIU, new Version(productFile.getVersion()), config.getPlatformFilter(), instructions);
+						P2InfUtils.printIU(buffer, index++, brandedIU, versionString, config.getPlatformFilter(), instructions);
 					}
 				}
 			}

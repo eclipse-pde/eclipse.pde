@@ -227,7 +227,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 	}
 
-	private String getReplacedProductVersion() {
+	protected String getReplacedProductVersion() {
 		String productVersion = productFile.getVersion();
 		if (productVersion.endsWith(PROPERTY_QUALIFIER)) {
 			Version version = new Version(productVersion);

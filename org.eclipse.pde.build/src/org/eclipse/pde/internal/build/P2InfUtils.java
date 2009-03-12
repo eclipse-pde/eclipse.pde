@@ -39,8 +39,8 @@ public class P2InfUtils {
 		if (filter != null)
 			buffer.append(prefix + "filter=" + filter + '\n'); //$NON-NLS-1$ 
 
-		printProvides(buffer, prefix, 1, NAMESPACE_IU, "@FLAVOR@" + name, version); //$NON-NLS-1$
-		printProvides(buffer, prefix, 2, NAMESPACE_FLAVOR, "@FLAVOR@", new Version("1.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
+		printProvides(buffer, prefix, 1, NAMESPACE_IU, "@FLAVOR@" + name, version.toString()); //$NON-NLS-1$
+		printProvides(buffer, prefix, 2, NAMESPACE_FLAVOR, "@FLAVOR@", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		printInstructions(buffer, prefix, instructions);
 
@@ -52,8 +52,11 @@ public class P2InfUtils {
 	}
 
 	public static void printIU(StringBuffer buffer, int i, String name, Version version, String filter, String[] instructions) {
-		VersionRange range = new VersionRange(version, true, version, true);
-		printRequires(buffer, null, i, NAMESPACE_IU, "@FLAVOR@" + name, range, filter, true); //$NON-NLS-1$
+		printIU(buffer, i, name, version.toString(), filter, instructions);
+	}
+
+	public static void printIU(StringBuffer buffer, int i, String name, String version, String filter, String[] instructions) {
+		printRequires(buffer, null, i, NAMESPACE_IU, "@FLAVOR@" + name, "[" + version + "," + version + "]", filter, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		String prefix = "units." + i + '.'; //$NON-NLS-1$
 
@@ -65,7 +68,7 @@ public class P2InfUtils {
 			buffer.append(prefix + "filter=" + filter + '\n'); //$NON-NLS-1$ 
 
 		printProvides(buffer, prefix, 1, NAMESPACE_IU, "@FLAVOR@" + name, version); //$NON-NLS-1$
-		printProvides(buffer, prefix, 2, NAMESPACE_FLAVOR, "@FLAVOR@", new Version("1.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
+		printProvides(buffer, prefix, 2, NAMESPACE_FLAVOR, "@FLAVOR@", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		buffer.append(prefix + "touchpoint.id=org.eclipse.equinox.p2.osgi\n"); //$NON-NLS-1$
 		buffer.append(prefix + "touchpoint.version=1.0.0\n"); //$NON-NLS-1$
@@ -84,6 +87,11 @@ public class P2InfUtils {
 	}
 
 	public static void printRequires(StringBuffer buffer, String prefix, int i, String namespace, String name, VersionRange range, String filter, boolean greedy) {
+		printRequires(buffer, prefix, i, namespace, name, range.toString(), filter, greedy);
+	}
+
+	public static void printRequires(StringBuffer buffer, String prefix, int i, String namespace, String name, String range, String filter, boolean greedy) {
+
 		if (prefix == null)
 			prefix = ""; //$NON-NLS-1$
 		buffer.append(prefix + "requires." + i + ".namespace=" + namespace + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -94,7 +102,7 @@ public class P2InfUtils {
 			buffer.append(prefix + "requires." + i + ".filter=" + filter + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public static void printProvides(StringBuffer buffer, String prefix, int i, String namespace, String name, Version version) {
+	public static void printProvides(StringBuffer buffer, String prefix, int i, String namespace, String name, String version) {
 		buffer.append(prefix + "provides." + i + ".namespace=" + namespace + '\n'); //$NON-NLS-1$ //$NON-NLS-2$ 
 		buffer.append(prefix + "provides." + i + ".name=" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$ 
 		buffer.append(prefix + "provides." + i + ".version=" + version + '\n'); //$NON-NLS-1$ //$NON-NLS-2$ 

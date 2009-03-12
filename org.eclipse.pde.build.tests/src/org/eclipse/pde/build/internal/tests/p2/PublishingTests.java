@@ -593,16 +593,17 @@ public class PublishingTests extends P2TestCase {
 		}
 		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString()); 
 		getIU(finalRepo, "a.jre.javase");
-		IInstallableUnit iu = getIU(finalRepo, "headless.product");
-		assertFalse(iu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
+		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
+		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
 		//check up to the date on the timestamp, don't worry about hours/mins
-		assertTrue(iu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8))); 
-		assertTouchpoint(iu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
+		assertTrue(productIu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8))); 
+		assertTouchpoint(productIu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
 		
 		getIU(finalRepo, "toolingorg.eclipse.equinox.common");
 		
-		iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
+		IInstallableUnit iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
 		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
+		assertEquals(iu.getVersion(), productIu.getVersion());
 	}
 
 	public void testBug265726() throws Exception {
