@@ -40,6 +40,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	public void generate() throws CoreException {
+		//make sure the script generator is initialized with the site before we try doing anything with it.
+		configScriptGenerator.setBuildSiteFactory(siteFactory);
+
 		try {
 			openScript(directory, getScriptName());
 			printProjectDeclaration();
