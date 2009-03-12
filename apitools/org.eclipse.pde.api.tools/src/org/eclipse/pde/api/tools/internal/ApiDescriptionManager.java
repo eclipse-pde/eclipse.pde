@@ -175,7 +175,19 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 		if (desc != null) {
 			desc.projectChanged();
 		}
-	}	
+	}
+
+	/**
+	 * Notifies the API description that the underlying project classpath has changed.
+	 * 
+	 * @param project
+	 */
+	synchronized void projectClasspathChanged(IJavaProject project) {
+		ProjectApiDescription desc = (ProjectApiDescription) fDescriptions.get(project);
+		if (desc != null) {
+			desc.projectClasspathChanged();
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
@@ -202,6 +214,12 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 							int flags = delta.getFlags();
 							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
 								clean(proj, false, true);
+							} else if((flags & (IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED
+									| IJavaElementDelta.F_CLASSPATH_CHANGED)) != 0) {
+								if (proj != null) {
+									projectClasspathChanged(proj);
+									return true;
+								}
 							} else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
 								if (proj != null) {
 									projectChanged(proj);
@@ -219,10 +237,23 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 					}
 					break;
 				}
-				case IJavaElement.PACKAGE_FRAGMENT :
-				case IJavaElement.PACKAGE_FRAGMENT_ROOT : {
+				case IJavaElement.PACKAGE_FRAGMENT : {
 					int flags = delta.getFlags();
 					if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
+						if (processJavaElementDeltas(delta.getAffectedChildren(), proj)) {
+							return true;
+						}
+					}
+					break;
+				}
+				case IJavaElement.PACKAGE_FRAGMENT_ROOT : {
+					int flags = delta.getFlags();
+					if ((flags & (IJavaElementDelta.F_ARCHIVE_CONTENT_CHANGED
+							| IJavaElementDelta.F_ADDED_TO_CLASSPATH
+							| IJavaElementDelta.F_REMOVED_FROM_CLASSPATH)) != 0) {
+						projectClasspathChanged(proj);
+						return true;
+					} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
 						if (processJavaElementDeltas(delta.getAffectedChildren(), proj)) {
 							return true;
 						}

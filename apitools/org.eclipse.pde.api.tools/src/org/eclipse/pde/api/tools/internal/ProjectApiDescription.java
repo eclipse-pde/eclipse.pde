@@ -699,7 +699,17 @@ public class ProjectApiDescription extends ApiDescription {
 	public synchronized void projectChanged() {
 		fInSynch = false;
 	}
-	
+
+	/**
+	 * Notes that the underlying project classpath has changed in some way and that the
+	 * description cache is no longer in synch with the project.
+	 */
+	public synchronized void projectClasspathChanged() {
+		fInSynch = false;
+		// we want to flush the packages cache to "reload" all packages using the new package fragment roots
+		fPackageTimeStamp = -1L;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#toString()
 	 */
