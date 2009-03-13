@@ -315,8 +315,6 @@ public class DeltaProcessor {
 						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS :
 						return RestrictionModifiers.isExtendRestriction(restrictions);
-					case IDelta.NON_FINAL_TO_FINAL :
-						return !Util.isVisible(delta.getNewModifiers()) || RestrictionModifiers.isOverrideRestriction(restrictions);
 				}
 				break;
 		}
@@ -362,7 +360,7 @@ public class DeltaProcessor {
 					case IDelta.TYPE_CONVERSION :
 						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS :
-						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						return true;
 				}
 				break;
 		}
