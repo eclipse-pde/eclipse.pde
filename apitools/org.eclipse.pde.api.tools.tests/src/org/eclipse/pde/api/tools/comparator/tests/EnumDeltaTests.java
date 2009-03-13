@@ -29,7 +29,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(EnumDeltaTests.class);
 //		TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
-//		suite.addTest(new EnumDeltaTests("test6"));
+//		suite.addTest(new EnumDeltaTests("test13"));
 //		return suite;
 	}
 
@@ -310,6 +310,28 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
 		assertEquals("Wrong flag", IDelta.ENUM_CONSTANT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Decrease access for an enum type
+	 */
+	public void test13() {
+		deployBundles("test13");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}

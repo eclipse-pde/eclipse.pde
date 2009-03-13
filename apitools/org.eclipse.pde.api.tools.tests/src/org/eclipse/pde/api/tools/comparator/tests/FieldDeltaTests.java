@@ -31,16 +31,16 @@ public class FieldDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(FieldDeltaTests.class);
 //		TestSuite suite = new TestSuite(FieldDeltaTests.class.getName());
-//		suite.addTest(new FieldDeltaTests("test6"));
+//		suite.addTest(new FieldDeltaTests("test75"));
 //		return suite;
 	}
 
-	public String getTestRoot() {
-		return "field";
-	}
-	
 	public FieldDeltaTests(String name) {
 		super(name);
+	}
+	
+	public String getTestRoot() {
+		return "field";
 	}
 	/**
 	 * Check change field type (interface)
@@ -62,179 +62,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-	}
-
-	/**
-	 * Check change field value (interface)
-	 */
-	public void test2() {
-		deployBundles("test2");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-	}
-	
-	/**
-	 * Check change field type (class)
-	 */
-	public void test3() {
-		deployBundles("test3");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
-		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
-	}
-
-	/**
-	 * Check change field value (class)
-	 */
-	public void test4() {
-		deployBundles("test4");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
-		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
-	}
-
-	/**
-	 * Check change field value (class) - no delta
-	 */
-	public void test5() {
-		deployBundles("test5");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		assertTrue("Not empty", delta.isEmpty());
-		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
-	}
-
-	/**
-	 * Check decrease field visibility - public to protected
-	 */
-	public void test6() {
-		deployBundles("test6");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-	}
-
-	/**
-	 * Check decrease field visibility - public to default
-	 */
-	public void test7() {
-		deployBundles("test7");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-	}
-	
-	/**
-	 * Check decrease field visibility - public to private
-	 */
-	public void test8() {
-		deployBundles("test8");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-	}
-
-	/**
-	 * Check increase field visibility - protected to public
-	 */
-	public void test9() {
-		deployBundles("test9");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
-		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
-		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -383,7 +210,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-
+	
 	/**
 	 * Check change field modifiers - static to non static
 	 */
@@ -449,7 +276,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-
+	
 	/**
 	 * Check change field modifiers - non transient to transient
 	 */
@@ -470,6 +297,28 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.NON_TRANSIENT_TO_TRANSIENT, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+
+	/**
+	 * Check change field value (interface)
+	 */
+	public void test2() {
+		deployBundles("test2");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -697,6 +546,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+
 	/**
 	 * Changed List&lt;Integer&gt; to List&lt;String&gt;
 	 */
@@ -718,6 +568,30 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
+
+	/**
+	 * Check change field type (class)
+	 */
+	public void test3() {
+		deployBundles("test3");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
+		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+
 	/**
 	 * Changed Map&lt;String, Integer&gt; to Map&lt;String, String&gt;
 	 */
@@ -761,6 +635,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 	}
+
 	/**
 	 * Changed List&lt;String&gt; to ArrayList&lt;String&gt;
 	 */
@@ -831,7 +706,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
-
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=218976
 	 */
@@ -855,7 +729,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=222905
 	 */
@@ -884,65 +757,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
-	
-	/**
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
-	 */
-	public void test71() {
-		deployBundles("test71");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
-		assertTrue("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
-		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertTrue("Is visible", Util.isVisible(child.getOldModifiers()));
-		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-	}
-	
-	/**
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
-	 */
-	public void test72() {
-		deployBundles("test72");
-		IApiBaseline before = getBeforeState();
-		IApiBaseline after = getAfterState();
-		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
-		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
-		assertNotNull("No delta", delta);
-		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length);
-		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
-		assertTrue("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertTrue("Should not be compatible", !DeltaProcessor.isCompatible(child));
-		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertTrue("Is visible", Util.isVisible(child.getOldModifiers()));
-		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
-	}
-	
+
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=222905
 	 */
@@ -965,8 +780,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
-
-
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=222905
 	 */
@@ -995,7 +808,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-	
+
 	/**
 	 * Remove compile-time constant
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=224994
@@ -1027,6 +840,29 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+
+	/**
+	 * Check change field value (class)
+	 */
+	public void test4() {
+		deployBundles("test4");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 
 	/**
@@ -1099,6 +935,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+	
 	/**
 	 * Added type arguments List&lt;String&gt;
 	 */
@@ -1120,6 +957,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+	
 	/**
 	 * Check change field modifiers - volatile to non volatile
 	 */
@@ -1141,7 +979,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-
+	
 	/**
 	 * Check change field modifiers - non volatile to volatile
 	 */
@@ -1163,6 +1001,8 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+
+
 	/**
 	 * Tag one existing field with @noreference
 	 */
@@ -1184,6 +1024,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
+	
 	/**
 	 * Adding a field with @noreference
 	 */
@@ -1200,6 +1041,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertTrue("Not empty", delta.isEmpty());
 		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
+
 	/**
 	 * Adding a field with @noreference
 	 */
@@ -1221,6 +1063,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+
 	/**
 	 * Removing @noreference on an existing field
 	 */
@@ -1257,6 +1100,23 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertNotNull("No delta", delta);
 		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
+	/**
+	 * Check change field value (class) - no delta
+	 */
+	public void test5() {
+		deployBundles("test5");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		assertTrue("Not empty", delta.isEmpty());
+		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+
 	/**
 	 * Removing field tagged as @noreference
 	 */
@@ -1341,7 +1201,6 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-
 	/**
 	 * Check change field type (class) for protected field inside class tagged as @noextend
 	 */
@@ -1468,6 +1327,28 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertTrue("Not @noreferece restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+
+	/**
+	 * Check decrease field visibility - public to protected
+	 */
+	public void test6() {
+		deployBundles("test6");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244995
@@ -1713,6 +1594,27 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 	/**
+	 * Check decrease field visibility - public to default
+	 */
+	public void test7() {
+		deployBundles("test7");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
 	 */
 	public void test70() {
@@ -1739,5 +1641,183 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
+	 */
+	public void test71() {
+		deployBundles("test71");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Is visible", Util.isVisible(child.getNewModifiers()));
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertTrue("Is visible", Util.isVisible(child.getOldModifiers()));
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=230189
+	 */
+	public void test72() {
+		deployBundles("test72");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertTrue("Is visible", Util.isVisible(child.getNewModifiers()));
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Should not be compatible", !DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertTrue("Is visible", Util.isVisible(child.getOldModifiers()));
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
+	 */
+	public void test73() {
+		deployBundles("test73");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
+	 */
+	public void test74() {
+		deployBundles("test74");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
+		assertTrue("Is visible", !Util.isVisible(child.getOldModifiers()));
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=244994
+	 */
+	public void test75() {
+		deployBundles("test75");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers()));
+		assertTrue("Is visible", !Util.isVisible(child.getOldModifiers()));
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Check decrease field visibility - public to private
+	 */
+	public void test8() {
+		deployBundles("test8");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Check increase field visibility - protected to public
+	 */
+	public void test9() {
+		deployBundles("test9");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 }
