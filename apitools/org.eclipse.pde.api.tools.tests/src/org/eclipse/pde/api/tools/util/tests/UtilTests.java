@@ -117,6 +117,13 @@ public class UtilTests extends TestCase {
 	}
 	
 	public void testSinceTagVersion() {
+		try {
+			new SinceTagVersion(null);
+			assertTrue("Should not reach there", false);
+		} catch (IllegalArgumentException e) {
+			// expected exception
+		}
+
 		SinceTagVersion sinceTagVersion = new SinceTagVersion(" org.eclipse.jdt.core 3.4. test plugin");
 		assertEquals("wrong version string", "3.4.", sinceTagVersion.getVersionString());
 		assertEquals("wrong prefix string", " org.eclipse.jdt.core ", sinceTagVersion.prefixString());
