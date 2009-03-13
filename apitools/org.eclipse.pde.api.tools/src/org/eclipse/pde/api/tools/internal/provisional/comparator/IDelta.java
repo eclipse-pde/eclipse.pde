@@ -960,11 +960,4 @@ public interface IDelta {
 	 * @return the component id in which the given delta is reported, or <code>null</code> if none
 	 */
 	public String getComponentVersionId();
-	
-	/**
-	 * Update component version id.
-	 * 
-	 * @param value the new component version ID
-	 */
-	public void setComponentVersionId(String value);
 }

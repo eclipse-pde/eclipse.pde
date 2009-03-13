@@ -356,8 +356,4 @@ public class Delta implements IDelta {
 		}
 		return String.valueOf(writer.getBuffer());
 	}
-
-	public void setComponentVersionId(String value) {
-		this.componentID = value;
-	}
 }
