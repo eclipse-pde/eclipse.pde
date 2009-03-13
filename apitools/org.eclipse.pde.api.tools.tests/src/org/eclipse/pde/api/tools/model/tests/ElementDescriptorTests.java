@@ -16,6 +16,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
@@ -47,6 +49,7 @@ public class ElementDescriptorTests extends TestCase {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("");
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("");
 		assertEquals("Default packages should be equal", pkg1, pkg2);
+		assertEquals("wrong value", "<default package>", String.valueOf(pkg1));
 	}
 	
 	/**
@@ -65,7 +68,8 @@ public class ElementDescriptorTests extends TestCase {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c");
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c");
 		assertEquals("a.b.c packages should be equal", pkg1, pkg2);
-	}	
+		assertEquals("wrong value", "a.b.c", String.valueOf(pkg1));
+	}
 	
 	/**
 	 * Tests equality of types in the default package
@@ -76,8 +80,8 @@ public class ElementDescriptorTests extends TestCase {
 		IReferenceTypeDescriptor type1 = pkg1.getType("A");
 		IReferenceTypeDescriptor type2 = pkg2.getType("A");
 		assertEquals("Types in default package should be equal", type1, type2);
-	}	
-	
+	}
+
 	/**
 	 * Tests equality of inner types in the default package
 	 */
@@ -288,5 +292,12 @@ public class ElementDescriptorTests extends TestCase {
 		assertEquals("Wrong signature", "Ljava.lang.Object;", type1.getSignature());
 	}
 	
+	public void testComponent() {
+		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent");
+		assertEquals("Wrong id", "com.mycomponent", descriptor.getId());
+		assertNull("Wrong value", descriptor.getPath());
+		assertEquals("Wrong id", "com.mycomponent", descriptor.toString());
+		assertEquals("Wrong element type", IElementDescriptor.COMPONENT, descriptor.getElementType());
+	}
 	
 }

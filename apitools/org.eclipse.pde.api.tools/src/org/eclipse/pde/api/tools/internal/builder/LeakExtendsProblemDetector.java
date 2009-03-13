@@ -96,16 +96,16 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 						}
 						IApiType nonApiSuper = type.getSuperclass();
 						// collect all visible methods in non-API types
-						Set methoods = new HashSet();
+						Set methods = new HashSet();
 						while (!isAPIType(nonApiSuper)) {
 							if (hasVisibleField(nonApiSuper, modifiers)) {
 								// a visible field in a non-API type is a definite leak
 								return true;
 							}
-							gatherVisibleMethods(nonApiSuper, methoods, modifiers);
+							gatherVisibleMethods(nonApiSuper, methods, modifiers);
 							nonApiSuper = nonApiSuper.getSuperclass();
 						}
-						if (methoods.size() > 0) {
+						if (methods.size() > 0) {
 							// check if the visible members are part of an API interface/class
 							List apiTypes = new LinkedList();
 							apiTypes.add(type);
@@ -115,13 +115,13 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 								IApiType t2 = (IApiType) iterator2.next();
 								Set apiMembers = new HashSet();
 								gatherVisibleMethods(t2, apiMembers, modifiers);
-								methoods.removeAll(apiMembers);
-								if (methoods.size() == 0) {
+								methods.removeAll(apiMembers);
+								if (methods.size() == 0) {
 									// there are no visible methods left that are not part of an API type/interface
 									return false;
 								}	
 							}
-							if (methoods.size() > 0) {
+							if (methods.size() > 0) {
 								// there are visible members that are not part of an API type/interface
 								return true;
 							}

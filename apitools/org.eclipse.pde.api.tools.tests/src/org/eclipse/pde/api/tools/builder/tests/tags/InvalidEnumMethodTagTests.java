@@ -268,4 +268,28 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
 				true);
 	}
+
+	public void testInvalidEnumMethodTag9I() {
+		x9(true);
+	}
+
+	public void testInvalidEnumMethodTag9F() {
+		x9(false);
+	}
+	
+	/**
+	 * Tests the unsupported @noimplement tag on private enum methods
+	 */
+	private void x9(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_private_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_private_enum_method}
+		});
+		deployTagTest("", 
+				"test9", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
 }

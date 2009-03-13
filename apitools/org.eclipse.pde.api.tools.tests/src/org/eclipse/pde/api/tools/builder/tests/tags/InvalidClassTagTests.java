@@ -213,11 +213,11 @@ public class InvalidClassTagTests extends TagTest {
 				true);
 	}
 		
-	public void testInvalidClassTag25I() {
+	public void testInvalidClassTag7I() {
 		x7(true);
 	}
 
-	public void testInvalidClassTag25F() {
+	public void testInvalidClassTag7F() {
 		x7(false);
 	}
 	
@@ -234,6 +234,28 @@ public class InvalidClassTagTests extends TagTest {
 		});
 		deployTagTest(TESTING_PACKAGE,
 				"test7", 
+				true, 
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+				true);
+	}
+	public void testInvalidClassTag8I() {
+		x8(true);
+	}
+
+	public void testInvalidClassTag8F() {
+		x8(false);
+	}
+	
+	/**
+	 * Test having an @noinstantiate tag on an abstract class
+	 */
+	private void x8(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@noinstantiate", BuilderMessages.TagValidator_an_abstract_class},
+		});
+		deployTagTest(TESTING_PACKAGE,
+				"test8", 
 				true, 
 				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
 				true);

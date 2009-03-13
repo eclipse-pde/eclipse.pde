@@ -813,7 +813,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			addProblem(tagProblems[i]);
 		}
 	}
-	
 	/**
 	 * Checks for illegal API usage in the specified component, creating problem
 	 * markers as required.
