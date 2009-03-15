@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -313,7 +313,7 @@ public class P2Utils {
 				String modelName = desc.getSymbolicName();
 				if (modelName != null && osgiStartLevels.containsKey(modelName)) {
 					bundleMap.put(currentModel, osgiStartLevels.get(modelName));
-				} else if ("org.eclipse.equinox.ds".equals(modelName)) { //$NON-NLS-1$
+				} else if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
 					bundleMap.put(currentModel, "1:true"); //$NON-NLS-1$ 
 				} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
 					bundleMap.put(currentModel, "1:true"); //$NON-NLS-1$
