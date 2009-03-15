@@ -12,15 +12,14 @@ package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.Arrays;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Constants;
 
-public class RegistryBrowserLabelProvider extends LabelProvider {
+public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 
 	private Image fPluginImage;
 	private Image fActivePluginImage;
@@ -209,107 +208,178 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 		return null;
 	}
 
-	public String getText(Object element) {
+	public void setText(ViewerCell cell) {
+		Object element = cell.getElement();
+
 		if (element instanceof Bundle) {
 			Bundle bundle = ((Bundle) element);
-			StringBuffer sb = new StringBuffer(bundle.getSymbolicName());
+
+			StyledString sb = new StyledString(bundle.getSymbolicName());
 			String version = bundle.getVersion();
-			if (version != null)
-				sb.append(" (").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (version != null) {
+				sb.append(" (", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ 
+				sb.append(version, StyledString.DECORATIONS_STYLER);
+				sb.append(")", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+			}
 			String host = bundle.getFragmentHost();
-			if (host != null)
-				sb.append("; ").append(host).append(PDERuntimeMessages.RegistryBrowserLabelProvider_fragment);// XXX NLSize //$NON-NLS-1$
-			return sb.toString();
+			if (host != null) {
+				sb.append(" [", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				sb.append(host, StyledString.QUALIFIER_STYLER);
+				sb.append("]", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+			}
+			cell.setText(sb.toString());
+			cell.setStyleRanges(sb.getStyleRanges());
+			return;
 		}
 
 		if (element instanceof ServiceRegistration) {
 			ServiceRegistration ref = (ServiceRegistration) element;
 			String identifier = " (id=" + ref.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
+			StyledString ss = new StyledString();
 			if (fRegistryBrowser.getGroupBy() == RegistryBrowser.BUNDLES) {
 				String[] classes = ref.getName().getClasses();
-				return Arrays.asList(classes).toString().concat(identifier);
+				ss.append(Arrays.asList(classes).toString());
+
+			} else {
+				ss.append(PDERuntimeMessages.RegistryBrowserLabelProvider_RegisteredBy);
+				ss.append(ref.getBundle());
 			}
 
-			return PDERuntimeMessages.RegistryBrowserLabelProvider_RegisteredBy + ref.getBundle().concat(identifier);
+			ss.append(identifier, StyledString.DECORATIONS_STYLER);
+
+			cell.setText(ss.getString());
+			cell.setStyleRanges(ss.getStyleRanges());
+			return;
 		}
 
 		if (element instanceof ServiceName) {
-			return Arrays.asList(((ServiceName) element).getClasses()).toString();
+			cell.setText(Arrays.asList(((ServiceName) element).getClasses()).toString());
+			return;
 		}
 
 		if (element instanceof Folder) {
+			String text = null;
 			switch (((Folder) element).getId()) {
 				case Folder.F_IMPORTS :
-					return PDERuntimeMessages.RegistryView_folders_imports;
+					text = PDERuntimeMessages.RegistryView_folders_imports;
+					break;
 				case Folder.F_LIBRARIES :
-					return PDERuntimeMessages.RegistryView_folders_libraries;
+					text = PDERuntimeMessages.RegistryView_folders_libraries;
+					break;
 				case Folder.F_EXTENSION_POINTS :
-					return PDERuntimeMessages.RegistryView_folders_extensionPoints;
+					text = PDERuntimeMessages.RegistryView_folders_extensionPoints;
+					break;
 				case Folder.F_EXTENSIONS :
-					return PDERuntimeMessages.RegistryView_folders_extensions;
+					text = PDERuntimeMessages.RegistryView_folders_extensions;
+					break;
 				case Folder.F_REGISTERED_SERVICES :
-					return PDERuntimeMessages.RegistryBrowserLabelProvider_registeredServices;
+					text = PDERuntimeMessages.RegistryBrowserLabelProvider_registeredServices;
+					break;
 				case Folder.F_SERVICES_IN_USE :
-					return PDERuntimeMessages.RegistryBrowserLabelProvider_usedServices;
+					text = PDERuntimeMessages.RegistryBrowserLabelProvider_usedServices;
+					break;
 				case Folder.F_PROPERTIES :
-					return PDERuntimeMessages.RegistryBrowserLabelProvider_Properties;
+					text = PDERuntimeMessages.RegistryBrowserLabelProvider_Properties;
+					break;
 				case Folder.F_USING_BUNDLES :
-					return PDERuntimeMessages.RegistryBrowserLabelProvider_UsingBundles;
+					text = PDERuntimeMessages.RegistryBrowserLabelProvider_UsingBundles;
+					break;
 				case Folder.F_FRAGMENTS :
-					return PDERuntimeMessages.RegistryBrowserLabelProvider_Fragments;
+					text = PDERuntimeMessages.RegistryBrowserLabelProvider_Fragments;
+					break;
+			}
+
+			if (text != null) {
+				cell.setText(text);
+				return;
 			}
 		}
 		if (element instanceof Extension) {
 			if (((RegistryBrowserContentProvider) fRegistryBrowser.getAdapter(IContentProvider.class)).isInExtensionSet) {
-				String name = ((Extension) element).getLabel();
-				String id = ((Extension) element).getExtensionPointUniqueIdentifier();
-				if (name != null && name.length() > 0)
-					return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_nameIdBind, id, name);
-				return id;
+				Extension extension = ((Extension) element);
+
+				StyledString ss = new StyledString(extension.getExtensionPointUniqueIdentifier());
+				String name = extension.getLabel();
+				if (name != null && name.length() > 0) {
+					ss.append("[ ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+					ss.append(name, StyledString.QUALIFIER_STYLER);
+					ss.append(']', StyledString.QUALIFIER_STYLER);
+				}
+
+				cell.setText(ss.getString());
+				cell.setStyleRanges(ss.getStyleRanges());
+				return;
 			}
 
 			String contributor = ((Extension) element).getNamespaceIdentifier();
-			return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor);
+			cell.setText(NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor));
+			return;
 
 		}
 		if (element instanceof ExtensionPoint) {
-			String id = ((ExtensionPoint) element).getUniqueIdentifier();
-			String name = ((ExtensionPoint) element).getLabel();
-			if (name != null && name.length() > 0)
-				return NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_nameIdBind, id, name);
-			return id;
+			ExtensionPoint extPoint = (ExtensionPoint) element;
+
+			StyledString ss = new StyledString(extPoint.getUniqueIdentifier());
+			String name = extPoint.getLabel();
+			if (name != null && name.length() > 0) {
+				ss.append(" [", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				ss.append(name, StyledString.QUALIFIER_STYLER);
+				ss.append(']', StyledString.QUALIFIER_STYLER);
+			}
+
+			cell.setText(ss.getString());
+			cell.setStyleRanges(ss.getStyleRanges());
+			return;
 		}
 		if (element instanceof BundlePrerequisite) {
 			BundlePrerequisite prereq = (BundlePrerequisite) element;
+
+			StyledString ss = new StyledString(prereq.getName());
+
 			String version = prereq.getVersion();
 			if (version != null) {
 				if (Character.isDigit(version.charAt(0)))
 					version = '(' + version + ')';
-				return prereq.getName() + ' ' + version;
+				ss.append(' ').append(version, StyledString.DECORATIONS_STYLER);
 			}
 
-			return prereq.getName();
+			cell.setText(ss.getString());
+			cell.setStyleRanges(ss.getStyleRanges());
+			return;
 		}
 
-		if (element instanceof BundleLibrary)
-			return ((BundleLibrary) element).getLibrary();
+		if (element instanceof BundleLibrary) {
+			cell.setText(((BundleLibrary) element).getLibrary());
+			return;
+		}
 
 		if (element instanceof ConfigurationElement) {
-			return ((ConfigurationElement) element).getName();
+			cell.setText(((ConfigurationElement) element).getName());
+			return;
 		}
 		if (element instanceof Attribute) {
 			Attribute attribute = (Attribute) element;
-			if (Attribute.F_BUNDLE.equals(attribute.getName()))
-				return attribute.getValue();
+			if (Attribute.F_BUNDLE.equals(attribute.getName())) {
+				cell.setText(attribute.getValue());
+				return;
+			}
 
-			return attribute.getName() + " = " + attribute.getValue(); //$NON-NLS-1$
+			cell.setText(attribute.getName() + " = " + attribute.getValue()); //$NON-NLS-1$
+			return;
 		}
 		if (element instanceof Property) {
 			Property property = (Property) element;
-			return property.getName() + " = " + property.getValue(); //$NON-NLS-1$
+			cell.setText(property.getName() + " = " + property.getValue()); //$NON-NLS-1$
+			return;
 		}
 
-		return super.getText(element);
+		cell.setText(element == null ? "" : element.toString()); //$NON-NLS-1$
+	}
+
+	public void update(ViewerCell cell) {
+		setText(cell);
+		cell.setImage(getImage(cell.getElement()));
+		super.update(cell);
 	}
 }

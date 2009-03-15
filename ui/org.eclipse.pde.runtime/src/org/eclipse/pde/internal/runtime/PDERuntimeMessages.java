@@ -45,8 +45,6 @@ public class PDERuntimeMessages extends NLS {
 	public static String MessageHelper_missing_imported_package;
 	public static String MessageHelper_missing_host;
 
-	public static String RegistryBrowserLabelProvider_nameIdBind;
-
 	public static String SpyDialog_title;
 	public static String SpyDialog_close;
 	public static String SpyDialog_activeShell_title;
