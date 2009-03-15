@@ -90,6 +90,7 @@ public class JARSigningTab {
 
 		fKeypassLabel = createLabel(comp, PDEUIMessages.JARSigningTab_keypass);
 		fKeypassText = createText(comp, 2);
+		fKeypassText.setEchoChar('*');
 
 		fAliasLabel = createLabel(comp, PDEUIMessages.AdvancedPluginExportPage_alias);
 		fAliasText = createText(comp, 2);
