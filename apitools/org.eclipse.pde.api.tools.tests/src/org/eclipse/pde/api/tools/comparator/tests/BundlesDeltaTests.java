@@ -546,21 +546,4 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
-	/**
-	 * Change minor version
-	 */
-	public void test15() {
-		deployBundle("test15", AFTER);
-		deployBundle("test15", BEFORE);
-		deployBundle("test15", BEFORE, "exportedbundle");
-		deployBundle("test15", AFTER, "exportedbundle");
-		IApiBaseline beforeState = getBeforeState();
-		IApiBaseline afterState = getAfterState();
-		IApiComponent apiComponent = afterState.getApiComponent(BUNDLE_NAME);
-		assertNotNull("No api component", apiComponent);
-		IApiComponent refApiComponent = beforeState.getApiComponent(BUNDLE_NAME);
-		assertNotNull("No api component", refApiComponent);
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false);
-		assertNotNull("No delta", delta);
-	}
 }
