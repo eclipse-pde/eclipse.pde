@@ -179,7 +179,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 	private void createTargetProfilesGroup(Composite container) {
 		Composite comp = SWTFactory.createComposite(container, 1, 1, GridData.FILL_BOTH, 0, 0);
-		((GridData) comp.getLayoutData()).widthHint = 500;
+		((GridData) comp.getLayoutData()).widthHint = 300;
 		SWTFactory.createWrapLabel(comp, PDEUIMessages.TargetPlatformPreferencePage2_0, 2);
 		SWTFactory.createVerticalSpacer(comp, 1);
 
