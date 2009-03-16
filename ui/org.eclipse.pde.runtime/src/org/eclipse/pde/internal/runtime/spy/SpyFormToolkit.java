@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,43 +14,21 @@ package org.eclipse.pde.internal.runtime.spy;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.help.IContext;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
-import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
-import org.eclipse.pde.internal.runtime.spy.dialogs.SpyDialog;
+import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.Bundle;
 
 /**
@@ -64,9 +42,9 @@ public class SpyFormToolkit extends FormToolkit {
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 
-		private SpyDialog dialog;
+		private PopupDialog dialog;
 
-		public SpyHyperlinkAdapter(SpyDialog dialog) {
+		public SpyHyperlinkAdapter(PopupDialog dialog) {
 			this.dialog = dialog;
 		}
 
@@ -126,10 +104,10 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	private Map bundleClassByName = new HashMap();
-	private SpyDialog dialog;
+	private PopupDialog dialog;
 	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 
-	public SpyFormToolkit(SpyDialog dialog) {
+	public SpyFormToolkit(PopupDialog dialog) {
 		super(Display.getDefault());
 		this.dialog = dialog;
 	}
