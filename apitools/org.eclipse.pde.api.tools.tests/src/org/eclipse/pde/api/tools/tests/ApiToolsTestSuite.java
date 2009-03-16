@@ -23,11 +23,14 @@ import org.eclipse.pde.api.tools.model.tests.ClassFileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.ComponentManifestTests;
 import org.eclipse.pde.api.tools.model.tests.ElementDescriptorTests;
 import org.eclipse.pde.api.tools.model.tests.TagScannerTests;
+import org.eclipse.pde.api.tools.problems.tests.ApiFilterTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemFactoryTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
 import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
 import org.eclipse.pde.api.tools.util.tests.HeadlessApiProfileManagerTests;
 import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
+import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
+import org.eclipse.pde.api.tools.util.tests.TarExceptionTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
 
 /**
@@ -60,11 +63,14 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(ApiTypeContainerTests.class));
 		addTest(new TestSuite(ClassFileScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));
-		addTest(new AllDeltaTests());
 		addTest(new TestSuite(ElementDescriptorTests.class));
 		addTest(new TestSuite(SearchScopeTests.class));
 		addTest(new TestSuite(ApiProblemTests.class));
 		addTest(new TestSuite(ApiProblemFactoryTests.class));
+		addTest(new TestSuite(ApiFilterTests.class));
+		addTest(new TestSuite(TarEntryTests.class));
+		addTest(new TestSuite(TarExceptionTests.class));
 		addTest(new TestSuite(OSGiLessAnalysisTests.class));
+		addTest(new AllDeltaTests());
 	}	
 }

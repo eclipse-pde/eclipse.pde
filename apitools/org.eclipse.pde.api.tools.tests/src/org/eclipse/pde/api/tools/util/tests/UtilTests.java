@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,19 @@ public class UtilTests extends TestCase {
 		assertTrue("The source location should be a directory", root.isDirectory());
 		File[] files = Util.getAllFiles(root, null);
 		assertTrue("There should be more than one file in the test source directory", files.length > 1);
+	}
+	
+	/**
+	 * Tests that passing an illegal argument when creating a new {@link SinceTagVersion} throws an exception
+	 */
+	public void testIllegalArgSinceTagVersion() {
+		try {
+			new SinceTagVersion(null);
+			fail("creating a since tag version with a null value should have thrown an exception");
+		}
+		catch(IllegalArgumentException iae) {
+			
+		}
 	}
 	
 	/**

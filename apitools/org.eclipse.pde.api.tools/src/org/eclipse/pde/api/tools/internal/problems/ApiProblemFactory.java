@@ -120,7 +120,7 @@ public class ApiProblemFactory {
 	}
 	
 	/**
-	 * Creates a new API profile {@link IApiProblem}
+	 * Creates a new API baseline {@link IApiProblem}
 	 * @param resourcepath the path to the resource this problem was found in
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
@@ -129,7 +129,7 @@ public class ApiProblemFactory {
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
-	public static IApiProblem newApiProfileProblem(String resourcepath, String[] argumentids, Object[] arguments, int element, int kind) {
+	public static IApiProblem newApiBaselineProblem(String resourcepath, String[] argumentids, Object[] arguments, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_API_BASELINE, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, null, null, argumentids, arguments, -1, -1, -1, id);
 	}
@@ -579,11 +579,12 @@ public class ApiProblemFactory {
 	 */
 	public static String getProblemSeverityId(IApiProblem problem) {
 		switch(problem.getCategory()) {
-			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 				switch(problem.getKind()) {
 					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
+				}
+				break;
 			}
-			break;
 			case IApiProblem.CATEGORY_API_BASELINE: {
 				switch(problem.getKind()) {
 					case IApiProblem.API_BASELINE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;

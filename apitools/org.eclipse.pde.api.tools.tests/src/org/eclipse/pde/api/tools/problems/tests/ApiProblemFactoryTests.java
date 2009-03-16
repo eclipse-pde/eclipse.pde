@@ -181,4 +181,96 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 				null, new String[] {"fooconstructor"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_CONSTRUCTOR_PARAMETER);
 		validateProblem(1, problem);
 	}
+	
+	/**
+	 * Tests the {@link ApiProblemFactory#newApiComponentResolutionProblem(String, String[], String[], Object[], int, int)} method
+	 */
+	public void testCreateComponentresolutionProblem() {
+		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem("", 
+				null, null, null, IElementDescriptor.COMPONENT, IApiProblem.API_COMPONENT_RESOLUTION);
+		assertNotNull("there should be a new problem created", problem);
+		validateProblem(0, problem);
+	}
+	
+	/**
+	 * Tests outliers of the {@link ApiProblemFactory#getProblemMessageId(int, int, int, int)} method
+	 */
+	public void testGetProblemMessageId() {
+		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_API_BASELINE, -1, -1, -1);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_VERSION, -1, -1, -1);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, -1, -1);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.ILLEGAL_IMPLEMENT, -1);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.ILLEGAL_EXTEND, -1);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.ILLEGAL_REFERENCE, -1);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.API_LEAK, -1);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, -1);
+		assertEquals("The returned id should be 36", 36, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, IApiProblem.METHOD);
+		assertEquals("The returned id should be 33", 33, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, IApiProblem.CONSTRUCTOR_METHOD);
+		assertEquals("The returned id should be 34", 34, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_USAGE, -1, IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, IApiProblem.FIELD);
+		assertEquals("The returned id should be 35", 35, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD);
+		assertEquals("The returned id should be 39", 39, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.ADDED, IDelta.METHOD);
+		assertEquals("The returned id should be 43", 43, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, -1, IDelta.ADDED, IDelta.ANNOTATION_DEFAULT_VALUE);
+		assertEquals("The returned id should be 18", 18, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, -1, IDelta.ADDED, 0);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, -1, IDelta.CHANGED, 0);
+		assertEquals("The returned id should be 0", 0, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, -1, IDelta.REMOVED, IDelta.TYPE_ARGUMENTS);
+		assertEquals("The returned id should be 103", 103, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION, -1, IApiProblem.API_COMPONENT_RESOLUTION, -1);
+		assertEquals("The returned id should be 99", 99, id);
+	}
+	
+	/**
+	 * Tests the {@link ApiProblemFactory#getProblemSeverityId(IApiProblem)}
+	 */
+	public void testGetProblemSeverityId() {
+		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem("", null, null, null, IElementDescriptor.COMPONENT, IApiProblem.API_COMPONENT_RESOLUTION);
+		assertEquals("the problem id should be: "+IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT, IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT, ApiProblemFactory.getProblemSeverityId(problem));
+		problem = ApiProblemFactory.newApiComponentResolutionProblem("", null, null, null, IElementDescriptor.COMPONENT, 0);
+		assertNull("the id must be null", ApiProblemFactory.getProblemSeverityId(problem));
+		problem = ApiProblemFactory.newApiBaselineProblem("", null, null, IElementDescriptor.RESOURCE, 0);
+		assertNull("the id must be null", ApiProblemFactory.getProblemSeverityId(problem));
+		problem = ApiProblemFactory.newApiSinceTagProblem("", null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, 0);
+		assertNull("the id must be null", ApiProblemFactory.getProblemSeverityId(problem));
+		problem = ApiProblemFactory.newApiUsageProblem(null, null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.API_LEAK);
+		assertNull("the id must be null", ApiProblemFactory.getProblemSeverityId(problem));
+		problem = ApiProblemFactory.newApiUsageProblem(null, null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES);
+		assertEquals("the problem id should be: "+IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiProblemFactory.getProblemSeverityId(problem));
+		problem = ApiProblemFactory.newApiUsageProblem(null, null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, 0);
+		assertNull("the id must be null", ApiProblemFactory.getProblemSeverityId(problem));
+	}
+	
+	/**
+	 * Tests the {@link ApiProblemFactory#getProblemKindFromPref(String)} method
+	 */
+	public void testGetProblemKindFromPref() {
+		int kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES);
+		assertEquals("the kind should be: "+IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, kind);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.UNUSED_PROBLEM_FILTERS);
+		assertEquals("the kind should be: "+IApiProblem.UNUSED_PROBLEM_FILTERS, IApiProblem.UNUSED_PROBLEM_FILTERS, kind);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.MISSING_SINCE_TAG);
+		assertEquals("the kind should be: "+IApiProblem.SINCE_TAG_MISSING, IApiProblem.SINCE_TAG_MISSING, kind);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.MALFORMED_SINCE_TAG);
+		assertEquals("the kind should be: "+IApiProblem.SINCE_TAG_MALFORMED, IApiProblem.SINCE_TAG_MALFORMED, kind);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.INVALID_SINCE_TAG_VERSION);
+		assertEquals("the kind should be: "+IApiProblem.SINCE_TAG_INVALID, IApiProblem.SINCE_TAG_INVALID, kind);
+		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
+		assertEquals("the kind should be: "+IApiProblem.API_COMPONENT_RESOLUTION, IApiProblem.API_COMPONENT_RESOLUTION, kind);
+		kind = ApiProblemFactory.getProblemKindFromPref("test");
+		assertEquals("the kind should be 0", 0, kind);
+	}
 }

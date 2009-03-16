@@ -53,14 +53,16 @@ public class TarEntry implements Cloneable {
 		this(name, -1);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	public Object clone() {
-		try {
-			return super.clone();
-		}
-		catch (CloneNotSupportedException e) {
-			// this shouldn't happen, since we are Cloneable
-			throw new IllegalStateException();
-		}
+		TarEntry entry = new TarEntry(this.name, this.filepos);
+		entry.setFileType(this.type);
+		entry.setMode(this.mode);
+		entry.setSize(this.size);
+		entry.setTime(this.time);
+		return entry;
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class TarEntry implements Cloneable {
 	/**
 	 * Returns the size of the file in bytes.
 	 * 
-	 * @return filesize
+	 * @return size
 	 */
 	public long getSize() {
 		return size;

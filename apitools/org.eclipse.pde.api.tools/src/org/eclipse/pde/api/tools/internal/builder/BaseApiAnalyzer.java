@@ -1799,7 +1799,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(DEBUG) {
 			System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
 		}
-		IApiProblem problem = ApiProblemFactory.newApiProfileProblem(
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(
 				Path.EMPTY.toPortableString(),
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
 				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)},
