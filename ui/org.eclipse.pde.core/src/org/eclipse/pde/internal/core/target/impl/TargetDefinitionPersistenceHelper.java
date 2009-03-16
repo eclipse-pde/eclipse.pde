@@ -332,6 +332,10 @@ public class TargetDefinitionPersistenceHelper {
 						bundleContainers.add(oldStylePrimaryContainer);
 					}
 					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, oldStylePrimaryContainer));
+					// It is possible to have an empty content section, in which case we should add the primary container, bug 268709
+					if (bundleContainers.isEmpty()) {
+						bundleContainers.add(oldStylePrimaryContainer);
+					}
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
 					for (int j = 0; j < envEntries.getLength(); ++j) {
