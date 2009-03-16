@@ -34,6 +34,7 @@ public class Product extends ProductObject implements IProduct {
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
+	private boolean fIncludeLaunchers;
 	private IWindowImages fWindowImages;
 	private ISplashInfo fSplashInfo;
 	private ILauncherInfo fLauncherInfo;
@@ -43,6 +44,7 @@ public class Product extends ProductObject implements IProduct {
 
 	public Product(IProductModel model) {
 		super(model);
+		fIncludeLaunchers = true;
 	}
 
 	/* (non-Javadoc)
@@ -163,6 +165,7 @@ public class Product extends ProductObject implements IProduct {
 		if (fVersion != null && fVersion.length() > 0)
 			writer.print(" " + P_VERSION + "=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.print(" " + P_INCLUDE_LAUNCHERS + "=\"" + Boolean.toString(fIncludeLaunchers) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 
 		if (fAboutInfo != null) {
@@ -262,6 +265,7 @@ public class Product extends ProductObject implements IProduct {
 		fProductId = null;
 		fName = null;
 		fUseFeatures = false;
+		fIncludeLaunchers = true;
 		fAboutInfo = null;
 		fPlugins.clear();
 		fPluginConfigurations.clear();
@@ -288,6 +292,8 @@ public class Product extends ProductObject implements IProduct {
 			fName = element.getAttribute(P_NAME);
 			fVersion = element.getAttribute(P_VERSION);
 			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
+			String launchers = element.getAttribute(P_INCLUDE_LAUNCHERS);
+			fIncludeLaunchers = ("true".equals(launchers) || launchers.length() == 0); //$NON-NLS-1$
 			NodeList children = node.getChildNodes();
 			IProductModelFactory factory = getModel().getFactory();
 			for (int i = 0; i < children.getLength(); i++) {
@@ -615,6 +621,17 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public IPluginConfiguration findPluginConfiguration(String id) {
 		return (IPluginConfiguration) fPluginConfigurations.get(id);
+	}
+
+	public boolean includeLaunchers() {
+		return fIncludeLaunchers;
+	}
+
+	public void setIncludeLaunchers(boolean include) {
+		boolean old = fIncludeLaunchers;
+		fIncludeLaunchers = include;
+		if (isEditable())
+			firePropertyChanged(P_INCLUDE_LAUNCHERS, Boolean.toString(old), Boolean.toString(fIncludeLaunchers));
 	}
 
 }

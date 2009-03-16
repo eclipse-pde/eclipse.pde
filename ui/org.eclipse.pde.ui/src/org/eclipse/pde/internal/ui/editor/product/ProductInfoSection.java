@@ -187,9 +187,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	}
 
 	private void createProductEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_prodIdLabel);
-
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_product);
+		label.setToolTipText(PDEUIMessages.ProductInfoSection_productTooltip);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fProductCombo = new ExtensionIdComboPart();
@@ -226,10 +225,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	}
 
 	private void createApplicationEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		createLabel(client, toolkit, ""); //$NON-NLS-1$
-		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_appLabel);
-
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_app, SWT.WRAP);
+		label.setToolTipText(PDEUIMessages.ProductInfoSection_appTooltip);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fAppCombo = new ExtensionIdComboPart();
@@ -249,8 +246,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	}
 
 	private void createConfigurationOption(Composite client, FormToolkit toolkit) {
-		createLabel(client, toolkit, ""); //$NON-NLS-1$
-
 		Composite comp = toolkit.createComposite(client);
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginWidth = layout.marginHeight = 0;
@@ -297,13 +292,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		gd.horizontalIndent = 25;
 		fFeatureButton.setLayoutData(gd);
 		fFeatureButton.setEnabled(isEditable());
-	}
-
-	private void createLabel(Composite client, FormToolkit toolkit, String text) {
-		Label label = toolkit.createLabel(client, text, SWT.WRAP);
-		GridData gd = new GridData();
-		gd.horizontalSpan = NUM_COLUMNS;
-		label.setLayoutData(gd);
 	}
 
 	private IProductModel getModel() {

@@ -17,7 +17,10 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
@@ -28,6 +31,7 @@ public class GeneralInfoSection extends PDESection {
 	private FormEntry fIdEntry;
 	private FormEntry fNameEntry;
 	private FormEntry fVersionEntry;
+	private Button fLaunchersButton;
 
 	private static int NUM_COLUMNS = 3;
 
@@ -56,6 +60,7 @@ public class GeneralInfoSection extends PDESection {
 		createIdEntry(client, toolkit, actionBars);
 		createVersionEntry(client, toolkit, actionBars);
 		createNameEntry(client, toolkit, actionBars);
+		createLaunchersOption(client, toolkit);
 
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
@@ -112,6 +117,19 @@ public class GeneralInfoSection extends PDESection {
 		fVersionEntry.setEditable(isEditable());
 	}
 
+	private void createLaunchersOption(Composite client, FormToolkit toolkit) {
+		fLaunchersButton = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_launchers, SWT.CHECK);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		fLaunchersButton.setLayoutData(data);
+		fLaunchersButton.setEnabled(isEditable());
+		fLaunchersButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getProduct().setIncludeLaunchers(fLaunchersButton.getSelection());
+			}
+		});
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
@@ -154,6 +172,7 @@ public class GeneralInfoSection extends PDESection {
 		if (product.getVersion() != null) {
 			fVersionEntry.setValue(product.getVersion(), true);
 		}
+		fLaunchersButton.setSelection(product.includeLaunchers());
 		super.refresh();
 	}
 
@@ -174,6 +193,8 @@ public class GeneralInfoSection extends PDESection {
 			fNameEntry.setValue(e.getNewValue().toString(), true);
 		} else if (prop.equals(IProduct.P_VERSION)) {
 			fVersionEntry.setValue(e.getNewValue().toString(), true);
+		} else if (prop.equals(IProduct.P_INCLUDE_LAUNCHERS)) {
+			fLaunchersButton.setSelection(Boolean.valueOf(e.getNewValue().toString()).booleanValue());
 		}
 	}
 

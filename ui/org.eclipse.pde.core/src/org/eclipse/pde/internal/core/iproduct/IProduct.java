@@ -21,6 +21,7 @@ public interface IProduct extends IProductObject {
 	String P_INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
 	String P_INTRO_ID = "introId"; //$NON-NLS-1$
 	String P_VERSION = "version"; //$NON-NLS-1$
+	String P_INCLUDE_LAUNCHERS = "includeLaunchers"; //$NON-NLS-1$
 
 	String getId();
 
@@ -35,6 +36,8 @@ public interface IProduct extends IProductObject {
 	String getDefiningPluginId();
 
 	boolean useFeatures();
+
+	boolean includeLaunchers();
 
 	IAboutInfo getAboutInfo();
 
@@ -103,6 +106,8 @@ public interface IProduct extends IProductObject {
 	void setLicenseInfo(ILicenseInfo info);
 
 	void setUseFeatures(boolean use);
+
+	void setIncludeLaunchers(boolean exclude);
 
 	void reset();
 

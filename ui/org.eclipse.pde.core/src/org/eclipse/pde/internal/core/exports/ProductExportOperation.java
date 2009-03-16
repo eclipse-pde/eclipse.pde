@@ -269,6 +269,10 @@ public class ProductExportOperation extends FeatureExportOperation {
 		HashMap properties = super.createAntBuildProperties(os, ws, arch);
 		properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, getLauncherName());
 
+		if (fProduct.includeLaunchers()) {
+			properties.put("excludeLaunchers", IBuildPropertiesConstants.TRUE); //$NON-NLS-1$
+		}
+
 		ILauncherInfo info = fProduct.getLauncherInfo();
 		if (info != null) {
 			String images = null;
