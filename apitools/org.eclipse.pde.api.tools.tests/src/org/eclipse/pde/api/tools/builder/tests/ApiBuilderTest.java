@@ -1233,9 +1233,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		FileInputStream stream = null;
 		try {
 			stream = new FileInputStream(replacement);
-			file.setContents(stream, false, true, null);
-		}
-		finally {
+			file.create(stream, true, null);
+		} finally {
 			if(stream != null) {
 				stream.close();
 			}
@@ -1258,7 +1257,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		FileInputStream stream = null;
 		try {
 			stream = new FileInputStream(replacement);
-			file.setContents(stream, false, true, null);
+			file.setContents(stream, true, false, null);
 		}
 		finally {
 			if(stream != null) {
