@@ -54,13 +54,13 @@ public class ClassFileComparator {
 	/**
 	 * Constant used for controlling tracing in the class file comparator
 	 */
-	private static boolean DEBUG = Util.DEBUG;
+	private static boolean Debug = Util.DEBUG;
 	
 	/**
 	 * Method used for initializing tracing in the class file comparator
 	 */
 	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
+		Debug = debugValue || Util.DEBUG;
 	}
 
 	private boolean isCheckedException(IApiBaseline profile, IApiComponent apiComponent, String exceptionName) {
@@ -83,7 +83,7 @@ public class ClassFileComparator {
 							superName);
 					if (result == null) {
 						// TODO should we report this failure ?
-						if (DEBUG) {
+						if (Debug) {
 							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 						break;
@@ -969,7 +969,7 @@ public class ClassFileComparator {
 			}
 		}
 		catch(CoreException e) {
-			if(DEBUG) {
+			if(Debug) {
 				reportStatus(e);
 			}
 		}
@@ -2840,7 +2840,7 @@ public class ClassFileComparator {
 				superName = superClass.getSuperclassName();
 			}
 		} catch (CoreException e) {
-			if(DEBUG) {
+			if(Debug) {
 				reportStatus(e);
 			}
 		}
@@ -3143,7 +3143,7 @@ public class ClassFileComparator {
 		IApiComponent[] components = profile.resolvePackage(component, packageName);
 		if (components == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getId()});
-			if (DEBUG) {
+			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
 			reportStatus(new Status(Status.ERROR, component.getId(), msg));
@@ -3152,7 +3152,7 @@ public class ClassFileComparator {
 		IApiTypeRoot result = Util.getClassFile(components, typeName); 
 		if (result == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getId()});
-			if (DEBUG) {
+			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
 			reportStatus(new Status(Status.ERROR, component.getId(), msg));
