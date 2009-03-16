@@ -165,7 +165,8 @@ public class GeneralInfoSection extends PDESection {
 		}
 
 		String prop = e.getChangedProperty();
-		if (prop == null)
+		Object[] objects = e.getChangedObjects();
+		if (prop == null || objects == null || !(objects[0] instanceof IProduct))
 			return;
 		if (prop.equals(IProduct.P_UID)) {
 			fIdEntry.setValue(e.getNewValue().toString(), true);
