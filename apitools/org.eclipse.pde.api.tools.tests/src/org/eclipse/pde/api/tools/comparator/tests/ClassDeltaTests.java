@@ -36,7 +36,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(ClassDeltaTests.class);
 //		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
-//		suite.addTest(new ClassDeltaTests("test141"));
+//		suite.addTest(new ClassDeltaTests("test154"));
 //		return suite;
 	}
 
@@ -3289,5 +3289,270 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Decrease access + @noextend (annotation)
+	 */
+	public void test143() {
+		deployBundles("test143");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertTrue("No @noextend restriction", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Decrease access + @noextend (interface)
+	 */
+	public void test144() {
+		deployBundles("test144");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertTrue("No @noextend restriction", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Decrease access + @noextend (interface)
+	 */
+	public void test145() {
+		deployBundles("test145");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertTrue("No @noextend restriction", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * non-abstract to abstract
+	 */
+	public void test146() {
+		deployBundles("test146");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.NON_ABSTRACT_TO_ABSTRACT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed protected field (@noextend class)
+	 */
+	public void test147() {
+		deployBundles("test147");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed protected field (@noextend class)
+	 */
+	public void test148() {
+		deployBundles("test148");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed private method (@noextend class)
+	 */
+	public void test149() {
+		deployBundles("test149");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed protected method (@noextend class)
+	 */
+	public void test150() {
+		deployBundles("test150");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed protected method (@noextend class)
+	 */
+	public void test151() {
+		deployBundles("test151");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed private method (@noextend class)
+	 */
+	public void test152() {
+		deployBundles("test152");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.TYPE_MEMBER, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed constant value from private field (@noextend class)
+	 */
+	public void test153() {
+		deployBundles("test153");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * removed constant value from protected field (@noextend class)
+	 */
+	public void test154() {
+		deployBundles("test154");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 2, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.CLINIT, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		child = allLeavesDeltas[1];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 }

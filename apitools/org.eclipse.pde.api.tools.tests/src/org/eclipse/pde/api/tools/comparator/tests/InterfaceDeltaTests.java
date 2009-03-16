@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -28,7 +29,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(InterfaceDeltaTests.class);
 //		TestSuite suite = new TestSuite(InterfaceDeltaTests.class.getName());
-//		suite.addTest(new InterfaceDeltaTests("test6"));
+//		suite.addTest(new InterfaceDeltaTests("test38"));
 //		return suite;
 	}
 
@@ -942,5 +943,24 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_UP, child.getFlags());
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	public void test38() {
+		deployBundles("test38");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertFalse(beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 }

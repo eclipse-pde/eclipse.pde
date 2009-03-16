@@ -163,10 +163,6 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	private void xAddFinalNoOverride(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoOverride.java");
 		// no problems expected since @nooverride
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
-		};
-		setExpectedProblemIds(ids);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -184,10 +180,6 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	private void xAddFinalRemoveNoOverride(boolean incremental) throws Exception {
 		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalRemoveNoOverride.java");
 		// no problems expected since @nooverride
-		int[] ids = new int[] {
-			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
-		};
-		setExpectedProblemIds(ids);
 		performCompatibilityTest(filePath, incremental);
 	}
 	
