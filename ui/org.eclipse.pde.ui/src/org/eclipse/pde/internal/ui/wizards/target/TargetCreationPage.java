@@ -152,8 +152,10 @@ public class TargetCreationPage extends WizardSelectionPage {
 				fTargets.add(name);
 			fTargetIds[i] = elements[i].getAttribute("id"); //$NON-NLS-1$
 		}
-		if (elements.length > 0)
+		if (elements.length > 0) {
 			fTargets.select(0);
+			setTargetId(fTargetIds[fTargets.getSelectionIndex()]);
+		}
 	}
 
 	protected int getInitializationOption() {
