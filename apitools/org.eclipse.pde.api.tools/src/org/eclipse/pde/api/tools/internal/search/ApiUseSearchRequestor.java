@@ -135,9 +135,6 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 					}
 				}
 			}
-			else {
-				System.out.println(reference.toString());
-			}
 		}
 		catch(CoreException ce) {
 			ApiPlugin.log(ce);
