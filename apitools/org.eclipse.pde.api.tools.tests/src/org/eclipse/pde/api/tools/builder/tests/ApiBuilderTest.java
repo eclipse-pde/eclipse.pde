@@ -1230,9 +1230,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		assertFalse("Workspace file should not exist: " + workspaceLocation.toString(), file.exists());
 		File replacement = replacementLocation.toFile();
 		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists());
-		FileInputStream stream = new FileInputStream(replacement);
-		file.create(stream, false, null);
-		stream.close();
+		FileInputStream stream = null;
+		try {
+			stream = new FileInputStream(replacement);
+			file.setContents(stream, false, true, null);
+		}
+		finally {
+			if(stream != null) {
+				stream.close();
+			}
+		}
 		getEnv().added(workspaceLocation);
 	}
 	
@@ -1248,9 +1255,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
 		File replacement = replacementLocation.toFile();
 		assertTrue("Replacement file does not exist: " + replacementLocation.toOSString(), replacement.exists());
-		FileInputStream stream = new FileInputStream(replacement);
-		file.setContents(stream, false, true, null);
-		stream.close();
+		FileInputStream stream = null;
+		try {
+			stream = new FileInputStream(replacement);
+			file.setContents(stream, false, true, null);
+		}
+		finally {
+			if(stream != null) {
+				stream.close();
+			}
+		}
 		getEnv().changed(workspaceLocation);
 	}
 	

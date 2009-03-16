@@ -74,7 +74,7 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 	 * 
 	 * @throws Exception if something bad happens or unexpected problems are detected
 	 */
-	public void testIncrementalAnnotCompat() throws Exception {
+	public void _testIncrementalAnnotCompat() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY, 
@@ -97,7 +97,7 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 	 * 
 	 * @throws Exception if something bad happens or unexpected problems are detected
 	 */
-	public void testIncrementalAnnotTags() throws Exception {
+	public void _testIncrementalAnnotTags() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_USAGE, 

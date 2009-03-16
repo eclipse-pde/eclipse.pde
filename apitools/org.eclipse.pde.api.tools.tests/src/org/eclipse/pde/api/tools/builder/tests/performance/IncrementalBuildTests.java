@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.performance;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -42,7 +47,58 @@ public class IncrementalBuildTests extends PerformanceTest {
 	public IncrementalBuildTests(String name) {
 		super(name);
 	}
+	
+	/**
+	 * @return all of the child test classes of this class
+	 */
+	private static Class[] getAllTestClasses() {
+		Class[] classes = new Class[] {
+			EnumIncrementalBuildTests.class,
+			AnnotationIncrementalBuildTests.class
+		};
+		return classes;
+	}
 
+	/**
+	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * @param suite
+	 */
+	private static void collectTests(TestSuite suite) {
+		// Hack to load all classes before computing their suite of test cases
+		// this allow to reset test cases subsets while running all Builder tests...
+		Class[] classes = getAllTestClasses();
+
+		// Reset forgotten subsets of tests
+		TestCase.TESTS_PREFIX = null;
+		TestCase.TESTS_NAMES = null;
+		TestCase.TESTS_NUMBERS = null;
+		TestCase.TESTS_RANGE = null;
+		TestCase.RUN_ONLY_ID = null;
+
+		/* tests */
+		for (int i = 0, length = classes.length; i < length; i++) {
+			Class clazz = classes[i];
+			Method suiteMethod;
+			try {
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				continue;
+			}
+			Object test;
+			try {
+				test = suiteMethod.invoke(null, new Object[0]);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				continue;
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				continue;
+			}
+			suite.addTest((Test) test);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getBaselineLocation()
 	 */
@@ -80,7 +136,9 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * @return the tests for this class
 	 */
 	public static Test suite() {
-		return buildTestSuite(IncrementalBuildTests.class);
+		TestSuite suite = (TestSuite) buildTestSuite(IncrementalBuildTests.class);
+		collectTests(suite);
+		return suite;
 	}
 	
 	/**

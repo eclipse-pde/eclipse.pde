@@ -102,7 +102,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	 * 
 	 * @throws Exception if something bad happens or unexpected problems are detected
 	 */
-	public void testIncrementalEnumCompat() throws Exception {
+	public void _testIncrementalEnumCompat() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY, 
@@ -124,7 +124,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	 * This test uses <code>java5.performance.api.TestEnum</code>
 	 * @throws Exception if something bad happens or unexpected problems are detected
 	 */
-	public void testIncremetalEnumLeak() throws Exception {
+	public void _testIncremetalEnumLeak() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_USAGE, 
@@ -146,7 +146,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	 * This test uses <code>java5.performance.api.TestEnum</code>
 	 * @throws Exception if something bad happens or unexpected problems are detected
 	 */
-	public void testIncrementalEnumUsage() throws Exception {
+	public void _testIncrementalEnumUsage() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_USAGE, 
@@ -169,7 +169,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 	 * 
 	 * @throws Exception if something bad happens or unexpected problems are detected
 	 */
-	public void testIncrementalEnumTags() throws Exception {
+	public void _testIncrementalEnumTags() throws Exception {
 		int[] problemids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_USAGE, 
