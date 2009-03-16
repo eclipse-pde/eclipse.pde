@@ -153,6 +153,13 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		assertNotNull("No delta", delta);
 		assertTrue("Not empty", delta.isEmpty());
 		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
+		try {
+			DeltaXmlVisitor xmlVisitor = new DeltaXmlVisitor();
+			delta.accept(xmlVisitor);
+			assertNotNull("No XML", xmlVisitor.getXML());
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
 	}
 
 	/**

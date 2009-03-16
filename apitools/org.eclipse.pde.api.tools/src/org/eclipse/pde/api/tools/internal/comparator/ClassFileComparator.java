@@ -101,8 +101,8 @@ public class ClassFileComparator {
 		return true;
 	}
 
-	private IApiBaseline apiProfile = null;
-	private IApiBaseline apiProfile2 = null;
+	private IApiBaseline apiBaseline1 = null;
+	private IApiBaseline apiBaseline2 = null;
 	
 	private IApiComponent component = null;
 	private IApiComponent component2 = null;
@@ -133,8 +133,8 @@ public class ClassFileComparator {
 		this.component2 = component2;
 		this.type1 = classFile.getStructure();
 		this.type2 = classFile2.getStructure();
-		this.apiProfile = apiState;
-		this.apiProfile2 = apiState2;
+		this.apiBaseline1 = apiState;
+		this.apiBaseline2 = apiState2;
 		this.visibilityModifiers = visibilityModifiers;
 	}
 
@@ -154,8 +154,8 @@ public class ClassFileComparator {
 		this.component2 = component2;
 		this.type1 = type;
 		this.type2 = classFile2.getStructure();
-		this.apiProfile = apiState;
-		this.apiProfile2 = apiState2;
+		this.apiBaseline1 = apiState;
+		this.apiBaseline2 = apiState2;
 		this.visibilityModifiers = visibilityModifiers;
 	}
 	private void addDelta(IDelta delta) {
@@ -394,7 +394,7 @@ public class ClassFileComparator {
 					for (Iterator iterator = names2.iterator(); iterator.hasNext();) {
 						String interfaceName = (String) iterator.next();
 						try {
-							IApiTypeRoot interfaceClassFile = getType(interfaceName, this.component2, this.apiProfile2);
+							IApiTypeRoot interfaceClassFile = getType(interfaceName, this.component2, this.apiBaseline2);
 							if (interfaceClassFile == null) continue;
 							IApiType type = interfaceClassFile.getStructure();
 							IApiMethod[] methods = type.getMethods();
@@ -561,7 +561,7 @@ public class ClassFileComparator {
 							}
 						}
 						IApiTypeRoot memberType2 = this.component2.findTypeRoot(typeMember.getName());
-						ClassFileComparator comparator = new ClassFileComparator(typeMember, memberType2, this.component, this.component2, this.apiProfile, this.apiProfile2, this.visibilityModifiers);
+						ClassFileComparator comparator = new ClassFileComparator(typeMember, memberType2, this.component, this.component2, this.apiBaseline1, this.apiBaseline2, this.visibilityModifiers);
 						IDelta delta2 = comparator.getDelta();
 						if (delta2 != null && delta2 != ApiComparator.NO_DELTA) {
 							this.addDelta(delta2);
@@ -2343,7 +2343,7 @@ public class ClassFileComparator {
 				// check all exception in method descriptor to see if they are checked or unchecked exceptions
 				loop: for (Iterator iterator = list1.iterator(); iterator.hasNext(); ) {
 					String exceptionName = ((String) iterator.next()).replace('/', '.');
-					if (isCheckedException(this.apiProfile, this.component, exceptionName)) {
+					if (isCheckedException(this.apiBaseline1, this.component, exceptionName)) {
 						// report delta - removal of checked exception
 						// TODO should we continue the loop for all remaining exceptions
 						this.addDelta(
@@ -2385,7 +2385,7 @@ public class ClassFileComparator {
 				if (removedExceptions.size() != 0) {
 					loop: for (Iterator iterator = removedExceptions.iterator(); iterator.hasNext(); ) {
 						String exceptionName = ((String) iterator.next()).replace('/', '.');
-						if (isCheckedException(this.apiProfile, this.component, exceptionName)) {
+						if (isCheckedException(this.apiBaseline1, this.component, exceptionName)) {
 							// report delta - removal of checked exception
 							// TODO should we continue the loop for all remaining exceptions
 							this.addDelta(
@@ -2416,7 +2416,7 @@ public class ClassFileComparator {
 				}
 				loop: for (Iterator iterator = list2.iterator(); iterator.hasNext(); ) {
 					String exceptionName = ((String) iterator.next()).replace('/', '.');
-					if (isCheckedException(this.apiProfile2, this.component2, exceptionName)) {
+					if (isCheckedException(this.apiBaseline2, this.component2, exceptionName)) {
 						// report delta - addition of checked exception
 						// TODO should we continue the loop for all remaining exceptions
 						this.addDelta(
@@ -2449,7 +2449,7 @@ public class ClassFileComparator {
 			// check all exception in method descriptor to see if they are checked or unchecked exceptions
 			loop: for (Iterator iterator = list2.iterator(); iterator.hasNext(); ) {
 				String exceptionName = ((String) iterator.next()).replace('/', '.');
-				if (isCheckedException(this.apiProfile2, this.component2, exceptionName)) {
+				if (isCheckedException(this.apiBaseline2, this.component2, exceptionName)) {
 					// report delta - addition of checked exception
 					this.addDelta(
 							getElementType(method),
