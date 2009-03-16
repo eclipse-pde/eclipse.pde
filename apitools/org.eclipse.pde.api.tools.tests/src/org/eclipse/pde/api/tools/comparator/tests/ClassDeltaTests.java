@@ -36,7 +36,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(ClassDeltaTests.class);
 //		TestSuite suite = new TestSuite(ClassDeltaTests.class.getName());
-//		suite.addTest(new ClassDeltaTests("test6"));
+//		suite.addTest(new ClassDeltaTests("test141"));
 //		return suite;
 	}
 
@@ -3251,5 +3251,43 @@ public class ClassDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
 		assertNotNull("No delta", delta);
 		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+	public void test140() {
+		deployBundles("test140");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertFalse(beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	public void test141() {
+		deployBundles("test141");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		assertFalse(beforeApiComponent.hasApiDescription());
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}
 }
