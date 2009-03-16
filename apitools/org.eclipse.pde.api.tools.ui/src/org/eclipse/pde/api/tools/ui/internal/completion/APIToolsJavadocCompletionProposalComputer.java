@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -35,8 +34,10 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer;
 import org.eclipse.jdt.ui.text.java.JavaContentAssistInvocationContext;
@@ -66,6 +67,9 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	private ASTParser fParser = null;
 	private HashSet fExistingTags = null;
 	
+	/**
+	 * Collects all of the existing API Tools Javadoc tags form a given Javadoc node
+	 */
 	class TagCollector extends ASTVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Javadoc)
@@ -73,6 +77,9 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		public boolean visit(Javadoc node) {
 			Set tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
 			List tags = node.tags();
+			if(fExistingTags == null) {
+				fExistingTags = new HashSet(tags.size());
+			}
 			TagElement tag = null;
 			String name = null;
 			for(Iterator iter = tags.iterator(); iter.hasNext();) {
@@ -111,14 +118,12 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		}
 		ICompilationUnit cunit = jcontext.getCompilationUnit();
 		if(cunit != null) {
-			ArrayList list = new ArrayList();
 			try {
 				int offset = jcontext.getInvocationOffset();
 				IJavaElement element = cunit.getElementAt(offset);
 				if (element == null) {
 					return Collections.EMPTY_LIST;
 				}
-				collectExistingTags(element, jcontext);
 				ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(
 						org.eclipse.jdt.core.CompletionProposal.create(org.eclipse.jdt.core.CompletionProposal.JAVADOC_BLOCK_TAG, 
 						offset));
@@ -149,19 +154,29 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					}
 				}
 				IApiJavadocTag[] tags = ApiPlugin.getJavadocTagManager().getTagsForType(type, member);
-				String completiontext = null;
-				int tokenstart = corecontext.getTokenStart();
-				int length = offset - tokenstart;
-				for(int i = 0; i < tags.length; i++) {
-					if(!acceptTag(tags[i], element)) {
-						continue;
+				int tagcount = tags.length;
+				if(tagcount > 0) {
+					ArrayList list = null;
+					collectExistingTags(element, jcontext);
+					String completiontext = null;
+					int tokenstart = corecontext.getTokenStart();
+					int length = offset - tokenstart;
+					for(int i = 0; i < tagcount; i++) {
+						if(!acceptTag(tags[i], element)) {
+							continue;
+						}
+						completiontext = tags[i].getCompleteTag(type, member);
+						if(appliesToContext(jcontext.getDocument(), completiontext, tokenstart, (length > 0 ? length : 1))) {
+							if(list == null) {
+								list = new ArrayList(tagcount-i);
+							}
+							list.add(new APIToolsJavadocCompletionProposal(corecontext, completiontext, tags[i].getTagName(), fImageHandle));
+						}
 					}
-					completiontext = tags[i].getCompleteTag(type, member);
-					if(appliesToContext(jcontext.getDocument(), completiontext, tokenstart, (length > 0 ? length : 1))) {
-						list.add(new APIToolsJavadocCompletionProposal(corecontext, completiontext, tags[i].getTagName(), fImageHandle));
+					if(list != null) {
+						return list;
 					}
 				}
-				return list;
 			} 
 			catch (JavaModelException e) {
 				fErrorMessage = e.getMessage();
@@ -243,21 +258,33 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	private void collectExistingTags(IJavaElement element, JavaContentAssistInvocationContext jcontext) throws JavaModelException {
 		if(element instanceof IMember) {
 			IMember member = (IMember) element;
-			ISourceRange range = member.getSourceRange();
 			ICompilationUnit cunit = jcontext.getCompilationUnit();
 			if(cunit != null) {
 				if(cunit.isWorkingCopy()) {
 					cunit.reconcile(ICompilationUnit.NO_AST, false, false, null, null);
 				}
 				fParser.setSource(member.getSource().toCharArray());
-				fParser.setFocalPosition(range.getOffset());
 				fParser.setKind(ASTParser.K_CLASS_BODY_DECLARATIONS);
 				Map options = element.getJavaProject().getOptions(true);
 				options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 				fParser.setCompilerOptions(options);
+				fParser.setStatementsRecovery(false);
+				fParser.setResolveBindings(false);
+				fParser.setBindingsRecovery(false);
 				ASTNode ast = fParser.createAST(null);
 				TagCollector collector = new TagCollector();
-				ast.accept(collector);
+				if (ast.getNodeType() == ASTNode.TYPE_DECLARATION) {
+					TypeDeclaration typeDeclaration = (TypeDeclaration) ast;
+					List bodyDeclarations = typeDeclaration.bodyDeclarations();
+					if (bodyDeclarations.size() == 1) {
+						// only one element should be there as we are parsing a specific member
+						BodyDeclaration bodyDeclaration = (BodyDeclaration) bodyDeclarations.iterator().next();
+						Javadoc javadoc = bodyDeclaration.getJavadoc();
+						if (javadoc != null) {
+							javadoc.accept(collector);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -317,7 +344,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 */
 	public void sessionStarted() {
 		fParser = ASTParser.newParser(AST.JLS3);
-		fExistingTags = new HashSet(8);
 		fErrorMessage = null;
 	}
 
