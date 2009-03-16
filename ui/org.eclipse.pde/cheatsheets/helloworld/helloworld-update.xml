@@ -91,7 +91,7 @@
       </description>
       <subitem label="Select the &quot;Site Map&quot; tab from the site editor" 
                skip="false"/>  
-      <subitem label="Click the &quot;New Category;&quot; button" 
+      <subitem label="Click the &quot;New Category&quot; button" 
                skip="false"/>  
       <subitem label="Input &quot;Hello World!&quot; into the &quot;Name&quot; text box" 
                skip="false"/>
