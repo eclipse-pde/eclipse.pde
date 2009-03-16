@@ -452,7 +452,6 @@ public class ApiProblemFactory {
 							case IDelta.ANNOTATION_ELEMENT_TYPE: {
 								switch(flags) {
 									case IDelta.FIELD: return 39;
-									case IDelta.METHOD: return 43;
 								}
 								break;
 							}
@@ -472,7 +471,6 @@ public class ApiProblemFactory {
 							}
 						}
 						switch(flags) {
-							case IDelta.ANNOTATION_DEFAULT_VALUE: return 18;
 							case IDelta.CLASS_BOUND: return 21;
 							case IDelta.CONSTRUCTOR: return 23;
 							case IDelta.INTERFACE_BOUND: return 26;

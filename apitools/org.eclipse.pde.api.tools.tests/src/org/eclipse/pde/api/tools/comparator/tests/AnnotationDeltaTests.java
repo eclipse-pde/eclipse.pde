@@ -27,7 +27,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(AnnotationDeltaTests.class);
 //		TestSuite suite = new TestSuite(AnnotationDeltaTests.class.getName());
-//		suite.addTest(new AnnotationDeltaTests("test6"));
+//		suite.addTest(new AnnotationDeltaTests("test9"));
 //		return suite;
 	}
 
@@ -375,6 +375,28 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
 		assertEquals("Wrong flag", IDelta.METHOD_WITHOUT_DEFAULT_VALUE, child.getFlags());
+		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+
+	/**
+	 * Add a field
+	 */
+	public void test9() {
+		deployBundles("test9");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
 		assertEquals("Wrong element type", IDelta.ANNOTATION_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 	}

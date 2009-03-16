@@ -29,10 +29,10 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class MethodDeltaTests extends DeltaTestSetup {
 	
 	public static Test suite() {
-//		return new TestSuite(MethodDeltaTests.class);
-		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-		suite.addTest(new MethodDeltaTests("test26"));
-		return suite;
+		return new TestSuite(MethodDeltaTests.class);
+//		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
+//		suite.addTest(new MethodDeltaTests("test43"));
+//		return suite;
 	}
 
 	public MethodDeltaTests(String name) {
