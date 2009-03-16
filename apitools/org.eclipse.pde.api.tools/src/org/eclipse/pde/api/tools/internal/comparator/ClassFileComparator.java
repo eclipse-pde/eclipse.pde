@@ -68,6 +68,9 @@ public class ClassFileComparator {
 			return true;
 		}
 		try {
+			if (Util.isJavaLangRuntimeException(exceptionName)) {
+				return false;
+			}
 			String packageName = Signatures.getPackageName(exceptionName);
 			IApiTypeRoot result = Util.getClassFile(
 					profile.resolvePackage(apiComponent, packageName),
@@ -3081,7 +3084,7 @@ public class ClassFileComparator {
 							this.type1,
 							getKeyForMethod(method, type),
 							new String[] {Util.getDescriptorName(type), methodDisplayName });
-			} else {
+				} else {
 					this.addDelta(
 							getElementType(type),
 							IDelta.ADDED,

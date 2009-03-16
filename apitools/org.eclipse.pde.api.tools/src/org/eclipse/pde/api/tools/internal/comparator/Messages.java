@@ -161,8 +161,6 @@ public class Messages extends NLS {
 								return 16;
 							case IDelta.TYPE_PARAMETERS :
 								return 17;
-							case IDelta.TYPE_ARGUMENTS :
-								return 18;
 							case IDelta.METHOD_MOVED_DOWN :
 								return 97;
 							case IDelta.RESTRICTIONS :
@@ -198,7 +196,7 @@ public class Messages extends NLS {
 								return 27;
 							case IDelta.FIELD :
 							case IDelta.API_FIELD :
-								if (Flags.isProtected(delta.getNewModifiers())) {
+								if (Flags.isProtected(delta.getOldModifiers())) {
 									return 28;
 								}
 								return 29;
@@ -206,12 +204,12 @@ public class Messages extends NLS {
 								return 30;
 							case IDelta.METHOD :
 							case IDelta.API_METHOD :
-								if (Flags.isProtected(delta.getNewModifiers())) {
+								if (Flags.isProtected(delta.getOldModifiers())) {
 									return 31;
 								}
 								return 32;
 							case IDelta.TYPE_MEMBER :
-								if (Flags.isProtected(delta.getNewModifiers())) {
+								if (Flags.isProtected(delta.getOldModifiers())) {
 									return 33;
 								}
 								return 34;
@@ -321,8 +319,6 @@ public class Messages extends NLS {
 								return 57;
 							case IDelta.TYPE_PARAMETERS :
 								return 58;
-							case IDelta.TYPE_ARGUMENTS :
-								return 18;
 							case IDelta.METHOD_MOVED_DOWN :
 								return 97;
 							case IDelta.SUPER_INTERFACE_WITH_METHODS :
@@ -427,8 +423,6 @@ public class Messages extends NLS {
 						switch(delta.getFlags()) {
 							case IDelta.ARRAY_TO_VARARGS :
 								return 87;
-							case IDelta.FINAL_TO_NON_FINAL :
-								return 88;
 							case IDelta.INCREASE_ACCESS :
 								return 89;
 							case IDelta.DECREASE_ACCESS :

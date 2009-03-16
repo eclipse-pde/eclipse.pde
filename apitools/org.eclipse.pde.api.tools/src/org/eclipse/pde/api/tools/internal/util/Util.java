@@ -696,6 +696,7 @@ public final class Util {
 			case IDelta.SUPER_INTERFACE_WITH_METHODS : return "SUPER_INTERFACE_WITH_METHODS"; //$NON-NLS-1$
 			case IDelta.REEXPORTED_API_TYPE : return "REEXPORTED_API_TYPE"; //$NON-NLS-1$
 			case IDelta.REEXPORTED_TYPE : return "REEXPORTED_TYPE"; //$NON-NLS-1$
+			case IDelta.METHOD_MOVED_DOWN : return "METHOD_MOVED_DOWN"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}
