@@ -455,9 +455,22 @@ public class PluginModelManager implements IModelProviderListener {
 						// restore settings from preferences
 						ITargetDefinition def = ts.newDefaultTargetDefinition();
 						if (curr.isContentEquivalent(def)) {
+							// Target is equivalent to the default settings, just add it as active
 							curr.setName(Messages.TargetPlatformService_7);
 						} else {
+							// Custom target settings, add as new target platform and add default as well
 							curr.setName(PDECoreMessages.PluginModelManager_0);
+
+							boolean defaultExists = false;
+							for (int i = 0; i < targets.length; i++) {
+								if (((TargetDefinition) def).isContentEquivalent(targets[i].getTargetDefinition())) {
+									defaultExists = true;
+									break;
+								}
+							}
+							if (!defaultExists) {
+								ts.saveTargetDefinition(def);
+							}
 						}
 						ts.saveTargetDefinition(curr);
 						wsHandle = curr.getHandle();

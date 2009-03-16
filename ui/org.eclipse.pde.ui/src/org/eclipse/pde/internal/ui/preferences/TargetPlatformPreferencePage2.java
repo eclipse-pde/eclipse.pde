@@ -81,12 +81,12 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			StyledString styledString = new StyledString(name, style);
 			if (targetHandle instanceof WorkspaceFileTargetHandle) {
 				IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
-				String location = " [" + file.getFullPath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+				String location = " - " + file.getFullPath(); //$NON-NLS-1$
 				styledString.append(location, StyledString.DECORATIONS_STYLER);
 			} else {
 				String location = (String) cell.getItem().getData(DATA_KEY_MOVED_LOCATION);
 				if (location != null) {
-					location = " [" + location + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+					location = " - " + location; //$NON-NLS-1$
 					styledString = new StyledString(name, style);
 					styledString.append(location, StyledString.QUALIFIER_STYLER);
 				}
@@ -179,7 +179,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 	private void createTargetProfilesGroup(Composite container) {
 		Composite comp = SWTFactory.createComposite(container, 1, 1, GridData.FILL_BOTH, 0, 0);
-		((GridData) comp.getLayoutData()).widthHint = 300;
+		((GridData) comp.getLayoutData()).widthHint = 350;
 		SWTFactory.createWrapLabel(comp, PDEUIMessages.TargetPlatformPreferencePage2_0, 2);
 		SWTFactory.createVerticalSpacer(comp, 1);
 
