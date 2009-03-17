@@ -43,6 +43,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -50,14 +52,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.osgi.framework.Constants;
 
 public class DSFileWizardPage extends WizardNewFileCreationPage {
@@ -76,7 +77,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	private Label fDSComponentNameLabel;
 
 	private Text fDSImplementationClassText;
-	private Hyperlink fDSImplementationClassHyperlink;
+	private Link fDSImplementationClassHyperlink;
 	private Button fDSImplementationClassButton;
 
 	private IStructuredSelection fSelection;
@@ -174,16 +175,14 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		});
 		setComponentName();
 
-		fDSImplementationClassHyperlink = new Hyperlink(fGroup, SWT.NONE);
-		fDSImplementationClassHyperlink
-				.setText(Messages.DSFileWizardPage_implementation_class);
-		fDSImplementationClassHyperlink.setUnderlined(true);
+		fDSImplementationClassHyperlink = new Link(fGroup, SWT.NONE);
+		fDSImplementationClassHyperlink.setText("<a>" //$NON-NLS-1$
+				+ Messages.DSFileWizardPage_implementation_class + "</a>"); //$NON-NLS-1$
 		fDSImplementationClassHyperlink.setForeground(Display.getDefault()
 				.getSystemColor(SWT.COLOR_BLUE));
 		fDSImplementationClassHyperlink
-				.addHyperlinkListener(new IHyperlinkListener() {
-
-			public void linkActivated(HyperlinkEvent e) {
+				.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
 						String value = fDSImplementationClassText.getText();
 						value = handleLinkActivated(value, false);
 						if (value != null)
