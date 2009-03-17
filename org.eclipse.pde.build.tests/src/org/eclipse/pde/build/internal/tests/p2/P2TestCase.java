@@ -122,6 +122,16 @@ public class P2TestCase extends PDETestCase {
 		return unit;
 	}
 
+	public void assertManagerDoesntContain(URI repo){
+		if (metadataManager == null)
+			initialize();
+		assertFalse(metadataManager.contains(repo));
+		
+		if (artifactManager == null)
+			initialize();
+		assertFalse(artifactManager.contains(repo));
+	}
+	
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
 		ITouchpointData[] data = iu.getTouchpointData();
 		for (int i = 0; i < data.length; i++) {

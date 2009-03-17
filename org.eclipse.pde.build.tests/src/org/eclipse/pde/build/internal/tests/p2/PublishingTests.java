@@ -828,7 +828,9 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
-		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
+		URI repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
+		assertManagerDoesntContain(repoURI); //bug 268867
+		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 		IInstallableUnit iu = getIU(metadata, "rcp.product");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
 		
