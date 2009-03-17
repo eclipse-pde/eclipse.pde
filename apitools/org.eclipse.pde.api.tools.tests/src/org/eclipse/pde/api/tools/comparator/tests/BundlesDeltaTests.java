@@ -546,4 +546,32 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
+	
+	/**
+	 * Test if diff is returned using org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator.compare(IApiComponent, IApiBaseline, int, boolean)
+	 */
+	public void test15() {
+		deployBundles("test15");
+		IApiBaseline beforeState = getBeforeState();
+		IApiBaseline afterState = getAfterState();
+		IApiComponent component = afterState.getApiComponent("deltatest");
+
+		IDelta delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.API, false);
+		assertNotNull("No delta", delta);
+		assertFalse("Equals to NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
+
+	/**
+	 * Test if diff is returned using org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator.compare(IApiComponent, IApiBaseline, int, boolean)
+	 */
+	public void test16() {
+		deployBundles("test16");
+		IApiBaseline beforeState = getBeforeState();
+		IApiBaseline afterState = getAfterState();
+		IApiComponent component = afterState.getApiComponent("deltatest");
+
+		IDelta delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.API, true);
+		assertNotNull("No delta", delta);
+		assertFalse("Equals to NO_DELTA", delta == ApiComparator.NO_DELTA);
+	}
 }

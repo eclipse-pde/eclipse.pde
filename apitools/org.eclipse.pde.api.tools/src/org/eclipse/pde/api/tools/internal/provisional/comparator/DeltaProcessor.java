@@ -138,9 +138,6 @@ public class DeltaProcessor {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
-					case IDelta.METHOD :
-						return RestrictionModifiers.isImplementRestriction(delta.getRestrictions()) &&
-								RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
 					case IDelta.TYPE_PARAMETER :
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 						return false;
@@ -196,9 +193,6 @@ public class DeltaProcessor {
 				}
 				break;
 			case IDelta.CHANGED :
-				if (!Util.isVisible(delta.getOldModifiers())) {
-					return true;
-				}
 				switch(delta.getFlags()) {
 					case IDelta.VARARGS_TO_ARRAY :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
@@ -206,9 +200,11 @@ public class DeltaProcessor {
 					case IDelta.STATIC_TO_NON_STATIC :
 						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.DECREASE_ACCESS :
-						return RestrictionModifiers.isExtendRestriction(restrictions);
+						return !Util.isVisible(delta.getOldModifiers())
+							|| RestrictionModifiers.isExtendRestriction(restrictions);
 					case IDelta.NON_FINAL_TO_FINAL :
-						return !Util.isVisible(delta.getNewModifiers())
+						return !Util.isVisible(delta.getOldModifiers())
+							|| !Util.isVisible(delta.getNewModifiers())
 							|| RestrictionModifiers.isExtendRestriction(restrictions)
 							|| RestrictionModifiers.isOverrideRestriction(restrictions);
 				}
@@ -352,16 +348,16 @@ public class DeltaProcessor {
 				}
 				break;
 			case IDelta.CHANGED :
-				if (!Util.isVisible(delta.getOldModifiers())) {
+				if (!Util.isVisible(delta.getNewModifiers())) {
 					return true;
 				}
 				switch(delta.getFlags()) {
 					case IDelta.CONTRACTED_SUPERINTERFACES_SET :
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 					case IDelta.TYPE_CONVERSION :
-						return !Util.isVisible(delta.getNewModifiers());
+						return false;
 					case IDelta.DECREASE_ACCESS :
-						return true;
+						return !Util.isVisible(delta.getOldModifiers());
 				}
 				break;
 		}

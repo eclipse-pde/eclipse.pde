@@ -43,5 +43,6 @@ public class AllDeltaTests extends TestSuite {
 		addTest(new TestSuite(MixedTypesDeltaTests.class));
 		addTest(new TestSuite(BundlesDeltaTests.class));
 		addTest(new TestSuite(RestrictionsDeltaTests.class));
+		addTest(new TestSuite(ApiScopeDeltaTests.class));
 	}
 }

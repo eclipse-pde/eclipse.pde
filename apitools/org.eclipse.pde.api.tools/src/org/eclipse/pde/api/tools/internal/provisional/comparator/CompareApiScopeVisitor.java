@@ -29,16 +29,18 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	Set deltas;
 	IApiBaseline referenceBaseline;
 	int visibilityModifiers;
+	boolean force;
 	boolean containsErrors = false;
 
-	public CompareApiScopeVisitor(final Set deltas, final IApiBaseline baseline, final int visibilityModifiers) {
+	public CompareApiScopeVisitor(final Set deltas, final IApiBaseline baseline, final boolean force, final int visibilityModifiers) {
 		this.deltas = deltas;
 		this.referenceBaseline = baseline;
 		this.visibilityModifiers = visibilityModifiers;
+		this.force = force;
 	}
 	
 	public boolean visit(IApiBaseline baseline) throws CoreException {
-		IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers);
+		IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers, this.force);
 		if (delta != null) {
 			delta.accept(new DeltaVisitor() {
 				public void endVisit(IDelta localDelta) {
@@ -76,6 +78,9 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			this.containsErrors = true;
 			return false;
 		}
+		if (component.isSourceComponent() || component.isSystemComponent()) {
+			return false;
+		}
 		IDelta delta = ApiComparator.compare(referenceComponent, component, this.visibilityModifiers);
 		if (delta != null) {
 			delta.accept(new DeltaVisitor() {
@@ -93,7 +98,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	
 	public void visit(IApiTypeRoot root) throws CoreException {
 		IApiComponent apiComponent = root.getApiComponent();
-		if (apiComponent == null) {
+		if (apiComponent == null || apiComponent.isSystemComponent() || apiComponent.isSourceComponent()) {
 			return;
 		}
 		if (apiComponent.getErrors() != null) {
@@ -109,8 +114,8 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 		IApiBaseline baseline = referenceComponent.getBaseline();
 		IDelta delta = ApiComparator.compare(
 				root,
-				apiComponent,
 				referenceComponent,
+				apiComponent,
 				this.referenceBaseline,
 				baseline,
 				this.visibilityModifiers);

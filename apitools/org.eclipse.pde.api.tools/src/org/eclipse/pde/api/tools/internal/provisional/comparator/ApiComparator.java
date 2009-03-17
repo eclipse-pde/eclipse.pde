@@ -331,7 +331,6 @@ public class ApiComparator {
 			final IApiBaseline baseline) {
 		return compare(referenceComponent, component2, referenceBaseline, baseline, VisibilityModifiers.ALL_VISIBILITIES);
 	}
-
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API components.
 	 * The two components are compared even if their versions are identical.
@@ -427,7 +426,6 @@ public class ApiComparator {
 			return null;
 		}
 	}
-
 	/**
 	 * Returns a delta that corresponds to the difference between the given component and the given reference component.
 	 * The given component cannot be null.
@@ -654,7 +652,61 @@ public class ApiComparator {
 		}
 		return delta;
 	}
-
+	/**
+	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
+	 * Nested API components with the same versions are not compared.
+	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, false);</p>
+	 * 
+	 * @param scope the given scope for the comparison
+	 * @param baseline the given API baseline to compare with
+	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
+	 * @param force a flag to force the comparison of nested API components with the same versions 
+	 *
+	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
+	 * @throws IllegalArgumentException if one of the two baselines is null
+	 *         CoreException if one of the element in the scope cannot be visited
+	 */
+	public static IDelta compare(
+			final IApiScope scope,
+			final IApiBaseline baseline,
+			final int visibilityModifiers,
+			final boolean force) throws CoreException {
+		if (scope == null || baseline == null) {
+			throw new IllegalArgumentException("None of the scope or the baseline must be null"); //$NON-NLS-1$
+		}
+		final Set deltas = new HashSet();
+		final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers);
+		scope.accept(visitor);
+		if (visitor.containsError()) {
+			return null;
+		}
+		if (deltas.isEmpty()) {
+			return NO_DELTA;
+		}
+		final Delta globalDelta = new Delta();
+		for (Iterator iterator = deltas.iterator(); iterator.hasNext(); ) {
+			IDelta delta = (IDelta) iterator.next();
+			delta.accept(new DeltaVisitor() {
+				public void endVisit(IDelta localDelta) {
+					if (localDelta.getChildren().length == 0) {
+						switch(localDelta.getElementType()) {
+							case IDelta.ANNOTATION_ELEMENT_TYPE :
+							case IDelta.ENUM_ELEMENT_TYPE :
+							case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+							case IDelta.METHOD_ELEMENT_TYPE :
+							case IDelta.INTERFACE_ELEMENT_TYPE :
+							case IDelta.CLASS_ELEMENT_TYPE :
+							case IDelta.FIELD_ELEMENT_TYPE :
+							case IDelta.API_COMPONENT_ELEMENT_TYPE :
+							case IDelta.API_PROFILE_ELEMENT_TYPE : 
+								globalDelta.add(localDelta);
+						}
+					}
+				}
+			});
+		}
+		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
+	}
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
 	 * Nested API components with the same versions are not compared.
@@ -666,33 +718,13 @@ public class ApiComparator {
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @throws IllegalArgumentException if one of the two baselines is null
+	 *         CoreException if one of the element in the scope cannot be visited
 	 */
 	public static IDelta compare(
 			final IApiScope scope,
 			final IApiBaseline baseline,
-			final int visibilityModifiers) {
-		try {
-			if (scope == null || baseline == null) {
-				throw new IllegalArgumentException("None of the scope or the baseline must be null"); //$NON-NLS-1$
-			}
-			final Set deltas = new HashSet();
-			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, visibilityModifiers);
-			scope.accept(visitor);
-			if (visitor.containsError()) {
-				return null;
-			}
-			if (deltas.isEmpty()) {
-				return NO_DELTA;
-			}
-			Delta globalDelta = new Delta();
-			for (Iterator iterator = deltas.iterator(); iterator.hasNext();) {
-				globalDelta.add((IDelta) iterator.next());
-			}
-			return globalDelta;
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-		return null;
+			final int visibilityModifiers) throws CoreException {
+		return compare(scope, baseline, visibilityModifiers, false);
 	}
 
 	/* (no javadoc)

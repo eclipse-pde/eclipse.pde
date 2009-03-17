@@ -22,6 +22,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -134,6 +135,9 @@ public class CompareTask extends CommonUtilsTask {
 		}
 		try {
 			delta = ApiComparator.compare(scope, referenceBaseline, this.visibilityModifiers);
+		} catch(CoreException e) {
+			// an error occurred during the comparison
+			throw new BuildException(NLS.bind(Messages.illegalElementInScope, e.getMessage()));
 		} finally {
 			referenceBaseline.dispose();
 			currentBaseline.dispose();

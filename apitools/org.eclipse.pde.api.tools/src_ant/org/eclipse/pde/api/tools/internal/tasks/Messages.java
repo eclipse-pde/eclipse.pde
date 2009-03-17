@@ -64,6 +64,7 @@ public class Messages extends NLS {
 
 	public static String printArguments;
 	public static String errorInComparison;
+	public static String illegalElementInScope;
 	public static String errorCreatingParentReportFile;
 	public static String errorCreatingReportDirectory;
 	public static String directoryIsEmpty;

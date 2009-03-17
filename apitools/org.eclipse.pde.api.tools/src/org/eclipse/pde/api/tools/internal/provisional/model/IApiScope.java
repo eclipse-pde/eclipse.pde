@@ -30,7 +30,7 @@ public interface IApiScope {
 	 * 
 	 * @return all API elements contained within this scope
 	 */
-	IApiElement[] getApiElement();
+	IApiElement[] getApiElements();
 	
 	/**
 	 * Visits all {@link IApiElement} in this scope.

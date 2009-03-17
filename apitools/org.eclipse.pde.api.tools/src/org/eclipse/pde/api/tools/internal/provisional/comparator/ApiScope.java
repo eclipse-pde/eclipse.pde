@@ -42,7 +42,7 @@ public class ApiScope implements IApiScope {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#accept(org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor)
 	 */
 	public void accept(ApiScopeVisitor visitor) throws CoreException {
-		IApiElement[] elements = getApiElement();
+		IApiElement[] elements = getApiElements();
 		for (int i = 0; i < elements.length; i++) {
 			IApiElement apiElement = elements[i];
 			int type = apiElement.getType();
@@ -93,7 +93,7 @@ public class ApiScope implements IApiScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#getApiElement()
 	 */
-	public IApiElement[] getApiElement() {
+	public IApiElement[] getApiElements() {
 		if (this.apiElements == null || this.apiElements.size() == 0) return NO_ELEMENTS;
 		return (IApiElement[]) this.apiElements.toArray(new IApiElement[this.apiElements.size()]);
 	}
