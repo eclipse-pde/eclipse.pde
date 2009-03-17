@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -115,8 +114,8 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		IProject project = null;
 		if (element instanceof IResource) {
 			project = ((IResource) element).getProject();
-		} else if (element instanceof JavaElement) {
-			project = ((JavaElement) element).getJavaProject().getProject();
+		} else if (element instanceof IJavaElement) {
+			project = ((IJavaElement) element).getJavaProject().getProject();
 		} else if (element instanceof ClassPathContainer) {
 			project = ((ClassPathContainer) element).getJavaProject()
 					.getProject();
