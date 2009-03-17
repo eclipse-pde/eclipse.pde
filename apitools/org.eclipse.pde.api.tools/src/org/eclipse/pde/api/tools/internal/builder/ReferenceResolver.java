@@ -57,12 +57,13 @@ public final class ReferenceResolver {
 	 */
 	public static void resolveReferences(List/*<IReference>*/ references, IProgressMonitor monitor) throws CoreException {
 		// sort references by target type for 'shared' resolution
-		Map sigtoref = new HashMap(50);
+		int refcount = references.size();
+		Map sigtoref = new HashMap(refcount);
 		
 		List refs = null;
 		IReference ref = null;
 		String key = null;
-		List methodDecls = new ArrayList(1000);
+		List methodDecls = new ArrayList(refcount);
 		long start = System.currentTimeMillis();
 		Iterator iterator = references.iterator();
 		while (iterator.hasNext()) {
@@ -121,7 +122,7 @@ public final class ReferenceResolver {
 			}
 			refs = (List) iterator.next();
 			ref = (IReference) refs.get(0);
-			((org.eclipse.pde.api.tools.internal.builder.Reference)ref).resolve();
+			((Reference)ref).resolve();
 			IApiMember resolved = ref.getResolvedReference();
 			if (resolved != null) {
 				Iterator iterator2 = refs.iterator();

@@ -45,7 +45,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarFile;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.zip.ZipEntry;
@@ -2213,8 +2212,7 @@ public final class Util {
 				String componentid = null;
 				for (int j = 0, max2 = components.length; j < max2; j++) {
 					componentid = components[j].getId();
-					Matcher matcher = pattern.matcher(componentid);
-					if (matcher.matches()) {
+					if (pattern.matcher(componentid).matches()) {
 						list.add(componentid);
 					}
 				}
