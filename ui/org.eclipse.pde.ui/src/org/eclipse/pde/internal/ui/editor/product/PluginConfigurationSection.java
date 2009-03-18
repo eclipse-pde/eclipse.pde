@@ -167,6 +167,7 @@ public class PluginConfigurationSection extends TableSection {
 
 		section.setClient(container);
 		getModel().addModelChangedListener(this);
+		getTablePart().setButtonEnabled(0, isEditable());
 		updateRemoveButtons(true, true);
 	}
 
@@ -399,8 +400,8 @@ public class PluginConfigurationSection extends TableSection {
 			}
 
 		}
+		getTablePart().setButtonEnabled(0, isEditable());
 		updateRemoveButtons(refreshRemove, refreshRemoveAll);
-
 	}
 
 	private void handleGlobalRefresh() {

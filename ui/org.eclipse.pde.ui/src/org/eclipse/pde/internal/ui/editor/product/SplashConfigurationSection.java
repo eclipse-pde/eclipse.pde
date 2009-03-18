@@ -258,6 +258,7 @@ public class SplashConfigurationSection extends PDESection {
 		data.verticalIndent = 5;
 		data.horizontalSpan = F_NUM_COLUMNS;
 		fAddBarButton.setLayoutData(data);
+		fAddBarButton.setEnabled(isEditable());
 
 		Color foreground = fToolkit.getColors().getColor(IFormColors.TITLE);
 
@@ -273,6 +274,7 @@ public class SplashConfigurationSection extends PDESection {
 		addOffsetTooltips(fBarControls);
 
 		for (int i = 0; i < fBarSpinners.length; i++) {
+			fBarSpinners[i].setEnabled(isEditable());
 			fBarSpinners[i].addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					applySpinners(true);
@@ -296,6 +298,7 @@ public class SplashConfigurationSection extends PDESection {
 				updateFieldEnablement();
 			}
 		});
+		fAddMessageButton.setEnabled(false);
 
 		Color foreground = fToolkit.getColors().getColor(IFormColors.TITLE);
 
@@ -323,6 +326,7 @@ public class SplashConfigurationSection extends PDESection {
 		addOffsetTooltips(fMessageControls);
 
 		for (int i = 0; i < fMessageSpinners.length; i++) {
+			fMessageSpinners[i].setEnabled(isEditable());
 			fMessageSpinners[i].addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					applySpinners(false);
@@ -586,10 +590,10 @@ public class SplashConfigurationSection extends PDESection {
 			updateFieldProgressBarEnablement(false);
 			updateFieldProgressMessageEnablement(false);
 		} else {
-			fAddBarButton.setEnabled(true);
-			fAddMessageButton.setEnabled(true);
-			updateFieldProgressBarEnablement(true);
-			updateFieldProgressMessageEnablement(true);
+			fAddBarButton.setEnabled(isEditable());
+			fAddMessageButton.setEnabled(isEditable());
+			updateFieldProgressBarEnablement(isEditable());
+			updateFieldProgressMessageEnablement(isEditable());
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -183,6 +183,7 @@ public class ConfigurationSection extends PDESection {
 		fLastTab = fTabFolder.getSelectionIndex();
 		IConfigurationFileInfo info = getConfigurationFileInfo();
 		String os = getOS(fLastTab);
+		fDefault.setEnabled(isEditable());
 		if (info == null) {
 			fDefault.setSelection(true);
 			fCustomEntry.setEditable(false);
@@ -191,7 +192,7 @@ public class ConfigurationSection extends PDESection {
 			fDefault.setSelection(!custom);
 			fCustom.setSelection(custom);
 			fCustomEntry.setValue(custom == true ? info.getPath(os) : null, true);
-			fCustomEntry.setEditable(custom);
+			fCustomEntry.setEditable(isEditable() && custom);
 		}
 		super.refresh();
 		fBlockChanges = false;

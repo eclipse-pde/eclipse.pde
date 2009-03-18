@@ -120,6 +120,7 @@ public class JRESection extends PDESection {
 				}
 			}
 		});
+		fEEButton.setEnabled(isEditable());
 
 		fEEsCombo = new ComboViewerPart();
 		fEEsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
@@ -134,6 +135,7 @@ public class JRESection extends PDESection {
 				}
 			}
 		});
+		fEEsCombo.setEnabled(isEditable());
 
 		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
 		GridDataFactory.fillDefaults().applyTo(fExecutionEnvironmentsButton);
@@ -143,6 +145,7 @@ public class JRESection extends PDESection {
 						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
 			}
 		});
+		fExecutionEnvironmentsButton.setEnabled(isEditable());
 
 		createTabs();
 		toolkit.paintBordersFor(client);
@@ -252,7 +255,7 @@ public class JRESection extends PDESection {
 	}
 
 	protected void updateWidgets() {
-		fEEsCombo.setEnabled(fEEButton.getSelection());
+		fEEsCombo.setEnabled(isEditable() && fEEButton.getSelection());
 	}
 
 	/* (non-Javadoc)
