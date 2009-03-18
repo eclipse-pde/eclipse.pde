@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 268363
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -75,7 +76,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
+		File file = new File(input.getURI());
 		if (file != null) {
 			String name = file.getName();
 			if (name.endsWith(".product")) { //$NON-NLS-1$

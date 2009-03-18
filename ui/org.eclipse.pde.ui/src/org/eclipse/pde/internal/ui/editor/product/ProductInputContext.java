@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 97149
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 97149, bug 268363
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.io.*;
 import java.util.ArrayList;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -61,6 +64,11 @@ public class ProductInputContext extends UTF8InputContext {
 				PDEPlugin.logException(e);
 				return null;
 			}
+		} else if (input instanceof IURIEditorInput) {
+			IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
+			InputStream is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
+			model = new ProductModel();
+			model.load(is, false);
 		}
 		return model;
 	}
