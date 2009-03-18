@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="apitooling.analysis" default="run" basedir=".">
+	<target name="run">
+		<apitooling.analysis
+			baseline="${reference_location}"
+			profile="${current_location}"
+			report="${report_location}"
+		/>
+	</target>
+</project>
