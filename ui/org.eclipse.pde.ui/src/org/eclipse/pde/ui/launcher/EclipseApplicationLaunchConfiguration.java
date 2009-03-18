@@ -56,7 +56,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			if (product.length() > 0) {
 				programArgs.add("-product"); //$NON-NLS-1$
 				programArgs.add(product);
-			} else { // TODO product w/o an application and product... how ot handle gracefully?
+			} else { // TODO product w/o an application and product... how to handle gracefully?
 				programArgs.add("-application"); //$NON-NLS-1$
 				programArgs.add(configuration.getAttribute(IPDELauncherConstants.APPLICATION, "")); //$NON-NLS-1$
 			}
