@@ -627,11 +627,13 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.junit4");
 		expected.add("org.eclipse.jdt.doc.user");
 		expected.add("org.eclipse.jdt.launching.macosx");
+		expected.add("org.eclipse.jdt.launching.ui.macosx");
 		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
-			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
+			if (symbolicName.equals("org.eclipse.jdt.launching.macosx") ||
+					symbolicName.equals("org.eclipse.jdt.launching.ui.macosx")) {
 				// the bundle should be missing unless on Mac
 				IStatus status = bundles[i].getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
