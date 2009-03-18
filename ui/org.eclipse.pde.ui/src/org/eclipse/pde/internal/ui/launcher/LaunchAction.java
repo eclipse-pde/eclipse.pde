@@ -37,11 +37,20 @@ public class LaunchAction extends Action {
 	private IProduct fProduct;
 	private String fMode;
 	private String fPath;
+	private Map fPluginConfigurations;
 
 	public LaunchAction(IProduct product, String path, String mode) {
 		fProduct = product;
 		fMode = mode;
 		fPath = path;
+		// initialize configurations... we should do this lazily
+		// TODO
+		fPluginConfigurations = new HashMap();
+		IPluginConfiguration[] configurations = fProduct.getPluginConfigurations();
+		for (int i = 0; i < configurations.length; i++) {
+			IPluginConfiguration config = configurations[i];
+			fPluginConfigurations.put(config.getId(), config);
+		}
 	}
 
 	public void run() {
@@ -84,10 +93,11 @@ public class LaunchAction extends Action {
 		IPluginModelBase[] models = getModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
-			if (model.getUnderlyingResource() == null)
+			if (model.getUnderlyingResource() == null) {
 				appendBundle(explugins, model);
-			else
+			} else {
 				appendBundle(wsplugins, model);
+			}
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
@@ -99,9 +109,15 @@ public class LaunchAction extends Action {
 	}
 
 	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
-		buffer.append(model.getPluginBase().getId());
-		buffer.append(BundleLauncherHelper.VERSION_SEPARATOR);
-		buffer.append(model.getPluginBase().getVersion());
+		IPluginConfiguration configuration = (IPluginConfiguration) fPluginConfigurations.get(model.getPluginBase().getId());
+		int sl = 4;
+		String autostart = "false"; //$NON-NLS-1$
+		if (configuration != null) {
+			sl = configuration.getStartLevel();
+			autostart = Boolean.toString(configuration.isAutoStart());
+		}
+		String entry = BundleLauncherHelper.writeBundleEntry(model, Integer.toString(sl), autostart);
+		buffer.append(entry);
 		buffer.append(',');
 	}
 
