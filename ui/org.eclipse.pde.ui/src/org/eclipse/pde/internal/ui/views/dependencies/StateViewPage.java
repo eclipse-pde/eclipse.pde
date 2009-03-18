@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Anyware Technologies - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
@@ -139,7 +140,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 	}
 
-	class StateLabelProvider extends StyledCellLabelProvider {
+	class StateLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 		private PDELabelProvider fSharedProvider;
 
 		public StateLabelProvider() {
@@ -206,6 +207,19 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			return null;
 		}
 
+		public String getText(Object element) {
+			String result = element.toString();
+			if (element instanceof ImportPackageSpecification) {
+				ImportPackageSpecification spec = (ImportPackageSpecification) element;
+				result = spec.getName();
+			} else if (element instanceof BundleSpecification) {
+				result = ((BundleSpecification) element).getSupplier().toString();
+			} else if (element instanceof BundleDescription) {
+				BundleDescription description = (BundleDescription) element;
+				result = fSharedProvider.getObjectText(description);
+			}
+			return result;
+		}
 	}
 
 	private boolean isJREPackage(ExportPackageDescription supplier) {
