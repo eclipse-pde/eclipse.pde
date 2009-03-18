@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setText(PDEUIMessages.EditorActions_cut);
 			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
-			setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
+			setActionDefinitionId(ActionFactory.CUT.getCommandId());
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -99,7 +99,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setText(PDEUIMessages.EditorActions_copy);
 			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-			setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
+			setActionDefinitionId(ActionFactory.COPY.getCommandId());
 		}
 
 		public void selectionChanged(ISelection selection) {
@@ -113,7 +113,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setText(PDEUIMessages.EditorActions_paste);
 			setImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 			setDisabledImageDescriptor(getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
-			setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
+			setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		}
 
 		public void selectionChanged(ISelection selection) {
