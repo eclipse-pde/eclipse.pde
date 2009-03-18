@@ -20,9 +20,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ltk.core.refactoring,
  org.eclipse.test.performance,
  org.eclipse.jdt.core.tests.builder,
- org.eclipse.jdt.core.tests.compiler
+ org.eclipse.jdt.core.tests.compiler,
+ org.eclipse.ant.core
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.pde.api.tools.builder.tests,
+Export-Package: org.eclipse.pde.api.tools.anttasks.tests,
+ org.eclipse.pde.api.tools.builder.tests,
  org.eclipse.pde.api.tools.builder.tests.compatibility,
  org.eclipse.pde.api.tools.builder.tests.leak,
  org.eclipse.pde.api.tools.builder.tests.performance,
@@ -32,6 +34,7 @@ Export-Package: org.eclipse.pde.api.tools.builder.tests,
  org.eclipse.pde.api.tools.model.tests;uses:="junit.framework,org.eclipse.pde.api.tools.model.component",
  org.eclipse.pde.api.tools.problems.tests,
  org.eclipse.pde.api.tools.reference.tests,
+ org.eclipse.pde.api.tools.search.tests,
  org.eclipse.pde.api.tools.tests,
  org.eclipse.pde.api.tools.tests.util,
  org.eclipse.pde.api.tools.util.tests;uses:="junit.framework"
