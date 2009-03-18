@@ -14,7 +14,10 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class BundleLauncherHelper {
@@ -63,13 +66,14 @@ public class BundleLauncherHelper {
 				IPluginModelBase[] models = entry.getWorkspaceModels();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
+
 					// TODO Very similar to logic in LaunchPluginValidator
 					// match only if...
 					// a) if we have the same version
 					// b) no version
 					// c) all else fails, if there's just one bundle available, use it
 					if (base.getVersion().equals(version) || version == null || models.length == 1)
-						map.put(models[i], token.substring(index + 1));
+						addBundleToMap(map, models[i], token.substring(index + 1));
 				}
 			}
 		}
@@ -84,13 +88,49 @@ public class BundleLauncherHelper {
 				if (!deselectedPlugins.contains(models[i])) {
 					if (set != null)
 						set.add(id);
-					if (!map.containsKey(models[i])) {
-						map.put(models[i], "default:default"); //$NON-NLS-1$
-					}
+					if (!map.containsKey(models[i]))
+						addBundleToMap(map, models[i], "default:default"); //$NON-NLS-1$
 				}
 			}
 		}
 		return map;
+	}
+
+	/**
+	 * Adds the given bundle and start information to the map.  This will override anything set
+	 * for system bundles, and set their start level to the appropriate level
+	 * @param map The map to add the bundles too
+	 * @param bundle The bundle to add
+	 * @param substring the start information in the form level:autostart
+	 */
+	private static void addBundleToMap(Map map, IPluginModelBase bundle, String sl) {
+		BundleDescription desc = bundle.getBundleDescription();
+		boolean defaultsl = (sl == null || sl.equals("default:default")); //$NON-NLS-1$
+		if (desc != null && defaultsl) {
+			String modelName = desc.getSymbolicName();
+			if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
+				map.put(bundle, "1:true"); //$NON-NLS-1$ 
+			} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
+				map.put(bundle, "1:true"); //$NON-NLS-1$
+			} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
+				map.put(bundle, "2:true"); //$NON-NLS-1$
+			} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
+				map.put(bundle, "-1:true"); //$NON-NLS-1$
+			} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
+				map.put(bundle, "3:true"); //$NON-NLS-1$
+			} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
+				if (TargetPlatformHelper.getTargetVersion() > 3.1) {
+					map.put(bundle, "default:true"); //$NON-NLS-1$
+				} else {
+					map.put(bundle, "2:true"); //$NON-NLS-1$
+				}
+			} else {
+				map.put(bundle, sl);
+			}
+		} else {
+			map.put(bundle, sl);
+		}
+
 	}
 
 	public static Map getTargetBundleMap(ILaunchConfiguration configuration, Set set, String attribute) throws CoreException {
@@ -121,7 +161,7 @@ public class BundleLauncherHelper {
 						// b) no version
 						// c) all else fails, if there's just one bundle available, use it
 						if (base.getVersion().equals(version) || version == null || models.length == 1)
-							map.put(models[i], token.substring(index + 1));
+							addBundleToMap(map, models[i], token.substring(index + 1));
 					}
 				}
 			}

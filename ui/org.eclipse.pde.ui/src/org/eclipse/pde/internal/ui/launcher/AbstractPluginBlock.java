@@ -559,7 +559,7 @@ public abstract class AbstractPluginBlock {
 				autoValue = "false"; //$NON-NLS-1$
 				item.setText(2, autoValue);
 				// FIXME is this the right place for this logic?
-			} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName) || "org.eclipse.equinox.ds".equals(modelName)) { //$NON-NLS-1$
+			} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName) || IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
 				autoValue = "true"; //$NON-NLS-1$
 				item.setText(2, autoValue);
 			} else {
