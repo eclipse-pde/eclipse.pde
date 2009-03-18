@@ -52,8 +52,14 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 		// If a product is specified, then add it to the program args
 		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-			programArgs.add("-product"); //$NON-NLS-1$
-			programArgs.add(configuration.getAttribute(IPDELauncherConstants.PRODUCT, "")); //$NON-NLS-1$
+			String product = configuration.getAttribute(IPDELauncherConstants.PRODUCT, ""); //$NON-NLS-1$
+			if (product.length() > 0) {
+				programArgs.add("-product"); //$NON-NLS-1$
+				programArgs.add(product);
+			} else { // TODO product w/o an application and product... how ot handle gracefully?
+				programArgs.add("-application"); //$NON-NLS-1$
+				programArgs.add(configuration.getAttribute(IPDELauncherConstants.APPLICATION, "")); //$NON-NLS-1$
+			}
 		} else {
 			// specify the application to launch
 			programArgs.add("-application"); //$NON-NLS-1$

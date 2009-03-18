@@ -84,6 +84,7 @@ public class LaunchAction extends Action {
 
 	private ILaunchConfiguration refreshConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getProductId());
+		wc.setAttribute(IPDELauncherConstants.APPLICATION, fProduct.getApplication());
 		String os = Platform.getOS();
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(os));
