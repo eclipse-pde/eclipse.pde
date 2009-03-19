@@ -57,7 +57,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.osgi.framework.Constants;
 
 public class DSFileWizardPage extends WizardNewFileCreationPage {
@@ -226,18 +225,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 						}
 						return null;
 					}
-
-			public void linkEntered(HyperlinkEvent e) {
-						fDSImplementationClassHyperlink.setForeground(Display
-								.getDefault().getSystemColor(
-										SWT.COLOR_DARK_BLUE));
-					}
-
-			public void linkExited(HyperlinkEvent e) {
-						fDSImplementationClassHyperlink.setForeground(Display
-								.getDefault().getSystemColor(SWT.COLOR_BLUE));
-
-			}
 
 		});
 

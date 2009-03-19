@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 230232
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
@@ -136,10 +137,8 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		
 		DSErrorReporter reporter = new DSErrorReporter(file);
 		DefaultSAXParser.parse(file, reporter);
-		if (reporter != null) {
-			reporter.validateContent(monitor);
-			monitor.subTask(Messages.DSBuilder_updating);
-		}
+		reporter.validateContent(monitor);
+		monitor.subTask(Messages.DSBuilder_updating);
 		monitor.done();
 	}
 	
