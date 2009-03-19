@@ -212,6 +212,14 @@ public class ProductExportOperation extends FeatureExportOperation {
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#publishingP2Metadata()
+	 */
+	protected boolean publishingP2Metadata() {
+		//not supported yet
+		return false;
+	}
+
 	private String getRootFileLocations(boolean hasLaunchers) {
 		StringBuffer buffer = new StringBuffer();
 

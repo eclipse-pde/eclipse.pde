@@ -257,6 +257,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String FeatureExportOperation_runningAssemblyScript;
 
+	public static String FeatureExportOperation_publishingMetadata;
+
 	public static String FeatureExportOperation_runningBuildScript;
 
 	public static String FeatureExportOperation_runningPackagerScript;

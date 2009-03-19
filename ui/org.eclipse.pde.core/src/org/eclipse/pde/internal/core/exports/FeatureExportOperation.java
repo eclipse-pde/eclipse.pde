@@ -246,7 +246,7 @@ public class FeatureExportOperation extends Job {
 		fHasErrors = false;
 
 		try {
-			monitor.beginTask("", 10); //$NON-NLS-1$
+			monitor.beginTask("", 10 + (publishingP2Metadata() ? 2 : 0)); //$NON-NLS-1$
 			monitor.setTaskName(PDECoreMessages.FeatureExportJob_taskName);
 			HashMap properties = createAntBuildProperties(os, ws, arch);
 			BuildScriptGenerator generator = new BuildScriptGenerator();
@@ -259,6 +259,11 @@ public class FeatureExportOperation extends Job {
 			// grab the source if needed
 			if (fInfo.exportSource && !fInfo.exportSourceBundle)
 				runScript(getBuildScriptName(featureLocation), new String[] {"build.sources"}, properties, new SubProgressMonitor(monitor, 1)); //$NON-NLS-1$
+
+			if (publishingP2Metadata()) {
+				monitor.setTaskName(PDECoreMessages.FeatureExportOperation_publishingMetadata);
+				runScript(getAssembleP2ScriptName(featureID, featureLocation), new String[] {"main"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
+			}
 
 			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningAssemblyScript);
 			runScript(getAssemblyScriptName(featureID, os, ws, arch, featureLocation), new String[] {"main"}, //$NON-NLS-1$
@@ -334,6 +339,10 @@ public class FeatureExportOperation extends Job {
 				+ featureID + "." + os + "." //$NON-NLS-1$ //$NON-NLS-2$
 				+ ws + "." + arch //$NON-NLS-1$
 				+ ".xml"; //$NON-NLS-1$
+	}
+
+	protected String getAssembleP2ScriptName(String featureID, String featureLocation) {
+		return featureLocation + IPath.SEPARATOR + "assemble." + featureID + ".p2.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -474,6 +483,14 @@ public class FeatureExportOperation extends Job {
 	}
 
 	/**
+	 * Whether or not to use new metadata publishing or old generation
+	 */
+	protected boolean publishingP2Metadata() {
+		//for now we can only support when exporting a single platform
+		return fInfo.useJarFormat && fInfo.exportMetadata && (fInfo.targets == null || fInfo.targets.length == 1);
+	}
+
+	/**
 	* Adds the necessary properties to invoke the p2 metadata generator.  This method will
 	* be called when creating the ant build properties map.
 	* 
@@ -486,15 +503,21 @@ public class FeatureExportOperation extends Job {
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.FALSE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FINAL_MODE_OVERRIDE, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_COMPRESS, IBuildPropertiesConstants.TRUE);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, Boolean.toString(publishingP2Metadata()));
 			try {
 				String destination = ""; //$NON-NLS-1$
-				if (fInfo.toDirectory) {
-					destination = new File(fInfo.destinationDirectory).toURL().toString();
-				} else {
+				if (publishingP2Metadata()) {
 					destination = new File(fBuildTempMetadataLocation).toURL().toString();
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_BUILD_REPO, destination);
+				} else {
+					if (fInfo.toDirectory) {
+						destination = new File(fInfo.destinationDirectory).toURL().toString();
+					} else {
+						destination = new File(fBuildTempMetadataLocation).toURL().toString();
+					}
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, destination);
+					map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, destination);
 				}
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, destination);
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, destination);
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, PDECoreMessages.FeatureExportOperation_0);
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, PDECoreMessages.FeatureExportOperation_0);
 			} catch (MalformedURLException e) {
@@ -529,6 +552,26 @@ public class FeatureExportOperation extends Job {
 		if (!file.exists() || !file.isDirectory()) {
 			if (!file.mkdirs())
 				throw new InvocationTargetException(new Exception(PDECoreMessages.ExportWizard_badDirectory));
+		}
+
+		File metadataTemp = new File(fBuildTempMetadataLocation);
+		if (file.exists()) {
+			//make sure our build metadata repo is clean
+			deleteDir(metadataTemp);
+		}
+	}
+
+	private void deleteDir(File dir) {
+		if (dir.exists()) {
+			if (dir.isDirectory()) {
+				File[] children = dir.listFiles();
+				if (children != null) {
+					for (int i = 0; i < children.length; i++) {
+						deleteDir(children[i]);
+					}
+				}
+			}
+			dir.delete();
 		}
 	}
 
@@ -579,6 +622,7 @@ public class FeatureExportOperation extends Job {
 		// allow for binary cycles
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, Boolean.toString(fInfo.allowBinaryCycles));
+		properties.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, Boolean.toString(publishingP2Metadata()));
 		generator.setImmutableAntProperties(properties);
 
 		// allow for custom execution environments

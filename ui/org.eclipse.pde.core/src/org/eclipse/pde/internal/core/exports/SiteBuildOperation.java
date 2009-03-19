@@ -181,6 +181,13 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#publishingP2Metadata()
+	 */
+	protected boolean publishingP2Metadata() {
+		return true;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
 	 */
 	protected void setP2MetaDataProperties(Map map) {
@@ -200,8 +207,8 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, description.getName());
 			}
 			try {
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory).toURL().toString());
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory).toURL().toString());
+				String destination = new File(fBuildTempMetadataLocation).toURL().toString();
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_BUILD_REPO, destination);
 			} catch (MalformedURLException e) {
 				PDECore.log(e);
 			}
