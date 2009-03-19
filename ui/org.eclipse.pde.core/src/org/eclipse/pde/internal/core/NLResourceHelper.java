@@ -22,6 +22,7 @@ public class NLResourceHelper {
 	public static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	public static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	private PropertyResourceBundle bundle = null;
+	private String fNLFileBasePath;
 
 	public NLResourceHelper(String name, URL[] locations) {
 		InputStream stream = null;
@@ -64,9 +65,12 @@ public class NLResourceHelper {
 
 		InputStream stream = null;
 		for (int i = 0; i < suffices.length; i++) {
-			stream = resourceLoader.getResourceAsStream(name + suffices[i] + ".properties"); //$NON-NLS-1$
-			if (stream != null)
+			String candidateFileName = name + suffices[i];
+			stream = resourceLoader.getResourceAsStream(candidateFileName + ".properties"); //$NON-NLS-1$
+			if (stream != null) {
+				fNLFileBasePath = candidateFileName;
 				break;
+			}
 		}
 		return stream;
 	}
@@ -103,6 +107,10 @@ public class NLResourceHelper {
 		} catch (MissingResourceException e) {
 			return false;
 		}
+	}
+
+	public String getNLFileBasePath() {
+		return fNLFileBasePath;
 	}
 
 }

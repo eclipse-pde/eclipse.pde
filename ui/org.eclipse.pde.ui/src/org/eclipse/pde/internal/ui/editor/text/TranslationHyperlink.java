@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
@@ -35,9 +36,12 @@ public class TranslationHyperlink extends AbstractHyperlink {
 		fBase = base;
 	}
 
-	private String getLocaliation() {
+	private String getLocalization() {
 		String localiz = null;
-		if (fBase instanceof IPluginModelBase)
+		if (fBase instanceof PluginModelBase) {
+			if (((PluginModelBase) fBase).getNLResourceHelper() != null)
+				localiz = ((PluginModelBase) fBase).getNLResourceHelper().getNLFileBasePath();
+		} else if (fBase instanceof IPluginModelBase)
 			localiz = PDEManager.getBundleLocalization((IPluginModelBase) fBase);
 		else if (fBase instanceof IBundleModel)
 			localiz = ((IBundleModel) fBase).getBundle().getLocalization();
@@ -53,7 +57,7 @@ public class TranslationHyperlink extends AbstractHyperlink {
 	}
 
 	public boolean openHyperLink() {
-		String localiz = getLocaliation();
+		String localiz = getLocalization();
 		if (localiz == null) {
 			return false;
 		} else if (fBase.getUnderlyingResource() == null) {

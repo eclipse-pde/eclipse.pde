@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,25 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
-import org.eclipse.pde.internal.core.IModelChangedListenerFilter;
-import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.*;
 
 public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel, IModelChangeProviderExtension {
 	private ArrayList fListeners = new ArrayList();
@@ -69,13 +58,16 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		if (key == null || key.length() == 0)
 			return ""; //$NON-NLS-1$
 
-		if (fNLResourceHelper == null)
-			fNLResourceHelper = createNLResourceHelper();
-
-		return (fNLResourceHelper == null) ? key : fNLResourceHelper.getResourceString(key);
+		return (getNLResourceHelper() == null) ? key : getNLResourceHelper().getResourceString(key);
 	}
 
 	protected abstract NLResourceHelper createNLResourceHelper();
+
+	public NLResourceHelper getNLResourceHelper() {
+		if (fNLResourceHelper == null)
+			fNLResourceHelper = createNLResourceHelper();
+		return fNLResourceHelper;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModel#isDisposed()
