@@ -22,7 +22,6 @@ import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.*;
-import org.osgi.framework.Constants;
 
 /**
  * This class only represents 3.0 style plug-ins
@@ -40,7 +39,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 	private IBuildModel fBuildModel;
 
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME, PDEManager.getNLLookupLocations(this));
+		return new NLResourceHelper("plugin", PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
 
 	public URL getNLLookupLocation() {
