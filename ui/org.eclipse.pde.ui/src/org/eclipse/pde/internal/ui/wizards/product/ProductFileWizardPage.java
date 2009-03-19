@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
@@ -20,9 +21,10 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -146,13 +148,21 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		ArrayList list = new ArrayList();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench"); //$NON-NLS-1$
+			ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
 			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 			for (int i = 0; i < configs.length; i++) {
 				if (!DebugUITools.isPrivate(configs[i]))
 					list.add(configs[i].getName());
 			}
+			// add osgi launch configs to the list
+			type = manager.getLaunchConfigurationType(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE);
+			configs = manager.getLaunchConfigurations(type);
+			for (int i = 0; i < configs.length; i++) {
+				if (!DebugUITools.isPrivate(configs[i]))
+					list.add(configs[i].getName());
+			}
 		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 		return (String[]) list.toArray(new String[list.size()]);
 	}
@@ -164,13 +174,19 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		String configName = fLaunchConfigCombo.getText();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = manager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench"); //$NON-NLS-1$
+			ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
+			ILaunchConfigurationType type2 = manager.getLaunchConfigurationType(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE);
 			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-			for (int i = 0; i < configs.length; i++) {
-				if (configs[i].getName().equals(configName) && !DebugUITools.isPrivate(configs[i]))
-					return configs[i];
+			ILaunchConfiguration[] configs2 = manager.getLaunchConfigurations(type2);
+			ILaunchConfiguration[] configurations = new ILaunchConfiguration[configs.length + configs2.length];
+			System.arraycopy(configs, 0, configurations, 0, configs.length);
+			System.arraycopy(configs2, 0, configurations, configs.length, configs2.length);
+			for (int i = 0; i < configurations.length; i++) {
+				if (configurations[i].getName().equals(configName) && !DebugUITools.isPrivate(configurations[i]))
+					return configurations[i];
 			}
 		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 		return null;
 	}

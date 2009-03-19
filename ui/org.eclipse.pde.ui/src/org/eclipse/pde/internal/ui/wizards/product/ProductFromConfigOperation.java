@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
+import java.util.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -19,7 +21,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 /**
@@ -67,7 +69,19 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				product.setJREInfo(jreInfo);
 			}
 
-			addPlugins(factory, product, LaunchPluginValidator.getPluginList(fLaunchConfiguration));
+			// fetch the plug-ins models
+			String workspaceId = IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
+			String targetId = IPDELauncherConstants.SELECTED_TARGET_PLUGINS;
+			if (fLaunchConfiguration.getType().getIdentifier().equals(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE)) {
+				workspaceId = IPDELauncherConstants.WORKSPACE_BUNDLES;
+				targetId = IPDELauncherConstants.TARGET_BUNDLES;
+			}
+			Set set = new HashSet();
+			Map map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set, workspaceId);
+			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set, targetId));
+
+			addPlugins(factory, product, map);
+
 			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
 				super.initializeProduct(product);
 			} else {
@@ -83,7 +97,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				}
 			}
 		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 	}
-
 }

@@ -111,13 +111,13 @@ public class LaunchAction extends Action {
 
 	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
 		IPluginConfiguration configuration = (IPluginConfiguration) fPluginConfigurations.get(model.getPluginBase().getId());
-		int sl = 4;
-		String autostart = "false"; //$NON-NLS-1$
+		String sl = "default"; //$NON-NLS-1$
+		String autostart = "default"; //$NON-NLS-1$
 		if (configuration != null) {
-			sl = configuration.getStartLevel();
+			sl = Integer.toString(configuration.getStartLevel());
 			autostart = Boolean.toString(configuration.isAutoStart());
 		}
-		String entry = BundleLauncherHelper.writeBundleEntry(model, Integer.toString(sl), autostart);
+		String entry = BundleLauncherHelper.writeBundleEntry(model, sl, autostart);
 		buffer.append(entry);
 		buffer.append(',');
 	}

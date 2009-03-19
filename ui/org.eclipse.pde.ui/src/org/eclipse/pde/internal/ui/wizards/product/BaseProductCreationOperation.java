@@ -12,8 +12,7 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -157,14 +156,39 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected void addPlugins(IProductModelFactory factory, IProduct product, IPluginModelBase[] plugins) {
-		IProductPlugin[] pplugins = new IProductPlugin[plugins.length];
-		for (int i = 0; i < plugins.length; i++) {
+	protected void addPlugins(IProductModelFactory factory, IProduct product, Map plugins) {
+		IProductPlugin[] pplugins = new IProductPlugin[plugins.size()];
+		List configurations = new ArrayList(3);
+		IPluginModelBase[] models = (IPluginModelBase[]) plugins.keySet().toArray(new IPluginModelBase[plugins.size()]);
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+
+			// create plug-in model
 			IProductPlugin pplugin = factory.createPlugin();
-			pplugin.setId(plugins[i].getPluginBase().getId());
+			pplugin.setId(model.getPluginBase().getId());
 			pplugins[i] = pplugin;
+
+			// create plug-in configuration model
+			String sl = (String) plugins.get(model);
+			if (!model.isFragmentModel() && !sl.equals("default:default")) { //$NON-NLS-1$
+				IPluginConfiguration configuration = factory.createPluginConfiguration();
+				configuration.setId(model.getPluginBase().getId());
+				// TODO do we want to set the version here?
+				String[] slinfo = sl.split(":"); //$NON-NLS-1$
+				if (slinfo.length == 0)
+					continue;
+				if (slinfo[0].equals("default")) { //$NON-NLS-1$
+					slinfo[0] = "0"; //$NON-NLS-1$
+				}
+				configuration.setStartLevel(Integer.valueOf(slinfo[0]).intValue());
+				configuration.setAutoStart(slinfo[1].equals("true")); //$NON-NLS-1$
+				configurations.add(configuration);
+			}
 		}
 		product.addPlugins(pplugins);
+		int size = configurations.size();
+		if (size > 0)
+			product.addPluginConfigurations((IPluginConfiguration[]) configurations.toArray(new IPluginConfiguration[size]));
 	}
 
 	protected void addPlugins(IProductModelFactory factory, IProduct product, String[] plugins) {
