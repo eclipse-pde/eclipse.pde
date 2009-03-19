@@ -86,7 +86,7 @@ public class ActiveMenuSection implements ISpySection {
 	}
 
 	private void createContributionItemText(Object object, StringBuffer buffer, SpyFormToolkit toolkit) {
-		IContributionItem item = (IContributionItem) object;
+		// IContributionItem item = (IContributionItem) object;
 		// TODO call ICommandService to get the actual command...
 	}
 
