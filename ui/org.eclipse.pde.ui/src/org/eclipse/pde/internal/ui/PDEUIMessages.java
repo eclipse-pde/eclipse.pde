@@ -1823,7 +1823,6 @@ public class PDEUIMessages extends NLS {
 	public static String Product_PluginSection_working;
 	public static String ProductInfoSection_version;
 	public static String Product_PluginSection_required;
-	public static String ProductInfoSection_prodIdLabel;
 	public static String ProductExportWizardPage_title;
 	public static String ProductExportWizardPage_config;
 	public static String ProductExportWizardPage_browse;
