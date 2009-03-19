@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Constants;
 
-public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
+public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
 	private Image fPluginImage;
 	private Image fActivePluginImage;
@@ -208,8 +208,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 		return null;
 	}
 
-	public void setText(ViewerCell cell) {
-		Object element = cell.getElement();
+	protected StyledString getStyledText(Object element) {
 
 		if (element instanceof Bundle) {
 			Bundle bundle = ((Bundle) element);
@@ -227,9 +226,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 				sb.append(host, StyledString.QUALIFIER_STYLER);
 				sb.append("]", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 			}
-			cell.setText(sb.toString());
-			cell.setStyleRanges(sb.getStyleRanges());
-			return;
+			return sb;
 		}
 
 		if (element instanceof ServiceRegistration) {
@@ -248,14 +245,11 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 
 			ss.append(identifier, StyledString.DECORATIONS_STYLER);
 
-			cell.setText(ss.getString());
-			cell.setStyleRanges(ss.getStyleRanges());
-			return;
+			return ss;
 		}
 
 		if (element instanceof ServiceName) {
-			cell.setText(Arrays.asList(((ServiceName) element).getClasses()).toString());
-			return;
+			return new StyledString(Arrays.asList(((ServiceName) element).getClasses()).toString());
 		}
 
 		if (element instanceof Folder) {
@@ -291,8 +285,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 			}
 
 			if (text != null) {
-				cell.setText(text);
-				return;
+				return new StyledString(text);
 			}
 		}
 		if (element instanceof Extension) {
@@ -307,14 +300,11 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 					ss.append(']', StyledString.QUALIFIER_STYLER);
 				}
 
-				cell.setText(ss.getString());
-				cell.setStyleRanges(ss.getStyleRanges());
-				return;
+				return ss;
 			}
 
 			String contributor = ((Extension) element).getNamespaceIdentifier();
-			cell.setText(NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor));
-			return;
+			return new StyledString(NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor));
 
 		}
 		if (element instanceof ExtensionPoint) {
@@ -328,9 +318,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 				ss.append(']', StyledString.QUALIFIER_STYLER);
 			}
 
-			cell.setText(ss.getString());
-			cell.setStyleRanges(ss.getStyleRanges());
-			return;
+			return ss;
 		}
 		if (element instanceof BundlePrerequisite) {
 			BundlePrerequisite prereq = (BundlePrerequisite) element;
@@ -344,42 +332,41 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider {
 				ss.append(' ').append(version, StyledString.DECORATIONS_STYLER);
 			}
 
-			cell.setText(ss.getString());
-			cell.setStyleRanges(ss.getStyleRanges());
-			return;
+			return ss;
 		}
 
 		if (element instanceof BundleLibrary) {
-			cell.setText(((BundleLibrary) element).getLibrary());
-			return;
+			return new StyledString(((BundleLibrary) element).getLibrary());
 		}
 
 		if (element instanceof ConfigurationElement) {
-			cell.setText(((ConfigurationElement) element).getName());
-			return;
+			return new StyledString(((ConfigurationElement) element).getName());
 		}
 		if (element instanceof Attribute) {
 			Attribute attribute = (Attribute) element;
 			if (Attribute.F_BUNDLE.equals(attribute.getName())) {
-				cell.setText(attribute.getValue());
-				return;
+				return new StyledString(attribute.getValue());
 			}
 
-			cell.setText(attribute.getName() + " = " + attribute.getValue()); //$NON-NLS-1$
-			return;
+			return new StyledString(attribute.getName() + " = " + attribute.getValue()); //$NON-NLS-1$
 		}
 		if (element instanceof Property) {
 			Property property = (Property) element;
-			cell.setText(property.getName() + " = " + property.getValue()); //$NON-NLS-1$
-			return;
+			return new StyledString(property.getName() + " = " + property.getValue()); //$NON-NLS-1$
 		}
 
-		cell.setText(element == null ? "" : element.toString()); //$NON-NLS-1$
+		return new StyledString(element == null ? "" : element.toString()); //$NON-NLS-1$
 	}
 
 	public void update(ViewerCell cell) {
-		setText(cell);
+		StyledString string = getStyledText(cell.getElement());
+		cell.setText(string.getString());
+		cell.setStyleRanges(string.getStyleRanges());
 		cell.setImage(getImage(cell.getElement()));
 		super.update(cell);
+	}
+
+	public String getText(Object element) {
+		return getStyledText(element).getString();
 	}
 }
