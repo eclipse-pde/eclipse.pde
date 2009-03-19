@@ -80,8 +80,10 @@ public class DSReferenceSection extends TableSection implements
 			final Object element = cell.getElement();
 			IDSReference reference = (IDSReference) element;
 			String name = reference.getReferenceName();
-			StyledString styledString = new StyledString(name);
+			if (name == null || name.length() == 0)
+				name = reference.getReferenceInterface();
 
+			StyledString styledString = new StyledString(name);
 			String bind = reference.getReferenceBind();
 			String unbind = reference.getReferenceUnbind();
 			bind = (bind == null ? "<none>" : bind); //$NON-NLS-1$
