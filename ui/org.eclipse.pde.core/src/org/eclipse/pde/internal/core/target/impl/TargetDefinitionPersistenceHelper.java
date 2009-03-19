@@ -329,7 +329,7 @@ public class TargetDefinitionPersistenceHelper {
 					// Additional locations and other bundle content settings were stored under this tag in old style target platforms
 					// Only included if the content has useAllPlugins='true' otherwise we create bundle containers for the restrictions
 					boolean useAll = Boolean.TRUE.toString().equalsIgnoreCase(element.getAttribute(ATTR_USE_ALL));
-					if (Boolean.TRUE.toString().equalsIgnoreCase(element.getAttribute(ATTR_USE_ALL))) {
+					if (useAll) {
 						bundleContainers.add(oldStylePrimaryContainer);
 					}
 					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, oldStylePrimaryContainer, useAll));
