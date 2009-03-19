@@ -157,7 +157,7 @@
          <br/>
          To customize the launcher, perform the following steps:
       </description>
-      <subitem label="Select the &quot;Launcher&quot; tab within the product editor to display the &quot;Launcher&quot; page" 
+      <subitem label="Select the &quot;Launching&quot; tab within the product editor to display the &quot;Launching&quot; page" 
                skip="false"/>
       <subitem label="Input &quot;rcpapp&quot; into the &quot;Launcher Name&quot; text box under the &quot;Program Launcher&quot; heading" 
                skip="false"/>
