@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target name="Server-Side Equinox (with source)">
+
+   <targetJRE>
+      <execEnv>JavaSE-1.6</execEnv>
+   </targetJRE>
+
+   <location path="${resource_loc:/target-platforms/eclipse-equinox-SDK-3.5M5/eclipse}"/>
+
+   <content useAllPlugins="true">
+      <plugins>
+         <plugin id="com.ibm.icu"/>
+         <plugin id="com.ibm.icu.source"/>
+         <plugin id="javax.servlet"/>
+         <plugin id="javax.servlet.jsp"/>
+         <plugin id="org.apache.commons.el"/>
+         <plugin id="org.apache.commons.logging"/>
+         <plugin id="org.apache.commons.logging.source"/>
+         <plugin id="org.apache.jasper"/>
+         <plugin id="org.eclipse.core.commands"/>
+         <plugin id="org.eclipse.core.commands.source"/>
+         <plugin id="org.eclipse.core.contenttype"/>
+         <plugin id="org.eclipse.core.contenttype.source"/>
+         <plugin id="org.eclipse.core.databinding"/>
+         <plugin id="org.eclipse.core.databinding.beans"/>
+         <plugin id="org.eclipse.core.databinding.beans.source"/>
+         <plugin id="org.eclipse.core.databinding.source"/>
+         <plugin id="org.eclipse.core.expressions"/>
+         <plugin id="org.eclipse.core.expressions.source"/>
+         <plugin id="org.eclipse.core.jobs"/>
+         <plugin id="org.eclipse.core.jobs.source"/>
+         <plugin id="org.eclipse.core.runtime"/>
+         <plugin id="org.eclipse.core.runtime.source"/>
+         <plugin id="org.eclipse.equinox.app"/>
+         <plugin id="org.eclipse.equinox.app.source"/>
+         <plugin id="org.eclipse.equinox.cm"/>
+         <plugin id="org.eclipse.equinox.cm.source"/>
+         <plugin id="org.eclipse.equinox.common"/>
+         <plugin id="org.eclipse.equinox.common.source"/>
+         <plugin id="org.eclipse.equinox.device"/>
+         <plugin id="org.eclipse.equinox.device.source"/>
+         <plugin id="org.eclipse.equinox.ds"/>
+         <plugin id="org.eclipse.equinox.ds.source"/>
+         <plugin id="org.eclipse.equinox.event"/>
+         <plugin id="org.eclipse.equinox.event.source"/>
+         <plugin id="org.eclipse.equinox.http"/>
+         <plugin id="org.eclipse.equinox.http.jetty"/>
+         <plugin id="org.eclipse.equinox.http.jetty.source"/>
+         <plugin id="org.eclipse.equinox.http.registry"/>
+         <plugin id="org.eclipse.equinox.http.registry.source"/>
+         <plugin id="org.eclipse.equinox.http.servlet"/>
+         <plugin id="org.eclipse.equinox.http.servlet.source"/>
+         <plugin id="org.eclipse.equinox.http.servletbridge"/>
+         <plugin id="org.eclipse.equinox.http.servletbridge.source"/>
+         <plugin id="org.eclipse.equinox.http.source"/>
+         <plugin id="org.eclipse.equinox.io"/>
+         <plugin id="org.eclipse.equinox.io.source"/>
+         <plugin id="org.eclipse.equinox.ip"/>
+         <plugin id="org.eclipse.equinox.ip.source"/>
+         <plugin id="org.eclipse.equinox.jsp.jasper"/>
+         <plugin id="org.eclipse.equinox.jsp.jasper.registry"/>
+         <plugin id="org.eclipse.equinox.jsp.jasper.registry.source"/>
+         <plugin id="org.eclipse.equinox.jsp.jasper.source"/>
+         <plugin id="org.eclipse.equinox.launcher"/>
+         <plugin id="org.eclipse.equinox.launcher.source"/>
+         <plugin id="org.eclipse.equinox.log"/>
+         <plugin id="org.eclipse.equinox.log.source"/>
+         <plugin id="org.eclipse.equinox.metatype"/>
+         <plugin id="org.eclipse.equinox.metatype.source"/>
+         <plugin id="org.eclipse.equinox.preferences"/>
+         <plugin id="org.eclipse.equinox.preferences.source"/>
+         <plugin id="org.eclipse.equinox.registry"/>
+         <plugin id="org.eclipse.equinox.registry.source"/>
+         <plugin id="org.eclipse.equinox.servletbridge"/>
+         <plugin id="org.eclipse.equinox.servletbridge.source"/>
+         <plugin id="org.eclipse.equinox.simpleconfigurator"/>
+         <plugin id="org.eclipse.equinox.simpleconfigurator.source"/>
+         <plugin id="org.eclipse.equinox.transforms.hook"/>
+         <plugin id="org.eclipse.equinox.transforms.hook.source"/>
+         <plugin id="org.eclipse.equinox.transforms.xslt"/>
+         <plugin id="org.eclipse.equinox.transforms.xslt.source"/>
+         <plugin id="org.eclipse.equinox.useradmin"/>
+         <plugin id="org.eclipse.equinox.useradmin.source"/>
+         <plugin id="org.eclipse.equinox.util"/>
+         <plugin id="org.eclipse.equinox.util.source"/>
+         <plugin id="org.eclipse.equinox.wireadmin"/>
+         <plugin id="org.eclipse.equinox.wireadmin.source"/>
+         <plugin id="org.eclipse.jdt.junit.runtime"/>
+         <plugin id="org.eclipse.jdt.junit.runtime.source"/>
+         <plugin id="org.eclipse.osgi"/>
+         <plugin id="org.eclipse.osgi.services"/>
+         <plugin id="org.eclipse.osgi.services.source"/>
+         <plugin id="org.eclipse.osgi.source"/>
+         <plugin id="org.eclipse.osgi.util"/>
+         <plugin id="org.eclipse.osgi.util.source"/>
+         <plugin id="org.eclipse.rap.demo"/>
+         <plugin id="org.eclipse.rap.demo.databinding"/>
+         <plugin id="org.eclipse.rap.jface"/>
+         <plugin id="org.eclipse.rap.jface.databinding"/>
+         <plugin id="org.eclipse.rap.junit"/>
+         <plugin id="org.eclipse.rap.junit.runtime"/>
+         <plugin id="org.eclipse.rap.rwt"/>
+         <plugin id="org.eclipse.rap.rwt.q07"/>
+         <plugin id="org.eclipse.rap.source"/>
+         <plugin id="org.eclipse.rap.ui"/>
+         <plugin id="org.eclipse.rap.ui.forms"/>
+         <plugin id="org.eclipse.rap.ui.views"/>
+         <plugin id="org.eclipse.rap.ui.workbench"/>
+         <plugin id="org.junit"/>
+         <plugin id="org.junit.source"/>
+         <plugin id="org.junit4"/>
+         <plugin id="org.mortbay.jetty"/>
+         <plugin id="org.mortbay.jetty.source"/>
+      </plugins>
+      <features>
+      </features>
+      <extraLocations>
+         <location path="${resource_loc:/target-platforms/eclipse-3.5M5-delta-pack/eclipse}"/>
+         <location path="${resource_loc:/target-platforms/eclipse-pde-headless-3.5M5}"/>
+         <location path="${resource_loc:/target-platforms/eclipse-test-framework-3.5M5/eclipse}"/>
+         <location path="${resource_loc:/target-platforms/eclipse-core-plugins-3.5M5}"/>
+         <location path="${resource_loc:/target-platforms/3rdparty-bundles}"/>
+      </extraLocations>
+   </content>
+
+</target>

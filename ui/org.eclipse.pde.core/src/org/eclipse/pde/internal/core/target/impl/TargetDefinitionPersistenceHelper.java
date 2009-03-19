@@ -328,10 +328,11 @@ public class TargetDefinitionPersistenceHelper {
 				} else if (nodeName.equalsIgnoreCase(CONTENT)) {
 					// Additional locations and other bundle content settings were stored under this tag in old style target platforms
 					// Only included if the content has useAllPlugins='true' otherwise we create bundle containers for the restrictions
+					boolean useAll = Boolean.TRUE.toString().equalsIgnoreCase(element.getAttribute(ATTR_USE_ALL));
 					if (Boolean.TRUE.toString().equalsIgnoreCase(element.getAttribute(ATTR_USE_ALL))) {
 						bundleContainers.add(oldStylePrimaryContainer);
 					}
-					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, oldStylePrimaryContainer));
+					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, oldStylePrimaryContainer, useAll));
 					// It is possible to have an empty content section, in which case we should add the primary container, bug 268709
 					if (bundleContainers.isEmpty()) {
 						bundleContainers.add(oldStylePrimaryContainer);
@@ -545,9 +546,10 @@ public class TargetDefinitionPersistenceHelper {
 	 * 
 	 * @param content element containing the content section
 	 * @param primaryContainer the primary location defined in the xml file, restrictions are based off this container
+	 * @param useAll whether all bundles in the locations should be considered vs. only those specified
 	 * @return list of bundle containers
 	 */
-	private static List deserializeBundleContainersFromOldStyleElement(Element content, AbstractBundleContainer primaryContainer) throws CoreException {
+	private static List deserializeBundleContainersFromOldStyleElement(Element content, AbstractBundleContainer primaryContainer, boolean useAll) throws CoreException {
 		List containers = new ArrayList();
 		NodeList list = content.getChildNodes();
 		List included = new ArrayList(list.getLength());
@@ -556,7 +558,7 @@ public class TargetDefinitionPersistenceHelper {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
-				if (element.getNodeName().equalsIgnoreCase(PLUGINS)) {
+				if (!useAll && element.getNodeName().equalsIgnoreCase(PLUGINS)) {
 					NodeList plugins = element.getChildNodes();
 					for (int j = 0; j < plugins.getLength(); j++) {
 						Node lNode = plugins.item(j);
@@ -590,7 +592,7 @@ public class TargetDefinitionPersistenceHelper {
 							}
 						}
 					}
-				} else if (element.getNodeName().equalsIgnoreCase(FEATURES)) {
+				} else if (!useAll && element.getNodeName().equalsIgnoreCase(FEATURES)) {
 					NodeList features = element.getChildNodes();
 					for (int j = 0; j < features.getLength(); j++) {
 						Node lNode = features.item(j);
@@ -609,7 +611,7 @@ public class TargetDefinitionPersistenceHelper {
 			}
 		}
 		// in the old world, the restrictions were global to all containers
-		if (included.size() > 0 || optional.size() > 0) {
+		if (!useAll && (included.size() > 0 || optional.size() > 0)) {
 			Iterator iterator = containers.iterator();
 			while (iterator.hasNext()) {
 				IBundleContainer container = (IBundleContainer) iterator.next();

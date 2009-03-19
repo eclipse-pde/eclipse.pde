@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer;
+
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -518,4 +522,36 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 			} 
 		}
 	}	
+	
+	/**
+	 * Test for bug 264139. Tests that when a target definition specifies "useAllPlugins=true"
+	 * that we ignore specific plug-ins/features specified in the file during migration.
+	 * 
+	 * @throws Exception
+	 */
+	public void testMigrationOfUseAllWithRestrictions() throws Exception {
+		ITargetDefinition target = readOldTarget("eclipse-serverside");
+		IBundleContainer[] containers = target.getBundleContainers();
+		assertEquals(6, containers.length);
+		validateTypeAndLocation((AbstractBundleContainer) containers[0], ProfileBundleContainer.class, "${resource_loc:/target-platforms/eclipse-equinox-SDK-3.5M5/eclipse}");
+		validateTypeAndLocation((AbstractBundleContainer) containers[1], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-3.5M5-delta-pack/eclipse}");
+		validateTypeAndLocation((AbstractBundleContainer) containers[2], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-pde-headless-3.5M5}");
+		validateTypeAndLocation((AbstractBundleContainer) containers[3], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-test-framework-3.5M5/eclipse}");
+		validateTypeAndLocation((AbstractBundleContainer) containers[4], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-core-plugins-3.5M5}");
+		validateTypeAndLocation((AbstractBundleContainer) containers[5], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/3rdparty-bundles}");
+	}	
+	
+	/**
+	 * Validates the type and location of a bundle container.
+	 * 
+	 * @param conatiner container to validate
+	 * @param clazz the type of container expected
+	 * @param rawLocation its unresolved location
+	 * @throws CoreException if something goes wrong
+	 */
+	protected void validateTypeAndLocation(AbstractBundleContainer conatiner, Class clazz, String rawLocation) throws CoreException {
+		assertTrue(clazz.isInstance(conatiner));
+		assertEquals(rawLocation, conatiner.getLocation(false));
+		assertNull(conatiner.getIncludedBundles());
+	}
 }
