@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target name="Empty Content Section">
+
+   <location path="${eclipse_home}/plugins"/>
+
+   <content>
+      <plugins>
+      </plugins>
+      <features>
+      </features>
+   </content>
+
+</target>

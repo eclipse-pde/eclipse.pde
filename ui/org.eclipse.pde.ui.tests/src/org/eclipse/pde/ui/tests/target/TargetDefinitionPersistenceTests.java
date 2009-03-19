@@ -521,7 +521,27 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 				assertEquals("Wrong restriction", optional[j], actual[j]);
 			} 
 		}
-	}	
+	}
+	
+	/**
+	 * Test for bug 268709, if the content section is included in the xml, but there are no specific
+	 * plug-ins or features as well as no useAllPlugins=true setting, treat the file as though it did
+	 * include all plug-ins from the directory.
+	 */
+	public void testEmptyContentSection() throws Exception {
+		ITargetDefinition target = readOldTarget("emptycontent");
+			
+		IBundleContainer[] containers = target.getBundleContainers();
+		assertEquals("Wrong number of bundles", 1, containers.length);
+		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
+				new Path(getResolvedLocation(containers[0])));
+		
+		target.resolve(null);
+		
+		assertTrue("Should have resolved bundles", target.getBundles().length > 0);
+		
+	}
 	
 	/**
 	 * Test for bug 264139. Tests that when a target definition specifies "useAllPlugins=true"
@@ -544,14 +564,14 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	/**
 	 * Validates the type and location of a bundle container.
 	 * 
-	 * @param conatiner container to validate
+	 * @param container container to validate
 	 * @param clazz the type of container expected
 	 * @param rawLocation its unresolved location
 	 * @throws CoreException if something goes wrong
 	 */
-	protected void validateTypeAndLocation(AbstractBundleContainer conatiner, Class clazz, String rawLocation) throws CoreException {
-		assertTrue(clazz.isInstance(conatiner));
-		assertEquals(rawLocation, conatiner.getLocation(false));
-		assertNull(conatiner.getIncludedBundles());
+	protected void validateTypeAndLocation(AbstractBundleContainer container, Class clazz, String rawLocation) throws CoreException {
+		assertTrue(clazz.isInstance(container));
+		assertEquals(rawLocation, container.getLocation(false));
+		assertNull(container.getIncludedBundles());
 	}
 }
