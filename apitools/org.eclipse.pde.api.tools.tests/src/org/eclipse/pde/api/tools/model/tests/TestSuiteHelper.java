@@ -601,4 +601,11 @@ public class TestSuiteHelper {
 		return new Path(System.getProperty("user.dir"));
 	}
 
+	/**
+	 * @return the path for the system property <code>user.dir</code>
+	 */
+	public static IPath getUserDirectoryPath() {
+		return new Path(System.getProperty("user.dir"));
+	}
+	
 }
