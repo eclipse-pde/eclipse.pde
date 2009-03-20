@@ -402,6 +402,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		if (dialog.open() == Window.OK) {
 			ITargetDefinition def = wizard.getTargetDefinition();
 			fTargets.add(def);
+			if (fTargets.size() == 1) {
+				fActiveTarget = def;
+			}
 			fTableViewer.refresh(true);
 			fTableViewer.setSelection(new StructuredSelection(def));
 		}
