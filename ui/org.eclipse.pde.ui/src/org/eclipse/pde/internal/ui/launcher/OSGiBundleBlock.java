@@ -46,9 +46,10 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 		StringBuffer buffer = new StringBuffer();
 		if (fAddWorkspaceButton.getSelection()) {
-			for (int i = 0; i < fWorkspaceModels.length; i++) {
-				if (!fPluginTreeViewer.getChecked(fWorkspaceModels[i])) {
-					appendToBuffer(buffer, fWorkspaceModels[i]);
+			IPluginModelBase[] workspaceModels = getWorkspaceModels();
+			for (int i = 0; i < workspaceModels.length; i++) {
+				if (!fPluginTreeViewer.getChecked(workspaceModels[i])) {
+					appendToBuffer(buffer, workspaceModels[i]);
 				}
 			}
 		}
@@ -79,7 +80,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		fNumExternalChecked = map.size();
 		resetGroup(fExternalPlugins);
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
+		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
 	}
 
 	private void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
@@ -96,7 +97,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		resetGroup(fWorkspacePlugins);
 
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
+		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
 	}
 
 	protected LaunchValidationOperation createValidationOperation() {

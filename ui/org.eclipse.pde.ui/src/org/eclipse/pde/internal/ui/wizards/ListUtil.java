@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,12 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Comparator;
-import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.nls.ModelChange;
@@ -60,6 +61,22 @@ public class ListUtil {
 	}
 
 	public static class PluginComparator extends NameComparator {
+
+		private static IPropertyChangeListener listener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent event) {
+				if (IPreferenceConstants.PROP_SHOW_OBJECTS.equals(event.getProperty())) {
+					cachedIsFullNameModelEnabled = IPreferenceConstants.VALUE_USE_NAMES.equals(event.getNewValue());
+				}
+			}
+		};
+
+		static {
+			PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener);
+		}
+
+		private static boolean cachedIsFullNameModelEnabled = PDEPlugin.isFullNameModeEnabled();
+
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int result = 0;
 			String name1 = getName(e1);
@@ -84,7 +101,7 @@ public class ListUtil {
 		}
 
 		private String getPluginName(IPluginBase pluginBase) {
-			return PDEPlugin.isFullNameModeEnabled() ? pluginBase.getTranslatedName() : pluginBase.getId();
+			return cachedIsFullNameModelEnabled ? pluginBase.getTranslatedName() : pluginBase.getId();
 		}
 	}
 

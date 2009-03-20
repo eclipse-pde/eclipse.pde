@@ -52,7 +52,11 @@ public class PluginsTab extends AbstractLauncherTab {
 	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
 			int index = fSelectionCombo.getSelectionIndex();
-			fPluginBlock.enableViewer(index == CUSTOM_SELECTION);
+			try {
+				fPluginBlock.initialize(index == CUSTOM_SELECTION);
+			} catch (CoreException ex) {
+				PDEPlugin.log(ex);
+			}
 			updateLaunchConfigurationDialog();
 		}
 

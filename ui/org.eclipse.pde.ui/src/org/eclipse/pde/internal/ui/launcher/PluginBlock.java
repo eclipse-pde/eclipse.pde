@@ -23,25 +23,60 @@ import org.eclipse.pde.ui.launcher.*;
 
 public class PluginBlock extends AbstractPluginBlock {
 
+	/**
+	 * The configuration this block is currently displaying or <code>null</code> if none set
+	 */
 	protected ILaunchConfiguration fLaunchConfig;
+	/**
+	 * Whether the controls have been initialized for fLaunchConfig
+	 */
+	protected boolean fIsEnabled = false;
+
+	/**
+	 * Flag for when the combo changed.  We improve the performance of the config by waiting until the combo changed
+	 * to initialize the contents of the table.
+	 */
+	protected boolean fInitDefaultCheckState = false;
 
 	public PluginBlock(AbstractLauncherTab tab) {
 		super(tab);
 	}
 
-	public void initializeFrom(ILaunchConfiguration config, boolean customSelection) throws CoreException {
-		super.initializeFrom(config);
-		if (customSelection) {
+	public void initializeFrom(ILaunchConfiguration config, boolean enable) throws CoreException {
+
+		if (fLaunchConfig != null && fLaunchConfig.equals(config) && fIsEnabled == enable) {
+			// Do nothing
+			return;
+		}
+
+		fLaunchConfig = config;
+		fIsEnabled = enable;
+
+		if (enable) {
+			super.initializeFrom(config);
 			initWorkspacePluginsState(config);
 			initExternalPluginsState(config);
+			handleFilterButton(); // Once the page is initialized, apply any filtering
 		} else {
-			handleRestoreDefaults();
+			super.initializeFrom(null);
 		}
-		enableViewer(customSelection);
+		enableViewer(enable);
 		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
-		fLaunchConfig = config;
-		handleFilterButton(); // Once the page is initialized, apply any filtering
+	}
+
+	/**
+	 * Refresh the enable state of this block using the current launch config
+	 * @param enable
+	 * @throws CoreException
+	 */
+	public void initialize(boolean enable) throws CoreException {
+		// To support lazy loading of the table we need to set some launch configuration attributes when the combo changes
+		if (fLaunchConfig != null) {
+			fInitDefaultCheckState = enable && !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS) && !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
+			fTab.updateLaunchConfigurationDialog();
+		}
+		initializeFrom(fLaunchConfig, enable);
 	}
 
 	/*
@@ -69,7 +104,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		resetGroup(fWorkspacePlugins);
 
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
+		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
 	}
 
 	protected void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
@@ -85,32 +120,68 @@ public class PluginBlock extends AbstractPluginBlock {
 		fNumExternalChecked = map.size();
 		resetGroup(fExternalPlugins);
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
+		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#isEnabled()
+	 */
+	protected boolean isEnabled() {
+		return fIsEnabled;
 	}
 
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {
-		if (isEnabled()) {
-			Object[] selected = fPluginTreeViewer.getCheckedElements();
+		// If the table is populated, store what is checked.  If we are lazy loading and need to init, store the default checkstate
+		if (isEnabled() || fInitDefaultCheckState) {
 			StringBuffer wBuffer = new StringBuffer();
 			StringBuffer tBuffer = new StringBuffer();
-			for (int i = 0; i < selected.length; i++) {
-				if (selected[i] instanceof IPluginModelBase) {
-					IPluginModelBase model = (IPluginModelBase) selected[i];
-					if (model.getUnderlyingResource() == null) {
-						appendToBuffer(tBuffer, model);
-					} else {
-						appendToBuffer(wBuffer, model);
+
+			// If this is the first time the table is enabled, default the checkstate to all workspace plug-ins
+			if (fInitDefaultCheckState) {
+				TreeSet checkedWorkspace = new TreeSet();
+				IPluginModelBase[] workspaceModels = getWorkspaceModels();
+				for (int i = 0; i < workspaceModels.length; i++) {
+					String id = workspaceModels[i].getPluginBase().getId();
+					if (id != null) {
+						checkedWorkspace.add(id);
 					}
 				}
+
+				IPluginModelBase[] externalModels = getExternalModels();
+				for (int i = 0; i < externalModels.length; i++) {
+					IPluginModelBase model = externalModels[i];
+					boolean masked = checkedWorkspace.contains(model.getPluginBase().getId());
+					if (masked) {
+						appendToBuffer(wBuffer, model);
+					} else if (model.isEnabled()) {
+						appendToBuffer(tBuffer, model);
+					}
+				}
+				fInitDefaultCheckState = false;
+				// If we have checked elements, save them to the config
+			} else {
+				Object[] selected = fPluginTreeViewer.getCheckedElements();
+				for (int i = 0; i < selected.length; i++) {
+					if (selected[i] instanceof IPluginModelBase) {
+						IPluginModelBase model = (IPluginModelBase) selected[i];
+						if (model.getUnderlyingResource() == null) {
+							appendToBuffer(tBuffer, model);
+						} else {
+							appendToBuffer(wBuffer, model);
+						}
+					}
+				}
+
 			}
 			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wBuffer.length() == 0 ? (String) null : wBuffer.toString());
 			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, tBuffer.length() == 0 ? (String) null : tBuffer.toString());
 
 			StringBuffer buffer = new StringBuffer();
 			if (fAddWorkspaceButton.getSelection()) {
-				for (int i = 0; i < fWorkspaceModels.length; i++) {
-					if (!fPluginTreeViewer.getChecked(fWorkspaceModels[i])) {
-						appendToBuffer(buffer, fWorkspaceModels[i]);
+				IPluginModelBase[] workspaceModels = getWorkspaceModels();
+				for (int i = 0; i < workspaceModels.length; i++) {
+					if (!fPluginTreeViewer.getChecked(workspaceModels[i])) {
+						appendToBuffer(buffer, workspaceModels[i]);
 					}
 				}
 			}

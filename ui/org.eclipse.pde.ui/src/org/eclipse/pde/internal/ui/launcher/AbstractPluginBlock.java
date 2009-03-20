@@ -57,8 +57,8 @@ public abstract class AbstractPluginBlock {
 	protected CheckboxTreeViewer fPluginTreeViewer;
 	protected NamedElement fWorkspacePlugins;
 	protected NamedElement fExternalPlugins;
-	protected IPluginModelBase[] fExternalModels;
-	protected IPluginModelBase[] fWorkspaceModels;
+	private IPluginModelBase[] fExternalModels;
+	private IPluginModelBase[] fWorkspaceModels;
 	protected int fNumExternalChecked;
 	protected int fNumWorkspaceChecked;
 
@@ -170,9 +170,9 @@ public abstract class AbstractPluginBlock {
 
 		public Object[] getChildren(Object parent) {
 			if (parent == fExternalPlugins)
-				return fExternalModels;
+				return getExternalModels();
 			if (parent == fWorkspacePlugins)
-				return fWorkspaceModels;
+				return getWorkspaceModels();
 			return new Object[0];
 		}
 
@@ -186,9 +186,9 @@ public abstract class AbstractPluginBlock {
 
 		public Object[] getElements(Object input) {
 			ArrayList list = new ArrayList();
-			if (fWorkspaceModels.length > 0)
+			if (getWorkspaceModels().length > 0)
 				list.add(fWorkspacePlugins);
-			if (fExternalModels.length > 0)
+			if (getExternalModels().length > 0)
 				list.add(fExternalPlugins);
 			return list.toArray();
 		}
@@ -197,8 +197,6 @@ public abstract class AbstractPluginBlock {
 	public AbstractPluginBlock(AbstractLauncherTab tab) {
 		fTab = tab;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		fExternalModels = getExternalModels();
-		fWorkspaceModels = getWorkspaceModels();
 	}
 
 	/**
@@ -206,22 +204,29 @@ public abstract class AbstractPluginBlock {
 	 * @return array of external enabled plugins, possibly empty
 	 */
 	protected IPluginModelBase[] getExternalModels() {
-		Preferences pref = PDECore.getDefault().getPluginPreferences();
-		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
-		if (saved.equals(ICoreConstants.VALUE_SAVED_NONE))
-			return new IPluginModelBase[0];
-
-		IPluginModelBase[] models = PluginRegistry.getExternalModels();
-		if (saved.equals(ICoreConstants.VALUE_SAVED_ALL))
-			return models;
-
-		ArrayList list = new ArrayList(models.length);
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].isEnabled()) {
-				list.add(models[i]);
+		if (fExternalModels == null) {
+			Preferences pref = PDECore.getDefault().getPluginPreferences();
+			String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
+			if (saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
+				fExternalModels = new IPluginModelBase[0];
+				return fExternalModels;
 			}
+
+			IPluginModelBase[] models = PluginRegistry.getExternalModels();
+			if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
+				fExternalModels = models;
+				return fExternalModels;
+			}
+
+			ArrayList list = new ArrayList(models.length);
+			for (int i = 0; i < models.length; i++) {
+				if (models[i].isEnabled()) {
+					list.add(models[i]);
+				}
+			}
+			fExternalModels = (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
 		}
-		return (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+		return fExternalModels;
 	}
 
 	/**
@@ -230,20 +235,23 @@ public abstract class AbstractPluginBlock {
 	 * @return array of workspace OSGi plugins, possibly empty
 	 */
 	protected IPluginModelBase[] getWorkspaceModels() {
-		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		ArrayList list = new ArrayList(models.length);
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].getBundleDescription() != null) {
-				list.add(models[i]);
+		if (fWorkspaceModels == null) {
+			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
+			ArrayList list = new ArrayList(models.length);
+			for (int i = 0; i < models.length; i++) {
+				if (models[i].getBundleDescription() != null) {
+					list.add(models[i]);
+				}
 			}
+			fWorkspaceModels = (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
 		}
-		return (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+		return fWorkspaceModels;
 	}
 
 	protected void updateCounter() {
 		if (fCounter != null) {
 			int checked = fNumExternalChecked + fNumWorkspaceChecked;
-			int total = fWorkspaceModels.length + fExternalModels.length;
+			int total = getWorkspaceModels().length + getExternalModels().length;
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
 		}
 	}
@@ -304,9 +312,9 @@ public abstract class AbstractPluginBlock {
 					}
 
 					fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-					fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
+					fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
 					fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-					fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
+					fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
 				}
 				previousFilter = filtered;
 			}
@@ -696,19 +704,28 @@ public abstract class AbstractPluginBlock {
 		return (String[]) set.toArray(new String[set.size()]);
 	}
 
+	/**
+	 * Initializes the contents of this block from the given config.  If the config is
+	 * <code>null</code> the contents are reset.
+	 * 
+	 * @param config launch configuration to init from or <code>null</code>
+	 * @throws CoreException
+	 */
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
 		levelColumnCache = new HashMap();
 		autoColumnCache = new HashMap();
 		fPluginFilteredTree.resetFilter();
-		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
-		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
-		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
-		if (fPluginTreeViewer.getInput() == null) {
+		fIncludeOptionalButton.setSelection(config == null ? true : config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
+		fAddWorkspaceButton.setSelection(config == null ? true : config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
+		fAutoValidate.setSelection(config == null ? false : config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
+		if (config == null) {
+			fPluginTreeViewer.setInput(null);
+		} else if (fPluginTreeViewer.getInput() == null) {
 			fPluginTreeViewer.setUseHashlookup(true);
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
 			fPluginTreeViewer.reveal(fWorkspacePlugins);
 		}
-		fFilterButton.setSelection(config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
+		fFilterButton.setSelection(config == null ? false : config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
 	}
 
 	protected void computeSubset() {
@@ -793,9 +810,9 @@ public abstract class AbstractPluginBlock {
 
 	protected void adjustGroupState() {
 		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < fExternalModels.length);
+		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
 		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < fWorkspaceModels.length);
+		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -843,8 +860,8 @@ public abstract class AbstractPluginBlock {
 		fNumWorkspaceChecked = 0;
 		fNumExternalChecked = 0;
 
-		for (int i = 0; i < fWorkspaceModels.length; i++) {
-			IPluginModelBase model = fWorkspaceModels[i];
+		for (int i = 0; i < getWorkspaceModels().length; i++) {
+			IPluginModelBase model = getWorkspaceModels()[i];
 			fNumWorkspaceChecked += 1;
 			String id = model.getPluginBase().getId();
 			if (id != null)
@@ -853,8 +870,9 @@ public abstract class AbstractPluginBlock {
 		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, true);
 
 		fNumExternalChecked = 0;
-		for (int i = 0; i < fExternalModels.length; i++) {
-			IPluginModelBase model = fExternalModels[i];
+		IPluginModelBase[] externalModels = getExternalModels();
+		for (int i = 0; i < externalModels.length; i++) {
+			IPluginModelBase model = externalModels[i];
 			boolean masked = wtable.contains(model.getPluginBase().getId());
 			if (!masked && model.isEnabled()) {
 				fPluginTreeViewer.setChecked(model, true);
