@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -375,13 +377,38 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		document.appendChild(root);
 		root.setAttribute(IApiXmlConstants.ATTR_ID, fProject.getElementName());
 		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_FILTER_STORE_CURRENT_VERSION);
-		for(Iterator iter = fFilterMap.keySet().iterator(); iter.hasNext();) {
-			IResource resource = (IResource) iter.next();
-			Map pTypeNames = (Map) fFilterMap.get(resource);
+		Set allFiltersEntrySet = fFilterMap.entrySet();
+		List allFiltersEntries = new ArrayList(allFiltersEntrySet.size());
+		allFiltersEntries.addAll(allFiltersEntrySet);
+		Collections.sort(allFiltersEntries, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				Map.Entry entry1 = (Map.Entry) o1;
+				Map.Entry entry2 = (Map.Entry) o2;
+				String path1 = ((IResource) entry1.getKey()).getProjectRelativePath().toOSString();
+				String path2 = ((IResource) entry2.getKey()).getProjectRelativePath().toOSString();
+				return path1.compareTo(path2);
+			}
+		});
+		for(Iterator iter = allFiltersEntries.iterator(); iter.hasNext();) {
+			Map.Entry allFiltersEntry = (Map.Entry) iter.next();
+			IResource resource = (IResource) allFiltersEntry.getKey();
+			Map pTypeNames = (Map) allFiltersEntry.getValue();
 			if(pTypeNames == null) {
 				continue;
 			}
-			for (Iterator iterator = pTypeNames.entrySet().iterator(); iterator.hasNext(); ) {
+			Set allTypeNamesEntriesSet = pTypeNames.entrySet();
+			List allTypeNamesEntries = new ArrayList(allTypeNamesEntriesSet.size());
+			allTypeNamesEntries.addAll(allTypeNamesEntriesSet);
+			Collections.sort(allTypeNamesEntries, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					Map.Entry entry1 = (Map.Entry) o1;
+					Map.Entry entry2 = (Map.Entry) o2;
+					String typeName1 = (String) entry1.getKey();
+					String typeName2 = (String) entry2.getKey();
+					return typeName1.compareTo(typeName2);
+				}
+			});
+			for (Iterator iterator = allTypeNamesEntries.iterator(); iterator.hasNext(); ) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String typeName = (String) entry.getKey();
 				Set filters = (Set) entry.getValue();
@@ -397,7 +424,16 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				}
 				root.appendChild(relement);
 				typeName = null;
-				for(Iterator iterator2 = filters.iterator(); iterator2.hasNext(); ) {
+				List filtersList = new ArrayList(filters.size());
+				filtersList.addAll(filters);
+				Collections.sort(filtersList, new Comparator(){
+					public int compare(Object o1, Object o2) {
+						int problem1Id = ((IApiProblemFilter) o1).getUnderlyingProblem().getId();
+						int problem2Id = ((IApiProblemFilter) o2).getUnderlyingProblem().getId();
+						return problem1Id - problem2Id;
+					}
+				});
+				for(Iterator iterator2 = filtersList.iterator(); iterator2.hasNext(); ) {
 					IApiProblem problem = ((IApiProblemFilter) iterator2.next()).getUnderlyingProblem();
 					typeName = problem.getTypeName();
 					Element filterElement = document.createElement(IApiXmlConstants.ELEMENT_FILTER);
