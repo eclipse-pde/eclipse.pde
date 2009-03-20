@@ -30,6 +30,8 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public abstract class AntRunnerTestCase extends TestCase {
 	public static final String PROJECT_NAME = "pde.apitools";
 
+	private static final String BUILD_EXCEPTION_CLASS_NAME = "org.apache.tools.ant.BuildException";
+
 	private IFolder buildFolder = null;
 
 	public abstract String getTestResourcesFolder();
@@ -149,5 +151,9 @@ public abstract class AntRunnerTestCase extends TestCase {
 			args[idx++] = targets[i];
 		}
 		return args;
+	}
+	
+	public void checkBuildException(Exception e) {
+		assertEquals("Not BuildException", BUILD_EXCEPTION_CLASS_NAME, e.getClass().getCanonicalName());
 	}
 }

@@ -15,9 +15,6 @@ import java.util.Properties;
 import org.eclipse.core.resources.IFolder;
 
 public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
-
-	private static final String BUILD_EXCEPTION_CLASS_NAME = "org.apache.tools.ant.BuildException";
-
 	public String getTestResourcesFolder() {
 		return "apitooling.analysis/";
 	}
@@ -48,7 +45,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 			runAntScript(buildXMLPath, new String[] {"run"}, buildFolder.getLocation().toOSString(), properties);
 			assertFalse("An exception must occur", true);
 		} catch (Exception e) {
-			assertEquals("Wrong exception", BUILD_EXCEPTION_CLASS_NAME, e.getClass().getCanonicalName());
+			checkBuildException(e);
 		}
 	}
 	public void test3() throws Exception {
@@ -61,7 +58,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 			runAntScript(buildXMLPath, new String[] {"run"}, buildFolder.getLocation().toOSString(), properties);
 			assertFalse("An exception must occur", true);
 		} catch (Exception e) {
-			assertEquals("Wrong exception", BUILD_EXCEPTION_CLASS_NAME, e.getClass().getCanonicalName());
+			checkBuildException(e);
 		}
 	}
 	public void test4() throws Exception {
@@ -74,7 +71,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 			runAntScript(buildXMLPath, new String[] {"run"}, buildFolder.getLocation().toOSString(), properties);
 			assertFalse("An exception must occur", true);
 		} catch (Exception e) {
-			assertEquals("Wrong exception", BUILD_EXCEPTION_CLASS_NAME, e.getClass().getCanonicalName());
+			checkBuildException(e);
 		}
 	}
 }
