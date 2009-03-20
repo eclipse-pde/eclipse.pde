@@ -196,6 +196,9 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void reportIllegalPolicy(Element element, String policy) {
 		String name = element
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
+		if (name == null)
+			name = element
+					.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_INTERFACE);
 		String message = NLS.bind(Messages.DSErrorReporter_invalidPolicyValue,
 				name, policy);
 		Attr attr = element
