@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
@@ -37,22 +36,20 @@ public class UseSearchTests extends SearchTest {
 	static IPath HTML_PATH = TMP_PATH.append("html");
 	final HashMap<String, HashSet<String>> usedprojects = new HashMap<String, HashSet<String>>();
 	
-	/**
-	 * Asserts that a specific file exists at the given location with the given name
-	 * @param location
-	 * @param filename
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.search.tests.SearchTest#tearDown()
 	 */
-	void assertFile(String location, String filename) {
-		IPath path = new Path(location);
-		path.append(filename);
-		assertTrue("The report path must point to a file that exists", path.toFile().exists());
+	@Override
+	protected void tearDown() throws Exception {
+		scrubReportLocation(TMP_PATH.toFile());
+		super.tearDown();
 	}
 	
 	/**
 	 * Asserts the the report was created with the correct folder structure
 	 * @param reportroot
 	 */
-	void assertXMLReport(IPath reportroot){
+	private void assertXMLReport(IPath reportroot){
 		File root = reportroot.toFile();
 		assertTrue("the report root must exist", root.exists());
 		File[] files = root.listFiles(new FileFilter(){
@@ -84,18 +81,11 @@ public class UseSearchTests extends SearchTest {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {} {
-		scrubReportLocation(TMP_PATH.toFile());
-	}
-	
 	/**
 	 * Cleans the location if it exists
 	 * @param file
 	 */
-	protected void scrubReportLocation(File file) {
+	private void scrubReportLocation(File file) {
 		if(file.exists() && file.isDirectory()) {
 			File[] files = file.listFiles();
 			for (int i = 0; i < files.length; i++) {

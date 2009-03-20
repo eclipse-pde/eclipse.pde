@@ -158,4 +158,12 @@ public abstract class SearchTest extends TestCase {
 		TEST_REQUESTOR = new TestRequestor(this); 
 		TEST_REPORTER = new TestReporter(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+	}
 }
