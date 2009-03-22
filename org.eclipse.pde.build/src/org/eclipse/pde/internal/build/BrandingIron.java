@@ -228,16 +228,19 @@ public class BrandingIron implements IXMLConstants {
 	}
 
 	private void brandWindows() throws Exception {
-		File templateLauncher = new File(root, "launcher.exe"); //$NON-NLS-1$
+		File templateLauncher = new File(root, name + ".exe"); //$NON-NLS-1$
+		if (!templateLauncher.exists())
+			templateLauncher = new File(root, "launcher.exe"); //$NON-NLS-1$
 		if (!templateLauncher.exists())
 			templateLauncher = new File(root, "eclipse.exe"); //$NON-NLS-1$
-		if (brandIcons) {
+		if (brandIcons && templateLauncher.exists()) {
 			String[] args = new String[icons.length + 1];
 			args[0] = templateLauncher.getAbsolutePath();
 			System.arraycopy(icons, 0, args, 1, icons.length);
 			IconExe.main(args);
 		}
-		templateLauncher.renameTo(new File(root, name + ".exe")); //$NON-NLS-1$
+		if (!templateLauncher.getName().equals(name + ".exe")) //$NON-NLS-1$
+			templateLauncher.renameTo(new File(root, name + ".exe")); //$NON-NLS-1$
 	}
 
 	private void renameLauncher() {
