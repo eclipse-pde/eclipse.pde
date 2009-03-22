@@ -12,6 +12,7 @@ package org.eclipse.pde.build.internal.tests;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.Attributes;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -427,5 +428,50 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(config, "org.eclipse.update.reconcile=false");
 		assertLogContainsLine(config, "osgi.bundles=org.eclipse.core.runtime,org.eclipse.update.configurator,org.eclipse.equinox.common@start");
 
+	}
+	
+	public void testBug269540() throws Exception {
+		IFolder buildFolder = newTest("269540");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
+		Utils.generateBundle(a, "A");
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"), "(& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))");
+		Utils.generateBundleManifest(a, "A", "1.0.0", manifestAdditions);
+		Utils.generatePluginBuildProperties(a, null);
+		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
+				
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<launcher name=\"rcp\">                    \n");
+		buffer.append("   <win useIco=\"true\">                   \n");
+		buffer.append("      <ico path=\"/A/mail.ico\"/>          \n");
+		buffer.append("   </win>                                  \n");
+		buffer.append("</launcher>                                \n");
+		IFile product = buildFolder.getFile("foo.product");
+		Utils.generateProduct(product, "rcp", "1.0.0", null, "rcp", new String [] { "A" }, false, buffer);
+		
+		//steal the icons from test 237922
+		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
+		IFile icoFile = a.getFile("mail.ico");
+		icoFile.create(ico.openStream(), IResource.FORCE, null);
+		
+		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("product", product.getLocation().toOSString());
+		buildProperties.put("filteredDependencies", "true");
+		buildProperties.put("pluginPath", delta.getAbsolutePath());
+		buildProperties.put("configs", "win32, win32, x86");
+		//buildProperties.put("archivesFormat", "win32,win32,x86 - folder");
+		
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		
+		runProductBuild(buildFolder);
+		
+		Set entries = new HashSet();
+		entries.add("eclipse/plugins/A_1.0.0.jar");
+		entries.add("eclipse/rcp.exe");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
 	}
 }
