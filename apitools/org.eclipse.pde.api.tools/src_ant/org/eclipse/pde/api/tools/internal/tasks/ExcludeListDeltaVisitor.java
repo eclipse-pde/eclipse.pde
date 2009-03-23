@@ -61,6 +61,9 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 		StringBuffer buffer = new StringBuffer();
 		String componentId = delta.getComponentVersionId();
 		if (componentId != null) {
+			if (this.excludedElement.contains(componentId)) {
+				return true;
+			}
 			buffer.append(componentId).append(':');
 		}
 		if (typeName != null) {
