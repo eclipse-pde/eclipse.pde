@@ -164,7 +164,7 @@ public class RegistryBrowser extends ViewPart {
 
 		initializeModelJob = new Job(PDERuntimeMessages.RegistryBrowser_InitializingView) {
 			public IStatus run(IProgressMonitor monitor) {
-				model.connect(monitor);
+				model.connect(monitor, true);
 				initializeModelJob = null;
 				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}

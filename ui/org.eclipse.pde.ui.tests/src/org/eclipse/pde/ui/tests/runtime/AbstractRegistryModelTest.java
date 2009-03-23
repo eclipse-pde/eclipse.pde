@@ -11,70 +11,96 @@
 package org.eclipse.pde.ui.tests.runtime;
 
 import java.net.URISyntaxException;
-
-import java.util.*;
+import java.util.EventListener;
 import junit.framework.TestCase;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
+import org.eclipse.pde.internal.runtime.registry.model.Bundle;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
-import org.osgi.framework.BundleException;
+import org.osgi.framework.*;
 
-public abstract class AbstractRegistryModelTest extends TestCase {
+public abstract class AbstractRegistryModelTest extends TestCase implements ModelChangeListener  {
 
-	public static class TestModelChangeListener implements ModelChangeListener {
+	public static class MockFramework {
+		private EventListener listener;
 		
-		private static final int FRAMEWORK_EVENT_TIMEOUT = 5000;
-		
-		private List fDeltas = new ArrayList();
-		private int notificationsCount = 0;
-		private Thread testsThread;
-		private int expected;
-		
-		public TestModelChangeListener() {
-			// get the thread in which tests are run
-			testsThread = Thread.currentThread();
+		public void createBundleEvent(int type, org.osgi.framework.Bundle bundle) {
+			assertTrue(listener instanceof BundleListener);
+			((BundleListener)listener).bundleChanged(new BundleEvent(type, bundle));
 		}
 		
-		public void modelChanged(ModelChangeDelta[] deltas) {
-			notificationsCount += deltas.length;
-			fDeltas.addAll(Arrays.asList(deltas));
-			
-			// notify tests thread if it's waiting in waitForNotifications sleep
-			if ((expected > 0) && (notificationsCount >= expected))
-				testsThread.interrupt();
+		public void createRegistryAddedEvent(IExtension[] ext) {
+			assertTrue(listener instanceof IRegistryEventListener);
+			((IRegistryEventListener)listener).added(ext);
 		}
 		
-		public ModelChangeDelta[] getDeltas() {
-			return (ModelChangeDelta[]) fDeltas.toArray(new ModelChangeDelta[fDeltas.size()]);
+		public void createRegistryRemovedEvent(IExtension[] ext) {
+			assertTrue(listener instanceof IRegistryEventListener);
+			((IRegistryEventListener)listener).removed(ext);
 		}
 		
-		public int waitForNotifications(int count) {
-			expected = count;
-			
-			try {
-				Thread.sleep(expected * FRAMEWORK_EVENT_TIMEOUT);
-			} catch (InterruptedException e) {
-			}
-			
-			return notificationsCount;
+		public void createRegistryAddedEvent(IExtensionPoint[] ext) {
+			assertTrue(listener instanceof IRegistryEventListener);
+			((IRegistryEventListener)listener).added(ext);
 		}
+		
+		public void createRegistryRemovedEvent(IExtensionPoint[] ext) {
+			assertTrue(listener instanceof IRegistryEventListener);
+			((IRegistryEventListener)listener).removed(ext);
+		}
+		
+		public void createServiceEvent(int type, ServiceReference ref) {
+			assertTrue(listener instanceof ServiceListener);
+			((ServiceListener)listener).serviceChanged(new ServiceEvent(type, ref));
+		}
+		
+		public void setListener(EventListener listener) {
+			this.listener = listener;
+		}		
 	}
-
-	private static final String TESTBUNDLE_PATH = "/testplugins/org.eclipse.pde.runtime.tests.testbundle_1.0.0.jar";
-
-	private static final String TESTBUNDLE = "org.eclipse.pde.runtime.tests.testbundle";
 	
-	protected RegistryModel f;
+	public static final String TEST_EXT_POINT = "org.eclipse.ui.views";
+	public static final String TEST_EXT_POINT_BUNDLE = "org.eclipse.ui";
+	
+	protected MockFramework mockFramework = new MockFramework();
+	
+	protected org.osgi.framework.Bundle testBundle;
+	protected ServiceReference testServiceReference;
+	
+	protected IExtensionPoint testExtPoint;
+	protected org.osgi.framework.Bundle testExtPointBundle;
+	
+	protected RegistryModel model;
+	
+	protected ModelChangeDelta[] deltas;
+	
+	public void modelChanged(ModelChangeDelta[] deltas) {
+		this.deltas = deltas;
+	}
 	
 	abstract protected RegistryModel createModel() throws URISyntaxException;
 	
+	public AbstractRegistryModelTest() {
+		testBundle = MacroPlugin.getBundleContext().getBundle();
+		org.osgi.framework.ServiceRegistration registration = MacroPlugin.getBundleContext().registerService(getClass().getName(), this, null);
+		testServiceReference = registration.getReference();
+		
+		testExtPoint = Platform.getExtensionRegistry().getExtensionPoint(TEST_EXT_POINT);
+		testExtPointBundle = MacroPlugin.getDefault().getPackageAdmin().getBundles(TEST_EXT_POINT_BUNDLE, null)[0];
+	}
+	
 	protected void setUp() throws Exception {
-		f = createModel();
-		f.connect(new NullProgressMonitor());
+		model = createModel();
+		model.connect(new NullProgressMonitor(), false);
+		
+		deltas = new ModelChangeDelta[0];
+		model.addModelChangeListener(this);
 	}
 	
 	protected void tearDown() {
-		f.disconnect();
+		model.removeModelChangeListener(this);
+		model.disconnect();
 	}
 	
 	/**
@@ -82,86 +108,97 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 	 */
 	public void testInstalledBundles() {
 		org.osgi.framework.Bundle[] origBundles = MacroPlugin.getBundleContext().getBundles();
-		Bundle[] bundles = f.getBundles();
+		model.initialize(new NullProgressMonitor());
+		Bundle[] bundles = model.getBundles();
 		
 		assertEquals(origBundles.length, bundles.length);
 	}
 	
-	public void testBundleChangedNotification() throws BundleException {
-		TestModelChangeListener listener = new TestModelChangeListener();
+	public void testBundleInstalled() {
+		mockFramework.createBundleEvent(BundleEvent.INSTALLED, testBundle);
 		
-		f.addModelChangeListener(listener);
-		org.osgi.framework.Bundle bundle = MacroPlugin.getBundleContext().installBundle(TestUtils.findPath(TESTBUNDLE_PATH));
-		bundle.start(); // resolved, started
-		bundle.stop(); // stopped, unresolved
-		bundle.update();
-		bundle.uninstall();
-		
-		listener.waitForNotifications(7);
-		
-		f.removeModelChangeListener(listener);
-		
-		ModelChangeDelta[] deltas = listener.getDeltas();
-		
-		// bundle install
-		ModelChangeDelta delta = deltas[0];
-		assertTrue(delta.getModelObject() instanceof Bundle);
-		assertEquals(TESTBUNDLE, ((Bundle)delta.getModelObject()).getSymbolicName());
-		assertEquals(ModelChangeDelta.ADDED, delta.getFlag());
-		
-		// bundle starting
-		delta = deltas[1];
-		assertTrue(delta.getModelObject() instanceof Bundle);
-		assertEquals(TESTBUNDLE, ((Bundle)delta.getModelObject()).getSymbolicName());
-		assertEquals(ModelChangeDelta.RESOLVED, delta.getFlag());
-		
-		// bundle started
-		delta = deltas[2];
-		assertTrue(delta.getModelObject() instanceof Bundle);
-		assertEquals(TESTBUNDLE, ((Bundle)delta.getModelObject()).getSymbolicName());
-		assertEquals(ModelChangeDelta.STARTED, delta.getFlag());
-		
-		// bundle stopping
-		delta = deltas[3];
-		assertTrue(delta.getModelObject() instanceof Bundle);
-		assertEquals(TESTBUNDLE, ((Bundle)delta.getModelObject()).getSymbolicName());
-		assertEquals(ModelChangeDelta.STOPPED, delta.getFlag());
-		
-		// bundle stopped
-		delta = deltas[4];
-		assertTrue(delta.getModelObject() instanceof Bundle);
-		assertEquals(TESTBUNDLE, ((Bundle)delta.getModelObject()).getSymbolicName());
-		assertEquals(ModelChangeDelta.UNRESOLVED, delta.getFlag());
-		
-		// bundle update
-		delta = deltas[5];
-		assertTrue(delta.getModelObject() instanceof Bundle);
-		assertEquals(TESTBUNDLE, ((Bundle)delta.getModelObject()).getSymbolicName());
-		assertEquals(ModelChangeDelta.UPDATED, delta.getFlag());
-		
-		// bundle uninstall
-		delta = deltas[6];
-		assertTrue(delta.getModelObject() instanceof Bundle);
-		assertEquals(TESTBUNDLE, ((Bundle)delta.getModelObject()).getSymbolicName());
-		assertEquals(ModelChangeDelta.REMOVED, delta.getFlag());
-		
-		assertEquals(7, deltas.length);
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.ADDED, deltas[0].getFlag());
 	}
 	
-	public void testServiceChangedNotification() throws BundleException {
-		TestModelChangeListener listener = new TestModelChangeListener();
+	public void testBundleStartedEvent() {
+		mockFramework.createBundleEvent(BundleEvent.STARTED, testBundle);
 		
-		f.addModelChangeListener(listener);
-		org.osgi.framework.ServiceRegistration registration = MacroPlugin.getBundleContext().registerService(getClass().getName(), this, null);
-		registration.unregister();
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.STARTED, deltas[0].getFlag());
+	}
+	
+	public void testBundleStoppedEvent() {
+		mockFramework.createBundleEvent(BundleEvent.STOPPED, testBundle);
 		
-		listener.waitForNotifications(3);
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.STOPPED, deltas[0].getFlag());
+	}
+	
+	public void testBundleUpdatedEvent() {
+		mockFramework.createBundleEvent(BundleEvent.UPDATED, testBundle);
 		
-		f.removeModelChangeListener(listener);
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.UPDATED, deltas[0].getFlag());
+	}
+	
+	public void testBundleUninstalledEvent() {
+		mockFramework.createBundleEvent(BundleEvent.UNINSTALLED, testBundle);
 		
-		ModelChangeDelta[] deltas = listener.getDeltas();
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.REMOVED, deltas[0].getFlag());
+	}
+	
+	public void testBundleResolvedEvent() {
+		mockFramework.createBundleEvent(BundleEvent.RESOLVED, testBundle);
 		
-		// service register
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.RESOLVED, deltas[0].getFlag());
+	}
+	
+	public void testBundleUnresolvedEvent() {
+		mockFramework.createBundleEvent(BundleEvent.UNRESOLVED, testBundle);
+		
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.UNRESOLVED, deltas[0].getFlag());
+	}
+	
+	public void testBundleStartingEvent() {
+		mockFramework.createBundleEvent(BundleEvent.STARTING, testBundle);
+		
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.STARTING, deltas[0].getFlag());
+	}
+	
+	public void testBundleStoppingEvent() {
+		mockFramework.createBundleEvent(BundleEvent.STOPPING, testBundle);
+		
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Bundle);
+		assertEquals(testBundle.getSymbolicName(), ((Bundle)deltas[0].getModelObject()).getSymbolicName());
+		assertEquals(ModelChangeDelta.STOPPING, deltas[0].getFlag());
+	}
+	
+	public void testServiceRegisteredEvent() {
+		mockFramework.createServiceEvent(ServiceEvent.REGISTERED, testServiceReference);
+		
+		assertEquals(2, deltas.length);
 		ModelChangeDelta delta = deltas[0];
 		assertTrue(delta.getModelObject() instanceof ServiceName);
 		assertEquals(getClass().getName(), ((ServiceName)delta.getModelObject()).getClasses()[0]);
@@ -171,14 +208,83 @@ public abstract class AbstractRegistryModelTest extends TestCase {
 		assertTrue(delta.getModelObject() instanceof ServiceRegistration);
 		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getName().getClasses()[0]);
 		assertEquals(ModelChangeDelta.ADDED, delta.getFlag());
+	}
+	
+	public void testServiceUnregisteringEvent() {
+		mockFramework.createServiceEvent(ServiceEvent.UNREGISTERING, testServiceReference);
 		
-		// service unregister
-		delta = deltas[2];
+		assertEquals(2, deltas.length);
+		ModelChangeDelta delta = deltas[0];
+		assertTrue(delta.getModelObject() instanceof ServiceName);
+		assertEquals(getClass().getName(), ((ServiceName)delta.getModelObject()).getClasses()[0]);
+		assertEquals(ModelChangeDelta.REMOVED, delta.getFlag());
+		
+		delta = deltas[1];
 		assertTrue(delta.getModelObject() instanceof ServiceRegistration);
 		assertEquals(getClass().getName(), ((ServiceRegistration)delta.getModelObject()).getName().getClasses()[0]);
 		assertEquals(ModelChangeDelta.REMOVED, delta.getFlag());
-		
-		assertEquals(3, deltas.length);
 	}
-
+	
+	public void testServiceModifiedEvent() {
+		mockFramework.createServiceEvent(ServiceEvent.MODIFIED, testServiceReference);
+		
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof ServiceRegistration);
+		assertEquals(getClass().getName(), ((ServiceRegistration)deltas[0].getModelObject()).getName().getClasses()[0]);
+		assertEquals(ModelChangeDelta.UPDATED, deltas[0].getFlag());
+	}
+	
+	public void testExtensionAddedEvent() {
+		mockFramework.createRegistryAddedEvent(new IExtensionPoint[] {testExtPoint});
+		
+		IExtension ext = testExtPoint.getExtensions()[0];
+		
+		mockFramework.createRegistryAddedEvent(new IExtension[] {ext});
+		
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Extension);
+		assertEquals(ext.getLabel(), ((Extension)deltas[0].getModelObject()).getLabel());
+		assertEquals(ext.getExtensionPointUniqueIdentifier(), ((Extension)deltas[0].getModelObject()).getExtensionPointUniqueIdentifier());
+		assertEquals(ext.getNamespaceIdentifier(), ((Extension)deltas[0].getModelObject()).getNamespaceIdentifier());
+		assertEquals(ModelChangeDelta.ADDED, deltas[0].getFlag());
+	}
+	
+	public void testExtensionRemovedEvent() {
+		mockFramework.createRegistryAddedEvent(new IExtensionPoint[] {testExtPoint});
+		
+		IExtension ext = testExtPoint.getExtensions()[0];
+		
+		mockFramework.createRegistryRemovedEvent(new IExtension[] {ext});
+		
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof Extension);
+		Extension modelObject = ((Extension)deltas[0].getModelObject());
+		assertEquals(ext.getLabel(), modelObject.getLabel());
+		assertEquals(ext.getExtensionPointUniqueIdentifier(), modelObject.getExtensionPointUniqueIdentifier());
+		assertEquals(ext.getNamespaceIdentifier(), modelObject.getNamespaceIdentifier());
+		assertEquals(ModelChangeDelta.REMOVED, deltas[0].getFlag());	
+	}
+	
+	public void testExtensionPointAddedEvent() {
+		mockFramework.createRegistryAddedEvent(new IExtensionPoint[] {testExtPoint});
+		
+		assertEquals(1, deltas.length);
+		assertTrue(deltas[0].getModelObject() instanceof ExtensionPoint);
+		
+		ExtensionPoint modelObject = ((ExtensionPoint)deltas[0].getModelObject());
+		assertEquals(testExtPoint.getLabel(), modelObject.getLabel());
+		assertEquals(testExtPoint.getNamespaceIdentifier(), modelObject.getNamespaceIdentifier());
+		assertEquals(testExtPoint.getUniqueIdentifier(), modelObject.getUniqueIdentifier());
+		assertEquals(ModelChangeDelta.ADDED, deltas[0].getFlag());
+	}
+	
+	public void testExtensionPointRemovedEvent() {
+		mockFramework.createRegistryRemovedEvent(new IExtensionPoint[] {testExtPoint});
+		
+		ExtensionPoint modelObject = ((ExtensionPoint)deltas[0].getModelObject());
+		assertEquals(testExtPoint.getLabel(), modelObject.getLabel());
+		assertEquals(testExtPoint.getNamespaceIdentifier(), modelObject.getNamespaceIdentifier());
+		assertEquals(testExtPoint.getUniqueIdentifier(), modelObject.getUniqueIdentifier());
+		assertEquals(ModelChangeDelta.REMOVED, deltas[0].getFlag());
+	}
 }

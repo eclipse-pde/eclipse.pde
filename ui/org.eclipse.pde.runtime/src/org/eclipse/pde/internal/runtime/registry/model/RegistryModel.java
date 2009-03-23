@@ -233,9 +233,15 @@ public class RegistryModel {
 		hostFragments.remove(fragment);
 	}
 
-	public void connect(IProgressMonitor monitor) {
+	public void connect(IProgressMonitor monitor, boolean forceInit) {
 		backend.connect(monitor);
 
+		if (forceInit) {
+			initialize(monitor);
+		}
+	}
+
+	public void initialize(IProgressMonitor monitor) {
 		backend.initializeBundles(monitor);
 		backend.initializeServices(monitor);
 		backend.initializeExtensionPoints(monitor);

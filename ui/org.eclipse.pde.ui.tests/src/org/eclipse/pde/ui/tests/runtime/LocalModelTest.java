@@ -12,13 +12,22 @@ package org.eclipse.pde.ui.tests.runtime;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.internal.runtime.registry.model.LocalRegistryBackend;
 import org.eclipse.pde.internal.runtime.registry.model.RegistryModel;
-import org.eclipse.pde.internal.runtime.registry.model.RegistryModelFactory;
 
 public class LocalModelTest extends AbstractRegistryModelTest {
-
+	
 	protected RegistryModel createModel() {
-		return RegistryModelFactory.getRegistryModel("local");
+		return new RegistryModel(new LocalRegistryBackend() {
+			public void connect(IProgressMonitor monitor) {
+				mockFramework.setListener(this);
+			}
+			
+			public void disconnect() {
+				// empty
+			}
+		});
 	}
 	
 	public static Test suite() {
