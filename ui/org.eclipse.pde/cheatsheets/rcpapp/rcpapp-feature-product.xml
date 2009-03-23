@@ -77,7 +77,7 @@
       <description>
          To create the feature, perform the following steps:
       </description>
-      <subitem label="Select the &quot;Configuration&quot; tab to display the &quot;Configuration&quot; page" 
+      <subitem label="Select the &quot;Dependencies&quot; tab to display the &quot;Dependencies&quot; page" 
                skip="false"/>
       <subitem label="Select the &quot;New Feature...&quot; button under the &quot;Features&quot; heading" 
                skip="false"/>
@@ -104,11 +104,11 @@
       </description>
       <subitem label="Select the &quot;Information&quot; tab" 
                skip="false"/>  
-      <subitem label="Input &quot;RCP application feature description&quot; into the &quot;Text&quot; dialog box within the &quot;Feature Description&quot; tab" 
+      <subitem label="Input &quot;RCP application feature description&quot; into the &quot;Text&quot; text box within the &quot;Feature Description&quot; tab" 
                skip="false"/>  
       <subitem label="Select the &quot;License Agreement&quot; tab within the &quot;Information&quot; page" 
                skip="false"/>  
-      <subitem label="Input &quot;RCP application license agreement&quot; into the &quot;Text&quot; dialog box" 
+      <subitem label="Input &quot;RCP application license agreement&quot; into the &quot;Text&quot; text box" 
                skip="false"/>
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>
@@ -123,7 +123,7 @@
       <description>
          To add features to the product configuration, perform the following steps:
       </description>
-      <subitem label="Select the &quot;rcpapp.product&quot; tab in the workbench to return back to the product editor (opened on the &quot;Configuration&quot; page)" 
+      <subitem label="Select the &quot;rcpapp.product&quot; tab in the workbench to return back to the product editor (opened on the &quot;Dependencies&quot; page)" 
                skip="false">
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/rcpapp.product)" required="false" translate="" />
       </subitem>  
@@ -149,6 +149,10 @@
       <subitem label="Click the &quot;Eclipse Product export wizard&quot; hyperlink under the &quot;Exporting&quot; heading to launch the &quot;Export&quot; dialog box" 
                skip="false">
          <command serialization="org.eclipse.ui.file.export(exportWizardId=org.eclipse.pde.ui.productExportWizard)" required="false" translate="" />
+      </subitem>
+      <subitem
+            label="Verify that &quot;/com.example.rcpapp/rcpapp.product&quot; is entered in the &quot;Configuration&quot; combo box within the &quot;Product Configuration&quot; group"
+            skip="true">
       </subitem>
       <subitem label="Input &quot;rcpapp_feature-based&quot; in the &quot;Root directory&quot; text box contained in the &quot;Product Configuration&quot; group" 
                skip="false"/>
