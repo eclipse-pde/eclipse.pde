@@ -33,10 +33,7 @@ public class NonApiProjectDescription extends ProjectApiDescription {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.pde.api.tools.internal.model.ProjectApiDescription#
-	 * isInsertOnResolve
-	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
-	 * .IElementDescriptor)
+	 * @see org.eclipse.pde.api.tools.internal.model.ProjectApiDescription#isInsertOnResolve(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
 		switch (elementDescriptor.getElementType()) {
