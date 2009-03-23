@@ -47,6 +47,9 @@ public class Extension extends ModelObject {
 		return namespaceIdentifier;
 	}
 
+	/**
+	 * @return contributor id or <code>null</code> if contributor not present
+	 */
 	public Long getContributorId() {
 		return contributor;
 	}
@@ -76,8 +79,11 @@ public class Extension extends ModelObject {
 		return model.getExtensionPoint(extensionPointUniqueIdentifier);
 	}
 
+	/**
+	 * @return contributor or <code>null</code> if contributor not present
+	 */
 	public Bundle getContributor() {
-		if (model == null)
+		if (model == null || contributor == null)
 			return null;
 		return model.getBundle(contributor);
 	}

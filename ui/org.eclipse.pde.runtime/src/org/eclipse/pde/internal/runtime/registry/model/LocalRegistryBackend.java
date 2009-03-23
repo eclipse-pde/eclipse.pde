@@ -223,7 +223,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 
 	private static Long getBundleId(String name) {
 		BundleDescription descr = PDERuntimePlugin.getDefault().getPlatformAdmin().getState().getBundle(name, null);
-		return new Long(descr.getBundleId());
+		return descr == null ? null : new Long(descr.getBundleId());
 	}
 
 	private ExtensionPoint createExtensionPointAdapter(IExtensionPoint extensionPoint) {
