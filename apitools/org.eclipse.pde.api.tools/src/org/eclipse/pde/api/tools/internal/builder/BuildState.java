@@ -15,6 +15,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,11 +31,12 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 public class BuildState {
 	private static final IDelta[] EMPTY_DELTAS = new IDelta[0];
 	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
-	private static final int VERSION = 0x08;
+	private static final int VERSION = 0x10;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
 	private String[] reexportedComponents;
+	private Set apiToolingDependentProjects;
 	
 	public static BuildState read(DataInputStream in) throws IOException {
 		String pluginID= in.readUTF();
@@ -67,6 +69,10 @@ public class BuildState {
 				components[i] = in.readUTF();
 			}
 			state.reexportedComponents = components;
+			int numberOfApiToolingDependents = in.readInt();
+			for (int i = 0; i < numberOfApiToolingDependents; i++) {
+				state.addApiToolingDependentProject(in.readUTF());
+			}
 			return state;
 		}
 		return null;
@@ -93,6 +99,12 @@ public class BuildState {
 		out.writeInt(length);
 		for (int i = 0; i < length; i++) {
 			out.writeUTF(reexportedComponents[i]);
+		}
+		Set apiToolingDependentsProjects = state.getApiToolingDependentProjects();
+		length = apiToolingDependentsProjects.size();
+		out.writeInt(length);
+		for (Iterator iterator = apiToolingDependentsProjects.iterator(); iterator.hasNext(); ) {
+			out.writeUTF((String) iterator.next());
 		}
 	}
 	private static IDelta readDelta(DataInputStream in) throws IOException {
@@ -240,5 +252,16 @@ public class BuildState {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
+	}
+
+	public void addApiToolingDependentProject(String projectName) {
+		if (this.apiToolingDependentProjects == null) {
+			this.apiToolingDependentProjects = new HashSet(3);
+		}
+		this.apiToolingDependentProjects.add(projectName);
+	}
+	
+	public Set getApiToolingDependentProjects() {
+		return this.apiToolingDependentProjects == null ? Collections.EMPTY_SET : this.apiToolingDependentProjects;
 	}
 }

@@ -330,6 +330,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					fBuildState = getLastBuiltState(fCurrentProject);
 					if (fBuildState == null) {
 						buildAll(baseline, localMonitor.newChild(1));
+					} else if (worthDoingFullBuild(projects)) {
+						buildAll(baseline, localMonitor.newChild(1));
 					} else {
 						IProject[] reexportedProjects = null;
 						String[] projectNames = this.fBuildState.getReexportedComponents();
@@ -404,6 +406,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				monitor.done();
 			}
 			if (fBuildState != null) {
+				for(int i = 0, max = projects.length; i < max; i++) {
+					IProject project = projects[i];
+					if (Util.isApiProject(project)) {
+						fBuildState.addApiToolingDependentProject(project.getName());
+					}
+				}
 				saveBuiltState(fCurrentProject, fBuildState);
 				fBuildState = null;
 			}
@@ -414,6 +422,21 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		return projects;
 	}
 	
+	private boolean worthDoingFullBuild(IProject[] projects) {
+		Set apiToolingDependentProjects = fBuildState.getApiToolingDependentProjects();
+		for (int i = 0, max = projects.length; i < max; i++) {
+			IProject currentProject = projects[i];
+			if (Util.isApiProject(currentProject)) {
+				if (apiToolingDependentProjects.contains(currentProject.getName())) {
+					continue;
+				}
+				return true;
+			} else if (apiToolingDependentProjects.contains(currentProject.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * Performs a full build for the project
 	 * @param monitor
@@ -880,7 +903,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private void cleanupApiDescription(IProject project) {
 		if(project != null && project.exists()) {
-			ApiDescriptionManager.getDefault().clean(JavaCore.create(project), true, false);
+			ApiDescriptionManager.getDefault().clean(JavaCore.create(project), true, true);
 		}
 	}
 	/**

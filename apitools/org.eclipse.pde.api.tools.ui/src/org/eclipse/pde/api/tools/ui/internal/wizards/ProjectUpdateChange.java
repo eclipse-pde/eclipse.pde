@@ -12,14 +12,20 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 
 import com.ibm.icu.text.MessageFormat;
@@ -71,22 +77,32 @@ public class ProjectUpdateChange extends Change {
 		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, new String[] {fProject.getName()}));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if(pm == null) {
 			pm = new NullProgressMonitor();
 		}
 		pm.beginTask(IApiToolsConstants.EMPTY_STRING, 1);
 		pm.setTaskName(WizardMessages.ProjectUpdateChange_adding_nature_and_builder);
-		IProjectDescription description = fProject.getDescription();
+		IProjectDescription description = this.fProject.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];
 		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
 		newNatures[prevNatures.length] = ApiPlugin.NATURE_ID;
 		description.setNatureIds(newNatures);
-		fProject.setDescription(description, pm);
+		this.fProject.setDescription(description, pm);
+		IJavaProject javaProject = JavaCore.create(this.fProject);
+		// make sure we get rid of the previous api description file
+		ApiDescriptionManager.getDefault().clean(javaProject, true, true);
+		// we want a full build of the converted project next time a build is triggered
+		if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+			Util.getBuildJob(new IProject[] { this.fProject }).schedule();
+		} else {
+			/*
+			 * If autobuild is off, clear the last build state to force a full build of
+			 * this project on the next build.
+			 */
+			ApiAnalysisBuilder.setLastBuiltState(this.fProject, null);
+		}
 		if(!pm.isCanceled()) {
 			pm.worked(1);
 		}

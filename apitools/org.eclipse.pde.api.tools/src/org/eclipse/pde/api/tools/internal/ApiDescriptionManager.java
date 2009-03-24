@@ -218,17 +218,13 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 									| IJavaElementDelta.F_CLASSPATH_CHANGED)) != 0) {
 								if (proj != null) {
 									projectClasspathChanged(proj);
-									return true;
 								}
 							} else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
 								if (proj != null) {
 									projectChanged(proj);
-									return true;
 								}
 							} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-								if (processJavaElementDeltas(delta.getAffectedChildren(), proj)) {
-									return true;
-								}
+								processJavaElementDeltas(delta.getAffectedChildren(), proj);
 							}
 							break;
 						case IJavaElementDelta.REMOVED:
