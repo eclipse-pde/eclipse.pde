@@ -21,11 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
@@ -63,6 +60,22 @@ public abstract class UsageTest extends ApiBuilderTest {
 		enableVersionNumberOptions(false);
 	}
 
+	/**
+	 * Performs actions in the {@link #setUp()} method
+	 * @throws Exception
+	 */
+	protected void doSetup() throws Exception {
+		IProject[] pjs = getEnv().getWorkspace().getRoot().getProjects();
+		File file = null;
+		if(pjs.length == 0) {
+			file = getTestSourcePath("refproject").toFile();
+			createExistingProject(file, true, false);
+		}
+		file = getTestSourcePath("usagetests").toFile();
+		createExistingProject(file, true, true);
+		fullBuild();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
@@ -108,40 +121,6 @@ public abstract class UsageTest extends ApiBuilderTest {
 				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
 				true);
 	}
-
-	protected void deployReplacementTest(IPath before, IPath after, IPath filterpath, String sourcename, boolean inc) {
-		try {
-			getEnv().setAutoBuilding(false);
-			IProject project = getEnv().getProject(getTestingProjectName());
-			assertNotNull("the testing project "+getTestingProjectName()+" must be in the workspace", project);
-			IPath settings = assertSettingsFolder(project);
-			getEnv().addFile(settings, filterpath.lastSegment(), Util.getFileContentAsString(filterpath.toFile()));
-			assertSource(before, project, TESTING_PACKAGE, sourcename);
-			doBuild((inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), null);
-			replaceSource(after, project, TESTING_PACKAGE, sourcename);
-			doBuild((inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), null);
-			IJavaProject jproject = getEnv().getJavaProject(getTestingProjectName());
-			IPath sourcepath = project.getFullPath();
-			if(after != null) {
-				IType type = jproject.findType(TESTING_PACKAGE, sourcename);
-				assertNotNull("The type "+sourcename+" from package "+TESTING_PACKAGE+" must exist", type);
-				sourcepath = type.getPath();
-			}
-			if(getExpectedProblemIds().length > 0) {
-				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
-				assertProblems(getEnv().getProblems());
-			}
-			else {
-				expectingNoProblemsFor(sourcepath);
-			}
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
-		finally {
-			getEnv().setAutoBuilding(true);
-		}
-	}
 	
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
@@ -149,15 +128,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		IProject[] pjs = getEnv().getWorkspace().getRoot().getProjects();
-		File file = null;
-		if(pjs.length == 0) {
-			file = getTestSourcePath("refproject").toFile();
-			createExistingProject(file, true, false);
-		}
-		file = getTestSourcePath("usagetests").toFile();
-		createExistingProject(file, true, true);
-		fullBuild();
+		doSetup();
 	}
 	
 	/**
@@ -213,7 +184,8 @@ public abstract class UsageTest extends ApiBuilderTest {
 				ClassUsageTests.class,
 				Java5ClassUsageTests.class,
 				InterfaceUsageTests.class,
-				UnusedApiProblemFilterTests.class
+				UnusedApiProblemFilterTests.class,
+				DependentUsageTests.class
 		};
 		return classes;
 	}

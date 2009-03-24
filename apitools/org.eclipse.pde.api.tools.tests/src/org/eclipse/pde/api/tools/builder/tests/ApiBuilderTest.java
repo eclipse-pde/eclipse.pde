@@ -365,7 +365,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected IPath assertSource(IProject project, String packagename, String sourcename) throws JavaModelException {
 		IPath ppath = project.getFullPath();
 		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
+		IPath frpath = ppath.append(SRC_ROOT);
+		if(!packageFragmentRootExists(ppath, SRC_ROOT)) {
+			frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
+		}
 		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
 		IPath packpath = getEnv().addPackage(frpath, packagename);
 		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
@@ -389,7 +392,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected IPath assertSource(IPath sourcepath, IProject project, String packagename, String sourcename) throws JavaModelException {
 		IPath ppath = project.getFullPath();
 		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
+		IPath frpath = ppath.append(SRC_ROOT);
+		if(!packageFragmentRootExists(ppath, SRC_ROOT)) {
+			frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
+		}
 		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
 		IPath packpath = getEnv().addPackage(frpath, packagename);
 		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
@@ -398,6 +404,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
 		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
 		return packpath;
+	}
+	
+	protected boolean packageFragmentRootExists(IPath projectpath, String rootname) {
+		IFolder folder = (IFolder) getEnv().getWorkspace().getRoot().findMember(projectpath.append(rootname));
+		return folder.exists();
 	}
 	
 	/**
@@ -613,7 +624,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected void replaceSource(IPath sourcepath, IProject project, String packagename, String sourcename) {
 		IPath ppath = project.getFullPath();
 		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = getEnv().getPackageFragmentRootPath(ppath, SRC_ROOT);
+		IPath frpath = ppath.append(SRC_ROOT);
+		if(!packageFragmentRootExists(ppath, SRC_ROOT)) {
+			frpath = getEnv().getPackageFragmentRootPath(ppath, SRC_ROOT);
+		}
 		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
 		IPath packpath = getEnv().getPackagePath(frpath, packagename);
 		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
@@ -1203,7 +1217,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected void deleteWorkspaceFile(IPath workspaceLocation) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
 		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
-		file.delete(false, null);
+		file.delete(true, null);
 		getEnv().removed(workspaceLocation);
 	}
 	

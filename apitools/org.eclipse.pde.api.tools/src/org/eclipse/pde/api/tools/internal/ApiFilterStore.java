@@ -230,6 +230,19 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFilters(org.eclipse.pde.api.tools.internal.provisional.IApiProblem[])
 	 */
 	public synchronized void addFilters(IApiProblem[] problems) {
+		if(problems == null) {
+			if(DEBUG) {
+				System.out.println("null problems array: not addding filters"); //$NON-NLS-1$
+			}
+			return;
+		}
+		if(problems.length < 1) {
+			if(DEBUG) {
+				System.out.println("empty problem array: not addding filters"); //$NON-NLS-1$
+			}
+			return;
+		}
+		initializeApiFilters();
 		internalAddFilters(problems, true);
 	}
 
@@ -261,6 +274,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
 		IResource resource = fProject.getProject().findMember(new Path(resourcePath));
 		if(resource == null) {
+			if(DEBUG) {
+				System.out.println("no resource exists: ["+resourcePath+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return false;
 		}
 		IApiProblemFilter[] filters = this.getFilters(resource);
@@ -273,11 +289,16 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		IApiProblemFilter filter = null;
 		for(int i = 0, max = filters.length; i < max; i++) {
 			filter = filters[i];
-			IApiProblem underlyingProblem = filter.getUnderlyingProblem();
-			if(underlyingProblem.equals(problem)) {
+			if(filter.getUnderlyingProblem().equals(problem)) {
+				if(DEBUG) {
+					System.out.println("recording filter used: ["+filter.toString()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				recordFilterUsed(resource, filter);
 				return true;
 			}
+		}
+		if(DEBUG) {
+			System.out.println("no filter defined for problem: ["+problem.toString()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return false;
 	}
@@ -468,12 +489,15 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		if(DEBUG) {
-			System.out.println("null filter map, creating a new one"); //$NON-NLS-1$
+			System.out.println("initializing api filter map for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		fFilterMap = new HashMap(5);
 		IPath filepath = getFilterFilePath();
 		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath, true);
 		if(file == null) {
+			if(DEBUG) {
+				System.out.println(".api_filter file not found during initialization for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return;
 		}
 		String xml = null;
@@ -589,13 +613,6 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @param persist if the filters should be auto-persisted after they are added
 	 */
 	private void internalAddFilters(IApiProblem[] problems, boolean persist) {
-		if(problems == null) {
-			if(DEBUG) {
-				System.out.println("null problems array not addding filters"); //$NON-NLS-1$
-			}
-			return;
-		}
-		initializeApiFilters();
 		Set filters = null;
 		for(int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];
@@ -796,6 +813,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			//via the persistApiFilters(..) method
 			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=222442
 			fTriggeredChange = false;
+			if(DEBUG) {
+				System.out.println("ignoring trigered change"); //$NON-NLS-1$
+			}
 			return;
 		}
 		if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
@@ -806,6 +826,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			boolean needsbuild = false;
 			if(leafdelta.getKind() == IResourceDelta.REMOVED) {
+				if(DEBUG) {
+					System.out.println("processed REMOVED delta"); //$NON-NLS-1$
+				}
 				if(fFilterMap != null) {
 					fFilterMap.clear();
 					needsbuild = true;
@@ -814,8 +837,14 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			else if(leafdelta.getKind() == IResourceDelta.ADDED || 
 					(leafdelta.getFlags() & IResourceDelta.CONTENT) != 0 || 
 					(leafdelta.getFlags() & IResourceDelta.REPLACED) != 0) {
+				if(DEBUG) {
+					System.out.println("processing ADDED or CONTENT or REPLACED"); //$NON-NLS-1$
+				}
 				IResource resource = leafdelta.getResource();
 				if(resource != null && resource.getType() == IResource.FILE) {
+					if(DEBUG) {
+						System.out.println("processed FILE delta for ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 					IFile file = (IFile) resource;
 					if(file.isAccessible()) {
 						try {

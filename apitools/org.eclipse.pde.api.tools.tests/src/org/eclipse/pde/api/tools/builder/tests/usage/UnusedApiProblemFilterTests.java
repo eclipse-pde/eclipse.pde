@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -20,7 +21,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Tests that unused {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}s
@@ -65,6 +65,18 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		assertStubBaseline(BASELINE);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#doSetup()
+	 */
+	@Override
+	protected void doSetup() throws Exception {
+		createExistingProjects(
+				"usageprojects", 
+				false, 
+				true, 
+				false);
+	}
+	
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
 	 */
@@ -103,16 +115,20 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		return fRootPath; 
 	}
 	
-	private IPath getBeforePath(String testname) {
-		return fRootPath.append(testname).append(BEFORE);
+	private IPath getBeforePath(String testname, String typename) {
+		return getUpdateFilePath(testname).append(BEFORE).append(typename);
 	}
 	
-	private IPath getAfterPath(String testname) {
-		return fRootPath.append(testname).append(AFTER);
+	private IPath getAfterPath(String testname, String typename) {
+		return getUpdateFilePath(testname).append(AFTER).append(typename);
 	}
 	
 	private IPath getFilterFilePath(String testname) {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(fRootPath).append(testname).append(".api_filters");
+		return getUpdateFilePath(testname).append(".api_filters");
+	}
+	
+	private IPath getUpdatePath(String path) {
+		return new Path("/usagetests/src/x/y/z/").append(path);
 	}
 	
 	/**
@@ -134,11 +150,45 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 				IApiProblem.NO_FLAGS);
 	}
 	
-	public void testUnusedFilter1F() {
+	protected void deployTest(IPath beforepath, IPath afterpath, IPath filterpath, IPath updatepath, boolean inc) throws Exception {
+		try {
+			getEnv().setAutoBuilding(false);
+			createWorkspaceFile(new Path("/usagetests/.settings/.api_filters"), filterpath);
+			//add the source
+			createWorkspaceFile(updatepath, beforepath);
+			fullBuild();
+			expectingNoJDTProblems();
+			//update the source
+			if(afterpath == null) {
+				deleteWorkspaceFile(updatepath);
+			}
+			else {
+				updateWorkspaceFile(updatepath, afterpath);
+			}
+			if(inc) {
+				incrementalBuild();
+			}
+			else {
+				fullBuild();
+			}
+			expectingNoJDTProblems();
+			if(getExpectedProblemIds().length > 0) {
+				assertProblems(getEnv().getProblems());
+			}
+			else {
+				expectingNoProblems();
+			}
+		}
+		finally {
+			getEnv().setAutoBuilding(true);
+		}
+	}
+	
+	public void testUnusedFilter1F() throws Exception {
 		x1(false);
 	}
 	
-	public void testUnusedFilter1I() {
+	public void testUnusedFilter1I() throws Exception {
 		x1(true);
 	}
 	
@@ -147,24 +197,23 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * to a class that has a protected method leaking and internal type, with a filter for the problem
 	 * @param inc
 	 */
-	private void x1(boolean inc) {
+	private void x1(boolean inc) throws Exception {
 		String testname = "test1";
-		String sourcename = "testUF1";
+		String sourcename = "testUF1.java";
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
 		setExpectedMessageArgs(new String[][] {{"testUF1.m1(internal) has non-API parameter type internal"}});
-		deployReplacementTest(
-				getBeforePath(testname), 
-				getAfterPath(testname), 
+		deployTest(getBeforePath(testname, sourcename), 
+				getAfterPath(testname, sourcename), 
 				getFilterFilePath(testname), 
-				sourcename, 
+				getUpdatePath(sourcename),
 				inc);
 	}
 	
-	public void testUnusedFilter2F() {
+	public void testUnusedFilter2F() throws Exception {
 		x2(false);
 	}
 	
-	public void testUnusedFilter2I() {
+	public void testUnusedFilter2I() throws Exception {
 		x2(true);
 	}
 	
@@ -173,24 +222,23 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * problem filter
 	 * @param inc
 	 */
-	private void x2(boolean inc) {
+	private void x2(boolean inc) throws Exception {
 		String testname = "test2";
-		String sourcename = "testUF2";
+		String sourcename = "testUF2.java";
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
 		setExpectedMessageArgs(new String[][] {{"testUF2.m1() has non-API return type internal"}});
-		deployReplacementTest(
-				getBeforePath(testname),
-				null,
-				getFilterFilePath(testname),
-				sourcename,
+		deployTest(getBeforePath(testname, sourcename), 
+				null, 
+				getFilterFilePath(testname), 
+				getUpdatePath(sourcename),
 				inc);
 	}
 
-	public void testUnusedFilter3F() {
+	public void testUnusedFilter3F() throws Exception {
 		x3(false);
 	}
 	
-	public void testUnusedFilter3I() {
+	public void testUnusedFilter3I() throws Exception {
 		x3(true);
 	}
 	
@@ -199,9 +247,9 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * deleting a member that had a filter
 	 * @param inc
 	 */
-	private void x3(boolean inc) {
+	private void x3(boolean inc) throws Exception {
 		String testname = "test3";
-		String sourcename = "testUF3";
+		String sourcename = "testUF3.java";
 		setExpectedProblemIds(new int[] {
 				getDefaultProblemId(),
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, 
@@ -211,19 +259,18 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		);
 		setExpectedMessageArgs(new String[][] {{"testUF3.m2() has non-API return type internal"},
 				{"internal", "testUF3", "m1(internal[])"}});
-		deployReplacementTest(
-				getBeforePath(testname), 
-				getAfterPath(testname), 
+		deployTest(getBeforePath(testname, sourcename), 
+				getAfterPath(testname, sourcename), 
 				getFilterFilePath(testname), 
-				sourcename, 
+				getUpdatePath(sourcename),
 				inc);
 	}
 	
-	public void testUnusedFilter4F() {
+	public void testUnusedFilter4F() throws Exception {
 		x4(false);
 	}
 	
-	public void testUnusedFilter4I() {
+	public void testUnusedFilter4I() throws Exception {
 		x4(true);
 	}
 	
@@ -233,16 +280,15 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 * but no API baseline set
 	 * @param inc
 	 */
-	private void x4(boolean inc) {
+	private void x4(boolean inc) throws Exception {
 		removeBaseline(BASELINE);
 		String testname = "test1";
-		String sourcename = "testUF1";
+		String sourcename = "testUF1.java";
 		expectingNoProblems();
-		deployReplacementTest(
-				getBeforePath(testname), 
-				getAfterPath(testname), 
+		deployTest(getBeforePath(testname, sourcename), 
+				getAfterPath(testname, sourcename), 
 				getFilterFilePath(testname), 
-				sourcename, 
+				getUpdatePath(sourcename),
 				inc);
 	}
 }
