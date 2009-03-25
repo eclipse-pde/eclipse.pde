@@ -705,27 +705,28 @@ public abstract class AbstractPluginBlock {
 	}
 
 	/**
-	 * Initializes the contents of this block from the given config.  If the config is
-	 * <code>null</code> the contents are reset.
+	 * Initializes the contents of this block from the given config.  The table's input
+	 * will only be initialized if the boolean parameter is set to true.
 	 * 
 	 * @param config launch configuration to init from or <code>null</code>
+	 * @param enableTable whether to set the input on the table
 	 * @throws CoreException
 	 */
-	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
+	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
 		levelColumnCache = new HashMap();
 		autoColumnCache = new HashMap();
 		fPluginFilteredTree.resetFilter();
-		fIncludeOptionalButton.setSelection(config == null ? true : config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
-		fAddWorkspaceButton.setSelection(config == null ? true : config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
-		fAutoValidate.setSelection(config == null ? false : config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
-		if (config == null) {
+		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
+		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
+		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
+		if (!enableTable) {
 			fPluginTreeViewer.setInput(null);
 		} else if (fPluginTreeViewer.getInput() == null) {
 			fPluginTreeViewer.setUseHashlookup(true);
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
 			fPluginTreeViewer.reveal(fWorkspacePlugins);
 		}
-		fFilterButton.setSelection(config == null ? false : config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
+		fFilterButton.setSelection(config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
 	}
 
 	protected void computeSubset() {

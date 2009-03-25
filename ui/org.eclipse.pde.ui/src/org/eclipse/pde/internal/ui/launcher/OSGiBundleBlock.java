@@ -57,7 +57,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
-		super.initializeFrom(configuration);
+		super.initializeFrom(configuration, true);
 		initWorkspacePluginsState(configuration);
 		initExternalPluginsState(configuration);
 		updateCounter();

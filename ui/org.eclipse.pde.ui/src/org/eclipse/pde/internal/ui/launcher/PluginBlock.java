@@ -42,25 +42,28 @@ public class PluginBlock extends AbstractPluginBlock {
 		super(tab);
 	}
 
-	public void initializeFrom(ILaunchConfiguration config, boolean enable) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration, boolean)
+	 */
+	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
 
-		if (fLaunchConfig != null && fLaunchConfig.equals(config) && fIsEnabled == enable) {
+		if (fLaunchConfig != null && fLaunchConfig.equals(config) && fIsEnabled == enableTable) {
 			// Do nothing
 			return;
 		}
 
 		fLaunchConfig = config;
-		fIsEnabled = enable;
+		fIsEnabled = enableTable;
 
-		if (enable) {
-			super.initializeFrom(config);
+		super.initializeFrom(config, enableTable);
+
+		if (enableTable) {
 			initWorkspacePluginsState(config);
 			initExternalPluginsState(config);
 			handleFilterButton(); // Once the page is initialized, apply any filtering
-		} else {
-			super.initializeFrom(null);
 		}
-		enableViewer(enable);
+
+		enableViewer(enableTable);
 		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
 	}
