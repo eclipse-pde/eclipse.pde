@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<feature 
+<feature
       id="org.eclipse.pde.api.tools.ee.osgiminimum12_feature"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -26,7 +26,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"
-         unpack="true"/>
+         fragment="true"/>
 
 </feature>
