@@ -18,5 +18,5 @@ public class AddFinalNoOverride {
 	/**
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
-	public final void method() {}
+	public final void method(int tab[]) {}
 }

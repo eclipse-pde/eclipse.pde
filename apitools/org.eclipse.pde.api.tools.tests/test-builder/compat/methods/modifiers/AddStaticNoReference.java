@@ -18,5 +18,7 @@ public class AddStaticNoReference {
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public static void method() {}
+	public static int method()[] {
+		return null;
+	}
 }

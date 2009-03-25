@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
@@ -331,7 +332,7 @@ public final class Signatures {
 		List rparams = Signatures.getParametersTypeNames(params);
 		if(rparams.size() == params.size()) {
 			if(!node.isConstructor()) {
-				Type returnType = node.getReturnType2();
+				Type returnType = getType(node);
 				if (returnType != null) {
 					String rtype = Signatures.getTypeSignature(returnType);
 					if(rtype != null) {
@@ -360,12 +361,51 @@ public final class Signatures {
 		String pname = null;
 		for(Iterator iter = rawparams.iterator(); iter.hasNext();) {
 			param = (SingleVariableDeclaration) iter.next();
-			pname = Signatures.getTypeSignature(param.getType());
+			pname = Signatures.getTypeSignature(getType(param));
 			if(pname != null) {
 				rparams.add(pname);
 			}
 		}
 		return rparams;
+	}
+
+	/*
+	 * This is called for SingleVariableDeclaration and MethodDeclaration
+	 */
+	private static Type getType(ASTNode node) {
+		switch(node.getNodeType()) {
+			case ASTNode.SINGLE_VARIABLE_DECLARATION : {
+				SingleVariableDeclaration param = (SingleVariableDeclaration) node;
+				Type type = param.getType();
+				int extraDim = param.getExtraDimensions();
+		
+				if (extraDim == 0) {
+					return type;
+				}
+				AST ast = type.getAST();
+				type = (Type) ASTNode.copySubtree(ast, type);
+				for (int i = 0; i < extraDim; i++) {
+					type = ast.newArrayType(type);
+				}
+				return type;
+			}
+			default: {
+				// ASTNode.METHOD_DECLARATION
+				MethodDeclaration methodDeclaration = (MethodDeclaration) node;
+				Type type = methodDeclaration.getReturnType2();
+				int extraDim = methodDeclaration.getExtraDimensions();
+		
+				if (extraDim == 0) {
+					return type;
+				}
+				AST ast = type.getAST();
+				type = (Type) ASTNode.copySubtree(ast, type);
+				for (int i = 0; i < extraDim; i++) {
+					type = ast.newArrayType(type);
+				}
+				return type;
+			}
+		}
 	}
 
 	/**
