@@ -972,9 +972,7 @@ public class ClassFileComparator {
 			}
 		}
 		catch(CoreException e) {
-			if(Debug) {
-				reportStatus(e);
-			}
+			reportStatus(e);
 		}
 	}
 	
@@ -2843,9 +2841,7 @@ public class ClassFileComparator {
 				superName = superClass.getSuperclassName();
 			}
 		} catch (CoreException e) {
-			if(Debug) {
-				reportStatus(e);
-			}
+			reportStatus(e);
 		}
 		if (list.isEmpty()) return null;
 		return list;
