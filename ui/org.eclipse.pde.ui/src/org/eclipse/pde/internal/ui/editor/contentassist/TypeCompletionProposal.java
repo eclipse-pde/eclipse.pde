@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 	 */
 	public void apply(IDocument document) {
 		if (fLength == -1) {
-			String current = document.get();
-			fLength = current.length();
+			fLength = document.getLength();
 		}
 		try {
 			document.replace(fBeginInsertPoint, fLength, fReplacementString);
@@ -100,9 +99,6 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 		return new Point(fBeginInsertPoint + fReplacementString.length(), 0);
 	}
 
-	/**
-	 * @return
-	 */
 	public String getReplacementString() {
 		return fReplacementString;
 	}

@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDEManager;
@@ -80,32 +79,38 @@ public class TranslationHyperlink extends AbstractHyperlink {
 			if (doc == null)
 				return false;
 
-			String key = fElement.substring(1);
-			int keyLen = key.length();
-			String contents = doc.get();
-			int length = contents.length();
-			int start = 0;
-			int index;
-			while ((index = contents.indexOf(key, start)) >= 0) {
-				if (index > 0) {
-					// check for newline before
-					char c = contents.charAt(index - 1);
-					if (c != '\n' && c != '\r') {
-						start += keyLen;
-						continue;
+			try {
+				String key = fElement.substring(1);
+				int keyLen = key.length();
+				int length = doc.getLength();
+				int start = 0;
+				IRegion region = null;
+				FindReplaceDocumentAdapter docSearch = new FindReplaceDocumentAdapter(doc);
+				while ((region = docSearch.find(start, key, true, false, false, false)) != null) {
+					int offset = region.getOffset();
+					if (offset > 0) {
+						// check for newline before
+						char c = doc.getChar(offset - 1);
+						if (c != '\n' && c != '\r') {
+							start += keyLen;
+							continue;
+						}
 					}
-				}
-				if (index + keyLen < length) {
-					// check for whitespace / assign symbol after
-					char c = contents.charAt(index + keyLen);
-					if (!Character.isWhitespace(c) && c != '=' && c != ':') {
-						start += keyLen;
-						continue;
+					if (offset + keyLen < length) {
+						// check for whitespace / assign symbol after
+						char c = doc.getChar(offset + keyLen);
+						if (!Character.isWhitespace(c) && c != '=' && c != ':') {
+							start += keyLen;
+							continue;
+						}
 					}
+					tEditor.selectAndReveal(offset, keyLen);
+					break;
 				}
-				tEditor.selectAndReveal(index, keyLen);
-				break;
+			} catch (BadLocationException e) {
+				PDEPlugin.log(e);
 			}
+
 		} catch (PartInitException e) {
 			return false;
 		}
