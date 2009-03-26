@@ -155,8 +155,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 						if(backingcollection.size() == 1) {
 							newdefault = profile.getName();
 							tableviewer.refresh(profile);
+							rebuildcount = 0;
 						}
-						
 						dirty = true;
 					}
 				}
