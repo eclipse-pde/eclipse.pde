@@ -187,7 +187,11 @@ public class ApiBaselineWizardPage extends WizardPage {
 			monitor.worked(1);
 			IResolvedBundle[] bundles = container.getBundles();
 			List components = new ArrayList();
-			fProfile = ApiModelFactory.newApiBaseline(name);
+			try {
+				fProfile = ApiModelFactory.newApiBaseline(name, location);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
+			}
 			if (bundles.length > 0) {
 				// an installation
 				subMonitor = new SubProgressMonitor(monitor, 8);
@@ -281,7 +285,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 				IApiComponent[] components = original.getApiComponents();
 				IProgressMonitor localmonitor = SubMonitor.convert(monitor, WizardMessages.ApiProfileWizardPage_create_working_copy, components.length + 1);
 				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_profile_attribs);
-				workingcopy = ApiModelFactory.newApiBaseline(original.getName());
+				workingcopy = ApiModelFactory.newApiBaseline(original.getName(), original.getLocation());
 				localmonitor.worked(1);
 				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_api_components);
 				ArrayList comps = new ArrayList();
@@ -472,12 +476,19 @@ public class ApiBaselineWizardPage extends WizardPage {
 				nametext.setText(fProfile.getName());
 				IApiComponent[] components = fProfile.getApiComponents();
 				HashSet locations = new HashSet();
-				IPath location = null;
-				for(int i = 0; i < components.length; i++) {
-					if(!components[i].isSystemComponent()) {
-						location = new Path(components[i].getLocation()).removeLastSegments(1);
-						if(location.toFile().isDirectory()) {
-							locations.add(location.removeTrailingSeparator().toOSString());
+				IPath location = new Path(fProfile.getLocation());
+				if (location != null) {
+					// check if the location is a file
+					if(location.toFile().isDirectory()) {
+						locations.add(location.removeTrailingSeparator().toOSString());
+					}
+				} else {
+					for(int i = 0; i < components.length; i++) {
+						if(!components[i].isSystemComponent()) {
+							location = new Path(components[i].getLocation()).removeLastSegments(1);
+							if(location.toFile().isDirectory()) {
+								locations.add(location.removeTrailingSeparator().toOSString());
+							}
 						}
 					}
 				}
@@ -515,8 +526,8 @@ public class ApiBaselineWizardPage extends WizardPage {
 			treeviewer.setInput(getCurrentComponents());
 			treeviewer.refresh();
 			setPageComplete(pageValid());
-		} 
-		catch (InvocationTargetException ite) {} 
+		}
+		catch (InvocationTargetException ite) {}
 		catch (InterruptedException ie) {}
 	}
 	

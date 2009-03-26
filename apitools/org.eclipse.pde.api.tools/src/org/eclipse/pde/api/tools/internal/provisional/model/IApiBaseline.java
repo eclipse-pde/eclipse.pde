@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 public interface IApiBaseline extends IApiElement {
 	
 	/**
-	 * Returns all API components in this profile. The components
+	 * Returns all API components in this baseline. The components
 	 * are returned in the order that components are searched when
 	 * performing name lookup for a type (simulates the order
 	 * components would be searched when performing class loading
@@ -31,19 +31,19 @@ public interface IApiBaseline extends IApiElement {
 	 *  This is a convenience method for retrieving all children 
 	 *  of the baseline that are {@link IApiComponent}s.
 	 *  
-	 * @return all API components in this profile
+	 * @return all API components in this baseline
 	 */
 	public IApiComponent[] getApiComponents();
 	
 	/**
-	 * Allows the name of the profile to be changed to the new name.
+	 * Allows the name of the baseline to be changed to the new name.
 	 * If the new name is <code>null</code>, no changes are made.
-	 * @param name the new name for the profile
+	 * @param name the new name for the baseline
 	 */
 	public void setName(String name);
 	
 	/**
-	 * Adds the given API components to this profile, excluding all the source components.
+	 * Adds the given API components to this baseline, excluding all the source components.
 	 * 
 	 * @param components components to add
 	 * @throws CoreException if the baseline is disposed
@@ -62,7 +62,7 @@ public interface IApiBaseline extends IApiElement {
 	public IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException;
 
 	/**
-	 * Returns the API component in this profile with the given symbolic name
+	 * Returns the API component in this baseline with the given symbolic name
 	 * or <code>null</code> if none.
 	 * 
 	 * @param id component symbolic name
@@ -70,9 +70,9 @@ public interface IApiBaseline extends IApiElement {
 	 */
 	public IApiComponent getApiComponent(String id);
 	/**
-	 * Returns the execution environment this profile is resolved with, or
+	 * Returns the execution environment this baseline is resolved with, or
 	 * <code>null</code> if none (not yet determined or unable to bind to an
-	 * execution environment). A profile can be created with a specific execution
+	 * execution environment). A baseline can be created with a specific execution
 	 * environment, or be created to automatically resolve an execution environment
 	 * as components are added to it.
 	 * <p> 
@@ -85,24 +85,24 @@ public interface IApiBaseline extends IApiElement {
 	
 	/**
 	 * Returns a status describing how the execution environment bound to this API
-	 * profile satisfies the requirements of the components in this profile.
+	 * baseline satisfies the requirements of the components in this baseline.
 	 * 
-	 * @return status describing execution environment bound to this profile
+	 * @return status describing execution environment bound to this baseline
 	 */
 	public IStatus getExecutionEnvironmentStatus();
 	
 	/**
-	 * Disposes this API profile. Clients must call this method when done
-	 * with a profile in order to free system resources.
+	 * Disposes this API baseline. Clients must call this method when done
+	 * with a baseline in order to free system resources.
 	 * <p>
-	 * All API components in this profile are disposed.
+	 * All API components in this baseline are disposed.
 	 * </p>
 	 */
 	public void dispose();
 	
 	/**
-	 * Closes all components in this profile. The profile may still be used after closing,
-	 * but clients should close the profile when they are done with it to free
+	 * Closes all components in this baseline. The baseline may still be used after closing,
+	 * but clients should close the baseline when they are done with it to free
 	 * system resources.
 	 * 
 	 * @throws CoreException if closing fails
@@ -110,7 +110,7 @@ public interface IApiBaseline extends IApiElement {
 	public void close() throws CoreException;
 	
 	/**
-	 * Returns all components in this profile depending on the given components.
+	 * Returns all components in this baseline depending on the given components.
 	 * The returned collection includes the given components and all dependents.
 	 * 
 	 * @param components the initial set of components
@@ -121,13 +121,29 @@ public interface IApiBaseline extends IApiElement {
 	public IApiComponent[] getDependentComponents(IApiComponent[] components) throws CoreException;
 
 	/**
-	 * Returns all the prerequisite components in this profile for the given components. 
+	 * Returns all the prerequisite components in this baseline for the given components. 
 	 * The returned collection includes the given components and all prerequisites.
 	 * 
 	 * @param components the initial set of components
 	 * @return an array of components for the given leaves and their
-	 * prerequisite components in this profile
+	 * prerequisite components in this baseline
 	 * @throws CoreException if the baseline is disposed
 	 */
 	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) throws CoreException;
+
+	/**
+	 * Returns the location of this API baseline. It returns <code>null</code> if the baseline was not created
+	 * from a location.
+	 * <p>This is an absolute path.</p>
+	 * 
+	 * @return location or <code>null</code> if none.
+	 */
+	public String getLocation();
+
+	/**
+	 * Allows the location of the baseline to be changed to the new location.
+	 * 
+	 * @param location the new location of the baseline
+	 */
+	public void setLocation(String location);
 }

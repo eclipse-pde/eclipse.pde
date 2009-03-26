@@ -99,6 +99,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private boolean fAutoResolve = false;
 	
 	/**
+	 * Contains the location of the baseline if the baseline was created with a location.
+	 */
+	private String fLocation;
+	/**
 	 * Execution environment status
 	 */
 	private IStatus fEEStatus = null;
@@ -141,9 +145,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	public ApiBaseline(String name) {
 		super(null, IApiElement.BASELINE, name);
 		fAutoResolve = true;
-		fEEStatus = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_0);
-	}	
-		
+		fEEStatus = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_0);
+	}
+
 	/**
 	 * Constructs a new API baseline with the given attributes.
 	 * 
@@ -152,13 +156,28 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @throws CoreException if unable to create a baseline with the given attributes
 	 */
 	public ApiBaseline(String name, File eeDescription) throws CoreException {
+		this(name, eeDescription, null);
+	}
+
+	/**
+	 * Constructs a new API baseline with the given attributes.
+	 * 
+	 * @param name baseline name
+	 * @param eeDescriptoin execution environment description file
+	 * @param location the given baseline location
+	 * @throws CoreException if unable to create a baseline with the given attributes
+	 */
+	public ApiBaseline(String name, File eeDescription, String location) throws CoreException {
 		this(name);
-		fAutoResolve = false;
-		ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(eeDescription);
-		String profile = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
-		initialize(ee);
-		fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID,
-				MessageFormat.format(CoreMessages.ApiProfile_1, new String[]{profile}));
+		if (eeDescription != null) {
+			fAutoResolve = false;
+			ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(eeDescription);
+			String profile = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
+			initialize(ee);
+			fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID,
+					MessageFormat.format(CoreMessages.ApiBaseline_1, new String[]{profile}));
+		}
+		this.fLocation = location;
 	}
 
 	/**
@@ -379,18 +398,18 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 							initialize(ee);
 						} catch (CoreException e) {
-							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_2, e);
+							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
 						} catch (IOException e) {
-							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_2, e);
+							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
 						}
 					}
 				} else {
 					// VM is not strictly compatible with any EE
-					error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_4);
+					error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_3);
 				}
 			} else {
 				// no VMs match any required EE
-				error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiProfile_4);
+				error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_3);
 			}
 			if (error == null) {
 				// build status for unbound required EE's
@@ -399,14 +418,14 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
 					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID,
-							MessageFormat.format(CoreMessages.ApiProfile_1, new String[]{systemEE}));
+							MessageFormat.format(CoreMessages.ApiBaseline_1, new String[]{systemEE}));
 				} else {
 					iterator = missing.iterator();
-					MultiStatus multi = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, CoreMessages.ApiProfile_7, null);
+					MultiStatus multi = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, CoreMessages.ApiBaseline_4, null);
 					while (iterator.hasNext()) {
 						String id = (String) iterator.next();
 						multi.add(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID,
-								MessageFormat.format(CoreMessages.ApiProfile_8, new String[]{id})));
+								MessageFormat.format(CoreMessages.ApiBaseline_5, new String[]{id})));
 					}
 					fEEStatus = multi;
 				}
@@ -847,5 +866,19 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				ApiPlugin.log(e);
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see IApiBaseline#getLocation()
+	 */
+	public String getLocation() {
+		return this.fLocation;
+	}
+
+	/* (non-Javadoc)
+	 * @see IApiBaseline#setLocation(String)
+	 */
+	public void setLocation(String location) {
+		this.fLocation = location;
 	}
 }

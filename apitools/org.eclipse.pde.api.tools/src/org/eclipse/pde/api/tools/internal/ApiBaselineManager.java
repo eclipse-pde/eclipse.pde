@@ -416,6 +416,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		document.appendChild(root);
 		root.setAttribute(IApiXmlConstants.ATTR_NAME, profile.getName());
 		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_PROFILE_CURRENT_VERSION);
+		String location = profile.getLocation();
+		if (location != null) {
+			root.setAttribute(IApiXmlConstants.ATTR_LOCATION, location);
+		}
 		// dump component pools
 		Element subroot = null;
 		File dir = null;
@@ -483,6 +487,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			Document document = parser.parse(stream);
 			Element root = document.getDocumentElement();
 			if(root.getNodeName().equals(IApiXmlConstants.ELEMENT_APIPROFILE)) {
+				String baselineLocation = root.getAttribute(IApiXmlConstants.ATTR_LOCATION);
+				if (baselineLocation != null) {
+					baseline.setLocation(Path.fromPortableString(baselineLocation).toOSString());
+				}
 				// un-pooled components
 				NodeList children = root.getElementsByTagName(IApiXmlConstants.ELEMENT_APICOMPONENT);
 				List components = new ArrayList();

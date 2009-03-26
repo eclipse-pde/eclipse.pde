@@ -167,4 +167,42 @@ public class ApiModelFactory {
 	public static IApiBaseline newApiBaseline(String name, File eeDescription) throws CoreException {
 		return new ApiBaseline(name, eeDescription);
 	}
+	
+	/**
+	 * Creates a new empty {@link IApiBaseline} with the given name. Its execution
+	 * environment will be automatically resolved when components are added
+	 * to it.
+	 * <p>
+	 * Note, a baseline can only automatically resolve an execution environment
+	 * when it is created within an Eclipse SDK. A baseline created in a non-OSGi
+	 * environment must have its execution environment specified at creation
+	 * time.
+	 * </p>
+	 *
+	 * @param name baseline name
+	 * @param location the given baseline's location
+	 * @return a new empty {@link IApiBaseline}
+	 * @throws CoreException if unable to create a new baseline with the specified attributes 
+	 */
+	public static IApiBaseline newApiBaseline(String name, String location) throws CoreException {
+		return new ApiBaseline(name, null, location);
+	}
+
+	/**
+	 * Creates a new empty API baseline with the specified execution environment.
+	 * <p>
+	 * The execution environment description file describes how an execution 
+	 * environment profile is provided by or mapped to a specific JRE. The format for
+	 * this file is described here
+	 * <code>http://wiki.eclipse.org/index.php/Execution_Environment_Descriptions</code>.
+	 * </p>
+	 * @param name baseline name
+	 * @param eeDescription execution environment description file
+	 * @param location the given baseline's location
+	 * @return a new {@link IApiBaseline}
+	 * @throws CoreException if unable to create a new baseline with the specified attributes 
+	 */
+	public static IApiBaseline newApiBaseline(String name, File eeDescription, String location) throws CoreException {
+		return new ApiBaseline(name, eeDescription, location);
+	}
 }

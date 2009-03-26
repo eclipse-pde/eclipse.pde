@@ -17,12 +17,12 @@ import org.eclipse.osgi.util.NLS;
  */
 public class CoreMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.coremessages"; //$NON-NLS-1$
-	public static String ApiProfile_0;
-	public static String ApiProfile_1;
-	public static String ApiProfile_2;
-	public static String ApiProfile_4;
-	public static String ApiProfile_7;
-	public static String ApiProfile_8;
+	public static String ApiBaseline_0;
+	public static String ApiBaseline_1;
+	public static String ApiBaseline_2;
+	public static String ApiBaseline_3;
+	public static String ApiBaseline_4;
+	public static String ApiBaseline_5;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CoreMessages.class);
