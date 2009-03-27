@@ -627,8 +627,12 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	public String[] getVMArguments() {
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
 
-		if (fVMArgs != null)
+		if (fVMArgs != null) {
+			if (fVMArgs.length == 0) {
+				return null;
+			}
 			return fVMArgs;
+		}
 
 		try {
 			FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
@@ -651,9 +655,6 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			manipulator.setConfigData(configData);
 			manipulator.load();
 			fVMArgs = manipulator.getLauncherData().getJvmArgs();
-			if (fVMArgs.length == 0) {
-				fVMArgs = null;
-			}
 		} catch (BundleException e) {
 			PDECore.log(e);
 		} catch (CoreException e) {
