@@ -450,6 +450,17 @@ public class TargetPlatformService implements ITargetPlatformService {
 		value = getValueOrNull(preferences.getDefaultString(ICoreConstants.NL));
 		target.setNL(value);
 
+		// initialize vm arguments from the default container
+		IBundleContainer[] containers = target.getBundleContainers();
+		StringBuffer arguments = new StringBuffer(""); //$NON-NLS-1$
+		for (int i = 0; i < containers.length; i++) {
+			String[] vmargs = containers[i].getVMArguments();
+			for (int j = 0; j < vmargs.length; j++) {
+				arguments.append(vmargs[j]).append(' ');
+			}
+		}
+		target.setVMArguments(arguments.toString());
+
 		return target;
 	}
 

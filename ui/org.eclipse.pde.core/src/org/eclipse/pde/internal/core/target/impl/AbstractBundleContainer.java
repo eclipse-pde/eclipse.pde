@@ -63,9 +63,14 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	private IExtensionRegistry fRegistry;
 
 	/**
-	 * Most recent source patch detected from an old-style source bundle extension.
+	 * Most recent source path detected from an old-style source bundle extension.
 	 */
 	private String fSourcePath;
+
+	/**
+	 * The Java VM Arguments specified by this bundle container 
+	 */
+	private String[] fVMArgs;
 
 	/**
 	 * Resolves any string substitution variables in the given text returning
@@ -622,7 +627,9 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	public String[] getVMArguments() {
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
 
-		String[] jvmArgs = null;
+		if (fVMArgs != null)
+			return fVMArgs;
+
 		try {
 			FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
 			if (fwAdmin == null) {
@@ -643,7 +650,10 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 
 			manipulator.setConfigData(configData);
 			manipulator.load();
-			jvmArgs = manipulator.getLauncherData().getJvmArgs();
+			fVMArgs = manipulator.getLauncherData().getJvmArgs();
+			if (fVMArgs.length == 0) {
+				fVMArgs = null;
+			}
 		} catch (BundleException e) {
 			PDECore.log(e);
 		} catch (CoreException e) {
@@ -651,9 +661,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		} catch (IOException e) {
 			PDECore.log(e);
 		}
-		if (jvmArgs.length == 0) {
-			return null;
-		}
-		return jvmArgs;
+
+		return fVMArgs;
 	}
 }
