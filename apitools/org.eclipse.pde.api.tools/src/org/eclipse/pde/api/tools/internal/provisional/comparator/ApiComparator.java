@@ -585,9 +585,11 @@ public class ApiComparator {
 			}
 			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, component2, referenceBaseline, baseline, visibilityModifiers);
 			IDelta delta = comparator.getDelta();
-			IStatus status = comparator.getStatus();
-			if(status != null) {
-				ApiPlugin.log(status);
+			if (DEBUG) {
+				IStatus status = comparator.getStatus();
+				if(status != null) {
+					ApiPlugin.log(status);
+				}
 			}
 			return delta;
 		} catch (CoreException e) {
@@ -642,9 +644,11 @@ public class ApiComparator {
 						baseline,
 						visibilityModifiers);
 			delta = comparator.getDelta();
-			IStatus status = comparator.getStatus();
-			if(status != null) {
-				ApiPlugin.log(status);
+			if (DEBUG) {
+				IStatus status = comparator.getStatus();
+				if(status != null) {
+					ApiPlugin.log(status);
+				}
 			}
 		}
 		catch(CoreException e) {
@@ -911,9 +915,11 @@ public class ApiComparator {
 									typeRootBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, provider, referenceBaseline, baseline, visibilityModifiers);
 									IDelta delta = comparator.getDelta();
-									IStatus status = comparator.getStatus();
-									if(status != null) {
-										ApiPlugin.log(status);
+									if (DEBUG) {
+										IStatus status = comparator.getStatus();
+										if(status != null) {
+											ApiPlugin.log(status);
+										}
 									}
 									if (delta != null && delta != NO_DELTA) {
 										globalDelta.add(delta);
