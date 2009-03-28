@@ -89,7 +89,7 @@ public class PluginConfigurationSection extends TableSection {
 					return configuration.getId();
 					//return super.getColumnText(PluginRegistry.findModel(configuration.getId()), index);
 				case 1 :
-					return Integer.toString(configuration.getStartLevel());
+					return (configuration.getStartLevel() == 0) ? "default" : Integer.toString(configuration.getStartLevel()); //$NON-NLS-1$
 				case 2 :
 					return Boolean.toString(configuration.isAutoStart());
 			}
@@ -135,7 +135,7 @@ public class PluginConfigurationSection extends TableSection {
 
 		final Table table = fConfigurationsTable.getTable();
 		final TableColumn column1 = new TableColumn(table, SWT.LEFT);
-		column1.setText(PDEUIMessages.ConfigurationPageMock_sectionTitle);
+		column1.setText(PDEUIMessages.PluginConfigurationSection_tablePluginTitle);
 		column1.setWidth(300);
 
 		final TableColumn column2 = new TableColumn(table, SWT.CENTER);
@@ -195,7 +195,11 @@ public class PluginConfigurationSection extends TableSection {
 			for (int i = 0; i < features.length; i++) {
 				IProductFeature feature = features[i];
 				FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-				IFeatureModel fModel = manager.findFeatureModel(feature.getId(), feature.getVersion());
+				IFeatureModel fModel = manager.findFeatureModelRelaxed(feature.getId(), feature.getVersion());
+				if (fModel == null)
+					fModel = manager.findFeatureModel(feature.getId());
+				if (fModel == null)
+					continue;
 				IFeaturePlugin[] fPlugins = fModel.getFeature().getPlugins();
 				for (int j = 0; j < fPlugins.length; j++) {
 					IFeaturePlugin fPlugin = fPlugins[j];

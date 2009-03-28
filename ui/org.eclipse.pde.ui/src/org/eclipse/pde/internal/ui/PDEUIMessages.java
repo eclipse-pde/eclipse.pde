@@ -2145,6 +2145,7 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationPageMock_pageTitle;
 	public static String ConfigurationPageMock_sectionTitle;
 	public static String ConfigurationPageMock_sectionDesc;
+	public static String PluginConfigurationSection_tablePluginTitle;
 
 	public static String AbstractPluginBlock_counter;
 
