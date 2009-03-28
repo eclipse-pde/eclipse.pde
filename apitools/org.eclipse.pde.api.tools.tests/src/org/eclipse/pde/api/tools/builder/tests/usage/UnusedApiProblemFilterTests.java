@@ -209,20 +209,20 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 				inc);
 	}
 	
-	public void testUnusedFilter2F() throws Exception {
-		x2(false);
-	}
-	
-	public void testUnusedFilter2I() throws Exception {
-		x2(true);
-	}
+//	public void testUnusedFilter2F() throws Exception {
+//		x2(false);
+//	}
+//	
+//	public void testUnusedFilter2I() throws Exception {
+//		x2(true);
+//	}
 	
 	/**
 	 * Tests that there is no problem reported for a compilation unit that has been deleted, which has an api 
 	 * problem filter
 	 * @param inc
 	 */
-	private void x2(boolean inc) throws Exception {
+	void x2(boolean inc) throws Exception {
 		String testname = "test2";
 		String sourcename = "testUF2.java";
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
