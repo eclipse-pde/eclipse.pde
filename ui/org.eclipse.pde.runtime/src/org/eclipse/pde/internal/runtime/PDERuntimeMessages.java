@@ -18,18 +18,13 @@ public class PDERuntimeMessages extends NLS {
 	public static String ActiveFormEditorSection_Active_Form_Page;
 
 	public static String ActiveMenuSection_0;
-
 	public static String ActiveMenuSection_1;
-
 	public static String ActiveMenuSection_2;
-
 	public static String ActiveMenuSection_3;
-
 	public static String ActiveMenuSection_4;
-
 	public static String ActiveMenuSection_5;
-
 	public static String ActiveMenuSection_6;
+	public static String ActiveMenuSection_7;
 
 	public static String RegistryView_refresh_label;
 	public static String RegistryView_refresh_tooltip;

@@ -16,15 +16,16 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.IActionSetContributionItem;
 import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.osgi.framework.Bundle;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * @since 3.5
@@ -54,6 +55,9 @@ public class ActiveMenuSection implements ISpySection {
 				if (id != null) {
 					buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_0, new String[] {id}));
 				}
+				if (object instanceof ContributionItem) {
+					createLocationURI(toolkit, object, text, buffer, id);
+				}
 				scan(item, buffer, toolkit, text);
 			}
 
@@ -62,7 +66,33 @@ public class ActiveMenuSection implements ISpySection {
 		}
 	}
 
-	// FIXME this is a bit hackish but works... rearchitect
+	private void createLocationURI(SpyFormToolkit toolkit, Object object, FormText text, StringBuffer buffer, String id) {
+		IContributionManager parent = ((ContributionItem) object).getParent();
+		if (parent instanceof IMenuManager) {
+			String parentId = ((IMenuManager) parent).getId();
+			String locationURI = "menu:" + parentId + (id == null ? "?after=additions" : "?after=" + id); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_7, new String[] {locationURI}));
+		} else if (parent instanceof ToolBarManager) {
+			ToolBar bar = ((ToolBarManager) parent).getControl();
+			if (bar.getParent() instanceof CoolBar) {
+				CoolItem[] items = ((CoolBar) bar.getParent()).getItems();
+				for (int i = 0; i < items.length; i++) {
+					CoolItem coolItem = items[i];
+					if (coolItem.getControl() == bar) {
+						Object o = coolItem.getData();
+						if (o instanceof ToolBarContributionItem) {
+							String parentId = ((ToolBarContributionItem) o).getId();
+							String locationURI = "toolbar:" + parentId + (id == null ? "?after=additions" : "?after=" + id); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_7, new String[] {locationURI}));
+						}
+						continue;
+					}
+				}
+			}
+		}
+	}
+
+	// FIXME this is a bit hackish but works... need to redo
 	private void scan(IContributionItem item, StringBuffer buffer, SpyFormToolkit toolkit, FormText text) {
 		// check for action set information
 		if (item instanceof IActionSetContributionItem) {
@@ -76,18 +106,10 @@ public class ActiveMenuSection implements ISpySection {
 			scan(subItem.getInnerItem(), buffer, toolkit, text); // recurse
 		} else if (item instanceof CommandContributionItem) { // TODO... this is hard...
 			CommandContributionItem contributionItem = (CommandContributionItem) item;
-			ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
-			Command command = service.getCommand(contributionItem.getCommand().getId());
-			//buffer.append(toolkit.createIdentifierSection(text, "The active command category id:", new String[] {command.getCategory().getId()}));
+			Command command = contributionItem.getCommand().getCommand();
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_2, new Class[] {command.getClass()}));
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_3, new Class[] {command.getHandler().getClass()}));
-			createContributionItemText(item, buffer, toolkit);
 		}
-	}
-
-	private void createContributionItemText(Object object, StringBuffer buffer, SpyFormToolkit toolkit) {
-		// IContributionItem item = (IContributionItem) object;
-		// TODO call ICommandService to get the actual command...
 	}
 
 	private void createActionContributionItemText(Object object, StringBuffer buffer, SpyFormToolkit toolkit, FormText text) {
@@ -108,6 +130,9 @@ public class ActiveMenuSection implements ISpySection {
 			// normal JFace Actions
 			Class clazz = action.getClass();
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_5, new Class[] {clazz}));
+			PackageAdmin admin = PDERuntimePlugin.getDefault().getPackageAdmin();
+			Bundle bundle = admin.getBundle(clazz);
+			toolkit.generatePluginDetailsText(bundle, null, "meow", buffer, text); //$NON-NLS-1$
 		}
 
 	}
@@ -125,6 +150,9 @@ public class ActiveMenuSection implements ISpySection {
 			}
 
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_6, new Class[] {delegate.getClass()}));
+			PackageAdmin admin = PDERuntimePlugin.getDefault().getPackageAdmin();
+			Bundle bundle = admin.getBundle(clazz);
+			toolkit.generatePluginDetailsText(bundle, null, "menu item", buffer, text); //$NON-NLS-1$
 
 		} catch (Exception e) {
 			createActionContributionItemText(object, buffer, toolkit, text, clazz.getSuperclass(), pluginAction);
