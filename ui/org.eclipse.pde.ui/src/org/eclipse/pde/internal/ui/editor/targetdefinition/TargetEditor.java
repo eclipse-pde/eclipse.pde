@@ -13,22 +13,25 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.impl.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * Editor for target definition (*.target) files.  Interacts with the ITargetDefinition model
@@ -89,7 +92,44 @@ public class TargetEditor extends FormEditor {
 	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
+		ITargetDefinition target = getTarget();
+		WorkspaceFileTargetHandle currentTargetHandle = (WorkspaceFileTargetHandle) target.getHandle();
+
+		SaveAsDialog dialog = new SaveAsDialog(getSite().getShell());
+		dialog.create();
+		dialog.setMessage(PDEUIMessages.TargetEditor_0, IMessageProvider.NONE);
+		dialog.setOriginalFile(currentTargetHandle.getTargetFile());
+		dialog.open();
+
+		IPath path = dialog.getResult();
+
+		if (path == null) {
+			return;
+		}
+		if (!"target".equalsIgnoreCase(path.getFileExtension())) { //$NON-NLS-1$
+			path.addFileExtension("target"); //$NON-NLS-1$
+		}
+
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IFile file = workspace.getRoot().getFile(path);
+
+		if (target != null) {
+			try {
+				WorkspaceFileTargetHandle newFleTarget = new WorkspaceFileTargetHandle(file);
+				newFleTarget.save(target);
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+			}
+		}
+
+		PDEPlugin.getWorkspace().removeResourceChangeListener(fInputListener);
+		fInputListener = new FileInputListener(file);
+		PDEPlugin.getWorkspace().addResourceChangeListener(fInputListener);
+		setInput(new FileEditorInput(file));
+		setPartName(getEditorInput().getName());
+		commitPages(true);
+		editorDirtyStateChanged();
+
 	}
 
 	/* (non-Javadoc)
