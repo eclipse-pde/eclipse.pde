@@ -65,11 +65,15 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 			Bundle bundle = (Bundle) element;
 
-			List folders = new ArrayList(7);
+			List folders = new ArrayList(9);
 
 			folders.add(new Attribute(Attribute.F_LOCATION, bundle.getLocation()));
 			if (bundle.getImports().length > 0)
 				folders.add(new Folder(Folder.F_IMPORTS, bundle));
+			if (bundle.getImportedPackages().length > 0)
+				folders.add(new Folder(Folder.F_IMPORTED_PACKAGES, bundle));
+			if (bundle.getExportedPackages().length > 0)
+				folders.add(new Folder(Folder.F_EXPORTED_PACKAGES, bundle));
 			if (bundle.getLibraries().length > 0)
 				folders.add(new Folder(Folder.F_LIBRARIES, bundle));
 			if (bundle.getExtensionPoints().length > 0)

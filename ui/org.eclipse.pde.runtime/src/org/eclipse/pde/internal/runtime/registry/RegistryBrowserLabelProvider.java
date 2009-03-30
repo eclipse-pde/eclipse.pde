@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+
 import java.util.Arrays;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -44,6 +46,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 	private Image fPropertyImage;
 	private Image fServicePropertyImage;
 	private Image fFragmentImage;
+	private Image fPackageImage;
 	private RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserLabelProvider(RegistryBrowser browser) {
@@ -66,6 +69,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		fPropertyImage = PDERuntimePluginImages.DESC_PROPERTY_OBJ.createImage();
 		fPluginsImage = PDERuntimePluginImages.DESC_PLUGINS_OBJ.createImage();
 		fFragmentImage = PDERuntimePluginImages.DESC_FRAGMENT_OBJ.createImage();
+		fPackageImage = PDERuntimePluginImages.DESC_PACKAGE_OBJ.createImage();
 
 		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
@@ -108,6 +112,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		fServicePropertyImage.dispose();
 		fPluginsImage.dispose();
 		fFragmentImage.dispose();
+		fPackageImage.dispose();
 	}
 
 	public Image getImage(Object element) {
@@ -175,6 +180,9 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 					return fPluginsImage;
 				case Folder.F_FRAGMENTS :
 					return fPluginsImage;
+				case Folder.F_EXPORTED_PACKAGES :
+				case Folder.F_IMPORTED_PACKAGES :
+					return fPackageImage;
 			}
 			return null;
 		}
@@ -185,8 +193,14 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		if (element instanceof ExtensionPoint)
 			return fExtensionPointImage;
 
-		if (element instanceof BundlePrerequisite)
-			return ((BundlePrerequisite) element).isExported() ? fExpReqPluginImage : fReqPluginImage;
+		if (element instanceof BundlePrerequisite) {
+			BundlePrerequisite prereq = (BundlePrerequisite) element;
+
+			if (prereq.isPackage())
+				return fPackageImage;
+
+			return prereq.isExported() ? fExpReqPluginImage : fReqPluginImage;
+		}
 
 		if (element instanceof BundleLibrary)
 			return fLibraryImage;
@@ -257,6 +271,12 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 			switch (((Folder) element).getId()) {
 				case Folder.F_IMPORTS :
 					text = PDERuntimeMessages.RegistryView_folders_imports;
+					break;
+				case Folder.F_IMPORTED_PACKAGES :
+					text = PDERuntimeMessages.RegistryBrowserLabelProvider_ImportedPackages;
+					break;
+				case Folder.F_EXPORTED_PACKAGES :
+					text = PDERuntimeMessages.RegistryBrowserLabelProvider_ExportedPackages;
 					break;
 				case Folder.F_LIBRARIES :
 					text = PDERuntimeMessages.RegistryView_folders_libraries;

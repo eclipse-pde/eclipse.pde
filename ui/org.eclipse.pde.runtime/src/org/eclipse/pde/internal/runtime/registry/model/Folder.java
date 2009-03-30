@@ -21,6 +21,8 @@ public class Folder {
 	public static final int F_PROPERTIES = 7;
 	public static final int F_USING_BUNDLES = 8;
 	public static final int F_FRAGMENTS = 9;
+	public static final int F_IMPORTED_PACKAGES = 10;
+	public static final int F_EXPORTED_PACKAGES = 11;
 
 	private int id;
 	private Object parent;
@@ -58,6 +60,10 @@ public class Folder {
 				return ((ServiceRegistration) parent).getUsingBundles();
 			case F_FRAGMENTS :
 				return ((Bundle) parent).getFragments();
+			case F_IMPORTED_PACKAGES :
+				return ((Bundle) parent).getImportedPackages();
+			case F_EXPORTED_PACKAGES :
+				return ((Bundle) parent).getExportedPackages();
 		}
 
 		return null;

@@ -190,6 +190,14 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		if (libraries != null)
 			adapter.setLibraries(libraries);
 
+		BundlePrerequisite[] importPackages = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.IMPORT_PACKAGE);
+		if (importPackages != null)
+			adapter.setImportedPackages(importPackages);
+
+		BundlePrerequisite[] exportPackages = (BundlePrerequisite[]) getManifestHeaderArray(bundle, Constants.EXPORT_PACKAGE);
+		if (exportPackages != null)
+			adapter.setExportedPackages(exportPackages);
+
 		return adapter;
 	}
 
@@ -318,16 +326,22 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 					array[i] = library;
 				}
 				return array;
-			} else if (headerKey.equals(Constants.REQUIRE_BUNDLE)) {
+			} else if (headerKey.equals(Constants.REQUIRE_BUNDLE) || headerKey.equals(Constants.IMPORT_PACKAGE) || headerKey.equals(Constants.EXPORT_PACKAGE)) {
 				BundlePrerequisite[] array = new BundlePrerequisite[elements.length];
 				for (int i = 0; i < elements.length; i++) {
 					ManifestElement element = elements[i];
 
 					BundlePrerequisite prereq = new BundlePrerequisite();
 					prereq.setName(element.getValue());
-					prereq.setVersion(element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE));
-					String visibility = element.getDirective(Constants.VISIBILITY_DIRECTIVE);
-					prereq.setExported(Constants.VISIBILITY_REEXPORT.equals(visibility));
+					if (headerKey.equals(Constants.REQUIRE_BUNDLE)) {
+						prereq.setVersion(element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE));
+						String visibility = element.getDirective(Constants.VISIBILITY_DIRECTIVE);
+						prereq.setExported(Constants.VISIBILITY_REEXPORT.equals(visibility));
+					} else {
+						prereq.setVersion(element.getAttribute(Constants.VERSION_ATTRIBUTE));
+						prereq.setPackage(true);
+					}
+
 					array[i] = prereq;
 				}
 				return array;

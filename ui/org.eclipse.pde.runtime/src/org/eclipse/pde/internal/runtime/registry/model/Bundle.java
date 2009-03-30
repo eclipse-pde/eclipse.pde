@@ -28,6 +28,8 @@ public class Bundle extends ModelObject {
 	private int state;
 	private long id;
 	private BundleLibrary[] libraries = new BundleLibrary[0];
+	private BundlePrerequisite[] importedPackages = new BundlePrerequisite[0];
+	private BundlePrerequisite[] exportedPackages = new BundlePrerequisite[0];
 
 	private String fragmentHost;
 	private String fragmentHostVersion;
@@ -220,5 +222,21 @@ public class Bundle extends ModelObject {
 		if (model == null)
 			return new Bundle[0];
 		return model.getFragments(this);
+	}
+
+	public void setImportedPackages(BundlePrerequisite[] importedPackages) {
+		this.importedPackages = importedPackages;
+	}
+
+	public BundlePrerequisite[] getImportedPackages() {
+		return importedPackages;
+	}
+
+	public void setExportedPackages(BundlePrerequisite[] exportedPackages) {
+		this.exportedPackages = exportedPackages;
+	}
+
+	public BundlePrerequisite[] getExportedPackages() {
+		return exportedPackages;
 	}
 }
