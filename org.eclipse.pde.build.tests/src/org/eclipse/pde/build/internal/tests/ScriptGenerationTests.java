@@ -306,7 +306,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		//Assert classpath has the swt fragment
 		String swtFragment = "org.eclipse.swt." + Platform.getWS() + '.' + Platform.getOS();
-		if (!Platform.getWS().equals("carbon"))
+		if (!Platform.getWS().equals("carbon") && !Platform.getWS().equals("cocoa"))
 			swtFragment += '.' + Platform.getOSArch();
 		assertTrue(path.indexOf(swtFragment) > 0);
 	}
@@ -1203,7 +1203,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.writeBuffer(buildXML, buffer);
 
 		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
-		
+
 		zipEntries.add("plugins/p1_1.0.0.jar.pack.gz");
 		zipEntries.add("plugins/p2_1.0.0.jar.pack.gz");
 		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
