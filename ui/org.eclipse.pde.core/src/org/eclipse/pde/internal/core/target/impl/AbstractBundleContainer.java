@@ -627,42 +627,40 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	public String[] getVMArguments() {
 		String FWK_ADMIN_EQ = "org.eclipse.equinox.frameworkadmin.equinox"; //$NON-NLS-1$
 
-		if (fVMArgs != null) {
-			if (fVMArgs.length == 0) {
-				return null;
+		if (fVMArgs == null) {
+			try {
+				FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+				if (fwAdmin == null) {
+					Bundle fwAdminBundle = Platform.getBundle(FWK_ADMIN_EQ);
+					fwAdminBundle.start();
+					fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+				}
+				Manipulator manipulator = fwAdmin.getManipulator();
+				ConfigData configData = new ConfigData(null, null, null, null);
+
+				String home = getLocation(true);
+				manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
+				File installDirectory = new File(home);
+				if (Platform.getOS().equals(Platform.OS_MACOSX))
+					installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+				manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
+				manipulator.getLauncherData().setHome(new File(home));
+
+				manipulator.setConfigData(configData);
+				manipulator.load();
+				fVMArgs = manipulator.getLauncherData().getJvmArgs();
+			} catch (BundleException e) {
+				PDECore.log(e);
+			} catch (CoreException e) {
+				PDECore.log(e);
+			} catch (IOException e) {
+				PDECore.log(e);
 			}
-			return fVMArgs;
+
 		}
-
-		try {
-			FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
-			if (fwAdmin == null) {
-				Bundle fwAdminBundle = Platform.getBundle(FWK_ADMIN_EQ);
-				fwAdminBundle.start();
-				fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
-			}
-			Manipulator manipulator = fwAdmin.getManipulator();
-			ConfigData configData = new ConfigData(null, null, null, null);
-
-			String home = getLocation(true);
-			manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
-			File installDirectory = new File(home);
-			if (Platform.getOS().equals(Platform.OS_MACOSX))
-				installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
-			manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
-			manipulator.getLauncherData().setHome(new File(home));
-
-			manipulator.setConfigData(configData);
-			manipulator.load();
-			fVMArgs = manipulator.getLauncherData().getJvmArgs();
-		} catch (BundleException e) {
-			PDECore.log(e);
-		} catch (CoreException e) {
-			PDECore.log(e);
-		} catch (IOException e) {
-			PDECore.log(e);
+		if (fVMArgs == null || fVMArgs.length == 0) {
+			return null;
 		}
-
 		return fVMArgs;
 	}
 }
