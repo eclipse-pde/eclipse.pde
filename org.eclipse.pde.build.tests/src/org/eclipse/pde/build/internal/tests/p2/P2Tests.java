@@ -554,6 +554,7 @@ public class P2Tests extends P2TestCase {
 		test.append("                        source=\"${compareFrom}\"                                               \n");
 		test.append("                        destination=\"${newLocation}\"                                          \n");
 		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
+		test.append("                        comparatorLog=\"${basedir}/compare.log\"                                \n");
 		test.append("    />                                                                                          \n");
 		test.append("  </target>                                                                                     \n");
 		test.append("</project>                                                                                      \n");
@@ -568,6 +569,7 @@ public class P2Tests extends P2TestCase {
 		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
 
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
+		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] { "canonical: osgi.bundle,b,1.0.0", "Difference found for B.class"} );
 	}
 
 	public void testBug263272_2() throws Exception {
@@ -641,6 +643,7 @@ public class P2Tests extends P2TestCase {
 		test.append("                        source=\"${compareFrom}\"                                               \n");
 		test.append("                        destination=\"${newLocation}\"                                          \n");
 		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
+		test.append("                        comparatorLog=\"${basedir}/compare.log\"                                \n");
 		test.append("    />                                                                                          \n");
 		test.append("  </target>                                                                                     \n");
 		test.append("</project>                                                                                      \n");
