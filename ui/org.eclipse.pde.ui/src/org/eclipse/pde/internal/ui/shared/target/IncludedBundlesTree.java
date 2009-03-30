@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import com.ibm.icu.text.MessageFormat;
+import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -34,12 +35,16 @@ public class IncludedBundlesTree extends FilteredTree {
 	private ViewerFilter fSourceFilter;
 	private ViewerFilter fPluginFilter;
 	private IResolvedBundle[] fAllBundles;
+	private Button fGroupPlugins;
+	private HashMap fTreeViewerContents;
+	private boolean fIsGroupedByLocation;
 
 	public IncludedBundlesTree(Composite parent) {
 		super(parent, SWT.BORDER | SWT.MULTI, new PatternFilter(), true);
 	}
 
 	protected Control createTreeControl(Composite parent, int style) {
+		fIsGroupedByLocation = false;
 		Composite treeComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 		super.createTreeControl(treeComp, style);
 		((GridData) fTree.getControl().getLayoutData()).heightHint = 300;
@@ -47,6 +52,7 @@ public class IncludedBundlesTree extends FilteredTree {
 		fCountLabel = SWTFactory.createLabel(treeComp, "", 2); //$NON-NLS-1$
 		updateButtons();
 		initializeFilters();
+		initializeTreeContents(fAllBundles);
 		return treeComp;
 	}
 
@@ -60,7 +66,11 @@ public class IncludedBundlesTree extends FilteredTree {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
 					for (int i = 0; i < selected.length; i++) {
-						fTree.setChecked(selected[i], true);
+						if (fIsGroupedByLocation) {
+							handleCheck(selected[i], true);
+						} else {
+							fTree.setChecked(selected[i], true);
+						}
 					}
 					updateButtons();
 				}
@@ -72,7 +82,11 @@ public class IncludedBundlesTree extends FilteredTree {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
 					for (int i = 0; i < selected.length; i++) {
-						fTree.setChecked(selected[i], false);
+						if (fIsGroupedByLocation) {
+							handleCheck(selected[i], false);
+						} else {
+							fTree.setChecked(selected[i], false);
+						}
 					}
 					updateButtons();
 				}
@@ -84,16 +98,34 @@ public class IncludedBundlesTree extends FilteredTree {
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, Messages.IncludedBundlesTree_2, null);
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				// We only want to check visible
-				fTree.setAllChecked(true);
+				if (fIsGroupedByLocation) {
+					Iterator iter = fTreeViewerContents.keySet().iterator();
+					while (iter.hasNext()) {
+						handleCheck(iter.next(), true);
+					}
+
+				} else {
+					// We only want to check visible
+					fTree.setAllChecked(true);
+				}
+
 				updateButtons();
 			}
 		});
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, Messages.IncludedBundlesTree_3, null);
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				// We only want to uncheck visible
-				fTree.setAllChecked(false);
+
+				if (fIsGroupedByLocation) {
+					Iterator iter = fTreeViewerContents.keySet().iterator();
+					while (iter.hasNext()) {
+						handleCheck(iter.next(), false);
+					}
+
+				} else {
+					// We only want to uncheck visible
+					fTree.setAllChecked(false);
+				}
 				updateButtons();
 			}
 		});
@@ -111,6 +143,43 @@ public class IncludedBundlesTree extends FilteredTree {
 		Composite filterComp = SWTFactory.createComposite(buttonComp, 1, 1, SWT.NONE, 0, 0);
 		filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
 
+		fGroupPlugins = SWTFactory.createCheckButton(filterComp, Messages.IncludedBundlesTree_6, null, false, 1);
+		fGroupPlugins.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setEnabled(false);
+				fIsGroupedByLocation = fGroupPlugins.getSelection();
+				Object[] checkedElements = fTree.getCheckedElements();
+				fTree.setContentProvider(getContentProviderForTree());
+
+				if (fIsGroupedByLocation) {
+					fTree.expandAll();
+					fTree.setCheckedElements(checkedElements);
+					Iterator iter = fTreeViewerContents.keySet().iterator();
+					HashMap bundles = null;
+					Object key = null;
+
+					while (iter.hasNext()) {
+						key = iter.next();
+						bundles = (HashMap) fTreeViewerContents.get(key);
+
+						Iterator childIter = bundles.keySet().iterator();
+						boolean allChilrenSelected = true;
+						boolean noneChildrenSelected = true;
+						while (childIter.hasNext()) {
+							Object bundle = childIter.next();
+							boolean checkedState = ((Boolean) bundles.get(bundle)).booleanValue();
+							allChilrenSelected = allChilrenSelected && checkedState;
+							noneChildrenSelected = noneChildrenSelected && !checkedState;
+
+						}
+						fTree.setChecked(key, !noneChildrenSelected);
+						fTree.setGrayed(key, !allChilrenSelected && !noneChildrenSelected);
+					}
+				}
+				updateButtons();
+				setEnabled(true);
+			}
+		});
 		fShowLabel = SWTFactory.createLabel(filterComp, Messages.BundleContainerTable_9, 1);
 
 		fShowPluginsButton = SWTFactory.createCheckButton(filterComp, Messages.BundleContainerTable_14, null, true, 1);
@@ -145,6 +214,41 @@ public class IncludedBundlesTree extends FilteredTree {
 		gd.horizontalIndent = 10;
 		fShowSourceButton.setLayoutData(gd);
 
+	}
+
+	/**
+	 * returns a HashMap which contains all the new File objects representing a new location
+	 */
+	protected HashMap initializeTreeContents(IResolvedBundle[] allBundles) {
+		HashMap parents = new HashMap();
+		if (allBundles == null)
+			return null;
+
+		if (fTreeViewerContents == null)
+			fTreeViewerContents = new HashMap();
+		else
+			fTreeViewerContents.clear();
+
+		for (int i = 0; i < allBundles.length; i++) {
+			IResolvedBundle bundle = allBundles[i];
+
+			String path = bundle.getBundleInfo().getLocation().getRawPath();
+			if (path != null) {
+				File installFile = new File(path);
+				File parentFile = installFile.getParentFile();
+				HashMap bundles = (HashMap) fTreeViewerContents.get(parentFile);
+				if (bundles == null) {
+					bundles = new HashMap();
+					bundles.put(bundle, new Boolean(fTree.getChecked(bundle)));
+					fTreeViewerContents.put(parentFile, bundles);
+					parents.put(parentFile, Boolean.FALSE);
+				} else {
+					bundles.put(bundle, new Boolean(fTree.getChecked(bundle)));
+				}
+			}
+		}
+
+		return parents;
 	}
 
 	private void initializeFilters() {
@@ -200,7 +304,18 @@ public class IncludedBundlesTree extends FilteredTree {
 //			fSelectRequiredButton.setEnabled(false);
 		}
 
-		int checked = fTree.getCheckedElements().length;
+		int checked;
+		if (fIsGroupedByLocation) {
+			checked = fTree.getCheckedElements().length;
+			Iterator iter = fTreeViewerContents.keySet().iterator();
+			while (iter.hasNext()) {
+				if (fTree.getChecked(iter.next())) {
+					--checked;
+				}
+			}
+		} else {
+			checked = fTree.getCheckedElements().length;
+		}
 		fSelectAllButton.setEnabled(fAllBundles != null && checked != fTree.getTree().getItemCount());
 		fDeselectAllButton.setEnabled(fAllBundles != null && checked != 0);
 
@@ -299,7 +414,124 @@ public class IncludedBundlesTree extends FilteredTree {
 				}
 			}
 		};
-		fTree.setContentProvider(new ITreeContentProvider() {
+		fTree.setContentProvider(getContentProviderForTree());
+		fTree.setLabelProvider(new BundleInfoLabelProvider(false));
+		fTree.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				fTree.setChecked(selection.getFirstElement(), !fTree.getChecked(selection.getFirstElement()));
+				updateButtons();
+			}
+		});
+		fTree.addCheckStateListener(new ICheckStateListener() {
+
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				if (fIsGroupedByLocation) {
+					handleCheck(event.getElement(), event.getChecked());
+					updateButtons();
+				}
+			}
+		});
+		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateButtons();
+			}
+		});
+		fTree.setSorter(new ViewerSorter());
+		return fTree;
+	}
+
+	/**
+	 * Marks the check state of <code>element</code> to <code>state</code> when plug-ins are grouped by location 
+	 */
+	private void handleCheck(Object element, boolean state) {
+		if (fTreeViewerContents.containsKey(element)) {
+
+			HashMap bundles = (HashMap) fTreeViewerContents.get(element);
+			Iterator iter = bundles.keySet().iterator();
+			while (iter.hasNext()) {
+				Object key = iter.next();
+				bundles.put(key, new Boolean(state));
+				fTree.setChecked(key, state);
+			}
+			fTree.setChecked(element, state);
+			fTree.setGrayed(element, false);
+			return;
+		}
+		Iterator iter = fTreeViewerContents.keySet().iterator();
+		HashMap bundles = null;
+		Object key = null;
+		while (iter.hasNext()) {
+			key = iter.next();
+			bundles = (HashMap) fTreeViewerContents.get(key);
+			if (bundles.containsKey(element)) {
+				bundles.put(element, new Boolean(state));
+				break;
+			}
+		}
+		iter = bundles.keySet().iterator();
+		boolean allChilrenSelected = true;
+		boolean noneChildrenSelected = true;
+		while (iter.hasNext()) {
+			Object bundle = iter.next();
+			boolean checkedState = ((Boolean) bundles.get(bundle)).booleanValue();
+			allChilrenSelected = allChilrenSelected && checkedState;
+			noneChildrenSelected = noneChildrenSelected && !checkedState;
+		}
+		fTree.setChecked(element, state);
+		fTree.setChecked(key, !noneChildrenSelected);
+		fTree.setGrayed(key, !allChilrenSelected && !noneChildrenSelected);
+	}
+
+	private ITreeContentProvider getContentProviderForTree() {
+		if (fIsGroupedByLocation) {
+
+			//Content provider for grouped by location
+			return (new ITreeContentProvider() {
+
+				public Object[] getChildren(Object parentElement) {
+					if (parentElement instanceof File) {
+						HashMap files = (HashMap) fTreeViewerContents.get(parentElement);
+						if (files != null) {
+							Object[] result = files.keySet().toArray();
+							return result;
+						}
+					}
+					return new Object[0];
+				}
+
+				public Object getParent(Object element) {
+					if (element instanceof IResolvedBundle) {
+						IResolvedBundle bundle = (IResolvedBundle) element;
+						String installPath = bundle.getBundleInfo().getLocation().getPath();
+						if (installPath != null)
+							return new File(installPath).getParentFile();
+					}
+					return null;
+				}
+
+				public boolean hasChildren(Object element) {
+					if (element instanceof File)
+						return fTreeViewerContents.containsKey(element);
+					return false;
+				}
+
+				public Object[] getElements(Object inputElement) {
+					if (fTreeViewerContents == null)
+						return initializeTreeContents(fAllBundles).keySet().toArray();
+					return fTreeViewerContents.keySet().toArray();
+				}
+
+				public void dispose() {
+				}
+
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				}
+			});
+		}
+
+		//ungrouped content provider
+		return (new ITreeContentProvider() {
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
@@ -325,21 +557,6 @@ public class IncludedBundlesTree extends FilteredTree {
 				return new Object[0];
 			}
 		});
-		fTree.setLabelProvider(new BundleInfoLabelProvider(false));
-		fTree.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				fTree.setChecked(selection.getFirstElement(), !fTree.getChecked(selection.getFirstElement()));
-				updateButtons();
-			}
-		});
-		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
-		fTree.setSorter(new ViewerSorter());
-		return fTree;
 	}
 
 	/**
@@ -353,7 +570,18 @@ public class IncludedBundlesTree extends FilteredTree {
 	public BundleInfo[] getIncludedBundles() {
 		if (fTree.getControl().isEnabled() && fAllBundles != null) {
 			Object[] checked = fTree.getCheckedElements();
-			if (checked.length == fAllBundles.length) {
+			if (fIsGroupedByLocation) {
+				int count = fTree.getCheckedElements().length;
+				Iterator iter = fTreeViewerContents.keySet().iterator();
+				while (iter.hasNext()) {
+					if (fTree.getChecked(iter.next())) {
+						--count;
+					}
+				}
+				if (count == fAllBundles.length)
+					return null;
+
+			} else if (checked.length == fAllBundles.length) {
 				return null;
 			}
 

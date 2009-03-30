@@ -85,6 +85,7 @@ public class Messages extends NLS {
 	public static String IncludedBundlesTree_3;
 	public static String IncludedBundlesTree_4;
 	public static String IncludedBundlesTree_5;
+	public static String IncludedBundlesTree_6;
 	public static String RestrictionsListSelectionDialog_0;
 	public static String RestrictionsListSelectionDialog_1;
 	public static String RestrictionsListSelectionDialog_2;
