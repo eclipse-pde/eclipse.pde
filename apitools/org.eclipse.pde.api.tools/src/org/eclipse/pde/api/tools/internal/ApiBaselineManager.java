@@ -56,7 +56,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
@@ -888,7 +887,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 									IJavaProject jp = JavaCore.create(project);
 									if (jp.exists()) {
 										ApiDescriptionManager.getDefault().clean(jp, true, true);
-										ApiAnalysisBuilder.cleanupMarkers(resource);
 									}
 								}
 							} catch (CoreException e) {

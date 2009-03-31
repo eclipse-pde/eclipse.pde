@@ -363,4 +363,68 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {{"interref", "test8"}});
 		deployTest("test8", XYZ_PATH, I_PATH, "interref.java", addtag);
 	}
+	
+	/**
+	 * Tests adding @noextend AND @noinstantiate tags to a class known to be used 
+	 * by another bundle
+	 * 
+	 *  Uses test9.java and classref.java
+	 */
+	public void testAddExtendInstantiateRestriction() throws Exception {
+		test9(true);
+	}
+	
+	/**
+	 * Tests removing @noextend AND @noinstantiate tags to a class known to be used 
+	 * by another bundle
+	 * 
+	 * Uses test9.java and classref.java
+	 */
+	public void testRemoveExtendInstantiateRestriction() throws Exception {
+		test9(false);
+	}
+	
+	private void test9(boolean addtag) throws Exception {
+		setExpectedProblemIds(new int[] {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
+		});
+		setExpectedMessageArgs(new String[][] {
+					{"classref", "test9"},
+					{"classref", "test9"}
+				});
+		deployTest("test9", XYZ_PATH, C_PATH, "classref.java", addtag);
+	}
+	
+	/**
+	 * Tests adding @noextend AND @noimplement tags to an interface known to be used 
+	 * by another bundle
+	 * 
+	 *  Uses test10.java and interref.java
+	 */
+	public void testAddExtendImplementRestriction() throws Exception {
+		test10(true);
+	}
+	
+	/**
+	 * Tests removing @noextend AND @noimplement tags to an interface known to be used 
+	 * by another bundle
+	 * 
+	 * Uses test10.java and interref.java
+	 */
+	public void testRemoveExtendImplementRestriction() throws Exception {
+		test10(false);
+	}
+	
+	private void test10(boolean addtag) throws Exception {
+		setExpectedProblemIds(new int[] {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS)
+		});
+		setExpectedMessageArgs(new String[][] {
+					{"interref", "test10"},
+					{"interref", "clazz"}
+				});
+		deployTest("test10", XYZ_PATH, I_PATH, "interref.java", addtag);
+	}
 }

@@ -139,8 +139,8 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 * Cleans the API description for the given project.
 	 * 
 	 * @param project
-	 * @param whether to delete the file on disk
-	 * @param whether to remove the cached API description
+	 * @param delete whether to delete the file on disk
+	 * @param remove whether to remove the cached API description
 	 */
 	public synchronized void clean(IJavaProject project, boolean delete, boolean remove) {
 		ProjectApiDescription desc = null;
@@ -260,8 +260,9 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 					int flags = delta.getFlags();
 					switch (delta.getKind()) {
 						case IJavaElementDelta.CHANGED: {
-							if ((flags & IJavaElementDelta.F_CONTENT) != 0
-									|| (flags & IJavaElementDelta.F_FINE_GRAINED) != 0) {
+							if ((flags & (IJavaElementDelta.F_CONTENT | 
+											IJavaElementDelta.F_FINE_GRAINED | 
+											IJavaElementDelta.F_PRIMARY_RESOURCE)) != 0){
 								if (proj != null) {
 									projectChanged(proj);
 									return true;
@@ -502,6 +503,5 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	private static void abort(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, exception);
 		throw new CoreException(status);
-	}	
-
+	}
 }

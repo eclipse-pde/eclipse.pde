@@ -75,4 +75,11 @@ public class CompilationUnit {
 		}
 		return new FileInputStream(new File(filepath));
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getName();
+	}
 }

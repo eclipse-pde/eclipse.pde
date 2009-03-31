@@ -20,6 +20,7 @@ public class BuilderMessages extends NLS {
 	public static String checking_api_usage;
 
 	public static String AbstractTypeLeakDetector_vis_type_has_no_api_description;
+	public static String ApiAnalysisBuilder_builder_for_project;
 	public static String ApiAnalysisBuilder_finding_affected_source_files;
 	public static String ApiAnalysisBuilder_initializing_analyzer;
 	public static String ApiProblemFactory_problem_message_not_found;
@@ -32,7 +33,6 @@ public class BuilderMessages extends NLS {
 	public static String build_wrongFileFormat;
 	public static String build_saveStateComplete;
 	public static String build_cannotSaveState;
-	public static String IllegalExtendsProblemDetector_an_anonymous_declaration;
 	public static String undefinedRange;
 	public static String reportUnsatisfiedConstraint;
 

@@ -301,7 +301,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 				}
 				if (changedTypes != null) {
-					// check the ones not already checked as part of typenames check
+					// check the ones not already checked as part of type names check
 					for (int i = 0; i < changedTypes.length; i++) {
 						String typeName = changedTypes[i];
 						if (typeNamesSet == null || !typeNamesSet.remove(typeName)) {
@@ -1550,7 +1550,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							Util.EMPTY_STRING);
 				}
 			}
-			// analyse version of required components
+			// analyze version of required components
 			ReexportedBundleVersionInfo info = null;
 			if (problem != null) {
 				switch (problem.getKind()) {
@@ -1580,7 +1580,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						}
 						break;
 					case IApiProblem.MINOR_VERSION_CHANGE :
-						// check if there is a version change required due to reexported bundles
+						// check if there is a version change required due to re-exported bundles
 						info = checkBundleVersionsOfReexportedBundles(reference, component);
 						if (info != null) {
 							switch(info.kind) {
@@ -1602,7 +1602,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						}
 						break;
 					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API :
-						// check if there is a version change required due to reexported bundles
+						// check if there is a version change required due to re-exported bundles
 						info = checkBundleVersionsOfReexportedBundles(reference, component);
 						if (info != null) {
 							switch(info.kind) {
