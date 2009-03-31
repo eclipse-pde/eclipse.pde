@@ -81,9 +81,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		Class[] classes = new Class[] {
 			FullSourceBuildTests.class,
 			ApiDescriptionTests.class,
-			IncrementalBuildTests.class,
-			EnumIncrementalBuildTests.class,
-			AnnotationIncrementalBuildTests.class
+			IncrementalBuildTests.class
 		};
 		return classes;
 	}
@@ -214,7 +212,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	protected void createInitialWorkspace() throws Exception {
-		// Get wksp info
+		// Get workspace info
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		// Modify resources workspace preferences to avoid disturbing tests while running them
