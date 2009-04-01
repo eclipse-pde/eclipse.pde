@@ -21,6 +21,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
@@ -85,8 +86,7 @@ public class JREBlock {
 		fJreButton.setText(PDEUIMessages.BasicLauncherTab_jre);
 		fJreButton.addSelectionListener(fListener);
 
-		fJreCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
-		fJreCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		fJreCombo = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 		fJreCombo.addSelectionListener(fListener);
 
 		fJrePrefButton = new Button(parent, SWT.PUSH);
@@ -115,8 +115,7 @@ public class JREBlock {
 		fEeButton.setText(PDEUIMessages.BasicLauncherTab_ee);
 		fEeButton.addSelectionListener(fListener);
 
-		fEeCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
-		fEeCombo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		fEeCombo = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
 		fEeCombo.addSelectionListener(fListener);
 
 		fEePrefButton = new Button(parent, SWT.PUSH);

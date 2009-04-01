@@ -19,6 +19,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.fieldassist.*;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
@@ -102,9 +103,7 @@ public class ProgramBlock {
 		fProductButton.setText(PDEUIMessages.ProgramBlock_runProduct);
 		fProductButton.addSelectionListener(fListener);
 
-		fProductCombo = new Combo(parent, SWT.DROP_DOWN);
-		fProductCombo.setItems(TargetPlatform.getProducts());
-		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fProductCombo = SWTFactory.createCombo(parent, SWT.DROP_DOWN, 1, TargetPlatform.getProducts());
 		fProductCombo.addSelectionListener(fListener);
 		fProductCombo.addModifyListener(fListener);
 
@@ -119,9 +118,7 @@ public class ProgramBlock {
 		fApplicationButton = new Button(parent, SWT.RADIO);
 		fApplicationButton.setText(PDEUIMessages.ProgramBlock_runApplication);
 
-		fApplicationCombo = new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN);
-		fApplicationCombo.setItems(getApplicationNames());
-		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fApplicationCombo = SWTFactory.createCombo(parent, SWT.READ_ONLY | SWT.DROP_DOWN, 1, getApplicationNames());
 		fApplicationCombo.addSelectionListener(fListener);
 	}
 
