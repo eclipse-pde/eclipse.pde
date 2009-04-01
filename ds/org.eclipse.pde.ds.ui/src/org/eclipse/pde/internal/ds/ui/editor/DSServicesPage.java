@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ds.ui.SharedImages;
 import org.eclipse.pde.internal.ds.ui.editor.sections.DSProvideSection;
 import org.eclipse.pde.internal.ds.ui.editor.sections.DSReferenceSection;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -51,6 +52,9 @@ public class DSServicesPage extends PDEFormPage implements
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
+		body.setLayoutData(data);
 		
 		// Sections
 		managedForm.addPart(new DSReferenceSection(this, body));

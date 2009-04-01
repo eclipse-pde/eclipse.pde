@@ -98,7 +98,8 @@ public class DSProvideSection extends TableSection implements
 	}
 
 	public DSProvideSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {
+		super(page, parent, Section.DESCRIPTION | Section.TWISTIE,
+				new String[] {
 				Messages.DSProvideSection_add,
 				Messages.DSProvideSection_remove,
 				Messages.DSProvideSection_edit });
@@ -107,10 +108,11 @@ public class DSProvideSection extends TableSection implements
 
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setDescription(Messages.DSProvideSection_description);
-
+		section.setExpanded(true);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
 		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
 		section.setLayoutData(data);
 
 		Composite container = createClientContainer(section, 2, toolkit);

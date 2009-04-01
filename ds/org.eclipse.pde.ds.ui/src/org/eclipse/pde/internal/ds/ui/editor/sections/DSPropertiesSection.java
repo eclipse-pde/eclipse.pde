@@ -136,7 +136,7 @@ public class DSPropertiesSection extends TableSection {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);
 

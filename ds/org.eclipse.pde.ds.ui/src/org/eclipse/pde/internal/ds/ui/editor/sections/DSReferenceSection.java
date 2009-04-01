@@ -86,8 +86,8 @@ public class DSReferenceSection extends TableSection implements
 			StyledString styledString = new StyledString(name);
 			String bind = reference.getReferenceBind();
 			String unbind = reference.getReferenceUnbind();
-			bind = (bind == null ? "<none>" : bind); //$NON-NLS-1$
-			unbind = (unbind == null ? "<none>" : unbind); //$NON-NLS-1$
+			bind = (bind == null || bind.length() == 0 ? "<none>" : bind); //$NON-NLS-1$
+			unbind = (unbind == null || unbind.length() == 0 ? "<none>" : unbind); //$NON-NLS-1$
 			styledString
 					.append(
 							" [" + bind + "," + unbind + "]", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -133,7 +133,8 @@ public class DSReferenceSection extends TableSection implements
 	}
 
 	public DSReferenceSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {
+		super(page, parent, Section.DESCRIPTION | Section.TWISTIE,
+				new String[] {
 				Messages.DSReferenceSection_add,
 				Messages.DSReferenceSection_remove,
 				Messages.DSReferenceSection_edit,
@@ -144,10 +145,11 @@ public class DSReferenceSection extends TableSection implements
 
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setDescription(Messages.DSReferenceSection_description);
-
+		section.setExpanded(true);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 
 		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessVerticalSpace = true;
 		section.setLayoutData(data);
 
 		Composite container = createClientContainer(section, 2, toolkit);

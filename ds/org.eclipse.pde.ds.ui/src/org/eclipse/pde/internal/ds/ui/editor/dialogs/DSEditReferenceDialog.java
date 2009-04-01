@@ -79,7 +79,7 @@ public class DSEditReferenceDialog extends FormDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		FormToolkit toolkit = mform.getToolkit();
 		toolkit.decorateFormHeading(mform.getForm().getForm());
-		
+
 		Composite entryContainer = toolkit.createComposite(container);
 		entryContainer.setLayout(FormLayoutFactory.createSectionClientGridLayout(
 				false, 3));
@@ -100,7 +100,7 @@ public class DSEditReferenceDialog extends FormDialog {
 
 		// Attribute: Cardinality
 		addCardinalityEntry(toolkit, entryContainer, gd);
-		
+
 		// Attribute: Policy
 		addPolicyEntry(toolkit, entryContainer, gd);
 
@@ -162,7 +162,7 @@ public class DSEditReferenceDialog extends FormDialog {
 		switch (buttonId) {
 		case 0:
 			handleOKPressed();
-		break;
+			break;
 		}
 		super.buttonPressed(buttonId);
 	}
@@ -182,18 +182,14 @@ public class DSEditReferenceDialog extends FormDialog {
 		}
 
 		fBindEntry.commit();
-		if (!fBindEntry.getValue().equals("")) { //$NON-NLS-1$
-			if (!fBindEntry.getValue().equals(fReference.getReferenceBind())) {
-				fReference.setReferenceBind(fBindEntry.getValue());
-			}
+		if (!fBindEntry.getValue().equals(fReference.getReferenceBind())) {
+			fReference.setReferenceBind(fBindEntry.getValue());
 		}
 
+
 		fUnBindEntry.commit();
-		if (!fUnBindEntry.getValue().equals("")) { //$NON-NLS-1$
-			if (!fUnBindEntry.getValue()
-					.equals(fReference.getReferenceUnbind())) {
-				fReference.setReferenceUnbind(fUnBindEntry.getValue());
-			}
+		if (!fUnBindEntry.getValue().equals(fReference.getReferenceUnbind())) {
+			fReference.setReferenceUnbind(fUnBindEntry.getValue());
 		}
 
 		fTargetEntry.commit();
@@ -272,7 +268,7 @@ public class DSEditReferenceDialog extends FormDialog {
 			public void textDirty(FormEntry entry) {
 				// no op due to OK Button
 			}
-			
+
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fInterfaceEntry.getValue();
 				value = handleLinkActivated(value, false);
