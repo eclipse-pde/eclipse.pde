@@ -82,6 +82,7 @@ IFormColors.TITLE));
 		fConfigurationPolicy.createControl(client, toolkit, SWT.READ_ONLY);
 
 		String[] items = new String[] {
+				"", //$NON-NLS-1$
 				IDSConstants.VALUE_CONFIGURATION_POLICY_OPTIONAL,
 				IDSConstants.VALUE_CONFIGURATION_POLICY_REQUIRE,
 				IDSConstants.VALUE_CONFIGURATION_POLICY_IGNORE };

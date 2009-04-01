@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
- *     Chris Aniszczyk <caniszczyk@gmail.com>
+ *     EclipseSource Corporation - ongoing enhancements
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.contentassist;
@@ -53,17 +53,20 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 
 		if (attribute.equals(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED)) {
 			replacementString = attribute + string1
-					+ IDSConstants.VALUE_TRUE + string2;
+ + IDSConstants.VALUE_TRUE
+					+ string2;
 		} else if (attribute
 				.equals(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE)) {
 			replacementString = attribute + string1
-					+ IDSConstants.VALUE_FALSE + string2;
+ + IDSConstants.VALUE_FALSE
+					+ string2;
 		} else if (attribute.equals(IDSConstants.ATTRIBUTE_PROPERTY_TYPE)) {
 			replacementString = attribute + string1
 					+ IDSConstants.VALUE_PROPERTY_TYPE_STRING + string2;
 		} else if (attribute.equals(IDSConstants.ATTRIBUTE_SERVICE_FACTORY)) {
 			replacementString = attribute + string1
-					+ IDSConstants.VALUE_FALSE + string2;
+ + IDSConstants.VALUE_FALSE
+					+ string2;
 		} else if (attribute
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_TARGET)) {
 			replacementString = attribute + string1
@@ -77,9 +80,14 @@ public class DSAttrCompletionProposal extends TypeCompletionProposal implements
 				.equals(IDSConstants.ATTRIBUTE_REFERENCE_POLICY)) {
 			replacementString = attribute + string1
 					+ IDSConstants.VALUE_REFERENCE_POLICY_STATIC + string2;
+		} else if (attribute
+				.equals(IDSConstants.ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY)) {
+			replacementString = attribute + string1
+					+ IDSConstants.VALUE_CONFIGURATION_POLICY_OPTIONAL
+					+ string2;
 		} else {
 			replacementString = attribute + string1 + attribute
-					+ string2;
+ + string2;
 		}
 		return replacementString;
 	}

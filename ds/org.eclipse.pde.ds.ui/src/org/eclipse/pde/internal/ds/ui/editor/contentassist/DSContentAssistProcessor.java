@@ -150,14 +150,20 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		int startOffset = offests[2] + 1;
 
 		// Component
-		if (element != null && element.equals(IDSConstants.ELEMENT_COMPONENT)) {
+		if (element != null
+				&& element.equals("scr:" + IDSConstants.ELEMENT_COMPONENT)) { //$NON-NLS-1$
 			boolean isAttrImmediate = attribute == null ? false : attribute
 					.equals(IDSConstants.ATTRIBUTE_COMPONENT_IMMEDIATE);
 			boolean isAttrEnabled = attribute == null ? false : attribute
 					.equals(IDSConstants.ATTRIBUTE_COMPONENT_ENABLED);
+			boolean isAttrConfigPolicy = attribute == null ? false : attribute
+					.equals(IDSConstants.ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY);
 			if ((isAttrImmediate || isAttrEnabled)) {
-
-				return this.getCompletionBooleans(startOffset, attrValueLength);
+				return getCompletionBooleans(startOffset, attrValueLength);
+			}
+			if (isAttrConfigPolicy) {
+				return getConfigurationPolicyValues(attrValueLength,
+						startOffset);
 			}
 			// Service
 		} else if (element != null
@@ -165,7 +171,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			boolean isAttrServFactory = attribute == null ? false : attribute
 					.equals(IDSConstants.ATTRIBUTE_SERVICE_FACTORY);
 			if (isAttrServFactory) {
-				return this.getCompletionBooleans(startOffset, attrValueLength);
+				return getCompletionBooleans(startOffset, attrValueLength);
 			}
 			// Reference
 		} else if (element != null
@@ -213,6 +219,24 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 				new TypeCompletionProposal(
 						IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC, null,
 						IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC,
+						startOffset, attrValueLength) };
+	}
+
+	private ICompletionProposal[] getConfigurationPolicyValues(
+			int attrValueLength, int startOffset) {
+		return new ICompletionProposal[] {
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_CONFIGURATION_POLICY_IGNORE,
+						null,
+						IDSConstants.VALUE_CONFIGURATION_POLICY_IGNORE,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_CONFIGURATION_POLICY_OPTIONAL, null,
+						IDSConstants.VALUE_CONFIGURATION_POLICY_OPTIONAL,
+						startOffset, attrValueLength),
+				new TypeCompletionProposal(
+						IDSConstants.VALUE_CONFIGURATION_POLICY_REQUIRE, null,
+						IDSConstants.VALUE_CONFIGURATION_POLICY_REQUIRE,
 						startOffset, attrValueLength) };
 	}
 
