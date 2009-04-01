@@ -878,4 +878,30 @@ public class PublishingTests extends P2TestCase {
 		entries.add("license.html");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/e.source_1.0.0.jar", entries);
 	}
+	
+	public void testPublishFeature_Bug270882() throws Exception {
+		IFolder buildFolder = newTest("PublishFeature_Bug270882");
+		
+		IFolder f = Utils.createFolder(buildFolder, "features/f");
+		
+		IFile licenseFile = f.getFile("license.html");
+		Utils.writeBuffer(licenseFile, new StringBuffer("important stuff!\n"));
+		
+		Utils.generateFeature(buildFolder, "f", null, null);
+		Properties properties = new Properties();
+		properties.put("root", "absolute:file:" + licenseFile.getLocation().toOSString());
+		Utils.storeBuildProperties(f, properties);
+	
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("p2.gathering", "true");
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("archivesFormat", "group,group,group-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		Set entries = new HashSet();
+		entries.add("license.html");
+		assertZipContents(buildFolder, "buildRepo/binary/f_root_1.0.0", entries);
+	}
 }

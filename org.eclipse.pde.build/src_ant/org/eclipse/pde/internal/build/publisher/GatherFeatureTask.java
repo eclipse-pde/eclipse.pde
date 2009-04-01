@@ -134,14 +134,14 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 						File base = null;
 						if (file.startsWith("absolute:")) { //$NON-NLS-1$
 							file = file.substring(9);
-							fromDir = ""; //$NON-NLS-1$
+							fromDir = null;
 						}
 						if (file.startsWith("file:")) { //$NON-NLS-1$
-							File temp = new File(fromDir, file.substring(5));
+							File temp = fromDir != null ? new File(fromDir, file.substring(5)) : new File(file.substring(5));
 							base = temp.getParentFile();
 							file = temp.getName();
 						} else {
-							base = new File(fromDir, file);
+							base = fromDir != null ? new File(fromDir, file) : new File(file);
 							file = "**"; //$NON-NLS-1$
 						}
 
