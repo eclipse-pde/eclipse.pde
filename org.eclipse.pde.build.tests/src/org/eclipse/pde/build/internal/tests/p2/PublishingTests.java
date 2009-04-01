@@ -644,6 +644,11 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
+		//bug 270887
+		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
+		URI repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
+		assertManagerDoesntContain(repoURI);
+		
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString());
 		assertNotNull(repository);
 
