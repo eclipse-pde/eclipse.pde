@@ -67,6 +67,8 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_private_enum_method;
 	public static String TagValidator_private_field;
 	public static String TagValidator_private_method;
+	
+	public static String IncrementalBuilder_builder_for_project;
 
 	static {
 		// initialize resource bundle

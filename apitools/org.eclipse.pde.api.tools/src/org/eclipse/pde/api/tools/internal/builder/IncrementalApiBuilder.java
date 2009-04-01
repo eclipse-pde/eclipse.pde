@@ -130,7 +130,7 @@ public class IncrementalApiBuilder {
 	 */
 	public void build(IApiBaseline baseline, IResourceDelta[] deltas, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
 		IProject project = this.builder.getProject();
-		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind("API analysis: Incrementally building... {0}", project), 10);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(BuilderMessages.IncrementalBuilder_builder_for_project, project.getName()), 10);
 		try {
 			State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(project, localmonitor.newChild(1));
 			if(state == null) {
