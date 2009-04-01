@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -68,16 +69,23 @@ public class TargetWeaver {
 						if (path != null && path.length() > 0) {
 							File file = new File(path);
 							if (file.exists()) {
+								BufferedInputStream stream = null;
 								try {
-									fgDevProperties.load(new BufferedInputStream(new FileInputStream(file)));
+									stream = new BufferedInputStream(new FileInputStream(file));
+									fgDevProperties.load(stream);
 								} catch (FileNotFoundException e) {
 									PDECore.log(e);
 								} catch (IOException e) {
 									PDECore.log(e);
+								} finally {
+									if (stream != null)
+										stream.close();
 								}
 							}
 						}
 					} catch (MalformedURLException e) {
+						PDECore.log(e);
+					} catch (IOException e) {
 						PDECore.log(e);
 					}
 				}
