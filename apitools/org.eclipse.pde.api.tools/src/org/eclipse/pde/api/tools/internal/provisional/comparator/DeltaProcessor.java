@@ -294,7 +294,7 @@ public class DeltaProcessor {
 			case IDelta.REMOVED :
 				switch(delta.getFlags()) {
 					case IDelta.TYPE_PARAMETER :
-						return !Util.isVisible(delta.getNewModifiers());
+						return !Util.isVisible(delta.getOldModifiers());
 				}
 				break;
 			case IDelta.ADDED :

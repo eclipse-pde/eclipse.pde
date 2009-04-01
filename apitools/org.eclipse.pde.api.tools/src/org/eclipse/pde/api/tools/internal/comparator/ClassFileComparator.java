@@ -2030,7 +2030,7 @@ public class ClassFileComparator {
 						access,
 						0,
 						this.type1,
-						this.type1.getName(),
+						getKeyForMethod(method, this.type1),
 						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 				return;
 			}
@@ -2056,7 +2056,7 @@ public class ClassFileComparator {
 										access,
 										method3.getModifiers(),
 										this.type1,
-										this.type1.getName(),
+										getKeyForMethod(method3, this.type1),
 										new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 								found = true;
 								break;
@@ -2085,7 +2085,7 @@ public class ClassFileComparator {
 											access,
 											access3,
 											this.type1,
-											this.type1.getName(),
+											getKeyForMethod(method3, this.type1),
 											new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 									found = true;
 									break loop;
@@ -2125,7 +2125,7 @@ public class ClassFileComparator {
 							access,
 							0,
 							this.type1,
-							this.type1.getName(),
+							getKeyForMethod(method, this.type1),
 							new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 				} else {
 					int restrictions = this.currentDescriptorRestrictions;
@@ -2141,7 +2141,7 @@ public class ClassFileComparator {
 							access,
 							0,
 							this.type1,
-							this.type1.getName(),
+							getKeyForMethod(method, this.type1),
 							new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
 				}
 			}

@@ -112,6 +112,12 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 							case IDelta.FIELD :
 							case IDelta.TYPE :
+							case IDelta.API_TYPE :
+							case IDelta.API_METHOD :
+							case IDelta.API_FIELD :
+							case IDelta.API_CONSTRUCTOR :
+							case IDelta.API_ENUM_CONSTANT :
+							case IDelta.REEXPORTED_TYPE :
 								if (!checkExclude(delta)) {
 									super.processLeafDelta(delta);
 								}
@@ -125,6 +131,12 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 							case IDelta.ENUM_CONSTANT :
 							case IDelta.FIELD :
 							case IDelta.TYPE :
+							case IDelta.API_TYPE :
+							case IDelta.API_METHOD :
+							case IDelta.API_FIELD :
+							case IDelta.API_CONSTRUCTOR :
+							case IDelta.API_ENUM_CONSTANT :
+							case IDelta.REEXPORTED_TYPE :
 								if (!checkExclude(delta)) {
 									super.processLeafDelta(delta);
 								}
@@ -144,6 +156,28 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 		} else {
 			switch(delta.getKind()) {
 				case IDelta.ADDED :
+					switch(delta.getFlags()) {
+						case IDelta.TYPE_MEMBER :
+						case IDelta.METHOD :
+						case IDelta.CONSTRUCTOR :
+						case IDelta.ENUM_CONSTANT :
+						case IDelta.METHOD_WITH_DEFAULT_VALUE :
+						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+						case IDelta.FIELD :
+						case IDelta.TYPE :
+						case IDelta.API_TYPE :
+						case IDelta.API_METHOD :
+						case IDelta.API_FIELD :
+						case IDelta.API_CONSTRUCTOR :
+						case IDelta.API_ENUM_CONSTANT :
+						case IDelta.REEXPORTED_TYPE :
+							if (Util.isVisible(delta.getNewModifiers())) {
+								if (!checkExclude(delta)) {
+									super.processLeafDelta(delta);
+								}
+							}
+					}
+					break;
 				case IDelta.REMOVED :
 					switch(delta.getFlags()) {
 						case IDelta.TYPE_MEMBER :
@@ -153,12 +187,21 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 						case IDelta.METHOD_WITH_DEFAULT_VALUE :
 						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 						case IDelta.FIELD :
-							if (Util.isVisible(delta.getNewModifiers())) {
+						case IDelta.TYPE :
+						case IDelta.API_TYPE :
+						case IDelta.API_METHOD :
+						case IDelta.API_FIELD :
+						case IDelta.API_CONSTRUCTOR :
+						case IDelta.API_ENUM_CONSTANT :
+						case IDelta.REEXPORTED_API_TYPE :
+						case IDelta.REEXPORTED_TYPE :
+							if (Util.isVisible(delta.getOldModifiers())) {
 								if (!checkExclude(delta)) {
 									super.processLeafDelta(delta);
 								}
 							}
 					}
+				break;
 			}
 		}
 	}
