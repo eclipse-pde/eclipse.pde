@@ -906,7 +906,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	protected IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
 			public String[] getShowInTargetIds() {
-				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
+				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER};
 			}
 		};
 	}
