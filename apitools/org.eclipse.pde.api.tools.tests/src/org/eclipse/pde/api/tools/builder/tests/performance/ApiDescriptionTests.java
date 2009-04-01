@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,18 +64,18 @@ public class ApiDescriptionTests extends PerformanceTest {
 		for (int j = 0; j < 2; j++) {
 			// *** clean & visit API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
-			IApiComponent component = profile.getApiComponent(proj.getName());
+			IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+			IApiComponent component = baseline.getApiComponent(proj.getName());
 			component.getApiDescription().accept(visitor);
 		}
 		
 		// TEST
-		for (int j = 0; j < 15; j++) {
+		for (int j = 0; j < 6500; j++) {
 			
 			// *** clean API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
-			IApiComponent component = profile.getApiComponent(proj.getName());
+			IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+			IApiComponent component = baseline.getApiComponent(proj.getName());
 				
 			// ** Visit API description ***
 			startMeasuring();
