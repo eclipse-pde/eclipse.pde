@@ -1085,18 +1085,10 @@
                      name="org.eclipse.core.resources.IProject">
                </objectClass>
                <or>
-                  <and>
-                     <objectState
-                           name="persistentProperty"
-                           value="org.eclipse.pde.core.imported = binary">
-                     </objectState>
-                     <not>
-                        <objectState
-                              name="persistentProperty"
-                              value="org.eclipse.team.core.repository">
-                        </objectState>
-                     </not>
-                  </and>
+                  <objectState
+                        name="persistentProperty"
+                        value="org.eclipse.pde.core.imported = binary">
+                  </objectState>
                   <objectState
                         name="persistentProperty"
                         value="org.eclipse.pde.core.imported = external">
