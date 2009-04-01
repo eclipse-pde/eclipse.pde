@@ -27,9 +27,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -49,7 +51,6 @@ import org.eclipse.pde.internal.ds.ui.editor.dialogs.DSEditProvideDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
@@ -71,7 +72,7 @@ public class DSProvideSection extends TableSection implements
 	private Action fAddAction;
 	private Action fEditAction;
 
-	class ContentProvider extends DefaultTableProvider {
+	class ContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IDSModel) {
 				IDSModel model = (IDSModel) inputElement;
@@ -85,6 +86,14 @@ public class DSProvideSection extends TableSection implements
 
 			}
 			return new Object[0];
+		}
+
+		public void dispose() {
+			// do nothing
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// do nothing
 		}
 	}
 
@@ -125,6 +134,7 @@ public class DSProvideSection extends TableSection implements
 		}
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+		updateTitle();
 	}
 
 	public void dispose() {
