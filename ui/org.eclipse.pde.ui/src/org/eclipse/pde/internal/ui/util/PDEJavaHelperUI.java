@@ -237,7 +237,7 @@ public class PDEJavaHelperUI {
 		// Set auto activation character to be a '.'
 		char[] autoActivationChars = new char[] {TypeContentProposalProvider.F_DOT};
 		// Create the adapter
-		ContentAssistCommandAdapter adapter = new ContentAssistCommandAdapter(text, textContentAdapter, proposalProvider, IWorkbenchCommandConstants.EDIT_CONTENTASSIST, autoActivationChars);
+		ContentAssistCommandAdapter adapter = new ContentAssistCommandAdapter(text, textContentAdapter, proposalProvider, IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST, autoActivationChars);
 		// Configure the adapter
 		// Add label provider
 		ILabelProvider labelProvider = new TypeProposalLabelProvider();

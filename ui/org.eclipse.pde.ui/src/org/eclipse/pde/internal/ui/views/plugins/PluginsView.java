@@ -441,7 +441,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				String showInLabel = PDEUIMessages.PluginsView_showIn;
 				IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 				if (bindingService != null) {
-					String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
+					String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 					if (keyBinding != null) {
 						showInLabel += '\t' + keyBinding;
 					}
