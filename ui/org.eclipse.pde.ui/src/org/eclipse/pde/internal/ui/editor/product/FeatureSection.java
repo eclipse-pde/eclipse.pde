@@ -23,8 +23,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
@@ -46,10 +45,23 @@ import org.eclipse.ui.forms.widgets.Section;
 public class FeatureSection extends TableSection implements IPropertyChangeListener {
 
 	private SortAction fSortAction;
+	private Action fNewFeatureAction;
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
 			return getProduct().getFeatures();
+		}
+	}
+
+	class NewFeatureAction extends Action {
+
+		public NewFeatureAction() {
+			super(PDEUIMessages.Product_FeatureSection_newFeature, IAction.AS_PUSH_BUTTON);
+			setImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_TOOL);
+		}
+
+		public void run() {
+			handleNewFeature();
 		}
 	}
 
@@ -60,16 +72,13 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	private static String[] getButtonLabels() {
-		String[] labels = new String[9];
+		String[] labels = new String[6];
 		labels[0] = PDEUIMessages.Product_FeatureSection_add;
 		labels[1] = PDEUIMessages.Product_FeatureSection_remove;
 		labels[2] = PDEUIMessages.Product_PluginSection_removeAll;
 		labels[3] = PDEUIMessages.Product_FeatureSection_properties;
 		labels[4] = PDEUIMessages.Product_FeatureSection_up;
 		labels[5] = PDEUIMessages.Product_FeatureSection_down;
-		labels[6] = null;
-		labels[7] = null;
-		labels[8] = PDEUIMessages.Product_FeatureSection_newFeature;
 		return labels;
 	}
 
@@ -103,7 +112,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		tablePart.setButtonEnabled(3, isEditable());
 		tablePart.setButtonEnabled(4, isEditable());
 		tablePart.setButtonEnabled(5, isEditable());
-		tablePart.setButtonEnabled(8, isEditable());
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -132,11 +140,12 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 				}
 			}
 		});
-		// Add sort action to the tool bar
+		fNewFeatureAction = new NewFeatureAction();
+		toolBarManager.add(fNewFeatureAction);
 		fSortAction = new SortAction(fFeatureTable, PDEUIMessages.Product_FeatureSection_sortAlpha, null, null, this);
 		toolBarManager.add(fSortAction);
-		toolBarManager.update(true);
 
+		toolBarManager.update(true);
 		section.setTextClient(toolbar);
 	}
 
@@ -163,8 +172,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 			case 5 :
 				handleDown();
 				break;
-			case 8 :
-				handleNewFeature();
 		}
 	}
 

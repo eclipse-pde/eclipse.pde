@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Code 9 Corporation - ongoing enhancements
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -38,8 +38,8 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -59,24 +59,46 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	private TableViewer fPluginTable;
 	private Button fIncludeOptionalButton;
+	private Action fNewPluginAction;
+	private Action fNewFragmentAction;
 	public static final QualifiedName OPTIONAL_PROPERTY = new QualifiedName(IPDEUIConstants.PLUGIN_ID, "product.includeOptional"); //$NON-NLS-1$
+
+	class NewPluginAction extends Action {
+
+		public NewPluginAction() {
+			super(PDEUIMessages.Product_PluginSection_newPlugin, IAction.AS_PUSH_BUTTON);
+			setImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_TOOL);
+		}
+
+		public void run() {
+			handleNewPlugin();
+		}
+	}
+
+	class NewFragmentAction extends Action {
+
+		public NewFragmentAction() {
+			super(PDEUIMessages.Product_PluginSection_newFragment, IAction.AS_PUSH_BUTTON);
+			setImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_TOOL);
+		}
+
+		public void run() {
+			handleNewFragment();
+		}
+	}
 
 	public PluginSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, getButtonLabels());
 	}
 
 	private static String[] getButtonLabels() {
-		String[] labels = new String[10];
+		String[] labels = new String[6];
 		labels[0] = PDEUIMessages.Product_PluginSection_add;
 		labels[1] = PDEUIMessages.Product_PluginSection_working;
 		labels[2] = PDEUIMessages.Product_PluginSection_required;
 		labels[3] = PDEUIMessages.PluginSection_remove;
 		labels[4] = PDEUIMessages.Product_PluginSection_removeAll;
 		labels[5] = PDEUIMessages.Product_FeatureSection_properties;
-		labels[6] = null;
-		labels[7] = null;
-		labels[8] = PDEUIMessages.Product_PluginSection_newPlugin;
-		labels[9] = PDEUIMessages.Product_PluginSection_newFragment;
 		return labels;
 	}
 
@@ -118,8 +140,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		// remove buttons will be updated on refresh
 
 		tablePart.setButtonEnabled(5, isEditable());
-		tablePart.setButtonEnabled(8, isEditable());
-		tablePart.setButtonEnabled(9, isEditable());
 
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -127,6 +147,29 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		section.setText(PDEUIMessages.Product_PluginSection_title);
 		section.setDescription(PDEUIMessages.Product_PluginSection_desc);
 		getModel().addModelChangedListener(this);
+		createSectionToolbar(section, toolkit);
+	}
+
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		// Cursor needs to be explicitly disposed
+		toolbar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
+					handCursor.dispose();
+				}
+			}
+		});
+		fNewPluginAction = new NewPluginAction();
+		fNewFragmentAction = new NewFragmentAction();
+		toolBarManager.add(fNewPluginAction);
+		toolBarManager.add(fNewFragmentAction);
+
+		toolBarManager.update(true);
+		section.setTextClient(toolbar);
 	}
 
 	private void createOptionalDependenciesButton(Composite container) {
@@ -181,11 +224,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			case 5 :
 				handleProperties();
 				break;
-			case 7 :
-				handleNewPlugin();
-				break;
-			case 8 :
-				handleNewFragment();
 		}
 	}
 
