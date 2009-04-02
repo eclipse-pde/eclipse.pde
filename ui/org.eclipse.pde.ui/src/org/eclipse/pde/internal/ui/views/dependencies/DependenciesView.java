@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
@@ -21,6 +22,7 @@ import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.plugin.LoopDialog;
+import org.eclipse.pde.internal.ui.views.target.StateViewPage;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -173,45 +175,18 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		}
 	}
 
-	class ShowStateAction extends Action {
-
-		public ShowStateAction() {
-			super(PDEUIMessages.DependenciesView_showStateAction_label, IAction.AS_CHECK_BOX);
-			setDescription(PDEUIMessages.DependenciesView_showStateAction_description);
-			setToolTipText(PDEUIMessages.DependenciesView_showStateAction_toolTip);
-			setImageDescriptor(PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
-			setId(SHOW_STATE_ACTION_ID);
-		}
-
-		/*
-		 * @see Action#actionPerformed
-		 */
-		public void run() {
-			fPreferences.setValue(DEPS_VIEW_SHOW_STATE, isChecked());
-			enableStateView(isChecked());
-		}
-	}
-
 	protected static final IWorkbenchPart PART_CALLEES_LIST = new DummyPart();
-
 	protected static final IWorkbenchPart PART_CALLEES_TREE = new DummyPart();
-
 	protected static final IWorkbenchPart PART_CALLERS_LIST = new DummyPart();
-
 	protected static final IWorkbenchPart PART_CALLERS_TREE = new DummyPart();
-
-	protected static final IWorkbenchPart PART_STATE_TREE = new DummyPart();
 
 	public static final String TREE_ACTION_GROUP = "tree"; //$NON-NLS-1$
 
 	protected static final String MEMENTO_KEY_INPUT = "inputPluginId"; //$NON-NLS-1$
 
-	protected static final String SHOW_STATE_ACTION_ID = "show.state.action"; //$NON-NLS-1$
-
 	private static final DependencyLoop[] NO_LOOPS = new DependencyLoop[0];
 
 	private Map fPagesToParts;
-
 	private Map fPartsToPages;
 
 	private Object fInput;
@@ -219,13 +194,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private Preferences fPreferences = PDEPlugin.getDefault().getPluginPreferences();
 
 	private ShowCalleesAction fShowCallees;
-
 	private ShowCallersAction fShowCallers;
-
 	private ShowListAction fShowList;
-
 	private ShowTreeAction fShowTree;
-
 	private ShowLoopsAction fShowLoops;
 
 	// history of input elements (as Strings). No duplicates
@@ -234,8 +205,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private DependencyLoop[] fLoops;
 
 	private HistoryDropDownAction fHistoryDropDownAction;
-
-	private Action fShowState;
 
 	private IWorkbenchPart fLastDependenciesPart = null;
 
@@ -266,10 +235,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		manager.add(new Separator("history")); //$NON-NLS-1$
 		manager.add(fShowLoops);
 		manager.add(fHistoryDropDownAction);
-		manager.add(new Separator("state")); //$NON-NLS-1$
-		manager.add(fShowState);
-		if (PART_STATE_TREE.equals(getCurrentContributingPart()))
-			enableDependenciesActions(false);
 	}
 
 	/*
@@ -278,8 +243,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
 	 */
 	protected IPage createDefaultPage(PageBook book) {
-		if (fInput == null || fPreferences.getBoolean(DEPS_VIEW_SHOW_STATE))
-			return createPage(PART_STATE_TREE);
 		return createPage(getDefaultPart());
 	}
 
@@ -343,9 +306,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		fHistoryDropDownAction = new HistoryDropDownAction(this);
 		fHistoryDropDownAction.setEnabled(!fInputHistory.isEmpty());
 
-		fShowState = new ShowStateAction();
-		fShowState.setChecked(fInput == null || fPreferences.getBoolean(DEPS_VIEW_SHOW_STATE));
-
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
 
@@ -389,8 +349,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
 	protected IWorkbenchPart getBootstrapPart() {
-		if (fInput == null || fPreferences.getBoolean(DEPS_VIEW_SHOW_STATE))
-			return PART_STATE_TREE;
 		return getDefaultPart();
 	}
 
@@ -425,11 +383,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	}
 
 	public void openTo(Object object) {
-		// if we are suppose to open to a element and we are in state mode, disable state mode and set focus
-		if (getCurrentContributingPart() == PART_STATE_TREE) {
-			fShowState.setChecked(false);
-			fShowState.run();
-		}
 		if (object != null && !object.equals(fInput)) {
 			if (object instanceof IPluginModelBase) {
 				String id = ((IPluginModelBase) object).getPluginBase().getId();
@@ -440,9 +393,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	}
 
 	public void openCallersFor(Object object) {
-		if (getCurrentContributingPart() == PART_STATE_TREE)
-			fLastDependenciesPart = (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) ? PART_CALLERS_LIST : PART_CALLERS_TREE;
-		else if (!fShowCallers.isChecked() && fShowCallees.isChecked()) {
+		if (!fShowCallers.isChecked() && fShowCallees.isChecked()) {
 			fShowCallers.setChecked(true);
 			fShowCallees.setChecked(false);
 			fShowCallers.run();
@@ -451,9 +402,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	}
 
 	public void openCalleesFor(Object object) {
-		if (getCurrentContributingPart() == PART_STATE_TREE)
-			fLastDependenciesPart = (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) ? PART_CALLEES_LIST : PART_CALLEES_TREE;
-		else if (!fShowCallees.isChecked() && fShowCallers.isChecked()) {
+		if (!fShowCallees.isChecked() && fShowCallers.isChecked()) {
 			fShowCallees.setChecked(true);
 			fShowCallers.setChecked(false);
 			fShowCallees.run();
@@ -559,8 +508,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		if (currPage instanceof DependenciesViewPage) {
 			selection = ((DependenciesViewPage) currPage).getSelection();
 			((DependenciesViewPage) currPage).setActive(false);
-		} else if (currPage instanceof StateViewPage) {
-			((StateViewPage) currPage).setActive(false);
 		}
 		IPage p = pageRec.page;
 		if (p instanceof DependenciesViewPage) {
@@ -572,8 +519,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		if (p instanceof DependenciesViewPage) {
 			updateTitle(fInput);
 			((DependenciesViewPage) p).setSelection(selection);
-		} else if (p instanceof StateViewPage) {
-			((StateViewPage) p).setActive(true);
 		}
 	}
 
@@ -676,27 +621,12 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	}
 
 	protected void enableStateView(boolean enabled) {
-		if (enabled) {
-			fLastDependenciesPart = getCurrentContributingPart();
-			partActivated(DependenciesView.PART_STATE_TREE);
-		} else {
-			if (fLastDependenciesPart != null)
-				partActivated(fLastDependenciesPart);
-			else
-				partActivated(getDefaultPart());
-			fLastDependenciesPart = null;
-		}
-		enableDependenciesActions(!enabled);
+		if (fLastDependenciesPart != null)
+			partActivated(fLastDependenciesPart);
+		else
+			partActivated(getDefaultPart());
+		fLastDependenciesPart = null;
 		getViewSite().getActionBars().getToolBarManager().update(true);
 	}
 
-	// hide the table/tree, caller/callee, history and other action not applicable when showing the State view page
-	private void enableDependenciesActions(boolean enabled) {
-		IContributionItem[] items = getViewSite().getActionBars().getToolBarManager().getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (!(SHOW_STATE_ACTION_ID.equals(items[i].getId()) || "state".equals(items[i].getId())) //$NON-NLS-1$
-					&& !(items[i] instanceof SubContributionItem))
-				items[i].setVisible(enabled);
-		}
-	}
 }

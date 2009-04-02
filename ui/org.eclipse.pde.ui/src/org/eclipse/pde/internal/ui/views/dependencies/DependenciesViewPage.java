@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
@@ -23,6 +22,7 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
 import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
@@ -43,6 +43,7 @@ public abstract class DependenciesViewPage extends Page {
 			setEnabled(object != null);
 			String name = ((LabelProvider) fViewer.getLabelProvider()).getText(object);
 			setText(NLS.bind(PDEUIMessages.DependenciesViewPage_focusOnSelection, name));
+			setImageDescriptor(PDEPluginImages.DESC_FOCUS_ON);
 		}
 	}
 
@@ -312,6 +313,7 @@ public abstract class DependenciesViewPage extends Page {
 			}
 		};
 		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn);
+		fFocusOnAction.setImageDescriptor(PDEPluginImages.DESC_FOCUS_ON);
 
 		fRefactorAction = RefactoringActionFactory.createRefactorPluginIdAction();
 
@@ -448,6 +450,9 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	private void contributeToActionBars(IActionBars actionBars) {
+		IToolBarManager manager = actionBars.getToolBarManager();
+		manager.add(fFocusOnAction);
+		manager.add(new Separator());
 		contributeToDropDownMenu(actionBars.getMenuManager());
 	}
 

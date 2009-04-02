@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Anyware Technologies - ongoing enhancements
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.views.dependencies;
+package org.eclipse.pde.internal.ui.views.target;
 
 import java.util.ArrayList;
 import org.eclipse.jdt.ui.ISharedImages;
@@ -21,13 +21,12 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.pde.internal.ui.views.dependencies.DependenciesViewComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
@@ -36,6 +35,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBookView;
 import org.osgi.framework.Version;
 
 public class StateViewPage extends Page implements IStateDeltaListener, IPluginModelListener {
@@ -43,9 +43,10 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 	private IPropertyChangeListener fPropertyListener;
 	private FilteredTree fFilteredTree = null;
 	private TreeViewer fTreeViewer = null;
-	private DependenciesView fView;
+	private PageBookView fView;
 	private Composite fComposite;
 	private Action fOpenAction;
+	private String DIALOG_SETTINGS = "targetStateView"; //$NON-NLS-1$
 
 	private static final String HIDE_RESOLVED = "hideResolved"; //$NON-NLS-1$
 	private static final String SHOW_NONLEAF = "hideNonLeaf"; //$NON-NLS-1$
@@ -64,19 +65,6 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			return true;
 		}
 	};
-
-	class FocusOnAction extends Action {
-		public FocusOnAction(String text) {
-			super(text);
-			setDescription(PDEUIMessages.StateViewPage_focusActionDescription);
-			setToolTipText(PDEUIMessages.StateViewPage_focusActionToolTip);
-		}
-
-		public void run() {
-			setFocusOnSelection();
-		}
-
-	}
 
 	class DependencyGroup {
 		Object[] dependencies;
@@ -163,10 +151,21 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				if (isJREPackage(supplier)) {
 					styledString.append(PDEUIMessages.StateViewPage_suppliedByJRE);
 				} else {
-					element = supplier.getSupplier();
 					styledString.append(PDEUIMessages.StateViewPage_suppliedBy);
+					getElementString(supplier.getSupplier(), styledString, false);
 				}
-			} else if (element instanceof BundleSpecification) {
+			} else {
+				getElementString(element, styledString, true);
+			}
+
+			cell.setText(styledString.toString());
+			cell.setStyleRanges(styledString.getStyleRanges());
+			cell.setImage(getImage(element));
+			super.update(cell);
+		}
+
+		private void getElementString(Object element, StyledString styledString, boolean showLocation) {
+			if (element instanceof BundleSpecification) {
 				styledString.append(((BundleSpecification) element).getSupplier().toString());
 			} else if (element instanceof BundleDescription) {
 				BundleDescription description = (BundleDescription) element;
@@ -175,17 +174,12 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
 				// Use the PDELabelProvider.formatVersion function to properly format the version for all languages including bidi
 				styledString.append(' ').append(PDELabelProvider.formatVersion(version.toString())).toString();
-				if (description.getLocation() != null) {
+				if (showLocation && description.getLocation() != null) {
 					styledString.append(" - " + description.getLocation(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				}
 			} else {
 				styledString.append(element.toString());
 			}
-
-			cell.setText(styledString.toString());
-			cell.setStyleRanges(styledString.getStyleRanges());
-			cell.setImage(getImage(element));
-			super.update(cell);
 		}
 
 		public Image getImage(Object element) {
@@ -227,7 +221,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		return (((Integer) supplier.getDirective("x-equinox-ee")).intValue() > 0); //$NON-NLS-1$
 	}
 
-	public StateViewPage(DependenciesView view) {
+	public StateViewPage(PageBookView view) {
 		fView = view;
 		fPropertyListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -294,6 +288,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyListener);
 		getSite().setSelectionProvider(fTreeViewer);
 		PDECore.getDefault().getModelManager().addStateDeltaListener(this);
+		setActive(true);
 	}
 
 	public Control getControl() {
@@ -330,7 +325,6 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 	protected void setActive(boolean active) {
 		if (active) {
-			fView.updateTitle(PDEUIMessages.StateViewPage_title);
 			State state = PDECore.getDefault().getModelManager().getState().getState();
 			state.resolve(true);
 			fTreeViewer.setInput(state);
@@ -366,13 +360,6 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		menuManager.add(filterResolved);
 		menuManager.add(filterLeaves);
 
-		Action action = new FocusOnAction(PDEUIMessages.StateViewPage_focusOnTitle);
-		action.setImageDescriptor(PDEPluginImages.DESC_FOCUS_ON);
-		if (toolBarManager.find(DependenciesView.TREE_ACTION_GROUP) != null)
-			toolBarManager.prependToGroup(DependenciesView.TREE_ACTION_GROUP, action);
-		else
-			toolBarManager.add(action);
-
 		hookContextMenu();
 	}
 
@@ -402,17 +389,13 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				};
 			}
 			menu.add(fOpenAction);
-			menu.add(new Separator());
-			String name = ((LabelProvider) fTreeViewer.getLabelProvider()).getText(desc);
-			menu.add(new FocusOnAction(NLS.bind(PDEUIMessages.StateViewPage_focusOnSelection, name)));
-
-			menu.add(new Separator());
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
 	}
 
 	public void dispose() {
 		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
+		setActive(false);
 		super.dispose();
 	}
 
@@ -449,33 +432,11 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		});
 	}
 
-	// Changes State view to dependencies view and sets the input as the corresponding selected item in the tree viewer.
-	private void setFocusOnSelection() {
-		// first, find the Show State Action from the toolbar
-		IContributionItem item = getSite().getActionBars().getToolBarManager().find(DependenciesView.SHOW_STATE_ACTION_ID);
-		if (item != null && item instanceof ActionContributionItem) {
-			// then get selection item
-			IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-			if (selection.isEmpty())
-				return;
-			BundleDescription desc = getBundleDescription(selection.getFirstElement());
-			if (desc != null) {
-				IAction action = ((ActionContributionItem) item).getAction();
-				// deselect the action to show the state
-				action.setChecked(false);
-				// run the action to change the view back to traditional dependencies view
-				action.run();
-				// set the traditional view to focus on selected object from state view
-				fView.openTo(PluginRegistry.findModel(desc));
-			}
-		}
-	}
-
 	private IDialogSettings getSettings() {
 		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection("dependenciesView"); //$NON-NLS-1$
+		IDialogSettings section = master.getSection(DIALOG_SETTINGS);
 		if (section == null) {
-			section = master.addNewSection("dependenciesView"); //$NON-NLS-1$
+			section = master.addNewSection(DIALOG_SETTINGS);
 		}
 		return section;
 	}

@@ -434,6 +434,14 @@
             class="org.eclipse.pde.internal.ui.views.dependencies.DependenciesView"
             id="org.eclipse.pde.ui.DependenciesView">
       </view>
+      <view
+            category="org.eclipse.pde.ui"
+            class="org.eclipse.pde.internal.ui.views.target.TargetStateView"
+            icon="$nl$/icons/obj16/target_profile_xml_obj.gif"
+            id="org.eclipse.pde.ui.TargetPlatformState"
+            name="%views.tpstate.name"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

@@ -46,6 +46,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.util;x-internal:=true,
  org.eclipse.pde.internal.ui.views.dependencies;x-internal:=true,
  org.eclipse.pde.internal.ui.views.plugins;x-internal:=true,
+ org.eclipse.pde.internal.ui.views.target;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.exports;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.extension;x-internal:=true,
