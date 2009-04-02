@@ -263,6 +263,7 @@ public class APIFreezeReportConversionTask extends Task {
 					if (debug) {
 						if (entry.typeName != null) {
 							System.out.print(entry.typeName);
+							System.out.print('#');
 						}
 						System.out.println(entry.key);
 					}
