@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -86,9 +84,6 @@ public class IncrementalApiBuilder {
 					} else if (Util.isJavaFileName(fileName)) {
 						IProject project = resource.getProject();
 						if (this.project.equals(project)) {
-							if (delta.getKind() == IResourceDelta.ADDED) {
-								IncrementalApiBuilder.this.addremovedeltas.add(delta);
-							}
 							IncrementalApiBuilder.this.changedtypes.add(resource);
 						} 
 						else if (this.projects != null && this.projects.contains(project)) {
@@ -102,9 +97,8 @@ public class IncrementalApiBuilder {
 	}
 
 	ApiAnalysisBuilder builder = null;
-	//IProject project = null;
 	HashSet changedtypes = new HashSet(16);
-	HashSet addremovedeltas = new HashSet(8);
+	HashSet removedtypes = new HashSet(16);
 	StringSet typenames = new StringSet(16);
 	StringSet packages = new StringSet(16);
 	
@@ -164,7 +158,7 @@ public class IncrementalApiBuilder {
 				localmonitor.done();
 			}
 			this.changedtypes.clear();
-			this.addremovedeltas.clear();
+			this.removedtypes.clear();
 			this.typenames.clear();
 			this.packages.clear();
 		}
@@ -177,7 +171,7 @@ public class IncrementalApiBuilder {
 	 * @param state
 	 * @param monitor
 	 */
-	private void build(final IProject project, final State state, IApiBaseline baseline, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
+	void build(final IProject project, final State state, IApiBaseline baseline, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
 		IApiBaseline wsprofile = null;
 		try {
 			// clear the old state so a full build will occur if this one is cancelled or terminates prematurely
@@ -204,8 +198,8 @@ public class IncrementalApiBuilder {
 					if(comp == null) {
 						return;
 					}
-					List tnames = new ArrayList(typesize),
-						 cnames = new ArrayList(typesize);
+					HashSet tnames = new HashSet(typesize),
+						 	cnames = new HashSet(typesize);
 					collectAllQualifiedNames(project, this.changedtypes, tnames, cnames, localmonitor.newChild(1));
 					this.builder.updateMonitor(localmonitor, 1);
 					this.builder.getAnalyzer().analyzeComponent(buildstate, 
@@ -239,7 +233,7 @@ public class IncrementalApiBuilder {
 	 * @param state
 	 * @param typesToCheck
 	 */
-	private void collectAffectedSourceFiles(final IProject project, State state, Set typesToCheck) {
+	void collectAffectedSourceFiles(final IProject project, State state, Set typesToCheck) {
 		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are just 'X'
 		char[][][] internedQualifiedNames = ReferenceCollection.internQualifiedNames(this.packages);
 		// if a well known qualified name was found then we can skip over these
@@ -255,17 +249,17 @@ public class IncrementalApiBuilder {
 		Object[] valueTable = state.getReferences().valueTable;
 		IFile file = null;
 		String typeLocator = null;
-		next : for (int i = 0, l = valueTable.length; i < l; i++) {
+		for (int i = 0; i < valueTable.length; i++) {
 			typeLocator =  (String) keyTable[i];
 			if (typeLocator != null) {
 				ReferenceCollection refs = (ReferenceCollection) valueTable[i];
 				if (refs.includes(internedQualifiedNames, internedSimpleNames, null)) {
 					file = project.getFile(typeLocator);
 					if (file == null) {
-						continue next;
+						continue;
 					}
 					if (ApiAnalysisBuilder.DEBUG) {
-						System.out.println("  adding affected source file " + typeLocator); //$NON-NLS-1$
+						System.out.println("  adding affected source file " + file.getName()); //$NON-NLS-1$
 					}
 					typesToCheck.add(file);
 				}
@@ -277,19 +271,21 @@ public class IncrementalApiBuilder {
 	 * Finds affected source files for a resource that has changed that either contains class files or is itself a class file
 	 * @param binaryDelta
 	 */
-	private void findAffectedSourceFiles(IResourceDelta binaryDelta) {
+	void findAffectedSourceFiles(IResourceDelta binaryDelta) {
 		IResource resource = binaryDelta.getResource();
 		if(resource.getType() == IResource.FILE) {
 			if (Util.isClassFile(resource.getName())) {
+				IPath typePath = resolveJavaPathFromResource(resource);
+				if(typePath == null) {
+					return;
+				}
 				switch (binaryDelta.getKind()) {
-					case IResourceDelta.REMOVED :
-						this.addremovedeltas.add(binaryDelta);
+					case IResourceDelta.REMOVED : {
+						//directly add the removed type
+						this.removedtypes.add(typePath.toString().replace('/', '.'));
+					}
 						//$FALL-THROUGH$
 					case IResourceDelta.ADDED : {
-						IPath typePath = resolveJavaPathFromResource(resource);
-						if(typePath == null) {
-							return;
-						}
 						if (ApiAnalysisBuilder.DEBUG) {
 							System.out.println("Found added/removed class file " + typePath); //$NON-NLS-1$
 						}
@@ -299,10 +295,6 @@ public class IncrementalApiBuilder {
 					case IResourceDelta.CHANGED : {
 						if ((binaryDelta.getFlags() & IResourceDelta.CONTENT) == 0) {
 							return; // skip it since it really isn't changed
-						}
-						IPath typePath = resolveJavaPathFromResource(resource);
-						if(typePath == null) {
-							return;
 						}
 						if (ApiAnalysisBuilder.DEBUG) {
 							System.out.println("Found changed class file " + typePath); //$NON-NLS-1$
@@ -342,16 +334,18 @@ public class IncrementalApiBuilder {
 	 * @param cnames the list to collect the changed type names into
 	 * @param monitor
 	 */
-	private void collectAllQualifiedNames(final IProject project, final HashSet alltypes, List tnames, List cnames, final IProgressMonitor monitor) {
+	void collectAllQualifiedNames(final IProject project, final HashSet alltypes, HashSet tnames, HashSet cnames, final IProgressMonitor monitor) {
 		IType[] types = null;
 		IFile file = null;
+		ICompilationUnit unit = null;
+		IType type = null;
 		for (Iterator iterator = alltypes.iterator(); iterator.hasNext(); ) {
 			file = (IFile) iterator.next();
-			ICompilationUnit unit = (ICompilationUnit) JavaCore.create(file);
+			unit = (ICompilationUnit) JavaCore.create(file);
 			if(!unit.exists()) {
 				continue;
 			}
-			IType type = unit.findPrimaryType();
+			type = unit.findPrimaryType();
 			if(type == null) {
 				continue;
 			}
@@ -360,20 +354,17 @@ public class IncrementalApiBuilder {
 			this.builder.updateMonitor(monitor, 0);
 			this.builder.cleanupCompatibilityMarkers(file);
 			this.builder.updateMonitor(monitor, 0);
+			this.builder.cleanupUsageMarkers(file);
+			this.builder.updateMonitor(monitor, 0);
 			cnames.add(type.getFullyQualifiedName());
 			try {
-				this.builder.cleanupUsageMarkers(file);
-				this.builder.updateMonitor(monitor, 0);
 				types = unit.getAllTypes();
-				String tname = null;
 				for (int i = 0; i < types.length; i++) {
-					IType type2 = types[i];
-					if (type2.isMember()) {
-						tname = type2.getFullyQualifiedName('$');
+					if (types[i].isMember()) {
+						tnames.add(types[i].getFullyQualifiedName('$'));
 					} else {
-						tname = type2.getFullyQualifiedName();
+						tnames.add(types[i].getFullyQualifiedName());
 					}
-					tnames.add(tname);
 				}
 			} catch (JavaModelException e) {
 				ApiPlugin.log(e.getStatus());
@@ -381,108 +372,20 @@ public class IncrementalApiBuilder {
 			this.builder.updateMonitor(monitor, 0);
 		}
 		// inject removed types inside changed type names so that we can properly detect type removal
-		IResourceDelta delta = null;
-		for (Iterator iterator = this.addremovedeltas.iterator(); iterator.hasNext(); ) {
-			delta = (IResourceDelta) iterator.next();
-			if (delta.getKind() != IResourceDelta.REMOVED) {
-				continue;
-			}
-			IResource resource = delta.getResource();
-			IPath typePath = resolveJavaPathFromResource(resource);
-			if(typePath == null) {
-				continue;
-			}
-			// record removed type names (package + type)
-			StringBuffer buffer = new StringBuffer();
-			String[] segments = typePath.segments();
-			for (int i = 0, max = segments.length; i < max; i++) {
-				if (i > 0) {
-					buffer.append('.');
-				}
-				buffer.append(segments[i]);
-			}
-			cnames.add(String.valueOf(buffer));
-		}
-		// clean up markers on added deltas
-		if (!this.addremovedeltas.isEmpty()) {
-			IResource manifestFile = Util.getManifestFile(project);
-			if (manifestFile != null) {
-				try {
-					IMarker[] markers = manifestFile.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-					for (int i = 0, max = markers.length; i < max; i++) {
-						IMarker marker = markers[i];
-						String typeName = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, null);
-						if (typeName != null) {
-							for (Iterator iterator = this.addremovedeltas.iterator(); iterator.hasNext(); ) {
-								delta = (IResourceDelta) iterator.next();
-								if (delta.getKind() != IResourceDelta.ADDED) {
-									continue;
-								}
-								ICompilationUnit unit = (ICompilationUnit) JavaCore.create(delta.getResource());
-								if(!unit.exists()) {
-									continue;
-								}
-								IType type = unit.findPrimaryType();
-								if(type == null) {
-									continue;
-								}
-								if (typeName.equals(type.getFullyQualifiedName())) {
-									marker.delete();
-									return;
-								} else {
-									// check secondary types
-									try {
-										types = unit.getAllTypes();
-										for (int j = 0; j < types.length; j++) {
-											IType type2 = types[i];
-											String fullyQualifiedName = null;
-											if (type2.isMember()) {
-												fullyQualifiedName = type2.getFullyQualifiedName('$');
-											} else {
-												fullyQualifiedName = type2.getFullyQualifiedName();
-											}
-											if (typeName.equals(fullyQualifiedName)) {
-												marker.delete();
-												return;
-											}
-										}
-									} catch (JavaModelException e) {
-										ApiPlugin.log(e.getStatus());
-									}
-								}
-							}
-						}
-					}
-				} catch (CoreException e) {
-					ApiPlugin.log(e.getStatus());
-				}
-			}
-		}
+		cnames.addAll(this.removedtypes);
 		IResource resource = project.findMember(ApiAnalysisBuilder.MANIFEST_PATH);
 		if (resource != null) {
 			try {
 				IMarker[] markers = resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				loop: for (int i = 0, max = markers.length; i < max; i++) {
-					IMarker marker = markers[i];
-					String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
-					for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
-						String typeName = (String) iterator.next();
-						if (typeName.equals(typeNameFromMarker)) {
-							marker.delete();
-							continue loop;
-						}
+				for (int i = 0; i < markers.length; i++) {
+					if(tnames.contains(Util.getTypeNameFromMarker(markers[i]))) {
+						markers[i].delete();
 					}
 				}
 				markers = resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				loop: for (int i = 0, max = markers.length; i < max; i++) {
-					IMarker marker = markers[i];
-					String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
-					for (Iterator iterator = tnames.iterator(); iterator.hasNext(); ) {
-						String typeName = (String) iterator.next();
-						if (typeName.equals(typeNameFromMarker)) {
-							marker.delete();
-							continue loop;
-						}
+				for (int i = 0; i < markers.length; i++) {
+					if(tnames.contains(Util.getTypeNameFromMarker(markers[i]))) {
+						markers[i].delete();
 					}
 				}
 			} catch (CoreException e) {
@@ -490,7 +393,7 @@ public class IncrementalApiBuilder {
 			}
 		}
 	}
-	
+
 	/**
 	 * Resolves the java path from the given resource
 	 * @param resource
