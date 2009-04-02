@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.dialogs;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import com.ibm.icu.text.BreakIterator;
+import java.util.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.*;
@@ -21,24 +24,99 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.osgi.framework.Constants;
 
-public class PluginSelectionDialog extends ElementListSelectionDialog {
+public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
+
+	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.PluginSelectionDialog"; //$NON-NLS-1$
+	private IPluginModelBase[] fModels;
+
+	private class PluginSearchItemsFilter extends ItemsFilter {
+
+		public boolean isConsistentItem(Object item) {
+			return true;
+		}
+
+		public boolean matchItem(Object item) {
+			String id = null;
+			if (item instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase) item;
+				id = model.getPluginBase().getId();
+			}
+
+			// if the id does not match, check to see if a segment matches.
+			// This is how PatternFilter searches for matches (see PatternFilter.getWords(String))
+			return (matches(id)) ? true : matchesSegments(id);
+		}
+
+		private boolean matchesSegments(String id) {
+			BreakIterator iter = BreakIterator.getWordInstance();
+			iter.setText(id);
+			int i = iter.first();
+			while (i != java.text.BreakIterator.DONE && i < id.length()) {
+				int j = iter.following(i);
+				if (j == java.text.BreakIterator.DONE) {
+					j = id.length();
+				}
+				// match the word
+				if (Character.isLetterOrDigit(id.charAt(i))) {
+					String word = id.substring(i, j);
+					if (matches(word))
+						return true;
+				}
+				i = j;
+			}
+			return false;
+		}
+	}
+
+	private class PluginSearchComparator implements Comparator {
+
+		public int compare(Object o1, Object o2) {
+			int id1 = getId(o1);
+			int id2 = getId(o2);
+
+			if (id1 != id2)
+				return id1 - id2;
+			return compareSimilarObjects(o1, o2);
+		}
+
+		private int getId(Object element) {
+			if (element instanceof IPluginModelBase) {
+				return 100;
+			}
+			return 0;
+		}
+
+		private int compareSimilarObjects(Object o1, Object o2) {
+			if (o1 instanceof IPluginModelBase && o2 instanceof IPluginModelBase) {
+				IPluginModelBase ipmb1 = (IPluginModelBase) o1;
+				IPluginModelBase ipmb2 = (IPluginModelBase) o1;
+				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
+			}
+			return 0;
+		}
+
+		private int comparePlugins(IPluginBase ipmb1, IPluginBase ipmb2) {
+			return ipmb1.getId().compareTo(ipmb2.getId());
+		}
+
+	}
 
 	public PluginSelectionDialog(Shell parentShell, boolean includeFragments, boolean multipleSelection) {
 		this(parentShell, getElements(includeFragments), multipleSelection);
 	}
 
 	public PluginSelectionDialog(Shell parentShell, IPluginModelBase[] models, boolean multipleSelection) {
-		super(parentShell, PDEPlugin.getDefault().getLabelProvider());
+		super(parentShell, multipleSelection);
+		fModels = models;
 		setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		setMessage(PDEUIMessages.PluginSelectionDialog_message);
-		setElements(models);
-		setMultipleSelection(multipleSelection);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		setListLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	}
 
 	/*
@@ -139,4 +217,50 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 		}
 		return null;
 	}
+
+	protected Control createExtendedContentArea(Composite parent) {
+		return null;
+	}
+
+	protected ItemsFilter createFilter() {
+		return new PluginSearchItemsFilter();
+	}
+
+	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
+		for (int i = 0; i < fModels.length; i++) {
+			contentProvider.add(fModels[i], itemsFilter);
+			progressMonitor.worked(1);
+		}
+		progressMonitor.done();
+	}
+
+	protected IDialogSettings getDialogSettings() {
+		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
+
+		if (settings == null) {
+			settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS);
+		}
+
+		return settings;
+	}
+
+	public String getElementName(Object item) {
+		if (item instanceof IPluginModelBase) {
+			IPluginModelBase model = (IPluginModelBase) item;
+			return model.getPluginBase().getId();
+		}
+		return null;
+	}
+
+	protected Comparator getItemsComparator() {
+		return new PluginSearchComparator();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
+	 */
+	protected IStatus validateItem(Object item) {
+		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+	}
+
 }
