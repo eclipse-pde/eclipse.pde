@@ -39,8 +39,6 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -1291,8 +1289,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 				SWTFactory.createVerticalSpacer(group, 1);
 				Link link = SWTFactory.createLink(group, linkedName, JFaceResources.getDialogFont(), 3);
 				link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
-				link.addMouseListener(new MouseAdapter() {
-					public void mouseDown(MouseEvent e) {
+				link.addSelectionListener(new SelectionAdapter(){
+					public void widgetSelected(SelectionEvent e) {
 						IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 						if(handlerService != null) {
 							try {
@@ -1319,7 +1317,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
 							}
 						}
-					}
+					};
 				});
 				this.fSystemLibraryControls.add(link);
 			}
