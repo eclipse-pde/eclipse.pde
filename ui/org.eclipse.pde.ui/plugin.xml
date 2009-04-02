@@ -1084,12 +1084,10 @@
                <objectClass
                      name="org.eclipse.core.resources.IProject">
                </objectClass>
-               <or>
-                  <objectState
+               <objectState
                         name="persistentProperty"
                         value="org.eclipse.pde.core.imported = binary">
-                  </objectState>
-               </or>
+               </objectState>
             </and>
          </enablement>
       </decorator>
