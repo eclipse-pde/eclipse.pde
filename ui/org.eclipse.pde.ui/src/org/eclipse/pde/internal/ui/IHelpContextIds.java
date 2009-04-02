@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Code 9 Corporation - ongoing enhancements
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -40,6 +40,7 @@ public interface IHelpContextIds {
 
 	public static final String DEPENDENCIES_VIEW = PREFIX + "dependencies_view"; //$NON-NLS-1$
 	public static final String HISTORY_ACTION = PREFIX + "history_action"; //$NON-NLS-1$
+	public static final String TARGET_STATE_VIEW = PREFIX + "target_state_view"; //$NON-NLS-1$
 	public static final String HISTORY_LIST_ACTION = PREFIX + "history_list_action"; //$NON-NLS-1$
 	public static final String HISTORY_LIST_DIALOG = PREFIX + "history_list_dialog"; //$NON-NLS-1$
 

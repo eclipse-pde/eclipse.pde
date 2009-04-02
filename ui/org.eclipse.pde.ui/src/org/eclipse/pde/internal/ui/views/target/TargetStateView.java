@@ -68,7 +68,7 @@ public class TargetStateView extends PageBookView {
 
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.DEPENDENCIES_VIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.TARGET_STATE_VIEW);
 	}
 
 	protected IPage createDefaultPage(PageBook book) {
