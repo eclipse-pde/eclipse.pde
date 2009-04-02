@@ -247,11 +247,11 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		fDSImplementationClassButton.addMouseListener(new MouseListener() {
 
 			public void mouseDoubleClick(MouseEvent e) {
-				// TODO Auto-generated method stub
+				// do nothing
 			}
 
 			public void mouseDown(MouseEvent e) {
-				// TODO Auto-generated method stub
+				// do nothing
 			}
 
 			public void mouseUp(MouseEvent e) {
@@ -274,6 +274,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 						entry.setText(type.getFullyQualifiedName('$'));
 					}
 				} catch (CoreException e) {
+					Activator.logException(e);
 				}
 			}
 		});
