@@ -480,8 +480,9 @@ public class P2Tests extends P2TestCase {
 
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
+		IFolder c = Utils.createFolder(buildFolder, "plugins/c");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=false", "c;unpack=false"});
 
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes = new Attributes();
@@ -497,6 +498,12 @@ public class P2Tests extends P2TestCase {
 		code.append("}                                            \n");
 		Utils.writeBuffer(a.getFile("src/a/A.java"), code);
 
+		Utils.generateBundleManifest(c, "c", "1.0.0", null);
+		Properties properties = new Properties();
+		properties.put("bin.includes", "META-INF/, ., build.properties");
+		Utils.generatePluginBuildProperties(c, properties);
+		Utils.writeBuffer(c.getFile("src/a/A.java"), code);
+
 		additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Import-Package"), "a");
 		Utils.generateBundleManifest(b, "b", "1.0.0", additionalAttributes);
@@ -511,7 +518,7 @@ public class P2Tests extends P2TestCase {
 		code.append("}                                            \n");
 		Utils.writeBuffer(b.getFile("src/b.java"), code);
 
-		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repo1Location);
@@ -540,12 +547,20 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.artifact.repo", repo2Location);
 		properties.put("forceContextQualifier", "v2");
 		Utils.storeBuildProperties(buildFolder, properties);
+
+		//bug 271034 same properties file, touched with new timestamp, perhaps new order
+		properties = new Properties();
+		properties.put("bin.includes", "META-INF/, ., build.properties");
+		Utils.generatePluginBuildProperties(c, properties);
+		
 		runBuild(buildFolder);
 
 		assertResourceFile(buildFolder, "repo1/plugins/a_1.0.0.v1.jar");
 		assertResourceFile(buildFolder, "repo1/plugins/b_1.0.0.jar");
+		assertResourceFile(buildFolder, "repo1/plugins/c_1.0.0.jar");
 		assertResourceFile(buildFolder, "repo2/plugins/a_1.0.0.v2.jar");
 		assertResourceFile(buildFolder, "repo2/plugins/b_1.0.0.jar");
+		assertResourceFile(buildFolder, "repo1/plugins/c_1.0.0.jar");
 
 		StringBuffer test = new StringBuffer();
 		test.append("<project default=\"mirror\">                                                                    \n");
@@ -555,6 +570,7 @@ public class P2Tests extends P2TestCase {
 		test.append("                        destination=\"${newLocation}\"                                          \n");
 		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
 		test.append("                        comparatorLog=\"${basedir}/compare.log\"                                \n");
+		test.append("                        ignoreErrors=\"true\"                                                  \n");
 		test.append("    />                                                                                          \n");
 		test.append("  </target>                                                                                     \n");
 		test.append("</project>                                                                                      \n");
@@ -570,6 +586,12 @@ public class P2Tests extends P2TestCase {
 
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
 		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] { "canonical: osgi.bundle,b,1.0.0", "Difference found for B.class"} );
+		try {
+			assertLogContainsLine(buildFolder.getFile("compare.log"), "build.properties");
+			fail("we expected no errors/warnings");
+		} catch (AssertionFailedError e) {
+			assertNull(e.getMessage());
+		}
 	}
 
 	public void testBug263272_2() throws Exception {
