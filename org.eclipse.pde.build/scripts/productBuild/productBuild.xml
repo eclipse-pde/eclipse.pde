@@ -45,7 +45,7 @@
 		baseLocation="${baseLocation}"
 		productFile="${product}"
 		verify="${verify}"
-		pluginPath="${pluginPath}"
+		pluginPath="${transformedRepoLocation}${path.separator}${pluginPath}"
 		configInfo="${configs}"
 		pluginList="${pluginList}"
 		featureList="${featureList}"
