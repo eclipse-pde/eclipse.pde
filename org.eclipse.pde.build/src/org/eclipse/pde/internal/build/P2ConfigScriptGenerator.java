@@ -76,7 +76,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printProjectDeclaration("Publish p2 metadata", TARGET_MAIN, null); //$NON-NLS-1$
 		ProductFile product = getProductFile();
 		if (product != null) {
-			script.printProperty(PROPERTY_LAUNCHER_NAME, product.getLauncherName());
+			String launcherName = product.getLauncherName() != null ? product.getLauncherName() : "eclipse"; //$NON-NLS-1$
+			script.printProperty(PROPERTY_LAUNCHER_NAME, launcherName);
 			script.printProperty(PROPERTY_LAUNCHER_PROVIDER, FEATURE_EQUINOX_EXECUTABLE);
 		}
 		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$

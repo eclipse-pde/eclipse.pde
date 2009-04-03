@@ -233,13 +233,21 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 						//include a CU for the branded exe
 						instructions = new String[4];
-						instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setLauncherName(name:" + productFile.getLauncherName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+						String launcherName = getLauncherName(executableFeature);
+						instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setLauncherName(name:" + launcherName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 						instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setLauncherName()"; //$NON-NLS-1$
 						P2InfUtils.printIU(buffer, index++, brandedIU, versionString, config.getPlatformFilter(), instructions);
 					}
 				}
 			}
 		}
+	}
+
+	private String getLauncherName(BuildTimeFeature executableProvider) {
+		String name = productFile.getLauncherName();
+		if (name != null)
+			return name;
+		return "eclipse"; //$NON-NLS-1$
 	}
 
 	private String findConfigFile(String os) {
