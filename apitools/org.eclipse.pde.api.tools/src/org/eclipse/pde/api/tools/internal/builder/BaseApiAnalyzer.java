@@ -1074,9 +1074,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							Version componentVersion = new Version(componentVersionString);
 							buffer.append(componentVersion.getMajor()).append('.').append(componentVersion.getMinor());
 							if (postfixString != null) {
-								if (!Character.isWhitespace(postfixString.charAt(0))) {
-									buffer.append(' ');
-								}
 								buffer.append(postfixString);
 							}
 							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion, Util.getDeltaArgumentString(delta)}, delta, member, String.valueOf(buffer));
@@ -1100,9 +1097,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								Version version = new Version(accurateVersion);
 								buffer.append(version.getMajor()).append('.').append(version.getMinor());
 								if (postfixString != null) {
-									if (!Character.isWhitespace(postfixString.charAt(0))) {
-										buffer.append(' ');
-									}
 									buffer.append(postfixString);
 								}
 								String accurateSinceTagValue = String.valueOf(buffer);

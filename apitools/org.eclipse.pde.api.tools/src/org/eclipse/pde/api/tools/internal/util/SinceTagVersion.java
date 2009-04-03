@@ -26,9 +26,7 @@ public class SinceTagVersion {
 	private Version version;
 	private String versionString;
 	private String postfixString;
-	private static final Pattern VERSION_PATTERN = Pattern.compile("\\s([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)\\s");; //$NON-NLS-1$
-	private static final Pattern NO_SPACE_VERSION_PATTERN = Pattern.compile("([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)");; //$NON-NLS-1$
-	private static final Pattern NO_LEADING_SPACE_VERSION_PATTERN = Pattern.compile("([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)\\s");; //$NON-NLS-1$
+	private static final Pattern VERSION_PATTERN = Pattern.compile("([0-9]+\\.?[0-9]?\\.?[0-9]?\\.?[A-Za-z0-9]*)");; //$NON-NLS-1$
 
 	/**
 	 * Creates a new instance.
@@ -40,45 +38,82 @@ public class SinceTagVersion {
 		if (value == null) {
 			throw new IllegalArgumentException("The given value cannot be null"); //$NON-NLS-1$
 		}
-		Matcher m = VERSION_PATTERN.matcher(value);
-		if (m.find()) {
-			this.versionString = m.group(1);
-			// check for a version that would start the value string
-			m = NO_LEADING_SPACE_VERSION_PATTERN.matcher(value);
-			if (m.find()) {
-				this.versionString = m.group(1);
-			}
-		} else {
-			m = NO_SPACE_VERSION_PATTERN.matcher(value);
-			if (m.find()) {
-				this.versionString = m.group(1);
-			}
-		}
-		if (this.versionString != null) {
-			int prefixIndex = value.indexOf(this.versionString);
-			if (versionString.length() != value.length()) {
-				if (prefixIndex != 0) {
-					this.prefixString = value.substring(0, prefixIndex);
-					// if prefixString doesn't end with a space, this is a wrong version
-					if (Character.isLetterOrDigit(value.charAt(prefixIndex - 1))) {
-						this.versionString = null;
-						this.prefixString = null;
-						return;
+		char[] chars = value.toCharArray();
+		final int READ_VERSION = 0;
+		final int INSIDE_VERSION = 1;
+
+		int mode = READ_VERSION;
+		
+		loop: for (int i = 0, max = chars.length; i < max; i++) {
+			char currentChar = chars[i];
+			switch(mode) {
+			case READ_VERSION :
+				switch(currentChar) {
+					case '0' :
+					case '1' :
+					case '2' :
+					case '3' :
+					case '4' :
+					case '5' :
+					case '6' :
+					case '7' :
+					case '8' :
+					case '9' :
+						mode = INSIDE_VERSION;
+						i--;
+						break;
+					default :
+				}
+				break;
+			case INSIDE_VERSION :
+				// read sequence of digits
+				int start = i;
+				loop2 : while (i < max) {
+					if (Character.isWhitespace(currentChar)) {
+						break loop2;
+					}
+					if (Character.isLetterOrDigit(currentChar)
+							|| currentChar == '.') {
+						currentChar = chars[i];
+						i++;
+					} else {
+						break loop2;
 					}
 				}
+				// extract "version string"
+				String potentialVersion = null;
+				if (i == max) {
+					potentialVersion= value.substring(start, i);
+				} else {
+					potentialVersion= value.substring(start, i - 1);
+				}
+				// check if it matches
+				Matcher m = VERSION_PATTERN.matcher(potentialVersion);
+				if (m.find()) {
+					this.versionString = potentialVersion;
+					if (start != 0) {
+						this.prefixString = value.substring(0, start);
+						// if prefixString doesn't end with a space, this is a wrong version
+						if (Character.isLetterOrDigit(value.charAt(start - 1))) {
+							this.versionString = null;
+							this.prefixString = null;
+							continue loop;
+						}
+					}
+					if (i != max) {
+						this.postfixString = value.substring(i - 1);
+					}
+					try {
+						this.version = new Version(this.versionString);
+					} catch (IllegalArgumentException e) {
+						// ignore - wrong format
+					}
+					return;
+				}
+				mode = READ_VERSION;
 			}
-			// extract postfix
-			int beginIndex = prefixIndex + this.versionString.length();
-			if (beginIndex != value.length()) {
-				this.postfixString = value.substring(beginIndex);
-			}
-			try {
-				this.version = new Version(this.versionString);
-			} catch (IllegalArgumentException e) {
-				// ignore - wrong format
-			}
-		} else if (value.length() != 0) {
-			// we consider the actual string as the postfix value
+		}
+		if (this.versionString == null) {
 			this.postfixString = value;
 		}
 	}
