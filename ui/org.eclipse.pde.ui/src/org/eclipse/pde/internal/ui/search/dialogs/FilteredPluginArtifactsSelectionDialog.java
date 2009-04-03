@@ -697,7 +697,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		private int compareSimilarObjects(Object o1, Object o2) {
 			if (o1 instanceof IPluginModelBase && o2 instanceof IPluginModelBase) {
 				IPluginModelBase ipmb1 = (IPluginModelBase) o1;
-				IPluginModelBase ipmb2 = (IPluginModelBase) o1;
+				IPluginModelBase ipmb2 = (IPluginModelBase) o2;
 				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
 			} else if (o1 instanceof IPluginExtensionPoint && o2 instanceof IPluginExtensionPoint) {
 				IPluginExtensionPoint ipep1 = (IPluginExtensionPoint) o1;

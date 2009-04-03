@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.dialogs;
 
-import com.ibm.icu.text.BreakIterator;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -47,29 +46,16 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 				id = model.getPluginBase().getId();
 			}
 
-			// if the id does not match, check to see if a segment matches.
-			// This is how PatternFilter searches for matches (see PatternFilter.getWords(String))
-			return (matches(id)) ? true : matchesSegments(id);
+			return (matches(id));
 		}
 
-		private boolean matchesSegments(String id) {
-			BreakIterator iter = BreakIterator.getWordInstance();
-			iter.setText(id);
-			int i = iter.first();
-			while (i != java.text.BreakIterator.DONE && i < id.length()) {
-				int j = iter.following(i);
-				if (j == java.text.BreakIterator.DONE) {
-					j = id.length();
-				}
-				// match the word
-				if (Character.isLetterOrDigit(id.charAt(i))) {
-					String word = id.substring(i, j);
-					if (matches(word))
-						return true;
-				}
-				i = j;
+		protected boolean matches(String text) {
+			String pattern = patternMatcher.getPattern();
+			if (pattern.indexOf("*") != 0 & pattern.indexOf("?") != 0 & pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				pattern = "*" + pattern; //$NON-NLS-1$
+				patternMatcher.setPattern(pattern);
 			}
-			return false;
+			return patternMatcher.matches(text);
 		}
 	}
 
@@ -94,7 +80,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		private int compareSimilarObjects(Object o1, Object o2) {
 			if (o1 instanceof IPluginModelBase && o2 instanceof IPluginModelBase) {
 				IPluginModelBase ipmb1 = (IPluginModelBase) o1;
-				IPluginModelBase ipmb2 = (IPluginModelBase) o1;
+				IPluginModelBase ipmb2 = (IPluginModelBase) o2;
 				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
 			}
 			return 0;
