@@ -924,4 +924,62 @@ public class PublishingTests extends P2TestCase {
 		entries.add("license.html");
 		assertZipContents(buildFolder, "buildRepo/binary/f_root_1.0.0", entries);
 	}
+	
+	public void testBug264743_PublishExecutable() throws Exception {
+		IFolder buildFolder = newTest("264743").getFolder("build1");
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "org.eclipse.equinox.executable");
+		properties.put("p2.gathering", "true");
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("archivesFormat", "group,group,group-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		IFolder repo = buildFolder.getFolder("tmp/eclipse");
+		URI repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
+		IMetadataRepository metadata = loadMetadataRepository(repoURI);
+		IInstallableUnit iu = getIU(metadata, "equinox.executable");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable.feature.jar");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.launcher");
+		Set entries = new HashSet();
+		entries.add("bin/win32/win32/x86/launcher.exe");
+		entries.add("bin/carbon/macosx/ppc/Eclipse.app/Contents/MacOS/launcher");
+		entries.add("bin/gtk/linux/x86/launcher");
+		assertZipContents(buildFolder, "tmp/eclipse/features/org.eclipse.equinox.executable_3.3.200.jar", entries);
+
+		IFolder build2 = Utils.createFolder(buildFolder, "../build2");
+		
+		IFile productFile = build2.getFile("rcp.product");
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"}, false);
+		
+		properties = BuildConfiguration.getBuilderProperties(build2);
+		properties.put("configs", "win32,win32,x86 & linux,gtk,x86");
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("p2.gathering", "true");
+		properties.put("skipDirector", "true");
+		properties.put("skipMirroring", "true");
+		//this tests bug 269361
+		properties.put("repoBaseLocation", buildFolder.getFolder("tmp").getLocation().toOSString());
+		properties.put("transformedRepoLocation", build2.getFolder("transformed").getLocation().toOSString());
+
+		Utils.storeBuildProperties(build2, properties);
+
+		runProductBuild(build2);
+		
+		repo = build2.getFolder("buildRepo");
+		repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
+		metadata = loadMetadataRepository(repoURI);
+		iu = getIU(metadata, "org.eclipse.equinox.executable.feature.group");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.win32.win32.x86");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.gtk.linux.x86");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
+		
+		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.win32.win32.x86_3.3.200");
+		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.gtk.linux.x86_3.3.200");
+		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.carbon.macosx.ppc_3.3.200");
+		assertResourceFile(repo, "binary/rcp.product_root.gtk.linux.x86_1.0.0");
+		assertResourceFile(repo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
+	}
 }

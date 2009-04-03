@@ -210,7 +210,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				BuildTimeFeature feature = features[i];
 				script.printTab();
 				script.print("\t<iu "); //$NON-NLS-1$
-				script.printAttribute(ID, feature.getId() + ".feature.group", true); //$NON-NLS-1$
+				script.printAttribute(ID, getFeatureGroupId(feature), true);
 				script.printAttribute(VERSION, feature.getVersion(), true);
 				script.println("/>"); //$NON-NLS-1$
 			}
@@ -225,6 +225,15 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 		script.printTargetEnd();
 		script.println();
+	}
+
+	private String getFeatureGroupId(BuildTimeFeature feature) {
+		if (!feature.isBinary()) {
+			Properties properties = getFeatureBuildProperties(feature);
+			if (properties.containsKey(PROPERTY_P2_GROUP_ID))
+				return properties.getProperty(PROPERTY_P2_GROUP_ID);
+		}
+		return feature.getId() + ".feature.group"; //$NON-NLS-1$
 	}
 
 	protected String getReplacedProductVersion() {
@@ -372,13 +381,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			Object object = iter.next();
 			if (object instanceof BuildTimeFeature) {
-				Properties featureProperties = null;
-				try {
-					featureProperties = AbstractScriptGenerator.readProperties(new Path(((BuildTimeFeature) object).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
-					Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
-				} catch (CoreException e) {
-					//do nothing
-				}
+				Properties featureProperties = getFeatureBuildProperties((BuildTimeFeature) object);
+				Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
 			}
 		}
 
@@ -396,6 +400,17 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printExecTask("cp", rootFileFolder + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), params, null); //$NON-NLS-1$
 			script.printDeleteTask(rootFileFolder, null, null);
 		}
+	}
+
+	private Properties getFeatureBuildProperties(BuildTimeFeature feature) {
+		if (feature.isBinary())
+			return null;
+		try {
+			return AbstractScriptGenerator.readProperties(new Path(feature.getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
+		} catch (CoreException e) {
+			return null;
+		}
+
 	}
 
 	protected void generateGatherSourceTarget() {
@@ -947,13 +962,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		ArrayList fileSets = new ArrayList();
 
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
-			Properties featureProperties = null;
-			try {
-				featureProperties = AbstractScriptGenerator.readProperties(new Path(((BuildTimeFeature) iter.next()).getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
-			} catch (CoreException e) {
-				return new FileSet[0];
-			}
-
+			Properties featureProperties = getFeatureBuildProperties((BuildTimeFeature) iter.next());
 			for (Iterator iter2 = featureProperties.entrySet().iterator(); iter2.hasNext();) {
 				Map.Entry permission = (Map.Entry) iter2.next();
 				String instruction = (String) permission.getKey();

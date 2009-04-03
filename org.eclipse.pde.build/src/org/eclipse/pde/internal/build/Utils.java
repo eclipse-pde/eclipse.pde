@@ -644,6 +644,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static void generatePermissions(Properties featureProperties, Config aConfig, String targetRootProperty, AntScript script) {
+		if (featureProperties == null)
+			return;
 		String configInfix = aConfig.toString("."); //$NON-NLS-1$
 		String configPath = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';

@@ -25,6 +25,7 @@ import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 
 public class GatherFeatureAction extends FeaturesAction {
 	private GatheringComputer computer;
+	private String groupId = null;
 	private final File featureRoot;
 
 	public GatherFeatureAction(File location, File featureRoot) {
@@ -34,6 +35,10 @@ public class GatherFeatureAction extends FeaturesAction {
 
 	public void setComputer(GatheringComputer computer) {
 		this.computer = computer;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	protected Feature[] getFeatures(File[] locations) {
@@ -71,6 +76,12 @@ public class GatherFeatureAction extends FeaturesAction {
 			ius.add(iu);
 		}
 		return ius;
+	}
+
+	protected String getGroupId(String featureId) {
+		if (groupId != null)
+			return groupId;
+		return super.getGroupId(featureId);
 	}
 
 	protected IInstallableUnit generateFeatureJarIU(Feature feature, IPublisherInfo publisherInfo) {

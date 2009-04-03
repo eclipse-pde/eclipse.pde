@@ -112,6 +112,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_MIRROR_METADATA_DEST = "p2.mirror.metadata.destination"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_MIRROR_ARTIFACT_DEST = "p2.mirror.artifact.destination"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_PUBLISH_PARTS = "p2.publish.parts"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_GROUP_ID = "p2.group.id"; //$NON-NLS-1$
 
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 
