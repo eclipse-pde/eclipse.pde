@@ -128,6 +128,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param resource
 	 */
 	void cleanupMarkers(IResource resource) {
+		cleanUnusedFilterMarkers(resource);
 		cleanupUsageMarkers(resource);
 		cleanupCompatibilityMarkers(resource);
 		cleanupUnsupportedTagMarkers(resource);
@@ -180,6 +181,21 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		} catch(CoreException e) {
 			ApiPlugin.log(e.getStatus());
+		}
+	}
+	
+	/**
+	 * Cleans up the unused API filter problems from the given resource
+	 * @param resource
+	 */
+	void cleanUnusedFilterMarkers(IResource resource) {
+		try {
+			if(resource != null && resource.isAccessible()) {
+				resource.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			}
+		}
+		catch(CoreException ce) {
+			ApiPlugin.log(ce.getStatus());
 		}
 	}
 	

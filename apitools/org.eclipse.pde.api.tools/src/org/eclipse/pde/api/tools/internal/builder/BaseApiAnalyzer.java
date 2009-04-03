@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -292,26 +291,30 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if(typenames != null || changedTypes != null) {
 				//incremental
 				Set typeNamesSet = null;
+				IResource resource = null;
 				if (typenames != null) {
 					typeNamesSet = new HashSet();
 					for (int i = 0; i < typenames.length; i++) {
-						String typeName = typenames[i];
-						typeNamesSet.add(typeName);
-						checkUnusedProblemFilters(store, project, typeName);
+						typeNamesSet.add(typenames[i]);
+						resource = Util.getResource(project, fJavaProject.findType(typenames[i]));
+						if(resource != null) {
+							createUnusedApiFilterProblems(store.getUnusedFilters(resource, typenames[i]));
+						}
 					}
 				}
 				if (changedTypes != null) {
 					// check the ones not already checked as part of type names check
 					for (int i = 0; i < changedTypes.length; i++) {
-						String typeName = changedTypes[i];
-						if (typeNamesSet == null || !typeNamesSet.remove(typeName)) {
-							checkUnusedProblemFilters(store, project, typeName);
+						if (typeNamesSet == null || !typeNamesSet.remove(changedTypes[i])) {
+							resource = Util.getResource(project, fJavaProject.findType(changedTypes[i]));
+							if(resource != null) {
+								createUnusedApiFilterProblems(store.getUnusedFilters(resource, changedTypes[i]));
+							}
 						}
 					}
 				}
 			} else {
 				//full build, clean up all old markers
-				project.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 				createUnusedApiFilterProblems(store.getUnusedFilters(null, null));
 			}
 		}
@@ -320,49 +323,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		finally {
 			updateMonitor(monitor, 1);
-		}
-	}
-
-	private void checkUnusedProblemFilters(ApiFilterStore store,
-			IProject project, String typeName) throws JavaModelException,
-			CoreException {
-		IType element = fJavaProject.findType(typeName);
-		IResource resource = Util.getResource(project, element);
-		if(resource != null) {
-			if (!Util.isManifest(resource.getProjectRelativePath())) {
-				resource.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-				IResource manifestFile = project.findMember(Util.MANIFEST_PROJECT_RELATIVE_PATH);
-				if (manifestFile != null) {
-					try {
-						IMarker[] markers = manifestFile.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-						loop: for (int j = 0, max = markers.length; j < max; j++) {
-							IMarker marker = markers[j];
-							String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
-							if (typeName.equals(typeNameFromMarker)) {
-								marker.delete();
-								continue loop;
-							}
-						}
-					} catch (CoreException e) {
-						ApiPlugin.log(e.getStatus());
-					}
-				}
-			} else {
-				try {
-					IMarker[] markers = resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-					loop: for (int j = 0, max = markers.length; j < max; j++) {
-						IMarker marker = markers[j];
-						String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
-						if (typeName.equals(typeNameFromMarker)) {
-							marker.delete();
-							continue loop;
-						}
-					}
-				} catch (CoreException e) {
-					ApiPlugin.log(e.getStatus());
-				}
-			}
-			createUnusedApiFilterProblems(store.getUnusedFilters(resource, typeName));
 		}
 	}
 
@@ -376,9 +336,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		}
 		IApiProblemFilter filter = null;
+		IApiProblem problem = null;
 		for (int i = 0; i < filters.length; i++) {
 			filter = filters[i];
-			IApiProblem problem = filter.getUnderlyingProblem();
+			problem = filter.getUnderlyingProblem();
 			if(problem == null) {
 				return;
 			}

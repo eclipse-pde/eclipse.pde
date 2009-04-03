@@ -349,12 +349,7 @@ public class IncrementalApiBuilder {
 			if(type == null) {
 				continue;
 			}
-			this.builder.updateMonitor(monitor, 0);
-			this.builder.cleanupUnsupportedTagMarkers(file);
-			this.builder.updateMonitor(monitor, 0);
-			this.builder.cleanupCompatibilityMarkers(file);
-			this.builder.updateMonitor(monitor, 0);
-			this.builder.cleanupUsageMarkers(file);
+			this.builder.cleanupMarkers(file);
 			this.builder.updateMonitor(monitor, 0);
 			cnames.add(type.getFullyQualifiedName());
 			try {
@@ -376,15 +371,31 @@ public class IncrementalApiBuilder {
 		IResource resource = project.findMember(ApiAnalysisBuilder.MANIFEST_PATH);
 		if (resource != null) {
 			try {
+				//TODO we should find a way to cache markers to type names, that way to get all
+				//the manifest markers for a given type name is time of O(1)
 				IMarker[] markers = resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				String tname = null; 
 				for (int i = 0; i < markers.length; i++) {
-					if(tnames.contains(Util.getTypeNameFromMarker(markers[i]))) {
+					tname = Util.getTypeNameFromMarker(markers[i]);
+					if(tnames.contains(tname) || cnames.contains(tname)) {
 						markers[i].delete();
 					}
 				}
+				//TODO we should find a way to cache markers to type names, that way to get all
+				//the manifest markers for a given type name is time of O(1)
 				markers = resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 				for (int i = 0; i < markers.length; i++) {
-					if(tnames.contains(Util.getTypeNameFromMarker(markers[i]))) {
+					tname = Util.getTypeNameFromMarker(markers[i]);
+					if(tnames.contains(tname) || cnames.contains(tname)) {
+						markers[i].delete();
+					}
+				}
+				//TODO we should find a way to cache markers to type names, that way to get all
+				//the manifest markers for a given type name is time of O(1)
+				markers = resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				for (int i = 0; i < markers.length; i++) {
+					tname = Util.getTypeNameFromMarker(markers[i]);
+					if(tnames.contains(tname) || cnames.contains(tname)) {
 						markers[i].delete();
 					}
 				}
