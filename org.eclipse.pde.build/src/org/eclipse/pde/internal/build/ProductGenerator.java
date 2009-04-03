@@ -202,6 +202,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			P2InfUtils.printBundleCU(buffer, index++, BUNDLE_EQUINOX_LAUNCHER, launcher.getVersion(), null, instructions);
 
 			BuildTimeFeature executableFeature = assembly.getRootProvider(FEATURE_EQUINOX_EXECUTABLE, null);
+			if (executableFeature == null && havePDEUIState())
+				executableFeature = assembly.getRootProvider("org.eclipse.pde.container.feature", null); //$NON-NLS-1$
 			List configs = getConfigInfos();
 			for (int i = 0; i < configs.size(); i++) {
 				Config config = (Config) configs.get(i);

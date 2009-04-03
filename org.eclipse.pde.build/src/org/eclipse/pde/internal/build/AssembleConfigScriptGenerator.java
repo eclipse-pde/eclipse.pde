@@ -466,6 +466,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_ARCHIVE_FULLPATH, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + Utils.getPropertyFormat(PROPERTY_BUILD_LABEL) + '/' + Utils.getPropertyFormat(PROPERTY_ARCHIVE_NAME));
 		printLauncherJarProperty();
 		script.printProperty(PROPERTY_P2_BUILD_REPO, "file:" + Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/buildRepo"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printProperty(PROPERTY_GENERIC_TARGETS, Utils.getPropertyFormat("eclipse.pdebuild.scripts") + '/' + "/genericTargets.xml"); //$NON-NLS-1$//$NON-NLS-2$
 		script.printAvailableTask(PROPERTY_CUSTOM_ASSEMBLY, "${builder}/customAssembly.xml", "${builder}/customAssembly.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (productQualifier != null)
 			script.printProperty(PROPERTY_P2_PRODUCT_QUALIFIER, productQualifier);

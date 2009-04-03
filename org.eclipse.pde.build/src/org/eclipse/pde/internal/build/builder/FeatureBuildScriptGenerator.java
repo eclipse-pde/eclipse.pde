@@ -477,8 +477,10 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 					fileSet[j] = new FileSet(fromDir + file, null, "**", null, null, null, null); //$NON-NLS-1$
 				}
 			}
-			script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + folder);
-			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + folder, fileSet, true, overwrite);
+			if (fileSet.length > 0) {
+				script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + folder);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + folder, fileSet, true, overwrite);
+			}
 		}
 	}
 
