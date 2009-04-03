@@ -99,6 +99,9 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_ARTIFACT_REPO_NAME = "p2.artifact.repo.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_GATHERING = "p2.gathering"; //$NON-NLS-1$
 
+	public static final String PROPERTY_SKIP_MIRRORING = "skipMirroring"; //$NON-NLS-1$
+	public static final String PROPERTY_SKIP_DIRECTOR = "skipDirector"; //$NON-NLS-1$
+
 	//Internal usage only
 	public static final String PROPERTY_P2_BUILD_REPO = "p2.build.repo"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_GENERATION_MODE = "p2.generation.mode"; //$NON-NLS-1$

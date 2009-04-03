@@ -828,6 +828,10 @@ public class PublishingTests extends P2TestCase {
 		properties.put("includeLaunchers", "false"); //bug 268119
 		properties.put("p2.gathering", "true");
 		properties.put("forceContextQualifier", "v1234"); //bug 246060
+		properties.put("skipDirector", "true"); //bug 271141
+		properties.put("skipMirroring", "true");
+		properties.put("p2.metadata.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
+		properties.put("p2.artifact.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
@@ -846,6 +850,10 @@ public class PublishingTests extends P2TestCase {
 		} catch (AssertionFailedError e) {
 		}
 		assertNull(iu);
+		
+		//bug 271141
+		assertFalse(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86.zip").exists());
+		assertFalse(buildFolder.getFolder("finalRepo").exists());
 	}
 	
 	public void testBug266488() throws Exception {
@@ -872,6 +880,13 @@ public class PublishingTests extends P2TestCase {
 		properties.put("topLevelElementId", "f");
 		properties.put("p2.gathering", "true");
 		properties.put("archivesFormat", "group,group,group-folder");
+		properties.put("skipMirroring", "true"); //bug 271114
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		assertFalse(buildFolder.getFolder("tmp/eclipse").exists());
+		
+		properties.remove("skipMirroring");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 		

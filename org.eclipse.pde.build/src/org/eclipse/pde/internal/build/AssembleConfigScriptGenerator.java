@@ -160,14 +160,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		mirrorArgs.put(PROPERTY_P2_MIRROR_METADATA_DEST, Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO));
 		mirrorArgs.put(PROPERTY_P2_MIRROR_ARTIFACT_DEST, Utils.getPropertyFormat(PROPERTY_P2_ARTIFACT_REPO));
 
-		script.printTargetDeclaration(TARGET_MIRROR_PRODUCT, null, PROPERTY_P2_METADATA_REPO, null, null);
+		script.printTargetDeclaration(TARGET_MIRROR_PRODUCT, null, PROPERTY_P2_METADATA_REPO, PROPERTY_SKIP_MIRRORING, null);
 		script.printAntCallTask(TARGET_MIRROR_ARCHIVE, true, mirrorArgs);
 		script.printTargetEnd();
 		script.println();
 	}
 
 	protected void generateMirrorTask(boolean assembling) {
-		script.printTargetDeclaration(TARGET_MIRROR_ARCHIVE, null, null, null, null);
+		script.printTargetDeclaration(TARGET_MIRROR_ARCHIVE, null, null, PROPERTY_SKIP_MIRRORING, null);
 		script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_P2_MIRROR_METADATA_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
 		script.printProperty(PROPERTY_P2_MIRROR_ARTIFACT_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
@@ -246,7 +246,22 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateDirectorTarget(boolean assembling) {
-		script.printTargetDeclaration(TARGET_RUN_DIRECTOR, null, null, assembling ? PROPERTY_RUN_PACKAGER : null, null);
+		if (assembling) {
+			script.printTargetDeclaration(TARGET_RUN_DIRECTOR_CONDITION, null, null, null, null);
+			script.printTab();
+			script.print("<condition"); //$NON-NLS-1$
+			script.printAttribute("property", TARGET_RUN_DIRECTOR_CONDITION, true); //$NON-NLS-1$
+			script.printAttribute("value", TRUE, true); //$NON-NLS-1$
+			script.println(">"); //$NON-NLS-1$
+			script.println("\t<or>"); //$NON-NLS-1$
+			script.println("\t\t<isset property=\"" + PROPERTY_RUN_PACKAGER + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			script.println("\t\t<isset property=\"" + PROPERTY_SKIP_DIRECTOR + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			script.println("\t</or>"); //$NON-NLS-1$
+			script.printEndTag("condition"); //$NON-NLS-1$
+			script.printTargetEnd();
+		}
+
+		script.printTargetDeclaration(TARGET_RUN_DIRECTOR, assembling ? TARGET_RUN_DIRECTOR_CONDITION : null, null, assembling ? TARGET_RUN_DIRECTOR_CONDITION : PROPERTY_SKIP_DIRECTOR, null);
 		Map parameters = new HashMap();
 		parameters.put(PROPERTY_OS, Utils.getPropertyFormat(PROPERTY_OS));
 		parameters.put(PROPERTY_WS, Utils.getPropertyFormat(PROPERTY_WS));
@@ -306,7 +321,31 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateArchivingTarget(boolean assembling) {
-		script.printTargetDeclaration(TARGET_ASSEMBLE_ARCHIVE, null, null, (assembling && BuildDirector.p2Gathering) ? PROPERTY_RUN_PACKAGER : null, null);
+		boolean condition = assembling && BuildDirector.p2Gathering;
+		if (condition) {
+			script.printTargetDeclaration(TARGET_ASSEMBLE_ARCHIVE_CONDITION, null, null, null, null);
+			script.printTab();
+			script.print("<condition"); //$NON-NLS-1$
+			script.printAttribute("property", TARGET_ASSEMBLE_ARCHIVE_CONDITION, true); //$NON-NLS-1$
+			script.printAttribute("value", TRUE, true); //$NON-NLS-1$
+			script.println(">"); //$NON-NLS-1$
+			script.println("\t<or>"); //$NON-NLS-1$
+			script.println("\t\t<isset property=\"" + PROPERTY_RUN_PACKAGER + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (productFile != null)
+				script.println("\t\t<isset property=\"" + PROPERTY_SKIP_DIRECTOR + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			else
+				script.println("\t\t<isset property=\"" + PROPERTY_SKIP_MIRRORING + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			script.println("\t</or>"); //$NON-NLS-1$
+			script.printEndTag("condition"); //$NON-NLS-1$
+			script.printTargetEnd();
+		}
+
+		// Only run the archive target if there is something there to archive.
+		// if not p2Gathering, no conditions,
+		// else, if assembling condition is (runPackager || skipDirector), if packaging condition is skipDirector
+		String assemblyCondition = BuildDirector.p2Gathering ? TARGET_ASSEMBLE_ARCHIVE_CONDITION : null;
+		String packageCondition = BuildDirector.p2Gathering ? (productFile != null ? PROPERTY_SKIP_DIRECTOR : PROPERTY_SKIP_MIRRORING) : null;
+		script.printTargetDeclaration(TARGET_ASSEMBLE_ARCHIVE, condition ? TARGET_ASSEMBLE_ARCHIVE_CONDITION : null, null, assembling ? assemblyCondition : packageCondition, null);
 		Map properties = new HashMap();
 		properties.put(PROPERTY_ROOT_FOLDER, rootFolder);
 		printCustomAssemblyAntCall(PROPERTY_PRE + "archive", properties); //$NON-NLS-1$
