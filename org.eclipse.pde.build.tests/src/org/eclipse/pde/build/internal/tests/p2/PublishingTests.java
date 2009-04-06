@@ -933,6 +933,8 @@ public class PublishingTests extends P2TestCase {
 		properties.put("p2.gathering", "true");
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("archivesFormat", "group,group,group-folder");
+		properties.put("feature.temp.folder", buildFolder.getFolder("ftemp").getLocation().toOSString());
+		properties.put("elementPath", "${buildDirectory}/features/ee");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 		
