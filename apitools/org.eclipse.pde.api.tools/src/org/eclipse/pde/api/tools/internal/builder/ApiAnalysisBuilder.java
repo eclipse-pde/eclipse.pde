@@ -366,9 +366,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	protected void createMarkers() {
 		try {
-			this.currentproject.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-			this.currentproject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-			this.currentproject.deleteMarkers(IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+			IResource manifest = Util.getManifestFile(this.currentproject);
+			if(manifest != null)  {
+				manifest.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			}
+			this.currentproject.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			this.currentproject.deleteMarkers(IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -440,10 +443,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			switch(category) {
 				case IApiProblem.CATEGORY_VERSION :
 				case IApiProblem.CATEGORY_API_BASELINE :
-				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
+				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 					break;
-				default :
+				}
+				default : {
 					line++;
+				}
 			}
 			marker.setAttributes(
 					new String[] {

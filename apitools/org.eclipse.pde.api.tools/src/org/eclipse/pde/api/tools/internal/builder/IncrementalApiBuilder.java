@@ -200,7 +200,7 @@ public class IncrementalApiBuilder {
 					}
 					HashSet tnames = new HashSet(typesize),
 						 	cnames = new HashSet(typesize);
-					collectAllQualifiedNames(project, this.changedtypes, tnames, cnames, localmonitor.newChild(1));
+					collectAllQualifiedNames(project, buildstate, this.changedtypes, tnames, cnames, localmonitor.newChild(1));
 					this.builder.updateMonitor(localmonitor, 1);
 					this.builder.getAnalyzer().analyzeComponent(buildstate, 
 							null, 
@@ -229,9 +229,9 @@ public class IncrementalApiBuilder {
 	/**
 	 * Collects the complete set of affected source files from the current project context based on the current JDT build state.
 	 * 
-	 * @param project
-	 * @param state
-	 * @param typesToCheck
+	 * @param project the current project being built
+	 * @param state the current JDT build state
+	 * @param typesToCheck the set of type names that we want to append to
 	 */
 	void collectAffectedSourceFiles(final IProject project, State state, Set typesToCheck) {
 		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are just 'X'
@@ -281,13 +281,16 @@ public class IncrementalApiBuilder {
 				}
 				switch (binaryDelta.getKind()) {
 					case IResourceDelta.REMOVED : {
+						if (ApiAnalysisBuilder.DEBUG) {
+							System.out.println("Found removed class file " + typePath); //$NON-NLS-1$
+						}
 						//directly add the removed type
 						this.removedtypes.add(typePath.toString().replace('/', '.'));
 					}
 						//$FALL-THROUGH$
 					case IResourceDelta.ADDED : {
 						if (ApiAnalysisBuilder.DEBUG) {
-							System.out.println("Found added/removed class file " + typePath); //$NON-NLS-1$
+							System.out.println("Found added class file " + typePath); //$NON-NLS-1$
 						}
 						addDependentsOf(typePath);
 						return;
@@ -328,13 +331,15 @@ public class IncrementalApiBuilder {
 	
 	/**
 	 * Returns an array of type names, and cleans up markers for the specified resource
+	 * @param project the project being built
+	 * @param state the current build state for the given project 
 	 * @param alltypes the listing of {@link IFile}s to get qualified names from
 	 * @param changedtypes the listing of {@link IFile}s that have actually changed (from the {@link IResourceDelta}
 	 * @param tnames the list to collect all type names into (including inner member names)
 	 * @param cnames the list to collect the changed type names into
 	 * @param monitor
 	 */
-	void collectAllQualifiedNames(final IProject project, final HashSet alltypes, HashSet tnames, HashSet cnames, final IProgressMonitor monitor) {
+	void collectAllQualifiedNames(final IProject project, BuildState state, final HashSet alltypes, HashSet tnames, HashSet cnames, final IProgressMonitor monitor) {
 		IType[] types = null;
 		IFile file = null;
 		ICompilationUnit unit = null;
@@ -367,7 +372,13 @@ public class IncrementalApiBuilder {
 			this.builder.updateMonitor(monitor, 0);
 		}
 		// inject removed types inside changed type names so that we can properly detect type removal
-		cnames.addAll(this.removedtypes);
+		String typename = null;
+		for(Iterator iter = this.removedtypes.iterator(); iter.hasNext();) {
+			typename = (String) iter.next();
+			//clean up the state - https://bugs.eclipse.org/bugs/show_bug.cgi?id=271110
+			state.cleanup(typename);
+			cnames.add(typename);
+		}
 		IResource resource = project.findMember(ApiAnalysisBuilder.MANIFEST_PATH);
 		if (resource != null) {
 			try {
@@ -375,15 +386,6 @@ public class IncrementalApiBuilder {
 				//the manifest markers for a given type name is time of O(1)
 				IMarker[] markers = resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 				String tname = null; 
-				for (int i = 0; i < markers.length; i++) {
-					tname = Util.getTypeNameFromMarker(markers[i]);
-					if(tnames.contains(tname) || cnames.contains(tname)) {
-						markers[i].delete();
-					}
-				}
-				//TODO we should find a way to cache markers to type names, that way to get all
-				//the manifest markers for a given type name is time of O(1)
-				markers = resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 				for (int i = 0; i < markers.length; i++) {
 					tname = Util.getTypeNameFromMarker(markers[i]);
 					if(tnames.contains(tname) || cnames.contains(tname)) {
