@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,14 +31,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.JavaModelManager;
+import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
@@ -214,51 +206,67 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
 		final IProject[] projects = getRequiredProjects(true);
 		IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
+		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+		if (wbaseline == null) {
+			if (DEBUG) {
+				System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
+			}
+			return NO_PROJECTS;
+		}
 		try {
 			switch(kind) {
 				case FULL_BUILD : {
 					if (DEBUG) {
 						System.out.println("Performing full build as requested by user"); //$NON-NLS-1$
 					}
-					buildAll(baseline, localMonitor.newChild(1));
+					buildAll(baseline, wbaseline, localMonitor.newChild(1));
 					break;
 				}
 				case AUTO_BUILD :
 				case INCREMENTAL_BUILD : {
-					this.buildstate = getLastBuiltState(currentproject);
+					this.buildstate = BuildState.getLastBuiltState(currentproject);
 					if (this.buildstate == null) {
-						buildAll(baseline, localMonitor.newChild(1));
+						buildAll(baseline, wbaseline, localMonitor.newChild(1));
 						break;
 					}
 					else if(worthDoingFullBuild(projects)) {
-						buildAll(baseline, localMonitor.newChild(1));
+						buildAll(baseline, wbaseline, localMonitor.newChild(1));
+						break;
 					}
-					IResourceDelta[] deltas = getDeltas(projects);
-					if(deltas.length < 1) {
-						buildAll(baseline, localMonitor.newChild(1));
-					}
-					else {	
-						IResourceDelta manifest = null;
-						IResourceDelta filters = null;
-						for (int i = 0; i < deltas.length; i++) {
-							manifest = deltas[i].findMember(MANIFEST_PATH);
-							if(manifest != null) {
-								break;
-							}
-							filters = deltas[i].findMember(FILTER_PATH);
-							if(filters != null){
-								break;
-							}
+					else {
+						IResourceDelta[] deltas = getDeltas(projects);
+						if(deltas.length < 1) {
+							buildAll(baseline, wbaseline, localMonitor.newChild(1));
 						}
-						if (manifest != null || filters != null) {
-							if (DEBUG) {
-								System.out.println("Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
-	 						}
-							buildAll(baseline, localMonitor.newChild(1));
-						}
-						else {
-							IncrementalApiBuilder builder = new IncrementalApiBuilder(this);
-							builder.build(baseline, deltas, this.buildstate, localMonitor.newChild(1));
+						else {	
+							IResourceDelta manifest = null;
+							IResourceDelta filters = null;
+							for (int i = 0; i < deltas.length; i++) {
+								manifest = deltas[i].findMember(MANIFEST_PATH);
+								if(manifest != null) {
+									break;
+								}
+								filters = deltas[i].findMember(FILTER_PATH);
+								if(filters != null){
+									break;
+								}
+							}
+							if (manifest != null || filters != null) {
+								if (DEBUG) {
+									System.out.println("Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
+		 						}
+								buildAll(baseline, wbaseline, localMonitor.newChild(1));
+							}
+							else {
+								State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(this.currentproject, localMonitor.newChild(1));
+								if(state == null) {
+									buildAll(baseline, wbaseline, localMonitor.newChild(1));
+									break;
+								}
+								BuildState.setLastBuiltState(this.currentproject, null);
+								IncrementalApiBuilder builder = new IncrementalApiBuilder(this);
+								builder.build(baseline, wbaseline, deltas, state, this.buildstate, localMonitor.newChild(1));
+							}
 						}
 					}
 				}	
@@ -279,6 +287,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(baseline != null) {
 				baseline.close();
 			}
+			wbaseline.close();
 			if(monitor != null) {
 				monitor.done();
 			}
@@ -289,7 +298,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						this.buildstate.addApiToolingDependentProject(project.getName());
 					}
 				}
-				saveBuiltState(this.currentproject, this.buildstate);
+				BuildState.saveBuiltState(this.currentproject, this.buildstate);
 				this.buildstate = null;
 			}
 		}
@@ -299,7 +308,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		return projects;
 	}
 	
-	private boolean worthDoingFullBuild(IProject[] projects) {
+	/**
+	 * if its worth doing a full build considering the given set if projects
+	 * @param projects projects to check the build state for
+	 * @return true if a full build should take place, false otherwise
+	 */
+	boolean worthDoingFullBuild(IProject[] projects) {
 		Set apiToolingDependentProjects = this.buildstate.getApiToolingDependentProjects();
 		for (int i = 0, max = projects.length; i < max; i++) {
 			IProject currentProject = projects[i];
@@ -317,12 +331,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	
 	/**
 	 * Performs a full build for the project
+	 * @param baseline the default baseline 
+	 * @param wbaseline the workspace baseline
 	 * @param monitor
 	 */
-	void buildAll(IApiBaseline baseline, IProgressMonitor monitor) throws CoreException {
-		IApiBaseline wsprofile = null;
+	void buildAll(IApiBaseline baseline, IApiBaseline wbaseline, IProgressMonitor monitor) throws CoreException {
 		try {
-			clearLastState();
+			BuildState.setLastBuiltState(this.currentproject, null);
 			this.buildstate = new BuildState();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, currentproject.getName()));
@@ -330,17 +345,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
 				localMonitor.subTask(BuilderMessages.building_workspace_profile);
-				wsprofile = getWorkspaceProfile();
 				updateMonitor(localMonitor, 1);
-				if (wsprofile == null) {
-					if (DEBUG) {
-						System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
-					}
-					return;
-				}
 				String id = currentModel.getBundleDescription().getSymbolicName();
 				// Compatibility checks
-				IApiComponent apiComponent = wsprofile.getApiComponent(id);
+				IApiComponent apiComponent = wbaseline.getApiComponent(id);
 				if(apiComponent != null) {
 					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, null, null, localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
@@ -350,9 +358,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		finally {
-			if(wsprofile != null) {
-				wsprofile.close();
-			}
 			if(monitor != null) {
 				monitor.done();
 			}
@@ -393,10 +398,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Returns the {@link IApiMarkerConstants} problem type given the 
 	 * problem category
-	 * @param category
+	 * @param category the problem category - see {@link IApiProblem} for problem categories
+	 * @param kind the kind of the problem - see {@link IApiProblem} for problem kinds
 	 * @return the problem type or <code>null</code>
 	 */
-	private String getProblemTypeFromCategory(int category, int kind) {
+	String getProblemTypeFromCategory(int category, int kind) {
 		switch(category) {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 				return IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER;
@@ -430,9 +436,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Creates an {@link IMarker} on the resource specified
 	 * in the problem (via its path) with the given problem
 	 * attributes
+	 * @param category the category of the problem - see {@link IApiProblem} for categories
+	 * @param type the marker type to create - see {@link IApiMarkerConstants} for types
 	 * @param problem the problem to create a marker from
 	 */
-	private void createMarkerForProblem(int category, String type, IApiProblem problem) {
+	void createMarkerForProblem(int category, String type, IApiProblem problem) {
 		IResource resource = resolveResource(problem);
 		if(resource == null) {
 			return;
@@ -498,7 +506,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param problem the problem to get the resource for
 	 * @return the resource or <code>null</code>
 	 */
-	private IResource resolveResource(IApiProblem problem) {
+	IResource resolveResource(IApiProblem problem) {
 		String resourcePath = problem.getResourcePath();
 		if (resourcePath == null) {
 			return null;
@@ -519,7 +527,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param args
 	 * @return a single string attribute from an array or arguments
 	 */
-	private String createArgAttribute(String[] args) {
+	String createArgAttribute(String[] args) {
 		StringBuffer buff = new StringBuffer();
 		for(int i = 0; i < args.length; i++) {
 			buff.append(args[i]);
@@ -564,7 +572,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			updateMonitor(localmonitor, 1);
 		}
 		finally {
-			clearLastState();
+			BuildState.setLastBuiltState(this.currentproject, null);
 			localmonitor.done();
 		}
 	}
@@ -573,7 +581,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * Cleans the .api_settings file for the given project
 	 * @param project
 	 */
-	private void cleanupApiDescription(IProject project) {
+	void cleanupApiDescription(IProject project) {
 		if(project != null && project.exists()) {
 			ApiDescriptionManager.getDefault().clean(JavaCore.create(project), true, true);
 		}
@@ -608,7 +616,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param projects
 	 * @return
 	 */
-	private IResourceDelta[] getDeltas(IProject[] projects) {
+	IResourceDelta[] getDeltas(IProject[] projects) {
 		if(DEBUG) {
 			System.out.println("Searching for deltas for build of project: "+this.currentproject.getName()); //$NON-NLS-1$
 		}
@@ -646,10 +654,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Returns the complete listing of required projects from the classpath of the backing project
 	 * @param includeBinaryPrerequisites
-	 * @return
+	 * @return the list of projects required 
 	 * @throws CoreException
 	 */
-	private IProject[] getRequiredProjects(boolean includebinaries) throws CoreException {
+	IProject[] getRequiredProjects(boolean includebinaries) throws CoreException {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		if (this.currentproject == null || workspaceRoot == null) { 
 			return new IProject[0];
@@ -719,13 +727,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		projects.toArray(result);
 		return result;
 	}
-
-	/**
-	 * @return the workspace {@link IApiProfile}
-	 */
-	IApiBaseline getWorkspaceProfile() throws CoreException {
-		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
-	}
 	
 	/**
 	 * Returns the output paths of the given project or <code>null</code> if none have been computed
@@ -741,7 +742,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param entry
 	 * @return true if the specified {@link IClasspathEntry} is optional, false otherwise
 	 */
-	private boolean isOptional(IClasspathEntry entry) {
+	boolean isOptional(IClasspathEntry entry) {
 		IClasspathAttribute[] attribs = entry.getExtraAttributes();
 		for (int i = 0, length = attribs.length; i < length; i++) {
 			IClasspathAttribute attribute = attribs[i];
@@ -756,134 +757,5 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	public String toString() {
 		return NLS.bind(BuilderMessages.ApiAnalysisBuilder_builder_for_project, this.currentproject.getName());
-	}
-	
-	/**
-	 * Return the last built state for the given project, or null if none
-	 */
-	public static BuildState getLastBuiltState(IProject project) throws CoreException {
-		if (!Util.isApiProject(project)) {
-			// should never be requested on non-Java projects
-			return null;
-		}
-		return readState(project);
-	}
-	
-	/**
-	 * Reads the build state for the relevant project.
-	 */
-	static BuildState readState(IProject project) throws CoreException {
-		File file = getSerializationFile(project);
-		if (file != null && file.exists()) {
-			try {
-				DataInputStream in= new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
-				try {
-					return BuildState.read(in);
-				} finally {
-					if (DEBUG) {
-						System.out.println("Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
-					}
-					in.close();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new CoreException(new Status(IStatus.ERROR, JavaCore.PLUGIN_ID, Platform.PLUGIN_ERROR, "Error reading last build state for project "+ project.getName(), e)); //$NON-NLS-1$
-			}
-		} else if (DEBUG) {
-			if (file == null) {
-				System.out.println("Project does not exist: " + project); //$NON-NLS-1$
-			} else {
-				System.out.println("Build state file " + file.getPath() + " does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Sets the last built state for the given project, or null to reset it.
-	 */
-	public static void setLastBuiltState(IProject project, BuildState state) throws CoreException {
-		if (Util.isApiProject(project)) {
-			// should never be requested on non-Java projects
-			if (state != null) {
-				saveBuiltState(project, state);
-			} else {
-				try {
-					File file = getSerializationFile(project);
-					if (file != null && file.exists()) {
-						file.delete();
-					}
-				} catch(SecurityException se) {
-					// could not delete file: cannot do much more
-				}
-			}
-		}
-	}	
-
-	/**
-	 * Returns the File to use for saving and restoring the last built state for the given project.
-	 */
-	static File getSerializationFile(IProject project) {
-		if (!project.exists()) {
-			return null;
-		}
-		IPath workingLocation = project.getWorkingLocation(ApiPlugin.PLUGIN_ID);
-		return workingLocation.append("state.dat").toFile(); //$NON-NLS-1$
-	}
-
-	/**
-	 * Saves the current build state
-	 * @param project
-	 * @param state
-	 * @throws CoreException
-	 */
-	static void saveBuiltState(IProject project, BuildState state) throws CoreException {
-		if (DEBUG) {
-			System.out.println("Saving build state for project: "+project.getName()); //$NON-NLS-1$
-		}
-		File file = getSerializationFile(project);
-		if (file == null) return;
-		long t = 0;
-		if (DEBUG) {
-			t = System.currentTimeMillis();
-		}
-		try {
-			DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-			try {
-				BuildState.write(state, out);
-			} finally {
-				out.close();
-			}
-		} catch (RuntimeException e) {
-			try {
-				file.delete();
-			} catch(SecurityException se) {
-				// could not delete file: cannot do much more
-			}
-			throw new CoreException(
-				new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR,
-					NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e)); 
-		} catch (IOException e) {
-			try {
-				file.delete();
-			} catch(SecurityException se) {
-				// could not delete file: cannot do much more
-			}
-			throw new CoreException(
-				new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR,
-					NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e)); 
-		}
-		if (DEBUG) {
-			t = System.currentTimeMillis() - t;
-			System.out.println(NLS.bind(BuilderMessages.build_saveStateComplete, String.valueOf(t))); 
-		}
-	}
-
-	/**
-	 * Clears the last build state by setting it to <code>null</code>
-	 * @throws CoreException
-	 */
-	void clearLastState() throws CoreException {
-		setLastBuiltState(this.currentproject, null);
 	}
 }

@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
-import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
+import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
@@ -101,7 +101,7 @@ public class ProjectUpdateChange extends Change {
 			 * If autobuild is off, clear the last build state to force a full build of
 			 * this project on the next build.
 			 */
-			ApiAnalysisBuilder.setLastBuiltState(this.fProject, null);
+			BuildState.setLastBuiltState(this.fProject, null);
 		}
 		if(!pm.isCanceled()) {
 			pm.worked(1);

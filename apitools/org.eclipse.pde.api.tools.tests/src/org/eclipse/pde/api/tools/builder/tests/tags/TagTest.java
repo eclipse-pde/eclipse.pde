@@ -18,6 +18,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
@@ -194,5 +196,41 @@ public abstract class TagTest extends ApiBuilderTest {
 	 */
 	protected String getTestingProjectName() {
 		return "tagtest";
+	}
+	
+	/**
+	 * Deploys a full build test for API Javadoc tags using the given source file in the specified package,
+	 * looking for problems specified from {@link #getExpectedProblemIds()()}
+	 * @param packagename
+	 * @param sourcename
+	 * @param expectingproblems
+	 * @param buildtype the type of build to perform. One of:
+	 * <ol>
+	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
+	 * </ol>
+	 * @param buildworkspace true if the workspace should be built, false if the created project should be built
+	 */
+	protected void deployTagTest(String packagename, String sourcename, boolean expectingproblems, int buildtype, boolean buildworkspace) {
+		try {
+			IPath path = assertProject(sourcename, packagename);
+			doBuild(buildtype, (buildworkspace ? null : path));
+			expectingNoJDTProblems();
+			IJavaProject jproject = getEnv().getJavaProject(path);
+			IType type = jproject.findType(packagename, sourcename);
+			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
+			IPath sourcepath = type.getPath();
+			if(expectingproblems) {
+				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
+				assertProblems(getEnv().getProblems());
+			}
+			else {
+				expectingNoProblemsFor(sourcepath);
+			}
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
 	}
 }

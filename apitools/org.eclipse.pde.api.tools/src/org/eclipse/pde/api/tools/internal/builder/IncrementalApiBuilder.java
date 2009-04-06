@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.core.builder.ReferenceCollection;
 import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.jdt.internal.core.builder.StringSet;
@@ -117,20 +116,18 @@ public class IncrementalApiBuilder {
 	 * Incrementally builds using the {@link org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer}
 	 * from the given {@link ApiAnalysisBuilder}
 	 * 
-	 * @param baseline
-	 * @param deltas
+	 * @param baseline the baseline to compare with
+	 * @param wbaseline the workspace baseline
+	 * @param deltas the deltas to be built
+	 * @param state the current JDT build state
+	 * @param buildstate the current API tools build state
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public void build(IApiBaseline baseline, IResourceDelta[] deltas, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
+	public void build(IApiBaseline baseline, IApiBaseline wbaseline, IResourceDelta[] deltas, State state, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
 		IProject project = this.builder.getProject();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, NLS.bind(BuilderMessages.IncrementalBuilder_builder_for_project, project.getName()), 10);
 		try {
-			State state = (State)JavaModelManager.getJavaModelManager().getLastBuiltState(project, localmonitor.newChild(1));
-			if(state == null) {
-				this.builder.buildAll(baseline, localmonitor);
-				return;
-			}
 			String[] projectNames = buildstate.getReexportedComponents();
 			HashSet depprojects = null;
 			if (projectNames.length != 0) {
@@ -151,7 +148,7 @@ public class IncrementalApiBuilder {
 			for (int i = 0; i < deltas.length; i++) {
 				deltas[i].accept(visitor);
 			}
-			build(project, state, baseline, buildstate, localmonitor.newChild(1));
+			build(project, baseline, wbaseline, state, buildstate, localmonitor.newChild(1));
 		}
 		finally {
 			if(!localmonitor.isCanceled()) {
@@ -167,15 +164,14 @@ public class IncrementalApiBuilder {
 	/**
 	 * Builds an API delta using the default profile (from the workspace settings and the current
 	 * @param project
-	 * workspace profile
-	 * @param state
+	 * @param baseline the baseline to compare to
+	 * @param wbaseline the current workspace baseline
+	 * @param state the current JDT build state
+	 * @param buildstate the current API tools build state
 	 * @param monitor
 	 */
-	void build(final IProject project, final State state, IApiBaseline baseline, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
-		IApiBaseline wsprofile = null;
+	void build(final IProject project, IApiBaseline baseline, IApiBaseline wbaseline, final State state, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
 		try {
-			// clear the old state so a full build will occur if this one is cancelled or terminates prematurely
-			this.builder.clearLastState();
 			SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 1);
 			collectAffectedSourceFiles(project, state, this.changedtypes);
 			int typesize = this.changedtypes.size();
@@ -186,15 +182,8 @@ public class IncrementalApiBuilder {
 			if (typesize != 0) {
 				IPluginModelBase currentModel = this.builder.getCurrentModel();
 				if (currentModel != null) {
-					wsprofile = this.builder.getWorkspaceProfile();
-					if (wsprofile == null) {
-						if (ApiAnalysisBuilder.DEBUG) {
-							System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
-						}
-						return;
-					}
 					String id = currentModel.getBundleDescription().getSymbolicName();
-					IApiComponent comp = wsprofile.getApiComponent(id);
+					IApiComponent comp = wbaseline.getApiComponent(id);
 					if(comp == null) {
 						return;
 					}
@@ -217,9 +206,6 @@ public class IncrementalApiBuilder {
 			}
 		}
 		finally {
-			if(wsprofile != null) {
-				wsprofile.close();
-			}
 			if(monitor != null) {
 				monitor.done();
 			}

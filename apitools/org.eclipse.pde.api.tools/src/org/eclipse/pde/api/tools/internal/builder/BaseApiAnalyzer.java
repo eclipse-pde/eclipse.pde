@@ -488,7 +488,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return new BuildState();
 		}
 		try {
-			BuildState state = ApiAnalysisBuilder.getLastBuiltState(project);
+			BuildState state = BuildState.getLastBuiltState(project);
 			if(state != null) {
 				return state;
 			}

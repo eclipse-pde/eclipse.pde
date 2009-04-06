@@ -21,6 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
@@ -168,6 +170,47 @@ public abstract class UsageTest extends ApiBuilderTest {
 				continue;
 			}
 			suite.addTest((Test) test);
+		}
+	}
+	
+	/**
+	 * Deploys a standard API usage test with the test project being created and the given source is imported in the testing project
+	 * into the given project.
+	 * 
+	 * This method assumes that the reference and testing project have been imported into the workspace already.
+	 * 
+	 * @param packagename
+	 * @param sourcename
+	 * @param expectingproblems
+	 * @param buildtype the type of build to perform. One of:
+	 * <ol>
+	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
+	 * </ol>
+	 * @param buildworkspace
+	 */
+	protected void deployUsageTest(String packagename, String sourcename, boolean expectingproblems, int buildtype, boolean buildworkspace) {
+		try {
+			IProject project = getEnv().getProject(getTestingProjectName());
+			assertNotNull("the testing project "+getTestingProjectName()+" must be in the workspace", project);
+			assertSource(project, packagename, sourcename);
+			doBuild(buildtype, (buildworkspace ? null : project.getFullPath()));
+			expectingNoJDTProblems();
+			IJavaProject jproject = getEnv().getJavaProject(getTestingProjectName());
+			IType type = jproject.findType(packagename, sourcename);
+			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
+			IPath sourcepath = type.getPath();
+			if(expectingproblems) {
+				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
+				assertProblems(getEnv().getProblems());
+			}
+			else {
+				expectingNoProblemsFor(sourcepath);
+			}
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
 		}
 	}
 	
