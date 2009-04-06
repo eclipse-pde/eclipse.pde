@@ -209,7 +209,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 				inc);
 	}
 	
-	public void testUnusedFilter2F() throws Exception {
+	/*public void testUnusedFilter2F() throws Exception {
 		x2(false);
 	}
 	
@@ -217,11 +217,11 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		x2(true);
 	}
 	
-	/**
+	*//**
 	 * Tests that there is no problem reported for a compilation unit that has been deleted, which has an api 
 	 * problem filter
 	 * @param inc
-	 */
+	 *//*
 	void x2(boolean inc) throws Exception {
 		String testname = "test2";
 		String sourcename = "testUF2.java";
@@ -232,7 +232,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 				getFilterFilePath(testname), 
 				getUpdatePath(sourcename),
 				inc);
-	}
+	}*/
 
 	public void testUnusedFilter3F() throws Exception {
 		x3(false);
