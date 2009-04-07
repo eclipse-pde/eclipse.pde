@@ -203,16 +203,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			System.out.println("\nStarting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		updateMonitor(monitor, 0);
-		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 2);
-		final IProject[] projects = getRequiredProjects(true);
-		IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);
 		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		if (wbaseline == null) {
 			if (DEBUG) {
-				System.err.println("Could not retrieve a workspace profile"); //$NON-NLS-1$
+				System.err.println("Could not retrieve a workspace profile");  //$NON-NLS-1$
 			}
 			return NO_PROJECTS;
 		}
+		final IProject[] projects = getRequiredProjects(true);
+		IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 		try {
 			switch(kind) {
 				case FULL_BUILD : {
@@ -284,13 +284,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				this.analyzer.dispose();
 				this.analyzer = null;
 			}
-			if(baseline != null) {
-				baseline.close();
+			if(projects.length < 1) {
+				//if this build cycle indicates that more projects need to be built do not close 
+				//the baselines yet, they might be re-read by another build cycle
+				if(baseline != null) {
+					baseline.close();
+				}
 			}
-			wbaseline.close();
-			if(monitor != null) {
-				monitor.done();
-			}
+			updateMonitor(monitor, 0);
 			if (this.buildstate != null) {
 				for(int i = 0, max = projects.length; i < max; i++) {
 					IProject project = projects[i];
@@ -300,6 +301,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 				BuildState.saveBuiltState(this.currentproject, this.buildstate);
 				this.buildstate = null;
+				updateMonitor(monitor, 0);
+			}
+			if(monitor != null) {
+				monitor.done();
 			}
 		}
 		if (DEBUG) {

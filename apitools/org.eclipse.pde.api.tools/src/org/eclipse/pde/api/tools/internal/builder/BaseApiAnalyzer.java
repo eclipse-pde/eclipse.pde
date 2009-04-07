@@ -669,8 +669,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(ignoreInvalidTagCheck()) {
 			return;
 		}
+		SubMonitor localMonitor = null;
 		try {
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getApiTypeContainers().length : typenames.length));
+			localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getApiTypeContainers().length : typenames.length));
 			if(typenames == null) {
 				try {
 					IPackageFragmentRoot[] roots = fJavaProject.getPackageFragmentRoots();
@@ -698,8 +699,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			ApiPlugin.log(e);
 		}
 		finally {
-			if(monitor != null) {
-				monitor.done();
+			if(localMonitor != null) {
+				localMonitor.done();
 			}
 		}
 	}

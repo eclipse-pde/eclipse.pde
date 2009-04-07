@@ -42,21 +42,18 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	 */
 	static class LocalApiTypeRoot extends AbstractApiTypeRoot implements Comparable {
 		
-		/**
-		 * Associated file
-		 */
-		private File fFile;
+		String fLocation = null;
 		
 		/**
 		 * Constructs a class file on the given file
 		 * @param directory the parent {@link IApiElement} directory
-		 * @param file file
+		 * @param location
 		 * @param qualified type name
 		 * @param component owning API component
 		 */
-		public LocalApiTypeRoot(DirectoryApiTypeContainer directory, File file, String typeName) {
+		public LocalApiTypeRoot(DirectoryApiTypeContainer directory, String location, String typeName) {
 			super(directory, typeName);
-			fFile = file;
+			fLocation = location;
 		}
 
 		/* (non-Javadoc)
@@ -95,18 +92,13 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		 */
 		public InputStream getInputStream() throws CoreException {
 			try {
-				return new FileInputStream(fFile);
+				return new FileInputStream(new File(fLocation));
 			} catch (FileNotFoundException e) {
 				abort("File not found", e); //$NON-NLS-1$
 			}
 			return null; // never reaches here
 		}
 	}	
-	
-	/**
-	 * Root directory of the class file container
-	 */
-	private File fRoot;
 
 	/**
 	 * Map of package names to associated directory (file)
@@ -126,7 +118,6 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	 */
 	public DirectoryApiTypeContainer(IApiElement parent, String location) {
 		super(parent, IApiElement.API_TYPE_CONTAINER, location);
-		this.fRoot = new File(location);
 	}
 	
 	/**
@@ -138,7 +129,14 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		for (int i = 0; i < packageNames.length; i++) {
 			String pkg = packageNames[i];
 			if (visitor.visitPackage(pkg)) {
-				File dir = (File) fPackages.get(pkg);
+				String location = (String) fPackages.get(pkg);
+				if(location == null) {
+					continue;
+				}
+				File dir = new File(location);
+				if(!dir.exists()) {
+					continue;
+				}
 				File[] files = dir.listFiles(new FileFilter() {
 					public boolean accept(File file) {
 						return file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX);
@@ -147,13 +145,12 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 				if (files != null) {
 					List classFiles = new ArrayList();
 					for (int j = 0; j < files.length; j++) {
-						File file = files[j];
-						String name = file.getName();
+						String name = files[j].getName();
 						String typeName = name.substring(0, name.length() - 6);
 						if (pkg.length() > 0) {
 							typeName = pkg + "." + typeName; //$NON-NLS-1$
 						}
-						classFiles.add(new LocalApiTypeRoot(this, file, typeName));
+						classFiles.add(new LocalApiTypeRoot(this, files[j].getAbsolutePath(), typeName));
 					}
 					Collections.sort(classFiles);
 					Iterator cfIterator = classFiles.iterator();
@@ -197,11 +194,11 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 			pkg = qualifiedName.substring(0, index);
 			cfName = qualifiedName.substring(index + 1);
 		}
-		File dir = (File) fPackages.get(pkg);
-		if (dir != null) {
-			File file = new File(dir, cfName + Util.DOT_CLASS_SUFFIX);
+		String location = (String) fPackages.get(pkg);
+		if(location != null) {
+			File file = new File(location, cfName + Util.DOT_CLASS_SUFFIX);
 			if (file.exists()) {
-				return new LocalApiTypeRoot(this, file, qualifiedName);
+				return new LocalApiTypeRoot(this, file.getAbsolutePath(), qualifiedName);
 			}
 		}
 		return null;
@@ -229,7 +226,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	private synchronized void init() {
 		if (fPackages == null) {
 			fPackages = new HashMap();
-			processDirectory(Util.DEFAULT_PACKAGE_NAME, fRoot);
+			processDirectory(Util.DEFAULT_PACKAGE_NAME, new File(getName()));
 		}
 	}
 	
@@ -248,10 +245,10 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				if (file.isDirectory()) {
-					dirs.add(file);
+					dirs.add(file.getAbsoluteFile());
 				} else if (!hasClassFiles) {
 					if (file.getName().endsWith(Util.DOT_CLASS_SUFFIX)) {
-						fPackages.put(packageName, dir);
+						fPackages.put(packageName, dir.getAbsolutePath());
 						hasClassFiles = true;
 					}
 				}
