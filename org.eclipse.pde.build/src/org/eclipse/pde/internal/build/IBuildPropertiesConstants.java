@@ -88,6 +88,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_ARTIFACT_REPO = "p2.artifact.repo"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_PUBLISH_ARTIFACTS = "p2.publish.artifacts"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_CATEGORY_SITE = "p2.category.site"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_CATEGORY_PREFIX = "p2.category.prefix"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_NAME = "p2.root.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_VERSION = "p2.root.version"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_PRODUCT_QUALIFIER = "p2.product.qualifier"; //$NON-NLS-1$

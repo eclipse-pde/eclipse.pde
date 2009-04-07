@@ -24,6 +24,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 	private final ArrayList features = new ArrayList();
 	private final ArrayList bundles = new ArrayList();
 	private URI siteXML = null;
+	private String siteQualifier = ""; //$NON-NLS-1$
 
 	public void execute() throws BuildException {
 		File[] f = getLocations(features);
@@ -35,7 +36,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 		if (b.length > 0)
 			application.addAction(new BundlesAction(b));
 		if (siteXML != null)
-			application.addAction(new SiteXMLAction(siteXML, null));
+			application.addAction(new SiteXMLAction(siteXML, siteQualifier));
 
 		try {
 			application.run(getPublisherInfo());
@@ -73,8 +74,13 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 		return set;
 	}
 
+	public void setSiteQualifier(String siteQualifier) {
+		if (siteQualifier != null && !siteQualifier.startsWith(ANT_PREFIX))
+			this.siteQualifier = siteQualifier;
+	}
+
 	public void setSite(String value) {
-		if (value != null && value.length() > 0 && !value.startsWith("${")) { //$NON-NLS-1$
+		if (value != null && value.length() > 0 && !value.startsWith(ANT_PREFIX)) {
 			try {
 				siteXML = URIUtil.fromString(value);
 			} catch (URISyntaxException e) {

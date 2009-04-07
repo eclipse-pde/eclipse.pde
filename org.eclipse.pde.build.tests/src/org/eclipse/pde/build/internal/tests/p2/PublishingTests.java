@@ -562,7 +562,7 @@ public class PublishingTests extends P2TestCase {
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("instructions.configure", "addRepository(type:0,location:file${#58}//foo/bar);");
 		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
@@ -591,16 +591,16 @@ public class PublishingTests extends P2TestCase {
 			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
 			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
 		}
-		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString()); 
+		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
 		getIU(finalRepo, "a.jre.javase");
 		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
 		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
 		//check up to the date on the timestamp, don't worry about hours/mins
-		assertTrue(productIu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8))); 
+		assertTrue(productIu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
 		assertTouchpoint(productIu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
-		
+
 		getIU(finalRepo, "toolingorg.eclipse.equinox.common");
-		
+
 		IInstallableUnit iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
 		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
 		assertEquals(iu.getVersion(), productIu.getVersion());
@@ -608,7 +608,7 @@ public class PublishingTests extends P2TestCase {
 
 	public void testBug265726() throws Exception {
 		IFolder buildFolder = newTest("265726");
-		if(Platform.getOS().equals("win32") && buildFolder.getLocation().toOSString().length() > 70) {
+		if (Platform.getOS().equals("win32") && buildFolder.getLocation().toOSString().length() > 70) {
 			System.out.println("Skipping PublishingTests.testBug265726() because of path length issues.\n");
 			return;
 		}
@@ -648,7 +648,7 @@ public class PublishingTests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
 		URI repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
 		assertManagerDoesntContain(repoURI);
-		
+
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString());
 		assertNotNull(repository);
 
@@ -708,16 +708,16 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "unzipped/artifacts.xml");
 		assertResourceFile(buildFolder, "unzipped/content.xml");
 	}
-	
+
 	public void testShape_267506() throws Exception {
 		IFolder buildFolder = newTest("publishShape");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
 		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;unpack=true", "b;unpack=false"});
-		
+
 		Utils.generateBundle(a, "a");
 		Utils.writeBuffer(a.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
-		
+
 		Properties includes = new Properties();
 		includes.put("bin.includes", "META-INF/MANIFEST.MF, .");
 		Utils.generateBundleManifest(b, "b", "1.0.0", null);
@@ -727,29 +727,28 @@ public class PublishingTests extends P2TestCase {
 		p2Inf.append("properties.1.name=pde.build\n"); //$NON-NLS-1$
 		p2Inf.append("properties.1.value=true\n"); //$NON-NLS-1$
 		Utils.writeBuffer(b.getFile("META-INF/p2.inf"), p2Inf);
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
-		
+
 		runBuild(buildFolder);
-		
+
 		URI uri = URIUtil.fromString("file:" + buildFolder.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());
 		IMetadataRepository repo = loadMetadataRepository(URIUtil.toJarURI(uri, new Path("")));
 		IInstallableUnit iuA = getIU(repo, "a");
 		assertTouchpoint(iuA, "zipped", "true");
-		
+
 		IInstallableUnit iuB = getIU(repo, "b");
 		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
-		
-		
+
 		/*
 		 * Part 2. Use the above zipped repo as input to a build to test reusing IUs (bug 259792) 
 		 */
 		IFolder build2 = Utils.createFolder(buildFolder, "build2");
 		Utils.generateFeature(build2, "f", null, new String[] {"a;unpack=false", "b;unpack=false"});
-		
+
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("topLevelElementId", "f");
 		properties.put("p2.gathering", "true");
@@ -757,13 +756,13 @@ public class PublishingTests extends P2TestCase {
 		//space here tries bug 267509, bug 267219
 		properties.put("transformedRepoLocation", build2.getFolder("trans formed").getLocation().toOSString());
 		Utils.storeBuildProperties(build2, properties);
-		
+
 		runBuild(build2);
-		
+
 		//reusing the metadata from part 1
 		uri = URIUtil.fromString("file:" + build2.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());
 		repo = loadMetadataRepository(URIUtil.toJarURI(uri, new Path("")));
-		
+
 		iuB = getIU(repo, "b");
 		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
 	}
@@ -772,13 +771,13 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("267461_2");
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
+
 		IFile productFile = buildFolder.getFile("rcp.product");
 		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("org.eclipse.pde.build.append.launchers", "false");
 		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86");
 		properties.put("archivesFormat", "win32,win32,x86-folder");
@@ -793,21 +792,21 @@ public class PublishingTests extends P2TestCase {
 
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "eclipse.product=rcp.product");
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "eclipse.application=my.app");
-		
+
 		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
 		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
 		IInstallableUnit iu = getIU(metadata, "uid.product");
 		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
-		
+
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
-		
+
 		iu = getIU(metadata, "toolingorg.eclipse.equinox.simpleconfigurator");
-		assertTouchpoint(iu, "configure",  "setStartLevel(startLevel:1);markStarted(started:true);");
+		assertTouchpoint(iu, "configure", "setStartLevel(startLevel:1);markStarted(started:true);");
 		assertFalse(buildFolder.getFile("tmp/eclipse/eclipse.exe").exists());
 	}
-	
+
 	public void testBug267972() throws Exception {
 		IFolder buildFolder = newTest("267972");
 		File delta = Utils.findDeltaPack();
@@ -818,7 +817,7 @@ public class PublishingTests extends P2TestCase {
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("org.eclipse.pde.build.append.startlevels", "false");
 		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("configs", "win32,win32,x86");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
@@ -842,32 +841,32 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 		IInstallableUnit iu = getIU(metadata, "rcp.product");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
-		
+
 		iu = null;
 		try {
 			//don't want to find this
-			iu = getIU(metadata, "toolingorg.eclipse.equinox.common");	
+			iu = getIU(metadata, "toolingorg.eclipse.equinox.common");
 		} catch (AssertionFailedError e) {
 		}
 		assertNull(iu);
-		
+
 		//bug 271141
 		assertFalse(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86.zip").exists());
 		assertFalse(buildFolder.getFolder("finalRepo").exists());
 	}
-	
+
 	public void testBug266488() throws Exception {
 		IFolder buildFolder = newTest("266488");
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/e");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
 		IFolder e = Utils.createFolder(buildFolder, "features/e");
-		
+
 		Utils.generateFeature(buildFolder, "f", new String[] {"e", "e.source"}, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@e.source", "e");
 		properties.put("individualSourceBundles", "true");
 		Utils.storeBuildProperties(f, properties);
-		
+
 		Utils.generateFeature(buildFolder, "e", null, new String[] {"e"});
 		Utils.writeBuffer(e.getFile("sourceTemplatePlugin/license.html"), new StringBuffer("important stuff!\n"));
 
@@ -875,7 +874,7 @@ public class PublishingTests extends P2TestCase {
 		properties = new Properties();
 		properties.put("bin.includes", "META-INF/, .");
 		Utils.storeBuildProperties(bundle, properties);
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("p2.gathering", "true");
@@ -883,51 +882,69 @@ public class PublishingTests extends P2TestCase {
 		properties.put("skipMirroring", "true"); //bug 271114
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		assertFalse(buildFolder.getFolder("tmp/eclipse").exists());
-		
+
 		properties.remove("skipMirroring");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/plugins/e.source_1.0.0.jar"));
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/plugins/e_1.0.0.jar"));
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/features/e.source_1.0.0.jar"));
-		
+
 		Set entries = new HashSet();
 		entries.add("license.html");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/e.source_1.0.0.jar", entries);
 	}
-	
+
 	public void testPublishFeature_Bug270882() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_Bug270882");
-		
+
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
-		
+
 		IFile licenseFile = f.getFile("license.html");
 		Utils.writeBuffer(licenseFile, new StringBuffer("important stuff!\n"));
-		
+
 		Utils.generateFeature(buildFolder, "f", null, null);
 		Properties properties = new Properties();
 		properties.put("root", "absolute:file:" + licenseFile.getLocation().toOSString());
 		Utils.storeBuildProperties(f, properties);
-	
+
+		//bug 270894
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<site>																					\n");
+		buffer.append("   <feature url=\"features/f_1.0.0.qualifier.jar\" id=\"f\" version=\"1.0.0.qualifier\">	\n");
+		buffer.append("      <category name=\"new_category_1\"/>												\n");
+		buffer.append("   </feature>																			\n");
+		buffer.append("   <category-def name=\"new_category_1\" label=\"New Category 1\"/>						\n");
+		buffer.append("</site>																					\n");
+		IFile siteXML = buildFolder.getFile("site.xml");
+		Utils.writeBuffer(siteXML, buffer);
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("p2.gathering", "true");
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("archivesFormat", "group,group,group-folder");
+		properties.put("p2.category.site", "file:" + siteXML.getLocation().toOSString());
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		Set entries = new HashSet();
 		entries.add("license.html");
-		assertZipContents(buildFolder, "buildRepo/binary/f_root_1.0.0", entries);
+		assertZipContents(buildFolder, "tmp/eclipse/binary/f_root_1.0.0", entries);
+
+		IFolder repo = buildFolder.getFolder("tmp/eclipse");
+		URI repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
+		IMetadataRepository metadata = loadMetadataRepository(repoURI);
+
+		assertNotNull(getIU(metadata, "new_category_1"));
 	}
-	
+
 	public void testBug264743_PublishExecutable() throws Exception {
 		IFolder buildFolder = newTest("264743").getFolder("build1");
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "org.eclipse.equinox.executable");
 		properties.put("p2.gathering", "true");
@@ -937,7 +954,7 @@ public class PublishingTests extends P2TestCase {
 		properties.put("elementPath", "${buildDirectory}/features/ee");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		IFolder repo = buildFolder.getFolder("tmp/eclipse");
 		URI repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
@@ -951,10 +968,10 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "tmp/eclipse/features/org.eclipse.equinox.executable_3.3.200.jar", entries);
 
 		IFolder build2 = Utils.createFolder(buildFolder, "../build2");
-		
+
 		IFile productFile = build2.getFile("rcp.product");
 		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"}, false);
-		
+
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("configs", "win32,win32,x86 & linux,gtk,x86");
 		properties.put("product", productFile.getLocation().toOSString());
@@ -969,7 +986,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(build2, properties);
 
 		runProductBuild(build2);
-		
+
 		repo = build2.getFolder("buildRepo");
 		repoURI = URIUtil.fromString("file:" + repo.getLocation().toOSString());
 		metadata = loadMetadataRepository(repoURI);
@@ -977,7 +994,7 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.win32.win32.x86");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.gtk.linux.x86");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
-		
+
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.win32.win32.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.gtk.linux.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.carbon.macosx.ppc_3.3.200");

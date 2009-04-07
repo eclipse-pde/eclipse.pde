@@ -171,7 +171,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_P2_MIRROR_METADATA_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
 		script.printProperty(PROPERTY_P2_MIRROR_ARTIFACT_DEST, "file:" + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE)); //$NON-NLS-1$
-		if (features.length + plugins.length > 0 || productFile != null) {
+		if (features.length + plugins.length + rootFileProviders.size() > 0 || productFile != null) {
 			script.printTab();
 			script.print("<p2.mirror "); //$NON-NLS-1$
 			script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
@@ -209,10 +209,21 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			for (int i = 0; i < features.length; i++) {
 				BuildTimeFeature feature = features[i];
 				script.printTab();
-				script.print("\t<iu "); //$NON-NLS-1$
+				script.print("\t<iu"); //$NON-NLS-1$
 				script.printAttribute(ID, getFeatureGroupId(feature), true);
 				script.printAttribute(VERSION, feature.getVersion(), true);
 				script.println("/>"); //$NON-NLS-1$
+			}
+
+			for (Iterator iterator = rootFileProviders.iterator(); iterator.hasNext();) {
+				BuildTimeFeature rootProvider = (BuildTimeFeature) iterator.next();
+				if (!(havePDEUIState() && rootProvider.getId().equals("org.eclipse.pde.container.feature"))) { //$NON-NLS-1$
+					script.printTab();
+					script.print("\t<iu"); //$NON-NLS-1$
+					script.printAttribute(ID, getFeatureGroupId(rootProvider), true);
+					script.printAttribute(VERSION, rootProvider.getVersion(), true);
+					script.println("/>"); //$NON-NLS-1$
+				}
 			}
 			if (productFile != null) {
 				script.printTab();
@@ -221,6 +232,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.printAttribute(VERSION, getReplacedProductVersion(), true);
 				script.println("/>"); //$NON-NLS-1$
 			}
+			//categories
+			script.printTab();
+			script.println("<iu query=\"property[@name='org.eclipse.equinox.p2.type.category']\" required=\"false\" />"); //$NON-NLS-1$
 			script.println("</p2.mirror>"); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
