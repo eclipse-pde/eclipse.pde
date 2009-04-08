@@ -757,7 +757,22 @@ public class PublishingTests extends P2TestCase {
 		properties.put("transformedRepoLocation", build2.getFolder("trans formed").getLocation().toOSString());
 		Utils.storeBuildProperties(build2, properties);
 
+		//bug 269122
+		StringBuffer customBuffer = new StringBuffer();
+		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/customTargets.xml\"/>	\n");
+		customBuffer.append("   <target name=\"preProcessRepos\">													\n");
+		customBuffer.append("      <echo message=\"pre Process Repos!\" />											\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("   <target name=\"postProcessRepos\">													\n");
+		customBuffer.append("      <echo message=\"post Process Repos!\" />											\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("</project>																				\n");
+		Utils.writeBuffer(build2.getFile("customTargets.xml"), customBuffer);
+
 		runBuild(build2);
+
+		assertLogContainsLines(build2.getFile("log.log"), new String[] {"pre Process Repos!", "post Process Repos!"});
 
 		//reusing the metadata from part 1
 		uri = URIUtil.fromString("file:" + build2.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());

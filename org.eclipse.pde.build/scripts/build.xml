@@ -48,11 +48,15 @@
 <!-- are in a format against which PDE Build can succesfully build   -->
 <!-- ===================================================================== -->
 <target name="processRepos" if="repoBaseLocation">
-	<subant antfile="${customTargets}" target="preProcessRepos" failonerror="false" inheritAll="true" buildpath="."/>
+	<subant target="preProcessRepos" failonerror="false" inheritAll="true" >
+		<fileset file="${customTargets}" />
+	</subant>
 	<ant antfile="${customTargets}" target="allElements">
 		<property name="target" value="transformRepos" />
 	</ant>
-	<subant antfile="${customTargets}" target="postProcessRepos" failonerror="false" inheritAll="true" buildpath="."/>
+	<subant target="postProcessRepos" failonerror="false" inheritAll="true" >
+		<fileset file="${customTargets}" />
+	</subant>
 </target>
 
 <!-- ===================================================================== -->
