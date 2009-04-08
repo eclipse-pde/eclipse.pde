@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -266,7 +266,11 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		}
 
 		if (throwsException) {
-			String message = NLS.bind(Messages.exception_missingFeature, featureId);
+			String message = null;
+			if (range.equals(VersionRange.emptyRange))
+				message = NLS.bind(Messages.exception_missingFeature, featureId);
+			else
+				message = NLS.bind(Messages.exception_missingFeatureInRange, featureId, range);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 		}
 

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2005, 2009 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -42,6 +42,7 @@ public class Messages extends NLS {
 	// exception
 	public static String exception_missingElement;
 	public static String exception_missingFeature;
+	public static String exception_missingFeatureInRange;
 	public static String exception_missingFile;
 	public static String exception_missingPlugin;
 	public static String exception_unresolvedPlugin;
