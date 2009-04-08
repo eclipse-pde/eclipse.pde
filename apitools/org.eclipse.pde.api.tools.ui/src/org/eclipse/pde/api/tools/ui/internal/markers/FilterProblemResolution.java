@@ -10,19 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaElementLabels;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -31,11 +35,12 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.0
  */
-public class FilterProblemResolution implements IMarkerResolution2 {
+public class FilterProblemResolution extends WorkbenchMarkerResolution {
 
 	protected IMarker fBackingMarker = null;
 	protected IJavaElement fResolvedElement = null;
 	protected String fCategory = null;
+	boolean plural = false;
 	
 	/**
 	 * Constructor
@@ -72,13 +77,18 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
 	public String getLabel() {
-		IJavaElement element = resolveElementFromMarker();
-		if(element != null) {
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES), resolveCategoryName()});
+		if(plural) {
+			return MarkerMessages.FilterProblemResolution_create_filters_for_problems;
 		}
 		else {
-			IResource res = fBackingMarker.getResource();
-			return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment(), resolveCategoryName()});
+			IJavaElement element = resolveElementFromMarker();
+			if(element != null) {
+				return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES), resolveCategoryName()});
+			}
+			else {
+				IResource res = fBackingMarker.getResource();
+				return MessageFormat.format(MarkerMessages.FilterProblemResolution_0, new String[] {res.getFullPath().removeFileExtension().lastSegment(), resolveCategoryName()});
+			}
 		}
 	}
 	
@@ -141,11 +151,35 @@ public class FilterProblemResolution implements IMarkerResolution2 {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse.core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void run(IMarker[] markers, IProgressMonitor monitor) {
+		CreateApiFilterOperation op = new CreateApiFilterOperation(markers);
+		op.setSystem(true);
+		op.schedule();
+		super.run(markers, monitor);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
 	public void run(IMarker marker) {
-		CreateApiFilterOperation op = new CreateApiFilterOperation(fBackingMarker);
-		op.setSystem(true);
-		op.schedule();
+		//do nothing, work done in #run(IMarker[], IProgressMonitor)
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#findOtherMarkers(org.eclipse.core.resources.IMarker[])
+	 */
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+		HashSet mset = new HashSet(markers.length);
+		for (int i = 0; i < markers.length; i++) {
+			if(Util.isApiProblemMarker(markers[i]) &&
+					!fBackingMarker.equals(markers[i])) {
+				mset.add(markers[i]);
+			}
+		}
+		int size = mset.size();
+		plural = size > 0;
+		return (IMarker[]) mset.toArray(new IMarker[size]);
 	}
 }

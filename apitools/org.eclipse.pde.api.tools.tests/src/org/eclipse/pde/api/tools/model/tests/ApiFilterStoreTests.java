@@ -230,7 +230,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 			IApiFilterStore store;
 			store = component.getFilterStore();
-			store.addFilters(new IApiProblem[] {problem});
+			store.addFiltersFor(new IApiProblem[] {problem});
 			assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem));
 			store.removeFilters(new IApiProblemFilter[] {component.newProblemFilter(problem)});
 			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem));

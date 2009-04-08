@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public interface IApiFilterStore {
 	 * 
 	 * @param problems problems to create a filter for and add to this store
 	 */
-	public void addFilters(IApiProblem[] problems);
+	public void addFiltersFor(IApiProblem[] problems);
 	
 	/**
 	 * Returns all filters for the specified project relative resource

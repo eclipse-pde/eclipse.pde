@@ -84,7 +84,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			this.initialize(filtersRoot, componentID);
 		}
 
-		public void addFilters(IApiProblem[] problems) {
+		public void addFiltersFor(IApiProblem[] problems) {
 			// do nothing
 		}
 

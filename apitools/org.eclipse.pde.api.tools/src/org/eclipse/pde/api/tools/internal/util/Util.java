@@ -1205,6 +1205,17 @@ public final class Util {
 	}
 	
 	/**
+	 * Returns if the given {@link IMarker} is representing an {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
+	 * or not
+	 * @param marker the marker to check
+	 * @return true if the marker is for an {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem} false otherwise
+	 * @throws CoreException
+	 */
+	public static boolean isApiProblemMarker(IMarker marker) {
+		return marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) > 0;
+	}
+	
+	/**
 	 * Returns a reference type for the given fully qualified type name.
 	 * 
 	 * @param fullyQualifiedName type name

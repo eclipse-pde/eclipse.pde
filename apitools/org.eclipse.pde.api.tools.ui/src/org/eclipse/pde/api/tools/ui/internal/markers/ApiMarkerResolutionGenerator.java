@@ -27,6 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
@@ -90,7 +91,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				IApiProblemFilter filter = resolveFilter(marker);
 				if(filter != null) {
 					return new IMarkerResolution[] {
-							new RemoveFilterProblemResolution(filter),
+							new RemoveFilterProblemResolution(filter, marker),
 							new OpenPropertyPageResolution(
 									MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters,
 									IApiToolsConstants.ID_FILTERS_PROP_PAGE,
@@ -112,7 +113,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 * resolves the {@link IApiProblemFilter} for the given marker
 	 * @param marker
 	 */
-	private IApiProblemFilter resolveFilter(IMarker marker) {
+	static IApiProblemFilter resolveFilter(IMarker marker) {
 		try {
 			String filterhandle = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, null);
 			String[] values = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
@@ -139,11 +140,11 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	}
 	
 	/**
-	 * Computes the hashcode of the {@link IApiProblem} from the api filter handle
+	 * Computes the hash code of the {@link IApiProblem} from the api filter handle
 	 * @param filterhandle
-	 * @return the hashcode of the {@link IApiProblem} that the given filter handle is for
+	 * @return the hash code of the {@link IApiProblem} that the given filter handle is for
 	 */
-	private int computeProblemHashcode(String filterhandle) {
+	private static int computeProblemHashcode(String filterhandle) {
 		if(filterhandle == null) {
 			return -1;
 		}
@@ -164,7 +165,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		return hashcode;
 	}
 	
-	private String[] splitHandle(String messageArguments, String delimiter) {
+	private static String[] splitHandle(String messageArguments, String delimiter) {
 		List matches = null;
 		char[] argumentsChars = messageArguments.toCharArray();
 		char[] delimiterChars = delimiter.toCharArray();
@@ -221,7 +222,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 * @param arguments
 	 * @return the hash code of the message arguments
 	 */
-	private int argumentsHashcode(String[] arguments) {
+	private static int argumentsHashcode(String[] arguments) {
 		if(arguments == null) {
 			return 0;
 		}
@@ -236,6 +237,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public boolean hasResolutions(IMarker marker) {
-		return marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) > 0;
+		return Util.isApiProblemMarker(marker);
 	}
 }

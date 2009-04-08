@@ -311,7 +311,7 @@ public class IncrementalApiBuilder {
 			typeName = typeName.substring(0, memberIndex);
 		}
 		if (this.typenames.add(typeName) && this.packages.add(packageName) && ApiAnalysisBuilder.DEBUG) {
-			System.out.println("  will look for dependents of " + typeName + " in " + packageName); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("  will look for dependents of " + typeName + " in " + packageName);  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

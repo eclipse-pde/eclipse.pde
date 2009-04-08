@@ -229,7 +229,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFilters(org.eclipse.pde.api.tools.internal.provisional.IApiProblem[])
 	 */
-	public synchronized void addFilters(IApiProblem[] problems) {
+	public synchronized void addFiltersFor(IApiProblem[] problems) {
 		if(problems == null) {
 			if(DEBUG) {
 				System.out.println("null problems array: not addding filters"); //$NON-NLS-1$

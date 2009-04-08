@@ -11,6 +11,10 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -42,7 +46,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class CreateApiFilterOperation extends UIJob {
 
-	private IMarker fBackingMarker = null;
+	private IMarker[] fMarkers = null;
 	
 	/**
 	 * Constructor
@@ -51,9 +55,9 @@ public class CreateApiFilterOperation extends UIJob {
 	 * 
 	 * @see IApiProblemFilter#getKinds()
 	 */
-	public CreateApiFilterOperation(IMarker marker) {
+	public CreateApiFilterOperation(IMarker[] markers) {
 		super(MarkerMessages.CreateApiFilterOperation_0);
-		fBackingMarker = marker;
+		fMarkers = markers;
 	}
 
 	/* (non-Javadoc)
@@ -61,30 +65,56 @@ public class CreateApiFilterOperation extends UIJob {
 	 */
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		try {
-			IResource resource = fBackingMarker.getResource();
-			IProject project = resource.getProject();
-			if(project == null) {
-				return Status.CANCEL_STATUS;
+			HashMap map = new HashMap(fMarkers.length);
+			IResource resource = null;
+			IProject project = null;
+			
+			IMarker marker = null;
+			IApiProblem problem = null;
+			HashSet problems = null;
+			for (int i = 0; i < fMarkers.length; i++) {
+				marker = fMarkers[i];
+				resource = marker.getResource();
+				project = resource.getProject();
+				if(project == null) {
+					return Status.CANCEL_STATUS;
+				}
+				problems = (HashSet) map.get(project);
+				if(problems == null) {
+					problems = new HashSet();
+					map.put(project, problems);
+				}
+				String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
+				problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+						typeNameFromMarker,
+						getMessageArgumentsFromMarker(marker), 
+						null,
+						null,
+						marker.getAttribute(IMarker.LINE_NUMBER, -1), 
+						marker.getAttribute(IMarker.CHAR_START, -1),
+						marker.getAttribute(IMarker.CHAR_END, -1), 
+						marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
+				problems.add(problem);
+				Util.touchCorrespondingResource(project, resource, typeNameFromMarker);
+				
 			}
-			IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
-			if(component == null) {
-				return Status.CANCEL_STATUS;
+			IApiComponent component = null;
+			Set pjs = map.keySet();
+			for (Iterator iter = pjs.iterator(); iter.hasNext();) {
+				project = (IProject) iter.next();
+				component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
+				if(component == null) {
+					return Status.CANCEL_STATUS;
+				}
+				IApiFilterStore store = component.getFilterStore();
+				problems = (HashSet) map.get(project);
+				if(problems == null) {
+					continue;
+				}
+				store.addFiltersFor((IApiProblem[]) problems.toArray(new IApiProblem[problems.size()]));
 			}
-			IApiFilterStore store = component.getFilterStore();
-			String typeNameFromMarker = Util.getTypeNameFromMarker(fBackingMarker);
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
-					typeNameFromMarker,
-					getMessageArgumentsFromMarker(), 
-					null,
-					null,
-					fBackingMarker.getAttribute(IMarker.LINE_NUMBER, -1), 
-					fBackingMarker.getAttribute(IMarker.CHAR_START, -1),
-					fBackingMarker.getAttribute(IMarker.CHAR_END, -1), 
-					fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
-			store.addFilters(new IApiProblem[] {problem});
-			Util.touchCorrespondingResource(project, resource, typeNameFromMarker);
 			if(!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				Util.getBuildJob(new IProject[] {resource.getProject()}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
+				Util.getBuildJob((IProject[]) pjs.toArray(new IProject[pjs.size()]), IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			}
 			return Status.OK_STATUS;
 		}
@@ -97,9 +127,9 @@ public class CreateApiFilterOperation extends UIJob {
 	/**
 	 * @return the listing of message arguments from the marker.
 	 */
-	private String[] getMessageArgumentsFromMarker() {
+	private String[] getMessageArgumentsFromMarker(IMarker marker) {
 		ArrayList args = new ArrayList();
-		String arguments = fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS, null);
+		String arguments = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS, null);
 		if(arguments != null) {
 			return arguments.split("#"); //$NON-NLS-1$
 		}
