@@ -723,60 +723,26 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			Set unused = new HashSet();
 			Set set = null;
 			if(resource != null) {
-				// incremental build
+				// add any unused filters for the resource
 				set = (Set) fUnusedFilters.get(resource);
-				if (!Util.isManifest(resource.getProjectRelativePath())) {
-					if(set != null) {
-						unused.addAll(set);
-					}
-					IProject project = resource.getProject();
-					if (project != null) {
-						IResource manifestFile = project.findMember(Util.MANIFEST_PROJECT_RELATIVE_PATH);
-						if (manifestFile != null) {
-							set = (Set) fUnusedFilters.get(manifestFile);
-							if (set != null) {
-								for (Iterator iterator = set.iterator(); iterator.hasNext();) {
-									ApiProblemFilter filter = (ApiProblemFilter) iterator.next();
-									IApiProblem underlyingProblem = filter.getUnderlyingProblem();
-									if (underlyingProblem != null) {
-										String underlyingTypeName = underlyingProblem.getTypeName();
-										if (underlyingTypeName != null && (typeName == null || underlyingProblem.equals(typeName))) {
-											unused.add(filter);
-										}
-									}
-								}
-							}
+				if (set != null) {
+					collectFilterFor(set, typeName, unused);
+				}
+				if(Util.isManifest(resource.getProjectRelativePath())) {
+					//we need to add any filters that are cached for resources
+					//that no longer exist - deleted types
+					//deleted types are only ever passed in with the manifest associated with them
+					IResource res = null;
+					for (Iterator iter = fUnusedFilters.keySet().iterator(); iter.hasNext();) {
+						res = (IResource) iter.next();
+						if(res.exists()) {
+							continue;
 						}
-					}
-				} else if (set != null) {
-					for (Iterator iterator = set.iterator(); iterator.hasNext();) {
-						ApiProblemFilter filter = (ApiProblemFilter) iterator.next();
-						IApiProblem underlyingProblem = filter.getUnderlyingProblem();
-						if (underlyingProblem != null) {
-							String underlyingTypeName = underlyingProblem.getTypeName();
-							if (underlyingTypeName != null && (typeName == null || underlyingTypeName.equals(typeName))) {
-								unused.add(filter);
-							}
+						if(!res.getProject().equals(resource.getProject())) {
+							continue;
 						}
-					}
-				} else {
-					/*
-					 * This is the manifest file and no filters have been found for the corresponding type name - incremental build case
-					 * This might correspond to a case where a type contained some filtered problem and the type has been removed
-					 */
-					Collection values = fUnusedFilters.values();
-					for (Iterator iterator = values.iterator(); iterator.hasNext();) {
-						Set allFilters = (Set) iterator.next();
-						for (Iterator iterator2 = allFilters.iterator(); iterator2.hasNext();) {
-							ApiProblemFilter filter = (ApiProblemFilter) iterator2.next();
-							IApiProblem underlyingProblem = filter.getUnderlyingProblem();
-							if (underlyingProblem != null) {
-								String underlyingTypeName = underlyingProblem.getTypeName();
-								if (underlyingTypeName != null && (typeName == null || underlyingTypeName.equals(typeName))) {
-									unused.add(filter);
-								}
-							}
-						}
+						set = (Set)fUnusedFilters.get(res);
+						collectFilterFor(set, typeName, unused);
 					}
 				}
 			}
@@ -795,6 +761,19 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return (IApiProblemFilter[]) unused.toArray(new IApiProblemFilter[size]);
 		}
 		return NO_FILTERS;
+	}
+	
+	private void collectFilterFor(Set filters, String typename, Set collector) {
+		for (Iterator iter = filters.iterator(); iter.hasNext();) {
+			ApiProblemFilter filter = (ApiProblemFilter) iter.next();
+			IApiProblem underlyingProblem = filter.getUnderlyingProblem();
+			if (underlyingProblem != null) {
+				String underlyingTypeName = underlyingProblem.getTypeName();
+				if (underlyingTypeName != null && (typename == null || underlyingTypeName.equals(typename))) {
+					collector.add(filter);
+				}
+			}
+		}
 	}
 	
 	/* (non-Javadoc)

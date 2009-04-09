@@ -81,7 +81,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			throws CoreException {
 		IApiMember member = reference.getMember();
 		String eeValue = ProfileModifiers.getName(((Integer) this.referenceEEs.get(reference)).intValue());
-		String simpleTypeName = Util.getSimpleTypeName(reference.getReferencedTypeName());
+		String simpleTypeName = Signatures.getSimpleTypeName(reference.getReferencedTypeName());
 		if (simpleTypeName.indexOf('$') != -1) {
 			simpleTypeName = simpleTypeName.replace('$', '.');
 		}
@@ -256,7 +256,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					String qname = reference.getReferencedTypeName().replace('$', '.');
 					int first = line.indexOf(qname);
 					if(first < 0) {
-						qname = Util.getSimpleTypeName(reference.getReferencedTypeName());
+						qname = Signatures.getSimpleTypeName(reference.getReferencedTypeName());
 						qname = qname.replace('$', '.');
 						first = line.indexOf(qname);
 					}
@@ -309,7 +309,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					String referenceMemberName = reference.getReferencedMemberName();
 					String methodName = null;
 					if (Util.isConstructor(referenceMemberName)) {
-						methodName = Util.getSimpleTypeName(reference.getReferencedTypeName().replace('$', '.'));
+						methodName = Signatures.getSimpleTypeName(reference.getReferencedTypeName().replace('$', '.'));
 					} else {
 						methodName = referenceMemberName;
 					}

@@ -66,6 +66,23 @@ public final class Signatures {
 	}
 	
 	/**
+	 * Strips member type names off the signature and returns the primary type name. Member types are assumed
+	 * to be delimited by the '$' character<br><br>
+	 * For example:<br>
+	 * <code>a.b.c.Type$Member -&gt; a.b.c.Type</code><br>
+	 * <code>x.y.z.Type -&gt; x.y.z.Type</code><br>
+	 * @param typename the type name to process
+	 * @return the primary type name stripped off of the given type name
+	 */
+	public static String getPrimaryTypeName(String typename) {
+		int idx = typename.indexOf('$');
+		if(idx > -1){
+			return typename.substring(0, idx);
+		}
+		return typename;
+	}
+	
+	/**
 	 * Returns the signature to use to display this {@link IApiMethod}.
 	 * This method will load the enclosing type in the event the method is a constructor.
 	 * @param method
@@ -614,5 +631,21 @@ public final class Signatures {
 	static boolean isInTopLevelType(final MethodDeclaration method) {
 		AbstractTypeDeclaration type = (AbstractTypeDeclaration) method.getParent();
 		return type != null && type.isPackageMemberTypeDeclaration();
+	}
+
+	/**
+	 * Returns the type name with any package qualification removed.<br><br>
+	 * For example:<br>
+	 * <code>a.b.c.Type -&gt; Type</code><br>
+	 * <code>a.b.c.Type$Member -&gt; Type$Member</code>
+	 * @param referencedTypeName
+	 * @return the type name with package qualification removed
+	 */
+	public static String getSimpleTypeName(String referencedTypeName) {
+		int index = referencedTypeName.lastIndexOf('.');
+		if (index == -1) {
+			return referencedTypeName;
+		}
+		return referencedTypeName.substring(index + 1);
 	}
 }

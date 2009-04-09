@@ -2007,17 +2007,7 @@ public final class Util {
 	public static boolean isConstructor(String referenceMemberName) {
 		return Arrays.equals(ConstantPool.Init, referenceMemberName.toCharArray());
 	}
-
-	public static String getSimpleTypeName(String referencedTypeName) {
-		int index = referencedTypeName.lastIndexOf('.');
-		if (index == -1) return referencedTypeName;
-		return referencedTypeName.substring(index + 1);
-	}
-	public static String getPackageName(String referencedTypeName) {
-		int index = referencedTypeName.lastIndexOf('.');
-		if (index <= 0) return referencedTypeName;
-		return referencedTypeName.substring(0, index);
-	}
+	
 	public static boolean isManifest(IPath path) {
 		return MANIFEST_PROJECT_RELATIVE_PATH.equals(path);
 	}
@@ -2085,6 +2075,13 @@ public final class Util {
 		return null;
 	}
 
+	/**
+	 * Returns the {@link IResource} to create markers on when building. If the {@link IType} is <code>null</code>
+	 * or the type cannot be located (does not exist) than the MANIFEST.MF will be returned.
+	 * @param project the project to look in for the {@link IResource}
+	 * @param type the type we are looking for the resource for, or <code>null</code>
+	 * @return the {@link IResource} associated with the given {@link IType} or the MANIFEST.MF file
+	 */
 	public static IResource getResource(IProject project, IType type) {
 		IResource resource = null;
 		try {

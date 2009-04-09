@@ -284,4 +284,22 @@ public class SignaturesTests extends TestCase {
 		field = type.addField("f1", "f1", null, Flags.AccPublic, null);
 		assertEquals("Wrong field signature returned", Signatures.getQualifiedFieldSignature(field), "x.y.z.Parent4.inner<T, E>.f1");
 	}
+	
+	/**
+	 * Tests the {@link Signatures#getPrimaryTypeName(String)} method
+	 */
+	public void testGetPrimaryTypeName() {
+		assertEquals("the type name x.y.z should have been returned", "x.y.z.Type", Signatures.getPrimaryTypeName("x.y.z.Type$Member"));
+		assertEquals("the type name x.y.z should have been returned", "x.y.z.Type", Signatures.getPrimaryTypeName("x.y.z.Type"));
+		assertEquals("the type name x.y.z should have been returned", "x.y.z.Type", Signatures.getPrimaryTypeName("x.y.z.Type$Member$Member"));
+	}
+	
+	/**
+	 * Tests the {@link Signatures#getSimpleTypeName(String)} method
+	 */
+	public void testGetSimpleTypeName() {
+		assertEquals("the type name Type should have been returned", "Type", Signatures.getSimpleTypeName("a.b.c.Type"));
+		assertEquals("the type name Type$Member should have been returned", "Type$Member", Signatures.getSimpleTypeName("a.b.c.Type$Member"));
+		assertEquals("the type name Type should have been returned", "Type", Signatures.getSimpleTypeName("Type"));
+	}
 }

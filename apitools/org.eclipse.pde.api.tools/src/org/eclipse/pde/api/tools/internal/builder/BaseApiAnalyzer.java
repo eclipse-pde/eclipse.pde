@@ -89,6 +89,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Constants;
@@ -296,7 +297,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					typeNamesSet = new HashSet();
 					for (int i = 0; i < typenames.length; i++) {
 						typeNamesSet.add(typenames[i]);
-						resource = Util.getResource(project, fJavaProject.findType(typenames[i]));
+						resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(typenames[i])));
 						if(resource != null) {
 							createUnusedApiFilterProblems(store.getUnusedFilters(resource, typenames[i]));
 						}
@@ -306,7 +307,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					// check the ones not already checked as part of type names check
 					for (int i = 0; i < changedTypes.length; i++) {
 						if (typeNamesSet == null || !typeNamesSet.remove(changedTypes[i])) {
-							resource = Util.getResource(project, fJavaProject.findType(changedTypes[i]));
+							resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(changedTypes[i])));
 							if(resource != null) {
 								createUnusedApiFilterProblems(store.getUnusedFilters(resource, changedTypes[i]));
 							}
@@ -843,7 +844,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		IDelta delta = null;
 		IApiComponent provider = null;
 		if (classFile == null) {
-			String packageName = Util.getPackageName(typeName);
+			String packageName = Signatures.getPackageName(typeName);
 			// check if the type is provided by a required component (it could have been moved/re-exported)
 			IApiComponent[] providers = component.getBaseline().resolvePackage(component, packageName);
 			int index = 0;
@@ -1321,7 +1322,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									typeRoot = component.findTypeRoot(typeName, id);
 								}
 								if (typeRoot == null) {
-									String packageName = Util.getPackageName(typeName);
+									String packageName = Signatures.getPackageName(typeName);
 									// check if the type is provided by a required component (it could have been moved/re-exported)
 									IApiComponent[] providers = component.getBaseline().resolvePackage(component, packageName);
 									int index = 0;
