@@ -52,6 +52,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	private String[] fTargetIds;
 	private Button fPreviewButton;
 	private String templateTargetId;
+	private ITargetDefinition[] fTargetDefs = new ITargetDefinition[4];
 
 	public TargetCreationPage(String pageName) {
 		super(pageName);
@@ -261,7 +262,12 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#getNextPage()
 	 */
 	public IWizardPage getNextPage() {
-		ITargetDefinition target = createTarget(getInitializationOption());
+		ITargetDefinition target = null;
+		int option = getInitializationOption();
+		if (fTargetDefs[option] == null) {
+			fTargetDefs[option] = createTarget(option);
+		}
+		target = fTargetDefs[option];
 		if (target != null) {
 			((NewTargetDefinitionWizard2) getWizard()).setTargetDefinition(target);
 			((EditTargetNode) getSelectedNode()).setTargetDefinition(target);
