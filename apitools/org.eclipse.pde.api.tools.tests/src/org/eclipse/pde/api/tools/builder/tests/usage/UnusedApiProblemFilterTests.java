@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -21,6 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
 
 /**
  * Tests that unused {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}s
@@ -32,6 +34,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	private static final String AFTER = "after";
 	
 	private IPath fRootPath = super.getTestSourcePath().append("filters");
+	private IPath fFiltersPath = new Path("/usagetests/.settings/.api_filters");
 	
 	/**
 	 * Constructor
@@ -153,9 +156,18 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	protected void deployTest(IPath beforepath, IPath afterpath, IPath filterpath, IPath updatepath, boolean inc) throws Exception {
 		try {
 			getEnv().setAutoBuilding(false);
-			createWorkspaceFile(new Path("/usagetests/.settings/.api_filters"), filterpath);
+			
 			//add the source
 			createWorkspaceFile(updatepath, beforepath);
+			
+			//touch the filter store to ensure it is listening...
+			ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent("usagetests").getFilterStore();
+			//wait for the event
+			ResourceEventWaiter waiter = new ResourceEventWaiter(fFiltersPath, IResourceDelta.CHANGED, 0);
+			createWorkspaceFile(fFiltersPath, filterpath);
+			Object event = waiter.waitForEvent();
+			assertNotNull("the resource changed event for the filter file was not recieved", event);
+			
 			fullBuild();
 			expectingNoJDTProblems();
 			//update the source
@@ -209,7 +221,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 				inc);
 	}
 	
-	/*public void testUnusedFilter2F() throws Exception {
+	public void testUnusedFilter2F() throws Exception {
 		x2(false);
 	}
 	
@@ -217,11 +229,11 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		x2(true);
 	}
 	
-	*//**
+	/**
 	 * Tests that there is no problem reported for a compilation unit that has been deleted, which has an api 
 	 * problem filter
 	 * @param inc
-	 *//*
+	 */
 	void x2(boolean inc) throws Exception {
 		String testname = "test2";
 		String sourcename = "testUF2.java";
@@ -232,7 +244,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 				getFilterFilePath(testname), 
 				getUpdatePath(sourcename),
 				inc);
-	}*/
+	}
 
 	public void testUnusedFilter3F() throws Exception {
 		x3(false);
