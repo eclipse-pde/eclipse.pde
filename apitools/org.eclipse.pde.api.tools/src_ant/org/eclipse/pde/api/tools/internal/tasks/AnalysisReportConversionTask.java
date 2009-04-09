@@ -72,7 +72,7 @@ public class AnalysisReportConversionTask extends Task {
 			if (IApiXmlConstants.ELEMENT_API_TOOL_REPORT.equals(name)) {
 				String componentID = attributes.getValue(IApiXmlConstants.ATTR_COMPONENT_ID);
 				if (debug) {
-					System.out.println("component id : " + componentID); //$NON-NLS-1$
+					System.out.println("component id : " + String.valueOf(componentID)); //$NON-NLS-1$
 				}
 				this.report = new Report(componentID);
 			} else if (IApiXmlConstants.ATTR_CATEGORY.equals(name)) {
@@ -154,8 +154,8 @@ public class AnalysisReportConversionTask extends Task {
 			return problemsList == null ? 0 : problemsList.size();
 		}
 		
-		public boolean hasNonApiBundles() {
-			return this.nonApiBundles != null && this.nonApiBundles.size() != 0;
+		public boolean isNonApiBundlesReport() {
+			return this.componentID == null;
 		}
 		public void setLink(String link) {
 			this.link = link;
@@ -351,7 +351,7 @@ public class AnalysisReportConversionTask extends Task {
 		try {
 			FileWriter fileWriter = new FileWriter(htmlFile);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			if (report.hasNonApiBundles()) {
+			if (report.isNonApiBundlesReport()) {
 				dumpNonApiBundles(writer, report);
 			} else {
 				dumpHeader(writer, report);
@@ -435,10 +435,10 @@ public class AnalysisReportConversionTask extends Task {
 					parser.parse(file, defaultHandler);
 					Report report = defaultHandler.getReport();
 					dumpReport(file, report);
-					if (!report.hasNonApiBundles()) {
-						summariesList.add(new Summary(report));
-					} else {
+					if (report.isNonApiBundlesReport()) {
 						nonApiBundleSummary = new Summary(report);
+					} else {
+						summariesList.add(new Summary(report));
 					}
 				}
 				// dump index file
