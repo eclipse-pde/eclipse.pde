@@ -113,7 +113,12 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_MIRROR_METADATA_DEST = "p2.mirror.metadata.destination"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_MIRROR_ARTIFACT_DEST = "p2.mirror.artifact.destination"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_PUBLISH_PARTS = "p2.publish.parts"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_PUBLISHONERROR = "p2.publishonerror"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_GROUP_ID = "p2.group.id"; //$NON-NLS-1$
+
+	public static final String PROPERTY_COMPILE_PROBLEM_MARKER = "compilation.problem.marker"; //$NON-NLS-1$
+	public static final String PROPERTY_COMPILE_PROBLEM_MARKER_EXISTS = "compilation.problem.marker.exists"; //$NON-NLS-1$
+	public static final String PROPERTY_COMPILATION_ERROR = "compilation.error.occured"; //$NON-NLS-1$
 
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 

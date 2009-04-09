@@ -24,7 +24,9 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
+import org.eclipse.equinox.internal.provisional.p2.query.Collector;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.Activator;
@@ -1015,5 +1017,36 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.carbon.macosx.ppc_3.3.200");
 		assertResourceFile(repo, "binary/rcp.product_root.gtk.linux.x86_1.0.0");
 		assertResourceFile(repo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
+	}
+
+	public void testBug269972() throws Exception {
+		IFolder buildFolder = newTest("269972");
+		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
+		IFolder b = Utils.createFolder(buildFolder, "plugins/b");
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;unpack=false", "b;unpack=false"});
+
+		Utils.generateBundle(a, "a");
+		Utils.writeBuffer(a.getFile("src/A.java"), new StringBuffer("public class A { int i; ds }"));
+
+		Utils.generateBundle(b, "b");
+		Utils.writeBuffer(b.getFile("src/B.java"), new StringBuffer("public class B { int i; }"));
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("p2.gathering", "true");
+		properties.put("javacFailOnError", "false");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		try {
+			runBuild(buildFolder);
+		} catch (Exception e) {
+			assertTrue(e.getMessage().indexOf("Unable to find: Installable Unit [ id=a version=1.0.0 ]") > -1);
+		}
+
+		URI repoURI = URIUtil.fromString("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		IMetadataRepository metadata = loadMetadataRepository(repoURI);
+		Collector collector = metadata.query(new InstallableUnitQuery("a"), new Collector(), null);
+		assertTrue(collector.size() == 0);
+		getIU(metadata, "b");
 	}
 }

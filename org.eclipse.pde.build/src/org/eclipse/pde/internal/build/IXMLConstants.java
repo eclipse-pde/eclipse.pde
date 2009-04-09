@@ -73,6 +73,7 @@ public interface IXMLConstants {
 	public static final String TARGET_RUN_DIRECTOR_CONDITION = "runDirector.condition"; //$NON-NLS-1$
 	public static final String TARGET_MIRROR_ARCHIVE = "mirrorArchive"; //$NON-NLS-1$
 	public static final String TARGET_MIRROR_PRODUCT = "mirrorProduct"; //$NON-NLS-1$
+	public static final String TARGET_CHECK_COMPILATION_RESULTS = "checkCompilationResults"; //$NON-NLS-1$
 
 	// properties
 	public static final String PROPERTY_ARCH = "arch"; //$NON-NLS-1$

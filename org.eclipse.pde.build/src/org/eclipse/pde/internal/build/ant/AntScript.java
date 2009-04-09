@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -216,7 +216,7 @@ public class AntScript implements IAntScript {
 	public void printAvailableTask(String property, String file) {
 		printTab();
 		output.print("<available"); //$NON-NLS-1$
-		printAttribute("property", property, true); //$NON-NLS-1$
+		printAttribute("property", property, false); //$NON-NLS-1$
 		printAttribute("file", file, false); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
@@ -528,10 +528,15 @@ public class AntScript implements IAntScript {
 	 * @param fileSets the specification for the files to delete
 	 */
 	public void printDeleteTask(String dir, String file, FileSet[] fileSets) {
+		printDeleteTask(dir, file, null, fileSets);
+	}
+
+	public void printDeleteTask(String dir, String file, String quiet, FileSet[] fileSets) {
 		printTab();
 		output.print("<delete"); //$NON-NLS-1$
 		printAttribute("dir", dir, false); //$NON-NLS-1$
 		printAttribute("file", file, false); //$NON-NLS-1$
+		printAttribute("quiet", quiet, false); //$NON-NLS-1$
 		if (fileSets == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {
@@ -622,8 +627,13 @@ public class AntScript implements IAntScript {
 	 * @param message the message to echo to the output
 	 */
 	public void printEchoTask(String message) {
+		printEchoTask(null, message);
+	}
+
+	public void printEchoTask(String file, String message) {
 		printTab();
 		output.print("<echo"); //$NON-NLS-1$
+		printAttribute("file", file, false); //$NON-NLS-1$
 		printAttribute("message", message, true); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
@@ -911,6 +921,18 @@ public class AntScript implements IAntScript {
 	}
 
 	public void printConditionIsSet(String property, String value, String testProperty, String elseValue) {
+		printConditionStart(property, value, elseValue);
+		printIsSet(testProperty);
+		printEndCondition();
+	}
+
+	public void printConditionIsTrue(String property, String value, String testValue) {
+		printConditionStart(property, value, null);
+		printIsTrue(testValue);
+		printEndCondition();
+	}
+
+	public void printConditionStart(String property, String value, String elseValue) {
 		printTab();
 		print("<condition"); //$NON-NLS-1$
 		printAttribute("property", property, true); //$NON-NLS-1$
@@ -918,19 +940,21 @@ public class AntScript implements IAntScript {
 		printAttribute("else", elseValue, false); //$NON-NLS-1$
 		println(">"); //$NON-NLS-1$
 		indent++;
-		println("<isset property=\"" + testProperty + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		indent--;
-		printEndTag("condition"); //$NON-NLS-1$
 	}
 
-	public void printConditionIsTrue(String property, String value, String testValue) {
-		printTab();
-		print("<condition"); //$NON-NLS-1$
-		printAttribute("property", property, true); //$NON-NLS-1$
-		printAttribute("value", value, true); //$NON-NLS-1$
-		println(">"); //$NON-NLS-1$
-		indent++;
+	public void printIsSet(String testProperty) {
+		println("<isset property=\"" + testProperty + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public void printIsTrue(String testValue) {
 		println("<istrue value=\"" + testValue + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public void printIsFalse(String testValue) {
+		println("<isfalse value=\"" + testValue + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public void printEndCondition() {
 		indent--;
 		printEndTag("condition"); //$NON-NLS-1$
 	}

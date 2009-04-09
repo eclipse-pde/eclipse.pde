@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -381,6 +381,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printDeleteTask(null, pluginUpdateJarDestination, null);
 		script.printDeleteTask(null, pluginZipDestination, null);
 		script.printDeleteTask(Utils.getPropertyFormat(IXMLConstants.PROPERTY_TEMP_FOLDER), null, null);
+		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER), TRUE, null);
 
 		if (customBuildCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_CLEAN, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
@@ -578,7 +579,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void generatePublishBinPartsTarget() throws CoreException {
 		script.println();
-		script.printTargetDeclaration(TARGET_PUBLISH_BIN_PARTS, TARGET_INIT, PROPERTY_P2_PUBLISH_PARTS, null, null);
+		script.printTargetDeclaration(TARGET_PUBLISH_BIN_PARTS, TARGET_INIT, PROPERTY_P2_PUBLISH_PARTS, PROPERTY_COMPILE_PROBLEM_MARKER_EXISTS, null);
 		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 		destination = destination.append(fullName);
 		String root = destination.toString();
@@ -888,6 +889,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_BASE_NL, Utils.getPropertyFormat(PROPERTY_NL));
 		script.printProperty(PROPERTY_BUNDLE_ID, model.getSymbolicName());
 		script.printProperty(PROPERTY_BUNDLE_VERSION, model.getVersion().toString());
+		script.printProperty(PROPERTY_P2_PUBLISHONERROR, FALSE);
 		script.println();
 
 		if (customBuildCallbacks != null && !customBuildCallbacks.equals(FALSE)) {
@@ -905,6 +907,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
 		script.printProperty(PROPERTY_PLUGIN_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		script.printConditionIsTrue(PROPERTY_P2_PUBLISH_PARTS, TRUE, Utils.getPropertyFormat(PROPERTY_P2_GATHERING));
+		script.printProperty(PROPERTY_COMPILE_PROBLEM_MARKER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + "compilation.problem"); //$NON-NLS-1$
+
+		script.printConditionStart(PROPERTY_COMPILE_PROBLEM_MARKER_EXISTS, TRUE, null);
+		script.printStartTag("and"); //$NON-NLS-1$
+		script.printAvailableTask(null, Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER));
+		script.printIsFalse(PROPERTY_P2_PUBLISHONERROR);
+		script.printEndTag("and"); //$NON-NLS-1$
+		script.printEndCondition();
+
 		script.printTargetEnd();
 		script.println();
 		script.printTargetDeclaration(TARGET_PROPERTIES, null, PROPERTY_ECLIPSE_RUNNING, null, null);
@@ -1121,6 +1132,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_buildJars, pluginModel.getSymbolicName()));
+		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER), TRUE, null);
+
 		Map params = null;
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
@@ -1135,6 +1148,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_JARS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
+		script.printTargetEnd();
+
+		script.println();
+		script.printTargetDeclaration(TARGET_CHECK_COMPILATION_RESULTS, null, PROPERTY_COMPILATION_ERROR, null, null);
+		script.printEchoTask(Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER), pluginModel.getSymbolicName() + " : " + PROPERTY_COMPILATION_ERROR + "=" + Utils.getPropertyFormat(PROPERTY_COMPILATION_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printTargetEnd();
 
 		script.println();
@@ -1309,10 +1327,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 			javac.setSrcdir(sources);
 			javac.setLogExtension(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
+			javac.setErrorProperty(PROPERTY_COMPILATION_ERROR);
 			generateCompilerSettings(javac, entry, classpath);
 
 			script.print(javac);
 		}
+
+		script.printAntCallTask(TARGET_CHECK_COMPILATION_RESULTS, true, null);
 
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
 		FileSet[] fileSets = new FileSet[sources.length];
