@@ -10,17 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.osgi.service.resolver.State;
+import java.util.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Constants;
@@ -99,7 +90,7 @@ public class DependencyManager {
 	}
 
 	private static String[] getImplicitDependencies() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String dependencies = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		if (dependencies.length() == 0)
 			return new String[0];

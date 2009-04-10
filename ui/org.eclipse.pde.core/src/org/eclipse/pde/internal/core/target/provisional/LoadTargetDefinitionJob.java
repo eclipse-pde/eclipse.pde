@@ -94,7 +94,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
-			Preferences preferences = PDECore.getDefault().getPluginPreferences();
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 			monitor.beginTask(Messages.LoadTargetOperation_mainTaskName, 100);
 
 			loadEnvironment(preferences, new SubProgressMonitor(monitor, 5));
@@ -127,7 +127,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				return Status.CANCEL_STATUS;
 			}
 
-			PDECore.getDefault().savePluginPreferences();
+			PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -141,10 +141,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * Configures program and VM argument preferences based on the target
 	 * definition.
 	 * 
-	 * @param pref preference store
+	 * @param pref preference manager
 	 * @param monitor progress monitor
 	 */
-	private void loadArgs(Preferences pref, IProgressMonitor monitor) {
+	private void loadArgs(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		monitor.beginTask(Messages.LoadTargetOperation_argsTaskName, 2);
 		String args = fTarget.getProgramArguments();
 		pref.setValue(ICoreConstants.PROGRAM_ARGS, (args != null) ? args : ""); //$NON-NLS-1$
@@ -157,10 +157,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	/**
 	 * Configures the environment preferences from the target definition.
 	 * 
-	 * @param pref preference store
+	 * @param pref preference manager
 	 * @param monitor progress monitor
 	 */
-	private void loadEnvironment(Preferences pref, IProgressMonitor monitor) {
+	private void loadEnvironment(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		monitor.beginTask(Messages.LoadTargetOperation_envTaskName, 1);
 		setEnvironmentPref(pref, ICoreConstants.ARCH, fTarget.getArch());
 		setEnvironmentPref(pref, ICoreConstants.NL, fTarget.getNL());
@@ -173,11 +173,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * Sets the given preference to default when <code>null</code> or the
 	 * specified value.
 	 * 
-	 * @param pref preference store
+	 * @param pref preference manager
 	 * @param key preference key
 	 * @param value preference value or <code>null</code>
 	 */
-	private void setEnvironmentPref(Preferences pref, String key, String value) {
+	private void setEnvironmentPref(PDEPreferencesManager pref, String key, String value) {
 		if (value == null) {
 			pref.setToDefault(key);
 		} else {
@@ -191,7 +191,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param pref
 	 * @param monitor
 	 */
-	private void loadJRE(Preferences pref, IProgressMonitor monitor) {
+	private void loadJRE(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		IPath container = fTarget.getJREContainer();
 		monitor.beginTask(Messages.LoadTargetOperation_jreTaskName, 1);
 		if (container != null) {
@@ -215,7 +215,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param pref preference store
 	 * @param monitor progress monitor
 	 */
-	private void loadImplicitPlugins(Preferences pref, IProgressMonitor monitor) {
+	private void loadImplicitPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		BundleInfo[] infos = fTarget.getImplicitDependencies();
 		if (infos != null) {
 			monitor.beginTask(Messages.LoadTargetOperation_implicitPluginsTaskName, infos.length + 1);
@@ -239,7 +239,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void loadPlugins(Preferences pref, IProgressMonitor monitor) throws CoreException {
+	private void loadPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(Messages.LoadTargetOperation_loadPluginsTaskName, 100);
 		String currentPath = pref.getString(ICoreConstants.PLATFORM_PATH);
 		IBundleContainer[] containers = fTarget.getBundleContainers();
@@ -296,7 +296,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * </p>
 	 * @param pref
 	 */
-	private void loadAdditionalPreferences(Preferences pref) throws CoreException {
+	private void loadAdditionalPreferences(PDEPreferencesManager pref) throws CoreException {
 		pref.setValue(ICoreConstants.TARGET_PROFILE, ""); //$NON-NLS-1$
 		String memento = fTarget.getHandle().getMemento();
 		if (fNone) {
@@ -328,7 +328,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		return additional;
 	}
 
-	private void handleReload(String targetLocation, List additionalLocations, Preferences pref, IProgressMonitor monitor) throws CoreException {
+	private void handleReload(String targetLocation, List additionalLocations, PDEPreferencesManager pref, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_reloadTaskName, 100);
 		try {
 			Set included = new HashSet();

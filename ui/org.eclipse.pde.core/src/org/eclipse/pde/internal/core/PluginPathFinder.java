@@ -87,7 +87,7 @@ public class PluginPathFinder {
 
 	public static URL[] getPluginPaths(String platformHome) {
 		// If we don't care about installed bundles, simply scan the location
-		Preferences store = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager store = PDECore.getDefault().getPreferencesManager();
 		if (!store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION))
 			return scanLocations(getSites(platformHome, false));
 

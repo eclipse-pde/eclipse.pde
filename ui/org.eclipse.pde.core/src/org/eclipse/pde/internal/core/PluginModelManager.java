@@ -14,7 +14,8 @@ package org.eclipse.pde.internal.core;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
@@ -435,7 +436,7 @@ public class PluginModelManager implements IModelProviderListener {
 	private synchronized void initDefaultTargetPlatformDefinition() {
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (service != null) {
-			String memento = PDECore.getDefault().getPluginPreferences().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+			String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
 			if (memento.equals("")) { //$NON-NLS-1$
 				// no workspace target handle set, check if any targets are equivalent to current settings
 				ITargetHandle[] targets = service.getTargets(null);
@@ -475,7 +476,7 @@ public class PluginModelManager implements IModelProviderListener {
 						ts.saveTargetDefinition(curr);
 						wsHandle = curr.getHandle();
 					}
-					Preferences preferences = PDECore.getDefault().getPluginPreferences();
+					PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, wsHandle.getMemento());
 				} catch (CoreException e) {
 					PDECore.log(e);

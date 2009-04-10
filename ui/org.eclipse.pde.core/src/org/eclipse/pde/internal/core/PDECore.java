@@ -48,8 +48,17 @@ public class PDECore extends Plugin {
 	private static IPluginModelBase[] registryPlugins;
 	private static PDEExtensionRegistry fExtensionRegistry = null;
 
+	private static PDEPreferencesManager fPrefManager;
+
 	public static PDECore getDefault() {
 		return inst;
+	}
+
+	public PDEPreferencesManager getPreferencesManager() {
+		if (fPrefManager == null) {
+			fPrefManager = new PDEPreferencesManager(PLUGIN_ID);
+		}
+		return fPrefManager;
 	}
 
 	public static IWorkspace getWorkspace() {
@@ -241,7 +250,7 @@ public class PDECore extends Plugin {
 	}
 
 	public void stop(BundleContext context) throws CoreException {
-		PDECore.getDefault().savePluginPreferences();
+		PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 
 		fJavaElementChangeListener.shutdown();
 		fPluginRebuilder.stop();

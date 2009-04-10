@@ -13,15 +13,17 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
-public class ExternalFeatureModelManager implements Preferences.IPropertyChangeListener {
+public class ExternalFeatureModelManager implements IEclipsePreferences.IPreferenceChangeListener {
 
 	/**
 	 * Creates a feature model for the feature based on the given feature XML
@@ -78,10 +80,10 @@ public class ExternalFeatureModelManager implements Preferences.IPropertyChangeL
 
 	private String fPlatformHome;
 
-	private Preferences fPref;
+	private PDEPreferencesManager fPref;
 
 	public ExternalFeatureModelManager() {
-		fPref = PDECore.getDefault().getPluginPreferences();
+		fPref = PDECore.getDefault().getPreferencesManager();
 	}
 
 	public void addModelProviderListener(IModelProviderListener listener) {
@@ -184,8 +186,8 @@ public class ExternalFeatureModelManager implements Preferences.IPropertyChangeL
 		}
 	}
 
-	public void propertyChange(PropertyChangeEvent event) {
-		if (!ICoreConstants.PLATFORM_PATH.equals(event.getProperty())) {
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (!ICoreConstants.PLATFORM_PATH.equals(event.getKey())) {
 			return;
 		}
 		String newHome = getPathString(event.getNewValue());
@@ -197,11 +199,11 @@ public class ExternalFeatureModelManager implements Preferences.IPropertyChangeL
 	}
 
 	public synchronized void shutdown() {
-		fPref.removePropertyChangeListener(this);
+		fPref.removePreferenceChangeListener(this);
 	}
 
 	public synchronized void startup() {
-		fPref.addPropertyChangeListener(this);
+		fPref.addPreferenceChangeListener(this);
 		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS));
 	}
 

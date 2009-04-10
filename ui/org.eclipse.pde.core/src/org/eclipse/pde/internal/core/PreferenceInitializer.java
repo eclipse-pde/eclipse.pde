@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core;
 
 import java.util.Locale;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
@@ -27,21 +26,22 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		preferences.setDefault(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
-		preferences.setDefault(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-		if (preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS))
-			preferences.setValue(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
+		IEclipsePreferences defaultPreferences = new DefaultScope().getNode(PDECore.PLUGIN_ID);
+		IEclipsePreferences preferences = new InstanceScope().getNode(PDECore.PLUGIN_ID);
+		defaultPreferences.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
+		defaultPreferences.put(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
+		if (preferences.get(ICoreConstants.TARGET_MODE, defaultPreferences.get(ICoreConstants.TARGET_MODE, "")).equals(ICoreConstants.VALUE_USE_THIS)) //$NON-NLS-1$
+			preferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
 		else
-			preferences.setDefault(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
+			defaultPreferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
 
 		// set defaults for the target environment variables.
-		preferences.setDefault(ICoreConstants.OS, Platform.getOS());
-		preferences.setDefault(ICoreConstants.WS, Platform.getWS());
-		preferences.setDefault(ICoreConstants.NL, Locale.getDefault().toString());
-		preferences.setDefault(ICoreConstants.ARCH, Platform.getOSArch());
+		defaultPreferences.put(ICoreConstants.OS, Platform.getOS());
+		defaultPreferences.put(ICoreConstants.WS, Platform.getWS());
+		defaultPreferences.put(ICoreConstants.NL, Locale.getDefault().toString());
+		defaultPreferences.put(ICoreConstants.ARCH, Platform.getOSArch());
 
-		preferences.setDefault(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
+		defaultPreferences.putBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
 
 		//set defaults for compiler preferences in org.eclipse.pde pref node, not org.eclipse.pde.core
 		IEclipsePreferences prefs = new DefaultScope().getNode(PDE.PLUGIN_ID);

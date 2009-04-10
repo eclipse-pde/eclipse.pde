@@ -51,7 +51,7 @@ public class TargetPlatform {
 	 * @return the target platform's main location
 	 */
 	public static String getLocation() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		return preferences.getString(ICoreConstants.PLATFORM_PATH);
 	}
 
@@ -112,7 +112,7 @@ public class TargetPlatform {
 	}
 
 	private static String getProperty(String key, String defaultValue) {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String value = preferences.getString(key);
 		return value.equals("") ? defaultValue : value; //$NON-NLS-1$
 	}

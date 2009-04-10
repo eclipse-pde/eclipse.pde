@@ -352,7 +352,7 @@ public class PDEJavaHelper {
 			}
 		}
 		// Get the general preference option
-		value = JavaCore.getJavaCore().getPluginPreferences().getString(optionName);
+		value = new PDEPreferencesManager(JavaCore.PLUGIN_ID).getString(optionName);
 		if (value != null) {
 			return value;
 		}

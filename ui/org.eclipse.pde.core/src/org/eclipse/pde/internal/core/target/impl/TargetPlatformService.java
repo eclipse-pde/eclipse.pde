@@ -201,7 +201,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getWorkspaceTargetDefinition()
 	 */
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
 		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
 			return getTarget(memento);
@@ -250,7 +250,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @throws CoreException
 	 */
 	public void loadTargetDefinitionFromPreferences(ITargetDefinition target) throws CoreException {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		initializeArgumentsInfo(preferences, target);
 		initializeEnvironmentInfo(preferences, target);
 		initializeImplicitInfo(preferences, target);
@@ -276,7 +276,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return value;
 	}
 
-	private void initializeArgumentsInfo(Preferences preferences, ITargetDefinition target) {
+	private void initializeArgumentsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		target.setProgramArguments(getValueOrNull(preferences.getString(ICoreConstants.PROGRAM_ARGS)));
 		StringBuffer result = new StringBuffer();
 		String vmArgs = getValueOrNull(preferences.getString(ICoreConstants.VM_ARGS));
@@ -294,14 +294,14 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 	}
 
-	private void initializeEnvironmentInfo(Preferences preferences, ITargetDefinition target) {
+	private void initializeEnvironmentInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		target.setOS(getValueOrNull(preferences.getString(ICoreConstants.OS)));
 		target.setWS(getValueOrNull(preferences.getString(ICoreConstants.WS)));
 		target.setNL(getValueOrNull(preferences.getString(ICoreConstants.NL)));
 		target.setArch(getValueOrNull(preferences.getString(ICoreConstants.ARCH)));
 	}
 
-	private void initializeImplicitInfo(Preferences preferences, ITargetDefinition target) {
+	private void initializeImplicitInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		if (value.length() > 0) {
 			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
@@ -315,7 +315,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 	}
 
-	private void initializeLocationInfo(Preferences preferences, ITargetDefinition target) {
+	private void initializeLocationInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
 		boolean profile = preferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
 		String home = null;
@@ -358,7 +358,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setBundleContainers(new IBundleContainer[] {primary});
 	}
 
-	private void initializeAdditionalLocsInfo(Preferences preferences, ITargetDefinition target) {
+	private void initializeAdditionalLocsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
 		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
 		int size = tokenizer.countTokens();
@@ -377,7 +377,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setJREContainer(null);
 	}
 
-	private void initializePluginContent(Preferences preferences, ITargetDefinition target) {
+	private void initializePluginContent(PDEPreferencesManager preferences, ITargetDefinition target) {
 		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
 		IBundleContainer primary = target.getBundleContainers()[0];
 		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
@@ -438,7 +438,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		IBundleContainer container = newProfileContainer("${eclipse_home}", configLocation); //$NON-NLS-1$
 		target.setBundleContainers(new IBundleContainer[] {container});
 		target.setName(Messages.TargetPlatformService_7);
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 
 		// initialize environment with default settings
 		String value = getValueOrNull(preferences.getDefaultString(ICoreConstants.ARCH));

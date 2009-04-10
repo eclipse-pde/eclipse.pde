@@ -44,7 +44,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 
 	public void run(IProgressMonitor monitor) throws CoreException {
 		try {
-			Preferences preferences = PDECore.getDefault().getPluginPreferences();
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 			monitor.beginTask(PDECoreMessages.LoadTargetOperation_mainTaskName, 100);
 			loadEnvironmentInfo(preferences, new SubProgressMonitor(monitor, 5));
 			loadProgramArgs(preferences, new SubProgressMonitor(monitor, 5));
@@ -52,7 +52,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			loadImplicitPlugins(preferences, new SubProgressMonitor(monitor, 15));
 			loadPlugins(preferences, new SubProgressMonitor(monitor, 60));
 			loadAdditionalPreferences(preferences);
-			PDECore.getDefault().savePluginPreferences();
+			PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 		} finally {
 			monitor.done();
 		}
@@ -66,7 +66,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		return fMissingFeatures.toArray();
 	}
 
-	protected void loadProgramArgs(Preferences pref, IProgressMonitor monitor) {
+	protected void loadProgramArgs(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		IArgumentsInfo args = fTarget.getArguments();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_argsTaskName, 2);
 		pref.setValue(ICoreConstants.PROGRAM_ARGS, (args != null) ? args.getProgramArguments() : ""); //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		monitor.done();
 	}
 
-	protected void loadEnvironmentInfo(Preferences pref, IProgressMonitor monitor) {
+	protected void loadEnvironmentInfo(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		IEnvironmentInfo env = fTarget.getEnvironment();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_envTaskName, 1);
 		if (env == null) {
@@ -92,7 +92,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		monitor.done();
 	}
 
-	protected void loadJREInfo(Preferences pref, IProgressMonitor monitor) {
+	protected void loadJREInfo(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		ITargetJRE jreInfo = fTarget.getTargetJREInfo();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_jreTaskName, 1);
 		if (jreInfo != null) {
@@ -107,7 +107,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		monitor.done();
 	}
 
-	protected void loadImplicitPlugins(Preferences pref, IProgressMonitor monitor) {
+	protected void loadImplicitPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		IImplicitDependenciesInfo info = fTarget.getImplicitPluginsInfo();
 		if (info != null) {
 			ITargetPlugin[] plugins = info.getPlugins();
@@ -124,7 +124,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		monitor.done();
 	}
 
-	protected void loadPlugins(Preferences pref, IProgressMonitor monitor) {
+	protected void loadPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_loadPluginsTaskName, 100);
 		ILocationInfo info = fTarget.getLocationInfo();
 		String currentPath = pref.getString(ICoreConstants.PLATFORM_PATH);
@@ -186,7 +186,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		monitor.done();
 	}
 
-	protected void loadAdditionalPreferences(Preferences pref) {
+	protected void loadAdditionalPreferences(PDEPreferencesManager pref) {
 		if (fPath == null)
 			return;
 		String newValue = "${workspace_loc:".concat(fPath.toOSString()).concat("}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -228,7 +228,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		return additional;
 	}
 
-	private void handleReload(String targetLocation, List additionalLocations, Preferences pref, IProgressMonitor monitor) {
+	private void handleReload(String targetLocation, List additionalLocations, PDEPreferencesManager pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_reloadTaskName, 85);
 		URL[] paths = getURLs(targetLocation, additionalLocations);
 		PDEState state = new PDEState(paths, true, new SubProgressMonitor(monitor, 45));
@@ -279,14 +279,14 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		return featureManager;
 	}
 
-	protected IPluginModelBase[] handlePluginSelection(PDEState state, Map featureMap, Preferences pref, IProgressMonitor monitor) {
+	protected IPluginModelBase[] handlePluginSelection(PDEState state, Map featureMap, PDEPreferencesManager pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_selectPluginsTaskName, 80);
 		Set optionalPlugins = new HashSet();
 		getPluginIds(featureMap, null, optionalPlugins, new SubProgressMonitor(monitor, 40));
 		return handlePluginSelection(state, optionalPlugins, pref, new SubProgressMonitor(monitor, 40));
 	}
 
-	protected IPluginModelBase[] handlePluginSelection(PDEState state, FeatureModelManager manager, Preferences pref, IProgressMonitor monitor) {
+	protected IPluginModelBase[] handlePluginSelection(PDEState state, FeatureModelManager manager, PDEPreferencesManager pref, IProgressMonitor monitor) {
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_selectPluginsTaskName, 80);
 		Set optionalPlugins = new HashSet();
 		getPluginIds(null, manager, optionalPlugins, new SubProgressMonitor(monitor, 40));
@@ -294,7 +294,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	}
 
 	// returns changed Models
-	private IPluginModelBase[] handlePluginSelection(PDEState state, Set optionalPlugins, Preferences pref, IProgressMonitor monitor) {
+	private IPluginModelBase[] handlePluginSelection(PDEState state, Set optionalPlugins, PDEPreferencesManager pref, IProgressMonitor monitor) {
 		List changed = new ArrayList();
 		boolean useAll = fTarget.useAllPlugins();
 

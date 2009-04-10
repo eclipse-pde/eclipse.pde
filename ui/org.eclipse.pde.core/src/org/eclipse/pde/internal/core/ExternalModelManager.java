@@ -14,8 +14,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ExternalModelManager extends AbstractModelManager {
@@ -28,7 +26,7 @@ public class ExternalModelManager extends AbstractModelManager {
 
 	protected void initializeModels(IPluginModelBase[] models) {
 		fModels = models;
-		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
 		if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
 			for (int i = 0; i < fModels.length; i++)
@@ -50,7 +48,7 @@ public class ExternalModelManager extends AbstractModelManager {
 	}
 
 	protected URL[] getPluginPaths() {
-		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
 		URL[] base = PluginPathFinder.getPluginPaths(pref.getString(ICoreConstants.PLATFORM_PATH));
 
 		String value = pref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
