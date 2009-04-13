@@ -97,6 +97,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			if (provider.getInitialState() != null) {
 				state = new PDEState(provider.getInitialState());
 				state.setEESources(eeSources);
+				state.resolveState();
 				return state;
 			}
 

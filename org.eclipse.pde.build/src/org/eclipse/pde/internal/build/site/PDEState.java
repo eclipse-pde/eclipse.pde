@@ -54,7 +54,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		patchBundles = initialState.getPatchData();
 		addedBundle = new ArrayList();
 		unqualifiedBundles = new ArrayList();
-		forceQualifiers();
+		//forceQualifiers();
 	}
 
 	public PDEState() {
@@ -417,6 +417,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		Dictionary[] stateProperties = (Dictionary[]) properties.toArray(new Dictionary[properties.size()]);
 		state.setPlatformProperties(stateProperties);
 		state.resolve(false);
+
+		if (unqualifiedBundles != null) {
+			forceQualifiers();
+		}
 	}
 
 	public State getState() {

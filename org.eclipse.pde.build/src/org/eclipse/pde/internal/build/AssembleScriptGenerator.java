@@ -123,8 +123,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		if (configScriptGenerator.getProductFile() != null)
 			return false;
 
-		//export from UI can't be grouped
-		return !havePDEUIState();
+		return true;
 	}
 
 	protected Collection[] getConfigInfos(Config aConfig) {
