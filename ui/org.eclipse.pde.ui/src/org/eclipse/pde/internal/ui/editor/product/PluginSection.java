@@ -607,6 +607,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		if (updateRemoveAll)
 			tablePart.setButtonEnabled(4, isEditable() && count > 0);
 		tablePart.setButtonEnabled(2, isEditable() && count > 0);
+		tablePart.setButtonEnabled(5, isEditable() && count == 1);
 	}
 
 	protected boolean createCount() {

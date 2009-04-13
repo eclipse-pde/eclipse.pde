@@ -1832,6 +1832,7 @@ public class PDEUIMessages extends NLS {
 	public static String Product_DependenciesPage_title;
 	public static String ProductFileWizadPage_groupTitle;
 	public static String Product_PluginSection_newFragment;
+	public static String ProductValidateAction_validate;
 	public static String Product_overview_testing;
 	public static String ProductInfoSection_title;
 	public static String GeneralInfoSection_title;

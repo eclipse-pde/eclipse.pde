@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Code 9 Corporation - ongoing enhancements
+ *     EclipseSource Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 268363
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -174,6 +175,8 @@ public class ProductEditor extends PDELauncherFormEditor {
 	public void contributeToToolbar(IToolBarManager manager) {
 		contributeLaunchersToToolbar(manager);
 		manager.add(getExportAction());
+		IProduct product = ((IProductModel) getAggregateModel()).getProduct();
+		manager.add(new ProductValidateAction(product));
 	}
 
 	private ProductExportAction getExportAction() {

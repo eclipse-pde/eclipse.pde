@@ -71,7 +71,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 
 	}
 
-	private IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
+	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
 		IVMInstall install = VMHelper.getVMInstall(fLaunchConfiguration);
 		if (install == null)
 			return new IExecutionEnvironment[0];
