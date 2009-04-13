@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,13 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.util.*;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -99,7 +97,7 @@ public class TargetImplicitPluginsTab {
 	}
 
 	protected void loadTable() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
 		fElements = new HashSet((4 / 3) * tokens.countTokens() + 1);
@@ -233,7 +231,7 @@ public class TargetImplicitPluginsTab {
 			BundleDescription desc = (BundleDescription) it.next();
 			buffer.append(desc.getSymbolicName());
 		}
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		preferences.setValue(ICoreConstants.IMPLICIT_DEPENDENCIES, buffer.toString());
 	}
 

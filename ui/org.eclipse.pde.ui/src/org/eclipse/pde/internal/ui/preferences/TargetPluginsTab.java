@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,7 +195,7 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 	public TargetPluginsTab(TargetPlatformPreferencePage page) {
 		super(new String[] {PDEUIMessages.ExternalPluginsBlock_reload, PDEUIMessages.TargetPluginsTab_add, null, null, PDEUIMessages.TargetPluginsTab_enableSelected, PDEUIMessages.TargetPluginsTab_disableSelected, PDEUIMessages.TargetPluginsTab_enableAll, PDEUIMessages.TargetPluginsTab_disableAll, null, null, PDEUIMessages.ExternalPluginsBlock_workingSet, PDEUIMessages.ExternalPluginsBlock_addRequired});
 		this.fPage = page;
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
 		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
@@ -272,7 +272,7 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 	 * Initializes the tab from the preference store
 	 */
 	protected void initializeView() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		boolean groupPlugins = preferences.getBoolean(ICoreConstants.GROUP_PLUGINS_VIEW);
 		fGroupPlugins.setSelection(groupPlugins);
 		if (groupPlugins) {
@@ -676,7 +676,7 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 	 * Saves the settings in the tab to the preference store.
 	 */
 	private void savePreferences() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		IPath newPath = new Path(fPage.getPlatformPath());
 		IPath defaultPath = new Path(org.eclipse.pde.core.plugin.TargetPlatform.getDefaultLocation());
 		String mode = newPath.equals(defaultPath) ? ICoreConstants.VALUE_USE_THIS : ICoreConstants.VALUE_USE_OTHER;
@@ -714,7 +714,7 @@ public class TargetPluginsTab extends SharedPartWithButtons {
 			buffer.append(fAdditionalLocations.get(i).toString());
 		}
 		preferences.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, buffer.toString());
-		PDECore.getDefault().savePluginPreferences();
+		PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 	}
 
 	/**

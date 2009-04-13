@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -105,14 +103,14 @@ public class JavaArgumentsTab {
 	}
 
 	protected void initialize() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		fProgramArgs.setText(preferences.getString(ICoreConstants.PROGRAM_ARGS));
 		fVMArgs.setText(preferences.getString(ICoreConstants.VM_ARGS));
 		fAppendLauncherArgs.setSelection(preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI));
 	}
 
 	public void performOk() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		preferences.setValue(ICoreConstants.PROGRAM_ARGS, fProgramArgs.getText());
 		preferences.setValue(ICoreConstants.VM_ARGS, fVMArgs.getText());
 		preferences.setValue(ICoreConstants.VM_LAUNCHER_INI, fAppendLauncherArgs.getSelection());

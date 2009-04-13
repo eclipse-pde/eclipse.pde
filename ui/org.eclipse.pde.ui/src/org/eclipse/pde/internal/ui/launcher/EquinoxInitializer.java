@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.*;
@@ -45,7 +44,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		StringBuffer vmArgs = new StringBuffer(preferences.getString(ICoreConstants.VM_ARGS));
 		if (vmArgs.indexOf("-Declipse.ignoreApp") == -1) { //$NON-NLS-1$
 			if (vmArgs.length() > 0)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,10 @@ package org.eclipse.pde.internal.ui.wizards.provisioner;
 
 import java.io.File;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -56,7 +54,7 @@ public class DirectorySelectionPage extends WizardPage {
 		setTitle(PDEUIMessages.DirectorySelectionPage_title);
 		setDescription(PDEUIMessages.DirectorySelectionPage_description);
 		setPageComplete(false);
-		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
 		fLastLocation = pref.getString(LAST_LOCATION);
 		if (fLastLocation.length() == 0)
 			fLastLocation = pref.getString(ICoreConstants.PLATFORM_PATH);
@@ -162,7 +160,7 @@ public class DirectorySelectionPage extends WizardPage {
 	}
 
 	public File[] getLocations() {
-		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
 		pref.setValue(LAST_LOCATION, fLastLocation);
 		return (File[]) fElements.toArray(new File[fElements.size()]);
 	}

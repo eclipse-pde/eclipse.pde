@@ -48,17 +48,17 @@ public class PDECore extends Plugin {
 	private static IPluginModelBase[] registryPlugins;
 	private static PDEExtensionRegistry fExtensionRegistry = null;
 
-	private static PDEPreferencesManager fPrefManager;
+	private static PDEPreferencesManager fPreferenceManager;
 
 	public static PDECore getDefault() {
 		return inst;
 	}
 
 	public PDEPreferencesManager getPreferencesManager() {
-		if (fPrefManager == null) {
-			fPrefManager = new PDEPreferencesManager(PLUGIN_ID);
+		if (fPreferenceManager == null) {
+			fPreferenceManager = new PDEPreferencesManager(PLUGIN_ID);
 		}
-		return fPrefManager;
+		return fPreferenceManager;
 	}
 
 	public static IWorkspace getWorkspace() {

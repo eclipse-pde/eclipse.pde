@@ -12,12 +12,12 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import java.util.*;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
 import org.eclipse.pde.internal.ui.*;
@@ -191,7 +191,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 
 	private Object fInput;
 
-	private Preferences fPreferences = PDEPlugin.getDefault().getPluginPreferences();
+	private PDEPreferencesManager fPreferences = PDEPlugin.getDefault().getPreferenceManager();
 
 	private ShowCalleesAction fShowCallees;
 	private ShowCallersAction fShowCallers;

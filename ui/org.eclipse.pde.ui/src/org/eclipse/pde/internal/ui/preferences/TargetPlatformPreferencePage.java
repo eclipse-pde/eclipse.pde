@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private TargetSourceTab fSourceTab;
 	private IConfigurationElement[] fElements;
 
-	private Preferences fPreferences = null;
+	private PDEPreferencesManager fPreferences = null;
 	protected boolean fNeedsReload = false;
 	private String fOriginalText;
 	private int fIndex;
@@ -80,7 +80,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	public TargetPlatformPreferencePage(int index) {
 		setDescription(PDEUIMessages.Preferences_TargetPlatformPage_Description);
-		fPreferences = PDECore.getDefault().getPluginPreferences();
+		fPreferences = PDECore.getDefault().getPreferencesManager();
 		fPluginsTab = new TargetPluginsTab(this);
 		fIndex = index;
 	}
@@ -506,7 +506,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	private boolean areAdditionalLocationsEqual(ITarget target) {
 		IAdditionalLocation[] addtionalLocs = target.getAdditionalDirectories();
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String value = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
 		StringTokenizer tokenzier = new StringTokenizer(value);
 		if (addtionalLocs.length != tokenzier.countTokens())

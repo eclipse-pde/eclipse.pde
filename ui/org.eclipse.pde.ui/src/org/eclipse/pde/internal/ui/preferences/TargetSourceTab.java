@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,7 +161,7 @@ public class TargetSourceTab {
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations());
 		// Reset the javadoc locations in a job in case locations are being initialized
 		Job resetJavadocJob = new Job("Reset Javadoc Locations") { //$NON-NLS-1$

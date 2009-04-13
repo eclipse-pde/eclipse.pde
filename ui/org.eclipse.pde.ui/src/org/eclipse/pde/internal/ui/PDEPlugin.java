@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Display;
@@ -67,8 +68,17 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
 	private OSGiFrameworkManager fOSGiFrameworkManager;
 
+	private PDEPreferencesManager fPreferenceManager;
+
 	public PDEPlugin() {
 		fInstance = this;
+	}
+
+	public PDEPreferencesManager getPreferenceManager() {
+		if (fPreferenceManager == null) {
+			fPreferenceManager = new PDEPreferencesManager(PLUGIN_ID);
+		}
+		return fPreferenceManager;
 	}
 
 	public URL getInstallURL() {

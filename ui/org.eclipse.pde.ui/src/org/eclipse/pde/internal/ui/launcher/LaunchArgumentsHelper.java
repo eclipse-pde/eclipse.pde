@@ -130,7 +130,7 @@ public class LaunchArgumentsHelper {
 		// TODO: Generally, once the new preference target platform preference page is in use,
 		// this code path will not be used. Once we decide to remove support for old targets/preferences
 		// this code can be removed.
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		StringBuffer result = new StringBuffer(preferences.getString(ICoreConstants.VM_ARGS));
 
 		if (preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI)) {
@@ -143,7 +143,7 @@ public class LaunchArgumentsHelper {
 	public static String getInitialProgramArguments() {
 		StringBuffer buffer = new StringBuffer("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"); //$NON-NLS-1$
 
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
 		if (programArgs.length() > 0) {
 			buffer.append(" "); //$NON-NLS-1$

@@ -93,7 +93,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		store.setValue(IPreferenceConstants.PROP_AUTO_MANAGE, fAutoManage.getSelection());
 		store.setValue(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT, fOverwriteBuildFiles.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
 		store.setValue(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES, fShowSourceBundles.getSelection());
-		PDEPlugin.getDefault().savePluginPreferences();
+		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 		return super.performOk();
 	}
 

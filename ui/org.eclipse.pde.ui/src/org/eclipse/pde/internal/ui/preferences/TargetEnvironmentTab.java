@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class TargetEnvironmentTab {
 	private Combo fNLCombo;
 	private Combo fArchCombo;
 
-	private Preferences preferences;
+	private PDEPreferencesManager preferences;
 	private TreeSet fNLChoices;
 	private TreeSet fOSChoices;
 	private TreeSet fWSChoices;
@@ -48,7 +48,7 @@ public class TargetEnvironmentTab {
 
 	public TargetEnvironmentTab(TargetPlatformPreferencePage page) {
 		fPage = page;
-		preferences = PDECore.getDefault().getPluginPreferences();
+		preferences = PDECore.getDefault().getPreferencesManager();
 	}
 
 	private void initializeChoices() {
@@ -325,7 +325,7 @@ public class TargetEnvironmentTab {
 			preferences.setValue(ICoreConstants.NL, locale);
 			changed |= !(locale.equals(oldNL));
 		}
-		PDECore.getDefault().savePluginPreferences();
+		PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 		if (changed) {
 			updateState();
 		}

@@ -205,7 +205,7 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected IPluginModelBase[] getExternalModels() {
 		if (fExternalModels == null) {
-			Preferences pref = PDECore.getDefault().getPluginPreferences();
+			PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
 			String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
 			if (saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 				fExternalModels = new IPluginModelBase[0];

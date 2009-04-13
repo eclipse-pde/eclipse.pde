@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eclipse.pde.internal.ui.util;
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
@@ -52,7 +52,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 
 	class WorkingSetLabelProvider extends LabelProvider {
 
-		Preferences pref = PDEPlugin.getDefault().getPluginPreferences();
+		PDEPreferencesManager pref = PDEPlugin.getDefault().getPreferenceManager();
 
 		public WorkingSetLabelProvider() {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);

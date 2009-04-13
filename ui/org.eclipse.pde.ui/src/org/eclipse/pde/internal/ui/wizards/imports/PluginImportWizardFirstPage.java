@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -333,7 +331,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return the value of the {@link ICoreConstants#PLATFORM_PATH} preference
 	 */
 	private String getTargetHome() {
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		return preferences.getString(ICoreConstants.PLATFORM_PATH);
 	}
 

@@ -26,16 +26,12 @@ public final class PDEPreferencesManager {
 		fDefaultScopePrefs = new DefaultScope().getNode(ID);
 	}
 
+	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
+		fInstanceScopePrefs.addPreferenceChangeListener(listener);
+	}
+
 	public boolean getBoolean(String key) {
 		return fInstanceScopePrefs.getBoolean(key, fDefaultScopePrefs.getBoolean(key, false));
-	}
-
-	public int getInt(String key) {
-		return fInstanceScopePrefs.getInt(key, fDefaultScopePrefs.getInt(key, 0));
-	}
-
-	public String getDefaultString(String key) {
-		return fDefaultScopePrefs.get(key, EMPTY_STRING);
 	}
 
 	public boolean getDefaultBoolean(String key) {
@@ -46,8 +42,20 @@ public final class PDEPreferencesManager {
 		return fDefaultScopePrefs.getInt(key, 0);
 	}
 
+	public String getDefaultString(String key) {
+		return fDefaultScopePrefs.get(key, EMPTY_STRING);
+	}
+
+	public int getInt(String key) {
+		return fInstanceScopePrefs.getInt(key, fDefaultScopePrefs.getInt(key, 0));
+	}
+
 	public String getString(String key) {
 		return fInstanceScopePrefs.get(key, fDefaultScopePrefs.get(key, EMPTY_STRING));
+	}
+
+	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
+		fInstanceScopePrefs.removePreferenceChangeListener(listener);
 	}
 
 	public void savePluginPreferences() {
@@ -58,10 +66,6 @@ public final class PDEPreferencesManager {
 		}
 	}
 
-	public void setDefault(String key, String value) {
-		fDefaultScopePrefs.put(key, value);
-	}
-
 	public void setDefault(String key, boolean value) {
 		fDefaultScopePrefs.putBoolean(key, value);
 	}
@@ -70,27 +74,23 @@ public final class PDEPreferencesManager {
 		fDefaultScopePrefs.putInt(key, value);
 	}
 
-	public void setToDefault(String key) {
-		fInstanceScopePrefs.put(key, fDefaultScopePrefs.get(key, EMPTY_STRING));
+	public void setDefault(String key, String value) {
+		fDefaultScopePrefs.put(key, value);
 	}
 
-	public void setValue(String key, int value) {
-		fInstanceScopePrefs.putInt(key, value);
+	public void setToDefault(String key) {
+		fInstanceScopePrefs.put(key, fDefaultScopePrefs.get(key, EMPTY_STRING));
 	}
 
 	public void setValue(String key, boolean value) {
 		fInstanceScopePrefs.putBoolean(key, value);
 	}
 
+	public void setValue(String key, int value) {
+		fInstanceScopePrefs.putInt(key, value);
+	}
+
 	public void setValue(String key, String value) {
 		fInstanceScopePrefs.put(key, value);
-	}
-
-	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
-		fInstanceScopePrefs.removePreferenceChangeListener(listener);
-	}
-
-	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
-		fInstanceScopePrefs.addPreferenceChangeListener(listener);
 	}
 }
