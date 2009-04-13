@@ -1701,6 +1701,16 @@ public class PDEUIMessages extends NLS {
 	public static String EditableTablePart_renameAction;
 	public static String EditableTablePart_renameTitle;
 
+	// Category Editor ######################################
+	public static String CategoryPage_header;
+	public static String CategoryDefinitionWizardPage_title;
+	public static String CategoryDefinitionWizardPage_description;
+	public static String NewCategoryDefinitionWizard_creatingManifest;
+	public static String NewCategoryDefinitionWizard_title;
+	public static String CategoryDefinitionCategorySection_title;
+	public static String CategoryDefinitionCategorySection_new;
+	public static String CategoryDefinitionCategorySection_desc;
+
 	// Site Editor #########################################
 	public static String CategorySection_title;
 	public static String CategorySection_new;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -18,6 +19,7 @@ public interface IPDEUIConstants {
 	String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor"; //$NON-NLS-1$
 	String FEATURE_EDITOR_ID = PLUGIN_ID + ".featureEditor"; //$NON-NLS-1$
 	String SITE_EDITOR_ID = PLUGIN_ID + ".siteEditor"; //$NON-NLS-1$
+	String CATEGORY_EDITOR_ID = PLUGIN_ID + ".categoryEditor"; //$NON-NLS-1$
 	String BUILD_EDITOR_ID = PLUGIN_ID + ".buildEditor"; //$NON-NLS-1$
 	String SCHEMA_EDITOR_ID = PLUGIN_ID + ".schemaEditor"; //$NON-NLS-1$
 	String PRODUCT_EDITOR_ID = PLUGIN_ID + ".productEditor"; //$NON-NLS-1$

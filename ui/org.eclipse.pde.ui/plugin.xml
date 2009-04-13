@@ -196,6 +196,16 @@
             %wizard.profile.name
          </description>
       </wizard>
+      <wizard
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.wizards.category.NewCategoryDefinitionWizard"
+            icon="$nl$/icons/etool16/newcatdef_wiz.gif"
+            id="org.eclipse.pde.ui.NewCategoryWizard"
+            name="%new.categoryDefintion.name">
+         <description>
+            %new.categoryDefinition.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">
@@ -389,6 +399,17 @@
             name="%editors.schema.launcher.name">
          <contentTypeBinding
                contentTypeId="org.eclipse.pde.schema">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.pde.internal.ui.editor.category.CategoryEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.category.CategoryEditorContributor"
+            default="true"
+            icon="$nl$/icons/obj16/category_obj.gif"
+            id="org.eclipse.pde.ui.categoryEditor"
+            name="%editors.categoryManifest.name">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.pde.categoryManifest">
          </contentTypeBinding>
       </editor>
 <!--      <editor
