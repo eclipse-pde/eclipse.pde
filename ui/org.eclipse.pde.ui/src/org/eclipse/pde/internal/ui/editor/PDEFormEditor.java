@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.OverviewPage;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -247,6 +248,10 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (pageToShow != null)
 			setActivePage(pageToShow);
 		updateTitle();
+		if (getPageCount() == 1 && getContainer() instanceof CTabFolder) {
+			((CTabFolder) getContainer()).setTabHeight(0);
+		}
+
 		PDEModelUtility.connect(this);
 	}
 
