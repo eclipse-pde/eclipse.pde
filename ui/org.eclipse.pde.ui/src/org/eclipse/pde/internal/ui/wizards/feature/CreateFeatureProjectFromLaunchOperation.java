@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.wizards.feature;
@@ -21,7 +22,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
-import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Shell;
@@ -47,10 +47,10 @@ public class CreateFeatureProjectFromLaunchOperation extends CreateFeatureProjec
 			String id = type.getIdentifier();
 			// if it is an Eclipse launch
 			if (id.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE))
-				models = LaunchPluginValidator.getPluginList(fLaunchConfig);
+				models = BundleLauncherHelper.getMergedBundles(fLaunchConfig, false);
 			// else if it is an OSGi launch
 			else if (id.equals(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE))
-				models = BundleLauncherHelper.getMergedBundles(fLaunchConfig);
+				models = BundleLauncherHelper.getMergedBundles(fLaunchConfig, true);
 		} catch (CoreException e) {
 		}
 		IPluginBase[] result = new IPluginBase[models == null ? 0 : models.length];

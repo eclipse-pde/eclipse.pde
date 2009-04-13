@@ -37,6 +37,13 @@ import org.osgi.framework.Version;
  */
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
+	// used to generate the dev classpath entries
+	// key is bundle ID, value is a model
+	private Map fAllBundles;
+
+	// key is a model, value is startLevel:autoStart
+	private Map fModels;
+
 	/**
 	 * To avoid duplicating variable substitution (and duplicate prompts)
 	 * this variable will store the substituted workspace location.
@@ -76,9 +83,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 
 		boolean showSplash = true;
-		// TODO fix getPluginstoRun to return a map that is model/startlevel
-		// model after EquinoxLaunchConfiguration
-		Map pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
 		if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
@@ -94,21 +98,21 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
 		} else {
 			String productID = LaunchConfigurationHelper.getProductID(configuration);
-			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, pluginMap, getConfigDir(configuration));
+			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
 			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
-			TargetPlatform.createPlatformConfiguration(getConfigDir(configuration), (IPluginModelBase[]) pluginMap.values().toArray(new IPluginModelBase[pluginMap.size()]), brandingId != null ? (IPluginModelBase) pluginMap.get(brandingId) : null);
-			TargetPlatformHelper.checkPluginPropertiesConsistency(pluginMap, getConfigDir(configuration));
+			TargetPlatform.createPlatformConfiguration(getConfigDir(configuration), (IPluginModelBase[]) fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]), brandingId != null ? (IPluginModelBase) fAllBundles.get(brandingId) : null);
+			TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
 			programArgs.add("-configuration"); //$NON-NLS-1$
 			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
 			// add the output folder names
 			programArgs.add("-dev"); //$NON-NLS-1$
-			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
+			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
 		}
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
-		IPluginModelBase base = (IPluginModelBase) pluginMap.get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
 			programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
@@ -238,6 +242,14 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fWorkspaceLocation = null;
+
+		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
+		fAllBundles = new HashMap(fModels.size());
+		Iterator iter = fModels.keySet().iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) iter.next();
+			fAllBundles.put(model.getPluginBase().getId(), model);
+		}
 		validateConfigIni(configuration);
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
@@ -263,7 +275,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 */
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = super.getVMArguments(configuration);
-		IPluginModelBase base = (IPluginModelBase) LaunchPluginValidator.getPluginsToRun(configuration).get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
 			// necessary for PDE to know how to load plugins when target platform = host platform
 			// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()

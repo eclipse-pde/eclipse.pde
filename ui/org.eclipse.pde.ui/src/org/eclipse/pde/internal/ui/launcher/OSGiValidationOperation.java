@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -21,7 +22,7 @@ public class OSGiValidationOperation extends LaunchValidationOperation {
 	}
 
 	protected IPluginModelBase[] getModels() throws CoreException {
-		return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration);
+		return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration, true);
 	}
 
 }

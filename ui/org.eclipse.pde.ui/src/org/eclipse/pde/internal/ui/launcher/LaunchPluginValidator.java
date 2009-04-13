@@ -14,143 +14,17 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
 
 public class LaunchPluginValidator {
-
-	public static void checkBackwardCompatibility(ILaunchConfiguration configuration, boolean save) throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = null;
-		if (configuration.isWorkingCopy()) {
-			wc = (ILaunchConfigurationWorkingCopy) configuration;
-		} else {
-			wc = configuration.getWorkingCopy();
-		}
-
-		String value = configuration.getAttribute("wsproject", (String) null); //$NON-NLS-1$
-		if (value != null) {
-			wc.setAttribute("wsproject", (String) null); //$NON-NLS-1$
-			if (value.indexOf(';') != -1) {
-				value = value.replace(';', ',');
-			} else if (value.indexOf(':') != -1) {
-				value = value.replace(':', ',');
-			}
-			value = (value.length() == 0 || value.equals(",")) //$NON-NLS-1$
-			? null
-					: value.substring(0, value.length() - 1);
-
-			boolean automatic = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
-			String attr = automatic ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
-			wc.setAttribute(attr, value);
-		}
-
-		String value2 = configuration.getAttribute("extplugins", (String) null); //$NON-NLS-1$
-		if (value2 != null) {
-			wc.setAttribute("extplugins", (String) null); //$NON-NLS-1$
-			if (value2.indexOf(';') != -1) {
-				value2 = value2.replace(';', ',');
-			} else if (value2.indexOf(':') != -1) {
-				value2 = value2.replace(':', ',');
-			}
-			value2 = (value2.length() == 0 || value2.equals(",")) ? null : value2.substring(0, value2.length() - 1); //$NON-NLS-1$
-			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
-		}
-
-		String version = configuration.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, (String) null);
-		boolean newApp = TargetPlatformHelper.usesNewApplicationModel();
-		boolean upgrade = !"3.3".equals(version) && newApp; //$NON-NLS-1$
-		if (!upgrade)
-			upgrade = TargetPlatformHelper.getTargetVersion() >= 3.2 && version == null;
-		if (upgrade) {
-			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
-			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
-			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
-			if (!usedefault && !useFeatures) {
-				ArrayList list = new ArrayList();
-				if (version == null) {
-					list.add("org.eclipse.core.contenttype"); //$NON-NLS-1$
-					list.add("org.eclipse.core.jobs"); //$NON-NLS-1$
-					list.add(IPDEBuildConstants.BUNDLE_EQUINOX_COMMON);
-					list.add("org.eclipse.equinox.preferences"); //$NON-NLS-1$
-					list.add("org.eclipse.equinox.registry"); //$NON-NLS-1$
-					list.add("org.eclipse.core.runtime.compatibility.registry"); //$NON-NLS-1$
-				}
-				if (!"3.3".equals(version) && newApp) //$NON-NLS-1$
-					list.add("org.eclipse.equinox.app"); //$NON-NLS-1$
-				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
-				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
-				for (int i = 0; i < list.size(); i++) {
-					String plugin = list.get(i).toString();
-					IPluginModelBase model = PluginRegistry.findModel(plugin);
-					if (model == null)
-						continue;
-					if (model.getUnderlyingResource() != null) {
-						if (automaticAdd)
-							continue;
-						if (extensions.length() > 0)
-							extensions.append(","); //$NON-NLS-1$
-						extensions.append(plugin);
-					} else {
-						if (target.length() > 0)
-							target.append(","); //$NON-NLS-1$
-						target.append(plugin);
-					}
-				}
-				if (extensions.length() > 0)
-					wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, extensions.toString());
-				if (target.length() > 0)
-					wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, target.toString());
-			}
-		}
-
-		if (save && (value != null || value2 != null || upgrade))
-			wc.doSave();
-	}
-
-	private static void addToMap(Map map, IPluginModelBase[] models) {
-		for (int i = 0; i < models.length; i++) {
-			addToMap(map, models[i]);
-		}
-	}
-
-	private static void addToMap(Map map, IPluginModelBase model) {
-		BundleDescription desc = model.getBundleDescription();
-		if (desc != null) {
-			String id = desc.getSymbolicName();
-			// the reason that we are using a map is to easily check
-			// if a plug-in with a certain id is among the plug-ins we are launching with.
-			// Therefore, now that we support multiple plug-ins by the same ID,
-			// once a particular ID is used up as a key, the rest can be entered
-			// with key == id_version, for easy retrieval of values later on,
-			// and without the need to create complicated data structures for values.
-			if (!map.containsKey(id)) {
-				map.put(id, model);
-			} else {
-				// since other code grabs only the model matching the "id", we want to make
-				// sure the model matching the "id" has the highest version (because for singletons
-				// the runtime will only resolve the highest version).  Bug 218393
-				IPluginModelBase oldModel = (IPluginModelBase) map.get(id);
-				String oldVersion = oldModel.getPluginBase().getVersion();
-				String newVersion = model.getPluginBase().getVersion();
-				if (oldVersion.compareTo(newVersion) < 0) {
-					map.put(id + "_" + oldModel.getBundleDescription().getBundleId(), oldModel); //$NON-NLS-1$
-					map.put(id, model);
-				} else {
-					map.put(id + "_" + desc.getBundleId(), model); //$NON-NLS-1$
-				}
-			}
-		}
-	}
 
 	private static IPluginModelBase[] getSelectedWorkspacePlugins(ILaunchConfiguration configuration) throws CoreException {
 
@@ -215,42 +89,6 @@ public class LaunchPluginValidator {
 			set.addAll(unmatchedEntries.values());
 		}
 		return set;
-	}
-
-	public static IPluginModelBase[] getPluginList(ILaunchConfiguration config) throws CoreException {
-		Map map = getPluginsToRun(config);
-		return (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
-	}
-
-	public static Map getPluginsToRun(ILaunchConfiguration config) throws CoreException {
-
-		checkBackwardCompatibility(config, true);
-
-		TreeMap map = new TreeMap();
-		if (config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
-			addToMap(map, PluginRegistry.getActiveModels());
-			return map;
-		}
-
-		if (config.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-			addToMap(map, PluginRegistry.getWorkspaceModels());
-			return map;
-		}
-
-		addToMap(map, getSelectedWorkspacePlugins(config));
-
-		Map exModels = BundleLauncherHelper.getTargetBundleMap(config, null, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-
-		Iterator it = exModels.keySet().iterator();
-		while (it.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) it.next();
-			String id = model.getPluginBase().getId();
-			IPluginModelBase existing = (IPluginModelBase) map.get(id);
-			// only allow dups if plug-in existing in map is not a workspace plug-in
-			if (existing == null || existing.getUnderlyingResource() == null)
-				addToMap(map, model);
-		}
-		return map;
 	}
 
 	public static IProject[] getAffectedProjects(ILaunchConfiguration config) throws CoreException {

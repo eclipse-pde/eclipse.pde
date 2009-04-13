@@ -7,15 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Code 9 Corporation - ongoing enhancements
+ *     EclipseSource Corporation - ongoing enhancements
  *     David Saff <saff@mit.edu> - bug 102632
  *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 250340
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -47,7 +46,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	protected File fConfigDir = null;
 
-	private Map fPluginMap;
+	// used to generate the dev classpath entries
+	// key is bundle ID, value is a model
+	private Map fAllBundles;
+
+	// key is a model, value is startLevel:autoStart
+	private Map fModels;
 
 	/*
 	 * (non-Javadoc)
@@ -123,17 +127,17 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// Create the platform configuration for the runtime workbench
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
-		LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fPluginMap, getConfigurationDirectory(configuration));
+		LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigurationDirectory(configuration));
 		String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
-		TargetPlatform.createPlatformConfiguration(getConfigurationDirectory(configuration), (IPluginModelBase[]) fPluginMap.values().toArray(new IPluginModelBase[fPluginMap.size()]), brandingId != null ? (IPluginModelBase) fPluginMap.get(brandingId) : null);
-		TargetPlatformHelper.checkPluginPropertiesConsistency(fPluginMap, getConfigurationDirectory(configuration));
+		TargetPlatform.createPlatformConfiguration(getConfigurationDirectory(configuration), (IPluginModelBase[]) fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]), brandingId != null ? (IPluginModelBase) fAllBundles.get(brandingId) : null);
+		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigurationDirectory(configuration));
 
 		programArgs.add("-configuration"); //$NON-NLS-1$
 		programArgs.add("file:" + new Path(getConfigurationDirectory(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigurationDirectory(configuration).toString() + "/dev.properties", fPluginMap)); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigurationDirectory(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
 
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths()
@@ -207,7 +211,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// if application is not set, we should launch the default UI test app
 		// Check to see if we should launch the legacy UI app
 		if (application == null) {
-			IPluginModelBase model = (IPluginModelBase) fPluginMap.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
+			IPluginModelBase model = (IPluginModelBase) fAllBundles.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
 			BundleDescription desc = model != null ? model.getBundleDescription() : null;
 			if (desc != null) {
 				Version version = desc.getVersion();
@@ -252,14 +256,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		String vmArgs = LaunchArgumentsHelper.getUserVMArguments(configuration);
 
 		// necessary for PDE to know how to load plugins when target platform = host platform
-		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
-		Map pluginsToRun = LaunchPluginValidator.getPluginsToRun(configuration);
-		IPluginModelBase base = (IPluginModelBase) pluginsToRun.get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
 			vmArgs = concatArg(vmArgs, "-Declipse.pde.launch=true"); //$NON-NLS-1$
 		}
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
-		if (pluginsToRun.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
+		if (fAllBundles.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
 			if (vmArgs.indexOf("-Declipse.p2.data.area=") < 0) { //$NON-NLS-1$
 				vmArgs = concatArg(vmArgs, "-Declipse.p2.data.area=@config.dir" + File.separator + "p2"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -381,17 +383,23 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		// Get the list of plug-ins to run
-		fPluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
-
 		fWorkspaceLocation = null;
+		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
+		fAllBundles = new HashMap(fModels.size());
+		Iterator iter = fModels.keySet().iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = (IPluginModelBase) iter.next();
+			fAllBundles.put(model.getPluginBase().getId(), model);
+		}
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		String[] requiredPlugins = getRequiredPlugins(configuration);
 		for (int i = 0; i < requiredPlugins.length; i++) {
 			String id = requiredPlugins[i];
-			if (!fPluginMap.containsKey(id)) {
-				fPluginMap.put(id, findPlugin(id));
+			if (!fAllBundles.containsKey(id)) {
+				IPluginModelBase model = findPlugin(id);
+				fAllBundles.put(id, model);
+				fModels.put(model, "default:default"); //$NON-NLS-1$
 			}
 		}
 

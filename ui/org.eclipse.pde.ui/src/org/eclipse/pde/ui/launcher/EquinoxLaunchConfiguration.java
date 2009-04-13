@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
@@ -74,7 +75,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		String bundles = null;
 		if (fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 			// If simple configurator is being used, we need to write out the bundles.txt instead of writing out the list in the config.ini
-			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration));
+			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration), null);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
 				if (fAllBundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR) != null) {
@@ -153,7 +154,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		fModels = BundleLauncherHelper.getMergedBundleMap(configuration);
+		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
 		fAllBundles = new HashMap(fModels.size());
 		Iterator iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {

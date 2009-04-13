@@ -14,10 +14,12 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class BundleLauncherHelper {
@@ -32,15 +34,41 @@ public class BundleLauncherHelper {
 		return getTargetBundleMap(configuration, null, IPDELauncherConstants.TARGET_BUNDLES);
 	}
 
-	public static Map getMergedBundleMap(ILaunchConfiguration configuration) throws CoreException {
+	public static Map getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
 		Set set = new HashSet();
-		Map map = getWorkspaceBundleMap(configuration, set, IPDELauncherConstants.WORKSPACE_BUNDLES);
-		map.putAll(getTargetBundleMap(configuration, set, IPDELauncherConstants.TARGET_BUNDLES));
+		Map map = new HashMap();
+
+		// if we are using the eclipse-based launcher, we need special checks
+		if (!osgi) {
+
+			checkBackwardCompatibility(configuration, true);
+
+			if (configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
+				IPluginModelBase[] models = PluginRegistry.getActiveModels();
+				for (int i = 0; i < models.length; i++) {
+					addBundleToMap(map, models[i], "default:default"); //$NON-NLS-1$
+				}
+				return map;
+			}
+
+			if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
+				IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
+				for (int i = 0; i < models.length; i++) {
+					addBundleToMap(map, models[i], "default:default"); //$NON-NLS-1$
+				}
+				return map;
+			}
+		}
+
+		String workspace = osgi == false ? IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.WORKSPACE_BUNDLES;
+		String target = osgi == false ? IPDELauncherConstants.SELECTED_TARGET_PLUGINS : IPDELauncherConstants.TARGET_BUNDLES;
+		map = getWorkspaceBundleMap(configuration, set, workspace);
+		map.putAll(getTargetBundleMap(configuration, set, target));
 		return map;
 	}
 
-	public static IPluginModelBase[] getMergedBundles(ILaunchConfiguration configuration) throws CoreException {
-		Map map = getMergedBundleMap(configuration);
+	public static IPluginModelBase[] getMergedBundles(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
+		Map map = getMergedBundleMap(configuration, osgi);
 		return (IPluginModelBase[]) map.keySet().toArray(new IPluginModelBase[map.size()]);
 	}
 
@@ -67,7 +95,6 @@ public class BundleLauncherHelper {
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
 
-					// TODO Very similar to logic in LaunchPluginValidator
 					// match only if...
 					// a) if we have the same version
 					// b) no version
@@ -189,6 +216,95 @@ public class BundleLauncherHelper {
 		if (autoStart != null)
 			buffer.append(autoStart);
 		return buffer.toString();
+	}
+
+	public static void checkBackwardCompatibility(ILaunchConfiguration configuration, boolean save) throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = null;
+		if (configuration.isWorkingCopy()) {
+			wc = (ILaunchConfigurationWorkingCopy) configuration;
+		} else {
+			wc = configuration.getWorkingCopy();
+		}
+
+		String value = configuration.getAttribute("wsproject", (String) null); //$NON-NLS-1$
+		if (value != null) {
+			wc.setAttribute("wsproject", (String) null); //$NON-NLS-1$
+			if (value.indexOf(';') != -1) {
+				value = value.replace(';', ',');
+			} else if (value.indexOf(':') != -1) {
+				value = value.replace(':', ',');
+			}
+			value = (value.length() == 0 || value.equals(",")) //$NON-NLS-1$
+			? null
+					: value.substring(0, value.length() - 1);
+
+			boolean automatic = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			String attr = automatic ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
+			wc.setAttribute(attr, value);
+		}
+
+		String value2 = configuration.getAttribute("extplugins", (String) null); //$NON-NLS-1$
+		if (value2 != null) {
+			wc.setAttribute("extplugins", (String) null); //$NON-NLS-1$
+			if (value2.indexOf(';') != -1) {
+				value2 = value2.replace(';', ',');
+			} else if (value2.indexOf(':') != -1) {
+				value2 = value2.replace(':', ',');
+			}
+			value2 = (value2.length() == 0 || value2.equals(",")) ? null : value2.substring(0, value2.length() - 1); //$NON-NLS-1$
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
+		}
+
+		String version = configuration.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, (String) null);
+		boolean newApp = TargetPlatformHelper.usesNewApplicationModel();
+		boolean upgrade = !"3.3".equals(version) && newApp; //$NON-NLS-1$
+		if (!upgrade)
+			upgrade = TargetPlatformHelper.getTargetVersion() >= 3.2 && version == null;
+		if (upgrade) {
+			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
+			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			if (!usedefault && !useFeatures) {
+				ArrayList list = new ArrayList();
+				if (version == null) {
+					list.add("org.eclipse.core.contenttype"); //$NON-NLS-1$
+					list.add("org.eclipse.core.jobs"); //$NON-NLS-1$
+					list.add(IPDEBuildConstants.BUNDLE_EQUINOX_COMMON);
+					list.add("org.eclipse.equinox.preferences"); //$NON-NLS-1$
+					list.add("org.eclipse.equinox.registry"); //$NON-NLS-1$
+					list.add("org.eclipse.core.runtime.compatibility.registry"); //$NON-NLS-1$
+				}
+				if (!"3.3".equals(version) && newApp) //$NON-NLS-1$
+					list.add("org.eclipse.equinox.app"); //$NON-NLS-1$
+				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
+				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
+				for (int i = 0; i < list.size(); i++) {
+					String plugin = list.get(i).toString();
+					IPluginModelBase model = PluginRegistry.findModel(plugin);
+					if (model == null)
+						continue;
+					if (model.getUnderlyingResource() != null) {
+						if (automaticAdd)
+							continue;
+						if (extensions.length() > 0)
+							extensions.append(","); //$NON-NLS-1$
+						extensions.append(plugin);
+					} else {
+						if (target.length() > 0)
+							target.append(","); //$NON-NLS-1$
+						target.append(plugin);
+					}
+				}
+				if (extensions.length() > 0)
+					wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, extensions.toString());
+				if (target.length() > 0)
+					wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, target.toString());
+			}
+		}
+
+		if (save && (value != null || value2 != null || upgrade))
+			wc.doSave();
 	}
 
 }

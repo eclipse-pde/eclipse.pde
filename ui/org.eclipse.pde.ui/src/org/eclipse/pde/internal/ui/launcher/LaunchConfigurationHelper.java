@@ -79,7 +79,7 @@ public class LaunchConfigurationHelper {
 		return mgr.performStringSubstitution(text);
 	}
 
-	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map map, File directory) throws CoreException {
+	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map bundles, Map bundlesWithStartLevels, File directory) throws CoreException {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
@@ -93,7 +93,7 @@ public class LaunchConfigurationHelper {
 			// if target's config.ini has the osgi.bundles header, then parse and compute the proper osgi.bundles value
 			String bundleList = properties.getProperty(PROP_OSGI_BUNDLES);
 			if (bundleList != null)
-				properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), map));
+				properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), bundles, bundlesWithStartLevels));
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String) null);
 			if (templateLoc != null) {
@@ -106,7 +106,7 @@ public class LaunchConfigurationHelper {
 		}
 		// whether we create a new config.ini or read from one as a template, we should add the required properties - bug 161265
 		if (properties != null) {
-			addRequiredProperties(properties, productID, map);
+			addRequiredProperties(properties, productID, bundles, bundlesWithStartLevels);
 		} else {
 			properties = new Properties();
 		}
@@ -119,50 +119,32 @@ public class LaunchConfigurationHelper {
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
 
 		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
-		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && map.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
-
-			// TODO we need to clean this up... our original list should have start level information
-			// this causes a performance impact
+		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 			URL bundlesTxt = null;
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			if (usedefault || useFeatures) {
-				bundlesTxt = P2Utils.writeBundlesTxt(map.values(), osgiBundles, directory);
+				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, 4, false, directory, osgiBundles);
 			} else {
-				Map models = new HashMap();
-				Map modelsWithStartLevels = new HashMap();
-				modelsWithStartLevels.putAll(BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS));
-				boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
-				String attribute = automaticAdd ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
-				modelsWithStartLevels.putAll(BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, attribute));
-				IPluginModelBase[] plugins = (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
-				for (int i = 0; i < plugins.length; i++) {
-					IPluginModelBase model = plugins[i];
-					String startLevel = (String) modelsWithStartLevels.get(model);
-					if (startLevel != null) {
-						models.put(model, startLevel);
-					}
-				}
-				bundlesTxt = P2Utils.writeBundlesTxt(models, start, autostart, directory);
+				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, start, autostart, directory, null);
 			}
 
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
-
 				// if we have simple configurator and update configurator together, ensure update doesn't reconcile
-				if (map.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR) != null) {
+				if (bundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR) != null) {
 					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
 
-		setBundleLocations(map, properties);
+		setBundleLocations(bundles, properties);
 
 		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
 		return properties;
 	}
 
-	private static void addRequiredProperties(Properties properties, String productID, Map map) {
+	private static void addRequiredProperties(Properties properties, String productID, Map bundles, Map bundlesWithStartLevels) {
 		if (!properties.containsKey("osgi.install.area")) //$NON-NLS-1$
 			properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
@@ -170,12 +152,12 @@ public class LaunchConfigurationHelper {
 		if (!properties.containsKey(PROP_OSGI_FRAMEWORK))
 			properties.setProperty(PROP_OSGI_FRAMEWORK, IPDEBuildConstants.BUNDLE_OSGI);
 		if (!properties.containsKey("osgi.splashPath") && productID != null) //$NON-NLS-1$
-			addSplashLocation(properties, productID, map);
+			addSplashLocation(properties, productID, bundles);
 		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
 		if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
-			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
+			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, bundles); //$NON-NLS-1$
 		if (!properties.containsKey(PROP_OSGI_BUNDLES))
-			properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatform.getBundleList(), map));
+			properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatform.getBundleList(), bundles, bundlesWithStartLevels));
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -186,16 +168,17 @@ public class LaunchConfigurationHelper {
 	 * launching with.  The list of bundles must have already had it's path information
 	 * removed.
 	 * @param bundleList list of bundles without path information
-	 * @param map map of bundle id to bundle model, contains all bundles being launched with
+	 * @param bundles map of bundle id to bundle model, contains all bundles being launched with
+	 * @param bundlesWithStartLevels map of bundles of start level
 	 * @return string list of osgi bundles
 	 */
-	private static String computeOSGiBundles(String bundleList, Map map) {
+	private static String computeOSGiBundles(String bundleList, Map bundles, Map bundlesWithStartLevels) {
 
 		// if p2 and only simple configurator and 
 		// if simple configurator isn't selected & isn't in bundle list... hack it
 
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
-		if (map.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != null)
+		if (bundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != null)
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
 
 		StringBuffer buffer = new StringBuffer();
@@ -205,7 +188,7 @@ public class LaunchConfigurationHelper {
 			String token = tokenizer.nextToken();
 			int index = token.indexOf('@');
 			String id = index != -1 ? token.substring(0, index) : token;
-			if (map.containsKey(id)) {
+			if (bundles.containsKey(id)) {
 				if (buffer.length() > 0)
 					buffer.append(',');
 				buffer.append(id);
@@ -218,17 +201,18 @@ public class LaunchConfigurationHelper {
 		// if org.eclipse.update.configurator is not included (LIKE IN BASIC RCP APPLICATION), then write out all bundles in osgi.bundles - bug 170772
 		if (!initialBundleSet.contains(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR)) {
 			initialBundleSet.add(IPDEBuildConstants.BUNDLE_OSGI);
-			Iterator iter = map.keySet().iterator();
+			Iterator iter = bundlesWithStartLevels.keySet().iterator();
 			while (iter.hasNext()) {
-				String id = iter.next().toString();
+				IPluginModelBase model = (IPluginModelBase) iter.next();
+				String id = model.getPluginBase().getId();
 				if (!initialBundleSet.contains(id)) {
 					if (buffer.length() > 0)
 						buffer.append(',');
+
+					String slinfo = (String) bundlesWithStartLevels.get(model);
 					buffer.append(id);
-					// if we are working with core.runtime, we need to ensure it's started
-					if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(id)) {
-						buffer.append("@start"); //$NON-NLS-1$
-					}
+					buffer.append('@');
+					buffer.append(slinfo);
 				}
 			}
 		}
@@ -360,15 +344,16 @@ public class LaunchConfigurationHelper {
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
 				String url = getBundleURL(token, map, false);
-				int index = -1;
+				int i = -1;
 				if (url == null) {
-					index = token.indexOf('@');
-					if (index != -1)
-						url = getBundleURL(token.substring(0, index), map, false);
+					i = token.indexOf('@');
+					if (i != -1) {
+						url = getBundleURL(token.substring(0, i), map, false);
+					}
 					if (url == null) {
-						index = token.indexOf(':');
-						if (index != -1)
-							url = getBundleURL(token.substring(0, index), map, false);
+						i = token.indexOf(':');
+						if (i != -1)
+							url = getBundleURL(token.substring(0, i), map, false);
 					}
 				}
 				if (url != null) {
@@ -376,12 +361,41 @@ public class LaunchConfigurationHelper {
 						buffer.append(","); //$NON-NLS-1$
 					}
 					buffer.append("reference:" + url); //$NON-NLS-1$
-					if (index != -1)
-						buffer.append(token.substring(index));
+					if (i != -1) {
+						String slinfo = token.substring(i + 1);
+						buffer.append(getStartData(slinfo, false));
+					}
 				}
 			}
 			properties.setProperty(PROP_OSGI_BUNDLES, buffer.toString());
 		}
+	}
+
+	/**
+	 * Convenience method to parses the startData ("startLevel:autoStart"), convert it to the
+	 * format expected by the OSGi bundles property, and append to a StringBuffer.
+	 * @param startData data to parse ("startLevel:autoStart")
+	 * @param defaultAuto default auto start setting
+	 */
+	public static String getStartData(String startData, boolean defaultAuto) {
+		StringBuffer buffer = new StringBuffer();
+		int index = startData.indexOf(':');
+		String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
+		String auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
+		if ("default".equals(auto)) //$NON-NLS-1$
+			auto = Boolean.toString(defaultAuto);
+		if (!level.equals("default") || "true".equals(auto) || "start".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			buffer.append("@"); //$NON-NLS-1$
+
+		if (!level.equals("default")) { //$NON-NLS-1$
+			buffer.append(level);
+			if ("start".equals(auto) || "true".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(":"); //$NON-NLS-1$
+		}
+		if ("start".equals(auto) || "true".equals(auto)) { //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append("start"); //$NON-NLS-1$
+		}
+		return buffer.toString();
 	}
 
 	public static void save(File file, Properties properties) {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -18,7 +19,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BundleHelper;
@@ -189,12 +189,35 @@ public class P2Utils {
 	 * @param defaultStartLevel start level to use when "default" is the start level
 	 * @param defaultAutoStart auto start setting to use when "default" is the auto start setting
 	 * @param directory configuration directory to create the files in
+	 * @param osgiBundleList a list of bundles coming from a template config.ini
 	 * @return URL location of the bundles.info or <code>null</code>
 	 */
-	public static URL writeBundlesTxt(Map bundles, int defaultStartLevel, boolean defaultAutoStart, File directory) {
+	public static URL writeBundlesTxt(Map bundles, int defaultStartLevel, boolean defaultAutoStart, File directory, String osgiBundleList) {
 		if (bundles.size() == 0) {
 			return null;
 		}
+
+		// Parse the osgi bundle list for start levels
+		Map osgiStartLevels = new HashMap();
+		if (osgiBundleList != null) {
+			StringTokenizer tokenizer = new StringTokenizer(osgiBundleList, ","); //$NON-NLS-1$
+			while (tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken();
+				int index = token.indexOf('@');
+				if (index != -1) {
+					String modelName = token.substring(0, index);
+					String startData = token.substring(index + 1);
+					index = startData.indexOf(':');
+					String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
+					String auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
+					if ("start".equals(auto)) { //$NON-NLS-1$
+						auto = "true"; //$NON-NLS-1$
+					}
+					osgiStartLevels.put(modelName, level + ':' + auto);
+				}
+			}
+		}
+
 		List bundleInfo = new ArrayList(bundles.size());
 		List sourceInfo = new ArrayList(bundles.size());
 		for (Iterator iterator = bundles.keySet().iterator(); iterator.hasNext();) {
@@ -215,6 +238,10 @@ public class P2Utils {
 					info.setSymbolicName(base.getId());
 					info.setVersion(base.getVersion());
 					String currentLevel = (String) bundles.get(currentModel);
+					// override the start level setting if something comes from the config.ini
+					if (osgiStartLevels.containsKey(base.getId())) {
+						currentLevel = (String) osgiStartLevels.get(base.getId());
+					}
 					int index = currentLevel.indexOf(':');
 					String levelString = index > 0 ? currentLevel.substring(0, index) : "default"; //$NON-NLS-1$
 					String auto = index > 0 && index < currentLevel.length() - 1 ? currentLevel.substring(index + 1) : "default"; //$NON-NLS-1$
@@ -267,75 +294,6 @@ public class P2Utils {
 			PDECore.logException(e);
 			return null;
 		}
-	}
-
-	/**
-	 * Creates a bundles.info file in the given directory containing the name,
-	 * version, location, start level and expected state of every bundle in the
-	 * given collection.  Will also create a source.info file containing
-	 * a list of all source bundles found in the given collection. If a bundle
-	 * has a specified start level in the osgi bundle list, that value is used
-	 * instead of the default.  Returns the URL location of the bundle.txt or 
-	 * <code>null</code> if there was a problem creating it.
-	 * 
-	 * @param bundles collection of IPluginModelBase objects to write into the bundles.info/source.info
-	 * @param osgiBundleList comma separated list of bundles specified in a template config.ini, used to override start levels
-	 * @param directory directory to create the bundles.info and source.info files in
-	 * @return URL location of the bundles.info or <code>null</code>
-	 */
-	public static URL writeBundlesTxt(Collection bundles, String osgiBundleList, File directory) {
-		// Parse the osgi bundle list for start levels
-		Map osgiStartLevels = new HashMap();
-		StringTokenizer tokenizer = new StringTokenizer(osgiBundleList, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			int index = token.indexOf('@');
-			if (index != -1) {
-				String modelName = token.substring(0, index);
-				String startData = token.substring(index + 1);
-				index = startData.indexOf(':');
-				String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
-				String auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
-				if ("start".equals(auto)) { //$NON-NLS-1$
-					auto = "true"; //$NON-NLS-1$
-				}
-				osgiStartLevels.put(modelName, level + ':' + auto);
-			}
-		}
-
-		// Create a map of bundles to start levels
-		String defaultAppend = "default:default"; //$NON-NLS-1$
-		Map bundleMap = new HashMap(bundles.size());
-		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
-			IPluginModelBase currentModel = (IPluginModelBase) iterator.next();
-			BundleDescription desc = currentModel.getBundleDescription();
-			if (desc != null) {
-				String modelName = desc.getSymbolicName();
-				if (modelName != null && osgiStartLevels.containsKey(modelName)) {
-					bundleMap.put(currentModel, osgiStartLevels.get(modelName));
-				} else if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
-					bundleMap.put(currentModel, "1:true"); //$NON-NLS-1$ 
-				} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
-					bundleMap.put(currentModel, "1:true"); //$NON-NLS-1$
-				} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
-					bundleMap.put(currentModel, "2:true"); //$NON-NLS-1$
-				} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
-					bundleMap.put(currentModel, "-1:true"); //$NON-NLS-1$
-				} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
-					bundleMap.put(currentModel, "3:true"); //$NON-NLS-1$
-				} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
-					if (TargetPlatformHelper.getTargetVersion() > 3.1) {
-						bundleMap.put(currentModel, "default:true"); //$NON-NLS-1$
-					} else {
-						bundleMap.put(currentModel, "2:true"); //$NON-NLS-1$
-					}
-				} else {
-					bundleMap.put(currentModel, defaultAppend);
-				}
-			}
-		}
-
-		return writeBundlesTxt(bundleMap, 4, false, directory);
 	}
 
 }
