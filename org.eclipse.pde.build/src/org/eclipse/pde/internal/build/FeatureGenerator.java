@@ -354,7 +354,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							}
 							if (error) {
 								//throw error
-								String message = NLS.bind(Messages.exception_missingPlugin, name);
+								String message = NLS.bind(Messages.exception_missingPlugin, bundleVersion != null ? name + "_" + bundleVersion : name); //$NON-NLS-1$
 								throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 							}
 						}
