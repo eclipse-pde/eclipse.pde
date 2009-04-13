@@ -23,7 +23,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -53,74 +52,41 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (configurations == null)
 			configurations = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()}};
 
-		Properties versionAdvice = new Properties();
+		cleanupBuildRepo();
+
 		try {
-			monitor.beginTask("", 10 * configurations.length); //$NON-NLS-1$
-			for (int i = 0; i < configurations.length; i++) {
-				try {
-					String[] config = configurations[i];
-					if (config[0].equals("macosx") && fInfo.targets == null) //$NON-NLS-1$
-						createMacScript(config, new SubProgressMonitor(monitor, 1));
-					// create a feature to wrap all plug-ins and features
-					String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
-					fFeatureLocation = fBuildTempLocation + File.separator + featureID;
-
-					createFeature(featureID, fFeatureLocation, config, true);
-					createBuildPropertiesFile(fFeatureLocation, config);
-					doExport(featureID, null, fFeatureLocation, config[0], config[1], config[2], new SubProgressMonitor(monitor, 8));
-				} catch (IOException e) {
-					PDECore.log(e);
-				} catch (InvocationTargetException e) {
-					return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
-				} catch (CoreException e) {
-					return e.getStatus();
-				} finally {
-
-					// Append platform specific version information so that it is available for the p2 post script
-					String versionsPrefix = fProduct.useFeatures() ? IPDEBuildConstants.DEFAULT_FEATURE_VERSION_FILENAME_PREFIX : IPDEBuildConstants.DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX;
-					File versionFile = new File(fFeatureLocation, versionsPrefix + IPDEBuildConstants.PROPERTIES_FILE_SUFFIX);
-					InputStream stream = null;
-					try {
-						stream = new BufferedInputStream(new FileInputStream(versionFile));
-						versionAdvice.load(stream);
-					} catch (IOException e) {
-					} finally {
-						try {
-							if (stream != null)
-								stream.close();
-						} catch (IOException e) {
-						}
-					}
-
-					// Clean up generated files
-					for (int j = 0; j < fInfo.items.length; j++) {
-						try {
-							deleteBuildFiles(fInfo.items[j]);
-						} catch (CoreException e) {
-							PDECore.log(e);
-						}
-					}
-					cleanup(fInfo.targets == null ? null : configurations[i], new SubProgressMonitor(monitor, 1));
-				}
-			}
-
+			monitor.beginTask("", 10); //$NON-NLS-1$
 			try {
-				// Run postscript to generate p2 metadata for product
-				String postScript = PackageScriptGenerator.generateP2ProductScript(fFeatureLocation, fProduct.getModel().getInstallLocation(), versionAdvice);
-				if (postScript != null) {
-					try {
-						Map properties = new HashMap();
-						setP2MetaDataProperties(properties);
-						runScript(postScript, null, properties, monitor);
-					} catch (InvocationTargetException e) {
-						return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
-					}
+				if (fInfo.targets == null && configurations.length > 0) {
+					String[] config = configurations[0];
+					if (config[0].equals("macosx")) //$NON-NLS-1$
+						createMacScript(config, new SubProgressMonitor(monitor, 1));
 				}
+				// create a feature to wrap all plug-ins and features
+				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
+
+				createFeature(featureID, fFeatureLocation, configurations, true);
+				createBuildPropertiesFile(fFeatureLocation, configurations);
+				doExport(featureID, null, fFeatureLocation, configurations, new SubProgressMonitor(monitor, 8));
+			} catch (IOException e) {
+				PDECore.log(e);
+			} catch (InvocationTargetException e) {
+				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 			} catch (CoreException e) {
 				return e.getStatus();
+			} finally {
+				// Clean up generated files
+				for (int j = 0; j < fInfo.items.length; j++) {
+					try {
+						deleteBuildFiles(fInfo.items[j]);
+					} catch (CoreException e) {
+						PDECore.log(e);
+					}
+				}
+				cleanup(null, new SubProgressMonitor(monitor, 1));
 			}
 
-			cleanup(null, new SubProgressMonitor(monitor, 1));
 			if (hasAntErrors()) {
 				return new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
 			}
@@ -129,6 +95,19 @@ public class ProductExportOperation extends FeatureExportOperation {
 			monitor.done();
 		}
 		return Status.OK_STATUS;
+	}
+
+	protected boolean groupedConfigurations() {
+		// we never group product exports
+		return false;
+	}
+
+	private void cleanupBuildRepo() {
+		File metadataTemp = new File(fBuildTempMetadataLocation);
+		if (metadataTemp.exists()) {
+			//make sure our build metadata repo is clean
+			deleteDir(metadataTemp);
+		}
 	}
 
 	/*
@@ -144,15 +123,18 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return all;
 	}
 
-	private void createBuildPropertiesFile(String featureLocation, String[] config) {
+	private void createBuildPropertiesFile(String featureLocation, String[][] configurations) {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
 
 		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() != null;
 		Properties properties = new Properties();
-		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations(hasLaunchers)); //To copy a folder
-		if (!hasLaunchers) {
+		if (!hasLaunchers && configurations.length > 0) {
+			String rootPrefix = "root." + configurations[0][0] + //$NON-NLS-1$
+					"." + configurations[0][1] + //$NON-NLS-1$
+					"." + configurations[0][2]; //$NON-NLS-1$
+			properties.put(rootPrefix, getRootFileLocations(hasLaunchers)); //To copy a folder
 			properties.put("root.permissions.755", getLauncherName()); //$NON-NLS-1$
 			if (TargetPlatform.getWS().equals("motif") && TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$ //$NON-NLS-2$
 				properties.put("root.linux.motif.x86.permissions.755", "libXm.so.2"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -163,29 +145,27 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}
 
 		IJREInfo jreInfo = fProduct.getJREInfo();
-		File vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
-		if (vm != null) {
-			properties.put("root." + config[0] + //$NON-NLS-1$
-					"." + config[1] + //$NON-NLS-1$
-					"." + config[2] + //$NON-NLS-1$
-					".folder.jre", //$NON-NLS-1$
-					"absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$
-			String perms = (String) properties.get("root.permissions.755"); //$NON-NLS-1$
-			if (perms != null) {
-				StringBuffer buffer = new StringBuffer(perms);
-				buffer.append(","); //$NON-NLS-1$
-				buffer.append("jre/bin/java"); //$NON-NLS-1$
-				properties.put("root.permissions.755", buffer.toString()); //$NON-NLS-1$
+		for (int i = 0; i < configurations.length; i++) {
+			String[] config = configurations[i];
+			File vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
+
+			if (vm != null) {
+				String rootPrefix = "root." + config[0] + //$NON-NLS-1$
+						"." + config[1] + //$NON-NLS-1$
+						"." + config[2]; //$NON-NLS-1$
+				properties.put(rootPrefix + ".folder.jre", "absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+				String perms = (String) properties.get(rootPrefix + ".permissions.755"); //$NON-NLS-1$
+				if (perms != null) {
+					StringBuffer buffer = new StringBuffer(perms);
+					buffer.append(","); //$NON-NLS-1$
+					buffer.append("jre/bin/java"); //$NON-NLS-1$
+					properties.put(rootPrefix + ".permissions.755", buffer.toString()); //$NON-NLS-1$
+				}
 			}
 		}
 
 		if (fInfo.exportSource && fInfo.exportSourceBundle) {
 			properties.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			Dictionary environment = new Hashtable(4);
-			environment.put("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
-			environment.put("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
-			environment.put("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
-			environment.put("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
 			List workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (fInfo.items[i] instanceof IFeatureModel) {
@@ -203,7 +183,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 					if (bundle == null)
 						continue;
 
-					if (shouldAddPlugin(bundle, environment) && workspacePlugins.contains(PluginRegistry.findModel(bundle))) {
+					//it doesn't matter if we generate extra properties for platforms we aren't exporting for
+					if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) {
 						properties.put("generate.plugin@" + bundle.getSymbolicName() + ".source", bundle.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
@@ -216,8 +197,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#publishingP2Metadata()
 	 */
 	protected boolean publishingP2Metadata() {
-		//not supported yet
-		return false;
+		return fInfo.exportMetadata;
 	}
 
 	private String getRootFileLocations(boolean hasLaunchers) {
@@ -273,8 +253,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 		buffer.append(file.getAbsolutePath());
 	}
 
-	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
-		HashMap properties = super.createAntBuildProperties(os, ws, arch);
+	protected HashMap createAntBuildProperties(String[][] configs) {
+		HashMap properties = super.createAntBuildProperties(configs);
 		properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, getLauncherName());
 
 		if (fProduct.includeLaunchers()) {
@@ -283,18 +263,27 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		ILauncherInfo info = fProduct.getLauncherInfo();
 		if (info != null) {
-			String images = null;
-			if (os.equals("win32")) { //$NON-NLS-1$
-				images = getWin32Images(info);
-			} else if (os.equals("solaris")) { //$NON-NLS-1$
-				images = getSolarisImages(info);
-			} else if (os.equals("linux")) { //$NON-NLS-1$
-				images = getExpandedPath(info.getIconPath(ILauncherInfo.LINUX_ICON));
-			} else if (os.equals("macosx")) { //$NON-NLS-1$
-				images = getExpandedPath(info.getIconPath(ILauncherInfo.MACOSX_ICON));
+			String icons = ""; //$NON-NLS-1$
+			for (int i = 0; i < configs.length; i++) {
+				String images = null;
+				if (configs[i][0].equals("win32")) { //$NON-NLS-1$
+					images = getWin32Images(info);
+				} else if (configs[i][0].equals("solaris")) { //$NON-NLS-1$
+					images = getSolarisImages(info);
+				} else if (configs[i][0].equals("linux")) { //$NON-NLS-1$
+					images = getExpandedPath(info.getIconPath(ILauncherInfo.LINUX_ICON));
+				} else if (configs[i][0].equals("macosx")) { //$NON-NLS-1$
+					images = getExpandedPath(info.getIconPath(ILauncherInfo.MACOSX_ICON));
+				}
+				if (images != null) {
+					if (icons.length() > 0)
+						icons += ","; //$NON-NLS-1$
+					icons += images;
+				}
+
 			}
-			if (images != null && images.length() > 0)
-				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, images);
+			if (icons != null && icons.length() > 0)
+				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, icons);
 		}
 
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot);
@@ -308,11 +297,15 @@ public class ProductExportOperation extends FeatureExportOperation {
 	 */
 	protected void setP2MetaDataProperties(Map map) {
 		if (fInfo.exportMetadata) {
+			if (PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() == null)
+				map.put(IXMLConstants.PROPERTY_LAUNCHER_PROVIDER, "org.eclipse.pde.container.feature"); //$NON-NLS-1$
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_COMPRESS, IBuildPropertiesConstants.TRUE);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, Boolean.toString(publishingP2Metadata()));
 			try {
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_BUILD_REPO, new File(fBuildTempMetadataLocation).toURL().toString());
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO, new File(fInfo.destinationDirectory + "/repository").toURL().toString()); //$NON-NLS-1$
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, NLS.bind(PDECoreMessages.ProductExportOperation_0, fProduct.getProductId()));
@@ -381,8 +374,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return null;
 	}
 
-	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {
-		super.setupGenerator(generator, featureID, versionId, os, ws, arch, featureLocation);
+	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String[][] configs, String featureLocation) throws CoreException {
+		super.setupGenerator(generator, featureID, versionId, configs, featureLocation);
 		generator.setGenerateVersionsList(true);
 		if (fProduct != null)
 			generator.setProduct(fProduct.getModel().getInstallLocation());

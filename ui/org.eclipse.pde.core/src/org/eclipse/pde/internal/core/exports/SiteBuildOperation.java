@@ -194,9 +194,10 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		if (fInfo.toDirectory) {
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
-			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.FALSE);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FINAL_MODE_OVERRIDE, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_COMPRESS, IBuildPropertiesConstants.TRUE);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, Boolean.toString(publishingP2Metadata()));
 			IResource siteXML = fSiteModel.getUnderlyingResource();
 			if (siteXML.exists() && siteXML.getLocationURI() != null) {
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_CATEGORY_SITE, URIUtil.toUnencodedString(siteXML.getLocationURI()));

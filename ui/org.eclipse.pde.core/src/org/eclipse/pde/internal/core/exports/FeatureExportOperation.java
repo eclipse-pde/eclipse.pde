@@ -57,6 +57,7 @@ public class FeatureExportOperation extends Job {
 	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 
+	private static final String[] GENERIC_CONFIG = new String[] {"*", "*", "*", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	protected FeatureExportInfo fInfo;
 
 	public FeatureExportOperation(FeatureExportInfo info, String name) {
@@ -80,7 +81,7 @@ public class FeatureExportOperation extends Job {
 			if (configurations == null)
 				configurations = new String[][] {null};
 
-			monitor.beginTask("Exporting...", (configurations.length * fInfo.items.length * 23) + (configurations.length * 5) + 10); //$NON-NLS-1$
+			monitor.beginTask("Exporting...", (fInfo.items.length * 23) + 5 + 10); //$NON-NLS-1$
 			IStatus status = testBuildWorkspaceBeforeExport(new SubProgressMonitor(monitor, 10));
 
 			if (fInfo.exportSource && fInfo.exportSourceBundle) {
@@ -100,20 +101,15 @@ public class FeatureExportOperation extends Job {
 				doExport(model, null, new SubProgressMonitor(monitor, 20));
 
 			} else {
-				for (int i = 0; i < configurations.length; i++) {
-					for (int j = 0; j < fInfo.items.length; j++) {
-						if (monitor.isCanceled())
-							return Status.CANCEL_STATUS;
-						try {
-							doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 20));
-						} catch (CoreException e) {
-							return e.getStatus();
-						} finally {
-							cleanup(configurations[i], new SubProgressMonitor(monitor, 3));
-						}
-					}
-					if (fInfo.exportMetadata && !fInfo.toDirectory) {
-						appendMetadataToArchive(configurations[i], new SubProgressMonitor(monitor, 5));
+				for (int j = 0; j < fInfo.items.length; j++) {
+					if (monitor.isCanceled())
+						return Status.CANCEL_STATUS;
+					try {
+						doExport((IFeatureModel) fInfo.items[j], configurations, new SubProgressMonitor(monitor, 20));
+					} catch (CoreException e) {
+						return e.getStatus();
+					} finally {
+						cleanup(null, new SubProgressMonitor(monitor, 3));
 					}
 				}
 			}
@@ -201,7 +197,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	private void createDestination(String os, String ws, String arch) throws InvocationTargetException {
-		if (!fInfo.toDirectory)
+		if (!fInfo.toDirectory || groupedConfigurations())
 			return;
 		File file = new File(fInfo.destinationDirectory, os + '.' + ws + '.' + arch);
 		if (!file.exists() || !file.isDirectory()) {
@@ -210,15 +206,22 @@ public class FeatureExportOperation extends Job {
 		}
 	}
 
-	private void doExport(IFeatureModel model, String os, String ws, String arch, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
+	private void doExport(IFeatureModel model, String[][] configs, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
+		IFeature feature = model.getFeature();
+		if (configs == null || configs.length == 0 || configs[0] == null) {
+			configs = new String[][] {{getOS(feature), getWS(feature), getOSArch(feature)}};
+		} else {
+			for (int i = 0; i < configs.length; i++) {
+				createDestination(configs[i][0], configs[i][1], configs[i][2]);
+			}
+		}
 		try {
 			String location = model.getInstallLocation();
 			if (fInfo.useJarFormat) {
 				createPostProcessingFile(new File(location, FEATURE_POST_PROCESSING));
 				createPostProcessingFile(new File(location, PLUGIN_POST_PROCESSING));
 			}
-			IFeature feature = model.getFeature();
-			doExport(feature.getId(), feature.getVersion(), location, os, ws, arch, monitor);
+			doExport(feature.getId(), feature.getVersion(), location, configs, monitor);
 		} finally {
 			deleteBuildFiles(model);
 		}
@@ -242,15 +245,15 @@ public class FeatureExportOperation extends Job {
 		}
 	}
 
-	protected void doExport(String featureID, String version, String featureLocation, String os, String ws, String arch, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
+	protected void doExport(String featureID, String version, String featureLocation, String[][] configs, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
 		fHasErrors = false;
 
 		try {
-			monitor.beginTask("", 10 + (publishingP2Metadata() ? 2 : 0)); //$NON-NLS-1$
+			monitor.beginTask("", 6 + (configs.length * 4) + (publishingP2Metadata() ? 2 : 0)); //$NON-NLS-1$
 			monitor.setTaskName(PDECoreMessages.FeatureExportJob_taskName);
-			HashMap properties = createAntBuildProperties(os, ws, arch);
+			HashMap properties = createAntBuildProperties(configs);
 			BuildScriptGenerator generator = new BuildScriptGenerator();
-			setupGenerator(generator, featureID, version, os, ws, arch, featureLocation);
+			setupGenerator(generator, featureID, version, configs, featureLocation);
 			generator.generate();
 			monitor.worked(1);
 			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningBuildScript);
@@ -263,17 +266,50 @@ public class FeatureExportOperation extends Job {
 			if (publishingP2Metadata()) {
 				monitor.setTaskName(PDECoreMessages.FeatureExportOperation_publishingMetadata);
 				runScript(getAssembleP2ScriptName(featureID, featureLocation), new String[] {"main"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
+
+				//metadata implies groups if we aren't exporting products
+				if (groupedConfigurations()) {
+					configs = new String[][] {{"group", "group", "group"}}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
 			}
 
 			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningAssemblyScript);
-			runScript(getAssemblyScriptName(featureID, os, ws, arch, featureLocation), new String[] {"main"}, //$NON-NLS-1$
-					properties, new SubProgressMonitor(monitor, 2));
+			for (int i = 0; i < configs.length; i++) {
+				setArchiveLocation(properties, configs[i][0], configs[i][1], configs[i][2]);
+				runScript(getAssemblyScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), new String[] {"main"}, //$NON-NLS-1$
+						properties, new SubProgressMonitor(monitor, 2));
+			}
+
 			monitor.setTaskName(PDECoreMessages.FeatureExportOperation_runningPackagerScript);
-			runScript(getPackagerScriptName(featureID, os, ws, arch, featureLocation), null, properties, new SubProgressMonitor(monitor, 2));
+			for (int i = 0; i < configs.length; i++) {
+				setArchiveLocation(properties, configs[i][0], configs[i][1], configs[i][2]);
+				runScript(getPackagerScriptName(featureID, configs[i][0], configs[i][1], configs[i][2], featureLocation), null, properties, new SubProgressMonitor(monitor, 2));
+			}
 			properties.put("destination.temp.folder", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
-			runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$
+			runScript(getBuildScriptName(featureLocation), new String[] {"gather.logs"}, properties, new SubProgressMonitor(monitor, 2)); //$NON-NLS-1$				
 		} finally {
 			monitor.done();
+		}
+	}
+
+	protected boolean groupedConfigurations() {
+		//feature export with p2 metadata results in a grouped repo
+		return publishingP2Metadata();
+	}
+
+	private void setArchiveLocation(Map antProperties, String os, String ws, String arch) {
+		if (!fInfo.toDirectory) {
+			String filename = fInfo.zipFileName;
+			if (fInfo.targets != null && !groupedConfigurations()) {
+				int i = filename.lastIndexOf('.');
+				filename = filename.substring(0, i) + '.' + os + '.' + ws + '.' + arch + filename.substring(i);
+			}
+			antProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fInfo.destinationDirectory + File.separator + filename);
+		} else {
+			String dir = fInfo.destinationDirectory;
+			if (fInfo.targets != null && !groupedConfigurations())
+				dir += File.separatorChar + os + '.' + ws + '.' + arch;
+			antProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, dir);
 		}
 	}
 
@@ -393,7 +429,7 @@ public class FeatureExportOperation extends Job {
 				+ ".xml"; //$NON-NLS-1$
 	}
 
-	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
+	protected HashMap createAntBuildProperties(String[][] configs) {
 		if (fAntBuildProperties == null) {
 			fAntBuildProperties = new HashMap(15);
 
@@ -420,9 +456,9 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 			fAntBuildProperties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_GENERATE_API_DESCRIPTION, "true"); //$NON-NLS-1$
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, os);
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, ws);
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, arch);
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_OS, TargetPlatform.getOS());
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS());
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_ARCH, TargetPlatform.getOSArch());
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BASE_NL, TargetPlatform.getNL());
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BuildUtilities.getBootClasspath());
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
@@ -459,22 +495,8 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, "."); //$NON-NLS-1$
 			String prefix = Platform.getOS().equals("macosx") ? "." : ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, prefix);
-
-			if (!fInfo.toDirectory) {
-				String filename = fInfo.zipFileName;
-				if (fInfo.targets != null) {
-					int i = filename.lastIndexOf('.');
-					filename = filename.substring(0, i) + '.' + os + '.' + ws + '.' + arch + filename.substring(i);
-				}
-				fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fInfo.destinationDirectory + File.separator + filename);
-			} else {
-				String dir = fInfo.destinationDirectory;
-				if (fInfo.targets != null)
-					dir += File.separatorChar + os + '.' + ws + '.' + arch;
-				fAntBuildProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, dir);
-			}
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_TAR_ARGS, ""); //$NON-NLS-1$
-
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_RUN_PACKAGER, "true"); //$NON-NLS-1$
 		}
 
 		setP2MetaDataProperties(fAntBuildProperties);
@@ -486,8 +508,7 @@ public class FeatureExportOperation extends Job {
 	 * Whether or not to use new metadata publishing or old generation
 	 */
 	protected boolean publishingP2Metadata() {
-		//for now we can only support when exporting a single platform
-		return fInfo.useJarFormat && fInfo.exportMetadata && (fInfo.targets == null || fInfo.targets.length == 1);
+		return fInfo.useJarFormat && fInfo.exportMetadata;
 	}
 
 	/**
@@ -555,13 +576,13 @@ public class FeatureExportOperation extends Job {
 		}
 
 		File metadataTemp = new File(fBuildTempMetadataLocation);
-		if (file.exists()) {
+		if (metadataTemp.exists()) {
 			//make sure our build metadata repo is clean
 			deleteDir(metadataTemp);
 		}
 	}
 
-	private void deleteDir(File dir) {
+	protected void deleteDir(File dir) {
 		if (dir.exists()) {
 			if (dir.isDirectory()) {
 				File[] children = dir.listFiles();
@@ -575,17 +596,44 @@ public class FeatureExportOperation extends Job {
 		}
 	}
 
-	protected void doExport(IFeatureModel model, String[] config, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
-		if (config == null) {
-			IFeature feature = model.getFeature();
-			doExport(model, getOS(feature), getWS(feature), getOSArch(feature), monitor);
-		} else {
-			createDestination(config[0], config[1], config[2]);
-			doExport(model, config[0], config[1], config[2], monitor);
+	private String getConfigInfo(String[][] configs) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < configs.length; i++) {
+			if (i > 0)
+				buffer.append('&');
+			buffer.append(configs[i][0]);
+			buffer.append(',');
+			buffer.append(configs[i][1]);
+			buffer.append(',');
+			buffer.append(configs[i][2]);
 		}
+		return buffer.toString();
 	}
 
-	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {
+	private String getArchivesFormat(String[][] configs) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < configs.length; i++) {
+			if (i > 0)
+				buffer.append('&');
+			buffer.append(configs[i][0]);
+			buffer.append(',');
+			buffer.append(configs[i][1]);
+			buffer.append(',');
+			buffer.append(configs[i][2]);
+			buffer.append('-');
+			buffer.append(fInfo.toDirectory ? IXMLConstants.FORMAT_FOLDER : IXMLConstants.FORMAT_ANTZIP);
+		}
+
+		if (groupedConfigurations()) {
+			buffer.append('&');
+			buffer.append("group,group,group-"); //$NON-NLS-1$
+			buffer.append(fInfo.toDirectory ? IXMLConstants.FORMAT_FOLDER : IXMLConstants.FORMAT_ANTZIP);
+		}
+
+		return buffer.toString();
+	}
+
+	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String[][] configs, String featureLocation) throws CoreException {
 		generator.setBuildingOSGi(true);
 		generator.setChildren(true);
 		generator.setWorkingDirectory(featureLocation);
@@ -598,15 +646,9 @@ public class FeatureExportOperation extends Job {
 		generator.setGenerateJnlp(fInfo.jnlpInfo != null);
 		generator.setFlattenDependencies(true);
 
-		String config = os + ',' + ws + ',' + arch;
-		AbstractScriptGenerator.setConfigInfo(config); //This needs to be set before we set the format
-		String format;
-		if (fInfo.toDirectory)
-			format = config + '-' + IXMLConstants.FORMAT_FOLDER;
-		else
-			format = config + '-' + IXMLConstants.FORMAT_ANTZIP;
-		generator.setArchivesFormat(format);
-		generator.setPDEState(getState(os, ws, arch));
+		AbstractScriptGenerator.setConfigInfo(getConfigInfo(configs)); //This needs to be set before we set the format
+		generator.setArchivesFormat(getArchivesFormat(configs));
+		generator.setPDEState(getBuildState());
 		generator.setNextId(TargetPlatformHelper.getPDEState().getNextId());
 
 		if (fInfo.useWorkspaceCompiledClasses) {
@@ -623,6 +665,14 @@ public class FeatureExportOperation extends Job {
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, Boolean.toString(fInfo.allowBinaryCycles));
 		properties.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, Boolean.toString(publishingP2Metadata()));
+		//TODO this is duplicate from createAntBuildProperties
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
+		for (int i = 0; i < envs.length; i++) {
+			String id = envs[i].getId();
+			if (id != null)
+				properties.put(id, BuildUtilities.getBootClasspath(id));
+		}
 		generator.setImmutableAntProperties(properties);
 
 		// allow for custom execution environments
@@ -649,6 +699,15 @@ public class FeatureExportOperation extends Job {
 			properties.put("osgi.arch", arch); //$NON-NLS-1$			
 		}
 		fStateCopy.resolve(false);
+		return fStateCopy;
+	}
+
+	protected State getBuildState() {
+		State main = TargetPlatformHelper.getState();
+		if (fStateCopy == null)
+			copyState(main);
+		//this state is expected to get platform properties set by pde.build and re-resolved there.
+		//TODO should main.getPlatformProperties() be passed to pde/build?
 		return fStateCopy;
 	}
 
@@ -839,7 +898,24 @@ public class FeatureExportOperation extends Job {
 		}
 	}
 
-	protected void createFeature(String featureID, String featureLocation, String[] config, boolean includeLauncher) throws IOException {
+	private Dictionary getEnvironment(String[] config) {
+		Dictionary environment = new Hashtable(4);
+		environment.put("osgi.os", config[0]); //$NON-NLS-1$
+		environment.put("osgi.ws", config[1]); //$NON-NLS-1$
+		environment.put("osgi.arch", config[2]); //$NON-NLS-1$
+		environment.put("osgi.nl", config[3]); //$NON-NLS-1$
+		return environment;
+	}
+
+	private void setFilterAttributes(Element plugin, String[] config) {
+		if (config != GENERIC_CONFIG) {
+			plugin.setAttribute("os", config[0]); //$NON-NLS-1$
+			plugin.setAttribute("ws", config[1]); //$NON-NLS-1$
+			plugin.setAttribute("arch", config[2]); //$NON-NLS-1$
+		}
+	}
+
+	protected void createFeature(String featureID, String featureLocation, String[][] configurations, boolean includeLauncher) throws IOException {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
@@ -862,11 +938,7 @@ public class FeatureExportOperation extends Job {
 					root.appendChild(includes);
 				}
 			}
-			Dictionary environment = new Hashtable(4);
-			environment.put("osgi.os", config[0]); //$NON-NLS-1$
-			environment.put("osgi.ws", config[1]); //$NON-NLS-1$
-			environment.put("osgi.arch", config[2]); //$NON-NLS-1$
-			environment.put("osgi.nl", config[3]); //$NON-NLS-1$
+
 			List workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 
 			for (int i = 0; i < fInfo.items.length; i++) {
@@ -894,31 +966,51 @@ public class FeatureExportOperation extends Job {
 					}
 					if (bundle == null)
 						continue;
-					if (shouldAddPlugin(bundle, environment)) {
-						Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
-						plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
-						plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
-						setAdditionalAttributes(plugin, bundle);
-						root.appendChild(plugin);
 
-						if (fInfo.exportSource && fInfo.exportSourceBundle) {
-							if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) { // Is it a workspace plugin?
-								plugin = doc.createElement("plugin"); //$NON-NLS-1$
-								plugin.setAttribute("id", bundle.getSymbolicName() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
-								plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
-								setAdditionalAttributes(plugin, bundle);
-								root.appendChild(plugin);
-							} else // include the .source plugin, if available
-							{
-								IPluginModelBase model = PluginRegistry.findModel(bundle.getSymbolicName() + ".source"); //$NON-NLS-1$
-								if (model != null) {
-									bundle = model.getBundleDescription();
+					List configs = new ArrayList();
+					if (configurations.length > 1)
+						configs.add(GENERIC_CONFIG);
+					configs.addAll(Arrays.asList(configurations));
+
+					//when doing multiplatform we need filters set on the plugin elements that need them
+					//so check the Bundle's platfrom filter against each config
+					for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
+						String[] currentConfig = (String[]) iterator.next();
+						Dictionary environment = getEnvironment(currentConfig);
+						if (shouldAddPlugin(bundle, environment)) {
+							Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
+							plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
+							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+							setFilterAttributes(plugin, currentConfig);
+							setAdditionalAttributes(plugin, bundle);
+							root.appendChild(plugin);
+
+							if (fInfo.exportSource && fInfo.exportSourceBundle) {
+								if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) { // Is it a workspace plugin?
 									plugin = doc.createElement("plugin"); //$NON-NLS-1$
-									plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
+									plugin.setAttribute("id", bundle.getSymbolicName() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
 									plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+									setFilterAttributes(plugin, currentConfig);
 									setAdditionalAttributes(plugin, bundle);
 									root.appendChild(plugin);
+								} else // include the .source plugin, if available
+								{
+									IPluginModelBase model = PluginRegistry.findModel(bundle.getSymbolicName() + ".source"); //$NON-NLS-1$
+									if (model != null) {
+										bundle = model.getBundleDescription();
+										plugin = doc.createElement("plugin"); //$NON-NLS-1$
+										plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
+										plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+										setFilterAttributes(plugin, currentConfig);
+										setAdditionalAttributes(plugin, bundle);
+										root.appendChild(plugin);
+									}
 								}
+							}
+							if (currentConfig == GENERIC_CONFIG) {
+								//if the bundle matched the generic configuration, we don't need to generated additional inclusions
+								//for the rest of the configs
+								break;
 							}
 						}
 					}
