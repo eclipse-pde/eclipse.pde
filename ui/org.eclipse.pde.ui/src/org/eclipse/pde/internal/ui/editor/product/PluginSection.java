@@ -599,6 +599,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	private void updateRemoveButtons(boolean updateRemove, boolean updateRemoveAll) {
 		TablePart tablePart = getTablePart();
+		Table table = tablePart.getTableViewer().getTable();
+		TableItem[] tableSelection = table.getSelection();
 		if (updateRemove) {
 			ISelection selection = getViewerSelection();
 			tablePart.setButtonEnabled(3, isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof IProductPlugin);
@@ -607,7 +609,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		if (updateRemoveAll)
 			tablePart.setButtonEnabled(4, isEditable() && count > 0);
 		tablePart.setButtonEnabled(2, isEditable() && count > 0);
-		tablePart.setButtonEnabled(5, isEditable() && count == 1);
+		tablePart.setButtonEnabled(5, isEditable() && tableSelection.length == 1);
 	}
 
 	protected boolean createCount() {
