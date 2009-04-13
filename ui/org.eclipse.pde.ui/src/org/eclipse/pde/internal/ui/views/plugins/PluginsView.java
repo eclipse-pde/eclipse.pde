@@ -783,9 +783,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			updateContentDescription();
 			setTitleToolTip(getTitle());
 		} else {
-			String viewName = config.getAttribute("name"); //$NON-NLS-1$
-			String name = ((LabelProvider) fTreeViewer.getLabelProvider()).getText(newInput);
-			setContentDescription(viewName + ": " + name); //$NON-NLS-1$
 			setTitleToolTip(getInputPath(newInput));
 		}
 	}
