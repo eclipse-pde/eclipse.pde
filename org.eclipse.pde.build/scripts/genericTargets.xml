@@ -209,8 +209,13 @@ set here?
 	<property name="p2.director.extraVMArgs" value="-Declipse.p2.MD5Check=false" />
 	<property name="p2.director.profile" value="profile" />
 	<property name="p2.director.version" value="" />
+	<!-- by default, fork using the same config area we are running under -->
+	<property name="p2.director.configArea" value="${osgi.configuration.area}" />
+	<condition property="p2.director.devMode" value="-dev &quot;${osgi.dev}&quot;" else="">
+		<isset property="osgi.dev" />
+	</condition>
 	
-	<java jar="${equinoxLauncherJar}" fork="true"  failonerror="true">
+	<java jar="${equinoxLauncherJar}" fork="true" failonerror="true" outputproperty="p2.director.java.output">
 		<arg line="-application org.eclipse.equinox.p2.director.app.application" />
 		<arg line="-nosplash" />
 		<arg line="--launcher.suppressErrors" />
@@ -218,11 +223,16 @@ set here?
 		<arg line="-flavor ${p2.flavor}" />
 		<arg line="-installIU ${p2.director.iu}" />
 		<arg line="-version ${p2.director.version}" />
-		<arg line="-p2.os ${os}" />
-		<arg line="-p2.ws ${ws}" />
-		<arg line="-p2.arch ${arch}" />
+		<!-- need to quote os,ws,arch so that '*' does not get expanded -->
+		<arg value="-p2.os" />
+		<arg value="&quot;${os}&quot;" />
+		<arg value="-p2.ws" />
+		<arg value="&quot;${ws}&quot;" />
+		<arg value="-p2.arch" />
+		<arg value="&quot;${arch}&quot;" />
 		<arg line="-roaming" />
-		<arg line="-profile ${p2.director.profile}" />
+		<arg value="-profile" />
+		<arg value="${p2.director.profile}" />
 		<arg line="${p2.director.extraArgs}" />
 		<arg line="-metadataRepository"/>
 		<arg value="${p2.repo}" />
@@ -235,6 +245,16 @@ set here?
 
 		<jvmarg value="-Declipse.p2.data.area=${p2.director.dataArea}" />
 		<jvmarg line="${p2.director.extraVMArgs}" />
+		
+		<arg line="${p2.director.devMode}"/>
+		<sysproperty key="osgi.configuration.area" value="${p2.director.configArea}" />
 	</java>
+	<echo message="${p2.director.java.output}" />
+	<antcall target="logDirectorCall"/>
 </target>
+	
+<target name="logDirectorCall" if="p2.director.log" >
+	<echo message="${p2.director.java.output}" file="${p2.director.log}" append="true" />
+</target>
+	
 </project>

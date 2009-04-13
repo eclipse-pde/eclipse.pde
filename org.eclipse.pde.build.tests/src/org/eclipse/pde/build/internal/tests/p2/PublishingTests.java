@@ -175,10 +175,12 @@ public class PublishingTests extends P2TestCase {
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("filterP2Base", "true");
 		properties.put("p2.gathering", "true");
+		properties.put("p2.director.log", "director.log");
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "bundle_1.0.0.jar@1\\:start");
+		assertLogContainsLine(buildFolder.getFile("director.log"), "Installing foo 1.0.0");
 	}
 
 	protected File findExecutableFeature(File delta) throws Exception {
