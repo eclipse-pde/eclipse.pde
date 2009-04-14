@@ -334,6 +334,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
 			fActiveTarget = (ITargetDefinition) selection.getFirstElement();
+			setMessage(null);
 			fTableViewer.refresh(true);
 			fTableViewer.setSelection(new StructuredSelection(fActiveTarget));
 		}
