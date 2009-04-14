@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public class OSGiLessAnalysisTests extends TestCase {
 	
 	public void testAnalyzer() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingProfile("test-analyzer-1");
-		IApiBaseline current = TestSuiteHelper.createTestingProfile("test-analyzer-2");
+		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-analyzer-1");
+		IApiBaseline current = TestSuiteHelper.createTestingBaseline("test-analyzer-2");
 		BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 		IApiComponent component = current.getApiComponent("test.bundle.a");
 		assertNotNull("Missing API component test.bundle.a", component);

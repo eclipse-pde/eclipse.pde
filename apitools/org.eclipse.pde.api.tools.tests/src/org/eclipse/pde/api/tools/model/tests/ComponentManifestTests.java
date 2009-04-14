@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class ComponentManifestTests extends TestCase {
 		path = path.append("test-manifests");
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists());
-		IApiBaseline baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
+		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
 		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 		assertEquals("Id: ", "org.eclipse.debug.ui" , component.getId());
@@ -87,7 +87,7 @@ public class ComponentManifestTests extends TestCase {
 		path = path.append("test-manifests");
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists());
-		IApiBaseline baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
+		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
 		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 		

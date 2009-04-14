@@ -70,15 +70,15 @@ public class TestSuiteHelper {
 	};
 	
 	/**
-	 * Creates a profile from all bundles in the specified directory.
+	 * Creates a baseline from all bundles in the specified directory.
 	 *
 	 * @param rootDirectory directory to collect bundles from
-	 * @return API profile
+	 * @return API baseline
 	 * @throws CoreException
 	 */
-	public static IApiBaseline createProfile(String name, File rootDirectory) throws CoreException {
+	public static IApiBaseline createBaseline(String name, File rootDirectory) throws CoreException {
 		File eeFile = getEEDescriptionFile();
-		IApiBaseline baseline = newApiProfile(name, eeFile);
+		IApiBaseline baseline = newApiBaseline(name, eeFile);
 		// create a component for each jar/directory in the folder
 		File[] files = rootDirectory.listFiles();
 		List<IApiComponent> components = new ArrayList<IApiComponent>();
@@ -103,13 +103,13 @@ public class TestSuiteHelper {
 	}	
 	
 	/**
-	 * Creates a testing API profile
+	 * Creates a testing API baseline
 	 * @param testDirectory
 	 * @return
 	 * @throws CoreException
 	 */
-	public static IApiBaseline createTestingProfile(String testDirectory) throws CoreException {
-		return createTestingProfile(new Path(testDirectory));
+	public static IApiBaseline createTestingBaseline(String testDirectory) throws CoreException {
+		return createTestingBaseline(new Path(testDirectory));
 	}
 	
 	/**
@@ -222,13 +222,13 @@ public class TestSuiteHelper {
 	 * <code>null</code> is returned
 	 * @throws CoreException
 	 */
-	public static IApiBaseline createTestingProfile(IPath testDirectory) throws CoreException {
+	public static IApiBaseline createTestingBaseline(IPath testDirectory) throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(testDirectory);
 		File file = path.toFile();
 		if(file.exists()) {
 			File eeFile = getEEDescriptionFile();
-			IApiBaseline baseline = newApiProfile("test", eeFile);
+			IApiBaseline baseline = newApiBaseline("test", eeFile);
 			// create a component for each jar/directory in the folder
 			File[] files = file.listFiles();
 			List<IApiComponent> components = new ArrayList<IApiComponent>();
@@ -260,7 +260,7 @@ public class TestSuiteHelper {
 	/**
 	 * Constructs a new {@link IApiProfile} with the given name, id, version, and environment.
 	 * <p>
-	 * Attempts to locate OSGi execution environment profile when not running in 
+	 * Attempts to locate OSGi execution environment baseline when not running in 
 	 * an OSGi framework.
 	 * </p>
 	 * @param name
@@ -268,7 +268,7 @@ public class TestSuiteHelper {
 	 * @return API baseline
 	 * @exception CoreException if unable to create a baseline
 	 */
-	public static IApiBaseline newApiProfile(String name, File eeFile) throws CoreException {
+	public static IApiBaseline newApiBaseline(String name, File eeFile) throws CoreException {
 		return ApiModelFactory.newApiBaseline(name, eeFile);
 	}
 

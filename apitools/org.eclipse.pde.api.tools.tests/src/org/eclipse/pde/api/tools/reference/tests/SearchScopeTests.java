@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitEntireComponentsScope() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IApiComponent componentB = profile.getApiComponent("component.b");
 		IApiComponent[] components = new IApiComponent[]{componentA, componentB};
@@ -86,7 +86,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitTypeScope() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a");
 		IReferenceTypeDescriptor type = pkg.getType("A");
@@ -108,7 +108,7 @@ public class SearchScopeTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testVisitSpecificTypes() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		Collection<String> expectedPackages = new HashSet<String>();
 		expectedPackages.add("a.b.c");

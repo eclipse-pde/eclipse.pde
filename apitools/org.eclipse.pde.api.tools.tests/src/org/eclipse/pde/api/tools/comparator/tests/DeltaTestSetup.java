@@ -176,7 +176,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	protected IApiBaseline getAfterState() {
 		IApiBaseline state = null;
 		try {
-			state = TestSuiteHelper.createTestingProfile(getBaseLineFolder(AFTER));
+			state = TestSuiteHelper.createTestingBaseline(getBaseLineFolder(AFTER));
 		} catch (CoreException e) {
 			e.printStackTrace();
 			assertTrue("Should not happen", false);
@@ -191,7 +191,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	protected IApiBaseline getBeforeState() {
 		IApiBaseline state = null;
 		try {
-			state = TestSuiteHelper.createTestingProfile(getBaseLineFolder(BEFORE));
+			state = TestSuiteHelper.createTestingBaseline(getBaseLineFolder(BEFORE));
 		} catch (CoreException e) {
 			e.printStackTrace();
 			assertTrue("Should not happen", false);

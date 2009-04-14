@@ -476,8 +476,10 @@ public class ApiBaselineWizardPage extends WizardPage {
 				nametext.setText(fProfile.getName());
 				IApiComponent[] components = fProfile.getApiComponents();
 				HashSet locations = new HashSet();
-				IPath location = new Path(fProfile.getLocation());
-				if (location != null) {
+				String loc = fProfile.getLocation();
+				IPath location = null;
+				if (loc != null) {
+					location = new Path(loc);
 					// check if the location is a file
 					if(location.toFile().isDirectory()) {
 						locations.add(location.removeTrailingSeparator().toOSString());

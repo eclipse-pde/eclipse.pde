@@ -298,8 +298,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				}
 			}
 			String def = getDefaultProfilePref();
-			IApiBaseline profile = (IApiBaseline) baselinecache.get(def);
-			defaultbaseline = (profile != null ? def : null);
+			IApiBaseline baseline = (IApiBaseline) baselinecache.get(def);
+			defaultbaseline = (baseline != null ? def : null);
 			if(DEBUG) {
 				System.out.println("Time to initialize state cache: " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -487,7 +487,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			Element root = document.getDocumentElement();
 			if(root.getNodeName().equals(IApiXmlConstants.ELEMENT_APIPROFILE)) {
 				String baselineLocation = root.getAttribute(IApiXmlConstants.ATTR_LOCATION);
-				if (baselineLocation != null) {
+				if (baselineLocation != null && !baselineLocation.equals(Util.EMPTY_STRING)) {
 					baseline.setLocation(Path.fromPortableString(baselineLocation).toOSString());
 				}
 				// un-pooled components

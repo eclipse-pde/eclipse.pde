@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -277,7 +277,7 @@ public class ApiDescriptionTests extends TestCase {
 		path = path.append("test-xml");
 		File file = path.toFile();
 		assertTrue("Missing xml directory", file.exists());
-		IApiBaseline baseline = TestSuiteHelper.newApiProfile("test", TestSuiteHelper.getEEDescriptionFile());
+		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
 		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 		
@@ -798,7 +798,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * tests that a binary bundle with no .api_description file has no API description
 	 */
 	public void testBinaryHasNoApiDescription() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins");
+		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		assertFalse("Should have no .api_description file", componentA.hasApiDescription());
 	}
@@ -807,7 +807,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * tests that a binary bundle with an .api_description file has an API description
 	 */
 	public void testBinaryHasApiDescription() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingProfile("test-plugins-with-desc");
+		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins-with-desc");
 		IApiComponent componentA = profile.getApiComponent("component.a");
 		assertTrue("Should have an .api_description file", componentA.hasApiDescription());
 	}	
