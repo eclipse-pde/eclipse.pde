@@ -89,11 +89,16 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		URL configUrl = getConfigurationArea();
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
+
+		URL configUrl = getConfigurationArea();
+		if (!new File(configUrl.getFile()).isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
+		}
+
 		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
 		if (infos == null) {
 			IResolvedBundle[] platformXML = resolvePlatformXML(definition, home, monitor);

@@ -47,6 +47,13 @@ public interface IResolvedBundle {
 	public BundleInfo getBundleInfo();
 
 	/**
+	 * Returns the parent bundle container that this bundle belongs to.
+	 * 
+	 * @return parent bundle container
+	 */
+	public IBundleContainer getParentContainer();
+
+	/**
 	 * Returns <code>true</code> if this bundle is a source bundle and 
 	 * <code>false</code> if this bundle is an executable bundle.
 	 * 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -18,6 +19,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Provides text and image labels for BundleInfo and IResolveBundle objects.
@@ -57,7 +60,16 @@ public class BundleInfoLabelProvider extends LabelProvider {
 			}
 			return buf.toString();
 		} else if (element instanceof IResolvedBundle) {
-			return getText(((IResolvedBundle) element).getBundleInfo());
+			IResolvedBundle bundle = ((IResolvedBundle) element);
+			if (!bundle.getStatus().isOK()) {
+				// TODO Better error message for missing bundles
+				return bundle.getStatus().getMessage();
+			}
+			return getText(bundle.getBundleInfo());
+		} else if (element instanceof IStatus) {
+			return ((IStatus) element).getMessage();
+		} else if (element instanceof IPath) {
+			return ((IPath) element).removeFirstSegments(1).toString();
 		}
 		return super.getText(element);
 	}
@@ -69,7 +81,7 @@ public class BundleInfoLabelProvider extends LabelProvider {
 		if (element instanceof IResolvedBundle) {
 			IResolvedBundle bundle = (IResolvedBundle) element;
 			int flag = 0;
-			if (bundle.getStatus().getSeverity() == IStatus.WARNING) {
+			if (bundle.getStatus().getSeverity() == IStatus.WARNING || bundle.getStatus().getSeverity() == IStatus.INFO) {
 				flag = SharedLabelProvider.F_WARNING;
 			} else if (bundle.getStatus().getSeverity() == IStatus.ERROR) {
 				flag = SharedLabelProvider.F_ERROR;
@@ -84,6 +96,15 @@ public class BundleInfoLabelProvider extends LabelProvider {
 			}
 		} else if (element instanceof BundleInfo) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
+		} else if (element instanceof IStatus) {
+			int severity = ((IStatus) element).getSeverity();
+			if (severity == IStatus.WARNING || severity == IStatus.INFO) {
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+			} else if (severity == IStatus.ERROR) {
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+			}
+		} else if (element instanceof IPath) {
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
 		return super.getImage(element);
 	}

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -41,6 +39,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.progress.UIJob;
 
@@ -55,7 +55,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private Text fNameText;
-	private BundleContainerTable fTable;
+	private TabItem fLocationTab;
+	private TargetLocationsGroup fLocationTree;
+	private TargetContentsGroup fContentTree;
 
 	// Environment pull-downs
 	private Combo fOSCombo;
@@ -125,45 +127,20 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		TabFolder tabs = new TabFolder(comp, SWT.NONE);
 		tabs.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		TabItem pluginsTab = new TabItem(tabs, SWT.NONE);
-		pluginsTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
+		fLocationTab = new TabItem(tabs, SWT.NONE);
+		fLocationTab.setText(PDEUIMessages.LocationSection_0);
 
 		Composite pluginTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
-
 		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
+		fLocationTree = TargetLocationsGroup.createInDialog(pluginTabContainer);
+		fLocationTab.setControl(pluginTabContainer);
 
-		fTable = BundleContainerTable.createTableInDialog(pluginTabContainer, new IBundleContainerTableReporter() {
-			public void runResolveOperation(final IRunnableWithProgress operation) {
-				if (isControlCreated()) {
-					try {
-						getContainer().run(true, false, operation);
-					} catch (InvocationTargetException e) {
-						PDEPlugin.log(e);
-					} catch (InterruptedException e) {
-						// TODO Cancel the wizard?
-					}
-				} else {
-					// If the page isn't open yet, try running a UI job so the dialog has time to finish opening
-					new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-							try {
-								getContainer().run(true, false, operation);
-								return Status.OK_STATUS;
-							} catch (InvocationTargetException e) {
-								return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.TargetDefinitionContentPage_5, e);
-							} catch (InterruptedException e) {
-								return Status.CANCEL_STATUS;
-							}
-						}
-					}.schedule();
-				}
-			}
-
-			public void contentsChanged() {
-				// Do nothing, as wizard will always save when finish is pressed
-			}
-		});
-		pluginsTab.setControl(pluginTabContainer);
+		TabItem contentTab = new TabItem(tabs, SWT.NONE);
+		contentTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
+		Composite contentTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
+		SWTFactory.createWrapLabel(contentTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
+		fContentTree = new TargetContentsGroup(contentTabContainer);
+		contentTab.setControl(contentTabContainer);
 
 		TabItem envTab = new TabItem(tabs, SWT.NONE);
 		envTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_3);
@@ -180,8 +157,74 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		depTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_5);
 		depTab.setControl(createImplicitTabContents(tabs));
 
+		initializeListeners();
 		targetChanged(getTargetDefinition());
 		setControl(comp);
+	}
+
+	private void initializeListeners() {
+		ITargetChangedListener listener = new ITargetChangedListener() {
+			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
+				if (resolve && definition.isResolved()) {
+					try {
+						getContainer().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								getTargetDefinition().resolve(monitor);
+								if (monitor.isCanceled()) {
+									throw new InterruptedException();
+								}
+							}
+						});
+					} catch (InvocationTargetException e) {
+						PDECore.log(e);
+					} catch (InterruptedException e) {
+						// Do nothing, op cancelled
+					}
+				}
+				if (fContentTree != source) {
+					fContentTree.setInput(definition);
+				}
+				if (fLocationTree != source) {
+					fLocationTree.setInput(definition);
+				}
+				if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
+					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+				} else {
+					fLocationTab.setImage(null);
+				}
+			}
+		};
+		fContentTree.addTargetChangedListener(listener);
+		fLocationTree.addTargetChangedListener(listener);
+		// When  If the page isn't open yet, try running a UI job so the dialog has time to finish opening
+		new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				try {
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							getTargetDefinition().resolve(monitor);
+							if (monitor.isCanceled()) {
+								throw new InterruptedException();
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					PDECore.log(e);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+				ITargetDefinition definition = getTargetDefinition();
+				fContentTree.setInput(definition);
+				fLocationTree.setInput(definition);
+				if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
+					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+				} else {
+					fLocationTab.setImage(null);
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+
 	}
 
 	/* (non-Javadoc)
@@ -200,7 +243,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			else
 				setMessage(PDEUIMessages.TargetDefinitionContentPage_8);
 
-			fTable.setInput(definition);
+			fLocationTree.setInput(definition);
+			fContentTree.setInput(definition);
 
 			String presetValue = (definition.getOS() == null) ? EMPTY_STRING : definition.getOS();
 			fOSCombo.setText(presetValue);

@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
  * Wizard for adding a bundle container to a target.  Provides a selection page
  * where the user can choose the type of container to create.
  * 
- * @see BundleContainerTable
+ * @see TargetLocationsGroup
  * @see IBundleContainer
  */
 public class AddBundleContainerWizard extends Wizard {

@@ -163,18 +163,24 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_3, Messages.AddBundleContainerSelectionPage_4, PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
+					private EditDirectoryContainerPage fPage1;
+
 					public void addPages() {
 						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
 						if (settings == null) {
 							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
 						}
 						setDialogSettings(settings);
-						addPage(new EditDirectoryContainerPage(fTarget));
+						fPage1 = new EditDirectoryContainerPage();
+						addPage(fPage1);
+						addPage(new PreviewContainerPage(fTarget, fPage1));
+						setNeedsProgressMonitor(true);
 					}
 
 					public boolean performFinish() {
-						IBundleContainer container = ((EditDirectoryContainerPage) getPages()[0]).getBundleContainer();
+						IBundleContainer container = fPage1.getBundleContainer();
 						if (container != null) {
+							fPage1.storeSettings();
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 							if (oldContainers == null) {
 								fTarget.setBundleContainers(new IBundleContainer[] {container});
@@ -195,18 +201,25 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_6, Messages.AddBundleContainerSelectionPage_7, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
+					private EditDirectoryContainerPage fPage1;
+
 					public void addPages() {
 						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
 						if (settings == null) {
 							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
 						}
 						setDialogSettings(settings);
-						addPage(new EditProfileContainerPage(fTarget));
+						setDialogSettings(settings);
+						fPage1 = new EditProfileContainerPage();
+						addPage(fPage1);
+						addPage(new PreviewContainerPage(fTarget, fPage1));
+						setNeedsProgressMonitor(true);
 					}
 
 					public boolean performFinish() {
 						IBundleContainer container = ((EditProfileContainerPage) getPages()[0]).getBundleContainer();
 						if (container != null) {
+							((EditProfileContainerPage) getPages()[0]).storeSettings();
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 							if (oldContainers == null) {
 								fTarget.setBundleContainers(new IBundleContainer[] {container});
@@ -233,13 +246,14 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
 						}
 						setDialogSettings(settings);
-						addPage(new AddFeatureContainersPage(fTarget));
+						addPage(new AddFeatureContainersPage());
 					}
 
 					public boolean performFinish() {
 						try {
 							IBundleContainer[] containers = ((AddFeatureContainersPage) getPages()[0]).getBundleContainers();
 							if (containers != null) {
+								((AddFeatureContainersPage) getPages()[0]).storeSettings();
 								IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 								// TODO: show progress as resolving
 								for (int i = 0; i < containers.length; i++) {

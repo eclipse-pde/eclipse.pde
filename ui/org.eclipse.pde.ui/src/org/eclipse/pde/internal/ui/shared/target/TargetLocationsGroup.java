@@ -10,19 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.target.provisional.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
+import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,7 +28,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * UI part that can be added to a dialog or to a form editor.  Contains a table displaying
@@ -38,24 +35,21 @@ import org.eclipse.ui.progress.UIJob;
  * bundle containers of varying types.
  * 
  * @see TargetEditor
+ * @see TargetDefinitionContentPage
  * @see ITargetDefinition
  * @see IBundleContainer
  */
-public class BundleContainerTable {
+public class TargetLocationsGroup {
 
 	private TreeViewer fTreeViewer;
 	private Button fAddButton;
 	private Button fEditButton;
 	private Button fRemoveButton;
 	private Button fRemoveAllButton;
-	private Label fShowLabel;
-	private Button fShowPluginsButton;
-	private Button fShowSourceButton;
-	private ViewerFilter fPluginFilter;
-	private ViewerFilter fSourceFilter;
+	private Button fShowContentButton;
 
 	private ITargetDefinition fTarget;
-	private IBundleContainerTableReporter fReporter;
+	private ListenerList fChangeListeners = new ListenerList();
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
@@ -65,8 +59,8 @@ public class BundleContainerTable {
 	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 * @return generated instance of the table part
 	 */
-	public static BundleContainerTable createTableInForm(Composite parent, FormToolkit toolkit, IBundleContainerTableReporter reporter) {
-		BundleContainerTable contentTable = new BundleContainerTable(reporter);
+	public static TargetLocationsGroup createInForm(Composite parent, FormToolkit toolkit) {
+		TargetLocationsGroup contentTable = new TargetLocationsGroup();
 		contentTable.createFormContents(parent, toolkit);
 		return contentTable;
 	}
@@ -78,20 +72,30 @@ public class BundleContainerTable {
 	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 * @return generated instance of the table part
 	 */
-	public static BundleContainerTable createTableInDialog(Composite parent, IBundleContainerTableReporter reporter) {
-		BundleContainerTable contentTable = new BundleContainerTable(reporter);
+	public static TargetLocationsGroup createInDialog(Composite parent) {
+		TargetLocationsGroup contentTable = new TargetLocationsGroup();
 		contentTable.createDialogContents(parent);
 		return contentTable;
 	}
 
 	/**
-	 * Private constructor, use one of {@link #createTableInDialog(Composite, IBundleContainerTableReporter)}
-	 * or {@link #createTableInForm(Composite, FormToolkit, IBundleContainerTableReporter)}.
+	 * Private constructor, use one of {@link #createTableInDialog(Composite, ITargetChangedListener)}
+	 * or {@link #createTableInForm(Composite, FormToolkit, ITargetChangedListener)}.
 	 * 
 	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 */
-	private BundleContainerTable(IBundleContainerTableReporter reporter) {
-		fReporter = reporter;
+	private TargetLocationsGroup() {
+
+	}
+
+	/**
+	 * Adds a listener to the set of listeners that will be notified when the bundle containers
+	 * are modified.  This method has no effect if the listener has already been added. 
+	 * 
+	 * @param listener target changed listener to add
+	 */
+	public void addTargetChangedListener(ITargetChangedListener listener) {
+		fChangeListeners.add(listener);
 	}
 
 	/**
@@ -120,19 +124,10 @@ public class BundleContainerTable {
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
 		fRemoveAllButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_3, SWT.PUSH);
 
-		Composite filterComp = toolkit.createComposite(buttonComp);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		filterComp.setLayout(layout);
-		filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
-
-		fShowLabel = toolkit.createLabel(filterComp, Messages.BundleContainerTable_9);
-		fShowPluginsButton = toolkit.createButton(filterComp, Messages.BundleContainerTable_14, SWT.CHECK);
-		fShowSourceButton = toolkit.createButton(filterComp, Messages.BundleContainerTable_15, SWT.CHECK);
+		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
 
 		initializeTreeViewer(atree);
 		initializeButtons();
-		initializeFilters();
 
 		toolkit.paintBordersFor(comp);
 	}
@@ -162,16 +157,10 @@ public class BundleContainerTable {
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
 		fRemoveAllButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_3, null);
 
-		Composite filterComp = SWTFactory.createComposite(buttonComp, 1, 1, GridData.BEGINNING, 0, 0);
-		filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
-
-		fShowLabel = SWTFactory.createLabel(filterComp, Messages.BundleContainerTable_9, 1);
-		fShowPluginsButton = SWTFactory.createCheckButton(filterComp, Messages.BundleContainerTable_14, null, true, 1);
-		fShowSourceButton = SWTFactory.createCheckButton(filterComp, Messages.BundleContainerTable_15, null, true, 1);
+		fShowContentButton = SWTFactory.createCheckButton(comp, Messages.TargetLocationsGroup_1, null, false, 2);
 
 		initializeTreeViewer(atree);
 		initializeButtons();
-		initializeFilters();
 	}
 
 	/**
@@ -236,56 +225,14 @@ public class BundleContainerTable {
 		fRemoveAllButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fRemoveAllButton);
 
-		fShowPluginsButton.addSelectionListener(new SelectionAdapter() {
+		fShowContentButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (!fShowPluginsButton.getSelection()) {
-					fTreeViewer.addFilter(fPluginFilter);
-				} else {
-					fTreeViewer.removeFilter(fPluginFilter);
-				}
+				fTreeViewer.refresh();
+				fTreeViewer.expandAll();
 			}
 		});
-		fShowPluginsButton.setSelection(true);
-		GridData gd = new GridData();
-		gd.horizontalIndent = 10;
-		fShowPluginsButton.setLayoutData(gd);
-
-		fShowSourceButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!fShowSourceButton.getSelection()) {
-					fTreeViewer.addFilter(fSourceFilter);
-				} else {
-					fTreeViewer.removeFilter(fSourceFilter);
-				}
-			}
-		});
-		fShowSourceButton.setSelection(true);
-		gd = new GridData();
-		gd.horizontalIndent = 10;
-		fShowSourceButton.setLayoutData(gd);
-	}
-
-	private void initializeFilters() {
-		fSourceFilter = new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IResolvedBundle) {
-					if (((IResolvedBundle) element).isSourceBundle()) {
-						return false;
-					}
-				}
-				return true;
-			}
-		};
-		fPluginFilter = new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IResolvedBundle) {
-					if (!((IResolvedBundle) element).isSourceBundle()) {
-						return false;
-					}
-				}
-				return true;
-			}
-		};
+		fShowContentButton.setLayoutData(new GridData());
+		SWTFactory.setButtonDimensionHint(fShowContentButton);
 	}
 
 	/**
@@ -295,37 +242,8 @@ public class BundleContainerTable {
 	 */
 	public void setInput(ITargetDefinition target) {
 		fTarget = target;
-		refresh();
-	}
-
-	/**
-	 * Refreshes the contents of the table
-	 */
-	public void refresh() {
-		if (!fTarget.isResolved()) {
-			fReporter.runResolveOperation(new ResolveContainersOperation());
-		} else {
-			fTreeViewer.setInput(fTarget);
-			fTreeViewer.refresh();
-			updateButtons();
-		}
-	}
-
-	private void setEnabled(boolean enablement) {
-		fTreeViewer.getControl().setEnabled(enablement);
-		fAddButton.setEnabled(enablement);
-
-		fShowLabel.setEnabled(enablement);
-		fShowPluginsButton.setEnabled(enablement);
-		fShowSourceButton.setEnabled(enablement);
-
-		if (enablement) {
-			updateButtons();
-		} else {
-			fRemoveButton.setEnabled(enablement);
-			fRemoveAllButton.setEnabled(enablement);
-			fEditButton.setEnabled(enablement);
-		}
+		fTreeViewer.setInput(fTarget);
+		updateButtons();
 	}
 
 	private void handleAdd() {
@@ -333,8 +251,9 @@ public class BundleContainerTable {
 		Shell parent = fTreeViewer.getTree().getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		if (dialog.open() != Window.CANCEL) {
-			refresh();
 			contentsChanged();
+			fTreeViewer.refresh();
+			updateButtons();
 		}
 	}
 
@@ -356,7 +275,7 @@ public class BundleContainerTable {
 			}
 			if (oldContainer != null) {
 				Shell parent = fTreeViewer.getTree().getShell();
-				EditBundleContainerWizard wizard = new EditBundleContainerWizard(fTarget, oldContainer);
+				EditBundleContainerWizard wizard = new EditBundleContainerWizard(oldContainer);
 				WizardDialog dialog = new WizardDialog(parent, wizard);
 				if (dialog.open() == Window.OK) {
 					// Replace the old container with the new one
@@ -373,8 +292,9 @@ public class BundleContainerTable {
 						fTarget.setBundleContainers((IBundleContainer[]) newContainers.toArray(new IBundleContainer[newContainers.size()]));
 
 						// Update the table
-						refresh();
 						contentsChanged();
+						fTreeViewer.refresh();
+						updateButtons();
 						fTreeViewer.setSelection(new StructuredSelection(newContainer), true);
 					}
 				}
@@ -398,7 +318,8 @@ public class BundleContainerTable {
 				}
 				fTarget.setBundleContainers((IBundleContainer[]) newBundleContainers.toArray(new IBundleContainer[newBundleContainers.size()]));
 				contentsChanged();
-				refresh();
+				fTreeViewer.refresh(false);
+				updateButtons();
 			}
 		}
 	}
@@ -406,14 +327,15 @@ public class BundleContainerTable {
 	private void handleRemoveAll() {
 		fTarget.setBundleContainers(null);
 		contentsChanged();
-		refresh();
+		fTreeViewer.refresh(false);
+		updateButtons();
 	}
 
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		fEditButton.setEnabled(!selection.isEmpty() && (selection.getFirstElement() instanceof IBundleContainer || selection.getFirstElement() instanceof IResolvedBundle));
+		fEditButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
 		fRemoveButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
-		fRemoveAllButton.setEnabled(fTarget.getBundleContainers() != null && fTarget.getBundleContainers().length > 0);
+		fRemoveAllButton.setEnabled(fTarget != null && fTarget.getBundleContainers() != null && fTarget.getBundleContainers().length > 0);
 	}
 
 	/**
@@ -421,46 +343,9 @@ public class BundleContainerTable {
 	 * and is dirty.
 	 */
 	private void contentsChanged() {
-		fReporter.contentsChanged();
-	}
-
-	/**
-	 * Runnable that resolves the target.  Disables the table while running
-	 */
-	class ResolveContainersOperation implements IRunnableWithProgress {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
-		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-			Job job = new UIJob(Messages.BundleContainerTable_16) {
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					if (!fTreeViewer.getControl().isDisposed()) {
-						setEnabled(false);
-						fTreeViewer.setInput(Messages.BundleContainerTable_17);
-						fTreeViewer.refresh();
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.setSystem(true);
-			job.schedule();
-			fTarget.resolve(monitor);
-			if (!monitor.isCanceled()) {
-				job = new UIJob(Messages.BundleContainerTable_18) {
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						if (!fTreeViewer.getControl().isDisposed()) {
-							setEnabled(true);
-							fTreeViewer.setInput(fTarget);
-							fTreeViewer.refresh();
-							updateButtons();
-						}
-						return Status.OK_STATUS;
-					}
-				};
-				job.setSystem(true);
-				job.schedule();
-			}
+		Object[] listeners = fChangeListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((ITargetChangedListener) listeners[i]).contentsChanged(fTarget, this, true);
 		}
 	}
 
@@ -480,14 +365,14 @@ public class BundleContainerTable {
 					if (!status.isOK() && !status.isMultiStatus()) {
 						return new Object[] {status};
 					}
-					return container.getBundles();
-				}
-				// We should only be populating the table if the containers are resolved, but just in case
-				return new Object[] {new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.BundleContainerTable_19)};
-			} else if (parentElement instanceof IResolvedBundle) {
-				IStatus status = ((IResolvedBundle) parentElement).getStatus();
-				if (!status.isOK()) {
-					return new Object[] {status};
+					if (fShowContentButton.getSelection()) {
+						return container.getBundles();
+					} else if (!status.isOK()) {
+						// Show multi-status children so user can easily see problems
+						if (status.isMultiStatus()) {
+							return status.getChildren();
+						}
+					}
 				}
 			}
 			return new Object[0];

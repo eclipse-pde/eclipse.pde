@@ -21,7 +21,6 @@ public class Messages extends NLS {
 	public static String AddDirectoryContainerPage_4;
 	public static String AddDirectoryContainerPage_5;
 	public static String AddDirectoryContainerPage_6;
-	public static String AddDirectoryContainerPage_7;
 	public static String AddDirectoryContainerPage_9;
 	public static String AddFeatureContainerPage_0;
 	public static String AddFeatureContainerPage_1;
@@ -30,6 +29,7 @@ public class Messages extends NLS {
 	public static String AddFeatureContainerPage_4;
 	public static String AddFeatureContainersPage_0;
 	public static String AddFeatureContainersPage_1;
+	public static String AddFeatureContainersPage_2;
 	public static String AddProfileContainerPage_0;
 	public static String AddProfileContainerPage_1;
 	public static String AddProfileContainerPage_2;
@@ -52,7 +52,6 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_16;
 	public static String BundleContainerTable_17;
 	public static String BundleContainerTable_18;
-	public static String BundleContainerTable_19;
 	public static String BundleContainerTable_2;
 	public static String BundleContainerTable_3;
 	public static String BundleContainerTable_4;
@@ -63,7 +62,6 @@ public class Messages extends NLS {
 	public static String EditBundleContainerWizard_0;
 	public static String EditDirectoryContainerPage_0;
 	public static String EditDirectoryContainerPage_1;
-	public static String EditDirectoryContainerPage_2;
 	public static String EditDirectoryContainerPage_3;
 	public static String EditFeatureContainerPage_0;
 	public static String EditFeatureContainerPage_1;
@@ -71,7 +69,6 @@ public class Messages extends NLS {
 	public static String EditFeatureContainerPage_3;
 	public static String EditFeatureContainerPage_4;
 	public static String EditFeatureContainerPage_5;
-	public static String EditProfileContainerPage_0;
 	public static String EditProfileContainerPage_1;
 	public static String EditProfileContainerPage_2;
 	public static String EditProfileContainerPage_3;
@@ -84,11 +81,23 @@ public class Messages extends NLS {
 	public static String IncludedBundlesTree_2;
 	public static String IncludedBundlesTree_3;
 	public static String IncludedBundlesTree_4;
-	public static String IncludedBundlesTree_5;
-	public static String IncludedBundlesTree_6;
+	public static String PreviewContainerPage_1;
+	public static String PreviewContainerPage_2;
+	public static String PreviewContainerPage_3;
 	public static String RestrictionsListSelectionDialog_0;
 	public static String RestrictionsListSelectionDialog_1;
 	public static String RestrictionsListSelectionDialog_2;
+	public static String TargetContentsGroup_0;
+	public static String TargetContentsGroup_1;
+	public static String TargetContentsGroup_10;
+	public static String TargetContentsGroup_11;
+	public static String TargetContentsGroup_12;
+	public static String TargetContentsGroup_13;
+	public static String TargetContentsGroup_2;
+	public static String TargetContentsGroup_3;
+	public static String TargetContentsGroup_8;
+	public static String TargetContentsGroup_9;
+	public static String TargetLocationsGroup_1;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

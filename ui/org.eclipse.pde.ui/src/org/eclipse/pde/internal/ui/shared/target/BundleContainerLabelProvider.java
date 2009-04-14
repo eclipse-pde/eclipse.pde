@@ -51,9 +51,6 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 		} catch (CoreException e) {
 			return MessageFormat.format(Messages.BundleContainerTable_4, new String[] {e.getMessage()});
 		}
-		if (element instanceof IStatus) {
-			return ((IStatus) element).getMessage();
-		}
 		return super.getText(element);
 	}
 
@@ -66,7 +63,7 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 			IBundleContainer container = (IBundleContainer) element;
 			if (container.isResolved()) {
 				IStatus status = container.getBundleStatus();
-				if (status.getSeverity() == IStatus.WARNING) {
+				if (status.getSeverity() == IStatus.WARNING || status.getSeverity() == IStatus.INFO) {
 					flag = SharedLabelProvider.F_WARNING;
 				} else if (status.getSeverity() == IStatus.ERROR) {
 					flag = SharedLabelProvider.F_ERROR;
@@ -80,15 +77,7 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 			} else if (element instanceof ProfileBundleContainer) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION, flag);
 			}
-		} else if (element instanceof IStatus) {
-			int severity = ((IStatus) element).getSeverity();
-			if (severity == IStatus.WARNING) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
-			} else if (severity == IStatus.ERROR) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
-			}
 		}
-
 		return super.getImage(element);
 	}
 

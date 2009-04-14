@@ -1042,6 +1042,10 @@ public class PDEUIMessages extends NLS {
 	public static String ProjectNamesPage_desc;
 	public static String ProjectNamesPage_noSampleFound;
 
+	public static String ContentPage_0;
+
+	public static String ContentPage_1;
+
 	public static String ContentPage_title;
 	public static String ContentPage_ftitle;
 	public static String ContentPage_desc;
@@ -2736,6 +2740,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String LocationDialog_path;
 
+	public static String LocationSection_0;
+
 	public static String TargetPlatformPreferencePage_reset;
 
 	public static String TargetPlatformPreferencePage_chooseInstall;
@@ -2878,6 +2884,10 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureImportWizardPage_reload;
 
 	public static String TargetEditor_0;
+
+	public static String TargetEditor_1;
+
+	public static String TargetEditor_2;
 
 	public static String TargetErrorDialog_title;
 

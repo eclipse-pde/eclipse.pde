@@ -23,11 +23,11 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer;
 import org.eclipse.pde.internal.core.target.impl.DirectoryBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -42,12 +42,14 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class EditDirectoryContainerPage extends WizardPage {
 
-	protected static final int TYPING_DELAY = 600;
+	/**
+	 * How long to wait before validating the directory
+	 */
+	protected static final int TYPING_DELAY = 200;
+
 	private static ITargetPlatformService fTargetService;
 	protected Combo fInstallLocation;
-	protected IncludedBundlesTree fBundleTree;
 	protected IBundleContainer fContainer;
-	private ITargetDefinition fTarget;
 	private Job fTextChangedJob;
 
 	/**
@@ -65,14 +67,13 @@ public class EditDirectoryContainerPage extends WizardPage {
 	 */
 	private static final String SETTINGS_LOCATION_3 = "location3"; //$NON-NLS-1$
 
-	protected EditDirectoryContainerPage(ITargetDefinition target, IBundleContainer container) {
-		this(target);
+	protected EditDirectoryContainerPage(IBundleContainer container) {
+		this();
 		fContainer = container;
 	}
 
-	protected EditDirectoryContainerPage(ITargetDefinition target) {
+	protected EditDirectoryContainerPage() {
 		super("EditDirectoryContainer"); //$NON-NLS-1$
-		fTarget = target;
 	}
 
 	/* (non-Javadoc)
@@ -81,9 +82,9 @@ public class EditDirectoryContainerPage extends WizardPage {
 	public void createControl(Composite parent) {
 		setMessage(getDefaultMessage());
 		setTitle(getDefaultTitle());
+		setPageComplete(false);
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		createLocationArea(comp);
-		createTableArea(comp);
 		setControl(comp);
 		initializeInputFields(fContainer);
 	}
@@ -171,18 +172,6 @@ public class EditDirectoryContainerPage extends WizardPage {
 	}
 
 	/**
-	 * Creates the area at the bottom of the page.  Contains a table intended to display
-	 * the current resolved bundles.  This class may be overridden by subclasses to 
-	 * provide custom widgets.
-	 * @param parent parent composite
-	 */
-	protected void createTableArea(Composite parent) {
-		Group tableGroup = SWTFactory.createGroup(parent, Messages.EditDirectoryContainerPage_2, 2, 1, GridData.FILL_BOTH);
-		fBundleTree = new IncludedBundlesTree(tableGroup);
-		fBundleTree.setInput(null);
-	}
-
-	/**
 	 * Initializes the fields use to describe the container.  They should be filled in using
 	 * the given container or set to default values if the container is <code>null</code>.
 	 * @param container bundle container being edited, possibly <code>null</code>
@@ -246,6 +235,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 
 	/**
 	 * Store all of the dialog settings for this page
+	 * Should be explicitly called during the perform finish call of the wizard
 	 */
 	protected void storeSettings() {
 		String newLocation = fInstallLocation.getText().trim();
@@ -275,6 +265,13 @@ public class EditDirectoryContainerPage extends WizardPage {
 	}
 
 	/**
+	 * @return bundle container created/edited in this wizard or <code>null</code>
+	 */
+	public IBundleContainer getBundleContainer() {
+		return fContainer;
+	}
+
+	/**
 	 * Called whenever the location or another aspect of the container has changed
 	 * in the UI.  Will schedule a UIJob to verify and resolve the container 
 	 * reporting any problems to the user.  If a previous job is running or sleeping
@@ -284,7 +281,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 	 */
 	protected void containerChanged(long delay) {
 		if (fTextChangedJob == null) {
-			fTextChangedJob = new ResolveJob(getShell().getDisplay(), Messages.EditDirectoryContainerPage_3);
+			fTextChangedJob = new CreateContainerJob(getShell().getDisplay(), Messages.EditDirectoryContainerPage_3);
 		} else {
 			fTextChangedJob.cancel();
 		}
@@ -301,9 +298,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 	protected boolean validateInput() throws CoreException {
 		// Check if the text field is blank
 		if (fInstallLocation.getText().trim().length() == 0) {
-			fBundleTree.setInput(null);
 			setMessage(getDefaultMessage());
-			setPageComplete(false);
 			return false;
 		}
 
@@ -313,12 +308,9 @@ public class EditDirectoryContainerPage extends WizardPage {
 
 		// Check if directory exists
 		if (!location.isDirectory()) {
-			fBundleTree.setInput(null);
 			setMessage(Messages.AddDirectoryContainerPage_6, IMessageProvider.WARNING);
-			setPageComplete(true);
 		} else {
 			setMessage(getDefaultMessage());
-			setPageComplete(true);
 		}
 		return true;
 	}
@@ -332,7 +324,7 @@ public class EditDirectoryContainerPage extends WizardPage {
 	 * @return a new or modified bundle container
 	 * @throws CoreException
 	 */
-	protected IBundleContainer refreshContainer(IBundleContainer previous) throws CoreException {
+	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
 		IBundleContainer container = getTargetPlatformService().newDirectoryContainer(fInstallLocation.getText());
 		if (previous instanceof DirectoryBundleContainer) {
 			container.setIncludedBundles(previous.getIncludedBundles());
@@ -356,24 +348,8 @@ public class EditDirectoryContainerPage extends WizardPage {
 		return fTargetService;
 	}
 
-	/**
-	 * Returns the bundle container created by this wizard page with the
-	 * included bundles set on it based on what is checked in the tree.
-	 * Will return <code>null</code> if there was a problem creating the
-	 * bundle container.
-	 * 
-	 * @return bundle container or <code>null</code>
-	 * 
-	 */
-	public IBundleContainer getBundleContainer() {
-		if (fBundleTree != null) {
-			fContainer.setIncludedBundles(fBundleTree.getIncludedBundles());
-		}
-		return fContainer;
-	}
-
-	private class ResolveJob extends UIJob {
-		public ResolveJob(Display jobDisplay, String name) {
+	private class CreateContainerJob extends UIJob {
+		public CreateContainerJob(Display jobDisplay, String name) {
 			super(jobDisplay, name);
 		}
 
@@ -386,34 +362,15 @@ public class EditDirectoryContainerPage extends WizardPage {
 				// Validate the location and any other text fields
 				if (validateInput()) {
 					// Create a container from the input
-					fContainer = refreshContainer(fContainer);
-					if (fContainer != null) {
-						// Resolve the container
-						BusyIndicator.showWhile(getDisplay(), new Runnable() {
-							public void run() {
-								IStatus result = fContainer.isResolved() ? Status.OK_STATUS : fContainer.resolve(fTarget, null);
-
-								if (!result.isOK() && !result.isMultiStatus()) {
-									// There was a specific problem preventing the resolution, warn the user
-									fBundleTree.setInput(null);
-									setMessage(result.getMessage(), IMessageProvider.WARNING);
-								} else {
-									// Resolution was successful
-									fBundleTree.setInput(fContainer);
-									setPageComplete(true);
-								}
-							}
-						});
-						// Store the input into dialog settings as it is valid
-						storeSettings();
-					}
+					fContainer = createContainer(fContainer);
+					setPageComplete(true);
 				} else {
 					fContainer = null;
+					setPageComplete(false);
 				}
 				return Status.OK_STATUS;
 			} catch (CoreException e) {
 				fContainer = null;
-				fBundleTree.setInput(null);
 				setErrorMessage(e.getMessage());
 				setPageComplete(false);
 				return e.getStatus();

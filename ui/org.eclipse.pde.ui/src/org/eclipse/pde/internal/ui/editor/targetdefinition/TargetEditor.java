@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -21,6 +25,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.impl.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
@@ -32,6 +37,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Editor for target definition (*.target) files.  Interacts with the ITargetDefinition model
@@ -46,6 +52,7 @@ public class TargetEditor extends FormEditor {
 	private ITargetDefinition fTarget;
 	private List fManagedFormPages = new ArrayList(2);
 	private FileInputListener fInputListener;
+	private TargetChangedListener fTargetChangedListener;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
@@ -62,6 +69,7 @@ public class TargetEditor extends FormEditor {
 			setActiveEditor(this);
 			setPartName(getEditorInput().getName());
 			addPage(new DefinitionPage(this));
+			addPage(new ContentPage(this));
 			addPage(new EnvironmentPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.log(e);
@@ -147,6 +155,7 @@ public class TargetEditor extends FormEditor {
 		if (input instanceof IFileEditorInput) {
 			fInputListener = new FileInputListener(((IFileEditorInput) input).getFile());
 			PDEPlugin.getWorkspace().addResourceChangeListener(fInputListener);
+			getTargetChangedListener().contentsChanged(getTarget(), null, true);
 		}
 	}
 
@@ -195,6 +204,16 @@ public class TargetEditor extends FormEditor {
 			}
 		}
 		return fTarget;
+	}
+
+	/**
+	 * @return a shared listener that will refresh UI components when the target is modified
+	 */
+	public TargetChangedListener getTargetChangedListener() {
+		if (fTargetChangedListener == null) {
+			fTargetChangedListener = new TargetChangedListener();
+		}
+		return fTargetChangedListener;
 	}
 
 	/**
@@ -300,6 +319,66 @@ public class TargetEditor extends FormEditor {
 				}
 			}
 			return true;
+		}
+	}
+
+	class TargetChangedListener implements ITargetChangedListener {
+		private TargetLocationsGroup fLocationTree;
+		private TargetContentsGroup fContentTree;
+
+		public void setLocationTree(TargetLocationsGroup locationTree) {
+			fLocationTree = locationTree;
+		}
+
+		public void setContentTree(TargetContentsGroup contentTree) {
+			fContentTree = contentTree;
+		}
+
+		public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
+			if (!resolve || definition.isResolved()) {
+				if (fContentTree != null && source != fContentTree) {
+					fContentTree.setInput(getTarget());
+				}
+				if (fLocationTree != null && source != fLocationTree) {
+					fLocationTree.setInput(getTarget());
+				}
+			} else {
+				if (fContentTree != null) {
+					fContentTree.setEnabled(false);
+				}
+				if (fLocationTree != null) {
+					fLocationTree.setInput(null);
+				}
+				// TODO Cancel any other started jobs? Bad if we do this every time a checkbox changes
+				Job resolveJob = new Job(PDEUIMessages.TargetEditor_1) {
+					protected IStatus run(IProgressMonitor monitor) {
+						getTarget().resolve(monitor);
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
+						// Don't return any problems because we don't want an error dialog
+						return Status.OK_STATUS;
+					}
+				};
+				resolveJob.addJobChangeListener(new JobChangeAdapter() {
+					public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+						UIJob job = new UIJob(PDEUIMessages.TargetEditor_2) {
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								if (fContentTree != null) {
+									fContentTree.setInput(getTarget());
+								}
+								if (fLocationTree != null) {
+									fLocationTree.setInput(getTarget());
+								}
+								return Status.OK_STATUS;
+							}
+						};
+						job.setSystem(true);
+						job.schedule();
+					}
+				});
+				resolveJob.schedule();
+			}
 		}
 	}
 

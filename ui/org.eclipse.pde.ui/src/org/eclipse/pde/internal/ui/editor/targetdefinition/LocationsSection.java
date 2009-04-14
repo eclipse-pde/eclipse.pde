@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.shared.target.ITargetChangedListener;
-import org.eclipse.pde.internal.ui.shared.target.TargetContentsGroup;
+import org.eclipse.pde.internal.ui.shared.target.TargetLocationsGroup;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.SectionPart;
@@ -26,12 +26,12 @@ import org.eclipse.ui.forms.widgets.*;
  * @see DefinitionPage
  * @see TargetEditor
  */
-public class ContentSection extends SectionPart {
+public class LocationsSection extends SectionPart {
 
-	private TargetContentsGroup fContentGroup;
+	private TargetLocationsGroup fContainerGroup;
 	private TargetEditor fEditor;
 
-	public ContentSection(FormPage page, Composite parent) {
+	public LocationsSection(FormPage page, Composite parent) {
 		super(parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fEditor = (TargetEditor) page.getEditor();
 		createClient(getSection(), page.getEditor().getToolkit());
@@ -52,27 +52,26 @@ public class ContentSection extends SectionPart {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
-		GridData sectionData = new GridData(GridData.FILL_BOTH);
+		GridData sectionData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		sectionData.horizontalSpan = 2;
 		section.setLayoutData(sectionData);
-		section.setText(PDEUIMessages.ContentSection_0);
+		section.setText(PDEUIMessages.LocationSection_0);
 
 		section.setDescription(PDEUIMessages.ContentSection_1);
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 
-		fContentGroup = new TargetContentsGroup(client, toolkit);
-		fEditor.getTargetChangedListener().setContentTree(fContentGroup);
-		fContentGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
-		fContentGroup.addTargetChangedListener(new ITargetChangedListener() {
+		fContainerGroup = TargetLocationsGroup.createInForm(client, toolkit);
+		fEditor.getTargetChangedListener().setLocationTree(fContainerGroup);
+		fContainerGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
+		fContainerGroup.addTargetChangedListener(new ITargetChangedListener() {
 			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
 				markDirty();
 			}
 		});
 
 		toolkit.paintBordersFor(client);
-
 		section.setClient(client);
 	}
 
@@ -80,7 +79,7 @@ public class ContentSection extends SectionPart {
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
 	public void refresh() {
-		fContentGroup.setInput(getTarget());
+		fContainerGroup.setInput(getTarget());
 		super.refresh();
 	}
 

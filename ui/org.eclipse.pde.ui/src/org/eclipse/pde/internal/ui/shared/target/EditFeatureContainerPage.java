@@ -1,9 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.target.impl.FeatureBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
@@ -11,10 +20,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Wizard page for editing a feature bundle container, currently none of the options can be changed
+ *
+ */
 public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 
-	public EditFeatureContainerPage(ITargetDefinition target, IBundleContainer container) {
-		super(target, container);
+	public EditFeatureContainerPage(IBundleContainer container) {
+		super(container);
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +93,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#refreshContainer(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
 	 */
-	protected IBundleContainer refreshContainer(IBundleContainer previous) throws CoreException {
+	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
 		return getBundleContainer();
 	}
 

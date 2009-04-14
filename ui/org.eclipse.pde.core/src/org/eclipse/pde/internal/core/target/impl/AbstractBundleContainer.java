@@ -299,7 +299,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				sev = IStatus.INFO;
 				message = NLS.bind(Messages.AbstractBundleContainer_2, new Object[] {info.getVersion(), info.getSymbolicName()});
 			}
-			return new ResolvedBundle(info, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), false, optional, false);
+			return new ResolvedBundle(info, null, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), false, optional, false);
 		}
 		// DOES NOT EXIST
 		int sev = IStatus.ERROR;
@@ -308,7 +308,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			sev = IStatus.INFO;
 			message = NLS.bind(Messages.AbstractBundleContainer_4, info.getSymbolicName());
 		}
-		return new ResolvedBundle(info, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null), false, optional, false);
+		return new ResolvedBundle(info, null, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null), false, optional, false);
 	}
 
 	/**
@@ -405,9 +405,9 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			}
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, Messages.AbstractBundleContainer_5, e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundle.getSymbolicName()), e));
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, Messages.AbstractBundleContainer_5, e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundle.getSymbolicName()), e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);
 		}
@@ -501,7 +501,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		} catch (CoreException e) {
 			status = e.getStatus();
 		}
-		return new ResolvedBundle(info, status, source, false, fragment);
+		return new ResolvedBundle(info, this, status, source, false, fragment);
 	}
 
 	/**
@@ -542,7 +542,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 							}
 							boolean source = isSourceBundle(file, name, manifest);
 							boolean fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
-							ResolvedBundle rb = new ResolvedBundle(info, null, source, false, fragment);
+							ResolvedBundle rb = new ResolvedBundle(info, this, null, source, false, fragment);
 							rb.setSourcePath(fSourcePath);
 							return rb;
 						}
@@ -663,4 +663,35 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		}
 		return fVMArgs;
 	}
+
+	// Helpful when using working copies, but needs to differentiate between all containers, including different features with same location
+//	/* (non-Javadoc)
+//	 * @see java.lang.Object#equals(java.lang.Object)
+//	 */
+//	public boolean equals(Object obj) {
+//		if (obj instanceof AbstractBundleContainer) {
+//			AbstractBundleContainer container = (AbstractBundleContainer) obj;
+//			try {
+//				if (container.getType().equals(getType()) && container.getLocation(false).equals(getLocation(false))) {
+//					return true;
+//				}
+//			} catch (CoreException e) {
+//				PDECore.log(e);
+//			}
+//		}
+//		return false;
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see java.lang.Object#hashCode()
+//	 */
+//	public int hashCode() {
+//		int result = getType().hashCode();
+//		try {
+//			result += getLocation(false).hashCode();
+//		} catch (CoreException e) {
+//			// Do nothing, caught by equals
+//		}
+//		return result;
+//	}
 }

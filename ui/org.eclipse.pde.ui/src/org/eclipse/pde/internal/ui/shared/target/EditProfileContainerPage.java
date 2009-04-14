@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.internal.core.target.impl.ProfileBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -57,12 +56,12 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	 */
 	private static final String SETTINGS_CONFIG_3 = "config3"; //$NON-NLS-1$
 
-	public EditProfileContainerPage(ITargetDefinition target) {
-		super(target);
+	public EditProfileContainerPage() {
+		super();
 	}
 
-	public EditProfileContainerPage(ITargetDefinition target, IBundleContainer container) {
-		super(target, container);
+	public EditProfileContainerPage(IBundleContainer container) {
+		super(container);
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +87,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	protected void createLocationArea(Composite parent) {
 		super.createLocationArea(parent);
 
-		Group configComp = SWTFactory.createGroup(parent, Messages.EditProfileContainerPage_0, 2, 1, GridData.FILL_HORIZONTAL);
+		Composite configComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 
 		fUseDefaultConfig = new Button(configComp, SWT.CHECK | SWT.RIGHT);
 		GridData gd = new GridData();
@@ -103,6 +102,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		});
 
 		fConfigLabel = SWTFactory.createLabel(configComp, Messages.AddProfileContainerPage_3, 1);
+		((GridData) fConfigLabel.getLayoutData()).horizontalIndent = 15;
 
 		fConfigLocation = SWTFactory.createCombo(configComp, SWT.BORDER, 1, getConfigComboItems());
 		fConfigLocation.addModifyListener(new ModifyListener() {
@@ -241,9 +241,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 			if (fConfigLocation.isEnabled()) {
 				// Check if the text field is blank
 				if (fConfigLocation.getText().trim().length() == 0) {
-					fBundleTree.setInput(null);
 					setMessage(Messages.EditProfileContainerPage_2);
-					setPageComplete(false);
 					return false;
 				}
 
@@ -253,12 +251,9 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 
 				// Check that the directory exists
 				if (!configLocation.isDirectory()) {
-					fBundleTree.setInput(null);
 					setMessage(Messages.AddProfileContainerPage_8, IMessageProvider.WARNING);
-					setPageComplete(true);
 				} else {
 					setMessage(getDefaultMessage());
-					setPageComplete(true);
 				}
 			}
 		}
@@ -268,7 +263,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#refreshContainer(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
 	 */
-	protected IBundleContainer refreshContainer(IBundleContainer previous) throws CoreException {
+	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
 		IBundleContainer container = getTargetPlatformService().newProfileContainer(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
 		if (previous instanceof ProfileBundleContainer) {
 			container.setIncludedBundles(previous.getIncludedBundles());

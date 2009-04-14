@@ -21,7 +21,6 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,10 +43,6 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	private Button fIncludeVersionButton;
 	private CheckboxTableViewer fFeatureTable;
 
-	protected AddFeatureContainersPage(ITargetDefinition target) {
-		super(target);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
 	 */
@@ -63,10 +58,20 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createLocationArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createLocationArea(Composite parent) {
+		super.createLocationArea(parent);
+		createTableArea(parent);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.AddDirectoryContainerPage#createTableArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createTableArea(Composite parent) {
 		Composite tableComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
+
+		SWTFactory.createLabel(tableComp, Messages.AddFeatureContainersPage_2, 2);
 
 		fFeatureTable = CheckboxTableViewer.newCheckList(tableComp, SWT.BORDER);
 		// Connect the label provider

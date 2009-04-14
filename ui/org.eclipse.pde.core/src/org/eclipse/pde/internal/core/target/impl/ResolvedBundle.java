@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.target.impl;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 
 /**
@@ -23,6 +24,7 @@ import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 public class ResolvedBundle implements IResolvedBundle {
 
 	private BundleInfo fInfo;
+	private IBundleContainer fContainer;
 	private boolean fIsSource = false;
 	private IStatus fStatus;
 	private boolean fIsOptional = false;
@@ -39,8 +41,9 @@ public class ResolvedBundle implements IResolvedBundle {
 	 * @param optional whether the bundle is optional
 	 * @param whether the bundle is a fragment
 	 */
-	ResolvedBundle(BundleInfo info, IStatus status, boolean source, boolean optional, boolean fragment) {
+	ResolvedBundle(BundleInfo info, IBundleContainer parentContainer, IStatus status, boolean source, boolean optional, boolean fragment) {
 		fInfo = info;
+		fContainer = parentContainer;
 		if (status == null) {
 			fStatus = Status.OK_STATUS;
 		} else {
@@ -56,6 +59,13 @@ public class ResolvedBundle implements IResolvedBundle {
 	 */
 	public BundleInfo getBundleInfo() {
 		return fInfo;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IResolvedBundle#getParentContainer()
+	 */
+	public IBundleContainer getParentContainer() {
+		return fContainer;
 	}
 
 	/* (non-Javadoc)
@@ -112,5 +122,16 @@ public class ResolvedBundle implements IResolvedBundle {
 	 */
 	public String getSourcePath() {
 		return fSourcePath;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer result = new StringBuffer().append(fInfo.toString());
+		if (fStatus != null && !fStatus.isOK()) {
+			result = result.append(' ').append(fStatus.toString());
+		}
+		return result.toString();
 	}
 }
