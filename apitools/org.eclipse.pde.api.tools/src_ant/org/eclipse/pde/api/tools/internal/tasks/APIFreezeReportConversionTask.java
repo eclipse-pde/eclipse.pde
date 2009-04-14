@@ -156,6 +156,9 @@ public class APIFreezeReportConversionTask extends Task {
 			if(this.typeName != null && this.typeName.length() != 0) {
 				buffer.append(this.typeName);
 				switch(this.flags) {
+					case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
+					case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
+					case IDelta.API_METHOD :
 					case IDelta.METHOD :
 					case IDelta.METHOD_WITH_DEFAULT_VALUE :
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
@@ -169,6 +172,7 @@ public class APIFreezeReportConversionTask extends Task {
 						buffer.append('#');
 						buffer.append(Signature.toString(descriptor, selector, null, false, true));
 						break;
+					case IDelta.API_CONSTRUCTOR :
 					case IDelta.CONSTRUCTOR :
 						indexOf = key.indexOf('(');
 						if (indexOf == -1) {
@@ -181,10 +185,16 @@ public class APIFreezeReportConversionTask extends Task {
 						buffer.append(Signature.toString(descriptor, selector, null, false, false));
 						break;
 					case IDelta.FIELD :
+					case IDelta.API_FIELD :
+					case IDelta.ENUM_CONSTANT :
+					case IDelta.API_ENUM_CONSTANT :
 						buffer.append('#');
 						buffer.append(this.key);
 						break;
 					case IDelta.TYPE_MEMBER :
+					case IDelta.API_TYPE :
+					case IDelta.REEXPORTED_TYPE :
+					case IDelta.REEXPORTED_API_TYPE :
 						buffer.append('.');
 						buffer.append(this.key);
 						break;
