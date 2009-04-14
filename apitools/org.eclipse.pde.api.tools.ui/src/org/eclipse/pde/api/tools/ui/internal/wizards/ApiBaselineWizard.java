@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 public class ApiBaselineWizard extends Wizard {
 
 	private IApiBaseline profile = null;
+	private boolean content = false;
 	
 	/**
 	 * Constructor
@@ -48,6 +49,14 @@ public class ApiBaselineWizard extends Wizard {
 		return profile;
 	}
 	
+	/**
+	 * @return if the underlying content of the baseline has changed and not just
+	 * a change to the name
+	 */
+	public boolean contentChanged() {
+		return content;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
@@ -62,6 +71,7 @@ public class ApiBaselineWizard extends Wizard {
 		try {
 			ApiBaselineWizardPage page = (ApiBaselineWizardPage) getContainer().getCurrentPage();
 			profile = page.finish();
+			content = page.contentChanged();
 			return profile != null;
 		}
 		catch(IOException e) {

@@ -21,13 +21,15 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -79,11 +81,10 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 			.getApiBaselineManager();
 
 	private static HashSet removed = new HashSet(8);
-	private TableViewer tableviewer = null;
+	private CheckboxTableViewer tableviewer = null;
 	private ArrayList backingcollection = new ArrayList(8);
 	private String newdefault = null;
-	private Button newbutton = null, removebutton = null, editbutton = null,
-			setdefault = null, removedefault = null;
+	private Button newbutton = null, removebutton = null, editbutton = null;
 	protected static int rebuildcount = 0;
 	private String origdefault = null;
 	private boolean dirty = false;
@@ -108,7 +109,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 		
 		Composite lcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createWrapLabel(lcomp, PreferenceMessages.ApiProfilesPreferencePage_1, 2);
-		Table table = new Table(lcomp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
+		Table table = new Table(lcomp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.addKeyListener(new KeyAdapter(){
 			public void keyReleased(KeyEvent e) {
@@ -117,7 +118,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 				}
 			}
 		});
-		tableviewer = new TableViewer(table);
+		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new BaselineLabelProvider());
 		tableviewer.setContentProvider(new ArrayContentProvider());
 		tableviewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -131,15 +132,24 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 				IApiBaseline[] state = getCurrentSelection();
 				removebutton.setEnabled(state.length > 0);
 				editbutton.setEnabled(state.length == 1);
-				if(state.length == 1) {
-					boolean def = isDefault(state[0]);
-					setdefault.setEnabled(!def);
-					removedefault.setEnabled(def);
+			}
+		});
+		tableviewer.addCheckStateListener(new ICheckStateListener(){
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				IApiBaseline baseline = (IApiBaseline) event.getElement();
+				boolean checked = event.getChecked();
+				if(checked) {
+					tableviewer.setCheckedElements(new Object[] {baseline});
+					newdefault = baseline.getName();
 				}
 				else {
-					setdefault.setEnabled(false);
-					removedefault.setEnabled(false);
+					tableviewer.setChecked(baseline, checked);
+					newdefault = null;
+					manager.setDefaultApiBaseline(null);
 				}
+				rebuildcount = 0;
+				tableviewer.refresh(true);
+				dirty = true;
 			}
 		});
 		tableviewer.setComparator(new ViewerComparator() {
@@ -192,40 +202,10 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 		
 		SWTFactory.createVerticalSpacer(bcomp, 1);
 		
-		setdefault = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiBaselinePreferencePage_set_as_default, null);
-		setdefault.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				IApiBaseline[] states = getCurrentSelection();
-				if(states.length == 1){
-					newdefault = states[0].getName();
-					setdefault.setEnabled(false);
-					removedefault.setEnabled(true);
-					rebuildcount = 0;
-					tableviewer.refresh(true);
-					dirty = true;
-				}
-			}
-		});
-		setdefault.setEnabled(false);
-		
-		removedefault = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiBaselinePreferencePage_remove_as_default, null);
-		removedefault.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				IApiBaseline[] states = getCurrentSelection();
-				if(states.length == 1){
-					newdefault = null;
-					manager.setDefaultApiBaseline(null);
-					removedefault.setEnabled(false);
-					setdefault.setEnabled(true);
-					rebuildcount = 0;
-					tableviewer.refresh(true);
-					dirty = true;
-				}
-			}
-		});
-		removedefault.setEnabled(false);
-		
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
+		if(baseline != null) {
+			tableviewer.setCheckedElements(new Object[] {baseline});
+		}
 		origdefault = newdefault = (baseline == null ? null : baseline.getName());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIBASELINE_PREF_PAGE);
 
@@ -291,7 +271,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 							new StructuredSelection(newprofile), true);
 					newdefault = newprofile.getName();
 					rebuildcount = 0;
-					needsbuild = true;
+					needsbuild = wizard.contentChanged();
 					tableviewer.refresh(true);
 				}
 				dirty = true;
@@ -367,9 +347,15 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 		if (!dirty) {
 			return;
 		}
+		boolean defaultrename = false;
 		// remove
+		String name = null;
 		for (Iterator iter = removed.iterator(); iter.hasNext();) {
-			manager.removeApiBaseline((String) iter.next());
+			name = (String) iter.next();
+			if(name.equals(this.origdefault) && newdefault != null) {
+				defaultrename = true;
+			}
+			manager.removeApiBaseline(name);
 		}
 		// add the new / changed ones
 		for (Iterator iter = backingcollection.iterator(); iter.hasNext();) {
@@ -382,7 +368,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 			needsbuild = true;
 		} else if (def == null) {
 			manager.setDefaultApiBaseline(newdefault);
-			needsbuild = true;
+			needsbuild = !defaultrename;
 		}
 		if (needsbuild) {
 			if (rebuildcount < 1) {

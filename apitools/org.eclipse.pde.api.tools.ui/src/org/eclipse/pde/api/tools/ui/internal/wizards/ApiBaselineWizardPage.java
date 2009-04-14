@@ -234,6 +234,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 			}
 			try {
 				fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+				ApiBaselineWizardPage.this.contentchange = true;
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			}
@@ -315,6 +316,12 @@ public class ApiBaselineWizardPage extends WizardPage {
 	
 	private IApiBaseline fProfile = null;
 	private String originalname = null;
+	/**
+	 * Flag to know if the baselines' content has actually changed, or just some other attribute
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=267875
+	 */
+	private boolean contentchange = false;
+	
 	/**
 	 * We need to know if we are initializing the page to not respond to changed events
 	 * causing validation when the wizard opens.
@@ -625,6 +632,14 @@ public class ApiBaselineWizardPage extends WizardPage {
 			fProfile.setName(nametext.getText().trim());
 		}	
 		return fProfile;
+	}
+	
+	/**
+	 * @return if the actual content of the base line has changed and not just some
+	 * other attribute
+	 */
+	public boolean contentChanged() {
+		return this.contentchange;
 	}
 	
 	/**
