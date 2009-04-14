@@ -409,8 +409,11 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_sourceGroup;
 	public static String MainPreferencePage_group2;
 	public static String MainPreferencePage_promptBeforeOverwrite;
+	public static String MainPreferencePage_promtBeforeRemove;
 	public static String MainPreferencePage_showSourceBundles;
 	public static String MainPreferencePage_updateStale;
+	public static String MainPreferencePage_targetDefinitionsGroup;
+
 	public static String MainPreferencePage_targetPlatformRealization;
 
 	public static String ManifestStructureCreator_errorMessage;
@@ -2840,7 +2843,13 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage2_18;
 
+	public static String TargetPlatformPreferencePage2_19;
+
 	public static String TargetPlatformPreferencePage2_2;
+
+	public static String TargetPlatformPreferencePage2_20;
+
+	public static String TargetPlatformPreferencePage2_21;
 
 	public static String TargetPlatformPreferencePage2_3;
 

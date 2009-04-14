@@ -25,6 +25,7 @@ public interface IPreferenceConstants {
 	public static final String PROP_AUTO_MANAGE = "Preferences.MainPage.automanageDependencies"; //$NON-NLS-1$
 	public static final String PROP_SHOW_SOURCE_BUNDLES = "Preferences.MainPage.showSourceBundles"; //$NON-NLS-1$
 	public static final String OVERWRITE_BUILD_FILES_ON_EXPORT = "Preferences.MainPage.overwriteBuildFilesOnExport"; //$NON-NLS-1$
+	public static final String PROP_PROMPT_REMOVE_TARGET = "Preferences.MainPage.promptRemoveTarget"; //$NON-NLS-1$
 
 	// Editor Outline
 	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$

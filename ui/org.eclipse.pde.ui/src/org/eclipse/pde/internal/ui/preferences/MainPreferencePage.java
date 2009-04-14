@@ -17,6 +17,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -28,6 +30,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fAutoManage;
 	private Button fOverwriteBuildFiles;
 	private Button fShowSourceBundles;
+	private Button fPromptOnRemove;
 
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
@@ -74,6 +77,20 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fShowSourceBundles.setText(PDEUIMessages.MainPreferencePage_showSourceBundles);
 		fShowSourceBundles.setSelection(store.getBoolean(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES));
 
+		group = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_targetDefinitionsGroup, 1, 1, GridData.FILL_HORIZONTAL);
+
+		fPromptOnRemove = new Button(group, SWT.CHECK);
+		fPromptOnRemove.setText(PDEUIMessages.MainPreferencePage_promtBeforeRemove);
+		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(store.getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
+		fPromptOnRemove.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				PDEPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET, fPromptOnRemove.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
+
+			}
+
+		});
+
 		return composite;
 	}
 
@@ -109,6 +126,15 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAutoManage.setSelection(false);
 		fOverwriteBuildFiles.setSelection(true);
 		fShowSourceBundles.setSelection(false);
+		fPromptOnRemove.setSelection(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault().getPreferenceManager().getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
+		super.setVisible(visible);
 	}
 
 	/*

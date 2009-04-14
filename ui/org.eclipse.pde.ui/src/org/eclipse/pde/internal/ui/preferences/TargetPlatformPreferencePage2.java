@@ -24,8 +24,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
@@ -448,6 +447,28 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
 			List selected = selection.toList();
+
+			// If we are going to remove a workspace file, prompt to ask the user first
+			boolean isWorkspace = false;
+			for (Iterator iterator = selected.iterator(); iterator.hasNext();) {
+				ITargetDefinition currentTarget = (ITargetDefinition) iterator.next();
+				if (currentTarget.getHandle() instanceof WorkspaceFileTargetHandle) {
+					isWorkspace = true;
+					break;
+				}
+			}
+			if (isWorkspace) {
+				PDEPreferencesManager preferences = new PDEPreferencesManager(IPDEUIConstants.PLUGIN_ID);
+				String choice = preferences.getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET);
+				if (!MessageDialogWithToggle.ALWAYS.equalsIgnoreCase(choice)) {
+					MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_19, PDEUIMessages.TargetPlatformPreferencePage2_20, PDEUIMessages.TargetPlatformPreferencePage2_21, false, PDEPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET);
+					preferences.savePluginPreferences();
+					if (dialog.getReturnCode() != IDialogConstants.YES_ID) {
+						return;
+					}
+				}
+			}
+
 			if (fActiveTarget != null && selected.contains(fActiveTarget)) {
 				fActiveTarget = null;
 			}
