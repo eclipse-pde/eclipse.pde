@@ -84,8 +84,10 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_INDIVIDUAL_SOURCE = "individualSourceBundles"; //$NON-NLS-1$
 	public static final String PROPERTY_ALLOW_BINARY_CYCLES = "allowBinaryCycles"; //$NON-NLS-1$
 
+	public static final String PROPERTY_TRANSFORMED_REPO = "transformedRepoLocation"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_METADATA_REPO = "p2.metadata.repo"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ARTIFACT_REPO = "p2.artifact.repo"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_CONTEXT_REPOS = "p2.context.repos"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_PUBLISH_ARTIFACTS = "p2.publish.artifacts"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_CATEGORY_SITE = "p2.category.site"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_CATEGORY_PREFIX = "p2.category.prefix"; //$NON-NLS-1$
@@ -99,7 +101,6 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_METADATA_REPO_NAME = "p2.metadata.repo.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ARTIFACT_REPO_NAME = "p2.artifact.repo.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_GATHERING = "p2.gathering"; //$NON-NLS-1$
-
 	public static final String PROPERTY_SKIP_MIRRORING = "skipMirroring"; //$NON-NLS-1$
 	public static final String PROPERTY_SKIP_DIRECTOR = "skipDirector"; //$NON-NLS-1$
 

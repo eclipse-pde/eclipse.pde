@@ -31,6 +31,7 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.build.tests.BuildConfiguration;
+import org.eclipse.pde.internal.build.P2InfUtils;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.osgi.framework.Constants;
 
@@ -1050,5 +1051,63 @@ public class PublishingTests extends P2TestCase {
 		Collector collector = metadata.query(new InstallableUnitQuery("a"), new Collector(), null);
 		assertTrue(collector.size() == 0);
 		getIU(metadata, "b");
+	}
+
+	public void testBug259792_ReuseIUs() throws Exception {
+		IFolder root = newTest("259792");
+		IFolder build1 = Utils.createFolder(root, "build1");
+
+		IFolder a = Utils.createFolder(build1, "plugins/a");
+		IFolder b = Utils.createFolder(build1, "plugins/b");
+
+		Utils.generateFeature(build1, "f1", new String[] {"f2"}, new String[] {"a"});
+		
+		Utils.generateFeature(build1, "f2", null, new String[] {"b"});
+		StringBuffer p2Inf = new StringBuffer();
+		P2InfUtils.printRequires(p2Inf, null, 1, P2InfUtils.NAMESPACE_IU, "a", "[1.0.0,1.0.0]", null, true);
+		Utils.writeBuffer(build1.getFile("features/f2/p2.inf"), p2Inf);
+		Utils.writeBuffer(build1.getFile("features/f2/a.txt"), new StringBuffer("boo-urns"));
+		Properties properties = new Properties();
+		properties.put("bin.includes", "feature.xml");
+		properties.put("root", "file:a.txt");
+		Utils.storeBuildProperties(build1.getFolder("features/f2"), properties);
+		
+		Utils.generateBundle(a, "a");
+		Utils.generateBundle(b, "b");
+		
+		properties = BuildConfiguration.getBuilderProperties(build1);
+		properties.put("topLevelElementId", "f1");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(build1, properties);
+		runBuild(build1);
+		
+		URI repoURI = URIUtil.fromString("file:" + build1.getFile("I.TestBuild/f1-TestBuild-group.group.group.zip").getLocation().toOSString());
+		IMetadataRepository metadata = loadMetadataRepository(URIUtil.toJarURI(repoURI, null));
+		
+		IInstallableUnit iu = getIU(metadata, "f2.feature.group");
+		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "a");
+
+		IFolder build2 = Utils.createFolder(root, "build2");
+		
+		Utils.generateFeature(build2, "f3", new String[] {"f2"}, null);
+		properties = BuildConfiguration.getBuilderProperties(build2);
+		properties.put("topLevelElementId", "f3");
+		properties.put("p2.gathering", "true");
+		properties.put("repoBaseLocation", build1.getFolder("I.TestBuild").getLocation().toOSString());
+		properties.put("transformedRepoLocation", build2.getFolder("transformed").getLocation().toOSString());
+		Utils.storeBuildProperties(build2, properties);
+		runBuild(build2);
+		
+		//bug 272219
+		assertResourceFile(build2.getFolder("transformed"), "binary/f2_root_1.0.0");
+		
+		repoURI = URIUtil.fromString("file:" + build2.getFile("I.TestBuild/f3-TestBuild-group.group.group.zip").getLocation().toOSString());
+		metadata = loadMetadataRepository(URIUtil.toJarURI(repoURI, null));
+		iu = getIU(metadata, "f2.feature.group");
+		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "a");
+		
+		getIU(metadata, "a");
+		getIU(metadata, "f2_root"); //bug 271848, mirroring from context
+		assertResourceFile(build2, "buildRepo/binary/f2_root_1.0.0");
 	}
 }

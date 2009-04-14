@@ -241,7 +241,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 	}
 
-	private String getFeatureGroupId(BuildTimeFeature feature) {
+	protected String getFeatureGroupId(BuildTimeFeature feature) {
 		if (!feature.isBinary()) {
 			Properties properties = getFeatureBuildProperties(feature);
 			if (properties.containsKey(PROPERTY_P2_GROUP_ID))

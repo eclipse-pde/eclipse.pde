@@ -103,6 +103,7 @@ public class Utils {
 	static public void generateBundle(IFolder folder, String bundleId) throws CoreException, IOException {
 		generateBundleManifest(folder, bundleId, "1.0.0", null);
 		generatePluginBuildProperties(folder, null);
+		writeBuffer(folder.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 

@@ -476,6 +476,10 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		this.contextMetadata = uris;
 	}
 
+	public URI[] getContextMetadata() {
+		return contextMetadata;
+	}
+
 	public void setProductQualifier(String value) {
 		productQualifier = value;
 	}

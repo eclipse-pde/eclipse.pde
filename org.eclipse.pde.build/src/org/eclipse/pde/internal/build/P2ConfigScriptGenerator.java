@@ -10,6 +10,7 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.File;
+import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -17,6 +18,7 @@ import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.osgi.framework.Version;
 
 public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	private AssemblyInformation assemblyInformation = null;
@@ -232,7 +234,76 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			}
 			script.println("</p2.publish.product>"); //$NON-NLS-1$
 		}
+
+		script.println();
+		generateSynchContext();
 		script.printTargetEnd();
+	}
+
+	protected void generateSynchContext() {
+		ProductFile product = getProductFile();
+		ArrayList binaryFeatures = null;
+		if (product == null) {
+			binaryFeatures = new ArrayList();
+			for (int i = 0; i < features.length; i++) {
+				BuildTimeFeature feature = features[i];
+				if (feature.isBinary())
+					binaryFeatures.add(feature);
+			}
+		}
+
+		if (product == null && (binaryFeatures == null || binaryFeatures.size() == 0))
+			return;
+
+		script.printStartTag("p2.mirror"); //$NON-NLS-1$
+		script.printTab();
+		script.print("\t<source"); //$NON-NLS-1$
+		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
+		script.println("/>"); //$NON-NLS-1$
+
+		URI[] context = getContextMetadata();
+		for (int i = 0; context != null && i < context.length; i++) {
+			script.printTab();
+			script.print("\t<source"); //$NON-NLS-1$
+			script.printAttribute("location", URIUtil.toUnencodedString(context[i]), true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
+
+		}
+
+		script.printTab();
+		script.print("\t<destination "); //$NON-NLS-1$
+		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("kind", "metadata", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("/>"); //$NON-NLS-1$
+		script.print("\t<destination "); //$NON-NLS-1$
+		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
+		script.printAttribute("kind", "artifact", true); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("/>"); //$NON-NLS-1$
+		script.printTab();
+
+		if (product != null) {
+			String version = product.getVersion();
+			if (version.endsWith(PROPERTY_QUALIFIER)) {
+				Version oldVersion = new Version(version);
+				version = oldVersion.getMajor() + "." + oldVersion.getMinor() + "." + oldVersion.getMicro() + "." + Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_QUALIFIER); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			script.print("\t<iu"); //$NON-NLS-1$
+			script.printAttribute(ID, product.getId(), true);
+			script.printAttribute(VERSION, version, true);
+			script.println("/>"); //$NON-NLS-1$
+		} else {
+			for (int i = 0; i < features.length; i++) {
+				BuildTimeFeature feature = features[i];
+				if (feature.isBinary()) {
+					binaryFeatures.add(feature);
+					script.print("\t<iu"); //$NON-NLS-1$
+					script.printAttribute(ID, getFeatureGroupId(feature), true);
+					script.printAttribute(VERSION, feature.getVersion(), true);
+					script.println("/>"); //$NON-NLS-1$
+				}
+			}
+		}
+		script.printEndTag("p2.mirror"); //$NON-NLS-1$
 	}
 
 	private boolean generateProductP2Inf(File productFile, String root) {

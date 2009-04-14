@@ -11,6 +11,7 @@ package org.eclipse.pde.internal.build.tasks;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -302,16 +303,23 @@ public class BuildScriptGeneratorTask extends Task {
 		}
 	}
 
-	public void setContextRepository(String location) {
-		if (location == null || location.startsWith("${") || location.length() == 0) //$NON-NLS-1$
-			return;
-		if (!location.startsWith("file:")) //$NON-NLS-1$
-			location = "file:" + location; //$NON-NLS-1$
-		try {
-			URI uri = URIUtil.fromString(location);
-			generator.setContextMetadataRepositories(new URI[] {uri});
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("Invalid repository location:" + location); //$NON-NLS-1$
+	public void setContextRepository(String contexts) {
+		String[] locations = Utils.getArrayFromString(contexts, ","); //$NON-NLS-1$
+		ArrayList uris = new ArrayList();
+		for (int i = 0; i < locations.length; i++) {
+			String context = locations[i];
+			if (context == null || context.startsWith("${") || context.length() == 0) //$NON-NLS-1$
+				continue;
+
+			if (!context.startsWith("file:")) //$NON-NLS-1$
+				context = "file:" + context; //$NON-NLS-1$
+			try {
+				uris.add(URIUtil.fromString(context));
+			} catch (URISyntaxException e) {
+				log("Invalid repository location:" + context); //$NON-NLS-1$
+			}
 		}
+		if (uris.size() > 0)
+			generator.setContextMetadataRepositories((URI[]) uris.toArray(new URI[uris.size()]));
 	}
 }
