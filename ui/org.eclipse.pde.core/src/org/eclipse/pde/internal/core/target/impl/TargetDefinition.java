@@ -11,12 +11,13 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;
@@ -518,5 +519,94 @@ public class TargetDefinition implements ITargetDefinition {
 		buf.append("\nImplicit: ").append(fImplicit == null ? "null" : Integer.toString(fImplicit.length)); //$NON-NLS-1$ //$NON-NLS-2$
 		buf.append("\nHandle: ").append(fHandle.toString()); //$NON-NLS-1$
 		return buf.toString();
+	}
+
+	/**
+	 * Returns the profile for the this target handle, creating one if required.
+	 * 
+	 * @return profile
+	 * @throws CoreException in unable to retrieve profile
+	 */
+	IProfile getProfile() throws CoreException {
+		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
+		String id = ((AbstractTargetHandle) getHandle()).getProfileId();
+		IProfile profile = registry.getProfile(id);
+		if (profile != null) {
+			// ensure environment & NL settings are still the same (else we need a new profile)
+			String property = generateEnvironmentProperties();
+			String value = profile.getProperty(IProfile.PROP_ENVIRONMENTS);
+			boolean recreate = false;
+			if (!property.equals(value)) {
+				recreate = true;
+			}
+			if (!recreate) {
+				property = generateNLProperty();
+				value = profile.getProperty(IProfile.PROP_NL);
+				if (!property.equals(value)) {
+					recreate = true;
+				}
+			}
+			if (recreate) {
+				registry.removeProfile(id);
+				profile = null;
+			}
+		}
+		if (profile == null) {
+			// create profile
+			Map properties = new HashMap();
+			String location = AbstractTargetHandle.LOCAL_BUNDLE_POOL.toOSString();
+			properties.put(IProfile.PROP_INSTALL_FOLDER, location);
+			properties.put(IProfile.PROP_CACHE, location);
+			properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
+			// set up environment & NL properly so OS specific fragments are down loaded/installed
+			properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
+			properties.put(IProfile.PROP_NL, generateNLProperty());
+			profile = registry.addProfile(id, properties);
+		}
+		return profile;
+	}
+
+	/**
+	 * Generates the environment properties string for this target definition's p2 profile.
+	 * 
+	 * @return environment properties
+	 */
+	private String generateEnvironmentProperties() {
+		// TODO: are there constants for these keys?
+		StringBuffer env = new StringBuffer();
+		String ws = getWS();
+		if (ws == null) {
+			ws = Platform.getWS();
+		}
+		env.append("osgi.ws="); //$NON-NLS-1$
+		env.append(ws);
+		env.append(","); //$NON-NLS-1$
+		String os = getOS();
+		if (os == null) {
+			os = Platform.getOS();
+		}
+		env.append("osgi.os="); //$NON-NLS-1$
+		env.append(os);
+		env.append(","); //$NON-NLS-1$
+		String arch = getArch();
+		if (arch == null) {
+			arch = Platform.getOSArch();
+		}
+		env.append("osgi.arch="); //$NON-NLS-1$
+		env.append(arch);
+		return env.toString();
+	}
+
+	/**
+	 * Generates the NL property for this target definition's p2 profile.
+	 * 
+	 * @return NL profile property
+	 */
+	private String generateNLProperty() {
+		String nl = getNL();
+		if (nl == null) {
+			nl = Platform.getNL();
+		}
+		return nl;
 	}
 }

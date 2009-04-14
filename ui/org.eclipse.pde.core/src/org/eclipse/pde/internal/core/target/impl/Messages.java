@@ -22,6 +22,7 @@ public class Messages extends NLS {
 	public static String AbstractBundleContainer_2;
 	public static String AbstractBundleContainer_3;
 	public static String AbstractBundleContainer_4;
+	public static String AbstractTargetHandle_0;
 	public static String DirectoryBundleContainer_0;
 	public static String DirectoryBundleContainer_1;
 	public static String DirectoryBundleContainer_2;
@@ -31,6 +32,12 @@ public class Messages extends NLS {
 	public static String FeatureBundleContainer_2;
 	public static String FeatureBundleContainer_4;
 	public static String FeatureBundleContainer_5;
+	public static String IUBundleContainer_0;
+	public static String IUBundleContainer_1;
+	public static String IUBundleContainer_2;
+	public static String IUBundleContainer_3;
+	public static String IUBundleContainer_4;
+	public static String IUBundleContainer_5;
 	public static String LoadTargetDefinitionJob_0;
 	public static String LoadTargetDefinitionJob_1;
 	public static String LoadTargetOperation_argsTaskName;

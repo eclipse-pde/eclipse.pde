@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -18,6 +20,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -64,6 +67,8 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String PDE_INSTRUCTION = "pde"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
+	private static final String INSTALLABLE_UNIT = "unit"; //$NON-NLS-1$
+	private static final String REPOSITORY = "repository"; //$NON-NLS-1$
 	private static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
@@ -433,7 +438,9 @@ public class TargetDefinitionPersistenceHelper {
 
 	private static Element serializeBundleContainer(Document doc, AbstractBundleContainer container) throws CoreException {
 		Element containerElement = doc.createElement(LOCATION);
-		containerElement.setAttribute(ATTR_LOCATION_PATH, container.getLocation(false));
+		if (!(container instanceof IUBundleContainer)) {
+			containerElement.setAttribute(ATTR_LOCATION_PATH, container.getLocation(false));
+		}
 		containerElement.setAttribute(ATTR_LOCATION_TYPE, container.getType());
 		if (container instanceof FeatureBundleContainer) {
 			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) container).getFeatureId());
@@ -445,6 +452,24 @@ public class TargetDefinitionPersistenceHelper {
 			String configurationArea = ((ProfileBundleContainer) container).getConfigurationLocation();
 			if (configurationArea != null) {
 				containerElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
+			}
+		} else if (container instanceof IUBundleContainer) {
+			IUBundleContainer iubc = (IUBundleContainer) container;
+			String[] ids = iubc.getIds();
+			Version[] versions = iubc.getVersions();
+			for (int i = 0; i < ids.length; i++) {
+				Element unit = doc.createElement(INSTALLABLE_UNIT);
+				unit.setAttribute(ATTR_ID, ids[i]);
+				unit.setAttribute(ATTR_VERSION, versions[i].toString());
+				containerElement.appendChild(unit);
+			}
+			URI[] repositories = iubc.getRepositories();
+			if (repositories != null) {
+				for (int i = 0; i < repositories.length; i++) {
+					Element repo = doc.createElement(REPOSITORY);
+					repo.setAttribute(LOCATION, repositories[i].toASCIIString());
+					containerElement.appendChild(repo);
+				}
 			}
 		}
 		BundleInfo[] includedBundles = container.getIncludedBundles();
@@ -504,6 +529,41 @@ public class TargetDefinitionPersistenceHelper {
 		} else if (FeatureBundleContainer.TYPE.equals(type)) {
 			String version = location.getAttribute(ATTR_VERSION);
 			container = getTargetPlatformService().newFeatureContainer(path, location.getAttribute(ATTR_ID), version.length() > 0 ? version : null);
+		} else if (IUBundleContainer.TYPE.equals(type)) {
+			NodeList list = location.getChildNodes();
+			List ids = new ArrayList();
+			List versions = new ArrayList();
+			List repos = new ArrayList();
+			for (int i = 0; i < list.getLength(); ++i) {
+				Node node = list.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					// TODO: missing id/version
+					Element element = (Element) node;
+					if (element.getNodeName().equalsIgnoreCase(INSTALLABLE_UNIT)) {
+						String id = element.getAttribute(ATTR_ID);
+						if (id.length() > 0) {
+							String version = element.getAttribute(ATTR_VERSION);
+							if (version.length() > 0) {
+								ids.add(id);
+								versions.add(version);
+							}
+						}
+					} else if (element.getNodeName().equalsIgnoreCase(REPOSITORY)) {
+						String loc = element.getAttribute(LOCATION);
+						if (loc.length() > 0) {
+							try {
+								repos.add(new URI(loc));
+							} catch (URISyntaxException e) {
+								// TODO: illegal syntax
+							}
+						}
+					}
+				}
+			}
+			String[] iuIDs = (String[]) ids.toArray(new String[ids.size()]);
+			String[] iuVer = (String[]) versions.toArray(new String[versions.size()]);
+			URI[] uris = (URI[]) repos.toArray(new URI[repos.size()]);
+			container = new IUBundleContainer(iuIDs, iuVer, uris);
 		}
 
 		NodeList list = location.getChildNodes();

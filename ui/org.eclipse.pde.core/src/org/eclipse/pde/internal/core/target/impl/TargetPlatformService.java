@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -518,5 +519,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 		return multi;
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit[], java.net.URI[])
+	 */
+	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories) {
+		return new IUBundleContainer(units, repositories);
 	}
 }

@@ -11,7 +11,9 @@
 package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.InputStream;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
@@ -21,6 +23,12 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
  * @since 3.5
  */
 abstract class AbstractTargetHandle implements ITargetHandle {
+
+	/**
+	 * Path to the local directory where the local bundle pool is stored for p2 profile
+	 * based targets.
+	 */
+	static final IPath LOCAL_BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".local_pool"); //$NON-NLS-1$		
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getTargetDefinition()
@@ -55,5 +63,41 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 * @throws CoreException on failure
 	 */
 	abstract void save(ITargetDefinition definition) throws CoreException;
+
+	/**
+	 * Returns the profile identifier for this target handle. There is one profile
+	 * per target definition.
+	 * 
+	 * @return profile identifier
+	 * @throws CoreException in unable to generate identifier
+	 */
+	String getProfileId() throws CoreException {
+		return getMemento();
+	}
+
+	/**
+	 * Deletes the profile associated with this target handle, if any. Returns
+	 * <code>true</code> if a profile existed and was deleted, otherwise <code>false</code>.
+	 * 
+	 * @throws CoreException if unable to delete the profile
+	 */
+	void deleteProfile() throws CoreException {
+		IProfileRegistry registry = getProfileRegistry();
+		registry.removeProfile(getProfileId());
+	}
+
+	/**
+	 * Returns the profile registry.
+	 * 
+	 * @return profile registry
+	 * @throws CoreException if the registry does not exist
+	 */
+	static IProfileRegistry getProfileRegistry() throws CoreException {
+		IProfileRegistry registry = (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
+		if (registry == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
+		}
+		return registry;
+	}
 
 }

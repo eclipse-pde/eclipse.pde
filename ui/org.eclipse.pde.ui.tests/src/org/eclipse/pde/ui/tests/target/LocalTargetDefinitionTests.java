@@ -70,41 +70,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}
 	
 	/**
-	 * Retrieves all bundles (source and code) in the given target definition
-	 * returning them as a list of BundleInfos.
-	 * 
-	 * @param target target definition
-	 * @return all BundleInfos
-	 */
-	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
-		if (!target.isResolved()) {
-			target.resolve(null);
-		}
-		IResolvedBundle[] bundles = target.getBundles();
-		List list = new ArrayList(bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			list.add(bundles[i].getBundleInfo());
-		}
-		return list;
-	}	
-	
-	/**
-	 * Collects all bundle symbolic names into a set.
-	 * 
-	 * @param infos bundles
-	 * @return bundle symbolic names
-	 */
-	protected Set collectAllSymbolicNames(List infos) {
-		Set set = new HashSet(infos.size());
-		Iterator iterator = infos.iterator();
-		while (iterator.hasNext()) {
-			BundleInfo info = (BundleInfo) iterator.next();
-			set.add(info.getSymbolicName());
-		}
-		return set;
-	}
-	
-	/**
 	 * Tests that resetting the target platform should work OK (i.e. is equivalent to the
 	 * models in the default target platform).
 	 * 

@@ -339,19 +339,26 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * @return whether content is equivalent
 	 */
 	public boolean isContentEqual(AbstractBundleContainer container) {
-		return isInfosEqual(fRestrictions, container.fRestrictions) && isInfosEqual(fOptional, container.fOptional);
+		return isEqualOrNull(fRestrictions, container.fRestrictions) && isEqualOrNull(fOptional, container.fOptional);
 	}
 
-	private boolean isInfosEqual(BundleInfo[] infos1, BundleInfo[] infos2) {
-		if (infos1 == null) {
-			return infos2 == null;
+	/**
+	 * Returns whether the arrays have equal contents or are both <code>null</code>.
+	 * 
+	 * @param objects1
+	 * @param objects2
+	 * @return whether the arrays have equal contents or are both <code>null</code>
+	 */
+	protected boolean isEqualOrNull(Object[] objects1, Object[] objects2) {
+		if (objects1 == null) {
+			return objects2 == null;
 		}
-		if (infos2 == null) {
+		if (objects2 == null) {
 			return false;
 		}
-		if (infos1.length == infos2.length) {
-			for (int i = 0; i < infos1.length; i++) {
-				if (!infos1[i].equals(infos2[i])) {
+		if (objects1.length == objects2.length) {
+			for (int i = 0; i < objects1.length; i++) {
+				if (!objects1[i].equals(objects2[i])) {
 					return false;
 				}
 			}

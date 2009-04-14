@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
+import java.net.URI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 
 /**
  * A service to manage target platform definitions available to the workspace.
@@ -116,6 +118,18 @@ public interface ITargetPlatformService {
 	 * @return bundle container
 	 */
 	public IBundleContainer newProfileContainer(String home, String configurationLocation);
+
+	/**
+	 * Creates and returns a bundle container that contains all bundles contained in
+	 * the specified installable units (IU's) in the given repositories. If repositories are
+	 * not specified default repositories are searched (based on user preferences).
+	 * 
+	 * @param units installable units
+	 * @param repositories URI's describing repository locations or <code>null</code> to use
+	 * 	default repositories
+	 * @return bundle container
+	 */
+	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories);
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles referenced by
