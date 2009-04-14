@@ -72,14 +72,23 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 		int flags = delta.getFlags();
 		switch(flags) {
 			case IDelta.TYPE_MEMBER :
+			case IDelta.API_TYPE :
 				buffer.append('.').append(delta.getKey());
 				break;
+			case IDelta.API_METHOD :
+			case IDelta.API_CONSTRUCTOR :
+			case IDelta.API_ENUM_CONSTANT :
+			case IDelta.API_FIELD :
+			case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
+			case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
 			case IDelta.METHOD :
 			case IDelta.CONSTRUCTOR :
 			case IDelta.ENUM_CONSTANT :
 			case IDelta.METHOD_WITH_DEFAULT_VALUE :
 			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 			case IDelta.FIELD :
+			case IDelta.REEXPORTED_API_TYPE :
+			case IDelta.REEXPORTED_TYPE :
 				buffer.append('#').append(delta.getKey());
 				break;
 			case IDelta.MAJOR_VERSION :
