@@ -125,7 +125,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	private HashMap baselinecache = null;
 	
 	/**
-	 * Cache of baseline names to the file handle with their infos in it
+	 * Cache of baseline names to the location with their infos in it
 	 */
 	private HashMap handlecache = null;
 	
@@ -245,24 +245,27 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if(hasinfos.contains(baseline.getName())) {
 			return;
 		}
-		File file = (File) handlecache.get(baseline.getName());
-		if(file != null && file.exists()) {
-			FileInputStream inputStream = null;
-			try {
-				inputStream = new FileInputStream(file);
-				restoreBaseline(baseline, inputStream);
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			} finally {
-				if (inputStream != null) {
-					try {
-						inputStream.close();
-					} catch(IOException e) {
-						// ignore
+		String filename = (String) handlecache.get(baseline.getName());
+		if(filename != null) {
+			File file = new File(filename);
+			if(file.exists()) {
+				FileInputStream inputStream = null;
+				try {
+					inputStream = new FileInputStream(file);
+					restoreBaseline(baseline, inputStream);
+				} catch (IOException e) {
+					ApiPlugin.log(e);
+				} finally {
+					if (inputStream != null) {
+						try {
+							inputStream.close();
+						} catch(IOException e) {
+							// ignore
+						}
 					}
 				}
+				hasinfos.add(baseline.getName());
 			}
-			hasinfos.add(baseline.getName());
 		}
 	}
 	
@@ -292,7 +295,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					File baseline = baselines[i];
 					if(baseline.exists()) {
 						newbaseline = new ApiBaseline(new Path(baseline.getName()).removeFileExtension().toString());
-						handlecache.put(newbaseline.getName(), baseline);
+						handlecache.put(newbaseline.getName(), baseline.getAbsolutePath());
 						baselinecache.put(newbaseline.getName(), newbaseline);
 					}
 				}
