@@ -70,7 +70,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 		}
 		
 		// TEST
-		for (int j = 0; j < 6500; j++) {
+		for (int j = 0; j < 15; j++) {
 			
 			// *** clean API description ***
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
