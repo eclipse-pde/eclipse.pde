@@ -72,7 +72,6 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 		int flags = delta.getFlags();
 		switch(flags) {
 			case IDelta.TYPE_MEMBER :
-			case IDelta.API_TYPE :
 				buffer.append('.').append(delta.getKey());
 				break;
 			case IDelta.API_METHOD :
