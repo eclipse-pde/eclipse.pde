@@ -321,6 +321,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			} catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 			}
+			if (fActiveTarget == null) {
+				setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
+			}
 		}
 	}
 
@@ -471,6 +474,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 			if (fActiveTarget != null && selected.contains(fActiveTarget)) {
 				fActiveTarget = null;
+				setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
 			}
 			fRemoved.addAll(selected);
 			fTargets.removeAll(selected);
