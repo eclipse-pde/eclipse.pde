@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -18,13 +17,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
@@ -68,14 +67,30 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	protected void doSetup() throws Exception {
 		IProject[] pjs = getEnv().getWorkspace().getRoot().getProjects();
-		File file = null;
+		getEnv().setAutoBuilding(false);
 		if(pjs.length == 0) {
-			file = getTestSourcePath("refproject").toFile();
-			createExistingProject(file, true, false);
+			createExistingProjects("usageprojects", true, true, false);
 		}
-		file = getTestSourcePath("usagetests").toFile();
-		createExistingProject(file, true, true);
-		fullBuild();
+		else {
+			//ensureCompliance(new String[] {"usagetests"});
+			incrementalBuild();
+		}
+	}
+	
+	/**
+	 * Makes sure the compliance for the project is what the test says it should be
+	 * @param projectnames
+	 */
+	protected void ensureCompliance(String[] projectnames) {
+		IJavaProject project = null;
+		String compliance = null;
+		for (int i = 0; i < projectnames.length; i++) {
+			project = getEnv().getJavaProject(projectnames[i]);
+			compliance = getTestCompliance();
+			if(!compliance.equals(project.getOption(CompilerOptions.OPTION_Compliance, true))) {
+				getEnv().setProjectCompliance(project, compliance);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -111,6 +126,10 @@ public abstract class UsageTest extends ApiBuilderTest {
 		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojects").append(path);
 	}
 	
+	protected IPath getReplacementSourcePath(String path) {
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(path).addFileExtension("java");
+	}
+	
 	/**
 	 * Deploys a usage test
 	 * @param typename
@@ -120,7 +139,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 		deployUsageTest(TESTING_PACKAGE, 
 				typename, 
 				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
+				inc, 
 				true);
 	}
 	
@@ -130,7 +149,17 @@ public abstract class UsageTest extends ApiBuilderTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		getEnv().setRevert(true);
 		doSetup();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		getEnv().setRevert(false);
 	}
 	
 	/**
@@ -190,28 +219,27 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 * </ol>
 	 * @param buildworkspace
 	 */
-	protected void deployUsageTest(String packagename, String sourcename, boolean expectingproblems, int buildtype, boolean buildworkspace) {
+	protected void deployUsageTest(String packagename, String sourcename, boolean expectingproblems, boolean incremental, boolean buildworkspace) {
 		try {
-			IProject project = getEnv().getProject(getTestingProjectName());
-			assertNotNull("the testing project "+getTestingProjectName()+" must be in the workspace", project);
-			assertSource(project, packagename, sourcename);
-			doBuild(buildtype, (buildworkspace ? null : project.getFullPath()));
-			expectingNoJDTProblems();
-			IJavaProject jproject = getEnv().getJavaProject(getTestingProjectName());
-			IType type = jproject.findType(packagename, sourcename);
-			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
-			IPath sourcepath = type.getPath();
-			if(expectingproblems) {
-				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
-				assertProblems(getEnv().getProblems());
+			IPath typepath = getProjectRelativePath(packagename, sourcename);
+			createWorkspaceFile(typepath, getReplacementSourcePath(sourcename));
+			if(incremental) {
+				incrementalBuild();
 			}
 			else {
-				expectingNoProblemsFor(sourcepath);
+				fullBuild();
 			}
+			expectingNoJDTProblems();
+			ApiProblem[] problems = getEnv().getProblemsFor(typepath, null);
+			assertProblems(problems);
 		}
 		catch(Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	protected IPath getProjectRelativePath(String packagename, String sourcename) {
+		return new Path(getTestingProjectName()).append(SRC_ROOT).append(packagename.replace('.', '/')).append(sourcename).addFileExtension("java");
 	}
 	
 	/**
@@ -228,7 +256,8 @@ public abstract class UsageTest extends ApiBuilderTest {
 				Java5ClassUsageTests.class,
 				InterfaceUsageTests.class,
 				UnusedApiProblemFilterTests.class,
-				DependentUsageTests.class
+				DependentUsageTests.class,
+				FragmentUsageTests.class
 		};
 		return classes;
 	}

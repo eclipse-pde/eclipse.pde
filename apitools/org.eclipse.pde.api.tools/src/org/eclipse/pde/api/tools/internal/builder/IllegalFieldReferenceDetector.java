@@ -140,6 +140,9 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected boolean isProblem(IReference reference) {
+		if(!super.isProblem(reference)) {
+			return false;
+		}
 		try {
 			Object componentId = fFieldComponents.get(reference.getResolvedReference().getHandle());
 			return componentId != null && reference.getResolvedReference().getApiComponent().getId().equals(componentId);

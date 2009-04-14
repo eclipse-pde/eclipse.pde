@@ -393,7 +393,24 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @param reference
 	 * @return whether a problem
 	 */
-	protected abstract boolean isProblem(IReference reference);
+	protected boolean isProblem(IReference reference) {
+		//by default fragment -> host references are not problems 
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=255659
+		IApiMember member = reference.getResolvedReference();
+		if(member != null) {
+			IApiMember local = reference.getMember();
+			try {
+				IApiComponent lcomp = local.getApiComponent();
+				if(lcomp != null && lcomp.isFragment()) {
+					return !lcomp.getHost().equals(member.getApiComponent());
+				}
+			}
+			catch(CoreException ce) {
+				ApiPlugin.log(ce);
+			}
+		}
+		return true;
+	}
 	
 	/**
 	 * Tries to find the given {@link IApiMethod} in the given {@link IType}. If a matching method is not
