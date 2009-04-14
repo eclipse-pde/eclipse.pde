@@ -65,7 +65,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	public void execute() {
-		if (launcherName == null || launcherName.startsWith("${") || config == null) //$NON-NLS-1$
+		if (launcherName == null || launcherName.startsWith(ANT_PREFIX) || config == null)
 			return; //TODO error/warning
 
 		if (launcherProvider == null || launcherProvider.startsWith("${")) //$NON-NLS-1$
@@ -236,7 +236,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	public void setConfig(String config) {
-		if (config == null || config.startsWith("${")) //$NON-NLS-1$
+		if (config == null || config.startsWith(ANT_PREFIX))
 			return;
 
 		String[] elements = Utils.getArrayFromStringWithBlank(config, "."); //$NON-NLS-1$
