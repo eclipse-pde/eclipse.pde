@@ -1110,4 +1110,60 @@ public class PublishingTests extends P2TestCase {
 		getIU(metadata, "f2_root"); //bug 271848, mirroring from context
 		assertResourceFile(build2, "buildRepo/binary/f2_root_1.0.0");
 	}
+	
+	public void testPublish_FeatureBasedProduct() throws Exception {
+		IFolder buildFolder = newTest("featureBasedProduct");
+		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
+		
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+		
+		Utils.generateFeature(buildFolder, "f", null, new String [] { "org.eclipse.osgi", "org.eclipse.equinox.common"});
+		Utils.writeBuffer(buildFolder.getFile("features/f/important.txt"), new StringBuffer("boo-urns"));
+		Properties properties = new Properties();
+		properties.put("bin.includes", "feature.xml");
+		properties.put("root", "file:important.txt");
+		Utils.storeBuildProperties(buildFolder.getFolder("features/f"), properties);
+		
+		IFile productFile = buildFolder.getFile("rcp.product");
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"f"}, true);
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("configs", "win32,win32,x86");
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("p2.gathering", "true");
+		properties.put("skipMirroring", "true");
+		properties.put("p2.build.repo", "file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		//bug 269523
+		StringBuffer customBuffer = new StringBuffer();
+		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/customTargets.xml\"/>	\n");
+		customBuffer.append("   <target name=\"postBuild\">															\n");
+		customBuffer.append("      <p2.mirror destination=\"" + finalRepo.getLocation().toOSString() + "\"			\n");
+		customBuffer.append("                 source=\"${p2.build.repo}\" >											\n");
+		customBuffer.append("          <slicingOptions platformFilter=\"win32,win32,x86\" 							\n");
+		customBuffer.append("                          followStrict=\"true\" /> 									\n");
+		customBuffer.append("          <iu id=\"rcp.product\" version=\"1.0.0\" />									\n");
+		customBuffer.append("      </p2.mirror>																		\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("</project>																				\n");
+		Utils.writeBuffer(buildFolder.getFile("customTargets.xml"), customBuffer);
+		
+		runProductBuild(buildFolder);
+
+		assertResourceFile(finalRepo, "binary/f_root_1.0.0");
+		assertResourceFile(finalRepo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
+		assertResourceFile(finalRepo, "features/f_1.0.0.jar");
+		
+		HashSet entries = new HashSet();
+		entries.add("eclipse/eclipse.exe");
+		entries.add("eclipse/features/f_1.0.0/feature.xml");
+		entries.add("eclipse/important.txt");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
+	}
 }
