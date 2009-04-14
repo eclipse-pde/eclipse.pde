@@ -15,25 +15,34 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
+/**
+ * Provides the preference page for managing the default OSGi framework to use.
+ * 
+ * @since 3.3
+ */
 public class OSGiFrameworkPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	class FrameworkLabelProvider extends LabelProvider {
+	/**
+	 * Label provider for the table viewer. Annotates the default framework with bold text 
+	 */
+	class FrameworkLabelProvider extends LabelProvider implements IFontProvider {
+		private Font font = null;
+
 		public Image getImage(Object element) {
 			return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 		}
@@ -46,29 +55,66 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 			}
 			return super.getText(element);
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+		 */
+		public Font getFont(Object element) {
+			if (element instanceof IConfigurationElement) {
+				String id = ((IConfigurationElement) element).getAttribute(OSGiFrameworkManager.ATT_ID);
+				if (fDefaultFramework.equals(id)) {
+					if (this.font == null) {
+						Font dialogFont = JFaceResources.getDialogFont();
+						FontData[] fontData = dialogFont.getFontData();
+						for (int i = 0; i < fontData.length; i++) {
+							FontData data = fontData[i];
+							data.setStyle(SWT.BOLD);
+						}
+						Display display = getControl().getShell().getDisplay();
+						this.font = new Font(display, fontData);
+					}
+					return this.font;
+				}
+			}
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			if (this.font != null) {
+				this.font.dispose();
+			}
+			super.dispose();
+		}
 	}
 
-	private TableViewer fTableViewer;
-	private Button fSetDefaultButton;
+	private CheckboxTableViewer fTableViewer;
 	private String fDefaultFramework;
 
+	/**
+	 * Constructor
+	 */
 	public OSGiFrameworkPreferencePage() {
 		setDefaultFramework();
 	}
 
+	/**
+	 * Restores the default framework setting from the PDE preferences
+	 */
 	private void setDefaultFramework() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		fDefaultFramework = store.getString(IPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createContents(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.verticalSpacing = 10;
-		container.setLayout(layout);
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 
-		Link text = new Link(container, SWT.WRAP);
+		Link text = new Link(comp, SWT.WRAP);
 		text.setText(PDEUIMessages.OSGiFrameworkPreferencePage_installed);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -84,44 +130,33 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 			}
 		});
 
-		fTableViewer = new TableViewer(container, SWT.BORDER);
+		fTableViewer = new CheckboxTableViewer(new Table(comp, SWT.CHECK | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION));
 		fTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.setLabelProvider(new FrameworkLabelProvider());
 		fTableViewer.setInput(PDEPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks());
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				String id = ((IConfigurationElement) ssel.getFirstElement()).getAttribute("id"); //$NON-NLS-1$
-				fSetDefaultButton.setEnabled(ssel.size() == 1 && !fDefaultFramework.equals(id));
-			}
-		});
-
-		Composite buttonContainer = new Composite(container, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		buttonContainer.setLayout(layout);
-		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
-		fSetDefaultButton = new Button(buttonContainer, SWT.PUSH);
-		fSetDefaultButton.setText(PDEUIMessages.OSGiFrameworkPreferencePage_setAs);
-		fSetDefaultButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTUtil.setButtonDimensionHint(fSetDefaultButton);
-		fSetDefaultButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection ssel = (IStructuredSelection) fTableViewer.getSelection();
-				IConfigurationElement element = (IConfigurationElement) ssel.getFirstElement();
+		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				IConfigurationElement element = (IConfigurationElement) event.getElement();
+				fTableViewer.setCheckedElements(new Object[] {element});
 				fDefaultFramework = element.getAttribute(OSGiFrameworkManager.ATT_ID);
 				fTableViewer.refresh();
-				fSetDefaultButton.setEnabled(false);
 			}
 		});
-		fSetDefaultButton.setEnabled(false);
+		if (fDefaultFramework != null) {
+			IConfigurationElement element = PDEPlugin.getDefault().getOSGiFrameworkManager().getFramework(fDefaultFramework);
+			if (element != null) {
+				fTableViewer.setCheckedElements(new Object[] {element});
+			}
+		}
 		Dialog.applyDialogFont(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.OSGI_PREFERENCE_PAGE);
-		return container;
+		return comp;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 */
 	public boolean performOk() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		store.setValue(IPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, fDefaultFramework);
@@ -129,11 +164,17 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		return super.performOk();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
 	protected void performDefaults() {
 		setDefaultFramework();
 		fTableViewer.refresh();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
 	public void init(IWorkbench workbench) {
 	}
 

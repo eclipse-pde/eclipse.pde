@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,6 +121,21 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 			return element.getAttribute(ATT_NAME);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the {@link IConfigurationElement} for the framework with the given ID
+	 * or <code>null</code> if no element exists with that ID.
+	 * @param frameworkId
+	 * @return the {@link IConfigurationElement} for the framework with the given ID or <code>null</code>
+	 * 
+	 * @since 3.5
+	 */
+	public IConfigurationElement getFramework(String frameworkId) {
+		if (fFrameworks == null) {
+			loadElements();
+		}
+		return (IConfigurationElement) fFrameworks.get(frameworkId);
 	}
 
 }
