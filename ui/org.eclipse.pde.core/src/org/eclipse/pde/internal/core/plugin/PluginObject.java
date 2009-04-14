@@ -13,20 +13,9 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Vector;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
@@ -184,8 +173,16 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 	}
 
 	public String toString() {
-		if (fName != null)
-			return fName;
+		String result = null;
+		if (fName != null) {
+			result = fName;
+		}
+		if ((result == null || result.indexOf('%') >= 0) && fModel != null) {
+			result = fModel.toString();
+		}
+		if (result != null) {
+			return result;
+		}
 		return super.toString();
 	}
 
