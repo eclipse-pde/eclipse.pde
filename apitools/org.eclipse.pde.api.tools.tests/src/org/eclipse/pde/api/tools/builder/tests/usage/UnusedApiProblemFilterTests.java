@@ -230,7 +230,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	}
 	
 	/**
-	 * Tests that there is no problem reported for a compilation unit that has been deleted, which has an api 
+	 * Tests that there is problem reported for a compilation unit that has been deleted, which has an api 
 	 * problem filter
 	 * @param inc
 	 */

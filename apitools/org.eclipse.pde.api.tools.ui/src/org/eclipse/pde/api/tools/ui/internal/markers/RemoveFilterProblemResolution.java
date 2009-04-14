@@ -126,7 +126,6 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 			}
 		}
 		finally {
-			
 			localmonitor.done();
 		}
 	}
@@ -135,7 +134,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
 	public void run(IMarker marker) {
-		//do nothing, work done in #run(IMarker[], IProgressMonitor)
+		run(new IMarker[] {marker}, null);
 	}
 
 	/* (non-Javadoc)

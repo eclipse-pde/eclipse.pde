@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
@@ -68,7 +67,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.0
  */
-public class ApiFiltersPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
+public class ApiFiltersPropertyPage extends PropertyPage {
 	
 	/**
 	 * Comparator for the viewer to group filters by {@link IElementDescriptor} type

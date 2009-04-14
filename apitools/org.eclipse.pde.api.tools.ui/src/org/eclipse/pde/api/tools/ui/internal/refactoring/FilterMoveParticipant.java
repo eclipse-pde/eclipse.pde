@@ -1,0 +1,74 @@
+package org.eclipse.pde.api.tools.ui.internal.refactoring;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
+import org.eclipse.osgi.util.NLS;
+
+/**
+ * Handles a type being moved from one location to another and updates the associated 
+ * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}s as 
+ * needed
+ * 
+ * @since 1.0.1
+ */
+public class FilterMoveParticipant extends MoveParticipant {
+
+	private IJavaElement element = null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
+	 */
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
+		return new RefactoringStatus();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createPreChange(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		IResource resource = (IResource) getArguments().getDestination();
+		switch(this.element.getElementType()) {
+			case IJavaElement.TYPE: {
+				return RefactoringUtils.createMoveFilterChanges((IType)this.element, resource.getProjectRelativePath().toString());
+			}
+			case IJavaElement.PACKAGE_FRAGMENT: {
+				return RefactoringUtils.createMoveFilterChanges((IPackageFragment)this.element, resource.getProjectRelativePath().toString());
+			}
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
+	 */
+	public String getName() {
+		return NLS.bind(RefactoringMessages.FilterDeleteParticipant_remove_unused_filters_for_0, this.element.getElementName());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
+	 */
+	protected boolean initialize(Object element) {
+		if(element instanceof IJavaElement) {
+			this.element = (IJavaElement) element;
+			return true;
+		}
+		return false;
+	}
+}

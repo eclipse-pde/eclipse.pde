@@ -157,14 +157,13 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 		CreateApiFilterOperation op = new CreateApiFilterOperation(markers);
 		op.setSystem(true);
 		op.schedule();
-		super.run(markers, monitor);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
 	public void run(IMarker marker) {
-		//do nothing, work done in #run(IMarker[], IProgressMonitor)
+		run(new IMarker[] {marker}, null);
 	}
 	
 	/* (non-Javadoc)

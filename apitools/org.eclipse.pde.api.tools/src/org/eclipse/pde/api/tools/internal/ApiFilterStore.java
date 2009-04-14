@@ -352,10 +352,12 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			IResource resource = fProject.getProject().findMember(new Path(resourcePath));
 			if(resource == null) {
-				continue;
+				resource = fProject.getProject().getFile(resourcePath);
 			}
 			Map pTypeNames = (Map) fFilterMap.get(resource);
-			if (pTypeNames == null) continue;
+			if (pTypeNames == null) {
+				continue;
+			}
 			String typeName = underlyingProblem.getTypeName();
 			if (typeName == null) {
 				typeName = GLOBAL;

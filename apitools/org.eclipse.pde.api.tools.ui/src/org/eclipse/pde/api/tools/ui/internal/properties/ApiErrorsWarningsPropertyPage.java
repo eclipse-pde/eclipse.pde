@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
@@ -39,7 +38,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  *  
  * @since 1.0.0
  */
-public class ApiErrorsWarningsPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
+public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 
 	/**
 	 * The data map passed when showing the page

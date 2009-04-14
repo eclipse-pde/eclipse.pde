@@ -133,7 +133,7 @@ public final class VisibilityModifiers {
 				return "PRIVATE_PERMISSIBLE"; //$NON-NLS-1$
 			}
 			case FRAGMENT_PERMISSIBLE: {
-				return "RAGMENT_PERMISSIBLE"; //$NON-NLS-1$
+				return "FRAGMENT_PERMISSIBLE"; //$NON-NLS-1$
 			}
 			case SPI: {
 				return "SPI"; //$NON-NLS-1$
