@@ -225,11 +225,11 @@ set here?
 		<arg line="-version ${p2.director.version}" />
 		<!-- need to quote os,ws,arch so that '*' does not get expanded -->
 		<arg value="-p2.os" />
-		<arg value="&quot;${os}&quot;" />
+		<arg value="${os}" />
 		<arg value="-p2.ws" />
-		<arg value="&quot;${ws}&quot;" />
+		<arg value="${ws}" />
 		<arg value="-p2.arch" />
-		<arg value="&quot;${arch}&quot;" />
+		<arg value="${arch}" />
 		<arg line="-roaming" />
 		<arg value="-profile" />
 		<arg value="${p2.director.profile}" />
