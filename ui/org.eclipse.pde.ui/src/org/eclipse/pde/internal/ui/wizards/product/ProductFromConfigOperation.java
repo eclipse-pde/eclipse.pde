@@ -57,7 +57,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				product.setApplication(appName);
 			}
 
-			// Set JRE info from information from the launch config
+			// Set JRE info from information from the launch configuration
 			String jreString = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
 			if (jreString != null) {
 				IPath jreContainerPath = new Path(jreString);
@@ -96,6 +96,21 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 					super.initializeProduct(product);
 				}
 			}
+
+			// set vm and program arguments from the launch configuration
+			String vmargs = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String) null);
+			String programArgs = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
+			if (vmargs != null || programArgs != null) {
+				IArgumentsInfo arguments = product.getLauncherArguments();
+				if (arguments == null)
+					arguments = factory.createLauncherArguments();
+				if (vmargs != null)
+					arguments.setVMArguments(vmargs, IArgumentsInfo.L_ARGS_ALL);
+				if (programArgs != null)
+					arguments.setProgramArguments(programArgs, IArgumentsInfo.L_ARGS_ALL);
+				product.setLauncherArguments(arguments);
+			}
+
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
