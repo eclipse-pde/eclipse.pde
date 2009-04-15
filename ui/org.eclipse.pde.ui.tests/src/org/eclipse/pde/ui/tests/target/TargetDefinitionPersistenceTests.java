@@ -468,6 +468,55 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	}		
 	
 	/**
+	 * Tests that we can de-serialize an old style target definition file (version 3.2)
+	 * that has extra/unsupported tags and retrieve the correct contents.
+	 * 
+	 * @throws Exception
+	 */
+	public void testReadOldTargetFileWithUnknownTags() throws Exception {
+		ITargetDefinition target = readOldTarget("extratags");
+		
+		assertEquals("Wrong name", "Restrictions", target.getName());
+		assertNull(target.getArch());
+		assertNull(target.getOS());
+		assertNull(target.getNL());
+		assertNull(target.getWS());
+		assertNull(target.getProgramArguments());
+		assertNull(target.getVMArguments());
+		assertNull(target.getJREContainer());
+		assertNull(target.getImplicitDependencies());
+		
+		BundleInfo[] restrictions = new BundleInfo[]{
+			new BundleInfo("org.eclipse.debug.core", null, null, BundleInfo.NO_LEVEL, false),
+			new BundleInfo("org.eclipse.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
+			new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false),
+			new BundleInfo("org.eclipse.jdt.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
+			new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false)
+		};
+		
+		IBundleContainer[] containers = target.getBundleContainers();
+		assertEquals("Wrong number of bundles", 3, containers.length);
+		assertTrue(containers[0] instanceof ProfileBundleContainer);
+		assertTrue(containers[1] instanceof FeatureBundleContainer);
+		assertTrue(containers[2] instanceof DirectoryBundleContainer);
+		
+		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()), new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",((FeatureBundleContainer)containers[1]).getFeatureId());
+		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
+				new Path(getResolvedLocation(containers[2])));
+		
+		for (int i = 0; i < containers.length; i++) {
+			IBundleContainer container = containers[i];
+			BundleInfo[] actual = container.getIncludedBundles();
+			assertNotNull(actual);
+			assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
+			for (int j = 0; j < actual.length; j++) {
+				assertEquals("Wrong restriction", restrictions[j], actual[j]);
+			}
+		}
+	}			
+	
+	/**
 	 * Tests that we can de-serialize an old style target definition file (version 3.2) and retrieve
 	 * the correct contents with optional bundles.
 	 * 

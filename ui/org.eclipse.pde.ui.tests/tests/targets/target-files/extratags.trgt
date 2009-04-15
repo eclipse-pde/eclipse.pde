@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.2"?>
+
+<target name="Restrictions">
+
+   <extratag attribute="extra"/>
+   <location useDefault="true"/>
+
+   <content>
+      <extratag attribute="extra"/>
+      <plugins>
+         <plugin id="org.eclipse.debug.core"/>
+         <extratag attribute="extra"/>
+         <plugin id="org.eclipse.debug.ui"/>
+         <plugin id="org.eclipse.jdt.debug"/>
+         <plugin id="org.eclipse.jdt.debug.ui"/>
+         <plugin id="org.eclipse.jdt.launching"/>
+      </plugins>
+      <features>
+         <extratag attribute="extra"/>
+         <feature id="org.eclipse.jdt"/>
+      </features>
+      <extraLocations>
+         <extratag attribute="extra"/>
+         <location path="${eclipse_home}/dropins"/>
+      </extraLocations>
+      <extratag attribute="extra"/>
+   </content>
+
+   <extratag attribute="extra"/>
+</target>
