@@ -227,7 +227,7 @@ public class ExportPackageObject extends PackageObject {
 			// wrong type for usesValue! - in this situation the old
 			// formatUsesDirective() would throw a ClassCastException.
 			// So for consistency! :-(
-			Object foo = (ArrayList) usesValue;
+			Object foo = usesValue;
 			// To remove 'non-usage' error :-(
 			foo.getClass();
 
