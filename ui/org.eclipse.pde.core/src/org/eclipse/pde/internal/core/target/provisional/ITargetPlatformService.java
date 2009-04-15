@@ -57,6 +57,17 @@ public interface ITargetPlatformService {
 	public ITargetHandle getTarget(IFile file);
 
 	/**
+	 * Returns a handle to a target definition backed by the underlying {@link URI}.
+	 * The target definition may or may not exist. If the {@link URI} is valid
+	 * then this is a new target definition which becomes one of the known
+	 * external target definitions.
+	 * 
+	 * @param uri target definition {@link URI} that may or may not exist 
+	 * @return target handle
+	 */
+	public ITargetHandle getTarget(URI uri);
+
+	/**
 	 * Returns a new target definition to be stored with local metadata. The target
 	 * becomes one of the known workspace target definitions when it is saved.
 	 * 

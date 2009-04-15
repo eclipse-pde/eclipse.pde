@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.*;
@@ -152,11 +150,31 @@ public class TargetEditor extends FormEditor {
 	 */
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
+		IFile file = null;
+		boolean validFile = true;
 		if (input instanceof IFileEditorInput) {
-			fInputListener = new FileInputListener(((IFileEditorInput) input).getFile());
-			PDEPlugin.getWorkspace().addResourceChangeListener(fInputListener);
-			getTargetChangedListener().contentsChanged(getTarget(), null, true);
+			file = ((IFileEditorInput) input).getFile();
+			validFile = file.getLocation().toFile().exists();
+		} else if (input instanceof IURIEditorInput) {
+			String part = ((IURIEditorInput) input).getURI().getSchemeSpecificPart();
+			Path path = new Path(part);
+			file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			validFile = path.toFile().exists();
 		}
+
+		//If the file is not available or invalid, close the target editor
+		if (file == null || !validFile) {
+			Display display = getSite().getShell().getDisplay();
+			display.asyncExec(new Runnable() {
+				public void run() {
+					getSite().getPage().closeEditor(TargetEditor.this, false);
+				}
+			});
+		}
+
+		fInputListener = new FileInputListener(file);
+		PDEPlugin.getWorkspace().addResourceChangeListener(fInputListener);
+		getTargetChangedListener().contentsChanged(getTarget(), null, true);
 	}
 
 	/* (non-Javadoc)
@@ -187,16 +205,17 @@ public class TargetEditor extends FormEditor {
 					} catch (CoreException e) {
 						PDEPlugin.log(e);
 					}
-				} /*else if (input instanceof IURIEditorInput){
-									IFileStore store = EFS.getStore(((IURIEditorInput) input).getURI());
-									store.
-									is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
-									model = createStorageModel(is);
-								}
-								ResourcesPlugin.getPlugin().getWorkspace().getRoot().findFilesForLocationURI(URI)
-								
-								ITargetHandle fileHandle = service.getTarget(file)
-							}*/
+				} else if (input instanceof IURIEditorInput) {
+					try {
+						ITargetHandle externalTarget = service.getTarget(((IURIEditorInput) input).getURI());
+						fTarget = externalTarget.getTargetDefinition();
+					} catch (CoreException e) {
+					}
+				}
+				/*ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(URI)
+				
+				ITargetHandle fileHandle = service.getTarget(file)*/
+
 				// TODO Support storage editor input?
 				if (fTarget == null) {
 					fTarget = service.newTarget();

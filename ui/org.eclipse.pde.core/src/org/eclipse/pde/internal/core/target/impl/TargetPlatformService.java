@@ -37,6 +37,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 	private static ITargetPlatformService fgDefault;
 
 	/**
+	 * External File Targets
+	 */
+	private static Map fExtTargetHandles;
+
+	/**
 	 * Collects target files in the workspace
 	 */
 	class ResourceProxyVisitor implements IResourceProxyVisitor {
@@ -75,6 +80,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#deleteTarget(org.eclipse.pde.internal.core.target.provisional.ITargetHandle)
 	 */
 	public void deleteTarget(ITargetHandle handle) throws CoreException {
+		if (handle instanceof ExternalFileTargetHandle)
+			fExtTargetHandles.remove(((ExternalFileTargetHandle) handle).getLocation());
 		((AbstractTargetHandle) handle).delete();
 	}
 
@@ -96,11 +103,27 @@ public class TargetPlatformService implements ITargetPlatformService {
 				return WorkspaceFileTargetHandle.restoreHandle(uri);
 			} else if (LocalTargetHandle.SCHEME.equals(scheme)) {
 				return LocalTargetHandle.restoreHandle(uri);
+			} else if (ExternalFileTargetHandle.SCHEME.equals(scheme)) {
+				return ExternalFileTargetHandle.restoreHandle(uri);
 			}
 		} catch (URISyntaxException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetPlatformService_0, e));
 		}
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetPlatformService_1, null));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getTarget(java.net.URI)
+	 */
+	public ITargetHandle getTarget(URI uri) {
+		if (fExtTargetHandles == null)
+			fExtTargetHandles = new HashMap(10);
+		if (fExtTargetHandles.containsKey(uri)) {
+			return (ITargetHandle) fExtTargetHandles.get(uri);
+		}
+		ExternalFileTargetHandle externalTarget = new ExternalFileTargetHandle(uri);
+		fExtTargetHandles.put(uri, externalTarget);
+		return externalTarget;
 	}
 
 	/* (non-Javadoc)
@@ -110,6 +133,15 @@ public class TargetPlatformService implements ITargetPlatformService {
 		List local = findLocalTargetDefinitions();
 		List ws = findWorkspaceTargetDefinitions();
 		local.addAll(ws);
+		if (fExtTargetHandles != null) {
+			// If an external target is inaccessible then don't show it. But keep the reference in case it becomes accessible later
+			Collection externalTargets = fExtTargetHandles.values();
+			for (Iterator iterator = externalTargets.iterator(); iterator.hasNext();) {
+				ExternalFileTargetHandle target = (ExternalFileTargetHandle) iterator.next();
+				if (target.exists())
+					local.add(target);
+			}
+		}
 		return (ITargetHandle[]) local.toArray(new ITargetHandle[local.size()]);
 	}
 

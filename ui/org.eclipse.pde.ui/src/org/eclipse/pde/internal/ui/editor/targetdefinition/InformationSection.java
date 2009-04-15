@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.pde.internal.core.target.impl.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -85,9 +83,14 @@ public class InformationSection extends SectionPart {
 			}
 		});
 
-		IFile targetFile = ((WorkspaceFileTargetHandle) getTarget().getHandle()).getTargetFile();
+		fNameTextValidator = new TextValidator(fPage.getManagedForm(), fNameText, null, true) {
 
-		fNameTextValidator = new TextValidator(fPage.getManagedForm(), fNameText, targetFile.getProject(), true) {
+			protected boolean autoEnable() {
+				if (getText().getEditable() == false) {
+					return false;
+				}
+				return true;
+			}
 
 			protected boolean validateControl() {
 				return ControlValidationUtility.validateRequiredField(fNameText.getText(), fNameTextValidator, IMessageProvider.ERROR);

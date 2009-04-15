@@ -10,21 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer;
-
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
 import junit.framework.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
@@ -130,6 +121,36 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetHandle handle2 = service.getTarget(memento);
 		assertEquals("Restore failed", handle, handle2);
 		ITargetHandle handle3 = service.newTarget().getHandle();
+		assertFalse("Should be different targets", handle.equals(handle3));
+	}
+	
+	/**
+	 * Tests restoration of a handle to target definition in external URI
+	 * 
+	 * @throws CoreException 
+	 * @throws InterruptedException 
+	 */
+	public void testExternalFileTargetHandleMemento() throws CoreException, InterruptedException {
+		ITargetPlatformService service = getTargetService();
+		URI uri = null;
+		try {
+			uri = new URI("file:///does/not/exist");
+		} catch (URISyntaxException e) {
+		}
+		//IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("does/not/exist"));
+		ITargetHandle handle = service.getTarget(uri);
+		assertFalse("Target should not exist", handle.exists());
+		String memento = handle.getMemento();
+		assertNotNull("Missing memento", memento);
+		ITargetHandle handle2 = service.getTarget(memento);
+		assertEquals("Restore failed", handle, handle2);
+		//IFile file2 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("does/not/exist/either"));
+		URI uri2 = null;
+		try {
+			uri2 = new URI("file://even/this/file/does/not/exist");
+		} catch (URISyntaxException e) {
+		}
+		ITargetHandle handle3 = service.getTarget(uri2);
 		assertFalse("Should be different targets", handle.equals(handle3));
 	}
 	

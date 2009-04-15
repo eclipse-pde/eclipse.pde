@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
@@ -81,6 +82,10 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			if (targetHandle instanceof WorkspaceFileTargetHandle) {
 				IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
 				String location = " - " + file.getFullPath(); //$NON-NLS-1$
+				styledString.append(location, StyledString.DECORATIONS_STYLER);
+			} else if (targetHandle instanceof ExternalFileTargetHandle) {
+				URI uri = ((ExternalFileTargetHandle) targetHandle).getLocation();
+				String location = " - " + uri.toASCIIString(); //$NON-NLS-1$
 				styledString.append(location, StyledString.DECORATIONS_STYLER);
 			} else {
 				String location = (String) cell.getItem().getData(DATA_KEY_MOVED_LOCATION);
