@@ -170,6 +170,11 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	 */
 	private boolean isOutOfSynch = false;
 
+	/**
+	 * Composite containing a warning image and label for when the backing file for the active target could not be found
+	 */
+	private Composite fWarningComp;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -323,10 +328,22 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 						break;
 					}
 				}
+				if (fPrevious != null && !fPrevious.exists()) {
+					setMessage(PDEUIMessages.TargetPlatformPreferencePage2_23, IStatus.WARNING);
+					fWarningComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+					Label warningImage = SWTFactory.createLabel(fWarningComp, "", 1); //$NON-NLS-1$
+					GridData gd = new GridData();
+					gd.verticalAlignment = SWT.TOP;
+					warningImage.setLayoutData(gd);
+					warningImage.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
+					SWTFactory.createWrapLabel(fWarningComp, PDEUIMessages.TargetPlatformPreferencePage2_24, 1);
+					fWarningComp.moveAbove(tableComposite);
+				}
 			} catch (CoreException e) {
-				setErrorMessage(e.getMessage());
+				PDEPlugin.log(e);
+				setErrorMessage(PDEUIMessages.TargetPlatformPreferencePage2_23);
 			}
-			if (fActiveTarget == null) {
+			if (getMessage() == null && fActiveTarget == null) {
 				setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
 			}
 		}
@@ -340,6 +357,12 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		if (!selection.isEmpty()) {
 			fActiveTarget = (ITargetDefinition) selection.getFirstElement();
 			setMessage(null);
+			if (fWarningComp != null) {
+				Composite parent = fWarningComp.getParent();
+				fWarningComp.dispose();
+				fWarningComp = null;
+				parent.layout();
+			}
 			fTableViewer.refresh(true);
 			fTableViewer.setSelection(new StructuredSelection(fActiveTarget));
 		}

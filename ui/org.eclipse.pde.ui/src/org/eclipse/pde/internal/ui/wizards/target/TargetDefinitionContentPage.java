@@ -196,35 +196,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		};
 		fContentTree.addTargetChangedListener(listener);
 		fLocationTree.addTargetChangedListener(listener);
-		// When  If the page isn't open yet, try running a UI job so the dialog has time to finish opening
-		new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				try {
-					getContainer().run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							getTargetDefinition().resolve(monitor);
-							if (monitor.isCanceled()) {
-								throw new InterruptedException();
-							}
-						}
-					});
-				} catch (InvocationTargetException e) {
-					PDECore.log(e);
-				} catch (InterruptedException e) {
-					return Status.CANCEL_STATUS;
-				}
-				ITargetDefinition definition = getTargetDefinition();
-				fContentTree.setInput(definition);
-				fLocationTree.setInput(definition);
-				if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
-					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
-				} else {
-					fLocationTab.setImage(null);
-				}
-				return Status.OK_STATUS;
-			}
-		}.schedule();
-
 	}
 
 	/* (non-Javadoc)
@@ -233,6 +204,34 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	protected void targetChanged(ITargetDefinition definition) {
 		super.targetChanged(definition);
 		if (definition != null) {
+			// When  If the page isn't open yet, try running a UI job so the dialog has time to finish opening
+			new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					try {
+						getContainer().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								getTargetDefinition().resolve(monitor);
+								if (monitor.isCanceled()) {
+									throw new InterruptedException();
+								}
+							}
+						});
+					} catch (InvocationTargetException e) {
+						PDECore.log(e);
+					} catch (InterruptedException e) {
+						return Status.CANCEL_STATUS;
+					}
+					ITargetDefinition definition = getTargetDefinition();
+					fContentTree.setInput(definition);
+					fLocationTree.setInput(definition);
+					if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
+						fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+					} else {
+						fLocationTab.setImage(null);
+					}
+					return Status.OK_STATUS;
+				}
+			}.schedule();
 			String name = definition.getName();
 			if (name == null) {
 				name = EMPTY_STRING;

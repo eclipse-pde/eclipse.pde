@@ -2853,6 +2853,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage2_22;
 
+	public static String TargetPlatformPreferencePage2_23;
+
+	public static String TargetPlatformPreferencePage2_24;
+
 	public static String TargetPlatformPreferencePage2_3;
 
 	public static String TargetPlatformPreferencePage2_4;
