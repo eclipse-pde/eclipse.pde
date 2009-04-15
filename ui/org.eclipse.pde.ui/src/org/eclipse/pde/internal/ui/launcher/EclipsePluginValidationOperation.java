@@ -96,7 +96,10 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 	}
 
 	private void validateExtension(String id) {
-		String bundleID = id.substring(0, id.lastIndexOf('.'));
+		int index = id.lastIndexOf('.');
+		if (index == -1)
+			return;
+		String bundleID = id.substring(0, index);
 		BundleDescription bundle = getState().getBundle(bundleID, null);
 		if (bundle == null) {
 			String name = NLS.bind(PDEUIMessages.EclipsePluginValidationOperation_pluginMissing, bundleID);
