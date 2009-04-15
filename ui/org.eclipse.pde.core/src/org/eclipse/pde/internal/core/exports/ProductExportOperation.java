@@ -161,7 +161,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}
 
 		if (fInfo.exportSource && fInfo.exportSourceBundle) {
-			properties.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE, "true"); //$NON-NLS-1$
 			List workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (fInfo.items[i] instanceof IFeatureModel) {
