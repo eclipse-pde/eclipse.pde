@@ -86,7 +86,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#validateInput()
 	 */
-	protected boolean validateInput() throws CoreException {
+	protected boolean validateInput() {
 		return true;
 	}
 

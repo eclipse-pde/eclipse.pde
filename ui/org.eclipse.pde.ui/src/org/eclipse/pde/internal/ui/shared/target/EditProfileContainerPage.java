@@ -235,7 +235,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#validateInput()
 	 */
-	protected boolean validateInput() throws CoreException {
+	protected boolean validateInput() {
 		boolean valid = super.validateInput();
 		if (valid) {
 			if (fConfigLocation.isEnabled()) {
@@ -246,7 +246,13 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 				}
 
 				// Resolve any variables
-				String locationString = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fConfigLocation.getText().trim());
+				String locationString = null;
+				try {
+					locationString = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fConfigLocation.getText().trim());
+				} catch (CoreException e) {
+					setMessage(e.getMessage(), IMessageProvider.WARNING);
+					return true;
+				}
 				File configLocation = new File(locationString);
 
 				// Check that the directory exists

@@ -293,9 +293,8 @@ public class EditDirectoryContainerPage extends WizardPage {
 	 * The page's enablement, message and completion should be updated.
 	 * 
 	 * @return whether the finish button should be enabled and container creation should continue
-	 * @throws CoreException there is a problem validating
 	 */
-	protected boolean validateInput() throws CoreException {
+	protected boolean validateInput() {
 		// Check if the text field is blank
 		if (fInstallLocation.getText().trim().length() == 0) {
 			setMessage(getDefaultMessage());
@@ -303,7 +302,13 @@ public class EditDirectoryContainerPage extends WizardPage {
 		}
 
 		// Resolve any variables
-		String locationString = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fInstallLocation.getText().trim());
+		String locationString = null;
+		try {
+			locationString = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fInstallLocation.getText().trim());
+		} catch (CoreException e) {
+			setMessage(e.getMessage(), IMessageProvider.WARNING);
+			return true;
+		}
 		File location = new File(locationString);
 
 		// Check if directory exists
