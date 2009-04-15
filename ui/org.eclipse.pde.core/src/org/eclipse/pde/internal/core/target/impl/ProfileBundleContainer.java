@@ -95,8 +95,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}
 
 		URL configUrl = getConfigurationArea();
-		if (!new File(configUrl.getFile()).isDirectory()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
+		if (configUrl != null) {
+			if (!new File(configUrl.getFile()).isDirectory()) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
+			}
 		}
 
 		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
@@ -147,9 +149,13 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 				if (localMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				IResolvedBundle rb = generateBundle(files[i]);
-				if (rb != null) {
-					all.add(rb);
+				try {
+					IResolvedBundle rb = generateBundle(files[i]);
+					if (rb != null) {
+						all.add(rb);
+					}
+				} catch (CoreException e) {
+					// ignore invalid bundles
 				}
 				localMonitor.worked(1);
 			}
@@ -172,9 +178,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
-	 * Returns a URL to the configuration area associated with this profile.
+	 * Returns a URL to the configuration area associated with this profile or <code>null</code>
+	 * if none.
 	 * 
-	 * @return configuration area URL
+	 * @return configuration area URL or <code>null</code>
 	 * @throws CoreException if unable to generate a URL
 	 */
 	private URL getConfigurationArea() throws CoreException {
@@ -185,11 +192,15 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		} else {
 			configuration = new Path(resolveVariables(fConfiguration));
 		}
-		try {
-			return configuration.toFile().toURL();
-		} catch (MalformedURLException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_1, home.toOSString()), e));
+		File file = configuration.toFile();
+		if (file.exists()) {
+			try {
+				return file.toURL();
+			} catch (MalformedURLException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_1, home.toOSString()), e));
+			}
 		}
+		return null;
 	}
 
 	/* (non-Javadoc)
