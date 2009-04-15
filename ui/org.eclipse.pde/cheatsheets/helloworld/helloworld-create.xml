@@ -30,9 +30,9 @@
                serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)">
          </command>
       </subitem>
-      <subitem label="Verify that the selected value in the &quot;Location:&quot; combo box points to a valid Eclipse install location." skip="true">
+      <subitem label="Verify that the &quot;Target Definitions:&quot; check box list has one Target Platform selected as active." skip="true">
       </subitem>
-      <subitem label="Verify that all checkboxes corresponding to plug-in entries listed in the list box on the &quot;Plug-ins&quot; tab are checked." skip="true">
+      <subitem label="Select the Active Target Platform, Click Edit and verify that all checkboxes corresponding to plug-in entries listed in the list box on the &quot;Content&quot; tab are checked." skip="true">
       </subitem>
       <subitem label="Click &quot;OK&quot;." skip="false">
       </subitem>
