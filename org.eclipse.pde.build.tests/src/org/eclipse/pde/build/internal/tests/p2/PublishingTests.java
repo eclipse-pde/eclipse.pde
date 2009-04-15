@@ -1166,4 +1166,39 @@ public class PublishingTests extends P2TestCase {
 		entries.add("eclipse/sub/important.txt");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
 	}
+	
+	public void testDirectorLogging() throws Exception {
+		IFolder buildFolder = newTest("directorLogging");
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		IFile productFile = buildFolder.getFile("rcp.product");
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
+		Properties p2Inf = new Properties(); // bug 268223
+		p2Inf.put("requires.1.namespace", "foo");
+		p2Inf.put("requires.1.name", "bar");
+		p2Inf.put("requires.1.range", "[1.0.0,1.0.0]");
+		p2Inf.put("requires.1.greedy", "true");
+		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("configs", "win32,win32,x86");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("p2.gathering", "true");
+		properties.put("p2.product.qualifier", "I10232");
+		properties.put("p2.director.log", "director.log");
+		properties.put("filteredDependencyCheck", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		try {
+			runProductBuild(buildFolder);
+		} catch (Exception e) {
+			assertTrue(e.getMessage().indexOf("A Problem occured while running the director") > -1);
+		}
+		
+		assertLogContainsLines(buildFolder.getFile("director.log"), new String [] {"Installation failed.", "Missing requirement: uid.product 1.0.0.I10232 requires 'foo bar [1.0.0]' but it could not be found"});
+	}
 }
