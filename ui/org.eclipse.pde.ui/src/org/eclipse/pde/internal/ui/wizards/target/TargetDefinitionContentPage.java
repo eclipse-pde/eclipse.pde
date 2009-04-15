@@ -165,7 +165,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void initializeListeners() {
 		ITargetChangedListener listener = new ITargetChangedListener() {
 			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
-				if (resolve && definition.isResolved()) {
+				if (resolve && !definition.isResolved()) {
 					try {
 						getContainer().run(true, true, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -207,21 +207,23 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			// When  If the page isn't open yet, try running a UI job so the dialog has time to finish opening
 			new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					try {
-						getContainer().run(true, true, new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								getTargetDefinition().resolve(monitor);
-								if (monitor.isCanceled()) {
-									throw new InterruptedException();
-								}
-							}
-						});
-					} catch (InvocationTargetException e) {
-						PDECore.log(e);
-					} catch (InterruptedException e) {
-						return Status.CANCEL_STATUS;
-					}
 					ITargetDefinition definition = getTargetDefinition();
+					if (!definition.isResolved()) {
+						try {
+							getContainer().run(true, true, new IRunnableWithProgress() {
+								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+									getTargetDefinition().resolve(monitor);
+									if (monitor.isCanceled()) {
+										throw new InterruptedException();
+									}
+								}
+							});
+						} catch (InvocationTargetException e) {
+							PDECore.log(e);
+						} catch (InterruptedException e) {
+							return Status.CANCEL_STATUS;
+						}
+					}
 					fContentTree.setInput(definition);
 					fLocationTree.setInput(definition);
 					if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
