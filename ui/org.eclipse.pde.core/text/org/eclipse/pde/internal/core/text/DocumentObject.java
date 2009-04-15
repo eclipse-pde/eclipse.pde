@@ -11,21 +11,12 @@
 
 package org.eclipse.pde.internal.core.text;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.*;
 
 /**
  * DocumentObject
@@ -333,15 +324,15 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 */
 	protected void replaceChildNode(IDocumentElementNode newNode, IDocumentElementNode oldNode, boolean fireEvent) {
 		// Get the index of the old node
-		int position = indexOf((IDocumentElementNode) oldNode);
+		int position = indexOf(oldNode);
 		// Validate position
 		if (position < 0) {
 			return;
 		}
 		// Add the new node to the same position occupied by the old node
-		addChildNode((IDocumentElementNode) newNode, position, fireEvent);
+		addChildNode(newNode, position, fireEvent);
 		// Remove the old node
-		removeChildNode((IDocumentElementNode) oldNode, fireEvent);
+		removeChildNode(oldNode, fireEvent);
 	}
 
 	/**
