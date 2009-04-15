@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,6 +82,28 @@ public class JREBlock {
 	}
 
 	protected void createJRESection(Composite parent) {
+		fEeButton = new Button(parent, SWT.RADIO);
+		fEeButton.setText(PDEUIMessages.BasicLauncherTab_ee);
+		fEeButton.addSelectionListener(fListener);
+
+		fEeCombo = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
+		fEeCombo.addSelectionListener(fListener);
+
+		fEePrefButton = new Button(parent, SWT.PUSH);
+		fEePrefButton.setText(PDEUIMessages.BasicLauncherTab_environments);
+		fEePrefButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String currentEE = parseEESelection(fEeCombo.getText());
+				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}; //$NON-NLS-1$
+				if (PDEPreferencesUtil.showPreferencePage(pageIDs, fTab.getControl().getShell())) {
+					setEECombo();
+					setEEComboSelection(currentEE);
+				}
+			}
+		});
+		fEePrefButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		SWTUtil.setButtonDimensionHint(fEePrefButton);
+
 		fJreButton = new Button(parent, SWT.RADIO);
 		fJreButton.setText(PDEUIMessages.BasicLauncherTab_jre);
 		fJreButton.addSelectionListener(fListener);
@@ -110,28 +132,6 @@ public class JREBlock {
 		});
 		fJrePrefButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		SWTUtil.setButtonDimensionHint(fJrePrefButton);
-
-		fEeButton = new Button(parent, SWT.RADIO);
-		fEeButton.setText(PDEUIMessages.BasicLauncherTab_ee);
-		fEeButton.addSelectionListener(fListener);
-
-		fEeCombo = SWTFactory.createCombo(parent, SWT.DROP_DOWN | SWT.READ_ONLY, 1, null);
-		fEeCombo.addSelectionListener(fListener);
-
-		fEePrefButton = new Button(parent, SWT.PUSH);
-		fEePrefButton.setText(PDEUIMessages.BasicLauncherTab_environments);
-		fEePrefButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				String currentEE = parseEESelection(fEeCombo.getText());
-				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}; //$NON-NLS-1$
-				if (PDEPreferencesUtil.showPreferencePage(pageIDs, fTab.getControl().getShell())) {
-					setEECombo();
-					setEEComboSelection(currentEE);
-				}
-			}
-		});
-		fEePrefButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		SWTUtil.setButtonDimensionHint(fEePrefButton);
 	}
 
 	protected void createJavaExecutableSection(Composite parent) {
