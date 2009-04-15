@@ -88,7 +88,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 	protected static int rebuildcount = 0;
 	private String origdefault = null;
 	private boolean dirty = false;
-	private boolean needsbuild = false;
+	private boolean defaultcontentchanged = false;
+	private boolean defaultchanged = false;
 
 	/**
 	 * The main configuration block for the page
@@ -141,11 +142,13 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 				if(checked) {
 					tableviewer.setCheckedElements(new Object[] {baseline});
 					newdefault = baseline.getName();
+					defaultchanged = !newdefault.equals(origdefault);
 				}
 				else {
 					tableviewer.setChecked(baseline, checked);
 					newdefault = null;
 					manager.setDefaultApiBaseline(null);
+					defaultchanged = true;
 				}
 				rebuildcount = 0;
 				tableviewer.refresh(true);
@@ -255,23 +258,23 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 	 * 
 	 * @param profile
 	 */
-	protected void doEdit(final IApiBaseline profile) {
-		ApiBaselineWizard wizard = new ApiBaselineWizard(profile);
+	protected void doEdit(final IApiBaseline baseline) {
+		ApiBaselineWizard wizard = new ApiBaselineWizard(baseline);
 		WizardDialog dialog = new WizardDialog(ApiUIPlugin.getShell(), wizard);
 		if (dialog.open() == IDialogConstants.OK_ID) {
-			IApiBaseline newprofile = wizard.getProfile();
-			if (newprofile != null) {
+			IApiBaseline newbaseline = wizard.getProfile();
+			if (newbaseline != null) {
 				// clear any pending edit updates
-				removed.add(profile.getName());
-				backingcollection.remove(profile);
-				backingcollection.add(newprofile);
+				removed.add(baseline.getName());
+				backingcollection.remove(baseline);
+				backingcollection.add(newbaseline);
 				tableviewer.refresh();
-				if (isDefault(profile)) {
-					tableviewer.setSelection(
-							new StructuredSelection(newprofile), true);
-					newdefault = newprofile.getName();
+				if (isDefault(baseline)) {
+					tableviewer.setSelection(new StructuredSelection(newbaseline), true);
+					tableviewer.setCheckedElements(new Object[] {newbaseline});
+					newdefault = newbaseline.getName();
 					rebuildcount = 0;
-					needsbuild = wizard.contentChanged();
+					defaultcontentchanged = wizard.contentChanged();
 					tableviewer.refresh(true);
 				}
 				dirty = true;
@@ -347,30 +350,16 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 		if (!dirty) {
 			return;
 		}
-		boolean defaultrename = false;
 		// remove
-		String name = null;
 		for (Iterator iter = removed.iterator(); iter.hasNext();) {
-			name = (String) iter.next();
-			if(name.equals(this.origdefault) && newdefault != null) {
-				defaultrename = true;
-			}
-			manager.removeApiBaseline(name);
+			manager.removeApiBaseline((String) iter.next());
 		}
 		// add the new / changed ones
 		for (Iterator iter = backingcollection.iterator(); iter.hasNext();) {
 			manager.addApiBaseline((IApiBaseline) iter.next());
 		}
-		IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager()
-				.getDefaultApiBaseline();
-		if (def != null && !def.getName().equals(newdefault)) {
-			manager.setDefaultApiBaseline(newdefault);
-			needsbuild = true;
-		} else if (def == null) {
-			manager.setDefaultApiBaseline(newdefault);
-			needsbuild = !defaultrename;
-		}
-		if (needsbuild) {
+		manager.setDefaultApiBaseline(newdefault);
+		if (defaultchanged || defaultcontentchanged) {
 			if (rebuildcount < 1) {
 				rebuildcount++;
 				IProject[] projects = Util.getApiProjects();
@@ -386,6 +375,8 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 		}
 		origdefault = newdefault;
 		dirty = false;
+		defaultcontentchanged = false;
+		defaultchanged = false;
 		removed.clear();
 	}
 
