@@ -240,6 +240,8 @@ public class DSErrorReporter extends XMLErrorReporter {
 				cardinality);
 		Attr attr = element
 				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_CARDINALITY);
+		if (attr == null || attr.getValue() == null || attr.getName() == null)
+			return;
 		report(message, getLine(element, attr.getName()), ERROR,
 				DSMarkerFactory.CAT_OTHER);
 	}
