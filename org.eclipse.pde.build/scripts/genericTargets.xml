@@ -215,7 +215,7 @@ set here?
 		<isset property="osgi.dev" />
 	</condition>
 	
-	<java jar="${equinoxLauncherJar}" fork="true" failonerror="true" outputproperty="p2.director.java.output">
+	<java jar="${equinoxLauncherJar}" fork="true" failonerror="false" resultproperty="p2.director.return.code" outputproperty="p2.director.java.output">
 		<arg line="-application org.eclipse.equinox.p2.director.app.application" />
 		<arg line="-nosplash" />
 		<arg line="--launcher.suppressErrors" />
@@ -251,6 +251,10 @@ set here?
 	</java>
 	<echo message="${p2.director.java.output}" />
 	<antcall target="logDirectorCall"/>
+	<condition property="p2.director.error">
+		<isfailure code="${p2.director.return.code}" />
+	</condition>
+	<fail if="p2.director.error" message="A Problem occured while running the director." />
 </target>
 	
 <target name="logDirectorCall" if="p2.director.log" >
