@@ -16,6 +16,8 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
@@ -558,5 +560,35 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories) {
 		return new IUBundleContainer(units, repositories);
+	}
+
+	/**
+	 * Deletes any profiles associated with target definitions that no longer exist
+	 * and returns a list of profile identifiers that were deleted.
+	 */
+	public List cleanOrphanedTargetDefinitionProfiles() throws CoreException {
+		List list = new ArrayList();
+		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
+		IProfile[] profiles = registry.getProfiles();
+		for (int i = 0; i < profiles.length; i++) {
+			IProfile profile = profiles[i];
+			String id = profile.getProfileId();
+			if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+				String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
+				ITargetHandle target = getTarget(memento);
+				if (!target.exists()) {
+					registry.removeProfile(id);
+					list.add(id);
+				}
+			}
+		}
+		return list;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(java.lang.String[], java.lang.String[], java.net.URI[])
+	 */
+	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories) {
+		return new IUBundleContainer(unitIds, versions, repositories);
 	}
 }

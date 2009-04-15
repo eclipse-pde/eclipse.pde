@@ -143,6 +143,19 @@ public interface ITargetPlatformService {
 	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories);
 
 	/**
+	 * Creates and returns a bundle container that contains all bundles contained in
+	 * the specified installable units (IU's) in the given repositories. If repositories are
+	 * not specified default repositories are searched (based on user preferences).
+	 * 
+	 * @param unitIds installable unit identifiers
+	 * @param versions version identifiers
+	 * @param repositories URI's describing repository locations or <code>null</code> to use
+	 * 	default repositories
+	 * @return bundle container
+	 */
+	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories);
+
+	/**
 	 * Creates and returns a bundle container that contains all bundles referenced by
 	 * the feature at the specified location. The location is the directory that defines
 	 * the feature.

@@ -341,15 +341,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
-	 * Returns the IU's referenced by this container.
-	 * 
-	 * @return IU's
-	 */
-	public IInstallableUnit[] getInstallableUnits() {
-		return fUnits; // TODO:
-	}
-
-	/**
 	 * Returns the URI's identifying the metadata repositories to consider when resolving
 	 * IU's or <code>null</code> if the default set should be used.
 	 * 

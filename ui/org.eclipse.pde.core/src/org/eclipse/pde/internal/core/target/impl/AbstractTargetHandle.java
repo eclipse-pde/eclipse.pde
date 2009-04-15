@@ -28,7 +28,12 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 * Path to the local directory where the local bundle pool is stored for p2 profile
 	 * based targets.
 	 */
-	static final IPath LOCAL_BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".local_pool"); //$NON-NLS-1$		
+	static final IPath LOCAL_BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".local_pool"); //$NON-NLS-1$
+
+	/**
+	 * Prefix for all profiles ID's associated with target definitions
+	 */
+	static final String PROFILE_ID_PREFIX = "TARGET_DEFINITION:"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getTargetDefinition()
@@ -72,7 +77,10 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 * @throws CoreException in unable to generate identifier
 	 */
 	String getProfileId() throws CoreException {
-		return getMemento();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(PROFILE_ID_PREFIX);
+		buffer.append(getMemento());
+		return buffer.toString();
 	}
 
 	/**

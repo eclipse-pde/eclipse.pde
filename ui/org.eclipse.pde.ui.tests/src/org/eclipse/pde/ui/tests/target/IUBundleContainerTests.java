@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
+import org.eclipse.pde.internal.core.target.impl.IUBundleContainer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import org.eclipse.pde.internal.core.target.impl.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 
-import java.io.File;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -32,7 +30,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadata
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.impl.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
@@ -173,12 +171,10 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * 
 	 * @throws Exception
 	 */
-	public void testContentEqualNull() throws Exception {
-		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
-		IUBundleContainer c2 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
-		
-		IUBundleContainer c3 = createContainer(c1.getInstallableUnits(), null);
-		IUBundleContainer c4 = createContainer(c2.getInstallableUnits(), null);
+	public void testContentEqualNull() throws Exception {		
+		ITargetPlatformService service = getTargetService();
+		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
+		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
 		assertTrue("Contents should be equivalent", c3.isContentEqual(c4));
 	}
 	
@@ -187,12 +183,10 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * 
 	 * @throws Exception
 	 */
-	public void testContentNotEqualNull() throws Exception {
-		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
-		IUBundleContainer c2 = createContainer(new String[]{"bundle.b1", "bundle.b2"});
-		
-		IUBundleContainer c3 = createContainer(c1.getInstallableUnits(), null);
-		IUBundleContainer c4 = createContainer(c2.getInstallableUnits(), null);
+	public void testContentNotEqualNull() throws Exception {		
+		ITargetPlatformService service = getTargetService();
+		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
+		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.b1", "bundle.b2"}, new String[]{"1.0.0", "1.0.0"}, null);
 		assertFalse("Contents should not be equivalent", c3.isContentEqual(c4));
 	}	
 	
@@ -208,7 +202,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		IUBundleContainer container = createContainer(unitIds);
 		ITargetDefinition target = getTargetService().newTarget();
 		target.setBundleContainers(new IBundleContainer[]{container});
-		
 		List infos = getAllBundleInfos(target);
 		Set names = collectAllSymbolicNames(infos);
 		assertEquals(bundleIds.length, infos.size());
@@ -216,7 +209,11 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		for (int i = 0; i < bundleIds.length; i++) {
 			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
 		}
-		
+		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		assertEquals(1, profiles.size());
+		String id = (String) profiles.get(0);
+		assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
 	}	
 	
 	/**
@@ -247,6 +244,11 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		for (int i = 0; i < bundleIds.length; i++) {
 			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
 		}
+		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		assertEquals(1, profiles.size());
+		String id = (String) profiles.get(0);
+		assertTrue("Unexpected profile GC'd", id.endsWith(definitionB.getHandle().getMemento()));
 	}	
 	
 	/**
