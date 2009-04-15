@@ -115,6 +115,8 @@ public class LaunchAction extends Action {
 		String autostart = "default"; //$NON-NLS-1$
 		if (configuration != null) {
 			sl = Integer.toString(configuration.getStartLevel());
+			// ensure we don't have a 0 start level
+			sl = sl.equals("0") ? "default" : sl; //$NON-NLS-1$ //$NON-NLS-2$
 			autostart = Boolean.toString(configuration.isAutoStart());
 		}
 		String entry = BundleLauncherHelper.writeBundleEntry(model, sl, autostart);
