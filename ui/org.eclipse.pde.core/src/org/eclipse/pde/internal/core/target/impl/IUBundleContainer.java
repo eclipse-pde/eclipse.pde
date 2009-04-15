@@ -153,7 +153,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		// create the provisioning plan
 		ProfileChangeRequest request = new ProfileChangeRequest(profile);
-		request.addInstallableUnits(fUnits);
+		request.addInstallableUnits(units);
 		IPlanner planner = getPlanner();
 		ProvisioningContext context = null;
 		if (fRepos == null) {
