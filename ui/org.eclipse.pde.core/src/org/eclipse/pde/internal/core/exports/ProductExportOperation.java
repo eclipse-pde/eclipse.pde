@@ -15,8 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import javax.xml.parsers.*;
-import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -29,11 +27,11 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class ProductExportOperation extends FeatureExportOperation {
-
+	private static final String ECLIPSE_APP_MACOS = "Eclipse.app/Contents/MacOS"; //$NON-NLS-1$
+	private static final String ECLIPSE_APP_CONTENTS = "Eclipse.app/Contents"; //$NON-NLS-1$
 	private String fFeatureLocation;
 	private String fRoot;
 	private IProduct fProduct;
@@ -57,11 +55,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		try {
 			monitor.beginTask("", 10); //$NON-NLS-1$
 			try {
-				if (fInfo.targets == null && configurations.length > 0) {
-					String[] config = configurations[0];
-					if (config[0].equals("macosx")) //$NON-NLS-1$
-						createMacScript(config, new SubProgressMonitor(monitor, 1));
-				}
 				// create a feature to wrap all plug-ins and features
 				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
@@ -131,16 +124,20 @@ public class ProductExportOperation extends FeatureExportOperation {
 		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() != null;
 		Properties properties = new Properties();
 		if (!hasLaunchers && configurations.length > 0) {
-			String rootPrefix = "root." + configurations[0][0] + //$NON-NLS-1$
-					"." + configurations[0][1] + //$NON-NLS-1$
-					"." + configurations[0][2]; //$NON-NLS-1$
-			properties.put(rootPrefix, getRootFileLocations(hasLaunchers)); //To copy a folder
-			properties.put("root.permissions.755", getLauncherName()); //$NON-NLS-1$
-			if (TargetPlatform.getWS().equals("motif") && TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$ //$NON-NLS-2$
-				properties.put("root.linux.motif.x86.permissions.755", "libXm.so.2"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
-				properties.put("root.macosx.carbon.ppc.permissions.755", //$NON-NLS-1$
-						"${launcherName}.app/Contents/MacOS/${launcherName}"); //$NON-NLS-1$
+			String rootPrefix = IBuildPropertiesConstants.ROOT_PREFIX + configurations[0][0] + "." + configurations[0][1] + "." + configurations[0][2]; //$NON-NLS-1$ //$NON-NLS-2$
+			properties.put(rootPrefix, getRootFileLocations(hasLaunchers));
+			if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
+				String plist = createMacInfoPList();
+				if (plist != null)
+					properties.put(rootPrefix + ".folder." + ECLIPSE_APP_CONTENTS, "absolute:file:" + plist); //$NON-NLS-1$ //$NON-NLS-2$
+				properties.put(rootPrefix + ".folder." + ECLIPSE_APP_MACOS, getLauncherLocations(hasLaunchers)); //$NON-NLS-1$
+				properties.put(rootPrefix + ".permissions.755", ECLIPSE_APP_MACOS + "/" + getLauncherName()); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				properties.put(rootPrefix, getLauncherLocations(hasLaunchers)); //To copy a folder
+				properties.put(rootPrefix + ".permissions.755", getLauncherName()); //$NON-NLS-1$
+				if (TargetPlatform.getWS().equals("motif") && TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$ //$NON-NLS-2$
+					properties.put(rootPrefix + ".permissions.755", "libXm.so.2"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 
@@ -150,8 +147,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 			File vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
 
 			if (vm != null) {
-				String rootPrefix = "root." + config[0] + //$NON-NLS-1$
-						"." + config[1] + //$NON-NLS-1$
+				String rootPrefix = IBuildPropertiesConstants.ROOT_PREFIX + config[0] + "." + config[1] + //$NON-NLS-1$
 						"." + config[2]; //$NON-NLS-1$
 				properties.put(rootPrefix + ".folder.jre", "absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 				String perms = (String) properties.get(rootPrefix + ".permissions.755"); //$NON-NLS-1$
@@ -200,32 +196,45 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return fInfo.exportMetadata;
 	}
 
-	private String getRootFileLocations(boolean hasLaunchers) {
+	private String getLauncherLocations(boolean hasLaunchers) {
+		//get the launchers for the eclipse install
 		StringBuffer buffer = new StringBuffer();
-
-		File homeDir = new File(TargetPlatform.getLocation());
 		if (!hasLaunchers) {
+			File homeDir = new File(TargetPlatform.getLocation());
 			if (homeDir.exists() && homeDir.isDirectory()) {
-				appendAbsolutePath(buffer, new File(homeDir, "startup.jar")); //$NON-NLS-1$
-				if (!TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
-					// try to retrieve the exact eclipse launcher path
-					// see bug 205833
-					File file = null;
-					if (System.getProperties().get("eclipse.launcher") != null) { //$NON-NLS-1$
-						String launcherPath = System.getProperties().get("eclipse.launcher").toString(); //$NON-NLS-1$
-						file = new File(launcherPath);
-						if (file.exists() && !file.isDirectory()) {
-							appendAbsolutePath(buffer, file);
-						} else { // just assume traditional eclipse paths
-							appendEclipsePath(buffer, homeDir);
-						}
-					} else { // just assume traditional eclipse paths
-						appendEclipsePath(buffer, homeDir);
-					}
-					file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
-					if (file.exists()) {
-						appendAbsolutePath(buffer, file);
-					}
+				// try to retrieve the exact eclipse launcher path
+				// see bug 205833
+				File file = null;
+				if (System.getProperties().get("eclipse.launcher") != null) { //$NON-NLS-1$
+					String launcherPath = System.getProperties().get("eclipse.launcher").toString(); //$NON-NLS-1$
+					file = new File(launcherPath);
+				}
+
+				if (file != null && file.exists() && !file.isDirectory()) {
+					appendAbsolutePath(buffer, file);
+				} else if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$)
+					appendEclipsePath(buffer, new File(homeDir, ECLIPSE_APP_MACOS));
+				} else {
+					appendEclipsePath(buffer, homeDir);
+				}
+			}
+		}
+		return buffer.toString();
+	}
+
+	private String getRootFileLocations(boolean hasLaunchers) {
+		//Get the files that go in the root of the eclipse install, excluding the launcher
+		StringBuffer buffer = new StringBuffer();
+		if (!hasLaunchers) {
+			File homeDir = new File(TargetPlatform.getLocation());
+			if (homeDir.exists() && homeDir.isDirectory()) {
+				File file = new File(homeDir, "startup.jar"); //$NON-NLS-1$
+				if (file.exists())
+					appendAbsolutePath(buffer, file);
+
+				file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
+				if (file.exists()) {
+					appendAbsolutePath(buffer, file);
 				}
 			}
 		}
@@ -381,96 +390,34 @@ public class ProductExportOperation extends FeatureExportOperation {
 			generator.setProduct(fProduct.getModel().getInstallLocation());
 	}
 
-	private void createMacScript(String[] config, IProgressMonitor monitor) {
+	private String createMacInfoPList() {
 		String entryName = TargetPlatformHelper.getTargetVersion() >= 3.3 ? "macosx/Info.plist" //$NON-NLS-1$
 				: "macosx/Info.plist.32"; //$NON-NLS-1$
 		URL url = PDECore.getDefault().getBundle().getEntry(entryName);
 		if (url == null)
-			return;
+			return null;
 
-		File scriptFile = null;
 		File plist = null;
 		InputStream in = null;
-		String location = PDECore.getDefault().getStateLocation().toOSString();
+		String location = fFeatureLocation;
+
 		try {
 			in = url.openStream();
-			File dir = new File(location, "Eclipse.app/Contents"); //$NON-NLS-1$
+			File dir = new File(location, ECLIPSE_APP_CONTENTS);
 			dir.mkdirs();
 			plist = new File(dir, "Info.plist"); //$NON-NLS-1$
 			CoreUtility.readFile(in, plist);
-			scriptFile = createScriptFile("macbuild.xml"); //$NON-NLS-1$
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			Document doc = factory.newDocumentBuilder().newDocument();
-
-			Element root = doc.createElement("project"); //$NON-NLS-1$
-			root.setAttribute("name", "project"); //$NON-NLS-1$ //$NON-NLS-2$
-			root.setAttribute("default", "default"); //$NON-NLS-1$ //$NON-NLS-2$
-			doc.appendChild(root);
-
-			Element property = doc.createElement("property"); //$NON-NLS-1$
-			property.setAttribute("name", "eclipse.base"); //$NON-NLS-1$ //$NON-NLS-2$
-			property.setAttribute("value", "${assemblyTempDir}/${collectingFolder}"); //$NON-NLS-1$ //$NON-NLS-2$
-			root.appendChild(property);
-
-			Element target = doc.createElement("target"); //$NON-NLS-1$
-			target.setAttribute("name", "default"); //$NON-NLS-1$ //$NON-NLS-2$
-			root.appendChild(target);
-
-			Element copy = doc.createElement("copy"); //$NON-NLS-1$
-			StringBuffer toDir = new StringBuffer("${eclipse.base}/"); //$NON-NLS-1$
-			toDir.append(config[0]);
-			toDir.append("."); //$NON-NLS-1$
-			toDir.append(config[1]);
-			toDir.append("."); //$NON-NLS-1$
-			toDir.append(config[2]);
-			toDir.append("/${collectingFolder}"); //$NON-NLS-1$
-			copy.setAttribute("todir", toDir.toString()); //$NON-NLS-1$ 
-			copy.setAttribute("failonerror", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-			copy.setAttribute("overwrite", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			target.appendChild(copy);
-
-			Element fileset = doc.createElement("fileset"); //$NON-NLS-1$
-			fileset.setAttribute("dir", "${installFolder}"); //$NON-NLS-1$ //$NON-NLS-2$
-			fileset.setAttribute("includes", "Eclipse.app/Contents/MacOS/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
-			copy.appendChild(fileset);
-
-			fileset = doc.createElement("fileset"); //$NON-NLS-1$
-			fileset.setAttribute("dir", "${template}"); //$NON-NLS-1$ //$NON-NLS-2$
-			fileset.setAttribute("includes", "Eclipse.app/Contents/Info.plist"); //$NON-NLS-1$ //$NON-NLS-2$
-			copy.appendChild(fileset);
-
-			XMLPrintHandler.writeFile(doc, scriptFile);
-
-			AntRunner runner = new AntRunner();
-			HashMap map = new HashMap();
-			if (!fInfo.toDirectory) {
-				String filename = fInfo.zipFileName;
-				map.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fInfo.destinationDirectory + File.separator + filename);
-			} else {
-				map.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fInfo.destinationDirectory);
-			}
-			map.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot);
-			map.put("installFolder", TargetPlatform.getLocation()); //$NON-NLS-1$
-			map.put("template", location); //$NON-NLS-1$
-			runner.addUserProperties(map);
-			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
-			runner.setExecutionTargets(new String[] {"default"}); //$NON-NLS-1$
-			runner.run(new SubProgressMonitor(monitor, 1));
-		} catch (FactoryConfigurationError e) {
-		} catch (ParserConfigurationException e) {
-		} catch (CoreException e) {
+			return plist.getAbsolutePath();
 		} catch (IOException e) {
+			// nothing to do
 		} finally {
 			try {
 				if (in != null)
 					in.close();
 			} catch (IOException e) {
 			}
-			CoreUtility.deleteContent(new File(location, "Eclipse.app")); //$NON-NLS-1$
-			if (scriptFile != null && scriptFile.exists())
-				scriptFile.delete();
-			monitor.done();
 		}
+		return null;
 	}
 
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
