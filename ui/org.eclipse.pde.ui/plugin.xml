@@ -1760,27 +1760,6 @@
          </description>
       </wizard>
     </extension>
-    <extension
-          point="org.eclipse.pde.ui.targetProvisioners">
-       <provisioner
-             class="org.eclipse.pde.internal.ui.wizards.provisioner.FileSystemProvisionerWizard"
-             icon="$nl$/icons/obj16/fldr_obj.gif"
-             id="org.eclipse.pde.ui.directory"
-             name="%provisioner.file.name">
-          <description>
-             %provisioner.file.description
-          </description>
-       </provisioner>
-       <provisioner
-             class="org.eclipse.pde.internal.ui.wizards.provisioner.p2.P2TargetProvisionerWizard"
-             icon="icons/obj16/metadata_repo_obj.gif"
-             id="org.eclipse.pde.ui.p2.provisioner"
-             name="%provisioner.p2.name">
-          <description>
-             %provisioner.p2.description
-          </description>
-       </provisioner>
-    </extension>
     
     <!-- Search Menu Additions -->
     <extension

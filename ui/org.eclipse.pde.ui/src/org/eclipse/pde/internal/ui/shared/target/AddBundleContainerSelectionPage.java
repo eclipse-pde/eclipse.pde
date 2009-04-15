@@ -14,10 +14,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
@@ -280,11 +282,51 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 				return wizard;
 			}
 		});
+		standardChoices.add(new AbstractBundleContainerNode("Repository or Update Site", "Download plug-ins from a p2 repository or update site.", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ)) {
+			public IWizard createWizard() {
+				Wizard wizard = new Wizard() {
+					public void addPages() {
+						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
+						if (settings == null) {
+							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
+						}
+						setDialogSettings(settings);
+						// TODO Use proper API to get the profile
+						IProfile profile = null;
+						try {
+							profile = ((TargetDefinition) fTarget).getProfile();
+						} catch (CoreException e) {
+							PDEPlugin.log(e);
+						}
+						addPage(new AddP2ContainerPage(profile));
+					}
+
+					public boolean performFinish() {
+						IBundleContainer container = ((AddP2ContainerPage) getPages()[0]).getBundleContainer();
+						if (container != null) {
+							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
+							if (oldContainers == null) {
+								fTarget.setBundleContainers(new IBundleContainer[] {container});
+							} else {
+								IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];
+								System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
+								newContainers[newContainers.length - 1] = container;
+								fTarget.setBundleContainers(newContainers);
+							}
+						}
+						return true;
+					}
+				};
+				wizard.setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
+				return wizard;
+			}
+		});
 		return standardChoices;
 	}
 
 	/**
 	 * Returns a list of choices created from the ITargetProvisioner extension
+	 * The extension point was deprecated in 3.5 but we need to retain some compatibility.
 	 * @return list of wizard nodes
 	 */
 	private List getProvisionerExtensionChoices() {
@@ -301,20 +343,17 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 				if (element != null) {
 					final String pluginId = element.getPluginId();
 					final String contributionId = element.getID();
-					// TODO Ignore the directory provisioner until it can be deleted
-					if (!contributionId.equals("org.eclipse.pde.ui.directory")) { //$NON-NLS-1$
-						IPluginContribution pc = new IPluginContribution() {
-							public String getLocalId() {
-								return contributionId;
-							}
-
-							public String getPluginId() {
-								return pluginId;
-							}
-						};
-						if (!WorkbenchActivityHelper.filterItem(pc)) {
-							list.add(createExtensionNode(element));
+					IPluginContribution pc = new IPluginContribution() {
+						public String getLocalId() {
+							return contributionId;
 						}
+
+						public String getPluginId() {
+							return pluginId;
+						}
+					};
+					if (!WorkbenchActivityHelper.filterItem(pc)) {
+						list.add(createExtensionNode(element));
 					}
 				}
 			}

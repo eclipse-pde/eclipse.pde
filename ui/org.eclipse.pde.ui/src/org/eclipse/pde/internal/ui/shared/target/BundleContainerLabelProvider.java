@@ -47,6 +47,10 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 			} else if (element instanceof ProfileBundleContainer) {
 				ProfileBundleContainer container = (ProfileBundleContainer) element;
 				return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
+			} else if (element instanceof IUBundleContainer) {
+				IUBundleContainer container = (IUBundleContainer) element;
+				// TODO Try to describe the top level IUs
+				return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {"Repository", getIncludedBundlesLabel(container)});
 			}
 		} catch (CoreException e) {
 			return MessageFormat.format(Messages.BundleContainerTable_4, new String[] {e.getMessage()});
@@ -76,6 +80,8 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 				return PDEPlugin.getDefault().getLabelProvider().get(image, flag);
 			} else if (element instanceof ProfileBundleContainer) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION, flag);
+			} else if (element instanceof IUBundleContainer) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ, flag);
 			}
 		}
 		return super.getImage(element);

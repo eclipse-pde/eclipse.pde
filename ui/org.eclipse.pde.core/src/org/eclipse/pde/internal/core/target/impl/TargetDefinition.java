@@ -527,7 +527,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @return profile
 	 * @throws CoreException in unable to retrieve profile
 	 */
-	IProfile getProfile() throws CoreException {
+	public IProfile getProfile() throws CoreException {
 		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
 		String id = ((AbstractTargetHandle) getHandle()).getProfileId();
 		IProfile profile = registry.getProfile(id);

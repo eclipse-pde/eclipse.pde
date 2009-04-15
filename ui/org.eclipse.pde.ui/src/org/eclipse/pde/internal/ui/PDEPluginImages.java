@@ -128,6 +128,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_COMGROUP_OBJ = create(PATH_OBJ, "keygroups_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENCOM_OBJ = create(PATH_OBJ, "command_obj.gif"); //$NON-NLS-1$
 
+	public static final ImageDescriptor DESC_REPOSITORY_OBJ = create(PATH_OBJ, "metadata_repo_obj.gif"); //$NON-NLS-1$
+
 	public static final ImageDescriptor DESC_PLUGIN_OBJ = create(PATH_OBJ, "plugin_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ = create(PATH_OBJ, "plugin_dis_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OPERATING_SYSTEM_OBJ = create(PATH_OBJ, "operating_system_obj.gif"); //$NON-NLS-1$
