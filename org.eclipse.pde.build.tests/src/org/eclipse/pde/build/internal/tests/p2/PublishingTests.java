@@ -1122,7 +1122,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.writeBuffer(buildFolder.getFile("features/f/important.txt"), new StringBuffer("boo-urns"));
 		Properties properties = new Properties();
 		properties.put("bin.includes", "feature.xml");
-		properties.put("root", "file:important.txt");
+		properties.put("root.folder.sub", "file:important.txt"); //bug 272392
 		Utils.storeBuildProperties(buildFolder.getFolder("features/f"), properties);
 		
 		IFile productFile = buildFolder.getFile("rcp.product");
@@ -1163,7 +1163,7 @@ public class PublishingTests extends P2TestCase {
 		HashSet entries = new HashSet();
 		entries.add("eclipse/eclipse.exe");
 		entries.add("eclipse/features/f_1.0.0/feature.xml");
-		entries.add("eclipse/important.txt");
+		entries.add("eclipse/sub/important.txt");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
 	}
 }

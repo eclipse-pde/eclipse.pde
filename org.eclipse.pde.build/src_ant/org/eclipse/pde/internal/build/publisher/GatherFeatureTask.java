@@ -161,7 +161,10 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 
 							String[] found = fileset.getDirectoryScanner().getIncludedFiles();
 							for (int k = 0; k < found.length; k++) {
-								computer.addFile(base.getAbsolutePath(), found[k]);
+								if (key.length() > 0)
+									computer.addFile(key + "/" + found[k], new File(base, found[k])); //$NON-NLS-1$
+								else
+									computer.addFile(base.getAbsolutePath(), found[k]);
 							}
 							configFileSets.add(fileset);
 						}
