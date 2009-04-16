@@ -46,6 +46,7 @@ public class Messages extends NLS {
 	public static String exception_missingFile;
 	public static String exception_missingPlugin;
 	public static String exception_unresolvedPlugin;
+	public static String exception_unableToGenerateSourceFromBinary;
 	public static String exception_writeScript;
 	public static String exception_pluginParse;
 	public static String exception_featureParse;

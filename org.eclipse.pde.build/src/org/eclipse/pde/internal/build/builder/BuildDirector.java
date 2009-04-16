@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.build.builder;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.compatibility.Feature;
@@ -95,8 +96,22 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			Properties featureProperties = getBuildProperties(feature);
 			//we prefer a newly generated source plugin over a preexisting binary one. 
 			if ((model == null || Utils.isBinary(model)) && featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId())) {
+				boolean individual = useIndividualSource(featureProperties);
 				String[] extraEntries = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId()));
-				generateEmbeddedSource(entry, extraEntries, useIndividualSource(featureProperties));
+				if (individual) {
+					BundleDescription originalBundle = getSite(false).getRegistry().getResolvedBundle(extraEntries[0]);
+					if (originalBundle != null) {
+						if (!Utils.isBinary(originalBundle))
+							generateEmbeddedSource(entry, extraEntries, individual);
+						else if (model == null) {
+							String message = NLS.bind(Messages.exception_unableToGenerateSourceFromBinary, entry.getId(), originalBundle.getSymbolicName() + "_" + originalBundle.getVersion()); //$NON-NLS-1$
+							IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
+							throw new CoreException(status);
+						}
+					}
+				} else {
+					generateEmbeddedSource(entry, extraEntries, individual);
+				}
 				model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
 			}
 			if (model == null) {

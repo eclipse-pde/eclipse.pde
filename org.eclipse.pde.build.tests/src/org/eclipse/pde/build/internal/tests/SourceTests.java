@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -541,6 +541,46 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/a.source_2.0.0.jar");
 	}
 	
-	
-	
+	public void testBug272543() throws Exception {
+		IFolder root = newTest("272543");
+		IFolder buildFolder = Utils.createFolder(root, "build1");
+		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+		
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "bundleA", "bundleA.source;unpack=false" });
+		Properties properties = new Properties();
+		properties.put("generate.plugin@bundleA.source", "bundleA");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(sdk, properties);
+		
+		Utils.generateBundleManifest(bundleA, "bundleA", "1.0.0", null);
+		Properties buildProperties = new Properties();
+		buildProperties.put("src.includes", "about.html");
+		Utils.generatePluginBuildProperties(bundleA, buildProperties);
+		Utils.writeBuffer(bundleA.getFile("src/A.java"), new StringBuffer("class A {\n}\n"));
+		Utils.writeBuffer(bundleA.getFile("about.html"), new StringBuffer("about\n"));
+		
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "sdk");
+		properties.put("baseLocation", "");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		IFolder build2 = Utils.createFolder(root, "build2");
+		IFolder sdk2 = Utils.createFolder(build2, "features/sdk2");
+		Utils.generateFeature(build2, "sdk2", null, new String[] { "bundleA", "bundleA.source;unpack=false" });
+		properties = new Properties();
+		properties.put("generate.plugin@bundleA.source", "bundleA");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(sdk2, properties);
+		
+		
+		properties = BuildConfiguration.getBuilderProperties(build2);
+		properties.put("topLevelElementId", "sdk2");
+		properties.put("baseLocation", buildFolder.getFolder("tmp/eclipse").getLocation().toOSString());
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(build2, properties);
+		runBuild(build2);	
+	}
 }
