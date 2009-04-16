@@ -1987,7 +1987,7 @@
                    id="org.eclipse.jdt.debug.ui.LogViewActions.showStackTrace"
                    label="%showErrorInStackTraceConsoleAction.label"
                    toolbarPath="additions"
-                   tooltip="%showErrorInStackTraceConsoleAction.tooltip">
+                   tooltip="%showErrorInStackTraceConsoleAction.label">
              </action>
           </viewContribution>
 	</extension>>
