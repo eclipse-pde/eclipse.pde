@@ -277,7 +277,7 @@ public class TargetLocationsGroup {
 			}
 			if (oldContainer != null) {
 				Shell parent = fTreeViewer.getTree().getShell();
-				EditBundleContainerWizard wizard = new EditBundleContainerWizard(oldContainer);
+				EditBundleContainerWizard wizard = new EditBundleContainerWizard(fTarget, oldContainer);
 				WizardDialog dialog = new WizardDialog(parent, wizard);
 				if (dialog.open() == Window.OK) {
 					// Replace the old container with the new one

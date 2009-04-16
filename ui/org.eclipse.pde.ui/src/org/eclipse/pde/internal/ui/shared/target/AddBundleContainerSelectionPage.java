@@ -257,11 +257,6 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							if (containers != null) {
 								((AddFeatureContainersPage) getPages()[0]).storeSettings();
 								IBundleContainer[] oldContainers = fTarget.getBundleContainers();
-								// TODO: show progress as resolving
-								for (int i = 0; i < containers.length; i++) {
-									IBundleContainer newContainer = containers[i];
-									newContainer.resolve(fTarget, null);
-								}
 								if (oldContainers == null) {
 									fTarget.setBundleContainers(containers);
 								} else {
@@ -298,11 +293,11 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						} catch (CoreException e) {
 							PDEPlugin.log(e);
 						}
-						addPage(new AddP2ContainerPage(profile));
+						addPage(new EditIUContainerPage(profile));
 					}
 
 					public boolean performFinish() {
-						IBundleContainer container = ((AddP2ContainerPage) getPages()[0]).getBundleContainer();
+						IBundleContainer container = ((EditIUContainerPage) getPages()[0]).getBundleContainer();
 						if (container != null) {
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 							if (oldContainers == null) {
@@ -422,19 +417,6 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 								try {
 									// First try the specified dir, then try the plugins dir
 									IBundleContainer container = getTargetPlatformService().newDirectoryContainer(dirs[i].getPath());
-									container.resolve(fTarget, null);
-									IResolvedBundle[] resolved = container.getBundles();
-									if (resolved.length == 0) {
-										File pluginsDir = new File(dirs[i], "plugins"); //$NON-NLS-1$
-										if (pluginsDir.isDirectory()) {
-											IBundleContainer pluginContainer = getTargetPlatformService().newDirectoryContainer(pluginsDir.getPath());
-											pluginContainer.resolve(fTarget, null);
-											resolved = pluginContainer.getBundles();
-											if (resolved.length > 0) {
-												container = pluginContainer;
-											}
-										}
-									}
 									IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 									if (oldContainers == null) {
 										fTarget.setBundleContainers(new IBundleContainer[] {container});

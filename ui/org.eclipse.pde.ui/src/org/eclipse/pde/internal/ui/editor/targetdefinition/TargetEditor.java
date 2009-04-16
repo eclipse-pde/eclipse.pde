@@ -366,7 +366,8 @@ public class TargetEditor extends FormEditor {
 					fContentTree.setEnabled(false);
 				}
 				if (fLocationTree != null) {
-					fLocationTree.setInput(null);
+					// TODO setting the input to null here makes the table blank while resolving
+					fLocationTree.setInput(getTarget());
 				}
 				// TODO Cancel any other started jobs? Bad if we do this every time a checkbox changes
 				Job resolveJob = new Job(PDEUIMessages.TargetEditor_1) {

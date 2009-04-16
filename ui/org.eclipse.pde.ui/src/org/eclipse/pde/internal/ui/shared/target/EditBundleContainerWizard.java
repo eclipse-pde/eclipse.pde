@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
@@ -22,10 +24,12 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  */
 public class EditBundleContainerWizard extends Wizard {
 
+	private ITargetDefinition fTarget;
 	private IBundleContainer fContainer;
-	private EditDirectoryContainerPage fPage;
+	private IEditBundleContainerPage fPage;
 
-	public EditBundleContainerWizard(IBundleContainer container) {
+	public EditBundleContainerWizard(ITargetDefinition target, IBundleContainer container) {
+		fTarget = target;
 		fContainer = container;
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(AddBundleContainerSelectionPage.SETTINGS_SECTION);
 		if (settings == null) {
@@ -41,12 +45,19 @@ public class EditBundleContainerWizard extends Wizard {
 	public void addPages() {
 		if (fContainer instanceof DirectoryBundleContainer) {
 			fPage = new EditDirectoryContainerPage(fContainer);
-			addPage(fPage);
 		} else if (fContainer instanceof ProfileBundleContainer) {
 			fPage = new EditProfileContainerPage(fContainer);
-			addPage(fPage);
 		} else if (fContainer instanceof FeatureBundleContainer) {
 			fPage = new EditFeatureContainerPage(fContainer);
+		} else if (fContainer instanceof IUBundleContainer) {
+			try {
+				// TODO Use proper API to get the profile if available
+				fPage = new EditIUContainerPage((IUBundleContainer) fContainer, ((TargetDefinition) fTarget).getProfile());
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+			}
+		}
+		if (fPage != null) {
 			addPage(fPage);
 		}
 	}

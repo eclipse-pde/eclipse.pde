@@ -175,7 +175,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#storeSettings()
 	 */
-	protected void storeSettings() {
+	public void storeSettings() {
 		super.storeSettings();
 		if (fConfigLocation.isEnabled()) {
 			String newLocation = fConfigLocation.getText().trim();

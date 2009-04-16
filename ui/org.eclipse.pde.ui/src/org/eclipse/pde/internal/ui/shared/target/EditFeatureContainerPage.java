@@ -79,7 +79,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#storeSettings()
 	 */
-	protected void storeSettings() {
+	public void storeSettings() {
 		// Do nothing, no settings
 	}
 

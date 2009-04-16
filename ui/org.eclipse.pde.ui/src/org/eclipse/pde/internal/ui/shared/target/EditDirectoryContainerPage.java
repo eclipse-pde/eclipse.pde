@@ -40,7 +40,7 @@ import org.eclipse.ui.progress.UIJob;
  * @see AddBundleContainerSelectionPage
  * @see IBundleContainer
  */
-public class EditDirectoryContainerPage extends WizardPage {
+public class EditDirectoryContainerPage extends WizardPage implements IEditBundleContainerPage {
 
 	/**
 	 * How long to wait before validating the directory
@@ -233,11 +233,10 @@ public class EditDirectoryContainerPage extends WizardPage {
 		return "${eclipse_home}"; //$NON-NLS-1$
 	}
 
-	/**
-	 * Store all of the dialog settings for this page
-	 * Should be explicitly called during the perform finish call of the wizard
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#storeSettings()
 	 */
-	protected void storeSettings() {
+	public void storeSettings() {
 		String newLocation = fInstallLocation.getText().trim();
 
 		if (newLocation.charAt(newLocation.length() - 1) == File.separatorChar) {
@@ -264,8 +263,8 @@ public class EditDirectoryContainerPage extends WizardPage {
 		}
 	}
 
-	/**
-	 * @return bundle container created/edited in this wizard or <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#getBundleContainer()
 	 */
 	public IBundleContainer getBundleContainer() {
 		return fContainer;

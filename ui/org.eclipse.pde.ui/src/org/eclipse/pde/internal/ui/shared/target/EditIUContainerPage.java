@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.net.URI;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import java.net.URISyntaxException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
@@ -21,10 +21,12 @@ import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.provisional.p2.ui.policy.IUViewQueryContext;
 import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.impl.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
@@ -41,15 +43,25 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.5
  */
-public class AddP2ContainerPage extends WizardPage {
+public class EditIUContainerPage extends WizardPage implements IEditBundleContainerPage {
 
-	static final IStatus BAD_IU_SELECTION = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), ProvisionerMessages.P2TargetProvisionerWizardPage_1);
-	IStatus fSelectedIUStatus = Status.OK_STATUS;
+	// Errors on the page
+	private static final IStatus BAD_IU_SELECTION = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), ProvisionerMessages.P2TargetProvisionerWizardPage_1);
+	private IStatus fSelectedIUStatus = Status.OK_STATUS;
+
+	private static final String SETTINGS_GROUP_BY_CATEGORY = "groupByCategory";
+	private static final String SETTINGS_SHOW_OLD_VERSIONS = "showVersions";
+	private static final String SETTINGS_SELECTED_REPOSITORY = "selectedRepository";
 
 	/**
 	 * If the user is only downloading from a specific repository location, we store it here so it can be persisted in the target
 	 */
 	private URI fRepoLocation;
+
+	/**
+	 * If not null, this wizard is editing an existing bundle container instead of creating a new one from scratch
+	 */
+	private IUBundleContainer fEditContainer;
 
 	private IProfile fProfile;
 	private IUViewQueryContext fQueryContext;
@@ -62,20 +74,38 @@ public class AddP2ContainerPage extends WizardPage {
 	private Button fShowOldVersionsButton;
 	private Text fDetailsText;
 
-	protected AddP2ContainerPage(IProfile profile) {
+	protected EditIUContainerPage(IProfile profile) {
 		super("AddP2Container"); //$NON-NLS-1$
 		fProfile = profile;
 	}
 
-	/**
-	 * @return a new IU bundle container created by this wizard or <code>null</code>
+	protected EditIUContainerPage(IUBundleContainer container, IProfile profile) {
+		this(profile);
+		fEditContainer = container;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#getBundleContainer()
 	 */
 	public IBundleContainer getBundleContainer() {
+		// TODO Do we need to throw away the profile in case they have edited and removed IUs?
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (service == null) {
 			PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), "The target platform service could not be acquired."));
 		}
 		return service.newIUContainer(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#storeSettings()
+	 */
+	public void storeSettings() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			settings.put(SETTINGS_GROUP_BY_CATEGORY, fShowCategoriesButton.getSelection());
+			settings.put(SETTINGS_SHOW_OLD_VERSIONS, fShowOldVersionsButton.getSelection());
+			settings.put(SETTINGS_SELECTED_REPOSITORY, fRepoLocation != null ? fRepoLocation.toString() : null);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -263,31 +293,63 @@ public class AddP2ContainerPage extends WizardPage {
 	 * Restores the state of the wizard from previous invocations
 	 */
 	private void restoreWidgetState() {
-		// Initialize checkboxes for view context
-		fShowCategoriesButton.setSelection(fQueryContext.shouldGroupByCategories());
-		fShowOldVersionsButton.setSelection(fQueryContext.getShowLatestVersionsOnly());
-		fAvailableIUGroup.updateAvailableViewState();
+		IDialogSettings settings = getDialogSettings();
+		URI uri = null;
+		boolean showCategories = fQueryContext.shouldGroupByCategories();
+		boolean showOldVersions = fQueryContext.getShowLatestVersionsOnly();
 
-		// Init site selector, it should have focus by default
+		// Init the checkboxes and repo selector combo
+		if (fEditContainer != null) {
+			if (fEditContainer.getRepositories() != null) {
+				uri = fEditContainer.getRepositories()[0];
+			}
+		} else if (settings != null) {
+			String stringURI = settings.get(SETTINGS_SELECTED_REPOSITORY);
+			if (stringURI != null) {
+				try {
+					uri = new URI(stringURI);
+				} catch (URISyntaxException e) {
+					PDEPlugin.log(e);
+				}
+			}
+			showCategories = settings.getBoolean(SETTINGS_GROUP_BY_CATEGORY);
+			showOldVersions = settings.getBoolean(SETTINGS_SHOW_OLD_VERSIONS);
+		}
+
+		if (uri != null) {
+			fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_SPECIFIED, uri);
+		} else if (fEditContainer != null) {
+			fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_ALL, null);
+		} else {
+			fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_NONE, null);
+		}
+
+		fShowCategoriesButton.setSelection(showCategories);
+		fShowOldVersionsButton.setSelection(showOldVersions);
+
+		updateViewContext();
 		fRepoSelector.getDefaultFocusControl().setFocus();
-		fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_NONE, null);
-		// TODO Does the repo selector listener need to be called?
-
 		updateDetails();
 
-		// TODO Restore from dialog settings?
-//		if (resolveAllCheckbox != null) {
-//			IDialogSettings settings = ProvUIActivator.getDefault().getDialogSettings();
-//			IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-//			String value = null;
-//			if (section != null)
-//				value = section.get(RESOLVE_ALL);
-//			// no section or no value in the section
-//			if (value == null)
-//				resolveAllCheckbox.setSelection(true);
-//			else
-//				resolveAllCheckbox.setSelection(section.getBoolean(RESOLVE_ALL));
-//		}
+		// If we are editing a bundle check any installable units
+		if (fEditContainer != null) {
+			try {
+				// TODO This code does not do a good job, selecting, revealing, and collapsing all
+				// Only able to check items if we don't have categories
+				fQueryContext.setViewType(IUViewQueryContext.AVAILABLE_VIEW_FLAT);
+				fAvailableIUGroup.updateAvailableViewState();
+				fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits(fProfile));
+				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
+				if (units.length > 0) {
+					fAvailableIUGroup.getCheckboxTreeViewer().setSelection(new StructuredSelection(units[0]), true);
+				}
+				// Make sure view is back in proper state
+				updateViewContext();
+				fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+			}
+		}
 	}
 
 }
