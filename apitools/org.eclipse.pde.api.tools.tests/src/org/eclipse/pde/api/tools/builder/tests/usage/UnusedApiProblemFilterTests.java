@@ -19,8 +19,10 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
 
@@ -161,7 +163,13 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 			createWorkspaceFile(updatepath, beforepath);
 			
 			//touch the filter store to ensure it is listening...
-			ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent("usagetests").getFilterStore();
+			IApiBaselineManager mgr = ApiPlugin.getDefault().getApiBaselineManager();
+			IApiBaseline baseline = mgr.getWorkspaceBaseline();
+			assertNotNull("The workspace baseline should not be null", baseline);
+			IApiComponent component = baseline.getApiComponent("usagetests");
+			assertNotNull("The API component for project 'usagetests' must exist", component);
+			IApiFilterStore store = component.getFilterStore();
+			assertNotNull("The filterstore for 'usagetests' must not be null", store);
 			//wait for the event
 			ResourceEventWaiter waiter = new ResourceEventWaiter(fFiltersPath, IResourceDelta.CHANGED, 0);
 			createWorkspaceFile(fFiltersPath, filterpath);
