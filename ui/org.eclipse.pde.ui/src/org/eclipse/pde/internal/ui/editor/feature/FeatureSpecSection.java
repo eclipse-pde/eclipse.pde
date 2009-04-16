@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,6 +24,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -166,8 +166,6 @@ public class FeatureSpecSection extends PDESection {
 
 	/**
 	 * Obtains or creates a feature import with patch="true"
-	 * 
-	 * @return
 	 */
 	private IFeatureImport getPatchedFeature() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
@@ -220,7 +218,7 @@ public class FeatureSpecSection extends PDESection {
 		fIdText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
-					feature.setId(text.getValue());
+					feature.setId(text.getValue().trim());
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}

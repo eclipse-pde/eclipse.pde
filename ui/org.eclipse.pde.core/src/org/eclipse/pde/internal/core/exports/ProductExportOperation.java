@@ -166,7 +166,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (fInfo.items[i] instanceof IFeatureModel) {
 					IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
-					properties.put("generate.feature@" + feature.getId() + ".source", feature.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+					properties.put("generate.feature@" + feature.getId().trim() + ".source", feature.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					BundleDescription bundle = null;
 					if (fInfo.items[i] instanceof IPluginModelBase) {
@@ -181,7 +181,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 					//it doesn't matter if we generate extra properties for platforms we aren't exporting for
 					if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) {
-						properties.put("generate.plugin@" + bundle.getSymbolicName() + ".source", bundle.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
+						properties.put("generate.plugin@" + bundle.getSymbolicName().trim() + ".source", bundle.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
