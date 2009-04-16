@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.net.URI;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.internal.p2.ui.model.EmptyElementExplanation;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
@@ -45,7 +44,7 @@ import org.eclipse.ui.PlatformUI;
 public class AddP2ContainerPage extends WizardPage {
 
 	static final IStatus BAD_IU_SELECTION = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), ProvisionerMessages.P2TargetProvisionerWizardPage_1);
-	IStatus fSelectedIUStatus = BAD_IU_SELECTION;
+	IStatus fSelectedIUStatus = Status.OK_STATUS;
 
 	/**
 	 * If the user is only downloading from a specific repository location, we store it here so it can be persisted in the target
@@ -55,6 +54,7 @@ public class AddP2ContainerPage extends WizardPage {
 	private IProfile fProfile;
 	private IUViewQueryContext fQueryContext;
 
+	private RepositorySelectionGroup fRepoSelector;
 	private AvailableIUGroup fAvailableIUGroup;
 	private Button fPropertiesButton;
 	private IAction fPropertyAction;
@@ -96,19 +96,22 @@ public class AddP2ContainerPage extends WizardPage {
 		restoreWidgetState();
 		updateViewContext();
 		setControl(composite);
+		setPageComplete(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.P2_PROVISIONING_PAGE);
 	}
 
 	private void createRepositoryComboArea(Composite parent) {
-		RepositorySelectionGroup repoSelector = new RepositorySelectionGroup(getContainer(), parent, Policy.getDefault(), fQueryContext);
-		repoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
+		fRepoSelector = new RepositorySelectionGroup(getContainer(), parent, Policy.getDefault(), fQueryContext);
+		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
 			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
 				fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
-				if (repoChoice == AvailableIUGroup.AVAILABLE_SPECIFIED) {
-					fRepoLocation = repoLocation;
+				fRepoLocation = repoChoice == AvailableIUGroup.AVAILABLE_SPECIFIED ? repoLocation : null;
+				if (repoChoice == AvailableIUGroup.AVAILABLE_NONE) {
+					setDescription("Select a site or enter the location of a site.");
 				} else {
-					fRepoLocation = null;
+					setDescription("Check the items that you wish to add to your target platform");
 				}
+				pageChanged();
 			}
 		});
 	}
@@ -202,13 +205,6 @@ public class AddP2ContainerPage extends WizardPage {
 	private void updateDetails() {
 		// First look for an empty explanation.
 		Object[] elements = ((IStructuredSelection) fAvailableIUGroup.getStructuredViewer().getSelection()).toArray();
-		if (elements.length == 1 && elements[0] instanceof EmptyElementExplanation) {
-			String description = ((EmptyElementExplanation) elements[0]).getDescription();
-			if (description != null) {
-				fDetailsText.setText(description);
-				return;
-			}
-		}
 
 		// Now look for IU's
 		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs();
@@ -267,7 +263,31 @@ public class AddP2ContainerPage extends WizardPage {
 	 * Restores the state of the wizard from previous invocations
 	 */
 	private void restoreWidgetState() {
-		// TODO Init check boxes
+		// Initialize checkboxes for view context
+		fShowCategoriesButton.setSelection(fQueryContext.shouldGroupByCategories());
+		fShowOldVersionsButton.setSelection(fQueryContext.getShowLatestVersionsOnly());
+		fAvailableIUGroup.updateAvailableViewState();
+
+		// Init site selector, it should have focus by default
+		fRepoSelector.getDefaultFocusControl().setFocus();
+		fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_NONE, null);
+		// TODO Does the repo selector listener need to be called?
+
+		updateDetails();
+
+		// TODO Restore from dialog settings?
+//		if (resolveAllCheckbox != null) {
+//			IDialogSettings settings = ProvUIActivator.getDefault().getDialogSettings();
+//			IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
+//			String value = null;
+//			if (section != null)
+//				value = section.get(RESOLVE_ALL);
+//			// no section or no value in the section
+//			if (value == null)
+//				resolveAllCheckbox.setSelection(true);
+//			else
+//				resolveAllCheckbox.setSelection(section.getBoolean(RESOLVE_ALL));
+//		}
 	}
 
 }

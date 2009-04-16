@@ -14,6 +14,7 @@ import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
@@ -49,8 +50,14 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 				return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {container.getLocation(false), getIncludedBundlesLabel(container)});
 			} else if (element instanceof IUBundleContainer) {
 				IUBundleContainer container = (IUBundleContainer) element;
-				// TODO Try to describe the top level IUs
 				return MessageFormat.format(Messages.BundleContainerTable_7, new String[] {"Repository", getIncludedBundlesLabel(container)});
+			} else if (element instanceof IInstallableUnit) {
+				IInstallableUnit iu = (IInstallableUnit) element;
+				String name = iu.getProperty(IInstallableUnit.PROP_NAME);
+				if (name == null) {
+					name = iu.getId();
+				}
+				return MessageFormat.format("{0} ({1})", new String[] {name, iu.getVersion().toString()});
 			}
 		} catch (CoreException e) {
 			return MessageFormat.format(Messages.BundleContainerTable_4, new String[] {e.getMessage()});
@@ -83,6 +90,8 @@ class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 			} else if (element instanceof IUBundleContainer) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ, flag);
 			}
+		} else if (element instanceof IInstallableUnit) {
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_NOREF_FEATURE_OBJ);
 		}
 		return super.getImage(element);
 	}

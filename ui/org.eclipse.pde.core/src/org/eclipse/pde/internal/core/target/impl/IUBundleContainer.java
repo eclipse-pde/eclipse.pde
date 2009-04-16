@@ -224,7 +224,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return IU's
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	private synchronized IInstallableUnit[] getInstallableUnits(IProfile profile) throws CoreException {
+	public synchronized IInstallableUnit[] getInstallableUnits(IProfile profile) throws CoreException {
 		if (fUnits == null) {
 			fUnits = new IInstallableUnit[fIds.length];
 			for (int i = 0; i < fIds.length; i++) {
