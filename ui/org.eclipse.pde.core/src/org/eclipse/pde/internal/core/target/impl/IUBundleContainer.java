@@ -253,6 +253,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				}
 				if (collector.isEmpty()) {
 					// not found
+					fUnits = null;
 					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
 				}
 				fUnits[i] = (IInstallableUnit) collector.iterator().next();
