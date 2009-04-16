@@ -102,7 +102,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			fVersions[i] = new Version(versions[i]);
 
 		}
-		fRepos = repositories;
+		if (repositories == null || repositories.length == 0) {
+			fRepos = null;
+		} else {
+			fRepos = repositories;
+		}
 	}
 
 	/**
@@ -120,14 +124,18 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			fIds[i] = units[i].getId();
 			fVersions[i] = units[i].getVersion();
 		}
-		fRepos = repositories;
+		if (repositories == null || repositories.length == 0) {
+			fRepos = null;
+		} else {
+			fRepos = repositories;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
 	 */
 	public String getLocation(boolean resolve) throws CoreException {
-		return AbstractTargetHandle.LOCAL_BUNDLE_POOL.toOSString();
+		return AbstractTargetHandle.BUNDLE_POOL.toOSString();
 	}
 
 	/* (non-Javadoc)
@@ -155,13 +163,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		ProfileChangeRequest request = new ProfileChangeRequest(profile);
 		request.addInstallableUnits(units);
 		IPlanner planner = getPlanner();
-		ProvisioningContext context = null;
-		if (fRepos == null) {
-			context = new ProvisioningContext();
-		} else {
-			context = new ProvisioningContext(fRepos);
-			context.setArtifactRepositories(fRepos);
-		}
+		URI[] repositories = resolveRepositories();
+		ProvisioningContext context = new ProvisioningContext(repositories);
+		context.setArtifactRepositories(repositories);
+
 		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor);
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
@@ -171,7 +176,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		subMonitor.worked(1);
 
 		// execute the provisioning plan
-		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST & DefaultPhaseSet.PHASE_CONFIGURE & DefaultPhaseSet.PHASE_PROPERTY & DefaultPhaseSet.PHASE_UNCONFIGURE & DefaultPhaseSet.PHASE_UNINSTALL);
+		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_PROPERTY | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
 		IEngine engine = getEngine();
 		IStatus result = engine.perform(profile, phases, plan.getOperands(), context, subMonitor);
 		subMonitor.worked(6);
@@ -227,13 +232,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				Collector collector = profile.query(query, new Collector(), null);
 				if (collector.isEmpty()) {
 					// try repositories
-					if (fRepos != null) {
-						for (int j = 0; j < fRepos.length; j++) {
-							IMetadataRepository repository = getRepository(fRepos[j]);
-							collector = repository.query(query, new Collector(), null);
-							if (!collector.isEmpty()) {
-								break;
-							}
+					URI[] repositories = resolveRepositories();
+					for (int j = 0; j < repositories.length; j++) {
+						IMetadataRepository repository = getRepository(repositories[j]);
+						collector = repository.query(query, new Collector(), null);
+						if (!collector.isEmpty()) {
+							break;
 						}
 					}
 				}
@@ -255,12 +259,23 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException
 	 */
 	private IMetadataRepository getRepository(URI uri) throws CoreException {
+		IMetadataRepositoryManager manager = getRepoManager();
+		IMetadataRepository repo = manager.loadRepository(uri, null);
+		return repo;
+	}
+
+	/**
+	 * Returns the metadata repository manager.
+	 * 
+	 * @return metadata repository manager
+	 * @throws CoreException if none
+	 */
+	private IMetadataRepositoryManager getRepoManager() throws CoreException {
 		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) PDECore.getDefault().acquireService(IMetadataRepositoryManager.class.getName());
 		if (manager == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_2));
 		}
-		IMetadataRepository repo = manager.loadRepository(uri, null);
-		return repo;
+		return manager;
 	}
 
 	/**
@@ -347,6 +362,21 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return metadata repository URI's or <code>null</code>
 	 */
 	public URI[] getRepositories() {
+		return fRepos;
+	}
+
+	/**
+	 * Returns the repositories to consider when resolving IU's (will return default set of
+	 * repositories if current repository settings are <code>null</code>).
+	 *  
+	 * @return URI's of repositories to use when resolving bundles
+	 * @exception CoreException
+	 */
+	private URI[] resolveRepositories() throws CoreException {
+		if (fRepos == null) {
+			IMetadataRepositoryManager manager = getRepoManager();
+			return manager.getKnownRepositories(IMetadataRepositoryManager.REPOSITORIES_ALL);
+		}
 		return fRepos;
 	}
 

@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.impl;
 
+import java.io.File;
 import java.io.InputStream;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -28,7 +30,13 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 * Path to the local directory where the local bundle pool is stored for p2 profile
 	 * based targets.
 	 */
-	static final IPath LOCAL_BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".local_pool"); //$NON-NLS-1$
+	static final IPath BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".bundle_pool"); //$NON-NLS-1$
+
+	/**
+	 * Path to the local directory where install folders are created for p2 profile
+	 * based targets.
+	 */
+	static final IPath INSTALL_FOLDERS = PDECore.getDefault().getStateLocation().append(".install_folders"); //$NON-NLS-1$	
 
 	/**
 	 * Prefix for all profiles ID's associated with target definitions
@@ -91,7 +99,34 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 */
 	void deleteProfile() throws CoreException {
 		IProfileRegistry registry = getProfileRegistry();
-		registry.removeProfile(getProfileId());
+		IProfile profile = registry.getProfile(getProfileId());
+		if (profile != null) {
+			String location = profile.getProperty(IProfile.PROP_INSTALL_FOLDER);
+			registry.removeProfile(getProfileId());
+			if (location != null && location.length() > 0) {
+				File folder = new File(location);
+				if (folder.exists()) {
+					delete(folder);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Recursively deletes folder and files.
+	 * 
+	 * @param folder
+	 */
+	private void delete(File folder) {
+		File[] files = folder.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			File file = files[i];
+			if (file.isDirectory()) {
+				delete(file);
+			}
+			file.delete();
+		}
+		folder.delete();
 	}
 
 	/**

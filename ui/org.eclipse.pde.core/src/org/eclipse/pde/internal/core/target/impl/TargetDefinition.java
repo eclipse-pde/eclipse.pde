@@ -529,7 +529,8 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public IProfile getProfile() throws CoreException {
 		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		String id = ((AbstractTargetHandle) getHandle()).getProfileId();
+		AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
+		String id = handle.getProfileId();
 		IProfile profile = registry.getProfile(id);
 		if (profile != null) {
 			// ensure environment & NL settings are still the same (else we need a new profile)
@@ -547,16 +548,15 @@ public class TargetDefinition implements ITargetDefinition {
 				}
 			}
 			if (recreate) {
-				registry.removeProfile(id);
+				handle.deleteProfile();
 				profile = null;
 			}
 		}
 		if (profile == null) {
 			// create profile
 			Map properties = new HashMap();
-			String location = AbstractTargetHandle.LOCAL_BUNDLE_POOL.toOSString();
-			properties.put(IProfile.PROP_INSTALL_FOLDER, location);
-			properties.put(IProfile.PROP_CACHE, location);
+			properties.put(IProfile.PROP_INSTALL_FOLDER, AbstractTargetHandle.INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
+			properties.put(IProfile.PROP_CACHE, AbstractTargetHandle.BUNDLE_POOL.toOSString());
 			properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 			// set up environment & NL properly so OS specific fragments are down loaded/installed
 			properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());

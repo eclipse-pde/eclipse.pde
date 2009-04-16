@@ -49,6 +49,20 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	static final IPath LOCAL_TARGET_CONTAINER_PATH = PDECore.getDefault().getStateLocation().append(".local_targets"); //$NON-NLS-1$
 
 	/**
+	 * Returns the next unique ID for target handle.
+	 * 
+	 * @return time stamp ID
+	 */
+	static synchronized long nextTimeStamp() {
+		long stamp = System.currentTimeMillis();
+		if (stamp == fgLastStamp) {
+			stamp++;
+		}
+		fgLastStamp = stamp;
+		return stamp;
+	}
+
+	/**
 	 * Reconstructs a handle from the specified URI.
 	 * 
 	 * @param uri URI
@@ -75,11 +89,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	 * Constructs a new target handle to a local file, based on a time stamp.
 	 */
 	LocalTargetHandle() {
-		fTimeStamp = System.currentTimeMillis();
-		if (fTimeStamp == fgLastStamp) {
-			fTimeStamp++;
-		}
-		fgLastStamp = fTimeStamp;
+		fTimeStamp = nextTimeStamp();
 	}
 
 	/**

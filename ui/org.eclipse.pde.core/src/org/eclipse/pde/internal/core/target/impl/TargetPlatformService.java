@@ -575,9 +575,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 			String id = profile.getProfileId();
 			if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
 				String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
-				ITargetHandle target = getTarget(memento);
+				AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
 				if (!target.exists()) {
-					registry.removeProfile(id);
+					target.deleteProfile();
 					list.add(id);
 				}
 			}
