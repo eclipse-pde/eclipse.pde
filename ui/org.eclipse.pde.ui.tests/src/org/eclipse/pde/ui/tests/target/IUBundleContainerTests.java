@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
+
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.pde.internal.core.target.impl.IUBundleContainer;
 
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
@@ -300,5 +304,75 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testPersistMultipleIUDefinition() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		doPersistanceTest(new String[]{"bundle.a3", "bundle.b3"}, bundles);
+	}	
+	
+	/**
+	 * Incrementally adding IUs to a target.
+	 * 
+	 * @throws Exception
+	 */
+	public void testAddIUs() throws Exception {
+		IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
+		ITargetDefinition target = getTargetService().newTarget();
+		target.setBundleContainers(new IUBundleContainer[]{c1});
+		IStatus resolve = target.resolve(null);
+		assertTrue(resolve.isOK());
+		
+		getTargetService().saveTargetDefinition(target);
+		ITargetHandle handle = target.getHandle();
+		// get new unresolved copy of the target
+		target = handle.getTargetDefinition();
+		IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
+		target.setBundleContainers(new IUBundleContainer[]{c2});
+		
+		List infos = getAllBundleInfos(target);
+		Set names = collectAllSymbolicNames(infos);
+		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
+		assertEquals(bundleIds.length, infos.size());
+		
+		for (int i = 0; i < bundleIds.length; i++) {
+			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		}
+		
+		getTargetService().deleteTarget(target.getHandle());
+		
+		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		assertEquals(0, profiles.size());
+	}
+	
+	/**
+	 * Incrementally removing IUs from a target.
+	 * 
+	 * @throws Exception
+	 */
+	public void testRemoveIUs() throws Exception {
+		IUBundleContainer c1 = createContainer(new String[]{"feature.b.feature.group"});
+		ITargetDefinition target = getTargetService().newTarget();
+		target.setBundleContainers(new IUBundleContainer[]{c1});
+		IStatus resolve = target.resolve(null);
+		assertTrue(resolve.isOK());
+		
+		getTargetService().saveTargetDefinition(target);
+		ITargetHandle handle = target.getHandle();
+		// get new unresolved copy of the target
+		target = handle.getTargetDefinition();
+		IUBundleContainer c2 = createContainer(new String[]{"feature.a.feature.group"});
+		target.setBundleContainers(new IUBundleContainer[]{c2});
+		
+		List infos = getAllBundleInfos(target);
+		Set names = collectAllSymbolicNames(infos);
+		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
+		assertEquals(bundleIds.length, infos.size());
+		
+		for (int i = 0; i < bundleIds.length; i++) {
+			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		}
+		
+		getTargetService().deleteTarget(target.getHandle());
+		
+		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		assertEquals(0, profiles.size());
 	}	
 }

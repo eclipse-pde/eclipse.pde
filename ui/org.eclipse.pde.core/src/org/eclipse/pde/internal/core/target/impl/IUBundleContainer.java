@@ -162,6 +162,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// create the provisioning plan
 		ProfileChangeRequest request = new ProfileChangeRequest(profile);
 		request.addInstallableUnits(units);
+		for (int i = 0; i < units.length; i++) {
+			IInstallableUnit unit = units[i];
+			request.setInstallableUnitProfileProperty(unit, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
+		}
 		IPlanner planner = getPlanner();
 		URI[] repositories = resolveRepositories();
 		ProvisioningContext context = new ProvisioningContext(repositories);
@@ -182,7 +186,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		subMonitor.worked(1);
 
 		// execute the provisioning plan
-		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_PROPERTY | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
+		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
 		IEngine engine = getEngine();
 		IStatus result = engine.perform(profile, phases, plan.getOperands(), context, subMonitor);
 		subMonitor.worked(6);

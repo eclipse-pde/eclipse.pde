@@ -43,6 +43,12 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 */
 	static final String PROFILE_ID_PREFIX = "TARGET_DEFINITION:"; //$NON-NLS-1$
 
+	/**
+	 * Installable unit property to mark IU's that have been installed in a profile by
+	 * a bundle container (rather than as a secondary/required IU).
+	 */
+	static final String PROP_INSTALLED_IU = ""; //$NON-NLS-1$
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getTargetDefinition()
 	 */

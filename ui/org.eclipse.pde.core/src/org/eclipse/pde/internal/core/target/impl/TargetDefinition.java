@@ -16,8 +16,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
+import org.eclipse.equinox.internal.provisional.p2.engine.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.query.Collector;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;
@@ -545,6 +547,35 @@ public class TargetDefinition implements ITargetDefinition {
 				value = profile.getProperty(IProfile.PROP_NL);
 				if (!property.equals(value)) {
 					recreate = true;
+				}
+			}
+			if (!recreate) {
+				// check top level IU's. If any have been removed from the containers that are
+				// still in the profile, we need to recreate (rather than uninstall)
+				Collector collector = profile.query(new IUProfilePropertyQuery(profile, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true)), new Collector(), null);
+				Iterator iterator = collector.iterator();
+				if (iterator.hasNext()) {
+					Set installedIUs = new HashSet();
+					while (iterator.hasNext()) {
+						IInstallableUnit unit = (IInstallableUnit) iterator.next();
+						installedIUs.add(new IUDescriptor(unit.getId(), unit.getVersion().toString()));
+					}
+					IBundleContainer[] containers = getBundleContainers();
+					if (containers != null) {
+						for (int i = 0; i < containers.length; i++) {
+							if (containers[i] instanceof IUBundleContainer) {
+								IUBundleContainer bc = (IUBundleContainer) containers[i];
+								String[] ids = bc.getIds();
+								Version[] versions = bc.getVersions();
+								for (int j = 0; j < versions.length; j++) {
+									installedIUs.remove(new IUDescriptor(ids[j], versions[j].toString()));
+								}
+							}
+						}
+					}
+					if (!installedIUs.isEmpty()) {
+						recreate = true;
+					}
 				}
 			}
 			if (recreate) {
