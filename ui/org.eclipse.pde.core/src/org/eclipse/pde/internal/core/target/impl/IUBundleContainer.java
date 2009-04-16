@@ -173,6 +173,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			System.out.println(status.getMessage());
 			throw new CoreException(status);
 		}
+		ProvisioningPlan installerPlan = plan.getInstallerPlan();
+		if (installerPlan != null) {
+			// this plan requires an update to the installer first, log the fact and attempt
+			// to continue, we don't want to update the running SDK while provisioning a target
+			PDECore.log(new Status(IStatus.INFO, PDECore.PLUGIN_ID, Messages.IUBundleContainer_6));
+		}
 		subMonitor.worked(1);
 
 		// execute the provisioning plan
