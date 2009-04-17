@@ -18,8 +18,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
 import org.eclipse.equinox.internal.provisional.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.*;
-import org.eclipse.equinox.internal.provisional.p2.ui.policy.IUViewQueryContext;
-import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
+import org.eclipse.equinox.internal.provisional.p2.ui.policy.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
@@ -142,7 +141,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 		setPageComplete(false);
 		restoreWidgetState();
-		updateViewContext();
 		setControl(composite);
 		setPageComplete(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.P2_PROVISIONING_PAGE);
@@ -153,7 +151,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createRepositoryComboArea(Composite parent) {
-		fRepoSelector = new RepositorySelectionGroup(getContainer(), parent, Policy.getDefault(), fQueryContext);
+		Policy policy = new Policy();
+		policy.setRepositoryManipulator(new ColocatedRepositoryManipulator(policy, null));
+		fRepoSelector = new RepositorySelectionGroup(getContainer(), parent, policy, fQueryContext);
 		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
 			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
 				fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
@@ -376,13 +376,14 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				fQueryContext.setViewType(IUViewQueryContext.AVAILABLE_VIEW_FLAT);
 				fAvailableIUGroup.updateAvailableViewState();
 				fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits(fProfile));
+				// Make sure view is back in proper state
+				updateViewContext();
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
 				if (units.length > 0) {
 					fAvailableIUGroup.getCheckboxTreeViewer().setSelection(new StructuredSelection(units[0]), true);
 				}
-				// Make sure view is back in proper state
-				updateViewContext();
 				fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
+
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
