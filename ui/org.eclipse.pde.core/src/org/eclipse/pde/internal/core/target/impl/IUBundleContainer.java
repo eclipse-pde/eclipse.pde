@@ -26,6 +26,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadata
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
+import org.eclipse.equinox.internal.provisional.p2.repository.IRepositoryManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
@@ -386,7 +387,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	private URI[] resolveRepositories() throws CoreException {
 		if (fRepos == null) {
 			IMetadataRepositoryManager manager = getRepoManager();
-			return manager.getKnownRepositories(IMetadataRepositoryManager.REPOSITORIES_ALL);
+			return manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 		}
 		return fRepos;
 	}
