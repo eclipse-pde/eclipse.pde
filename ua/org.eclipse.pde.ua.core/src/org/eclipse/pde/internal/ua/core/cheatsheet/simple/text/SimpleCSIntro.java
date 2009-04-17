@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSIntro;
@@ -46,7 +45,8 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * 
 	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSIntro#
 	 * setDescription
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription)
+	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSDescription
+	 * )
 	 */
 	public void setDescription(ISimpleCSDescription description) {
 		setChildNode((IDocumentElementNode) description,
@@ -100,7 +100,8 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
+	 * @see
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#
 	 * getChildren()
 	 */
 	public List getChildren() {
@@ -111,19 +112,19 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getName
-	 * ()
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject
+	 * #getName ()
 	 */
 	public String getName() {
-		return PDECoreMessages.SimpleCSIntro_0;
+		return ELEMENT_INTRO;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject#getType
-	 * ()
+	 * org.eclipse.pde.internal.ua.core.text.cheatsheet.simple.SimpleCSObject
+	 * #getType ()
 	 */
 	public int getType() {
 		return TYPE_INTRO;
