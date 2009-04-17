@@ -312,6 +312,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	        assertNotNull("the test project api component must exist in the workspace profile", component);
 		}
 		catch(Exception e) {
+			System.err.println("assertProject failed");
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 		return project;
