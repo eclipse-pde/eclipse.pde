@@ -232,11 +232,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		fAvailableIUGroup.updateAvailableViewState();
 	}
 
+	/**
+	 * Update the details section of the page using the currently selected IU
+	 */
 	private void updateDetails() {
-		// First look for an empty explanation.
-		Object[] elements = ((IStructuredSelection) fAvailableIUGroup.getStructuredViewer().getSelection()).toArray();
-
-		// Now look for IU's
 		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs();
 		if (selected.length == 1) {
 			StringBuffer result = new StringBuffer();
