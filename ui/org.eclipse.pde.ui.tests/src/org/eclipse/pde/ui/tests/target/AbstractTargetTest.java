@@ -227,4 +227,20 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		return list;
 	}		
+	
+	/**
+	 * Returns a list of bundles included in the given container.
+	 * 
+	 * @param container bundle container
+	 * @return included bundles
+	 * @throws Exception
+	 */
+	protected List getBundleInfos(IBundleContainer container) throws Exception {
+		IResolvedBundle[] bundles = container.getBundles();
+		List list = new ArrayList(bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			list.add(bundles[i].getBundleInfo());
+		}
+		return list;
+	}
 }

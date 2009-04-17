@@ -14,6 +14,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IFileArtifactRepository;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
@@ -24,13 +25,11 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
+import org.eclipse.equinox.internal.provisional.p2.query.*;
 import org.eclipse.equinox.internal.provisional.p2.repository.IRepositoryManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
  * A bundle container that references IU's in one or more repositories.
@@ -197,13 +196,17 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			throw new CoreException(result);
 		}
 
+		// slice IUs and all prerequisites
+		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false);
+		IQueryable slice = slicer.slice(units, new NullProgressMonitor());
+
 		// query for bundles
 		BundleQuery query = new BundleQuery();
 		Collector collector = new Collector();
-		profile.query(query, collector, subMonitor);
+		slice.query(query, collector, subMonitor);
 		subMonitor.worked(1);
 
-		List bundles = new ArrayList();
+		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
 		Iterator iterator = collector.iterator();
 		while (iterator.hasNext()) {
@@ -217,14 +220,31 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				} else {
 					IResolvedBundle bundle = generateBundle(file);
 					if (bundle != null) {
-						bundles.add(bundle);
+						bundles.put(bundle.getBundleInfo(), bundle);
+					}
+				}
+			}
+		}
+		// remove all bundles from previous IU containers (so we don't get duplicates from multi-locations
+		IBundleContainer[] containers = definition.getBundleContainers();
+		for (int i = 0; i < containers.length; i++) {
+			IBundleContainer container = containers[i];
+			if (container == this) {
+				break;
+			}
+			if (container instanceof IUBundleContainer) {
+				IUBundleContainer bc = (IUBundleContainer) container;
+				IResolvedBundle[] included = bc.getBundles();
+				if (included != null) {
+					for (int j = 0; j < included.length; j++) {
+						bundles.remove(included[j].getBundleInfo());
 					}
 				}
 			}
 		}
 
 		subMonitor.done();
-		return (ResolvedBundle[]) bundles.toArray(new ResolvedBundle[bundles.size()]);
+		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
 	}
 
 	/**

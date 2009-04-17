@@ -375,4 +375,40 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(0, profiles.size());
 	}	
+	
+	/**
+	 * Tests overlapping IU containers.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOverlappingIUContainers() throws Exception {
+		IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
+		IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
+		ITargetDefinition target = getTargetService().newTarget();
+		target.setBundleContainers(new IUBundleContainer[]{c1, c2});
+		IStatus resolve = target.resolve(null);
+		assertTrue(resolve.isOK());
+				
+		List infos = getBundleInfos(c1);
+		Set names = collectAllSymbolicNames(infos);
+		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
+		assertEquals(bundleIds.length, infos.size());
+		
+		for (int i = 0; i < bundleIds.length; i++) {
+			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		}
+		
+		infos = getBundleInfos(c2);
+		names = collectAllSymbolicNames(infos);
+		bundleIds = new String[]{"bundle.b1", "bundle.b2", "bundle.b3"};
+		assertEquals(bundleIds.length, infos.size());
+		
+		for (int i = 0; i < bundleIds.length; i++) {
+			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		}
+		
+		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		assertEquals(1, profiles.size());
+	}	
 }
