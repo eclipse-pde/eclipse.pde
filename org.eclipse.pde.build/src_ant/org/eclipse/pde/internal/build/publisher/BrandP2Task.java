@@ -13,14 +13,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipOutputStream;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
-import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
+import org.eclipse.equinox.internal.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.*;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.core.Version;
@@ -205,7 +204,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 		newIUDescription.setTouchpointType(originalIU.getTouchpointType());
 		newIUDescription.setFilter(originalIU.getFilter());
 
-		ITouchpointData[] data = originalIU.getTouchpointData();
+		ITouchpointData[] data = brandTouchpointData(originalIU.getTouchpointData());
 		for (int i = 0; i < data.length; i++) {
 			newIUDescription.addTouchpointData(data[i]);
 		}
@@ -233,6 +232,103 @@ public class BrandP2Task extends Repo2RunnableTask {
 		} finally {
 			Utils.close(output);
 		}
+	}
+
+	private static final String CHMOD = "chmod"; //$NON-NLS-1$
+	private static final String TARGET_FILE = "targetFile"; //$NON-NLS-1$
+	private static final String INSTALL = "install"; //$NON-NLS-1$
+
+	private ITouchpointData[] brandTouchpointData(ITouchpointData[] data) {
+		boolean haveChmod = false;
+
+		String brandedLauncher = null;
+		if (config.getOs().equals("win32")) //$NON-NLS-1$
+			brandedLauncher = launcherName + ".exe"; //$NON-NLS-1$
+		else if (config.getOs().equals("macosx")) //$NON-NLS-1$
+			brandedLauncher = launcherName + ".app/Contents/MacOS/" + launcherName; //$NON-NLS-1$
+		else
+			brandedLauncher = launcherName;
+
+		for (int i = 0; i < data.length; i++) {
+			ITouchpointInstruction instruction = data[i].getInstruction(INSTALL);
+			String[] actions = Utils.getArrayFromString(instruction.getBody(), ";"); //$NON-NLS-1$
+			for (int j = 0; j < actions.length; j++) {
+				if (actions[j].startsWith(CHMOD)) {
+					Map map = parseAction(actions[j]);
+					String newFile = null;
+					String targetFile = (String) map.get(TARGET_FILE);
+					targetFile = targetFile.replace('\\', '/');
+					if (targetFile.equals(brandedLauncher))
+						return data; //data has properly branded chmod, nothing to do
+
+					if ((config.getOs().equals("macosx") && (targetFile.endsWith(".app/Contents/MacOS/launcher") || targetFile.endsWith(".app/Contents/MacOS/eclipse"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							(config.getOs().equals("win32") && (targetFile.equals("launcher.exe") || targetFile.equals("eclipse.exe"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							(targetFile.equals("launcher") || targetFile.equals("eclipse"))) { //$NON-NLS-1$ //$NON-NLS-2$
+						newFile = brandedLauncher;
+					}
+					if (newFile != null) {
+						map.put(TARGET_FILE, newFile);
+						actions[j] = CHMOD + toString(map);
+						haveChmod = true;
+						break;
+					}
+				}
+			}
+			if (haveChmod) {
+				TouchpointInstruction newInstruction = new TouchpointInstruction(toString(actions, ";"), instruction.getImportAttribute()); //$NON-NLS-1$
+				Map instructions = new HashMap(data[i].getInstructions());
+				instructions.put(INSTALL, newInstruction);
+				data[i] = new TouchpointData(instructions);
+				return data;
+			}
+		}
+
+		String body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
+		TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
+		Map instructions = new HashMap();
+		instructions.put(INSTALL, newInstruction);
+		ArrayList newData = new ArrayList(data.length + 1);
+		newData.addAll(Arrays.asList(data));
+		newData.add(new TouchpointData(instructions));
+		return (ITouchpointData[]) newData.toArray(new ITouchpointData[newData.size()]);
+	}
+
+	private String toString(String[] elements, String separator) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < elements.length; i++) {
+			buffer.append(elements[i]);
+			if (i < elements.length - 1)
+				buffer.append(separator);
+		}
+		return buffer.toString();
+	}
+
+	private String toString(Map map) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append('(');
+		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
+			String key = (String) iterator.next();
+			buffer.append(key);
+			buffer.append(':');
+			buffer.append(map.get(key));
+			if (iterator.hasNext())
+				buffer.append(',');
+		}
+		buffer.append(')');
+		return buffer.toString();
+	}
+
+	private Map parseAction(String action) {
+		Map result = new HashMap();
+		int open = action.indexOf('(');
+		int close = action.lastIndexOf(')');
+		String parameterString = action.substring(open + 1, close);
+		String[] parameters = Utils.getArrayFromString(parameterString, ","); //$NON-NLS-1$
+		for (int i = 0; i < parameters.length; i++) {
+			int colon = parameters[i].indexOf(':');
+			result.put(parameters[i].substring(0, colon).trim(), parameters[i].substring(colon + 1).trim());
+		}
+		return result;
 	}
 
 	public void setConfig(String config) {

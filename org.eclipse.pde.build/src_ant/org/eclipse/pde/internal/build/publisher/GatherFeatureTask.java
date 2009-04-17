@@ -14,7 +14,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.apache.tools.ant.types.selectors.FilenameSelector;
-import org.apache.tools.ant.types.selectors.SelectSelector;
+import org.apache.tools.ant.types.selectors.OrSelector;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.Utils;
@@ -112,7 +112,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	protected FeatureRootAdvice createRootAdvice() {
 		FeatureRootAdvice advice = new FeatureRootAdvice();
 
-		Map configMap = Utils.processRootProperties(getBuildProperties(), false);
+		Map configMap = Utils.processRootProperties(getBuildProperties(), true);
 		for (Iterator iterator = configMap.keySet().iterator(); iterator.hasNext();) {
 			String config = (String) iterator.next();
 			Map rootMap = (Map) configMap.get(config);
@@ -171,22 +171,26 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 					}
 				}
 			}
-			advice.addRootfiles(config, computer);
+			if (computer.size() > 0)
+				advice.addRootfiles(config, computer);
 
 			//do permissions, out of the configFileSets, select the files to change permissions on.
 			for (Iterator p = permissionsKeys.iterator(); p.hasNext();) {
 				String permissionKey = (String) p.next();
-				FilenameSelector nameSelector = new FilenameSelector();
-				nameSelector.setProject(getProject());
-				nameSelector.setName((String) rootMap.get(permissionKey));
-				SelectSelector selector = new SelectSelector();
-				selector.setProject(getProject());
-				selector.addFilename(nameSelector);
+				String permissionString = (String) rootMap.get(permissionKey);
+				String[] names = Utils.getArrayFromString(permissionString);
 
+				OrSelector orSelector = new OrSelector();
+				orSelector.setProject(getProject());
+				for (int i = 0; i < names.length; i++) {
+					FilenameSelector nameSelector = new FilenameSelector();
+					nameSelector.setProject(getProject());
+					nameSelector.setName(names[i]);
+					orSelector.addFilename(nameSelector);
+				}
 				for (Iterator s = configFileSets.iterator(); s.hasNext();) {
 					FileSet fileset = (FileSet) ((FileSet) s.next()).clone();
-					fileset.addSelector(selector);
-
+					fileset.addOr(orSelector);
 					String[] found = fileset.getDirectoryScanner().getIncludedFiles();
 					advice.addPermissions(config, permissionKey.substring(Utils.ROOT_PERMISSIONS.length()), found);
 				}

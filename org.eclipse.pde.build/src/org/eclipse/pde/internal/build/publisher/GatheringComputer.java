@@ -63,4 +63,8 @@ public class GatheringComputer implements IPathComputer {
 		Set keys = filesMap.keySet();
 		return (File[]) keys.toArray(new File[keys.size()]);
 	}
+
+	public int size() {
+		return filesMap.size();
+	}
 }

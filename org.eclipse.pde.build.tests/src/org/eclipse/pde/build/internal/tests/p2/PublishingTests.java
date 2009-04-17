@@ -462,6 +462,13 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getId(), "org.example.rcp");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.osgi");
+		
+		//bug 218377
+		iu = getIU(repository, "org.example.rcp_root.win32.win32.x86");
+		assertTouchpoint(iu, "install", "targetFile:branded.exe");
+		
+		iu = getIU(repository, "org.example.rcp_root.carbon.macosx.ppc");
+		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
 
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
