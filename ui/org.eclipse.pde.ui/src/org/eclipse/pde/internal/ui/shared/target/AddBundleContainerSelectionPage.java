@@ -161,7 +161,8 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @return list of wizard nodes
 	 */
 	private List getStandardChoices() {
-		List standardChoices = new ArrayList(3);
+		List standardChoices = new ArrayList(4);
+		// Directory Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_3, Messages.AddBundleContainerSelectionPage_4, PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
@@ -200,10 +201,11 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 				return wizard;
 			}
 		});
+		// Installation/Profile Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_6, Messages.AddBundleContainerSelectionPage_7, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
-					private EditDirectoryContainerPage fPage1;
+					private EditProfileContainerPage fPage1;
 
 					public void addPages() {
 						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
@@ -219,9 +221,9 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 					}
 
 					public boolean performFinish() {
-						IBundleContainer container = ((EditProfileContainerPage) getPages()[0]).getBundleContainer();
+						IBundleContainer container = fPage1.getBundleContainer();
 						if (container != null) {
-							((EditProfileContainerPage) getPages()[0]).storeSettings();
+							fPage1.storeSettings();
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 							if (oldContainers == null) {
 								fTarget.setBundleContainers(new IBundleContainer[] {container});
@@ -239,6 +241,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 				return wizard;
 			}
 		});
+		// Feature Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_9, Messages.AddBundleContainerSelectionPage_10, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
@@ -277,6 +280,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 				return wizard;
 			}
 		});
+		// Repository and Update Site Container
 		standardChoices.add(new AbstractBundleContainerNode("Repository or Update Site", "Download plug-ins from a p2 repository or update site.", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
@@ -299,6 +303,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 					public boolean performFinish() {
 						IBundleContainer container = ((EditIUContainerPage) getPages()[0]).getBundleContainer();
 						if (container != null) {
+							((EditIUContainerPage) getPages()[0]).storeSettings();
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
 							if (oldContainers == null) {
 								fTarget.setBundleContainers(new IBundleContainer[] {container});
