@@ -104,8 +104,6 @@ public class PDERuntimeMessages extends NLS {
 
 	public static String RegistryBrowserLabelProvider_ExportedPackages;
 
-	public static String RegistryBrowserLabelProvider_fragment;
-
 	public static String RegistryBrowserLabelProvider_Fragments;
 
 	public static String RegistryBrowserLabelProvider_ImportedPackages;

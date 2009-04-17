@@ -281,7 +281,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			}
 		});
 		// Repository and Update Site Container
-		standardChoices.add(new AbstractBundleContainerNode("Repository or Update Site", "Download plug-ins from a p2 repository or update site.", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ)) {
+		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_8, Messages.AddBundleContainerSelectionPage_11, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ)) {
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					public void addPages() {

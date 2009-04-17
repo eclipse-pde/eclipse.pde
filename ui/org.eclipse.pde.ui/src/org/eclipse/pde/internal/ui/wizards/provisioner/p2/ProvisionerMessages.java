@@ -21,12 +21,11 @@ public class ProvisionerMessages extends NLS {
 	public static String P2TargetProvisionerWizard_7;
 	public static String P2TargetProvisionerWizard_9;
 	public static String P2TargetProvisionerWizardPage_0;
-	public static String P2TargetProvisionerWizardPage_1;
-	public static String P2TargetProvisionerWizardPage_10;
 	public static String P2TargetProvisionerWizardPage_11;
 	public static String P2TargetProvisionerWizardPage_14;
 	public static String P2TargetProvisionerWizardPage_16;
 	public static String P2TargetProvisionerWizardPage_17;
+	public static String P2TargetProvisionerWizardPage_1;
 	public static String P2TargetProvisionerWizardPage_2;
 	public static String P2TargetProvisionerWizardPage_3;
 	public static String P2TargetProvisionerWizardPage_4;
@@ -35,6 +34,7 @@ public class ProvisionerMessages extends NLS {
 	public static String P2TargetProvisionerWizardPage_7;
 	public static String P2TargetProvisionerWizardPage_8;
 	public static String P2TargetProvisionerWizardPage_9;
+	public static String P2TargetProvisionerWizardPage_10;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ProvisionerMessages.class);

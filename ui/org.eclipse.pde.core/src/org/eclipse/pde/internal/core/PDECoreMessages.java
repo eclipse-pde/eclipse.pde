@@ -66,7 +66,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String SchemaElementReference_refElementMissing;
 
-	public static String SimpleCSIntro_0;
 	public static String TargetPlatform_exceptionThrown;
 
 	public static String FeatureBasedExportOperation_ProblemDuringExport;
@@ -225,7 +224,6 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_entiresMustRefDirs;
 	public static String BuildErrorReporter_dirsMustEndSlash;
 	public static String BuildErrorReporter_classpathEntryMissing1;
-	public static String BuildErrorReporter_defaultEncodingMissing;
 
 	public static String LoadTargetOperation_mainTaskName;
 

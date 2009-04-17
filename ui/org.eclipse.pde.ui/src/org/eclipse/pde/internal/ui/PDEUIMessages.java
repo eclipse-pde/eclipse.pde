@@ -50,12 +50,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String DefinitionPage_1;
 
-	public static String DependenciesView_showStateAction_description;
-
-	public static String DependenciesView_showStateAction_label;
-
-	public static String DependenciesView_showStateAction_toolTip;
-
 	public static String DependenciesViewPage_showFragments;
 
 	public static String DependenciesViewPage_showOptional;
@@ -327,14 +321,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SplashTemplatesSection_typeName;
 
-	public static String StateViewPage_focusActionDescription;
-
-	public static String StateViewPage_focusActionToolTip;
-
-	public static String StateViewPage_focusOnSelection;
-
-	public static String StateViewPage_focusOnTitle;
-
 	public static String StateViewPage_importedPackages;
 
 	public static String StateViewPage_openItem;
@@ -348,8 +334,6 @@ public class PDEUIMessages extends NLS {
 	public static String StateViewPage_suppliedBy;
 
 	public static String StateViewPage_suppliedByJRE;
-
-	public static String StateViewPage_title;
 
 	public static String TargetContentPage_title;
 
@@ -366,8 +350,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetCreationPage_5;
 
 	public static String TargetCreationPage_6;
-
-	public static String TargetCreationPage_7;
 
 	public static String UpdateActivationResolution_bundleActivationPolicy_desc;
 	public static String UpdateActivationResolution_bundleActivationPolicy_label;
@@ -435,8 +417,6 @@ public class PDEUIMessages extends NLS {
 	public static String OSGiFrameworkPreferencePage_default;
 
 	public static String OSGiFrameworkPreferencePage_installed;
-
-	public static String OSGiFrameworkPreferencePage_setAs;
 
 	public static String PDEFormEditor_errorMessageSaveNotCompleted;
 
@@ -1078,8 +1058,6 @@ public class PDEUIMessages extends NLS {
 	public static String ContentPage_noname;
 	public static String ContentPage_nopid;
 	public static String ContentPage_pluginNotFound;
-	public static String ContentPage_fragment;
-	public static String ContentPage_plugin;
 	public static String ContentPage_illegalCharactersInID;
 	public static String WizardListSelectionPage_title;
 	public static String WizardListSelectionPage_desc;
@@ -1096,7 +1074,6 @@ public class PDEUIMessages extends NLS {
 	public static String NewLibraryPluginCreationPage_pversion;
 	public static String NewLibraryPluginCreationPage_pname;
 	public static String NewLibraryPluginCreationPage_pprovider;
-	public static String NewLibraryPluginCreationPage_plugin;
 	public static String NewLibraryPluginCreationPage_noid;
 	public static String NewLibraryPluginCreationPage_invalidId;
 	public static String NewLibraryPluginCreationPage_noversion;
@@ -1856,7 +1833,6 @@ public class PDEUIMessages extends NLS {
 	public static String Product_PluginSection_add;
 	public static String Product_PluginSection_title;
 	public static String Product_FeatureSection_desc;
-	public static String ProductInfoSection_appLabel;
 	public static String ProductExportWizardPage_desc;
 	public static String ProductExportWizardPage_root;
 	public static String ProductExportWizardPage_sync;
@@ -2356,8 +2332,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginImportWizard_runningConfigsTitle;
 
-	public static String PluginImportWizardDetailedPage_Show_source_plugins;
-
 	public static String PluginImportWizardFirstPage_0;
 
 	public static String PluginImportWizardFirstPage_1;
@@ -2536,21 +2510,13 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetDefinitionContentPage_2;
 
-	public static String TargetDefinitionContentPage_3;
-
 	public static String TargetDefinitionContentPage_4;
-
-	public static String TargetDefinitionContentPage_5;
 
 	public static String TargetDefinitionContentPage_6;
 
 	public static String TargetDefinitionContentPage_7;
 
 	public static String TargetDefinitionContentPage_8;
-
-	public static String TargetDefinitionEnvironmentPage_1;
-
-	public static String TargetDefinitionEnvironmentPage_2;
 
 	public static String TargetDefinitionEnvironmentPage_3;
 
@@ -2677,14 +2643,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ProductExportWizardPage_exportOptionsGroup;
 
-	public static String TargetProfileWizardPage_groupTitle;
-
-	public static String TargetProfileWizardPage_blankTarget;
-
-	public static String TargetProfileWizardPage_currentPlatform;
-
-	public static String TargetProfileWizardPage_existingTarget;
-
 	public static String OpenTargetProfileAction_title;
 
 	public static String OpenTargetProfileAction_missingProfile;
@@ -2710,8 +2668,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetProfileWindow_program;
 
 	public static String TargetProfileWindow_vm;
-
-	public static String TargetProfileWizardPage_viewProfile;
 
 	public static String TargetPluginsTab_groupPlugins;
 
