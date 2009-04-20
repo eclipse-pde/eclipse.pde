@@ -1542,14 +1542,16 @@
       <viewer
             class="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"
             extensions="MF"
-            id="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
+            id="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"
+            label="%structureMergeViewers.manifest.label"/>
       <contentTypeBinding
             contentTypeId="org.eclipse.pde.bundleManifest"
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
       <viewer
             class="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator"
             extensions="PLUGIN"
-            id="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator" />
+            id="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator"
+            label="%structureMergeViewers.plugin.label"/>
       <contentTypeBinding
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginStructureViewerCreator"
             contentTypeId="org.eclipse.pde.pluginManifest" />
@@ -1562,14 +1564,16 @@
       <viewer
             class="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
             extensions="MF,MF2"
-            id="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"/>
+            id="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
+            label="%contentMergeViewers.manifest.label"/>
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
             contentTypeId="org.eclipse.pde.bundleManifest"/>
       <viewer
             class="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"
             extensions="PLUGIN,PLUGIN2"
-            id="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"/>
+            id="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"
+            label="%contentMergeViewers.plugin.label"/>
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.PluginContentMergeViewerCreator"
             contentTypeId="org.eclipse.pde.pluginManifest" />
