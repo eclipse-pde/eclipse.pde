@@ -723,6 +723,8 @@ public class TargetContentsGroup extends FilteredTree {
 					bundles = new ArrayList();
 					bundles.add(currentBundle);
 					fFileBundles.put(parentPath, bundles);
+					// Some paths may have nothing checked, but we still need a set stored in the map
+					fFileChecked.put(parentPath, new HashSet());
 				} else {
 					bundles.add(currentBundle);
 				}
