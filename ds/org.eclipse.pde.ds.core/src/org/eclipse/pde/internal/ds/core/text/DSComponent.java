@@ -329,7 +329,8 @@ public class DSComponent extends DSObject implements IDSComponent {
 				IDSConstants.ATTRIBUTE_COMPONENT_NAME,
 				IDSConstants.ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY,
 				IDSConstants.ATTRIBUTE_COMPONENT_ACTIVATE,
-				IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE };
+				IDSConstants.ATTRIBUTE_COMPONENT_DEACTIVATE,
+				IDSConstants.ATTRIBUTE_COMPONENT_MODIFIED };
 	}
 
 	public String getConfigurationPolicy() {
@@ -354,6 +355,14 @@ public class DSComponent extends DSObject implements IDSComponent {
 
 	public void setDeactivateMethod(String name) {
 		setXMLAttribute(ATTRIBUTE_COMPONENT_DEACTIVATE, name);
+	}
+
+	public String getModifiedMethod() {
+		return getXMLAttributeValue(ATTRIBUTE_COMPONENT_MODIFIED);
+	}
+
+	public void setModifiedeMethod(String name) {
+		setXMLAttribute(ATTRIBUTE_COMPONENT_MODIFIED, name);
 	}
 
 }

@@ -30,6 +30,8 @@ public class Messages extends NLS {
 	public static String DSComponentDetails_activateTooltip;
 	public static String DSComponentDetails_deactivateEntry;
 	public static String DSComponentDetails_deactivateTooltip;
+	public static String DSComponentDetails_modifiedEntry;
+	public static String DSComponentDetails_modifiedTooltip;
 	public static String DSComponentDetails_factoryEntry;
 	public static String DSComponentDetails_configurationPolicy;
 	public static String DSComponentDetails_enabledLabel;

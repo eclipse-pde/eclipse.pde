@@ -56,6 +56,7 @@ public class DSComponentSection extends PDESection {
 	private FormEntry fNameEntry;
 	private FormEntry fActivateEntry;
 	private FormEntry fDeactivateEntry;
+	private FormEntry fModifiedEntry;
 	private IDSModel fModel;
 
 	public DSComponentSection(PDEFormPage page, Composite parent) {
@@ -98,6 +99,12 @@ public class DSComponentSection extends PDESection {
 				Messages.DSComponentDetails_deactivateEntry, SWT.NONE);
 		fDeactivateEntry.getLabel().setToolTipText(
 				Messages.DSComponentDetails_deactivateTooltip);
+		
+		// Attribute: modified
+		fModifiedEntry = new FormEntry(client, toolkit,
+				Messages.DSComponentDetails_deactivateEntry, SWT.NONE);
+		fModifiedEntry.getLabel().setToolTipText(
+				Messages.DSComponentDetails_deactivateTooltip);
 
 		setListeners();
 		updateUIFields();
@@ -122,6 +129,7 @@ public class DSComponentSection extends PDESection {
 		fNameEntry.commit();
 		fActivateEntry.commit();
 		fDeactivateEntry.commit();
+		fModifiedEntry.commit();
 		super.commit(onSave);
 	}
 
@@ -170,8 +178,14 @@ public class DSComponentSection extends PDESection {
 				fDeactivateEntry.setValue(fComponent.getDeactivateMethod(),
 						true);
 			}
-
 			fDeactivateEntry.setEditable(isEditable());
+
+			if (fComponent.getModifiedMethod() == null) {
+				fModifiedEntry.setValue("", true); //$NON-NLS-1$
+			} else {
+				fModifiedEntry.setValue(fComponent.getModifiedMethod(), true);
+			}
+			fModifiedEntry.setEditable(isEditable());
 		}
 
 		// Ensure data object is defined
@@ -215,6 +229,15 @@ public class DSComponentSection extends PDESection {
 					return;
 				}
 				fComponent.setDeactivateMethod(fDeactivateEntry.getValue());
+			}
+		});
+		fModifiedEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				// Ensure data object is defined
+				if (fComponent == null) {
+					return;
+				}
+				fComponent.setModifiedeMethod(fModifiedEntry.getValue());
 			}
 		});
 

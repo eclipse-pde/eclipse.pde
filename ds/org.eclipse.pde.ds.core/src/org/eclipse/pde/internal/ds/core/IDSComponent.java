@@ -110,6 +110,21 @@ public interface IDSComponent extends IDSObject {
 	public String getDeactivateMethod();
 
 	/**
+	 * Sets the value of the modified method signature name
+	 * 
+	 * @param name
+	 *            String value of the modified method signature name
+	 */
+	public void setModifiedeMethod(String name);
+
+	/**
+	 * Returns the value of the modified method signature name
+	 * 
+	 * @return String value of the modified method signature name
+	 */
+	public String getModifiedMethod();
+
+	/**
 	 * Sets the value of the attribute immediate
 	 * 
 	 * @param bool

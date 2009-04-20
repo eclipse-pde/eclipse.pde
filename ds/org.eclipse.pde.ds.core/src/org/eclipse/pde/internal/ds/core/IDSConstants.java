@@ -38,6 +38,7 @@ public interface IDSConstants {
 	public static final String ATTRIBUTE_COMPONENT_CONFIGURATION_POLICY = "configuration-policy"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_ACTIVATE = "activate"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMPONENT_DEACTIVATE = "deactivate"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_COMPONENT_MODIFIED = "modified"; //$NON-NLS-1$
 	
 	//Implementation Attributes
 	public static final String ATTRIBUTE_IMPLEMENTATION_CLASS = "class"; //$NON-NLS-1$
