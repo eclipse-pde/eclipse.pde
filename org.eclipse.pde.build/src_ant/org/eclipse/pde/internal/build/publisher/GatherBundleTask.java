@@ -175,7 +175,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 					continue;
 				}
 
-				if (sourceMap.containsKey(name)) {
+				if (sourceMap.containsKey(name) && entries[i].getType() == CompiledEntry.FOLDER) {
 					Set folders = (Set) sourceMap.get(name);
 					processOutputFolders(folders, name, computer);
 				} else {

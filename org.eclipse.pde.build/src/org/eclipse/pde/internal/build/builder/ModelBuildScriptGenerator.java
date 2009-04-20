@@ -1295,9 +1295,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		FileSet[] workspaceFiles = null;
 		String outputKey = name.equals(EXPANDED_DOT) ? DOT : name;
 		if (workspaceOutputFolders != null && workspaceOutputFolders.containsKey(outputKey)) {
-			// this is a no-op when using p2Gathering, GatherBundleTask will collect the class files from where they are.
-			// unless we are using custom callbacks, then we need to gather everything as before
-			if (!BuildDirector.p2Gathering || customBuildCallbacks != null) {
+			// this is a no-op when using p2Gathering on folders GatherBundleTask will collect the class files from where they are.
+			// unless the class files are in a nested jar, or we are using custom callbacks, then we need to gather everything as before
+			boolean isFolder = (entry.getType() == CompiledEntry.FOLDER);
+			if (!BuildDirector.p2Gathering || !isFolder || customBuildCallbacks != null) {
 				Set paths = (Set) workspaceOutputFolders.get(outputKey);
 				workspaceFiles = new FileSet[paths.size()];
 
@@ -1308,7 +1309,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				}
 
 				//if entry is a folder, copy over the class files, otherwise they will be jarred from where they are.
-				if (entry.getType() == CompiledEntry.FOLDER) {
+				if (isFolder) {
 					script.printCopyTask(null, destdir, workspaceFiles, true, false);
 				}
 			}
