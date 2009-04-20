@@ -1223,19 +1223,61 @@ public class PublishingTests extends P2TestCase {
 		Utils.writeBuffer(foo.getFile("src2/foob.java"), new StringBuffer("public class foob { int i; }"));
 
 		Utils.generateFeature(buildFolder, "f", null, new String[] {"foo"});
-		
+
 		buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "f");
 		buildProperties.put("p2.gathering", "true");
 		buildProperties.put("filteredDependencyCheck", "true");
 		buildProperties.put("archivesFormat", "group,group,group-folder");
 		Utils.storeBuildProperties(buildFolder, buildProperties);
-		
+
 		runBuild(buildFolder);
-		
+
 		Set entries = new HashSet();
 		entries.add("src.jar");
 		entries.add("foob.class");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/foo_1.0.0.jar", entries);
+	}
+
+	public void testBug268498() throws Exception {
+		IFolder buildFolder = newTest("268498");
+		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		IFile product = rcp.getFile("rcp.product");
+		StringBuffer extra = new StringBuffer();
+		extra.append("<launcherArgs> 																				\n");
+		extra.append("   <programArgsMac>-showsplash org.eclipse.platform</programArgsMac>							\n");
+		extra.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>	\n");
+		extra.append(" </launcherArgs>																				\n");
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi"}, false, extra);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("configs", "macosx, cocoa, x86 & macosx, carbon, ppc");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IFile ini = buildFolder.getFile("eclipse.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
+
+		try {
+			assertLogContainsLines(ini, new String[] {"-XstartOnFirstThread", "-XstartOnFirstThread"});
+			fail("Duplicate");
+		} catch (Error e) {
+			assertNull(e.getMessage());
+		}
+		try {
+			assertLogContainsLines(ini, new String[] {"-showSplash", "org.eclipse.platform", "-showSplash", "org.eclipse.platform"});
+			fail("Duplicate");
+		} catch (Error e) {
+			assertNull(e.getMessage());
+		}
 	}
 }
