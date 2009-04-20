@@ -129,10 +129,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	private final static String DATA_KEY_MOVED_LOCATION = "movedLocation"; //$NON-NLS-1$
 
 	// Table viewer
-	private TableViewer fTableViewer;
+	private CheckboxTableViewer fTableViewer;
 
 	// Buttons
-	private Button fActivateButton;
 	private Button fReloadButton;
 	private Button fAddButton;
 	private Button fEditButton;
@@ -195,10 +194,21 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		Composite tableComposite = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH, 0, 0);
 		SWTFactory.createLabel(tableComposite, PDEUIMessages.TargetPlatformPreferencePage2_2, 2);
 
-		fTableViewer = new TableViewer(tableComposite, SWT.MULTI | SWT.BORDER);
+		fTableViewer = CheckboxTableViewer.newCheckList(tableComposite, SWT.MULTI | SWT.BORDER);
 		fTableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer.setLabelProvider(new TargetLabelProvider());
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				if (event.getChecked()) {
+					fTableViewer.setCheckedElements(new Object[] {event.getElement()});
+					handleActivate();
+				} else {
+					handleActivate();
+				}
+
+			}
+		});
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
@@ -246,13 +256,6 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		});
 
 		Composite buttonComposite = SWTFactory.createComposite(tableComposite, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
-
-		fActivateButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_10, null);
-		fActivateButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleActivate();
-			}
-		});
 
 		fReloadButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_16, null);
 		fReloadButton.addSelectionListener(new SelectionAdapter() {
@@ -324,6 +327,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 					ITargetDefinition target = (ITargetDefinition) iterator.next();
 					if (target.getHandle().equals(fPrevious)) {
 						fActiveTarget = target;
+						fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
 						fTableViewer.refresh(target);
 						break;
 					}
@@ -353,9 +357,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	 * Validates the selected definition and sets it as the active platform
 	 */
 	private void handleActivate() {
-		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
-		if (!selection.isEmpty()) {
-			fActiveTarget = (ITargetDefinition) selection.getFirstElement();
+		Object[] checked = fTableViewer.getCheckedElements();
+		if (checked.length > 0) {
+			fActiveTarget = (ITargetDefinition) checked[0];
 			setMessage(null);
 			if (fWarningComp != null) {
 				Composite parent = fWarningComp.getParent();
@@ -365,6 +369,10 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			}
 			fTableViewer.refresh(true);
 			fTableViewer.setSelection(new StructuredSelection(fActiveTarget));
+		} else {
+			setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
+			fActiveTarget = null;
+			fTableViewer.refresh(true);
 		}
 	}
 
@@ -544,11 +552,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		//fDuplicateButton.setEnabled(size == 1);
 		if (selection.getFirstElement() != null) {
 			fMoveButton.setEnabled(((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
-			fActivateButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) != fActiveTarget);
 			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious));
 		} else {
 			fMoveButton.setEnabled(false);
-			fActivateButton.setEnabled(false);
 			fReloadButton.setEnabled(false);
 		}
 	}
