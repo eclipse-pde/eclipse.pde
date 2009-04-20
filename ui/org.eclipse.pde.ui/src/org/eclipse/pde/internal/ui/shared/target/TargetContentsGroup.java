@@ -180,14 +180,14 @@ public class TargetContentsGroup extends FilteredTree {
 
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTree = new CheckboxTreeViewer(tree)/* {
-													public void refresh(boolean updateLabels) {
-														super.refresh(updateLabels);
-														if (updateLabels) {
-															// We want to update the labels and buttons as users change the filtering
-															updateButtons();
-														}
-													}
-												}*/;
+															public void refresh(boolean updateLabels) {
+																super.refresh(updateLabels);
+																if (updateLabels) {
+																	// We want to update the labels and buttons as users change the filtering
+																	updateButtons();
+																}
+															}
+														}*/;
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new TreeContentProvider());
 		fTree.setLabelProvider(new BundleContainerLabelProvider());
@@ -231,10 +231,14 @@ public class TargetContentsGroup extends FilteredTree {
 	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateFilterText(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Text doCreateFilterText(Composite parent) {
+		// Overridden so the text gets create using the toolkit if we have one
+		Text parentText = super.doCreateFilterText(parent);
 		if (fToolkit != null) {
-			return fToolkit.createText(parent, null);
+			int style = parentText.getStyle();
+			parentText.dispose();
+			return fToolkit.createText(parent, null, style);
 		}
-		return new Text(parent, SWT.SINGLE);
+		return parentText;
 	}
 
 	private void createButtons(Composite parent) {
