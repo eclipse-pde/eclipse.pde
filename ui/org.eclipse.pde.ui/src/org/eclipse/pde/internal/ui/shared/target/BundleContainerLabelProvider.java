@@ -29,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Label provider for the a tree containing bundle containers
  */
-class BundleContainerLabelProvider extends BundleInfoLabelProvider {
+public class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.BundleInfoLabelProvider#getText(java.lang.Object)

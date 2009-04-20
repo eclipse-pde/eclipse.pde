@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.shared.target.BundleContainerLabelProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.target.*;
@@ -39,6 +40,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
+/**
+ * Preference page for managing all known target definitions and setting one as the active target platform.
+ *
+ */
 public class TargetPlatformPreferencePage2 extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private class TargetLabelProvider extends StyledCellLabelProvider {
@@ -139,6 +144,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 	private Button fRemoveButton;
 	private Button fMoveButton;
 
+	// Text displaying additional information
+	private TableViewer fDetails;
+
 	/**
 	 * Initial collection of targets (handles are realized into definitions as working copies)
 	 */
@@ -195,7 +203,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		SWTFactory.createLabel(tableComposite, PDEUIMessages.TargetPlatformPreferencePage2_2, 2);
 
 		fTableViewer = CheckboxTableViewer.newCheckList(tableComposite, SWT.MULTI | SWT.BORDER);
-		fTableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 300;
+		fTableViewer.getControl().setLayoutData(gd);
 		fTableViewer.setLabelProvider(new TargetLabelProvider());
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
@@ -212,6 +222,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
+				updateDetails();
 			}
 		});
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -319,6 +330,14 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		updateButtons();
 
+		Group group = SWTFactory.createGroup(comp, PDEUIMessages.TargetPlatformPreferencePage2_25, 1, 1, GridData.FILL_HORIZONTAL);
+		fDetails = new TableViewer(group);
+		fDetails.setLabelProvider(new BundleContainerLabelProvider());
+		fDetails.setContentProvider(new ArrayContentProvider());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 50;
+		fDetails.getControl().setLayoutData(gd);
+
 		if (service != null) {
 			try {
 				fPrevious = service.getWorkspaceTargetHandle();
@@ -336,7 +355,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 					setMessage(PDEUIMessages.TargetPlatformPreferencePage2_23, IStatus.WARNING);
 					fWarningComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 					Label warningImage = SWTFactory.createLabel(fWarningComp, "", 1); //$NON-NLS-1$
-					GridData gd = new GridData();
+					gd = new GridData();
 					gd.verticalAlignment = SWT.TOP;
 					warningImage.setLayoutData(gd);
 					warningImage.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
@@ -556,6 +575,18 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		} else {
 			fMoveButton.setEnabled(false);
 			fReloadButton.setEnabled(false);
+		}
+	}
+
+	/**
+	 * Updates the details text box with information about the currently selected target 
+	 */
+	protected void updateDetails() {
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		if (selection.size() == 1) {
+			fDetails.setInput(((ITargetDefinition) selection.getFirstElement()).getBundleContainers());
+		} else {
+			fDetails.setInput(null);
 		}
 	}
 
