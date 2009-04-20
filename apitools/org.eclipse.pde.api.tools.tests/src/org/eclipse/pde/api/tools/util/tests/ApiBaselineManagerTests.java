@@ -27,7 +27,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -36,6 +38,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -49,6 +52,10 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.TypeNameRequestor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.BadLocationException;
@@ -278,38 +285,41 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		try {
 			NullProgressMonitor monitor = new NullProgressMonitor();
 			// delete any pre-existing project
-	        IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME);
-	        if (pro.exists()) {
-	        	JavaModelEventWaiter waiter = null;
-	        	if(!pro.isAccessible()) {
-	        		waiter = new JavaModelEventWaiter("", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT, IJavaElement.JAVA_MODEL);
-	        	}
-	        	else {
-	        		waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.REMOVED, 0, IJavaElement.JAVA_PROJECT);
-	        	}
-	            pro.delete(true, true, monitor);
-	            Object obj = waiter.waitForEvent();
-	            assertNotNull("the project delete event did not arrive", obj);
-	        }
-	        JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.ADDED, 0, IJavaElement.JAVA_PROJECT);
-	        // create project and import source
-	        project = ProjectUtils.createPluginProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
-	        Object obj = waiter.waitForEvent();
-	        assertNotNull("the added event was not received", obj);
-	        assertNotNull("The java project must have been created", project);
-	        IPackageFragmentRoot root = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
-	        assertNotNull("the src root must have been created", root);
-	        IPackageFragment fragment = root.createPackageFragment("a.b.c", true, monitor);
+			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME);
+			if (pro.exists()) {
+				waitForManualRefresh();
+				waitForAutoBuild();
+				performDummySearch();
+				JavaModelEventWaiter waiter = null;
+				if(!pro.isAccessible()) {
+					waiter = new JavaModelEventWaiter("", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT, IJavaElement.JAVA_MODEL);
+				}
+				else {
+					waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.REMOVED, 0, IJavaElement.JAVA_PROJECT);
+				}
+				pro.delete(true, true, monitor);
+				Object obj = waiter.waitForEvent();
+				assertNotNull("the project delete event did not arrive", obj);
+			}
+			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.ADDED, 0, IJavaElement.JAVA_PROJECT);
+			// create project and import source
+			project = ProjectUtils.createPluginProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
+			Object obj = waiter.waitForEvent();
+			assertNotNull("the added event was not received", obj);
+			assertNotNull("The java project must have been created", project);
+			IPackageFragmentRoot root = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
+			assertNotNull("the src root must have been created", root);
+			IPackageFragment fragment = root.createPackageFragment("a.b.c", true, monitor);
 			assertNotNull("the package fragment a.b.c cannot be null", fragment);
-	        
-	        // add rt.jar
-	        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-	        assertNotNull("No default JRE", vm);
-	        ProjectUtils.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
-	        IApiBaseline profile = getWorkspaceBaseline();
-	        assertNotNull("the workspace profile cannot be null", profile);
-	        IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-	        assertNotNull("the test project api component must exist in the workspace profile", component);
+
+			// add rt.jar
+			IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+			assertNotNull("No default JRE", vm);
+			ProjectUtils.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
+			IApiBaseline profile = getWorkspaceBaseline();
+			assertNotNull("the workspace profile cannot be null", profile);
+			IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNotNull("the test project api component must exist in the workspace profile", component);
 		}
 		catch(Exception e) {
 			System.err.println("assertProject failed");
@@ -772,10 +782,11 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws CoreException 
 	 */
 	public void testWPUpdateLibraryAddedToClasspath() throws InvocationTargetException, IOException, CoreException {
+		IApiComponent component = null;
 		try {
 			IJavaProject project = assertProject();
 			assertNotNull("The testing project must exist", project);
-			IApiComponent component = getWorkspaceBaseline().getApiComponent(project.getElementName());
+			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getApiTypeContainers().length;
 			
@@ -783,26 +794,34 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
 			assertNotNull("The new library path should not be null", folder);
 			
+			component.close();
+
 			// re-retrieve updated component
 			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertTrue("there must be more containers after the addition", before < component.getApiTypeContainers().length);
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			fail(e.getMessage());
+		} finally {
+			waitForManualRefresh();
+			performDummySearch();
+			if (component != null) {
+				component.close();
+			}
 		}
 	}
 	
 	/**
 	 * Tests removing a library from the classpath of a project
 	 */
-	public void testWPUpdateLibraryRemovedFromClasspath() {
+	public void testWPUpdateLibraryRemovedFromClasspath() throws CoreException {
+		IApiComponent component = null;
 		try {
 			IJavaProject project = assertProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add to classpath
 			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
-			IApiComponent component = getWorkspaceBaseline().getApiComponent(project.getElementName());
+			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getApiTypeContainers().length;
 			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
@@ -825,12 +844,18 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for the manifest modification was not received", object);
 			
+			component.close();
 			// retrieve updated component
 			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertTrue("there must be less containers after the removal", before > component.getApiTypeContainers().length);
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			fail(e.getMessage());
+		} finally {
+			waitForManualRefresh();
+			performDummySearch();
+			if (component != null) {
+				component.close();
+			}
 		}
 	}
 	
@@ -1066,5 +1091,34 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		newmodel.save();
 		Object object = waiter.waitForEvent();
 		assertNotNull("the changed event for the exported package change was not received", object);
+	}
+	public static void waitForManualRefresh() {
+		boolean wasInterrupted = false;
+		do {
+			try {
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
+				wasInterrupted = false;
+			} catch (OperationCanceledException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				wasInterrupted = true;
+			}
+		} while (wasInterrupted);
+	}
+
+	public static void performDummySearch() throws JavaModelException {
+		new SearchEngine().searchAllTypeNames(
+				null,
+				SearchPattern.R_EXACT_MATCH,
+				"XXXXXXXXX".toCharArray(), // make sure we search a concrete name. This is faster according to Kent
+				SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
+				IJavaSearchConstants.CLASS,
+				SearchEngine.createJavaSearchScope(new IJavaElement[0]),
+				new Requestor(),
+				IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+				null);
+	}
+
+	private static class Requestor extends TypeNameRequestor{
 	}
 }
