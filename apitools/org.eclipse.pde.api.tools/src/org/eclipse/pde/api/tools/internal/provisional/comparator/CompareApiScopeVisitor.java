@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.provisional.comparator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
@@ -20,6 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * ApiScope visitor implementation to run the comparison on all elements of the scope.
@@ -31,72 +33,105 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	int visibilityModifiers;
 	boolean force;
 	boolean containsErrors = false;
+	IProgressMonitor monitor;
 
-	public CompareApiScopeVisitor(final Set deltas, final IApiBaseline baseline, final boolean force, final int visibilityModifiers) {
+	public CompareApiScopeVisitor(
+			final Set deltas,
+			final IApiBaseline baseline,
+			final boolean force,
+			final int visibilityModifiers,
+			final IProgressMonitor monitor) {
 		this.deltas = deltas;
 		this.referenceBaseline = baseline;
 		this.visibilityModifiers = visibilityModifiers;
 		this.force = force;
+		this.monitor = monitor;
 	}
 	
 	public boolean visit(IApiBaseline baseline) throws CoreException {
-		IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers, this.force);
-		if (delta != null) {
-			delta.accept(new DeltaVisitor() {
-				public void endVisit(IDelta localDelta) {
-					if (localDelta.getChildren().length == 0) {
-						CompareApiScopeVisitor.this.deltas.add(localDelta);
+		try {
+			Util.checkCanceled(this.monitor);
+			IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers, this.force);
+			if (delta != null) {
+				delta.accept(new DeltaVisitor() {
+					public void endVisit(IDelta localDelta) {
+						if (localDelta.getChildren().length == 0) {
+							CompareApiScopeVisitor.this.deltas.add(localDelta);
+						}
 					}
-				}
-			});
-		} else {
-			this.containsErrors = true;
+				});
+			} else {
+				this.containsErrors = true;
+			}
+			return false;
+		} finally {
+			this.monitor.worked(1);
 		}
-		return false;
 	}
 
 	public boolean visit(IApiTypeContainer container) throws CoreException {
-		container.accept(new ApiTypeContainerVisitor() {
-			public void visit(String packageName, IApiTypeRoot typeroot) {
-				try {
-					CompareApiScopeVisitor.this.visit(typeroot);
-				} catch (CoreException e) {
-					ApiPlugin.log(e);
-				}
-			}
-		});
-		return false;
-	}
-
-	public boolean visit(IApiComponent component) throws CoreException {
-		if (component.getErrors() != null) {
-			this.containsErrors = true;
-			return false;
-		}
-		IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(component.getId());
-		if (referenceComponent.getErrors() != null) {
-			this.containsErrors = true;
-			return false;
-		}
-		if (component.isSourceComponent() || component.isSystemComponent()) {
-			return false;
-		}
-		IDelta delta = ApiComparator.compare(referenceComponent, component, this.visibilityModifiers);
-		if (delta != null) {
-			delta.accept(new DeltaVisitor() {
-				public void endVisit(IDelta localDelta) {
-					if (localDelta.getChildren().length == 0) {
-						CompareApiScopeVisitor.this.deltas.add(localDelta);
+		try {
+			Util.checkCanceled(this.monitor);
+			container.accept(new ApiTypeContainerVisitor() {
+				public void visit(String packageName, IApiTypeRoot typeroot) {
+					try {
+						Util.checkCanceled(CompareApiScopeVisitor.this.monitor);
+						compareApiTypeRoot(typeroot);
+					} catch (CoreException e) {
+						ApiPlugin.log(e);
 					}
 				}
 			});
-		} else {
-			this.containsErrors = true;
+			return false;
+		} finally {
+			this.monitor.worked(1);
 		}
-		return false;
+	}
+
+	public boolean visit(IApiComponent component) throws CoreException {
+		try {
+			Util.checkCanceled(this.monitor);
+			if (component.getErrors() != null) {
+				this.containsErrors = true;
+				return false;
+			}
+			IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(component.getId());
+			if (referenceComponent != null && referenceComponent.getErrors() != null) {
+				this.containsErrors = true;
+				return false;
+			}
+			if (component.isSourceComponent() || component.isSystemComponent()) {
+				return false;
+			}
+			Util.checkCanceled(this.monitor);
+			IDelta delta = ApiComparator.compare(referenceComponent, component, this.visibilityModifiers);
+			if (delta != null) {
+				delta.accept(new DeltaVisitor() {
+					public void endVisit(IDelta localDelta) {
+						if (localDelta.getChildren().length == 0) {
+							CompareApiScopeVisitor.this.deltas.add(localDelta);
+						}
+					}
+				});
+			} else {
+				this.containsErrors = true;
+			}
+			return false;
+		} finally {
+			this.monitor.worked(1);
+		}
 	}
 	
 	public void visit(IApiTypeRoot root) throws CoreException {
+		try {
+			Util.checkCanceled(this.monitor);
+			compareApiTypeRoot(root);
+		} finally {
+			this.monitor.worked(1);
+		}
+	}
+
+	void compareApiTypeRoot(IApiTypeRoot root) throws CoreException {
 		IApiComponent apiComponent = root.getApiComponent();
 		if (apiComponent == null || apiComponent.isSystemComponent() || apiComponent.isSourceComponent()) {
 			return;

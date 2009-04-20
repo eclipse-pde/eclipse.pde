@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
@@ -355,9 +357,6 @@ public class ApiComparator {
 			final int visibilityModifiers) {
 		try {
 		
-			if (referenceBaseline == null || baseline == null) {
-				throw new IllegalArgumentException("The baselines cannot be null"); //$NON-NLS-1$
-			}
 			if (referenceComponent == null) {
 				if (component2 == null) {
 					throw new IllegalArgumentException("Both components cannot be null"); //$NON-NLS-1$
@@ -380,6 +379,9 @@ public class ApiComparator {
 						null,
 						referenceComponentId,
 						Util.getComponentVersionsId(referenceComponent));
+			}
+			if (referenceBaseline == null || baseline == null) {
+				throw new IllegalArgumentException("The baselines cannot be null"); //$NON-NLS-1$
 			}
 			String referenceComponentId = referenceComponent.getId();
 			final Delta globalDelta = new Delta();
@@ -443,7 +445,7 @@ public class ApiComparator {
 			final int visibilityModifiers) {
 
 		try {
-			return compare(referenceComponent, component, referenceComponent.getBaseline(), component.getBaseline(), visibilityModifiers);
+			return compare(referenceComponent, component, referenceComponent == null ? null : referenceComponent.getBaseline(), component.getBaseline(), visibilityModifiers);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -665,6 +667,7 @@ public class ApiComparator {
 	 * @param baseline the given API baseline to compare with
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 * @param force a flag to force the comparison of nested API components with the same versions 
+	 * @param monitor the given progress monitor to report progress
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @throws IllegalArgumentException if one of the two baselines is null
@@ -674,12 +677,19 @@ public class ApiComparator {
 			final IApiScope scope,
 			final IApiBaseline baseline,
 			final int visibilityModifiers,
-			final boolean force) throws CoreException {
+			final boolean force,
+			final IProgressMonitor monitor) throws CoreException {
 		if (scope == null || baseline == null) {
 			throw new IllegalArgumentException("None of the scope or the baseline must be null"); //$NON-NLS-1$
 		}
+		IProgressMonitor localMonitor = null;
+		if (monitor == null) {
+			localMonitor = new NullProgressMonitor();
+		} else {
+			localMonitor = monitor;
+		}
 		final Set deltas = new HashSet();
-		final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers);
+		final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, localMonitor);
 		scope.accept(visitor);
 		if (visitor.containsError()) {
 			return null;
@@ -710,6 +720,28 @@ public class ApiComparator {
 			});
 		}
 		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
+	}
+
+	/**
+	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
+	 * Nested API components with the same versions are not compared.
+	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, force, null);</p>
+	 * 
+	 * @param scope the given scope for the comparison
+	 * @param baseline the given API baseline to compare with
+	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
+	 * @param force a flag to force the comparison of nested API components with the same versions 
+	 *
+	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
+	 * @throws IllegalArgumentException if one of the two baselines is null
+	 *         CoreException if one of the element in the scope cannot be visited
+	 */
+	public static IDelta compare(
+			final IApiScope scope,
+			final IApiBaseline baseline,
+			final int visibilityModifiers,
+			final boolean force) throws CoreException {
+		return compare(scope, baseline, visibilityModifiers, force, null);
 	}
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API baselines. 

@@ -114,6 +114,26 @@
                value="org.eclipse.pde.api.tools.apiAnalysisNature">
          </filter>
       </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.pde.api.tools.ui.compare"
+            objectClass="org.eclipse.jdt.core.IJavaElement">
+         <action
+               class="org.eclipse.pde.api.tools.ui.internal.actions.CompareWithAction"
+               enablesFor="+"
+               id="org.eclipse.pde.api.tools.ui.action.compare"
+               label="%APICompare.name"
+               menubarPath="compareWithMenu/compareWithGroup">
+         </action>
+         <menu
+               label="%CompareWithMenu.label"
+               path="additions"
+               id="compareWithMenu">
+            <separator
+                  name="compareWithGroup">
+            </separator>
+         </menu>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -269,6 +289,20 @@
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
             markerType="org.eclipse.pde.api.tools.unused_filters">
       </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.eclipse.pde.api.tools.ui.views.apitooling.view.category"
+            name="%Apitoolingview.category.name">
+      </category>
+      <view
+            category="org.eclipse.pde.api.tools.ui.views.apitooling.view.category"
+            class="org.eclipse.pde.api.tools.ui.internal.views.APIToolingView"
+            icon="icons/full/obj16/api_tools.gif"
+            id="org.eclipse.pde.api.tools.ui.views.apitooling.views.apitoolingview"
+            name="%Apitoolingview.name">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">

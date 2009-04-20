@@ -2244,4 +2244,9 @@ public final class Util {
 			return 0;
 		}
 	};
+
+	public static void checkCanceled(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
+	}
 }

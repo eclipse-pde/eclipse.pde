@@ -34,6 +34,7 @@ import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
+import org.eclipse.pde.api.tools.internal.SessionManager;
 import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceAnalyzer;
@@ -146,7 +147,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * Singleton instance of the {@link JavadocTagManager}
 	 */
 	private static JavadocTagManager fgTagManager = null;
-
+	/**
+	 * Singleton instance of the {@link ISessionManager}
+	 */
+	private static ISessionManager fgSessionManager = null;
 	/**
 	 * Private debug options
 	 */
@@ -517,6 +521,13 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			return SEVERITY_WARNING;
 		}
 		return SEVERITY_IGNORE;
+	}
+	
+	public ISessionManager getSessionManager() {
+		if(fgSessionManager == null) {
+			fgSessionManager = new SessionManager();
+		}
+		return fgSessionManager;
 	}
 
 	/**

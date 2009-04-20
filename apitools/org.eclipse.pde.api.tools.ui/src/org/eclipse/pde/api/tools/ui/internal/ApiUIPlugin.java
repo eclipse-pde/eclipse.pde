@@ -23,9 +23,16 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.ISession;
+import org.eclipse.pde.api.tools.internal.provisional.ISessionListener;
+import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -38,50 +45,56 @@ import org.osgi.framework.ServiceReference;
  * @since 1.0.0
  */
 public class ApiUIPlugin extends AbstractUIPlugin {
-
-	/**
-	 * Singleton plug-in
-	 */
-	private static ApiUIPlugin fgDefault = null;
-	
-	/**
-	 * The id of the plugin
-	 */
-	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools.ui"; //$NON-NLS-1$
-	
-	/**
-	 * Status code indicating an unexpected internal error.
-	 */
-	public static final int INTERNAL_ERROR = 120;
-	
-	/**
-	 * Root path to icon directories.
-	 */
-	private static final String ICONS_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
-	
-	/**
-	 * Relative path to object model icons.
-	 */
-	private final static String OBJECT= ICONS_PATH + "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
-	private final static String OVR= ICONS_PATH + "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
-	private final static String WIZBAN= ICONS_PATH + "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
-	private static final String ELCL= ICONS_PATH + "elcl16/"; 	//basic colors - size 16x16 //$NON-NLS-1$
-	
 	/**
 	 * Maps Image descriptors to images for composite images
 	 */
 	private static Map fCompositeImages = new HashMap();
 	
 	/**
-	 * This bundle's OSGi context
+	 * Singleton plug-in
 	 */
-	private BundleContext fBundleContext = null;
+	private static ApiUIPlugin fgDefault = null;
 	
 	/**
-	 * Constructor
+	 * Root path to icon directories.
 	 */
-	public ApiUIPlugin() {
-		fgDefault = this;
+	private static final String ICONS_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
+
+	private static final String DLCL = ICONS_PATH + "dlcl16/"; //basic colors - size 16x16 disabled//$NON-NLS-1$
+	
+	private static final String ELCL = ICONS_PATH + "elcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int INTERNAL_ERROR = 120;
+	/**
+	 * Relative path to object model icons.
+	 */
+	private final static String OBJECT = ICONS_PATH + "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String OVR = ICONS_PATH + "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
+	/**
+	 * The id of the plugin
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools.ui"; //$NON-NLS-1$
+	private final static String WIZBAN = ICONS_PATH + "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
+	
+	/**
+	 * Declare an Image in the registry table.
+	 * @param reg	image registry
+	 * @param key 	The key to use when registering the image
+	 * @param path	The path where the image can be found. This path is relative to where
+	 *				this plug-in class is found (i.e. typically the packages directory)
+	 */
+	private final static void declareRegistryImage(ImageRegistry reg, String key, String path) {
+		ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
+		Bundle bundle = Platform.getBundle(IApiToolsConstants.ID_API_TOOLS_UI_PLUGIN);
+		URL url = null;
+		if (bundle != null){
+			url = FileLocator.find(bundle, new Path(path), null);
+			desc = ImageDescriptor.createFromURL(url);
+		}
+		reg.put(key, desc);
 	}
 	
 	/**
@@ -97,45 +110,74 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns dialog settings with the given name, creating a new section
-	 * if one does not exist.
+	 * Returns the image associated with the given image descriptor.
 	 * 
-	 * @param name section name
-	 * @return dialog settings
+	 * @param descriptor the image descriptor for which there is a managed image
+	 * @return the image associated with the image descriptor or <code>null</code>
+	 *  if the image descriptor can't create the requested image.
 	 */
-	public IDialogSettings getDialogSettingsSection(String name) {
-		IDialogSettings dialogSettings= getDialogSettings();
-		IDialogSettings section= dialogSettings.getSection(name);
-		if (section == null) {
-			section= dialogSettings.addNewSection(name);
-		}
-		return section;
+	public static Image getImage(ImageDescriptor descriptor) {
+		if (descriptor == null)
+			descriptor= ImageDescriptor.getMissingImageDescriptor();
+			
+		Image result= (Image)fCompositeImages.get(descriptor);
+		if (result != null)
+			return result;
+	 
+		result= descriptor.createImage();
+		if (result != null)
+			fCompositeImages.put(descriptor, result);
+		return result;
+	}
+	
+	/**
+	 * Returns an image descriptor from the registry with the given key or <code>null</code> if none.
+	 * 
+	 * @param key image key
+	 * @return image descriptor or <code>null</code>
+	 */
+	public static ImageDescriptor getImageDescriptor(String key) {
+		return getDefault().getImageRegistry().getDescriptor(key);
 	}	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
+	/**
+	 * @return the id of this plugin.
+	 * Value is <code><org.eclipse.pde.api.tools.ui></code>
 	 */
-	protected void initializeImageRegistry(ImageRegistry reg) {
-		// model objects
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_COMPONENT, OBJECT + "api_tools.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY, OBJECT + "library_obj.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SEARCH, OBJECT + "extract_references.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE, OBJECT + "plugin_obj.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_FRAGMENT, OBJECT + "frgmt_obj.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE, OBJECT + "eclipse_profile.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION, OBJECT + "bundleversion.gif"); //$NON-NLS-1$
-		// overlays
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_ERROR, OVR + "error_ovr.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_WARNING, OVR + "warning_ovr.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_SUCCESS, OVR + "success_ovr.gif"); //$NON-NLS-1$
-		// wizards
-		declareRegistryImage(reg, IApiToolsConstants.IMG_WIZBAN_PROFILE, WIZBAN + "profile_wiz.png"); //$NON-NLS-1$
-		// enabled images
-		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_FILTER, ELCL + "filter_ps.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_REMOVE, ELCL + "remove_exc.gif"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_OPEN_PAGE, ELCL + "open_page.gif"); //$NON-NLS-1$
+	public static String getPluginIdentifier() {
+		return PLUGIN_ID;
 	}
 
+	/**
+	 * Returns an image from the registry with the given key or <code>null</code> if none.
+	 * 
+	 * @param key image key
+	 * @return image or <code>null</code>
+	 */
+	public static Image getSharedImage(String key) {
+		return getDefault().getImageRegistry().get(key);
+	}
+	
+	/**
+	 * Returns the currently active workbench window shell or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the currently active workbench window shell or <code>null</code>
+	 */
+	public static Shell getShell() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0) {
+				return windows[0].getShell();
+			}
+		} 
+		else {
+			return window.getShell();
+		}
+		return null;
+	}
+	
 	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
@@ -183,112 +225,29 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the currently active workbench window shell or <code>null</code>
-	 * if none.
-	 * 
-	 * @return the currently active workbench window shell or <code>null</code>
+	 * This bundle's OSGi context
 	 */
-	public static Shell getShell() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window == null) {
-			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			if (windows.length > 0) {
-				return windows[0].getShell();
-			}
-		} 
-		else {
-			return window.getShell();
+	private BundleContext fBundleContext = null;
+	
+	private ISessionListener sessionListener = new ISessionListener() {
+		public void sessionAdded(ISession addedSession) {
+			getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					showAPIToolingView();
+				}
+			});
 		}
-		return null;
-	}
-	
-	/**
-	 * @return the id of this plugin.
-	 * Value is <code><org.eclipse.pde.api.tools.ui></code>
-	 */
-	public static String getPluginIdentifier() {
-		return PLUGIN_ID;
-	}
-	
-	/**
-	 * Declare an Image in the registry table.
-	 * @param reg	image registry
-	 * @param key 	The key to use when registering the image
-	 * @param path	The path where the image can be found. This path is relative to where
-	 *				this plug-in class is found (i.e. typically the packages directory)
-	 */
-	private final static void declareRegistryImage(ImageRegistry reg, String key, String path) {
-		ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
-		Bundle bundle = Platform.getBundle(IApiToolsConstants.ID_API_TOOLS_UI_PLUGIN);
-		URL url = null;
-		if (bundle != null){
-			url = FileLocator.find(bundle, new Path(path), null);
-			desc = ImageDescriptor.createFromURL(url);
+		public void sessionRemoved(ISession removedSession) {
 		}
-		reg.put(key, desc);
-	}	
-	
-	/**
-	 * Returns an image from the registry with the given key or <code>null</code> if none.
-	 * 
-	 * @param key image key
-	 * @return image or <code>null</code>
-	 */
-	public static Image getSharedImage(String key) {
-		return getDefault().getImageRegistry().get(key);
-	}
-	
-	/**
-	 * Returns the image associated with the given image descriptor.
-	 * 
-	 * @param descriptor the image descriptor for which there is a managed image
-	 * @return the image associated with the image descriptor or <code>null</code>
-	 *  if the image descriptor can't create the requested image.
-	 */
-	public static Image getImage(ImageDescriptor descriptor) {
-		if (descriptor == null)
-			descriptor= ImageDescriptor.getMissingImageDescriptor();
-			
-		Image result= (Image)fCompositeImages.get(descriptor);
-		if (result != null)
-			return result;
-	 
-		result= descriptor.createImage();
-		if (result != null)
-			fCompositeImages.put(descriptor, result);
-		return result;
-	}
-	
-	/**
-	 * Returns an image descriptor from the registry with the given key or <code>null</code> if none.
-	 * 
-	 * @param key image key
-	 * @return image descriptor or <code>null</code>
-	 */
-	public static ImageDescriptor getImageDescriptor(String key) {
-		return getDefault().getImageRegistry().getDescriptor(key);
-	}
+		public void sessionActivated(ISession session) {
+		}
+	};
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	/**
+	 * Constructor
 	 */
-	public void stop(BundleContext context) throws Exception {
-		// dispose composite images
-		for (Iterator iter= fCompositeImages.values().iterator(); iter.hasNext(); ) {
-			Image image= (Image)iter.next();
-			image.dispose();
-		}
-		fCompositeImages.clear();
-		fBundleContext = null;
-		super.stop(context);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		fBundleContext = context;
-		super.start(context);
+	public ApiUIPlugin() {
+		fgDefault = this;
 	}
 	
 	/**
@@ -302,5 +261,84 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		if (reference == null)
 			return null;
 		return fBundleContext.getService(reference);
+	}
+	
+	/**
+	 * Returns dialog settings with the given name, creating a new section
+	 * if one does not exist.
+	 * 
+	 * @param name section name
+	 * @return dialog settings
+	 */
+	public IDialogSettings getDialogSettingsSection(String name) {
+		IDialogSettings dialogSettings= getDialogSettings();
+		IDialogSettings section= dialogSettings.getSection(name);
+		if (section == null) {
+			section= dialogSettings.addNewSection(name);
+		}
+		return section;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
+	 */
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		// model objects
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_COMPONENT, OBJECT + "api_tools.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY, OBJECT + "library_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SEARCH, OBJECT + "extract_references.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE, OBJECT + "plugin_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_FRAGMENT, OBJECT + "frgmt_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE, OBJECT + "eclipse_profile.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION, OBJECT + "bundleversion.gif"); //$NON-NLS-1$
+
+		// overlays
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_ERROR, OVR + "error_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_WARNING, OVR + "warning_ovr.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_SUCCESS, OVR + "success_ovr.gif"); //$NON-NLS-1$
+		// wizards
+		declareRegistryImage(reg, IApiToolsConstants.IMG_WIZBAN_PROFILE, WIZBAN + "profile_wiz.png"); //$NON-NLS-1$
+		// enabled images
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_FILTER, ELCL + "filter_ps.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_REMOVE, ELCL + "remove_exc.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_OPEN_PAGE, ELCL + "open_page.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.gif"); //$NON-NLS-1$
+	}
+	void showAPIToolingView() {
+		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) return;
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
+			try {
+				IViewPart view = page.showView(APIToolingView.ID, null, IWorkbenchPage.VIEW_CREATE);
+				page.bringToTop(view);
+			} catch (PartInitException e) {
+				log(e);
+			}
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		fBundleContext = context;
+		ApiPlugin.getDefault().getSessionManager().addSessionListener(this.sessionListener);
+		super.start(context);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		// dispose composite images
+		for (Iterator iter= fCompositeImages.values().iterator(); iter.hasNext(); ) {
+			Image image= (Image)iter.next();
+			image.dispose();
+		}
+		fCompositeImages.clear();
+		fBundleContext = null;
+		ApiPlugin.getDefault().getSessionManager().removeSessionListener(this.sessionListener);
+		super.stop(context);
 	}
 }
