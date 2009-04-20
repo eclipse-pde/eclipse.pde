@@ -143,7 +143,15 @@ public class TargetContentsGroup extends FilteredTree {
 		super.createTreeControl(treeComp, style);
 		((GridData) fTree.getControl().getLayoutData()).heightHint = 300;
 		createButtons(treeComp);
-		createOptions(treeComp);
+
+		if (fToolkit != null) {
+			fCountLabel = fToolkit.createLabel(treeComp, ""); //$NON-NLS-1$
+			GridData data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 2;
+			fCountLabel.setLayoutData(data);
+		} else {
+			fCountLabel = SWTFactory.createLabel(treeComp, "", 2); //$NON-NLS-1$
+		}
 
 		updateButtons();
 		initializeFilters();
@@ -276,6 +284,27 @@ public class TargetContentsGroup extends FilteredTree {
 			fShowPluginsButton.setSelection(true);
 			fShowSourceButton = fToolkit.createButton(filterComp, Messages.BundleContainerTable_15, SWT.CHECK);
 			fShowSourceButton.setSelection(true);
+
+			emptySpace = new Label(filterComp, SWT.NONE);
+			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.widthHint = gd.heightHint = 5;
+			emptySpace.setLayoutData(gd);
+
+			fGroupLabel = fToolkit.createLabel(filterComp, Messages.TargetContentsGroup_0);
+
+			fGroupComboPart = new ComboPart();
+			fGroupComboPart.createControl(filterComp, fToolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalIndent = 10;
+			fGroupComboPart.getControl().setLayoutData(gd);
+			fGroupComboPart.setItems(new String[] {Messages.TargetContentsGroup_1, Messages.TargetContentsGroup_2, Messages.TargetContentsGroup_3});
+			fGroupComboPart.setVisibleItemCount(30);
+			fGroupComboPart.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					handleGroupChange();
+				}
+			});
+
 		} else {
 			Composite buttonComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 			fSelectButton = SWTFactory.createPushButton(buttonComp, Messages.IncludedBundlesTree_0, null);
@@ -296,6 +325,22 @@ public class TargetContentsGroup extends FilteredTree {
 
 			fShowPluginsButton = SWTFactory.createCheckButton(filterComp, Messages.BundleContainerTable_14, null, true, 1);
 			fShowSourceButton = SWTFactory.createCheckButton(filterComp, Messages.BundleContainerTable_15, null, true, 1);
+
+			emptySpace = new Label(filterComp, SWT.NONE);
+			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.widthHint = gd.heightHint = 5;
+			emptySpace.setLayoutData(gd);
+
+			fGroupLabel = SWTFactory.createLabel(filterComp, Messages.TargetContentsGroup_0, 1);
+			fGroupCombo = SWTFactory.createCombo(filterComp, SWT.READ_ONLY, 1, new String[] {Messages.TargetContentsGroup_1, Messages.TargetContentsGroup_2, Messages.TargetContentsGroup_3});
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalIndent = 10;
+			fGroupCombo.setLayoutData(gd);
+			fGroupCombo.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					handleGroupChange();
+				}
+			});
 		}
 
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
@@ -363,49 +408,7 @@ public class TargetContentsGroup extends FilteredTree {
 		gd = new GridData();
 		gd.horizontalIndent = 10;
 		fShowSourceButton.setLayoutData(gd);
-	}
 
-	private void createOptions(Composite parent) {
-		if (fToolkit != null) {
-			Composite comp = fToolkit.createComposite(parent);
-			GridLayout layout = new GridLayout(2, false);
-			layout.marginWidth = layout.marginHeight = 0;
-			comp.setLayout(layout);
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.horizontalSpan = 2;
-			comp.setLayoutData(data);
-
-			fGroupLabel = fToolkit.createLabel(comp, Messages.TargetContentsGroup_0);
-
-			fGroupComboPart = new ComboPart();
-			fGroupComboPart.createControl(comp, fToolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
-			fGroupComboPart.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			fGroupComboPart.setItems(new String[] {Messages.TargetContentsGroup_1, Messages.TargetContentsGroup_2, Messages.TargetContentsGroup_3});
-			fGroupComboPart.setVisibleItemCount(30);
-			fGroupComboPart.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					handleGroupChange();
-				}
-			});
-
-			fCountLabel = fToolkit.createLabel(comp, ""); //$NON-NLS-1$
-			data = new GridData();
-			data.horizontalSpan = 2;
-			fCountLabel.setLayoutData(data);
-
-		} else {
-			Composite comp = SWTFactory.createComposite(parent, 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
-
-			fGroupLabel = SWTFactory.createLabel(comp, Messages.TargetContentsGroup_0, 1);
-			fGroupCombo = SWTFactory.createCombo(comp, SWT.READ_ONLY, 1, new String[] {Messages.TargetContentsGroup_1, Messages.TargetContentsGroup_2, Messages.TargetContentsGroup_3});
-			fGroupCombo.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					handleGroupChange();
-				}
-			});
-
-			fCountLabel = SWTFactory.createLabel(comp, "", 2); //$NON-NLS-1$
-		}
 	}
 
 	private void initializeFilters() {
