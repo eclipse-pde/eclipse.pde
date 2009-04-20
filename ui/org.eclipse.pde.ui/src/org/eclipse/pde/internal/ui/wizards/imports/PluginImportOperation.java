@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -327,11 +328,17 @@ public class PluginImportOperation extends WorkspaceJob {
 			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
 
 			// Extract the binary plug-in (for non-class files)
-			File srcFile = new File(model.getInstallLocation());
 			if (isJARd(model)) {
-				PluginImportHelper.extractArchive(srcFile, project.getFullPath(), new SubProgressMonitor(monitor, 1));
+				ArrayList collected = new ArrayList();
+				ZipFileStructureProvider provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
+				PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
+				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, new SubProgressMonitor(monitor, 1));
 			} else {
-				PluginImportHelper.importContent(new File(model.getInstallLocation()), project.getFullPath(), FileSystemStructureProvider.INSTANCE, null, new SubProgressMonitor(monitor, 1));
+				ArrayList collected = new ArrayList();
+				File srcFile = new File(model.getInstallLocation());
+				PluginImportHelper.collectResourcesFromFolder(FileSystemStructureProvider.INSTANCE, srcFile, project.getFullPath(), collected);
+				PluginImportHelper.collectRequiredBundleFiles(FileSystemStructureProvider.INSTANCE, srcFile, collected);
+				PluginImportHelper.importContent(srcFile, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, new SubProgressMonitor(monitor, 1));
 			}
 
 			// Create the build.properties file
@@ -339,6 +346,12 @@ public class PluginImportOperation extends WorkspaceJob {
 			buildModel.save();
 			monitor.worked(1);
 
+		} catch (ZipException e) {
+			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+			throw new CoreException(status);
+		} catch (IOException e) {
+			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+			throw new CoreException(status);
 		} finally {
 			monitor.done();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,6 +273,31 @@ public class PluginImportHelper {
 						} else {
 							collectResources(provider, curr, collected);
 						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Recursively searches through the files inside of
+	 * the specified folder.  The files found will be added to the given list.
+	 * @param provider provider
+	 * @param element element currently being looked at
+	 * @param folderPath location of the folder to get resources from
+	 * @param collected list of files found
+	 * @since 3.5
+	 */
+	public static void collectResourcesFromFolder(IImportStructureProvider provider, Object element, IPath folderPath, ArrayList collected) {
+		List children = provider.getChildren(element);
+		if (children != null && !children.isEmpty()) {
+			for (int i = 0; i < children.size(); i++) {
+				Object curr = children.get(i);
+				if (provider.isFolder(curr)) {
+					if (folderPath.segmentCount() > 1) {
+						collectResourcesFromFolder(provider, curr, folderPath.removeFirstSegments(1), collected);
+					} else {
+						collectResources(provider, curr, collected);
 					}
 				}
 			}
