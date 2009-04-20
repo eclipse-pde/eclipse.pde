@@ -102,9 +102,9 @@ public class DSComponentSection extends PDESection {
 		
 		// Attribute: modified
 		fModifiedEntry = new FormEntry(client, toolkit,
-				Messages.DSComponentDetails_deactivateEntry, SWT.NONE);
+				Messages.DSComponentDetails_modifiedEntry, SWT.NONE);
 		fModifiedEntry.getLabel().setToolTipText(
-				Messages.DSComponentDetails_deactivateTooltip);
+				Messages.DSComponentDetails_modifiedTooltip);
 
 		setListeners();
 		updateUIFields();
