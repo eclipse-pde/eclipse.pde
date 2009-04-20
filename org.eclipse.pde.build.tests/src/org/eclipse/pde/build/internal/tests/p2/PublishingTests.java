@@ -462,11 +462,11 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getId(), "org.example.rcp");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.osgi");
-		
+
 		//bug 218377
 		iu = getIU(repository, "org.example.rcp_root.win32.win32.x86");
 		assertTouchpoint(iu, "install", "targetFile:branded.exe");
-		
+
 		iu = getIU(repository, "org.example.rcp_root.carbon.macosx.ppc");
 		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
 
@@ -1068,7 +1068,7 @@ public class PublishingTests extends P2TestCase {
 		IFolder b = Utils.createFolder(build1, "plugins/b");
 
 		Utils.generateFeature(build1, "f1", new String[] {"f2"}, new String[] {"a"});
-		
+
 		Utils.generateFeature(build1, "f2", null, new String[] {"b"});
 		StringBuffer p2Inf = new StringBuffer();
 		P2InfUtils.printRequires(p2Inf, null, 1, P2InfUtils.NAMESPACE_IU, "a", "[1.0.0,1.0.0]", null, true);
@@ -1078,24 +1078,24 @@ public class PublishingTests extends P2TestCase {
 		properties.put("bin.includes", "feature.xml");
 		properties.put("root", "file:a.txt");
 		Utils.storeBuildProperties(build1.getFolder("features/f2"), properties);
-		
+
 		Utils.generateBundle(a, "a");
 		Utils.generateBundle(b, "b");
-		
+
 		properties = BuildConfiguration.getBuilderProperties(build1);
 		properties.put("topLevelElementId", "f1");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(build1, properties);
 		runBuild(build1);
-		
+
 		URI repoURI = URIUtil.fromString("file:" + build1.getFile("I.TestBuild/f1-TestBuild-group.group.group.zip").getLocation().toOSString());
 		IMetadataRepository metadata = loadMetadataRepository(URIUtil.toJarURI(repoURI, null));
-		
+
 		IInstallableUnit iu = getIU(metadata, "f2.feature.group");
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "a");
 
 		IFolder build2 = Utils.createFolder(root, "build2");
-		
+
 		Utils.generateFeature(build2, "f3", new String[] {"f2"}, null);
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("topLevelElementId", "f3");
@@ -1104,37 +1104,37 @@ public class PublishingTests extends P2TestCase {
 		properties.put("transformedRepoLocation", build2.getFolder("transformed").getLocation().toOSString());
 		Utils.storeBuildProperties(build2, properties);
 		runBuild(build2);
-		
+
 		//bug 272219
 		assertResourceFile(build2.getFolder("transformed"), "binary/f2_root_1.0.0");
-		
+
 		repoURI = URIUtil.fromString("file:" + build2.getFile("I.TestBuild/f3-TestBuild-group.group.group.zip").getLocation().toOSString());
 		metadata = loadMetadataRepository(URIUtil.toJarURI(repoURI, null));
 		iu = getIU(metadata, "f2.feature.group");
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "a");
-		
+
 		getIU(metadata, "a");
 		getIU(metadata, "f2_root"); //bug 271848, mirroring from context
 		assertResourceFile(build2, "buildRepo/binary/f2_root_1.0.0");
 	}
-	
+
 	public void testPublish_FeatureBasedProduct() throws Exception {
 		IFolder buildFolder = newTest("featureBasedProduct");
 		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
-		
+
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
-		Utils.generateFeature(buildFolder, "f", null, new String [] { "org.eclipse.osgi", "org.eclipse.equinox.common"});
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"});
 		Utils.writeBuffer(buildFolder.getFile("features/f/important.txt"), new StringBuffer("boo-urns"));
 		Properties properties = new Properties();
 		properties.put("bin.includes", "feature.xml");
 		properties.put("root.folder.sub", "file:important.txt"); //bug 272392
 		Utils.storeBuildProperties(buildFolder.getFolder("features/f"), properties);
-		
+
 		IFile productFile = buildFolder.getFile("rcp.product");
 		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"f"}, true);
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
@@ -1160,20 +1160,20 @@ public class PublishingTests extends P2TestCase {
 		customBuffer.append("   </target>																			\n");
 		customBuffer.append("</project>																				\n");
 		Utils.writeBuffer(buildFolder.getFile("customTargets.xml"), customBuffer);
-		
+
 		runProductBuild(buildFolder);
 
 		assertResourceFile(finalRepo, "binary/f_root_1.0.0");
 		assertResourceFile(finalRepo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
 		assertResourceFile(finalRepo, "features/f_1.0.0.jar");
-		
+
 		HashSet entries = new HashSet();
 		entries.add("eclipse/eclipse.exe");
 		entries.add("eclipse/features/f_1.0.0/feature.xml");
 		entries.add("eclipse/sub/important.txt");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
 	}
-	
+
 	public void testDirectorLogging() throws Exception {
 		IFolder buildFolder = newTest("directorLogging");
 		File delta = Utils.findDeltaPack();
@@ -1205,7 +1205,37 @@ public class PublishingTests extends P2TestCase {
 		} catch (Exception e) {
 			assertTrue(e.getMessage().indexOf("A Problem occured while running the director") > -1);
 		}
+
+		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] {"Installation failed.", "Missing requirement: uid.product 1.0.0.I10232 requires 'foo bar [1.0.0]' but it could not be found"});
+	}
+
+	public void testBug272907() throws Exception {
+		IFolder buildFolder = newTest("272907");
+		IFolder foo = Utils.createFolder(buildFolder, "plugins/foo");
+
+		Utils.generateBundleManifest(foo, "foo", "1.0.0", null);
+		Properties buildProperties = new Properties();
+		buildProperties.put("source.src.jar", "src/");
+		buildProperties.put("source..", "src2/");
+		buildProperties.put("bin.includes", "META-INF/, ., src.jar");
+		Utils.storeBuildProperties(foo, buildProperties);
+		Utils.writeBuffer(foo.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
+		Utils.writeBuffer(foo.getFile("src2/foob.java"), new StringBuffer("public class foob { int i; }"));
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"foo"});
 		
-		assertLogContainsLines(buildFolder.getFile("director.log"), new String [] {"Installation failed.", "Missing requirement: uid.product 1.0.0.I10232 requires 'foo bar [1.0.0]' but it could not be found"});
+		buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("topLevelElementId", "f");
+		buildProperties.put("p2.gathering", "true");
+		buildProperties.put("filteredDependencyCheck", "true");
+		buildProperties.put("archivesFormat", "group,group,group-folder");
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		
+		runBuild(buildFolder);
+		
+		Set entries = new HashSet();
+		entries.add("src.jar");
+		entries.add("foob.class");
+		assertZipContents(buildFolder, "tmp/eclipse/plugins/foo_1.0.0.jar", entries);
 	}
 }

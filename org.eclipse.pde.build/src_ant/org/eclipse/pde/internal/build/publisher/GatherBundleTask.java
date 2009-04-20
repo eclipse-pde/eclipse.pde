@@ -169,22 +169,19 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			fileSet.setProject(getProject());
 			fileSet.setDir(new File(buildResultFolder));
 			for (int i = 0; i < entries.length; i++) {
-				//folders only, jars should have been collected above
-				if (entries[i].getType() == CompiledEntry.FOLDER) {
-					String name = entries[i].getName(false);
-					if (name.equals(ModelBuildScriptGenerator.DOT)) {
-						dotIncluded = true;
-						continue;
-					}
+				String name = entries[i].getName(false);
+				if (name.equals(ModelBuildScriptGenerator.DOT)) {
+					dotIncluded = true;
+					continue;
+				}
 
-					if (sourceMap.containsKey(name)) {
-						Set folders = (Set) sourceMap.get(name);
-						processOutputFolders(folders, name, computer);
-					} else {
-						NameEntry fileInclude = fileSet.createInclude();
-						fileInclude.setName(name + "/"); //$NON-NLS-1$
-						haveEntries = true;
-					}
+				if (sourceMap.containsKey(name)) {
+					Set folders = (Set) sourceMap.get(name);
+					processOutputFolders(folders, name, computer);
+				} else {
+					NameEntry fileInclude = fileSet.createInclude();
+					fileInclude.setName(name + ((entries[i].getType() == CompiledEntry.FOLDER) ? "/" : "")); //$NON-NLS-1$ //$NON-NLS-2$
+					haveEntries = true;
 				}
 			}
 			if (haveEntries) {
