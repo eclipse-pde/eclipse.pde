@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 207466, 207344
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 272985
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
@@ -175,6 +176,10 @@ public class EventDetailsDialog extends TrayDialog {
 	}
 
 	public boolean close() {
+		if (clipboard != null) {
+			clipboard.dispose();
+			clipboard = null;
+		}
 		storeSettings();
 		isOpen = false;
 		labelProvider.disconnect(this);
