@@ -106,30 +106,4 @@ public class AbstractApiTest extends TestCase {
 			}
 		} while (wasInterrupted);
 	}
-	/**
-	 * Delete this resource.
-	 */
-	public void deleteResource(IProject project) throws CoreException {
-		int retryCount = 0; // wait 1 minute at most
-		while (++retryCount <= 60) {
-			if (delete(project)) {
-				return;
-			} else {
-				System.gc();
-			}
-		}
-		throw new RuntimeException("Could not delete " + project.getFullPath());
-	}
-	public static boolean delete(IProject project) {
-		try {
-			project.delete(true, true, null);
-			if (org.eclipse.jdt.core.tests.util.Util.isResourceDeleted(project)) {
-				return true;
-			}
-		}
-		catch (CoreException e) {
-			//	skip
-		}
-		return org.eclipse.jdt.core.tests.util.Util.waitUntilResourceDeleted(project);
-	}
 }

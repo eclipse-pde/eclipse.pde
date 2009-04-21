@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -445,5 +446,33 @@ public class FileUtils {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Delete this resource.
+	 */
+	public static void deleteResource(IProject project) throws CoreException {
+		int retryCount = 0; // wait 1 minute at most
+		while (++retryCount <= 60) {
+			if (delete(project)) {
+				return;
+			} else {
+				System.gc();
+			}
+		}
+		throw new RuntimeException("Could not delete " + project.getFullPath());
+	}
+
+	public static boolean delete(IProject project) {
+		try {
+			project.delete(true, true, null);
+			if (org.eclipse.jdt.core.tests.util.Util.isResourceDeleted(project)) {
+				return true;
+			}
+		}
+		catch (CoreException e) {
+			//	skip
+		}
+		return org.eclipse.jdt.core.tests.util.Util.waitUntilResourceDeleted(project);
 	}
 }
