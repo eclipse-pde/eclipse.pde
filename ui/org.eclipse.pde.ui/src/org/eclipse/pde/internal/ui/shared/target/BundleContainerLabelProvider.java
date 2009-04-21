@@ -108,7 +108,7 @@ public class BundleContainerLabelProvider extends BundleInfoLabelProvider {
 	 * @param container bundle container to check for inclusions
 	 * @return string label
 	 */
-	private String getIncludedBundlesLabel(IBundleContainer container) {
+	protected String getIncludedBundlesLabel(IBundleContainer container) {
 		// TODO Provide convenience methods in IBundleContainer to access all bundles?
 		if (!container.isResolved() || (!container.getBundleStatus().isOK() && !container.getBundleStatus().isMultiStatus()) || container.getBundles() == null) {
 			return ""; //$NON-NLS-1$

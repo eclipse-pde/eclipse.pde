@@ -291,29 +291,6 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			}
 		});
 
-		// TODO: post M5, implement "duplicate"
-//		fDuplicateButton = SWTFactory.createPushButton(buttonComposite, "Duplicate...", null);
-//		fDuplicateButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				// for now we always duplicate to local metadata
-//				IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
-//				ITargetDefinition source = (ITargetDefinition) selection.getFirstElement();
-//				ITargetPlatformService service = getTargetService();
-//				if (service != null) {
-//					ITargetDefinition dup = service.newTarget();
-//					try {
-//						service.copyTargetDefinition(source, dup);
-//						dup.setName(NLS.bind("Copy of {0}", source.getName()));
-//						fTargets.add(dup);
-//						fTableViewer.refresh();
-//						fTableViewer.setSelection(new StructuredSelection(dup));
-//					} catch (CoreException ex) {
-//						setErrorMessage(ex.getMessage());
-//					}
-//				}
-//			}
-//		});
-
 		fRemoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_7, null);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -332,7 +309,22 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		Group group = SWTFactory.createGroup(comp, PDEUIMessages.TargetPlatformPreferencePage2_25, 1, 1, GridData.FILL_HORIZONTAL);
 		fDetails = new TableViewer(group);
-		fDetails.setLabelProvider(new BundleContainerLabelProvider());
+		fDetails.setLabelProvider(new BundleContainerLabelProvider() {
+			protected String getIncludedBundlesLabel(IBundleContainer container) {
+				// Rather than display x of y included, resolve and display common variables in the path
+				try {
+					if (container instanceof AbstractBundleContainer) {
+						String unresolved = ((AbstractBundleContainer) container).getLocation(false);
+						if (unresolved.indexOf("${eclipse_home}") >= 0 || unresolved.indexOf("${workspace_loc}") >= 0) { //$NON-NLS-1$ //$NON-NLS-2$
+							return "(" + ((AbstractBundleContainer) container).getLocation(true) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					}
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
+				return ""; //$NON-NLS-1$
+			}
+		});
 		fDetails.setContentProvider(new ArrayContentProvider());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 50;
@@ -537,7 +529,6 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			// Quick hack because the first refresh loses the checkedState, which is being used to bold the active target
 			fTableViewer.refresh(false);
 			fTableViewer.refresh(true);
-			// TODO: update selection
 		}
 	}
 
@@ -713,7 +704,6 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		}
 
 		// Remove any definitions that have been removed
-		// TODO should we prompt? (only if workspace files?)
 		Iterator iterator = fRemoved.iterator();
 		while (iterator.hasNext()) {
 			ITargetDefinition target = (ITargetDefinition) iterator.next();
