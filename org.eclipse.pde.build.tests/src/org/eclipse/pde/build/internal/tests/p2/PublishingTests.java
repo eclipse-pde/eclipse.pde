@@ -1280,4 +1280,67 @@ public class PublishingTests extends P2TestCase {
 			assertNull(e.getMessage());
 		}
 	}
+
+	public void testPublish_P2InfConfigProperty() throws Exception {
+		IFolder buildFolder = newTest("268498");
+		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		IFile product = rcp.getFile("rcp.product");
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi"}, false, null);
+
+		StringBuffer inf = new StringBuffer();
+		inf.append("requires.1.namespace=org.eclipse.equinox.p2.iu									\n");
+		inf.append("requires.1.name=toolingorg.eclipse.configuration.macosx							\n");
+		inf.append("requires.1.filter=(osgi.os=macosx)												\n");
+		inf.append("requires.1.range=[1.0.0,1.0.0]													\n");
+		inf.append("requires.1.greedy=true															\n");
+		inf.append("requires.2.namespace=org.eclipse.equinox.p2.iu									\n");
+		inf.append("requires.2.name=toolingorg.eclipse.configuration								\n");
+		inf.append("requires.2.filter=(!(osgi.os=macosx))											\n");
+		inf.append("requires.2.range=[1.0.0,1.0.0]													\n");
+		inf.append("requires.2.greedy=true															\n");
+		inf.append("units.1.id=toolingorg.eclipse.configuration.macosx								\n");
+		inf.append("units.1.version=1.0.0															\n");
+		inf.append("units.1.provides.1.namespace=org.eclipse.equinox.p2.iu							\n");
+		inf.append("units.1.provides.1.name=toolingorg.eclipse.configuration.macosx					\n");
+		inf.append("units.1.provides.1.version=1.0.0												\n");
+		inf.append("units.1.filter=(osgi.os=macosx)													\n");
+		inf.append("units.1.touchpoint.id=org.eclipse.equinox.p2.osgi								\n");
+		inf.append("units.1.touchpoint.version=1.0.0												\n");
+		inf.append("units.1.instructions.configure=setProgramProperty(propName:osgi.instance.area.default,propValue:@user.home/Documents/workspace);\n");
+		inf.append("units.1.instructions.unconfigure=setProgramProperty(propName:osgi.instance.area.default,propValue:);\n");
+		inf.append("units.2.id=toolingorg.eclipse.configuration										\n");
+		inf.append("units.2.version=1.0.0															\n");
+		inf.append("units.2.provides.1.namespace=org.eclipse.equinox.p2.iu							\n");
+		inf.append("units.2.provides.1.name=toolingorg.eclipse.configuration						\n");
+		inf.append("units.2.provides.1.version=1.0.0												\n");
+		inf.append("units.2.filter=(!(osgi.os=macosx))												\n");
+		inf.append("units.2.touchpoint.id=org.eclipse.equinox.p2.osgi								\n");
+		inf.append("units.2.touchpoint.version=1.0.0												\n");
+		inf.append("units.2.instructions.configure=setProgramProperty(propName:osgi.instance.area.default,propValue:@user.home/workspace);\n");
+		inf.append("units.2.instructions.unconfigure=setProgramProperty(propName:osgi.instance.area.default,propValue:);\n");
+		Utils.writeBuffer(rcp.getFile("p2.inf"), inf);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("p2.gathering", "true");
+		properties.put("configs", "macosx,carbon,ppc & macosx,cocoa,x86 & win32,win32,x86");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IFile ini = buildFolder.getFile("config-mac.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/configuration/config.ini", ini);
+		assertLogContainsLine(ini, "osgi.instance.area.default=@user.home/Documents/workspace");
+		ini = buildFolder.getFile("config-mac2.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/configuration/config.ini", ini);
+		assertLogContainsLine(ini, "osgi.instance.area.default=@user.home/Documents/workspace");
+		ini = buildFolder.getFile("config-win32.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", "eclipse/configuration/config.ini", ini);
+		assertLogContainsLine(ini, "osgi.instance.area.default=@user.home/workspace");
+	}
 }
