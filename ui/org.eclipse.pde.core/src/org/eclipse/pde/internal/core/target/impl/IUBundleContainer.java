@@ -150,7 +150,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-		subMonitor.beginTask(Messages.IUBundleContainer_0, 10);
+		subMonitor.beginTask(Messages.IUBundleContainer_0, 20);
 
 		// retrieve profile
 		IProfile profile = ((TargetDefinition) definition).getProfile();
@@ -171,7 +171,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		ProvisioningContext context = new ProvisioningContext(repositories);
 		context.setArtifactRepositories(repositories);
 
-		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor);
+		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 1));
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
 			System.out.println(status.getMessage());
@@ -188,8 +188,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// execute the provisioning plan
 		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
 		IEngine engine = getEngine();
-		IStatus result = engine.perform(profile, phases, plan.getOperands(), context, subMonitor);
-		subMonitor.worked(6);
+		IStatus result = engine.perform(profile, phases, plan.getOperands(), context, new SubProgressMonitor(subMonitor, 14));
 
 		if (!result.isOK()) {
 			System.out.println(result.getMessage());
@@ -198,13 +197,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		// slice IUs and all prerequisites
 		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false);
-		IQueryable slice = slicer.slice(units, new NullProgressMonitor());
+		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 1));
 
 		// query for bundles
 		BundleQuery query = new BundleQuery();
 		Collector collector = new Collector();
-		slice.query(query, collector, subMonitor);
-		subMonitor.worked(1);
+		slice.query(query, collector, new SubProgressMonitor(subMonitor, 1));
 
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
@@ -242,7 +240,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				}
 			}
 		}
-
+		subMonitor.worked(1);
 		subMonitor.done();
 		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
 	}
