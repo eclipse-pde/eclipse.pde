@@ -55,9 +55,9 @@ public class ExportSessionAction extends Action {
 	public ExportSessionAction(APIToolingView view) {
 		setText(ActionMessages.ExportSessionAction_label);
 		setToolTipText(ActionMessages.ExportSessionAction_tooltip);
-		ImageDescriptor enabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ETOOL_EXPORT);
+		ImageDescriptor enabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ELCL_EXPORT);
 		setImageDescriptor(enabledImageDescriptor);
-		ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DTOOL_EXPORT);
+		ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DLCL_EXPORT);
 		setDisabledImageDescriptor(disabledImageDescriptor);
 		setEnabled(false);
 		this.view = view;

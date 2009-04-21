@@ -124,9 +124,9 @@ public interface IApiToolsConstants {
 	/**
 	 * Key for enabled export image
 	 */
-	public static final String IMG_ETOOL_EXPORT = "IMG_ETOOL_EXPORT"; //$NON-NLS-1$
+	public static final String IMG_ELCL_EXPORT = "IMG_ETOOL_EXPORT"; //$NON-NLS-1$
 	/**
 	 * Key for disabled export image
 	 */
-	public static final String IMG_DTOOL_EXPORT = "IMG_DTOOL_EXPORT"; //$NON-NLS-1$
+	public static final String IMG_DLCL_EXPORT = "IMG_DTOOL_EXPORT"; //$NON-NLS-1$
 }
