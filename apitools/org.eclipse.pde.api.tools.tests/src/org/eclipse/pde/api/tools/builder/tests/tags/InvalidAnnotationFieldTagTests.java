@@ -172,10 +172,10 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_annotation_field, 1);
-		deployTagTest("", 
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
+		deployTagTest("",
+				"test6",
+				true,
+				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD,
 				true);
 	}
 
