@@ -54,6 +54,8 @@ public class BuildEditor extends MultiSourceEditor {
 	}
 
 	public void monitoredFileAdded(IFile file) {
+		if (fInputContextManager == null)
+			return;
 		String name = file.getName();
 		if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
 			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
