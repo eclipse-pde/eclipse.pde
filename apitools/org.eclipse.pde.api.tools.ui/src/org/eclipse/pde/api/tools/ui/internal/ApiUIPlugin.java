@@ -62,6 +62,10 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 
 	private static final String DLCL = ICONS_PATH + "dlcl16/"; //basic colors - size 16x16 disabled//$NON-NLS-1$
 	
+	private static final String DTOOL = ICONS_PATH + "dtool16/"; //basic tool images - size 16x16 disabled//$NON-NLS-1$
+	
+	private static final String ETOOL = ICONS_PATH + "etool16/"; //basic tool images - size 16x16 enabled//$NON-NLS-1$
+
 	private static final String ELCL = ICONS_PATH + "elcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	
 	/**
@@ -304,6 +308,9 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_OPEN_PAGE, ELCL + "open_page.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ETOOL_EXPORT, ETOOL + "export_wiz.gif"); //$NON-NLS-1$
+		// disabled images
+		declareRegistryImage(reg, IApiToolsConstants.IMG_DTOOL_EXPORT, DTOOL + "export_wiz.gif"); //$NON-NLS-1$
 	}
 	void showAPIToolingView() {
 		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();

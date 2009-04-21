@@ -41,6 +41,7 @@ public class ActionMessages extends NLS {
 	public static String ExportSessionAction_tooltip;
 	public static String EnterFileNameForExport;
 	public static String ExportActionTitle;
+	public static String ExportDialogDescription;
 	public static String PropertyPackageVisibility;
 
 	public static String PropertyMessageKey;
@@ -56,6 +57,7 @@ public class ActionMessages extends NLS {
 
 	public static String MessageCategory;
 	public static String InfoCategory;
+	public static String ExportDialogErrorMessage;
 
 	static {
 		// initialize resource bundle

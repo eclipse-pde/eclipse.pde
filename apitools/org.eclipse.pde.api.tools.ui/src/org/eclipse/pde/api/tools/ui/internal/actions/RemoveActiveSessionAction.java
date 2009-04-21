@@ -27,10 +27,8 @@ public class RemoveActiveSessionAction extends Action {
 		setText(ActionMessages.RemoveActiveSessionAction_label);
 		setToolTipText(ActionMessages.RemoveActiveSessionAction_tooltip);
 		ImageDescriptor enabledImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE);
-		//ImageDescriptor enabledImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE);
 		setImageDescriptor(enabledImageDescriptor);
 		ImageDescriptor disabledImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_REMOVE_DISABLED);
-		//ImageDescriptor disabledImageDescriptor = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED);
 		setDisabledImageDescriptor(disabledImageDescriptor);
 		setActionDefinitionId(ActionFactory.DELETE.getCommandId());
 	}

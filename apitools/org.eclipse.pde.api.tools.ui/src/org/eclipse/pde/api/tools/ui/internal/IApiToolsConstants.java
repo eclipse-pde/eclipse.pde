@@ -121,4 +121,12 @@ public interface IApiToolsConstants {
 	 * Wizard banner for editing an API profile
 	 */
 	public static final String IMG_WIZBAN_PROFILE = "IMG_WIZBAN_PROFILE"; //$NON-NLS-1$
+	/**
+	 * Key for enabled export image
+	 */
+	public static final String IMG_ETOOL_EXPORT = "IMG_ETOOL_EXPORT"; //$NON-NLS-1$
+	/**
+	 * Key for disabled export image
+	 */
+	public static final String IMG_DTOOL_EXPORT = "IMG_DTOOL_EXPORT"; //$NON-NLS-1$
 }

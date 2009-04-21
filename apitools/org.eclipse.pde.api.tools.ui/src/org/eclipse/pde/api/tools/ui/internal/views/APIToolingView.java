@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -312,10 +311,11 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		tbm.add(this.removeAllSessionsAction);
 		tbm.add(this.selectSessionAction);
 		tbm.add(new Separator());
+		tbm.add(this.exportSessionAction);
 //		tbm.add(new CollapseAllAction(this.viewer));
 
-		IMenuManager mm = getViewSite().getActionBars().getMenuManager();
-		mm.add(this.exportSessionAction);
+//		IMenuManager mm = getViewSite().getActionBars().getMenuManager();
+//		mm.add(this.exportSessionAction);
 	}
 	private void createActions() {
 		final IActionBars actionBars = getViewSite().getActionBars();

@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -40,6 +41,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ISession;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
 
 /**
@@ -53,6 +55,10 @@ public class ExportSessionAction extends Action {
 	public ExportSessionAction(APIToolingView view) {
 		setText(ActionMessages.ExportSessionAction_label);
 		setToolTipText(ActionMessages.ExportSessionAction_tooltip);
+		ImageDescriptor enabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ETOOL_EXPORT);
+		setImageDescriptor(enabledImageDescriptor);
+		ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DTOOL_EXPORT);
+		setDisabledImageDescriptor(disabledImageDescriptor);
 		setEnabled(false);
 		this.view = view;
 	}
@@ -62,12 +68,12 @@ public class ExportSessionAction extends Action {
 		if (activeSession == null) {
 			return;
 		}
-		ExportDialog dialog = new ExportDialog(view.getSite(), ActionMessages.ExportActionTitle);
+		ExportDialog dialog = new ExportDialog(view.getSite().getShell(), ActionMessages.ExportActionTitle);
 		int returnCode = dialog.open();
-		if (returnCode == Window.CANCEL) {
+		if (returnCode != Window.OK) {
 			return;
 		}
-		final String reportFileName = dialog.reportPath;
+		final String reportFileName = dialog.getValue();
 		if (reportFileName == null) {
 			return;
 		}
