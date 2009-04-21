@@ -11,12 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
 public abstract class XMLSourcePage extends PDEProjectionSourcePage {
@@ -27,13 +23,7 @@ public abstract class XMLSourcePage extends PDEProjectionSourcePage {
 	}
 
 	public boolean canLeaveThePage() {
-		boolean cleanModel = getInputContext().isModelCorrect();
-		if (!cleanModel) {
-			Display.getCurrent().beep();
-			String title = getEditor().getSite().getRegisteredName();
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), title, PDEUIMessages.SourcePage_errorMessage);
-		}
-		return cleanModel;
+		return true;
 	}
 
 	protected String[] collectContextMenuPreferencePages() {
