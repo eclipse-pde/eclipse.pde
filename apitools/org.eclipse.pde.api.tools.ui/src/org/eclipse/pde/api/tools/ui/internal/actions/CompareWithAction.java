@@ -65,7 +65,6 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import com.ibm.icu.text.DateFormat;
 
@@ -107,44 +106,44 @@ public class CompareWithAction implements IObjectActionDelegate {
 			static {
 				Descriptors = new ArrayList();
 
-				PropertyDescriptor propertyDescriptor = new TextPropertyDescriptor(ID_MESSAGE, P_MESSAGE);
+				PropertyDescriptor propertyDescriptor = new PropertyDescriptor(ID_MESSAGE, P_MESSAGE);
 				propertyDescriptor.setCategory(P_MESSAGE_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_COMPONENT, P_COMPONENT);
+				propertyDescriptor = new PropertyDescriptor(ID_COMPONENT, P_COMPONENT);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_KEY, P_KEY);
+				propertyDescriptor = new PropertyDescriptor(ID_KEY, P_KEY);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				propertyDescriptor.setFilterFlags(new String[] { IPropertySheetEntry.FILTER_ID_EXPERT });
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_KIND, P_KIND);
+				propertyDescriptor = new PropertyDescriptor(ID_KIND, P_KIND);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_NEW_MODIFIERS, P_NEW_MODIFIERS);
+				propertyDescriptor = new PropertyDescriptor(ID_NEW_MODIFIERS, P_NEW_MODIFIERS);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_OLD_MODIFIERS, P_OLD_MODIFIERS);
+				propertyDescriptor = new PropertyDescriptor(ID_OLD_MODIFIERS, P_OLD_MODIFIERS);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_RESTRICTIONS, P_RESTRICTIONS);
+				propertyDescriptor = new PropertyDescriptor(ID_RESTRICTIONS, P_RESTRICTIONS);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_TYPENAME, P_TYPENAME);
+				propertyDescriptor = new PropertyDescriptor(ID_TYPENAME, P_TYPENAME);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 
-				propertyDescriptor = new TextPropertyDescriptor(ID_FLAGS, P_FLAGS);
+				propertyDescriptor = new PropertyDescriptor(ID_FLAGS, P_FLAGS);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 				
-				propertyDescriptor = new TextPropertyDescriptor(ID_ELEMENT_TYPE, P_ELEMENT_TYPE);
+				propertyDescriptor = new PropertyDescriptor(ID_ELEMENT_TYPE, P_ELEMENT_TYPE);
 				propertyDescriptor.setCategory(P_INFO_CATEGORY);
 				Descriptors.add(propertyDescriptor);
 			}
@@ -196,7 +195,7 @@ public class CompareWithAction implements IObjectActionDelegate {
 				return this.data;
 			}
 			public Object getEditableValue() {
-				return null;
+				return this;
 			}
 			public IPropertyDescriptor[] getPropertyDescriptors() {
 				if (this.data != null) {
