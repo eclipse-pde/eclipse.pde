@@ -63,6 +63,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.IPropertySource2;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
@@ -73,7 +74,7 @@ public class CompareWithAction implements IObjectActionDelegate {
 	public static class DeltaSession implements ISession {
 		static Object[] NO_CHILDREN = new Object[0];
 
-		static class TreeNode implements ITreeNode, IPropertySource, IAdaptable {
+		static class TreeNode implements ITreeNode, IPropertySource2, IAdaptable {
 			private static final IPropertyDescriptor[] NO_PROPERTY_DESCRIPTORS = new IPropertyDescriptor[0];
 			// Property id keys
 			public static final String ID_MESSAGE = "IDelta.Message"; //$NON-NLS-1$
@@ -348,9 +349,12 @@ public class CompareWithAction implements IObjectActionDelegate {
 				buffer.append(" (0x").append(Integer.toHexString(newModifiers)).append(')'); //$NON-NLS-1$
 				return buffer.toString();
 			}
+			public boolean isPropertyResettable(Object id) {
+				return false;
+			}
 		}
 
-		static class TreeModel implements ITreeModel, IAdaptable {
+		static class TreeModel implements ITreeModel {
 			TreeNode root;
 
 			TreeModel(TreeNode root) {
@@ -358,10 +362,6 @@ public class CompareWithAction implements IObjectActionDelegate {
 			}
 			public ITreeNode getRoot() {
 				return this.root;
-			}
-			public Object getAdapter(Class adapter) {
-				// TODO Auto-generated method stub
-				return null;
 			}
 		}
 

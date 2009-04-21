@@ -337,8 +337,9 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 					}
 					if (item instanceof ITreeNode) {
 						ITreeNode node = (ITreeNode) item;
-						if (node.getData() != null) {
-							// show in Properties view
+						if (node.getData() != null && !node.hasChildren()) {
+							// show the Properties view
+							ApiUIPlugin.getDefault().showPropertiesView();
 						}
 					}
 				}

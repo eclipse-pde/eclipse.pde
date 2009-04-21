@@ -309,12 +309,18 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_EXPORT, DLCL + "export.gif"); //$NON-NLS-1$
 	}
 	void showAPIToolingView() {
+		showView(APIToolingView.ID);
+	}
+	public void showPropertiesView() {
+		showView("org.eclipse.ui.views.PropertySheet"); //$NON-NLS-1$
+	}
+	private void showView(String id) {
 		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) return;
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			try {
-				IViewPart view = page.showView(APIToolingView.ID, null, IWorkbenchPage.VIEW_CREATE);
+				IViewPart view = page.showView(id, null, IWorkbenchPage.VIEW_CREATE);
 				page.bringToTop(view);
 			} catch (PartInitException e) {
 				log(e);
