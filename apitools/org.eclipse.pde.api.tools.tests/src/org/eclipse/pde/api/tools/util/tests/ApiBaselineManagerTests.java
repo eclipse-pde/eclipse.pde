@@ -297,7 +297,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 				else {
 					waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.REMOVED, 0, IJavaElement.JAVA_PROJECT);
 				}
-				pro.delete(true, true, monitor);
+				deleteResource(pro);
 				Object obj = waiter.waitForEvent();
 				assertNotNull("the project delete event did not arrive", obj);
 			}

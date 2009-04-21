@@ -33,20 +33,19 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  * 
  * @since 1.0.0 
  */
-public class AbstractApiTest extends TestCase {	
-	
+public class AbstractApiTest extends TestCase {
 	/**
 	 * Constant representing the name of the testing project created for plugin tests.
 	 * Value is: <code>APITests</code>.
 	 */
 	protected static final String TESTING_PROJECT_NAME = "APITests";
-	
+
 	/**
 	 * Constant representing the name of the testing plugin project created for plugin tests.
 	 * Value is: <code>APIPluginTests</code>.
 	 */
 	protected static final String TESTING_PLUGIN_PROJECT_NAME = "APIPluginTests";
-	
+
 	/**
 	 * Returns the {@link IJavaProject} with the given name. If this method
 	 * is called from a non-plugin unit test, <code>null</code> is always returned.
@@ -62,7 +61,7 @@ public class AbstractApiTest extends TestCase {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the {@link IApiComponent} for the given project name or <code>null</code> if it does not exist
 	 * @param projectname the name of the project
@@ -74,7 +73,7 @@ public class AbstractApiTest extends TestCase {
 		assertNotNull("the workspace profile must exist", profile);
 		return profile.getApiComponent(project.getElementName());
 	}
-	
+
 	/**
 	 * Performs the given refactoring
 	 * @param refactoring
@@ -90,7 +89,7 @@ public class AbstractApiTest extends TestCase {
 		PerformChangeOperation perform = new PerformChangeOperation(create);
 		ResourcesPlugin.getWorkspace().run(perform, monitor);
 	}
-	
+
 	/**
 	 * Wait for autobuild notification to occur
 	 */
@@ -106,5 +105,31 @@ public class AbstractApiTest extends TestCase {
 				wasInterrupted = true;
 			}
 		} while (wasInterrupted);
+	}
+	/**
+	 * Delete this resource.
+	 */
+	public void deleteResource(IProject project) throws CoreException {
+		int retryCount = 0; // wait 1 minute at most
+		while (++retryCount <= 60) {
+			if (delete(project)) {
+				return;
+			} else {
+				System.gc();
+			}
+		}
+		throw new RuntimeException("Could not delete " + project.getFullPath());
+	}
+	public static boolean delete(IProject project) {
+		try {
+			project.delete(true, true, null);
+			if (org.eclipse.jdt.core.tests.util.Util.isResourceDeleted(project)) {
+				return true;
+			}
+		}
+		catch (CoreException e) {
+			//	skip
+		}
+		return org.eclipse.jdt.core.tests.util.Util.waitUntilResourceDeleted(project);
 	}
 }
