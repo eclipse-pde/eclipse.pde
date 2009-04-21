@@ -120,6 +120,8 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	}
 
 	public void monitoredFileAdded(IFile file) {
+		if (fInputContextManager == null)
+			return;
 		String name = file.getName();
 		if (name.equalsIgnoreCase("feature.xml")) { //$NON-NLS-1$
 			/*
