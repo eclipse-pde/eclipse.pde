@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
-import org.osgi.framework.Constants;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
@@ -119,7 +118,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				if (model instanceof IBundlePluginModelBase) {
 					localization = ((IBundlePluginModelBase) model).getBundleLocalization();
 				} else if (model != null) {
-					localization = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
+					localization = "plugin"; //$NON-NLS-1$
 				}
 				if (localization != null && file.getProjectRelativePath().toString().startsWith(localization)) {
 					((AbstractNLModel) model).resetNLResourceHelper();

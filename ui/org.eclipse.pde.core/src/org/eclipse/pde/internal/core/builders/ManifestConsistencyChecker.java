@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Constants;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
@@ -150,7 +149,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (model instanceof IBundlePluginModelBase) {
 			localization = ((IBundlePluginModelBase) model).getBundleLocalization();
 		} else {
-			localization = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
+			localization = "plugin"; //$NON-NLS-1$
 		}
 		if (localization != null)
 			return file.getProjectRelativePath().equals(new Path(localization + ".properties")); //$NON-NLS-1$
