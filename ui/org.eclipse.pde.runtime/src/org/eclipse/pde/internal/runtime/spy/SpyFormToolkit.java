@@ -42,10 +42,10 @@ public class SpyFormToolkit extends FormToolkit {
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 
-		private PopupDialog dialog;
+		private PopupDialog fDialog;
 
 		public SpyHyperlinkAdapter(PopupDialog dialog) {
-			this.dialog = dialog;
+			this.fDialog = dialog;
 		}
 
 		public void linkActivated(HyperlinkEvent e) {
@@ -54,11 +54,11 @@ public class SpyFormToolkit extends FormToolkit {
 				String clazz = href.substring(CLASS_PROTOCOL_PREFIX.length());
 				Bundle bundle = (Bundle) bundleClassByName.get(clazz);
 				SpyIDEUtil.openClass(bundle.getSymbolicName(), clazz);
-				dialog.close();
+				fDialog.close();
 			} else if (href.startsWith(BUNDLE_PROTOCOL_PREFIX)) {
 				String bundle = href.substring(BUNDLE_PROTOCOL_PREFIX.length());
 				SpyIDEUtil.openBundleManifest(bundle);
-				dialog.close();
+				fDialog.close();
 			}
 		}
 	}
@@ -130,8 +130,14 @@ public class SpyFormToolkit extends FormToolkit {
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (e.widget == copyQNameItem) {
-					Clipboard clipboard = new Clipboard(formText.getDisplay());
-					clipboard.setContents(new Object[] {((String) formText.getSelectedLinkHref()).substring(CLASS_PROTOCOL_PREFIX.length())}, new Transfer[] {TextTransfer.getInstance()});
+					Clipboard clipboard = null;
+					try {
+						clipboard = new Clipboard(formText.getDisplay());
+						clipboard.setContents(new Object[] {((String) formText.getSelectedLinkHref()).substring(CLASS_PROTOCOL_PREFIX.length())}, new Transfer[] {TextTransfer.getInstance()});
+					} finally {
+						if (clipboard != null)
+							clipboard.dispose();
+					}
 				}
 			}
 		};
