@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
@@ -125,7 +126,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * <p>Map of <code>componentId -> {@link IApiComponent}</code></p>
 	 */
 	private HashMap fComponentsById = null;
-	
+	/**
+	 * Maps project name's to components.
+	 * <p>Map of <code>project name -> {@link IApiComponent}</code></p>
+	 */
+	private HashMap fComponentsByProjectNames = null;
 	/**
 	 * Cache of system package names
 	 */
@@ -304,6 +309,13 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			fComponentsById = new HashMap();
 		}
 		fComponentsById.put(component.getId(), component);
+		if (component instanceof PluginProjectApiComponent) {
+			PluginProjectApiComponent projectApiComponent = (PluginProjectApiComponent) component;
+			if (this.fComponentsByProjectNames == null) {
+				this.fComponentsByProjectNames = new HashMap();
+			}
+			this.fComponentsByProjectNames.put(projectApiComponent.getJavaProject().getProject().getName(), component);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -706,6 +718,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			fComponentsById.clear();
 			fComponentsById = null;
 		}
+		if(fComponentsByProjectNames != null) {
+			fComponentsByProjectNames.clear();
+			fComponentsByProjectNames = null;
+		}
 		if (fSystemPackageNames != null) {
 			fSystemPackageNames.clear();
 		}
@@ -880,5 +896,12 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	public void setLocation(String location) {
 		this.fLocation = location;
+	}
+	public IApiComponent getApiComponent(IProject project) {
+		loadBaselineInfos();
+		if(fComponentsByProjectNames == null) {
+			return null;
+		}
+		return (IApiComponent) fComponentsByProjectNames.get(project.getName());
 	}
 }

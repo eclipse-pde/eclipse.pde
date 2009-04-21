@@ -1851,7 +1851,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(profile == null) {
 			return false;
 		}
-		IApiComponent component = profile.getApiComponent(project.getName());
+		IApiComponent component = profile.getApiComponent(project);
 		if(component != null) {
 			try {
 				IApiFilterStore filterStore = component.getFilterStore();

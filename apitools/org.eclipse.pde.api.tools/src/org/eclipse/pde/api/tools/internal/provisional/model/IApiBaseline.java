@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.model;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -69,6 +70,15 @@ public interface IApiBaseline extends IApiElement {
 	 * @return API component or <code>null</code>
 	 */
 	public IApiComponent getApiComponent(String id);
+
+	/**
+	 * Returns the API component in this baseline for the given project
+	 * or <code>null</code> if none.
+	 * 
+	 * @param project the given project
+	 * @return API component or <code>null</code>
+	 */
+	public IApiComponent getApiComponent(IProject project);
 	/**
 	 * Returns the execution environment this baseline is resolved with, or
 	 * <code>null</code> if none (not yet determined or unable to bind to an

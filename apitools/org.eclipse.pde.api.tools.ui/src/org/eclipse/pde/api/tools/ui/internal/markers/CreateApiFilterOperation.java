@@ -102,7 +102,7 @@ public class CreateApiFilterOperation extends UIJob {
 			Set pjs = map.keySet();
 			for (Iterator iter = pjs.iterator(); iter.hasNext();) {
 				project = (IProject) iter.next();
-				component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
+				component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project);
 				if(component == null) {
 					return Status.CANCEL_STATUS;
 				}
