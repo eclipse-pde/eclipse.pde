@@ -17,7 +17,7 @@
 <xsl:template match="/">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 	<head>
-	<title>Compare Details</title>
+		<title>Compare Details</title>
 		<style type="text/css">
 			table {
 				border-style: solid;
