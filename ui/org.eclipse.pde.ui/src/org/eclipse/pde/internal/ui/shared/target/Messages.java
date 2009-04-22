@@ -92,6 +92,7 @@ public class Messages extends NLS {
 	public static String IncludedBundlesTree_1;
 	public static String IncludedBundlesTree_2;
 	public static String IncludedBundlesTree_3;
+	public static String PreviewContainerPage_0;
 	public static String PreviewContainerPage_1;
 	public static String PreviewContainerPage_2;
 	public static String PreviewContainerPage_3;

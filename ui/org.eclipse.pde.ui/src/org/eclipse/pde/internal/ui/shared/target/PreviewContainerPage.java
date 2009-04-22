@@ -78,7 +78,7 @@ public class PreviewContainerPage extends WizardPage {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					IStatus result = container.resolve(fTarget, monitor);
 					if (monitor.isCanceled()) {
-						fInput = new Object[] {"< Operation Cancelled >"};
+						fInput = new Object[] {Messages.PreviewContainerPage_0};
 					} else if (!result.isOK() && !result.isMultiStatus()) {
 						fInput = new Object[] {result};
 					} else {
