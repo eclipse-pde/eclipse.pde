@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -76,6 +75,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IVersionRange;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
+import org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -158,9 +158,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	public BaseApiAnalyzer() {
 	}
 	
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(org.eclipse.pde.api.tools.internal.builder.BuildState, org.eclipse.pde.api.tools.internal.provisional.IApiProfile, org.eclipse.pde.api.tools.internal.provisional.IApiComponent, java.lang.String[], java.lang.String[], org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(..)
 	 */
 	public void analyzeComponent(
 			final BuildState state,
@@ -168,11 +167,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			final Properties preferences,
 			final IApiBaseline baseline,
 			final IApiComponent component,
-			final String[] typenames,
-			final String[] changedtypes,
+			final IBuildContext context,
 			IProgressMonitor monitor) {
 		try {
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6 + (changedtypes == null ? 0 : changedtypes.length));
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6);
 			fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
 			this.fPreferences = preferences;
@@ -215,6 +213,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					return;
 				}
 			}
+			IBuildContext bcontext = context;
+			if(bcontext == null) {
+				bcontext = new BuildContext();
+			}
 			boolean checkfilters = false;
 			if(baseline != null) {
 				IApiComponent reference = baseline.getApiComponent(component.getId());
@@ -225,8 +227,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				//compatibility checks
 				if(reference != null) {
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getId(), baseline.getName()}));
-					if(changedtypes != null) {
+					if(bcontext.hasChangedTypes()) {
+						String[] changedtypes = bcontext.getStructurallyChangedTypes();
 						for(int i = 0; i < changedtypes.length; i++) {
+							if(changedtypes[i] == null) {
+								continue;
+							}
 							checkCompatibility(changedtypes[i], reference, component);
 							updateMonitor(localMonitor);
 						}
@@ -252,14 +258,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				updateMonitor(localMonitor);
 			}
 			//usage checks
-			checkApiUsage(component, typenames, localMonitor.newChild(1));
+			checkApiUsage(bcontext, component, localMonitor.newChild(1));
 			updateMonitor(localMonitor);
 			//tag validation
-			checkTagValidation(changedtypes, component, localMonitor.newChild(1));
+			checkTagValidation(bcontext, component, localMonitor.newChild(1));
 			updateMonitor(localMonitor);
 			if(checkfilters) {
 				//check for unused filters only if the scans have been done
-				checkUnusedProblemFilters(component, typenames, changedtypes, localMonitor.newChild(1));
+				checkUnusedProblemFilters(bcontext, component, localMonitor.newChild(1));
 			}
 			updateMonitor(localMonitor);
 		} catch(CoreException e) {
@@ -274,11 +280,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Checks for unused API problem filters
+	 * @param context the current build context
 	 * @param reference
-	 * @param typenames
 	 * @param monitor
 	 */
-	private void checkUnusedProblemFilters(IApiComponent reference, String[] typenames, String[] changedTypes, IProgressMonitor monitor) {
+	private void checkUnusedProblemFilters(final IBuildContext context, IApiComponent reference, IProgressMonitor monitor) {
 		if(ignoreUnusedProblemFilterCheck()) {
 			if(DEBUG) {
 				System.out.println("Ignoring unused problem filter check"); //$NON-NLS-1$
@@ -288,30 +294,27 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		try {
 			ApiFilterStore store = (ApiFilterStore)reference.getFilterStore();
-			IProject project = fJavaProject.getProject();
-			if(typenames != null || changedTypes != null) {
-				//incremental
-				Set typeNamesSet = null;
+			IProject project = fJavaProject.getProject(); 
+			if(context.hasTypes()) {
 				IResource resource = null;
-				if (typenames != null) {
-					typeNamesSet = new HashSet();
-					for (int i = 0; i < typenames.length; i++) {
-						typeNamesSet.add(typenames[i]);
-						resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(typenames[i])));
-						if(resource != null) {
-							createUnusedApiFilterProblems(store.getUnusedFilters(resource, typenames[i]));
-						}
+				String[] types = context.getStructurallyChangedTypes();
+				for (int i = 0; i < types.length; i++) {
+					if(types[i] == null) {
+						continue;
+					}
+					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
+					if(resource != null) {
+						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i]));
 					}
 				}
-				if (changedTypes != null) {
-					// check the ones not already checked as part of type names check
-					for (int i = 0; i < changedTypes.length; i++) {
-						if (typeNamesSet == null || !typeNamesSet.remove(changedTypes[i])) {
-							resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(changedTypes[i])));
-							if(resource != null) {
-								createUnusedApiFilterProblems(store.getUnusedFilters(resource, changedTypes[i]));
-							}
-						}
+				types = context.getDependentTypes();
+				for (int i = 0; i < types.length; i++) {
+					if(types[i] == null) {
+						continue;
+					}
+					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
+					if(resource != null) {
+						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i]));
 					}
 				}
 			} else {
@@ -508,6 +511,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if(typenames == null) {
 			return component;
 		}
+		if(typenames.length == 0) {
+			return component;
+		}
 		else {
 			return Factory.newTypeScope(component, getScopedElements(typenames));
 		}
@@ -521,6 +527,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private IReferenceTypeDescriptor[] getScopedElements(final String[] typenames) {
 		ArrayList types = new ArrayList(typenames.length);
 		for(int i = 0; i < typenames.length; i++) {
+			if(typenames[i] == null) {
+				continue;
+			}
 			types.add(Util.getType(typenames[i]));
 		}
 		return (IReferenceTypeDescriptor[]) types.toArray(new IReferenceTypeDescriptor[types.size()]);
@@ -662,18 +671,30 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}
-	 * @param typenames
+	 * @param context
 	 * @param component
 	 * @param monitor
 	 */
-	private void checkTagValidation(final String[] typenames, final IApiComponent component, IProgressMonitor monitor) {
+	private void checkTagValidation(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) {
 		if(ignoreInvalidTagCheck()) {
 			return;
 		}
 		SubMonitor localMonitor = null;
 		try {
-			localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + (typenames == null ? component.getApiTypeContainers().length : typenames.length));
-			if(typenames == null) {
+			
+			localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + component.getApiTypeContainers().length);
+			if(context.hasTypes()) {
+				String[] typenames = context.getStructurallyChangedTypes();
+				for(int i = 0; i < typenames.length; i++) {
+					if(typenames[i] == null) {
+						continue;
+					}
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typenames[i]));
+					processType(typenames[i]);
+					updateMonitor(localMonitor);
+				}
+			}
+			else {
 				try {
 					IPackageFragmentRoot[] roots = fJavaProject.getPackageFragmentRoots();
 					for(int i = 0; i < roots.length; i++) {
@@ -686,13 +707,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 				catch(JavaModelException jme) {
 					ApiPlugin.log(jme);
-				}
-			}
-			else {
-				for(int i = 0; i < typenames.length; i++) {
-					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typenames[i]));
-					processType(typenames[i]);
-					updateMonitor(localMonitor);
 				}
 			}
 			updateMonitor(localMonitor);
@@ -780,19 +794,38 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Checks for illegal API usage in the specified component, creating problem
 	 * markers as required.
 	 * 
-	 * @param profile profile being analyzed
+	 * @param context the current build context
 	 * @param component component being built
-	 * @param typenames
 	 * @param monitor progress monitor
 	 */
-	private void checkApiUsage(final IApiComponent component, final String[] typenames, IProgressMonitor monitor) throws CoreException {
+	private void checkApiUsage(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
 		if(ignoreApiUsageScan()) {
 			if(DEBUG) {
 				System.out.println("Ignoring API usage scan"); //$NON-NLS-1$
 			}
 			return;
 		} 
-		IApiTypeContainer scope = getSearchScope(component, typenames);
+		IApiTypeContainer scope = getSearchScope(component, null);
+		if(context.hasTypes()) {
+			String[] deptypes = context.getDependentTypes();
+			String[] structtypes = context.getStructurallyChangedTypes();
+			//TODO do any special processing here to prune types prior
+			//to doing the scan
+			HashSet typenames = new HashSet(deptypes.length + structtypes.length);
+			for (int i = 0; i < deptypes.length; i++) {
+				if(deptypes[i] == null) {
+					continue;
+				}
+				typenames.add(deptypes[i]);
+			}
+			for (int i = 0; i < structtypes.length; i++) {
+				if(structtypes[i] == null) {
+					continue;
+				}
+				typenames.add(structtypes[i]);
+			}
+			scope = getSearchScope(component, (String[]) typenames.toArray(new String[typenames.size()]));
+		}
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
 		ReferenceAnalyzer analyzer = new ReferenceAnalyzer();
 		try {

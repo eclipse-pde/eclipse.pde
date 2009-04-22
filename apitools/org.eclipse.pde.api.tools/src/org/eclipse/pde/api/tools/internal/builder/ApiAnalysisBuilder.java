@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.JavaModelManager;
@@ -107,7 +108,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Maps prerequisite projects to their output location(s)
 	 */
-	private HashMap projecttooutputlocations = new HashMap();
+	HashMap output_locs = new HashMap();
+	
+	/**
+	 * Maps pre-requisite projects to their source locations
+	 */
+	HashMap src_locs = new HashMap();
 	
 	/**
 	 * Current build state
@@ -355,7 +361,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				// Compatibility checks
 				IApiComponent apiComponent = wbaseline.getApiComponent(id);
 				if(apiComponent != null) {
-					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, null, null, localMonitor.newChild(1));
+					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.newChild(1));
 					updateMonitor(localMonitor, 1);
 					createMarkers();
 					updateMonitor(localMonitor, 1);
@@ -672,7 +678,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			IJavaProject javaProject = JavaCore.create(this.currentproject);
 			HashSet blocations = new HashSet();
 			blocations.add(javaProject.getOutputLocation());
-			projecttooutputlocations.put(this.currentproject, blocations);
+			this.output_locs.put(this.currentproject, blocations);
+			HashSet slocations = new HashSet();
+			IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				if(roots[i].isArchive()) {
+					continue;
+				}
+				slocations.add(roots[i].getPath());
+			}
+			this.src_locs.put(this.currentproject, slocations);
 			IClasspathEntry[] entries = javaProject.getResolvedClasspath(true);
 			for (int i = 0, l = entries.length; i < l; i++) {
 				IClasspathEntry entry = entries[i];
@@ -708,19 +723,22 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					//try to derive all of the output locations for each of the projects
 					javaProject = JavaCore.create(p);
 					HashSet bins = new HashSet();
+					HashSet srcs = new HashSet();
 					if(javaProject.exists()) {
 						bins.add(javaProject.getOutputLocation());
 						IClasspathEntry[] source = javaProject.getRawClasspath();
 						IPath entrypath = null;
 						for(int j = 0; j < source.length; j++) {
 							if(source[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+								srcs.add(source[j].getPath());
 								entrypath = source[j].getOutputLocation();
 								if(entrypath != null) {
 									bins.add(entrypath);
 								}
 							}
 						}
-						this.projecttooutputlocations.put(p, bins);
+						this.output_locs.put(p, bins);
+						this.src_locs.put(p, srcs);
 					}
 				}
 			}
@@ -739,7 +757,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return the output paths for the given project or <code>null</code>
 	 */
 	HashSet getProjectOutputPaths(IProject project) {
-		return (HashSet) this.projecttooutputlocations.get(project);
+		return (HashSet) this.output_locs.get(project);
 	}
 	
 	/**

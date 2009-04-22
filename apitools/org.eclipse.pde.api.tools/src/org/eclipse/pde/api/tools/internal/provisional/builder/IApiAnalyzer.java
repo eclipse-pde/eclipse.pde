@@ -42,13 +42,12 @@ public interface IApiAnalyzer {
 	 * @param preferences the given preferences to be used for the analysis
 	 * @param baseline the profile context to check the component against
 	 * @param component the component to analyze
-	 * @param typenames the context of type names to analyze within the given component
-	 * @param changedtypes the context of type names for actual types that had changes in them (raw type names from a build delta)
+	 * @param context the build context reported from the {@link ApiAnalysisBuilder}
 	 * @param monitor to report progress
 	 * @see PluginProjectApiComponent
 	 * @see BundleApiComponent
 	 */
-	public void analyzeComponent(final BuildState buildState, final IApiFilterStore filterStore, final Properties preferences, final IApiBaseline baseline, final IApiComponent component, final String[] typenames, final String[] changedtypes, IProgressMonitor monitor);
+	public void analyzeComponent(final BuildState buildState, final IApiFilterStore filterStore, final Properties preferences, final IApiBaseline baseline, final IApiComponent component, final IBuildContext context, IProgressMonitor monitor);
 	
 	/**
 	 * Returns the complete set of {@link IApiProblem}s found by this analyzer, or an empty

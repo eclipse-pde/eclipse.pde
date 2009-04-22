@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
+import org.eclipse.pde.api.tools.internal.builder.BuildContext;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
@@ -608,7 +609,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				allApiBundles.add(name);
 				BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 				try {
-					analyzer.analyzeComponent(null, getFilterStore(name), this.properties, referenceBaseline, apiComponent, null, null, new NullProgressMonitor());
+					analyzer.analyzeComponent(null, getFilterStore(name), this.properties, referenceBaseline, apiComponent, new BuildContext(), new NullProgressMonitor());
 					IApiProblem[] problems = analyzer.getProblems();
 					// remove duplicates
 					problems = removeDuplicates(problems);

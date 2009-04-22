@@ -128,7 +128,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 1.0.0
  */
 public final class Util {
-	
+
 	/**
 	 * Class that runs a build in the workspace or the given project
 	 */
@@ -228,6 +228,7 @@ public final class Util {
 	public static final String DEFAULT_PACKAGE_NAME = EMPTY_STRING;
 	
 	public static final String DOT_CLASS_SUFFIX = ".class"; //$NON-NLS-1$
+	public static final String DOT_JAVA_SUFFIX = ".java"; //$NON-NLS-1$
 
 	/**
 	 * Constant representing the default size to read from an input stream
@@ -1353,7 +1354,7 @@ public final class Util {
 	 * @return true if the name is for a java source file, false otherwise
 	 */
 	public static boolean isJavaFileName(String fileName) {
-		return fileName.toLowerCase().endsWith(".java"); //$NON-NLS-1$
+		return fileName.toLowerCase().endsWith(DOT_JAVA_SUFFIX);
 	}
 
 	/**
