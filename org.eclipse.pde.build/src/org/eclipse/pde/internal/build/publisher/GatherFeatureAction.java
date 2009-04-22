@@ -64,16 +64,18 @@ public class GatherFeatureAction extends FeaturesAction {
 
 			GatheringComputer rootComputer = advice.getRootFileComputer(config);
 
-			FileSetDescriptor descriptor = advice.getDescriptor(config);
-			IInstallableUnit iu = (IInstallableUnit) createFeatureRootFileIU(feature.getId(), feature.getVersion(), null, descriptor)[0];
+			if (rootComputer != null) {
+				FileSetDescriptor descriptor = advice.getDescriptor(config);
+				IInstallableUnit iu = (IInstallableUnit) createFeatureRootFileIU(feature.getId(), feature.getVersion(), null, descriptor)[0];
 
-			File[] files = rootComputer.getFiles();
-			IArtifactKey artifactKey = iu.getArtifacts()[0];
-			ArtifactDescriptor artifactDescriptor = new ArtifactDescriptor(artifactKey);
-			publishArtifact(artifactDescriptor, files, null, publisherInfo, rootComputer);
+				File[] files = rootComputer.getFiles();
+				IArtifactKey artifactKey = iu.getArtifacts()[0];
+				ArtifactDescriptor artifactDescriptor = new ArtifactDescriptor(artifactKey);
+				publishArtifact(artifactDescriptor, files, null, publisherInfo, rootComputer);
 
-			result.addIU(iu, IPublisherResult.NON_ROOT);
-			ius.add(iu);
+				result.addIU(iu, IPublisherResult.NON_ROOT);
+				ius.add(iu);
+			}
 		}
 		return ius;
 	}
