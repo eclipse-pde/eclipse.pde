@@ -27,6 +27,7 @@ public class ActionMessages extends NLS {
 	public static String CompareDialogTitle;
 	public static String CompareDialogCollectingElementTaskName;
 	public static String CompareDialogComputeDeltasTaskName;
+	public static String CompareWithAction_compared_project_with;
 	public static String CompareWithAction_compared_with_against;
 	public static String CompareWithAction_comparing_apis;
 	public static String CompareTaskNoChanges;

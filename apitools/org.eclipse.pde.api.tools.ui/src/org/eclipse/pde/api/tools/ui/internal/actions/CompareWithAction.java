@@ -536,11 +536,19 @@ public class CompareWithAction implements IObjectActionDelegate {
 						SubMonitor compareProgress = progress.newChild(98).setWorkRemaining(scope.getApiElements().length);
 						try {
 							IDelta delta = ApiComparator.compare(scope, baseline, VisibilityModifiers.API, false, compareProgress);
+							int size = structuredSelection.size();
 							String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
-										new Integer(structuredSelection.size()), 
+									new Integer(size), 
+									baselineName, 
+									new Integer(delta.getChildren().length)
+								});
+							if(size == 1) {
+								description = NLS.bind(ActionMessages.CompareWithAction_compared_project_with, new Object[] {
+										((IJavaElement)structuredSelection.getFirstElement()).getElementName(), 
 										baselineName, 
 										new Integer(delta.getChildren().length)
 									});
+							}
 							ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(description, delta, baselineName), true);
 							progress.worked(1);
 							return Status.OK_STATUS;
