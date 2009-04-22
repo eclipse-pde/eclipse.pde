@@ -15,6 +15,7 @@ import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.engine.*;
@@ -443,7 +444,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * specified definition
 	 */
 	public boolean isContentEquivalent(ITargetDefinition definition) {
-		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
+		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
 			// check containers and implicit dependencies
 			IBundleContainer[] c1 = getBundleContainers();
 			IBundleContainer[] c2 = definition.getBundleContainers();
@@ -480,6 +481,26 @@ public class TargetDefinition implements ITargetDefinition {
 			return false;
 		}
 		return o1.equals(o2);
+	}
+
+	private boolean isArgsNullOrEqual(String args1, String args2) {
+		if (args1 == null) {
+			return args2 == null;
+		}
+		if (args2 == null) {
+			return false;
+		}
+		String[] a1 = DebugPlugin.parseArguments(args1);
+		String[] a2 = DebugPlugin.parseArguments(args2);
+		if (a1.length == a2.length) {
+			for (int i = 0; i < a1.length; i++) {
+				if (!a1[i].equals(a2[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private boolean areContainersEqual(IBundleContainer[] c1, IBundleContainer[] c2) {

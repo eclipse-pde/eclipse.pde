@@ -496,7 +496,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 				arguments.append(vmargs[j]).append(' ');
 			}
 		}
-		target.setVMArguments(arguments.toString());
+		target.setVMArguments(arguments.toString().trim());
 
 		return target;
 	}

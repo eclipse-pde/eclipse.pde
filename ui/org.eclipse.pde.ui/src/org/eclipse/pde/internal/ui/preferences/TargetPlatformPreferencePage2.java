@@ -48,8 +48,15 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 	private class TargetLabelProvider extends StyledCellLabelProvider {
 
+		// Definition corresponding to running host
+		private TargetDefinition fRunningHost;
+
 		public TargetLabelProvider() {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
+			TargetPlatformService service = (TargetPlatformService) getTargetService();
+			if (service != null) {
+				fRunningHost = (TargetDefinition) service.newDefaultTargetDefinition();
+			}
 		}
 
 		/* (non-Javadoc)
@@ -115,6 +122,9 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				} else if (target.getBundleStatus().getSeverity() == IStatus.ERROR) {
 					flag = SharedLabelProvider.F_ERROR;
 				}
+			}
+			if (fRunningHost != null && fRunningHost.isContentEquivalent(target)) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING, flag);
 			}
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION, flag);
 		}
