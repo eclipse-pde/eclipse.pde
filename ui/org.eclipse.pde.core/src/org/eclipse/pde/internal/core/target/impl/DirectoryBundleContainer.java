@@ -76,7 +76,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			List bundles = new ArrayList(files.length);
 			for (int i = 0; i < files.length; i++) {
 				if (localMonitor.isCanceled()) {
-					throw new OperationCanceledException();
+					return new IResolvedBundle[0];
 				}
 				try {
 					IResolvedBundle rb = generateBundle(files[i]);

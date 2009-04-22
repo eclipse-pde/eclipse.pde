@@ -150,14 +150,22 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-		subMonitor.beginTask(Messages.IUBundleContainer_0, 20);
+		subMonitor.beginTask(Messages.IUBundleContainer_0, 200);
 
 		// retrieve profile
 		IProfile profile = ((TargetDefinition) definition).getProfile();
-		subMonitor.worked(1);
+		subMonitor.worked(10);
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
 
 		// resolve IUs
 		IInstallableUnit[] units = getInstallableUnits(profile);
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
 
 		// create the provisioning plan
 		ProfileChangeRequest request = new ProfileChangeRequest(profile);
@@ -171,10 +179,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		ProvisioningContext context = new ProvisioningContext(repositories);
 		context.setArtifactRepositories(repositories);
 
-		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 1));
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
+		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 10));
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
-			System.out.println(status.getMessage());
 			throw new CoreException(status);
 		}
 		ProvisioningPlan installerPlan = plan.getInstallerPlan();
@@ -183,26 +194,40 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			// to continue, we don't want to update the running SDK while provisioning a target
 			PDECore.log(new Status(IStatus.INFO, PDECore.PLUGIN_ID, Messages.IUBundleContainer_6));
 		}
-		subMonitor.worked(1);
+		subMonitor.worked(10);
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
 
 		// execute the provisioning plan
 		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
 		IEngine engine = getEngine();
-		IStatus result = engine.perform(profile, phases, plan.getOperands(), context, new SubProgressMonitor(subMonitor, 14));
+		IStatus result = engine.perform(profile, phases, plan.getOperands(), context, new SubProgressMonitor(subMonitor, 140));
 
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
 		if (!result.isOK()) {
-			System.out.println(result.getMessage());
 			throw new CoreException(result);
 		}
 
 		// slice IUs and all prerequisites
 		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false);
-		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 1));
+		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
 
 		// query for bundles
 		BundleQuery query = new BundleQuery();
 		Collector collector = new Collector();
-		slice.query(query, collector, new SubProgressMonitor(subMonitor, 1));
+		slice.query(query, collector, new SubProgressMonitor(subMonitor, 10));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
 
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
@@ -223,6 +248,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				}
 			}
 		}
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
 		// remove all bundles from previous IU containers (so we don't get duplicates from multi-locations
 		IBundleContainer[] containers = definition.getBundleContainers();
 		for (int i = 0; i < containers.length; i++) {
@@ -240,7 +270,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				}
 			}
 		}
-		subMonitor.worked(1);
+		subMonitor.worked(10);
 		subMonitor.done();
 		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
 	}

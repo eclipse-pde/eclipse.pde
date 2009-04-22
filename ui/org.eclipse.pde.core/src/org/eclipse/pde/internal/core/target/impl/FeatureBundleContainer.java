@@ -151,6 +151,9 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		IFeatureModel model = null;
 		try {
+			if (monitor.isCanceled()) {
+				return new IResolvedBundle[0];
+			}
 			File location = resolveFeatureLocation();
 			File manifest = new File(location, "feature.xml"); //$NON-NLS-1$
 			if (!manifest.exists() || !manifest.isFile()) {
@@ -169,6 +172,10 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			if (!dir.exists() || !dir.isDirectory()) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_5, fId)));
 			}
+			if (monitor.isCanceled()) {
+				return new IResolvedBundle[0];
+			}
+
 			IBundleContainer container = service.newDirectoryContainer(dir.getAbsolutePath());
 			container.resolve(definition, monitor);
 			IResolvedBundle[] bundles = container.getBundles();
@@ -176,6 +183,9 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			IFeaturePlugin[] plugins = feature.getPlugins();
 			List matchInfos = new ArrayList(plugins.length);
 			for (int i = 0; i < plugins.length; i++) {
+				if (monitor.isCanceled()) {
+					return new IResolvedBundle[0];
+				}
 				IFeaturePlugin plugin = plugins[i];
 				// only include if plug-in matches environment
 				if (isMatch(definition.getArch(), plugin.getArch(), Platform.getOSArch()) && isMatch(definition.getNL(), plugin.getNL(), Platform.getNL()) && isMatch(definition.getOS(), plugin.getOS(), Platform.getOS()) && isMatch(definition.getWS(), plugin.getWS(), Platform.getWS())) {

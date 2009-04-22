@@ -109,6 +109,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			}
 			infos = new BundleInfo[0];
 		}
+
+		if (monitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
 		BundleInfo[] source = P2Utils.readSourceBundles(home, configUrl);
 		if (source == null) {
 			source = new BundleInfo[0];
@@ -116,12 +121,18 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		IResolvedBundle[] all = new IResolvedBundle[infos.length + source.length];
 		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, all.length);
 		for (int i = 0; i < infos.length; i++) {
+			if (monitor.isCanceled()) {
+				return new IResolvedBundle[0];
+			}
 			BundleInfo info = infos[i];
 			all[i] = resolveBundle(info, false);
 			localMonitor.worked(1);
 		}
 		int index = 0;
 		for (int i = infos.length; i < all.length; i++) {
+			if (monitor.isCanceled()) {
+				return new IResolvedBundle[0];
+			}
 			BundleInfo info = source[index];
 			all[i] = resolveBundle(info, true);
 			index++;
