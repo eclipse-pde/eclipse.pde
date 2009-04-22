@@ -88,6 +88,13 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		return new PluginRegistryConverter();
 	}
 
+	private Dictionary getUIPlatformProperties() {
+		Dictionary result = new Hashtable();
+		result.put(IBuildPropertiesConstants.PROPERTY_RESOLVE_OPTIONAL, IBuildPropertiesConstants.TRUE);
+		result.put(IBuildPropertiesConstants.PROPERTY_RESOLVER_MODE, IBuildPropertiesConstants.VALUE_DEVELOPMENT);
+		return result;
+	}
+
 	public PDEState getRegistry() throws CoreException {
 		if (state == null) {
 			// create the registry according to the site where the code to
@@ -98,6 +105,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 				state = new PDEState(provider.getInitialState());
 				state.setEESources(eeSources);
 				state.resolveState();
+				state.setPlatformProperties(getUIPlatformProperties());
 				return state;
 			}
 

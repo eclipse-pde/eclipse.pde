@@ -78,6 +78,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_GENERATED_VERSION_LENGTH = "generatedVersionLength"; //$NON-NLS-1$
 
 	public static final String PROPERTY_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
+	public static final String PROPERTY_RESOLVE_OPTIONAL = "osgi.resolveOptional"; //$NON-NLS-1$
 	public static final String VALUE_DEVELOPMENT = "development"; //$NON-NLS-1$
 
 	public static final String RESOLVER_DEV_MODE = "resolution.devMode"; //$NON-NLS-1$
