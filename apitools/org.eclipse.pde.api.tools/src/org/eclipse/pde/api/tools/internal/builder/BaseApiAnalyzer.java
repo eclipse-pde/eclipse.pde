@@ -1239,7 +1239,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				if (!Util.isManifest(resource.getProjectRelativePath())) {
 					member = Util.getIMember(delta, fJavaProject);
 				}
-				if (member != null && !member.isBinary()) {
+				if (member != null && !member.isBinary() && member.exists()) {
 					ISourceRange range = member.getNameRange();
 					charStart = range.getOffset();
 					charEnd = charStart + range.getLength();
