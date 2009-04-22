@@ -455,9 +455,16 @@ public class PluginModelManager implements IModelProviderListener {
 					if (wsHandle == null) {
 						// restore settings from preferences
 						ITargetDefinition def = ts.newDefaultTargetDefinition();
+						String defVMargs = def.getVMArguments();
+						if (curr.getVMArguments() == null) {
+							// previous to 3.5, default VM arguments were null instead of matching the host's
+							// so compare to null VM arguments
+							def.setVMArguments(null);
+						}
 						if (curr.isContentEquivalent(def)) {
 							// Target is equivalent to the default settings, just add it as active
 							curr.setName(Messages.TargetPlatformService_7);
+							curr.setVMArguments(defVMargs); // restore default VM arguments
 						} else {
 							// Custom target settings, add as new target platform and add default as well
 							curr.setName(PDECoreMessages.PluginModelManager_0);
