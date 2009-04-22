@@ -37,6 +37,15 @@
 				text-decoration: none;
 				font-weight: bold;
 			}
+			a.typeslnk {
+				color:black;
+				font-family:Arial, Helvetica, sans-serif;
+				text-decoration:none;
+				margin-left:0.25em;
+			}
+			a.typeslnk:hover{
+				text-decoration:underline;
+			}
 			.link {
 				color:black;
 			}
@@ -96,9 +105,9 @@
 		<thead>
 			<tr class="vis">
 				<th class="vis">
-					<span onclick="showHide('breaking', 'breakingspan')">
+					<a href="javascript:void(0)" class="typeslnk" onclick="showHide('breaking', 'breakingspan')">
 						<span id="breakingspan" class="link" > + </span> List of breaking changes
-					</span>
+					</a>
 				</th>
 			</tr>
 		</thead>
@@ -119,9 +128,9 @@
 		<thead>
 			<tr class="vis">
 				<th class="vis">
-					<span onclick="showHide('compatible', 'compatiblespan')">
+					<a href="javascript:void(0)" class="typeslnk" onclick="showHide('compatible', 'compatiblespan')">
 						<span id="compatiblespan" class="link"> + </span> List of compatible changes
-					</span>
+					</a>
 				</th>
 			</tr>
 		</thead>
