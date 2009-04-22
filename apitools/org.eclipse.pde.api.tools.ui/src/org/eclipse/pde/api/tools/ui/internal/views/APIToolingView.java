@@ -78,6 +78,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	private NavigateAction previousAction;
 	private ExpandAllAction expandallAction;
 	private CollapseAllAction collapseallAction;
+	private IPropertySheetPage page;
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 		ITreeModel model;
@@ -233,7 +234,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 					}
 				}
 				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE : return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
-				case IDelta.API_PROFILE_ELEMENT_TYPE : return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE);
+				case IDelta.API_PROFILE_ELEMENT_TYPE :
 				case IDelta.API_COMPONENT_ELEMENT_TYPE : {
 					String componentVersionId = delta.getComponentVersionId();
 					IApiComponent component = null;
@@ -259,8 +260,8 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 						} catch (CoreException e) {
 							ApiPlugin.log(e);
 						}
-						return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 					}
+					return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 				}
 			}
 			return null;
@@ -404,7 +405,10 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	 * Returns the property sheet.
 	 */
 	protected IPropertySheetPage getPropertySheet() {
-		return new PropertySheetPage();
+		if (this.page == null) {
+			this.page = new PropertySheetPage();
+		}
+		return this.page;
 	}
 	/* (non-Javadoc)
 	 * Method declared on IAdaptable
