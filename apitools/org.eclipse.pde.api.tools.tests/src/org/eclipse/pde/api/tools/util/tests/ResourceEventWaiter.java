@@ -26,15 +26,18 @@ public class ResourceEventWaiter extends AbstractApiEventWaiter implements IReso
 	private IPath path = null;
 	private int kind = -1;
 	private int flags = -1;
+	private int type = -1;
 	
 	/**
 	 * Constructor
 	 * @param path the child path of he delta we are expecting to get an event for
 	 * @param kind the kind of the delta
+	 * @param type the type of the event
 	 * @param flags the flags for the delta
 	 */
-	public ResourceEventWaiter(IPath path, int kind, int flags) {
+	public ResourceEventWaiter(IPath path, int type, int kind, int flags) {
 		this.path = path;
+		this.type = type;
 		this.kind = kind;
 		this.flags = flags;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -65,10 +68,12 @@ public class ResourceEventWaiter extends AbstractApiEventWaiter implements IReso
 	 * @return true if this event is the one we are waiting for
 	 */
 	protected boolean accept(IResourceChangeEvent event) {
-		IResourceDelta delta = event.getDelta();
-		if(delta != null) {
-			if(delta.getKind() == this.kind && delta.getFlags() == this.flags) {
-				return (delta.findMember(this.path) != null);
+		if(event.getType() == this.type) {
+			IResourceDelta delta = event.getDelta();
+			if(delta != null) {
+				if(delta.getKind() == this.kind && delta.getFlags() == this.flags) {
+					return (delta.findMember(this.path) != null);
+				}
 			}
 		}
 		return false;

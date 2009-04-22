@@ -41,7 +41,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public class FileUtils {
 	/**
 	 * Maximum of time in ms to wait in deletion operation while running JDT/Core tests.
-	 * Default is 10 seconds. This number cannot exceed 1 minute (ie. 60000).
+	 * Default is 10 seconds. This number cannot exceed 1 minute (i.e. 60000).
 	 * <br>
 	 * To avoid too many loops while waiting, the ten first ones are done waiting
 	 * 10ms before repeating, the ten loops after are done waiting 100ms and
@@ -113,7 +113,9 @@ public class FileUtils {
 		}
 		if (findMember == null) return;
 		File dest = findMember.getLocation().toFile();
-		if (!dest.exists()) dest.mkdirs();
+		if (!dest.exists()) {
+			dest.mkdirs();
+		}
 		TestSuiteHelper.copy(file, dest);
 		try {
 			findMember.refreshLocal(IResource.DEPTH_INFINITE, null);

@@ -22,14 +22,11 @@ import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -38,7 +35,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -52,20 +48,14 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.core.search.TypeNameRequestor;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
-import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -81,7 +71,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
@@ -188,9 +177,9 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @return the {@link IApiDescription} for the testing project
 	 */
 	private IApiDescription getTestProjectApiDescription()  throws CoreException {
-		IApiBaseline profile = getWorkspaceBaseline();
-		assertNotNull("the workspace profile must exist", profile);
-		IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+		IApiBaseline baseline = getWorkspaceBaseline();
+		assertNotNull("the workspace baseline must exist", baseline);
+		IApiComponent component = baseline.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		if(component != null) {
 			return component.getApiDescription();
 		}
@@ -198,135 +187,74 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Returns the workspace profile.
-	 * 
-	 * @return workspace profile
-	 */
-	private IApiBaseline getWorkspaceBaseline() {
-		return fPMmanager.getWorkspaceBaseline();
-	}
-	
-	/**
-	 * Creates and returns a test profile with the given id. Also adds it to the profile manager
+	 * Creates and returns a test baseline with the given id. Also adds it to the baseline manager
 	 * 
 	 * @param id
 	 * @return
 	 */
 	protected IApiBaseline getTestBaseline(String id) {
-		IApiBaseline profile = null;
-		profile = ApiModelFactory.newApiBaseline(id);
-		fPMmanager.addApiBaseline(profile);
-		return profile;
+		IApiBaseline baseline = null;
+		baseline = ApiModelFactory.newApiBaseline(id);
+		fPMmanager.addApiBaseline(baseline);
+		return baseline;
 	}
 	
 	/**
-	 * Tests trying to get the workspace profile without the framework running 
+	 * Tests trying to get the workspace baseline without the framework running 
 	 */
 	public void testGetWorkspaceComponent() {
-		IApiBaseline profile = getWorkspaceBaseline();
-		assertTrue("the workspace profile must not be null", profile != null);
+		IApiBaseline baseline = getWorkspaceBaseline();
+		assertTrue("the workspace baseline must not be null", baseline != null);
 	}
 	
 	/**
-	 * Tests that an api profile can be added and retrieved successfully 
+	 * Tests that an api baseline can be added and retrieved successfully 
 	 */
-	public void testAddProfile() {
-		IApiBaseline profile = getTestBaseline("addtest");
-		assertTrue("the test profile must have been created", profile != null);
-		profile = fPMmanager.getApiBaseline("addtest");
-		assertTrue("the testadd profile must be in the manager", profile != null);
+	public void testAddBaseline() {
+		IApiBaseline baseline = getTestBaseline("addtest");
+		assertTrue("the test baseline must have been created", baseline != null);
+		baseline = fPMmanager.getApiBaseline("addtest");
+		assertTrue("the testadd baseline must be in the manager", baseline != null);
 	}
 	
 	/**
-	 * Tests that an api profile can be added/removed successfully
+	 * Tests that an api baseline can be added/removed successfully
 	 */
-	public void testRemoveProfile() {
-		IApiBaseline profile = getTestBaseline("removetest");
-		assertTrue("the testremove profile must exist", profile != null);
-		profile = fPMmanager.getApiBaseline("removetest");
-		assertTrue("the testremove profile must be in the manager", profile != null);
-		assertTrue("the testremove profile should have been removed", fPMmanager.removeApiBaseline("removetest"));
+	public void testRemoveBaseline() {
+		IApiBaseline baseline = getTestBaseline("removetest");
+		assertTrue("the testremove baseline must exist", baseline != null);
+		baseline = fPMmanager.getApiBaseline("removetest");
+		assertTrue("the testremove baseline must be in the manager", baseline != null);
+		assertTrue("the testremove baseline should have been removed", fPMmanager.removeApiBaseline("removetest"));
 	}
 	
 	/**
-	 * Tests that the default profile can be set/retrieved
+	 * Tests that the default baseline can be set/retrieved
 	 */
-	public void testSetDefaultProfile() {
-		IApiBaseline profile = getTestBaseline("testdefault");
-		assertTrue("the testdefault profile must exist", profile != null);
+	public void testSetDefaultBaseline() {
+		IApiBaseline baseline = getTestBaseline("testdefault");
+		assertTrue("the testdefault baseline must exist", baseline != null);
 		fPMmanager.setDefaultApiBaseline("testdefault");
-		profile = fPMmanager.getDefaultApiBaseline();
-		assertTrue("the default profile must be the testdefault profile", profile != null);
+		baseline = fPMmanager.getDefaultApiBaseline();
+		assertTrue("the default baseline must be the testdefault baseline", baseline != null);
 	}
 	
 	/**
-	 * Tests that all profiles added to the manager can be retrieved
+	 * Tests that all baselines added to the manager can be retrieved
 	 */
-	public void testGetAllProfiles() {
+	public void testGetAllBaselines() {
 		getTestBaseline("three");
-		IApiBaseline[] profiles = fPMmanager.getApiBaselines();
-		assertTrue("there should be three profiles", profiles.length == 3);
+		IApiBaseline[] baselines = fPMmanager.getApiBaselines();
+		assertTrue("there should be three baselines", baselines.length == 3);
 	}
 	
 	/**
-	 * Tests that all of the profiles have been removed
+	 * Tests that all of the baselines have been removed
 	 */
 	public void testCleanUfPMmanager() {
-		assertTrue("the testadd profile should have been removed", fPMmanager.removeApiBaseline("addtest"));
-		assertTrue("the testdefault profile should have been removed", fPMmanager.removeApiBaseline("testdefault"));
-		assertTrue("the three profile should have been removed", fPMmanager.removeApiBaseline("three"));
-	}
-	
-	/**
-	 * Used to ensure the testing project is available
-	 */
-	public IJavaProject assertProject() {
-		IJavaProject project = null;
-		try {
-			NullProgressMonitor monitor = new NullProgressMonitor();
-			// delete any pre-existing project
-			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME);
-			if (pro.exists()) {
-				waitForManualRefresh();
-				waitForAutoBuild();
-				performDummySearch();
-				JavaModelEventWaiter waiter = null;
-				if(!pro.isAccessible()) {
-					waiter = new JavaModelEventWaiter("", IJavaElementDelta.CHANGED, IJavaElementDelta.F_CONTENT, IJavaElement.JAVA_MODEL);
-				}
-				else {
-					waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.REMOVED, 0, IJavaElement.JAVA_PROJECT);
-				}
-				FileUtils.deleteResource(pro);
-				Object obj = waiter.waitForEvent();
-				assertNotNull("the project delete event did not arrive", obj);
-			}
-			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.ADDED, 0, IJavaElement.JAVA_PROJECT);
-			// create project and import source
-			project = ProjectUtils.createPluginProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
-			Object obj = waiter.waitForEvent();
-			assertNotNull("the added event was not received", obj);
-			assertNotNull("The java project must have been created", project);
-			IPackageFragmentRoot root = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
-			assertNotNull("the src root must have been created", root);
-			IPackageFragment fragment = root.createPackageFragment("a.b.c", true, monitor);
-			assertNotNull("the package fragment a.b.c cannot be null", fragment);
-
-			// add rt.jar
-			IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-			assertNotNull("No default JRE", vm);
-			ProjectUtils.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
-			IApiBaseline profile = getWorkspaceBaseline();
-			assertNotNull("the workspace profile cannot be null", profile);
-			IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNotNull("the test project api component must exist in the workspace profile", component);
-		}
-		catch(Exception e) {
-			System.err.println("assertProject failed");
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-		return project;
+		assertTrue("the testadd baseline should have been removed", fPMmanager.removeApiBaseline("addtest"));
+		assertTrue("the testdefault baseline should have been removed", fPMmanager.removeApiBaseline("testdefault"));
+		assertTrue("the three baseline should have been removed", fPMmanager.removeApiBaseline("three"));
 	}
 	
 	/**
@@ -384,14 +312,15 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			//add to project
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(libname, IJavaElementDelta.CHANGED, IJavaElementDelta.F_ADDED_TO_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
 			folder = project.getProject().getFolder(folderpath);
-			folder.create(false, true, null);
+			if(!folder.exists()) {
+				folder.create(false, true, null);
+			}
 			FileUtils.importFileFromDirectory(PLUGIN_LOC.append(libname).toFile(), folder.getFullPath(), null);
 			IPath libPath = folder.getFullPath().append(libname);
 			IClasspathEntry entry = JavaCore.newLibraryEntry(libPath, null, null);
 			ProjectUtils.addToClasspath(project, entry);
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the event for class path addition of "+libname+" not received", obj);
-			
 			// add to manifest bundle classpath
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
@@ -429,37 +358,22 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests creating a modifiable project, and making sure it is added to the workspace
-	 * profile
-	 * 
-	 * @throws CoreException
-	 */
-	public void testWPUpdateProjectCreation() {
-		try {
-			assertProject();
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
-	}
-	
-	/**
 	 * Tests that closing an API aware project causes the workspace description to be updated
 	 */
 	public void testWPUpdateProjectClosed() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
-			assertNotNull("the workspace profile must not be null", getWorkspaceBaseline());
+			assertNotNull("the workspace baseline must not be null", getWorkspaceBaseline());
 			IApiComponent component  = getWorkspaceBaseline().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNotNull("the change project api component must exist in the workspace profile", component);
+			assertNotNull("the change project api component must exist in the workspace baseline", component);
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter(TESTING_PLUGIN_PROJECT_NAME, IJavaElementDelta.CHANGED, IJavaElementDelta.F_CLOSED, IJavaElement.JAVA_PROJECT);
 			project.getProject().close(new NullProgressMonitor());
 			//might need a waiter to ensure the model changed event has been processed
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the closed event was not received", obj);
 			component = getWorkspaceBaseline().getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNull("the test project api component should no longer exist in the workspace profile", component);
+			assertNull("the test project api component should no longer exist in the workspace baseline", component);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -470,7 +384,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateProjectOpen() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			if(project.getProject().isAccessible()) {
 				project.getProject().close(new NullProgressMonitor());
@@ -479,10 +393,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			project.getProject().open(new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();
 			assertNotNull("the opened event was not received", obj);
-			IApiBaseline profile = getWorkspaceBaseline();
-			assertNotNull("the workspace profile must not be null", profile);
-			IApiComponent component = profile.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNotNull("the test project api component must exist in the workspace profile", component);
+			IApiBaseline baseline = getWorkspaceBaseline();
+			assertNotNull("the workspace baseline must not be null", baseline);
+			IApiComponent component = baseline.getApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+			assertNotNull("the test project api component must exist in the workspace baseline", component);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -495,7 +409,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceAdded() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute().makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -512,7 +426,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceRemoved() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -567,14 +481,14 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that making Javadoc changes to the source file TestClass2 cause the workspace profile to be 
+	 * Tests that making Javadoc changes to the source file TestClass2 cause the workspace baseline to be 
 	 * updated. 
 	 * 
 	 * This test adds a @noinstantiate tag to the source file TestClass2
 	 */
 	public void testWPUpdateSourceTypeChanged() {
 		try {		
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -606,7 +520,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateSourceInnerTypeChanged() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -630,13 +544,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that changing the javadoc for a method updates the workspace profile
+	 * Tests that changing the javadoc for a method updates the workspace baseline
 	 * 
 	 * This test adds a @noextend tag to the method foo() in TestClass1
 	 */
 	public void testWPUpdateSourceMethodChanged() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -659,13 +573,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that changing the javadoc for a field updates the workspace profile
+	 * Tests that changing the javadoc for a field updates the workspace baseline
 	 * 
 	 * This test adds a @noextend tag to the field 'field' in TestField9
 	 */
 	public void testWPUpdateSourceFieldChanged() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -688,13 +602,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that removing a tag from a method updates the workspace profile
+	 * Tests that removing a tag from a method updates the workspace baseline
 	 * 
 	 * This test removes a @noextend tag to the method foo() in TestClass1
 	 */
 	public void testWPUpdateSourceMethodRemoveTag() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -717,13 +631,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that removing a tag from a type updates the workspace profile
+	 * Tests that removing a tag from a type updates the workspace baseline
 	 * 
 	 * This test removes a @noinstantiate tag to an inner class in TestClass3
 	 */
 	public void testWPUpdateSourceTypeRemoveTag() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -746,13 +660,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that removing a tag from a field updates the workspace profile
+	 * Tests that removing a tag from a field updates the workspace baseline
 	 * 
 	 * This test adds a @noextend tag to the field 'field' in TestField9
 	 */
 	public void testWPUpdateSourceFieldRemoveTag() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 			assertNotNull("the 'src' package fragment root must exist", root);
@@ -782,30 +696,32 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws CoreException 
 	 */
 	public void testWPUpdateLibraryAddedToClasspath() throws InvocationTargetException, IOException, CoreException {
+		IFolder folder = null;
 		IApiComponent component = null;
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getApiTypeContainers().length;
 			
 			// add to classpath
-			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
+			folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
 			assertNotNull("The new library path should not be null", folder);
 			
-			component.close();
-
 			// re-retrieve updated component
 			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertTrue("there must be more containers after the addition", before < component.getApiTypeContainers().length);
-		} catch(Exception e) {
+		}
+		catch(Exception e) {
 			fail(e.getMessage());
-		} finally {
-			waitForManualRefresh();
-			performDummySearch();
-			if (component != null) {
-				component.close();
+		}
+		finally {
+			if(component != null) {
+				component.dispose();
+			}
+			if(folder != null) {
+				FileUtils.delete(folder);
 			}
 		}
 	}
@@ -813,10 +729,12 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests removing a library from the classpath of a project
 	 */
-	public void testWPUpdateLibraryRemovedFromClasspath() throws CoreException {
+	public void testWPUpdateLibraryRemovedFromClasspath() {
+		IPath libPath = null;
 		IApiComponent component = null;
+		IPluginModelBase model = null;
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add to classpath
@@ -824,7 +742,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getApiTypeContainers().length;
-			IPath libPath = folder.getFullPath().append("component.a_1.0.0.jar");
+			libPath = folder.getFullPath().append("component.a_1.0.0.jar");
 			
 			//remove classpath entry
 			JavaModelEventWaiter waiter = new JavaModelEventWaiter("component.a_1.0.0.jar", IJavaElementDelta.CHANGED, IJavaElementDelta.F_REMOVED_FROM_CLASSPATH, IJavaElement.PACKAGE_FRAGMENT_ROOT);
@@ -833,7 +751,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			assertNotNull("the added event for the package fragment was not received", obj);
 			
 			// remove from bundle class path
-			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
+			model = PluginRegistry.findModel(project.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
 			IFile file = (IFile) model.getUnderlyingResource();
 			assertNotNull("the underlying model file must exist", file);
@@ -844,17 +762,22 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			Object object = waiter2.waitForEvent();
 			assertNotNull("the event for the manifest modification was not received", object);
 			
-			component.close();
 			// retrieve updated component
 			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertTrue("there must be less containers after the removal", before > component.getApiTypeContainers().length);
-		} catch(Exception e) {
+		}
+		catch(Exception e) {
 			fail(e.getMessage());
-		} finally {
-			waitForManualRefresh();
-			performDummySearch();
-			if (component != null) {
-				component.close();
+		}
+		finally {
+			if(component != null) {
+				component.dispose();
+			}
+			if(model != null) {
+				model.dispose();
+			}
+			if(libPath != null) {
+				FileUtils.delete(libPath.toOSString());
 			}
 		}
 	}
@@ -865,7 +788,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateDefaultOutputFolderChanged() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IContainer container = ProjectUtils.addFolderToProject(project.getProject(), "bin2");
 			assertNotNull("the new output folder cannot be null", container);
@@ -890,7 +813,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateOutputFolderSrcFolderChanged() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			IContainer container = ProjectUtils.addFolderToProject(project.getProject(), "bin3");
 			assertNotNull("the new output location cannot be null", container);
@@ -936,11 +859,11 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that adding a package does not update the workspace profile
+	 * Tests that adding a package does not update the workspace baseline
 	 */
 	public void testWPUpdatePackageAdded() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add the package
@@ -957,13 +880,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that removing a package updates the workspace profile
+	 * Tests that removing a package updates the workspace baseline
 	 * This test removes the a.b.c package being used in all tests thus far,
 	 * and should be run last
 	 */
 	public void testWPUpdatePackageRemoved() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add the package
@@ -988,11 +911,11 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	
 	/**
 	 * Tests that an exported package addition in the PDE model is reflected in the workspace
-	 * api profile
+	 * api baseline
 	 */
 	public void testWPUpdateExportPackageAdded() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add package
@@ -1011,11 +934,11 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	
 	/**
 	 * Tests that changing a directive to x-internal on an exported package causes the workspace 
-	 * api profile to be updated
+	 * api baseline to be updated
 	 */
 	public void testWPUPdateExportPackageDirectiveChangedToInternal() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add package
@@ -1043,11 +966,11 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	
 	/**
 	 * Tests that an exported package removal in the PDE model is reflected in the workspace
-	 * api profile
+	 * api baseline
 	 */
 	public void testWPUpdateExportPackageRemoved() {
 		try {
-			IJavaProject project = assertProject();
+			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add package
@@ -1092,33 +1015,24 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		Object object = waiter.waitForEvent();
 		assertNotNull("the changed event for the exported package change was not received", object);
 	}
-	public static void waitForManualRefresh() {
-		boolean wasInterrupted = false;
-		do {
-			try {
-				Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
-				wasInterrupted = false;
-			} catch (OperationCanceledException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				wasInterrupted = true;
-			}
-		} while (wasInterrupted);
+	
+	IJavaProject getTestingProject() {
+		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME));
 	}
-
-	public static void performDummySearch() throws JavaModelException {
-		new SearchEngine().searchAllTypeNames(
-				null,
-				SearchPattern.R_EXACT_MATCH,
-				"XXXXXXXXX".toCharArray(), // make sure we search a concrete name. This is faster according to Kent
-				SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE,
-				IJavaSearchConstants.CLASS,
-				SearchEngine.createJavaSearchScope(new IJavaElement[0]),
-				new Requestor(),
-				IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-				null);
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		createProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {TESTING_PACKAGE});
 	}
-
-	private static class Requestor extends TypeNameRequestor{
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
 	}
 }

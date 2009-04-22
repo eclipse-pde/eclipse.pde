@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -46,6 +45,28 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	private static final IPath XML_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-xml");
 	private static final IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins");
 	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		createProject(TESTING_PLUGIN_PROJECT_NAME, null);
+		File dest = SRC_LOC.toFile();
+		assertTrue("the filter source dir must exist", dest.exists());
+		assertTrue("the filter source dir must be a directory", dest.isDirectory());
+		IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
+		IPackageFragmentRoot srcroot = project.findPackageFragmentRoot(project.getProject().getFullPath().append("src"));
+		assertNotNull("the default src root must exist", srcroot);
+		FileUtils.importFileFromDirectory(dest, srcroot.getPath(), new NullProgressMonitor());
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
+	}
 	/**
 	 * Tests that the .api_settings file is copied over to the testing project properly
 	 */
@@ -61,26 +82,6 @@ public class ApiFilterStoreTests extends AbstractApiTest {
     		FileUtils.importFileFromDirectory(dest, settings, new NullProgressMonitor());
     		IResource filters = project2.findMember("/.settings/.api_filters", true);
     		assertNotNull("the .api_filters file must exist in the testing project", filters);
-    	}
-    	catch (Exception e) {
-    		fail(e.getMessage());
-		}
-	}
-	
-	/**
-	 * Tests that the testing source is copied over correctly to the test project
-	 */
-	public void testCopySourceFiles() {
-		try {
-    		File dest = SRC_LOC.toFile();
-    		assertTrue("the filter source dir must exist", dest.exists());
-    		assertTrue("the filter source dir must be a directory", dest.isDirectory());
-    		IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
-    		IPackageFragmentRoot srcroot = project.findPackageFragmentRoot(project.getProject().getFullPath().append("src"));
-    		assertNotNull("the default src root must exist", srcroot);
-    		FileUtils.importFileFromDirectory(dest, srcroot.getPath(), new NullProgressMonitor());
-    		IType type = project.findType("x.y.z.C4");
-    		assertNotNull("the type C4 must exist in the testing project", type);
     	}
     	catch (Exception e) {
     		fail(e.getMessage());
@@ -241,26 +242,14 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that importing the test 'component_c' jar is successful
-	 */
-	public void testImportJar() {
-		try {
-			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-			FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath(), new NullProgressMonitor());
-			IResource res = project.findMember("component_c_1.0.0.jar");
-			assertNotNull("the jar should exist in the project dir", res);
-		}
-		catch (Exception e) {
-			fail(e.getMessage());
-		}
-	}
-	
-	/**
 	 * Tests that a filter store will not be annotated from a bundle
 	 */
 	public void testAnnotateStoreFromBundle() {
 		try {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+			FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath(), new NullProgressMonitor());
+			IResource res = project.findMember("component_c_1.0.0.jar");
+			assertNotNull("the jar should exist in the project dir", res);
 			IResource jar = project.findMember("component_c_1.0.0.jar");
 			assertNotNull("the component_c jar cannot be null", jar);
 			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
@@ -270,7 +259,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			IApiFilterStore store = component.getFilterStore();
 			assertNull("the new filter store must be null", store);
 		}
-		catch(CoreException e) {
+		catch(Exception e) {
 			fail(e.getMessage());
 		}
 	}

@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -171,7 +172,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 			IApiFilterStore store = component.getFilterStore();
 			assertNotNull("The filterstore for 'usagetests' must not be null", store);
 			//wait for the event
-			ResourceEventWaiter waiter = new ResourceEventWaiter(fFiltersPath, IResourceDelta.CHANGED, 0);
+			ResourceEventWaiter waiter = new ResourceEventWaiter(fFiltersPath, IResourceChangeEvent.POST_CHANGE, IResourceDelta.CHANGED, 0);
 			createWorkspaceFile(fFiltersPath, filterpath);
 			Object event = waiter.waitForEvent();
 			assertNotNull("the resource changed event for the filter file was not recieved", event);
