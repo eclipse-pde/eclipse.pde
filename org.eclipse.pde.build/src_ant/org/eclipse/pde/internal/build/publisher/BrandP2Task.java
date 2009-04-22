@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.zip.ZipOutputStream;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.metadata.*;
@@ -95,16 +96,20 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	private void cleanupRepositories() throws ProvisionException {
-		if (removeMetadataRepo) {
-			IMetadataRepositoryManager metadataManager = Activator.getMetadataRepositoryManager();
-			if (metadataManager != null)
+		IMetadataRepositoryManager metadataManager = Activator.getMetadataRepositoryManager();
+		IArtifactRepositoryManager artifactManager = Activator.getArtifactRepositoryManager();
+		URI destination = new Path(getRootFolder()).toFile().toURI();
+
+		if (metadataManager != null) {
+			if (removeMetadataRepo)
 				metadataManager.removeRepository(metadataURI);
+			metadataManager.removeRepository(destination);
 		}
 
-		if (removeArtifactRepo) {
-			IArtifactRepositoryManager artifactManager = Activator.getArtifactRepositoryManager();
-			if (artifactManager != null)
+		if (artifactManager != null) {
+			if (removeArtifactRepo)
 				artifactManager.removeRepository(artifactURI);
+			artifactManager.removeRepository(destination);
 		}
 	}
 
