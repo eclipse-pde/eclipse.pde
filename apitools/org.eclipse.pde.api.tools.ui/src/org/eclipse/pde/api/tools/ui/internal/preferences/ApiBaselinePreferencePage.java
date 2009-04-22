@@ -180,7 +180,9 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 						tableviewer.setSelection(new StructuredSelection(profile), true);
 						if(backingcollection.size() == 1) {
 							newdefault = profile.getName();
+							tableviewer.setCheckedElements(new Object[] {profile});
 							tableviewer.refresh(profile);
+							defaultchanged = true;
 							rebuildcount = 0;
 						}
 						dirty = true;
@@ -242,6 +244,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 			if (isDefault(states[i])) {
 				newdefault = null;
 				manager.setDefaultApiBaseline(null);
+				defaultchanged = true;
 				rebuildcount = 0;
 			}
 			removed.add(states[i].getName());
