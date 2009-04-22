@@ -39,6 +39,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -529,14 +530,17 @@ public class CompareWithAction implements IObjectActionDelegate {
 					SubMonitor progress = SubMonitor.convert(monitor, 100);
 					progress.subTask(ActionMessages.CompareDialogCollectingElementTaskName);
 					SubMonitor loopProgress = progress.newChild(10).setWorkRemaining(structuredSelection.size());
-					StringBuffer buffer = new StringBuffer();
-					final IApiScope scope = walkStructureSelection(structuredSelection, buffer, loopProgress);
-					final String description = getDescriptionFrom(buffer.toString());
+					final IApiScope scope = walkStructureSelection(structuredSelection, loopProgress);
 					try {
 						progress.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
 						SubMonitor compareProgress = progress.newChild(98).setWorkRemaining(scope.getApiElements().length);
 						try {
 							IDelta delta = ApiComparator.compare(scope, baseline, VisibilityModifiers.API, false, compareProgress);
+							String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
+										new Integer(structuredSelection.size()), 
+										baselineName, 
+										new Integer(delta.getChildren().length)
+									});
 							ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(description, delta, baselineName), true);
 							progress.worked(1);
 							return Status.OK_STATUS;
@@ -558,13 +562,8 @@ public class CompareWithAction implements IObjectActionDelegate {
 		}
 	}
 
-	String getDescriptionFrom(String fullDescription) {
-		return fullDescription;
-	}
-
 	public static ApiScope walkStructureSelection(
 			IStructuredSelection structuredSelection,
-			StringBuffer buffer,
 			IProgressMonitor monitor) {
 		Object[] selected=structuredSelection.toArray();
 		ApiScope scope = new ApiScope();
@@ -583,22 +582,6 @@ public class CompareWithAction implements IObjectActionDelegate {
 			}
 		});
 		int length = selected.length;
-		for (int i = 0, max = Math.min(3, length); i < max; i++) {
-			if (buffer.length() > 0 && i > 0) {
-				buffer.append(' ');
-			}
-			Object currentSelection = selected[i];
-			if (currentSelection instanceof IJavaElement) {
-				IJavaElement element =(IJavaElement) currentSelection;
-				buffer.append(element.getElementName());
-			}
-		}
-		if (buffer.length() > 25) {
-			buffer.setLength(25);
-		}
-		if (length > 3) {
-			buffer.append("..."); //$NON-NLS-1$
-		}
 		for (int i=0; i < length; i++) {
 			Object currentSelection = selected[i];
 			if (currentSelection instanceof IJavaElement) {

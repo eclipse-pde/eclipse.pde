@@ -173,7 +173,9 @@ public class SWTFactory {
 	public static Label createLabel(Composite parent, String text, int hspan) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setFont(parent.getFont());
-		l.setText(text);
+		if(text != null) {
+			l.setText(text);
+		}
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = hspan;
 		gd.grabExcessHorizontalSpace = false;
@@ -193,7 +195,9 @@ public class SWTFactory {
 	public static Label createLabel(Composite parent, String text, Font font, int hspan) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setFont(font);
-		l.setText(text);
+		if(text != null) {
+			l.setText(text);
+		}
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = hspan;
 		l.setLayoutData(gd);
@@ -231,7 +235,9 @@ public class SWTFactory {
 	public static Label createWrapLabel(Composite parent, String text, int hspan, int wrapwidth) {
 		Label l = new Label(parent, SWT.NONE | SWT.WRAP);
 		l.setFont(parent.getFont());
-		l.setText(text);
+		if(text != null) {
+			l.setText(text);
+		}
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = hspan;
 		gd.widthHint = wrapwidth;
@@ -250,7 +256,9 @@ public class SWTFactory {
 	public static Label createWrapLabel(Composite parent, String text, int hspan) {
 		Label l = new Label(parent, SWT.NONE | SWT.WRAP);
 		l.setFont(parent.getFont());
-		l.setText(text);
+		if(text != null) {
+			l.setText(text);
+		}
 		GridData gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = hspan;
 		l.setLayoutData(gd);

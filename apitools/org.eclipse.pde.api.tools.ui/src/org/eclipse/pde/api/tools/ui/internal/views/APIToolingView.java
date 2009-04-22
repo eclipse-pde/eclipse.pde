@@ -41,6 +41,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.ui.internal.ApiImageDescriptor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
+import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.actions.CollapseAllAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.ExpandAllAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.ExportSessionAction;
@@ -49,8 +50,10 @@ import org.eclipse.pde.api.tools.ui.internal.actions.RemoveActiveSessionAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.RemoveAllSessionsAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.SelectSessionAction;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
@@ -69,6 +72,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	public static final String ID = "org.eclipse.pde.api.tools.ui.views.apitooling.views.apitoolingview"; //$NON-NLS-1$
 
 	public TreeViewer viewer;
+	private Label sessionDescription = null;
 	private IAction removeActiveSessionAction;
 	private IAction removeAllSessionsAction;
 	private IAction selectSessionAction;
@@ -278,7 +282,12 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		this.viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		ViewForm form = new ViewForm(parent, SWT.FLAT);
+		this.sessionDescription = SWTFactory.createLabel(form, null, 1);
+		form.setTopCenterSeparate(true);
+		form.setTopCenter(this.sessionDescription);
+		
+		this.viewer = new TreeViewer(form, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.viewer.setContentProvider(new ViewContentProvider());
 		this.viewer.setLabelProvider(new ViewLabelProvider());
 		ISession[] sessions = ApiPlugin.getDefault().getSessionManager().getSessions();
@@ -291,7 +300,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		hookDoubleClickAction();
 
 		ApiPlugin.getDefault().getSessionManager().addSessionListener(this);
-		
+		form.setContent(this.viewer.getTree());
 		getSite().setSelectionProvider(this.viewer);
 	}
 	private void hookDoubleClickAction() {
@@ -360,7 +369,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 			public void run() {
 				ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
 				ISession active = sessionManager.getActiveSession();
-				setContentDescription(active == null ? "" : active.getDescription()); //$NON-NLS-1$
+				APIToolingView.this.sessionDescription.setText(active == null ? "No Description" : active.getDescription()); //$NON-NLS-1$
 				ISession[] sessions =  sessionManager.getSessions();
 				boolean atLeastOne = sessions.length >= 1;
 				APIToolingView.this.removeActiveSessionAction.setEnabled(atLeastOne);
