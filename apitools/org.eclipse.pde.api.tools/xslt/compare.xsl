@@ -20,6 +20,7 @@
 		<title>Compare Details</title>
 		<style type="text/css">
 			table {
+				width: 70%;
 				border-style: solid;
 				border-width: 1px;
 				border-color: #666666;
@@ -89,6 +90,7 @@
 		</script>
 	</head>
 	<body>
+		<h1>Compare Details</h1>
 		<div align="left">
 			<xsl:apply-templates select="deltas"/>
 		</div>
