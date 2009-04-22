@@ -11,6 +11,8 @@
 package org.eclipse.pde.api.tools.ui.internal.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -367,11 +369,13 @@ public class CompareWithAction implements IObjectActionDelegate {
 		IDelta delta;
 		String baselineName;
 		String timestamp;
-		
-		public DeltaSession(IDelta delta, String baselineName) {
+		String description;
+
+		public DeltaSession(String description, IDelta delta, String baselineName) {
 			this.delta = delta;
 			this.baselineName = baselineName;
 			this.timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
+			this.description = description;
 		}
 		public ITreeModel getModel() {
 			TreeNode root = new TreeNode(0, null, this.delta);
@@ -484,8 +488,8 @@ public class CompareWithAction implements IObjectActionDelegate {
 			return model;
 		}
 		
-		public String getTimestamp() {
-			return this.timestamp;
+		public String getDescription() {
+			return ActionMessages.bind(ActionMessages.SessionDescription, new String[] { this.timestamp, this.description });
 		}
 	}
 
@@ -525,13 +529,15 @@ public class CompareWithAction implements IObjectActionDelegate {
 					SubMonitor progress = SubMonitor.convert(monitor, 100);
 					progress.subTask(ActionMessages.CompareDialogCollectingElementTaskName);
 					SubMonitor loopProgress = progress.newChild(10).setWorkRemaining(structuredSelection.size());
-					final IApiScope scope = walkStructureSelection(structuredSelection, loopProgress);
+					StringBuffer buffer = new StringBuffer();
+					final IApiScope scope = walkStructureSelection(structuredSelection, buffer, loopProgress);
+					final String description = getDescriptionFrom(buffer.toString());
 					try {
 						progress.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
 						SubMonitor compareProgress = progress.newChild(98).setWorkRemaining(scope.getApiElements().length);
 						try {
 							IDelta delta = ApiComparator.compare(scope, baseline, VisibilityModifiers.API, false, compareProgress);
-							ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(delta, baselineName), true);
+							ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(description, delta, baselineName), true);
 							progress.worked(1);
 							return Status.OK_STATUS;
 						} catch (CoreException e) {
@@ -552,8 +558,13 @@ public class CompareWithAction implements IObjectActionDelegate {
 		}
 	}
 
+	String getDescriptionFrom(String fullDescription) {
+		return fullDescription;
+	}
+
 	public static ApiScope walkStructureSelection(
 			IStructuredSelection structuredSelection,
+			StringBuffer buffer,
 			IProgressMonitor monitor) {
 		Object[] selected=structuredSelection.toArray();
 		ApiScope scope = new ApiScope();
@@ -561,7 +572,34 @@ public class CompareWithAction implements IObjectActionDelegate {
 		if (workspaceBaseline == null) {
 			return scope;
 		}
-		for (int i=0, max = selected.length; i < max; i++) {
+		Arrays.sort(selected, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				if (o1 instanceof IJavaElement && o2 instanceof IJavaElement) {
+					IJavaElement element = (IJavaElement) o1;
+					IJavaElement element2 = (IJavaElement) o2;
+					return element.getElementType() - element2.getElementType();
+				}
+				return 0;
+			}
+		});
+		int length = selected.length;
+		for (int i = 0, max = Math.min(3, length); i < max; i++) {
+			if (buffer.length() > 0 && i > 0) {
+				buffer.append(' ');
+			}
+			Object currentSelection = selected[i];
+			if (currentSelection instanceof IJavaElement) {
+				IJavaElement element =(IJavaElement) currentSelection;
+				buffer.append(element.getElementName());
+			}
+		}
+		if (buffer.length() > 25) {
+			buffer.setLength(25);
+		}
+		if (length > 3) {
+			buffer.append("..."); //$NON-NLS-1$
+		}
+		for (int i=0; i < length; i++) {
 			Object currentSelection = selected[i];
 			if (currentSelection instanceof IJavaElement) {
 				monitor.worked(1);
@@ -602,10 +640,6 @@ public class CompareWithAction implements IObjectActionDelegate {
 							IApiComponent apiComponent = workspaceBaseline.getApiComponent(javaProject.getElementName());
 							if (apiComponent != null) {
 								scope.add(apiComponent);
-//								IPackageFragmentRoot[] roots = javaProject.getPackageFragmentRoots();
-//								for (int j = 0, max2 = roots.length; j < max2; j++) {
-//									addElementFor(roots[j], apiComponent, scope);
-//								}
 							}
 							break;
 					}

@@ -53,7 +53,7 @@ public class SelectSessionAction extends Action implements IMenuCreator {
 		for (int i = 0; i < sessions.length; i++) {
 			final ISession session = sessions[i];
 			MenuItem item = new MenuItem(menu, SWT.RADIO);
-			Object[] labelparams = new Object[] { new Integer(i + 1), session.getTimestamp()};
+			Object[] labelparams = new Object[] { new Integer(i + 1), session.getDescription()};
 			item.setText(NLS.bind(ActionMessages.SelectSessionActionEntry_label,
 					labelparams));
 			item.setSelection(session == active);

@@ -17,5 +17,5 @@ public interface ISession {
 	
 	public ITreeModel getModel();
 	
-	public String getTimestamp();
+	public String getDescription();
 }

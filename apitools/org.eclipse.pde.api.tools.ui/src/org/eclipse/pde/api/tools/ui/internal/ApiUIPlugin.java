@@ -305,8 +305,14 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPORT, ELCL + "export.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_NEXT_NAV, ELCL + "next_nav.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_PREV_NAV, ELCL + "prev_nav.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPANDALL, ELCL + "expandall.gif"); //$NON-NLS-1$
 		// disabled images
 		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_EXPORT, DLCL + "export.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_NEXT_NAV, DLCL + "next_nav.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_PREV_NAV, DLCL + "prev_nav.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_EXPANDALL, DLCL + "expandall.gif"); //$NON-NLS-1$
 	}
 	void showAPIToolingView() {
 		showView(APIToolingView.ID);

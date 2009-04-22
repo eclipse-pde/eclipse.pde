@@ -58,6 +58,15 @@ public class ActionMessages extends NLS {
 	public static String MessageCategory;
 	public static String InfoCategory;
 	public static String ExportDialogErrorMessage;
+	public static String NextAction_label;
+	public static String NextAction_tooltip;
+	public static String PreviousAction_label;
+	public static String PreviousAction_tooltip;
+	public static String CollapseAllAction_label;
+	public static String CollapseAllAction_tooltip;
+	public static String ExpandAllAction_label;
+	public static String ExpandAllAction_tooltip;
+	public static String SessionDescription;
 
 	static {
 		// initialize resource bundle

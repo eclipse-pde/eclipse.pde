@@ -21,12 +21,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
@@ -43,7 +41,10 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.ui.internal.ApiImageDescriptor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
+import org.eclipse.pde.api.tools.ui.internal.actions.CollapseAllAction;
+import org.eclipse.pde.api.tools.ui.internal.actions.ExpandAllAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.ExportSessionAction;
+import org.eclipse.pde.api.tools.ui.internal.actions.NavigateAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.RemoveActiveSessionAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.RemoveAllSessionsAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.SelectSessionAction;
@@ -73,6 +74,10 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	private IAction selectSessionAction;
 	private Action doubleClickAction;
 	private ExportSessionAction exportSessionAction;
+	private NavigateAction nextAction;
+	private NavigateAction previousAction;
+	private ExpandAllAction expandallAction;
+	private CollapseAllAction collapseallAction;
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 		ITreeModel model;
@@ -275,12 +280,6 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		this.viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.viewer.setContentProvider(new ViewContentProvider());
 		this.viewer.setLabelProvider(new ViewLabelProvider());
-		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 		ISession[] sessions = ApiPlugin.getDefault().getSessionManager().getSessions();
 		if (sessions.length > 0) {
 			this.viewer.setInput(sessions[0]);
@@ -305,17 +304,21 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		ApiPlugin.getDefault().getSessionManager().removeSessionListener(this);
 	}
 	protected void configureToolbar() {
-		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+		IActionBars actionBars = getViewSite().getActionBars();
+		IToolBarManager tbm = actionBars.getToolBarManager();
 		tbm.add(new Separator());
 		tbm.add(this.removeActiveSessionAction);
 		tbm.add(this.removeAllSessionsAction);
+		tbm.add(new Separator());
 		tbm.add(this.selectSessionAction);
 		tbm.add(new Separator());
+		tbm.add(this.nextAction);
+		tbm.add(this.previousAction);
+		tbm.add(new Separator());
+		tbm.add(this.expandallAction);
+		tbm.add(this.collapseallAction);
+		tbm.add(new Separator());
 		tbm.add(this.exportSessionAction);
-//		tbm.add(new CollapseAllAction(this.viewer));
-
-//		IMenuManager mm = getViewSite().getActionBars().getMenuManager();
-//		mm.add(this.exportSessionAction);
 	}
 	private void createActions() {
 		final IActionBars actionBars = getViewSite().getActionBars();
@@ -346,19 +349,27 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 			}
 		};
 		this.exportSessionAction = new ExportSessionAction(this);
+		this.nextAction = new NavigateAction(this, true);
+		this.previousAction = new NavigateAction(this, false);
+		this.expandallAction = new ExpandAllAction(this.viewer);
+		this.collapseallAction = new CollapseAllAction(this.viewer);
 	}
 	private void updateActions() {
 		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
 				ISession active = sessionManager.getActiveSession();
-				setContentDescription(active == null ? "" : active.getTimestamp()); //$NON-NLS-1$
+				setContentDescription(active == null ? "" : active.getDescription()); //$NON-NLS-1$
 				ISession[] sessions =  sessionManager.getSessions();
 				boolean atLeastOne = sessions.length >= 1;
 				APIToolingView.this.removeActiveSessionAction.setEnabled(atLeastOne);
 				APIToolingView.this.removeAllSessionsAction.setEnabled(atLeastOne);
 				APIToolingView.this.selectSessionAction.setEnabled(atLeastOne);
 				APIToolingView.this.exportSessionAction.setEnabled(active != null);
+				APIToolingView.this.expandallAction.setEnabled(atLeastOne);
+				APIToolingView.this.collapseallAction.setEnabled(atLeastOne);
+				APIToolingView.this.nextAction.setEnabled(atLeastOne);
+				APIToolingView.this.previousAction.setEnabled(atLeastOne);
 			}
 		});
 	}

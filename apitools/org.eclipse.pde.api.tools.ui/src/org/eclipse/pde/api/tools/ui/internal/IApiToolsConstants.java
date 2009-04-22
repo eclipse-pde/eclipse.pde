@@ -124,9 +124,33 @@ public interface IApiToolsConstants {
 	/**
 	 * Key for enabled export image
 	 */
-	public static final String IMG_ELCL_EXPORT = "IMG_ETOOL_EXPORT"; //$NON-NLS-1$
+	public static final String IMG_ELCL_EXPORT = "IMG_ELCL_EXPORT"; //$NON-NLS-1$
 	/**
 	 * Key for disabled export image
 	 */
-	public static final String IMG_DLCL_EXPORT = "IMG_DTOOL_EXPORT"; //$NON-NLS-1$
+	public static final String IMG_DLCL_EXPORT = "IMG_DLCL_EXPORT"; //$NON-NLS-1$
+	/**
+	 * Key for enabled next navigation image
+	 */
+	public static final String IMG_ELCL_NEXT_NAV = "IMG_ELCL_NEXT_NAV"; //$NON-NLS-1$
+	/**
+	 * Key for enabled previous navigation image
+	 */
+	public static final String IMG_ELCL_PREV_NAV = "IMG_ELCL_PREV_NAV"; //$NON-NLS-1$
+	/**
+	 * Key for disabled next navigation image
+	 */
+	public static final String IMG_DLCL_NEXT_NAV = "IMG_DLCL_NEXT_NAV"; //$NON-NLS-1$
+	/**
+	 * Key for disabled previous navigation image
+	 */
+	public static final String IMG_DLCL_PREV_NAV = "IMG_DLCL_PREV_NAV"; //$NON-NLS-1$
+	/**
+	 * Key for enabled expand all image
+	 */
+	public static final String IMG_ELCL_EXPANDALL = "IMG_ELCL_EXPANDALL"; //$NON-NLS-1$
+	/**
+	 * Key for disabled expand all image
+	 */
+	public static final String IMG_DLCL_EXPANDALL = "IMG_DLCL_EXPANDALL"; //$NON-NLS-1$
 }
