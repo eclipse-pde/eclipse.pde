@@ -26,7 +26,6 @@ public class P2InfUtils {
 
 	public static void printBundleCU(StringBuffer buffer, int i, String name, Version version, String filter, String[] instructions) {
 		VersionRange range = new VersionRange(version, true, version, true);
-		printRequires(buffer, null, i, NAMESPACE_IU, "@FLAVOR@" + name, range, filter, true); //$NON-NLS-1$
 
 		String prefix = "units." + i + '.'; //$NON-NLS-1$
 
