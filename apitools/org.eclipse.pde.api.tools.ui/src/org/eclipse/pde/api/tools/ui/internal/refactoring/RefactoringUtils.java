@@ -161,28 +161,6 @@ public class RefactoringUtils {
 	}
 	
 	/**
-	 * Creates the {@link Change} for updating {@link IApiProblemFilter}s
-	 * that are affected by moving a type
-	 * @param type the type being moved
-	 * @param destination where the resource is being moved to
-	 * @return the move type change for updating filters
-	 */
-	static Change createMoveFilterChanges(IType type, String destination) {
-		return createDeleteFilterChanges(type);
-	}
-	
-	/**
-	 * Creates the {@link Change} for {@link IApiProblemFilter}s affected by
-	 * moving a package fragment
-	 * @param fragment
-	 * @param destination
-	 * @return the change for moving a package fragment
-	 */
-	static Change createMoveFilterChanges(IPackageFragment fragment, String destination) {
-		return createDeleteFilterChanges(fragment);
-	}
-	
-	/**
 	 * Gets the {@link IApiFilterStore} for the given {@link IProject}
 	 * @param project
 	 * @return the filter store for the given project or <code>null</code>

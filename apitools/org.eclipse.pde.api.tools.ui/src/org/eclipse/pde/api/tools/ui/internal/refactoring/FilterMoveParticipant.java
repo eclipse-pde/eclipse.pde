@@ -1,6 +1,5 @@
 package org.eclipse.pde.api.tools.ui.internal.refactoring;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -42,13 +41,12 @@ public class FilterMoveParticipant extends MoveParticipant {
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createPreChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		IResource resource = (IResource) getArguments().getDestination();
-		switch(this.element.getElementType()) {
+ 		switch(this.element.getElementType()) {
 			case IJavaElement.TYPE: {
-				return RefactoringUtils.createMoveFilterChanges((IType)this.element, resource.getProjectRelativePath().toString());
+				return RefactoringUtils.createDeleteFilterChanges((IType)this.element);
 			}
 			case IJavaElement.PACKAGE_FRAGMENT: {
-				return RefactoringUtils.createMoveFilterChanges((IPackageFragment)this.element, resource.getProjectRelativePath().toString());
+				return RefactoringUtils.createDeleteFilterChanges((IPackageFragment)this.element);
 			}
 		}
 		return null;
