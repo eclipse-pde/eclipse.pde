@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -84,12 +85,25 @@ public abstract class AbstractPublisherTask extends Task {
 	protected boolean reusePackedFiles = false;
 	protected PublisherInfo publisherInfo = null;
 	private Properties buildProperties = null;
+	protected String overrides = null;
 	protected List contextMetadataRepositories = new ArrayList();
 	protected List contextArtifactRepositories = new ArrayList();
 
 	protected Properties getBuildProperties() {
 		if (buildProperties != null)
 			return buildProperties;
+
+		Properties overrideProperties = null;
+		if (overrides != null) {
+			File overrideFile = new File(overrides);
+			if (overrideFile.exists()) {
+				try {
+					overrideProperties = AbstractScriptGenerator.readProperties(overrideFile.getParent(), overrideFile.getName(), IStatus.OK);
+				} catch (CoreException e) {
+					//nothing
+				}
+			}
+		}
 
 		Properties properties = null;
 		try {
@@ -103,6 +117,14 @@ public abstract class AbstractPublisherTask extends Task {
 			String key = (String) iterator.next();
 			String value = properties.getProperty(key);
 			buildProperties.put(key, getProject().replaceProperties(value));
+		}
+
+		if (overrideProperties != null) {
+			for (Iterator iterator = overrideProperties.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String value = overrideProperties.getProperty(key);
+				buildProperties.put(key, getProject().replaceProperties(value));
+			}
 		}
 
 		return buildProperties;
@@ -165,6 +187,11 @@ public abstract class AbstractPublisherTask extends Task {
 	public void setBaseDirectory(String baseDirectory) {
 		if (baseDirectory != null && baseDirectory.length() > 0 && !baseDirectory.startsWith(ANT_PREFIX))
 			this.baseDirectory = baseDirectory;
+	}
+
+	public void setOverrides(String overrides) {
+		if (overrides != null && overrides.length() > 0 && !overrides.startsWith(ANT_PREFIX))
+			this.overrides = overrides;
 	}
 
 	protected PublisherInfo getPublisherInfo() {

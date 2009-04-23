@@ -416,7 +416,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	private Properties getFeatureBuildProperties(BuildTimeFeature feature) {
+	protected Properties getFeatureBuildProperties(BuildTimeFeature feature) {
 		if (feature.isBinary())
 			return null;
 		try {

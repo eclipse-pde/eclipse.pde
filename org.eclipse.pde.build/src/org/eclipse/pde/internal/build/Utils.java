@@ -566,6 +566,14 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return -1;
 	}
 
+	static public Properties getOldExecutableRootOverrides() {
+		Properties overrides = new Properties();
+		overrides.put("root.win32.win32.x86", "file:bin/win32/win32/x86/launcher.exe"); //$NON-NLS-1$ //$NON-NLS-2$
+		overrides.put("root.win32.win32.x86_64", "file:bin/win32/win32/x86_64/launcher.exe"); //$NON-NLS-1$ //$NON-NLS-2$
+		overrides.put("root.win32.wpf.x86", "file:bin/wpf/win32/x86/launcher.exe"); //$NON-NLS-1$ //$NON-NLS-2$
+		return overrides;
+	}
+
 	/**
 	 * Process root file properties.  
 	 * Resulting map is from config string to a property map.  The format of the property map is:

@@ -38,6 +38,7 @@ public interface IXMLConstants {
 	public static final String TARGET_API_GENERATION = "apitools.generation"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_BIN_PARTS = "gather.bin.parts"; //$NON-NLS-1$
 	public static final String TARGET_P2_SYNCH_CONTEXT = "p2.synch.context"; //$NON-NLS-1$
+	public static final String TARGET_P2_COMPATIBILITY_GATHER_EXECUTABLE = "p2.compatibility.gather.executable"; //$NON-NLS-1$
 	public static final String TARGET_P2_CONTEXT_EXISTS = "p2.context.exists"; //$NON-NLS-1$
 	public static final String TARGET_PUBLISH_BIN_PARTS = "publish.bin.parts"; //$NON-NLS-1$
 	public static final String TARGET_GATHER_LOGS = "gather.logs"; //$NON-NLS-1$

@@ -9,11 +9,12 @@
 
 package org.eclipse.pde.internal.build;
 
-import java.io.File;
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
@@ -21,6 +22,7 @@ import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.osgi.framework.Version;
 
 public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
+	private static final VersionRange OLD_EXECUTABLE_RANGE = new VersionRange(Version.emptyVersion, true, new Version(3, 3, 200, "v20090306-1900"), false); //$NON-NLS-1$
 	private AssemblyInformation assemblyInformation = null;
 	private boolean assembling = false;
 	private boolean versionsList = false;
@@ -348,6 +350,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	protected void generateGatherBinPartsTarget() {
+		BuildTimeFeature oldExecutableFeature = null;
 		ArrayList binaryFeatures = new ArrayList();
 		ArrayList binaryBundles = new ArrayList();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
@@ -378,14 +381,72 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
 			if (featureSet.contains(feature))
 				continue;
-			IPath featureLocation = new Path(feature.getURL().getPath()).removeLastSegments(1);
-			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
-			printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+			if (isOldExecutableFeature(feature)) {
+				oldExecutableFeature = feature;
+				script.printAntCallTask(TARGET_P2_COMPATIBILITY_GATHER_EXECUTABLE, true, null);
+			} else {
+				IPath featureLocation = new Path(feature.getURL().getPath()).removeLastSegments(1);
+				String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
+				printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+			}
 		}
 
 		String repo = Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO);
 		script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) binaryBundles.toArray(new FileSet[binaryBundles.size()]), (FileSet[]) binaryFeatures.toArray(new FileSet[binaryFeatures.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_PREFIX), contextMetadata);
 
+		script.printTargetEnd();
+		script.println();
+
+		if (oldExecutableFeature != null) {
+			generateCompatibilityGatherExecutable(oldExecutableFeature);
+		}
+	}
+
+	private boolean isOldExecutableFeature(BuildTimeFeature feature) {
+		if (!feature.getId().equals(FEATURE_EQUINOX_EXECUTABLE))
+			return false;
+
+		if (feature.isBinary() || !OLD_EXECUTABLE_RANGE.isIncluded(new Version(feature.getVersion())))
+			return false;
+
+		Properties properties = getFeatureBuildProperties(feature);
+		return properties != null && Boolean.valueOf((String) properties.get(PROPERTY_CUSTOM)).booleanValue();
+	}
+
+	private void generateCompatibilityGatherExecutable(BuildTimeFeature executableFeature) {
+		IPath featureLocation = new Path(executableFeature.getURL().getPath()).removeLastSegments(1);
+		String featureFullName = executableFeature.getId() + "_" + executableFeature.getVersion(); //$NON-NLS-1$
+
+		File productDir = new File(getWorkingDirectory(), DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product"); //$NON-NLS-1$
+		productDir.mkdirs();
+		File overridesFile = new File(productDir, "overrides.properties"); //$NON-NLS-1$
+		Properties overrides = Utils.getOldExecutableRootOverrides();
+		OutputStream outputStream = null;
+		try {
+			outputStream = new BufferedOutputStream(new FileOutputStream(overridesFile));
+			overrides.store(outputStream, "Overrides for org.eclipse.equinox.executable"); //$NON-NLS-1$
+		} catch (IOException e) {
+			//
+		} finally {
+			Utils.close(outputStream);
+		}
+
+		script.printTargetDeclaration(TARGET_P2_COMPATIBILITY_GATHER_EXECUTABLE, null, null, null, null);
+		script.printTab();
+		script.print("<eclipse.gatherFeature"); //$NON-NLS-1$
+		script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
+		script.printAttribute("artifactRepository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
+		script.printAttribute("buildResultFolder", executableFeature.getRootLocation(), true); //$NON-NLS-1$
+		script.printAttribute("baseDirectory", executableFeature.getRootLocation(), true); //$NON-NLS-1$
+		script.printAttribute("overrides", overridesFile.getAbsolutePath(), true); //$NON-NLS-1$
+		script.println("/>"); //$NON-NLS-1$
+
+		Map params = new HashMap();
+		params.put(PROPERTY_PROJECT_LOCATION, "${basedir}/" + Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString()); //$NON-NLS-1$
+		params.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
+		params.put(PROPERTY_PROJECT_NAME, featureFullName);
+		params.put(PROPERTY_TARGET_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION);
+		printCustomAssemblyAntCall(TARGET_GATHER_BIN_PARTS, params);
 		script.printTargetEnd();
 		script.println();
 	}
