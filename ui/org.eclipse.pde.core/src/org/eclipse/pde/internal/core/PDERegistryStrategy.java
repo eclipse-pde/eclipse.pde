@@ -257,7 +257,11 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		if (host != null && host.getBundle() != null && !host.getBundle().isSingleton() || host == null && !desc.isSingleton())
 			return null;
 		if (host != null) {
-			BundleDescription hostDesc = host.getBundle();
+			BundleDescription[] hosts = host.getHosts();
+			if (hosts.length != 1) {
+				return null;
+			}
+			BundleDescription hostDesc = hosts[0];
 			hostName = hostDesc.getSymbolicName();
 			hostId = Long.toString(hostDesc.getBundleId());
 		}
