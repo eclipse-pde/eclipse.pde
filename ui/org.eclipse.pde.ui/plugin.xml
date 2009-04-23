@@ -1108,15 +1108,35 @@
          <description>
             %decorator.desc
          </description>
-        <enablement>
+         <enablement>
             <and>
                <objectClass
                      name="org.eclipse.core.resources.IProject">
                </objectClass>
-               <objectState
-                        name="persistentProperty"
+               <or>
+                  <and>
+                     <objectState
+                        name="projectPersistentProperty"
                         value="org.eclipse.pde.core.imported = binary">
-               </objectState>
+                     </objectState>
+                     <or>
+                        <not>
+                           <objectState
+                              name="projectPersistentProperty"
+                              value="org.eclipse.team.core.repository">
+                           </objectState>
+                        </not>
+                        <objectState
+                           name="projectPersistentProperty"
+                           value="org.eclipse.team.core.repository=org.eclipse.pde.core.BinaryRepositoryProvider">
+                        </objectState>
+                     </or>
+                  </and>
+                  <objectState
+                        name="persistentProperty"
+                        value="org.eclipse.pde.core.imported = external">
+                  </objectState>
+               </or>
             </and>
          </enablement>
       </decorator>
