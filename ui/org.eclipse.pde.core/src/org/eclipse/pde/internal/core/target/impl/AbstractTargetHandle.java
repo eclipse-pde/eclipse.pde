@@ -12,7 +12,8 @@ package org.eclipse.pde.internal.core.target.impl;
 
 import java.io.File;
 import java.io.InputStream;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -105,14 +106,16 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 */
 	void deleteProfile() throws CoreException {
 		IProfileRegistry registry = getProfileRegistry();
-		IProfile profile = registry.getProfile(getProfileId());
-		if (profile != null) {
-			String location = profile.getProperty(IProfile.PROP_INSTALL_FOLDER);
-			registry.removeProfile(getProfileId());
-			if (location != null && location.length() > 0) {
-				File folder = new File(location);
-				if (folder.exists()) {
-					delete(folder);
+		if (registry != null) {
+			IProfile profile = registry.getProfile(getProfileId());
+			if (profile != null) {
+				String location = profile.getProperty(IProfile.PROP_INSTALL_FOLDER);
+				registry.removeProfile(getProfileId());
+				if (location != null && location.length() > 0) {
+					File folder = new File(location);
+					if (folder.exists()) {
+						delete(folder);
+					}
 				}
 			}
 		}
@@ -136,17 +139,12 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	}
 
 	/**
-	 * Returns the profile registry.
+	 * Returns the profile registry or <code>null</code>
 	 * 
-	 * @return profile registry
-	 * @throws CoreException if the registry does not exist
+	 * @return profile registry or <code>null</code>
 	 */
-	static IProfileRegistry getProfileRegistry() throws CoreException {
-		IProfileRegistry registry = (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
-		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
-		}
-		return registry;
+	static IProfileRegistry getProfileRegistry() {
+		return (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
 	}
 
 }

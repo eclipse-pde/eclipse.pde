@@ -569,16 +569,18 @@ public class TargetPlatformService implements ITargetPlatformService {
 	public List cleanOrphanedTargetDefinitionProfiles() throws CoreException {
 		List list = new ArrayList();
 		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		IProfile[] profiles = registry.getProfiles();
-		for (int i = 0; i < profiles.length; i++) {
-			IProfile profile = profiles[i];
-			String id = profile.getProfileId();
-			if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-				String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
-				AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
-				if (!target.exists()) {
-					target.deleteProfile();
-					list.add(id);
+		if (registry != null) {
+			IProfile[] profiles = registry.getProfiles();
+			for (int i = 0; i < profiles.length; i++) {
+				IProfile profile = profiles[i];
+				String id = profile.getProfileId();
+				if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+					String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
+					AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
+					if (!target.exists()) {
+						target.deleteProfile();
+						list.add(id);
+					}
 				}
 			}
 		}

@@ -552,6 +552,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public IProfile getProfile() throws CoreException {
 		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
+		if (registry == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
+		}
 		AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
 		String id = handle.getProfileId();
 		IProfile profile = registry.getProfile(id);
