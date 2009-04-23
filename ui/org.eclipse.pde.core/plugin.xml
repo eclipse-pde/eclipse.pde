@@ -17,6 +17,9 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.pde.internal.core.PreferenceInitializer"/>
+      <modifier
+            class="org.eclipse.pde.internal.core.TargetPreferenceModifyListener">
+      </modifier>
    </extension>
    <extension
          point="org.eclipse.team.core.repository">
