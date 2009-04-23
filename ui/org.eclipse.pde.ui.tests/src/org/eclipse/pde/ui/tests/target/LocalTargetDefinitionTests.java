@@ -537,6 +537,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.junit");
 		expected.add("org.junit4");
 		expected.add("org.eclipse.jdt.doc.user");
+		expected.add("org.hamcrest.core");
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx");
 			expected.add("org.eclipse.jdt.launching.ui.macosx");
@@ -594,6 +595,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.doc.user");
 		expected.add("org.eclipse.jdt.launching.macosx");
 		expected.add("org.eclipse.jdt.launching.ui.macosx");
+		expected.add("org.hamcrest.core");
 		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
@@ -680,6 +682,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.ui.source");
 		expected.add("org.junit.source");
 		expected.add("org.junit4.source");
+		expected.add("org.hamcrest.core.source");
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
 			expected.add("org.eclipse.jdt.launching.ui.macosx.source");
@@ -736,6 +739,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			expected.add("org.junit");
 			expected.add("org.junit4");
 			expected.add("org.eclipse.jdt.doc.user");
+			expected.add("org.hamcrest.core");
 			if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 				expected.add("org.eclipse.jdt.launching.macosx");
 				expected.add("org.eclipse.jdt.launching.ui.macosx");
