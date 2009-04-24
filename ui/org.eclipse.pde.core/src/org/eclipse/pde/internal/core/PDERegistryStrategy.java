@@ -183,10 +183,32 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		File input = getFile(base);
 		if (input == null)
 			return;
-		InputStream is = getInputStream(input, base);
-		if (is == null)
-			return;
-		registry.addContribution(new BufferedInputStream(is), contributor, true, input.getPath(), null, fKey);
+		InputStream is = null;
+		ZipFile jfile = null;
+
+		try {
+			if (input.getName().endsWith(".jar")) { //$NON-NLS-1$
+				jfile = new ZipFile(input, ZipFile.OPEN_READ);
+				String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+				ZipEntry entry = jfile.getEntry(fileName);
+				if (entry != null) {
+					is = jfile.getInputStream(entry);
+				}
+			} else {
+				is = new FileInputStream(input);
+			}
+			if (is != null) {
+				registry.addContribution(new BufferedInputStream(is), contributor, true, input.getPath(), null, fKey);
+			}
+		} catch (IOException e) {
+		} finally {
+			if (jfile != null) {
+				try {
+					jfile.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 
 	private void removeBundle(IExtensionRegistry registry, IPluginModelBase base) {
@@ -221,25 +243,6 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 		File inputFile = new File(file, fileName);
 		return (inputFile.exists()) ? inputFile : null;
-	}
-
-	private InputStream getInputStream(File file, IPluginModelBase base) {
-		if (file.getName().endsWith(".jar")) { //$NON-NLS-1$
-			try {
-				ZipFile jfile = new ZipFile(file, ZipFile.OPEN_READ);
-				String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
-				ZipEntry entry = jfile.getEntry(fileName);
-				if (entry != null)
-					return jfile.getInputStream(entry);
-			} catch (IOException e) {
-			}
-			return null;
-		}
-		try {
-			return new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-		}
-		return null;
 	}
 
 	public IContributor createContributor(IPluginModelBase base) {
