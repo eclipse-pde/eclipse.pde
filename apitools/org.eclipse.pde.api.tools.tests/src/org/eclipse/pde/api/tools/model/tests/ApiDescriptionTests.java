@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
-import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
@@ -376,7 +376,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * @throws CoreException if something goes terribly wrong 
 	 */
 	private String getApiDescriptionXML(IApiComponent apiComponent) throws CoreException {
-		ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(apiComponent);
+		ApiDescriptionXmlCreator xmlVisitor = new ApiDescriptionXmlCreator(apiComponent);
 		apiComponent.getApiDescription().accept(xmlVisitor);
 		return xmlVisitor.getXML();
 	}

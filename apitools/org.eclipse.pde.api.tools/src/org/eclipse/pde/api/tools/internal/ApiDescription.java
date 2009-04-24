@@ -158,6 +158,24 @@ public class ApiDescription implements IApiDescription {
 		}
 		
 		/**
+		 * Returns if the given node has API visibility. If the given node has {@link ApiDescription#VISIBILITY_INHERITED} visibility
+		 * this method recursively asks its' parent nodes if they have API visibility.
+		 * @param node
+		 * @return true if this node has API visibility false otherwise
+		 */
+		protected boolean hasApiVisibility(ManifestNode node) {
+			if(node != null) {
+				if(VisibilityModifiers.isAPI(node.visibility)) {
+					return true;
+				}
+				else if(node.visibility == VISIBILITY_INHERITED) {
+					return hasApiVisibility(node.parent);
+				}
+			}
+			return false;
+		}
+		
+		/**
 		 * Ensure this node is up to date. Default implementation does
 		 * nothing. Subclasses should override as required.
 		 * 
@@ -182,21 +200,23 @@ public class ApiDescription implements IApiDescription {
 				return;
 			}
 			switch (element.getElementType()) {
-			case IElementDescriptor.METHOD:
-				IMethodDescriptor md = (IMethodDescriptor) element;
-				Element method = document.createElement(IApiXmlConstants.ELEMENT_METHOD);
-				method.setAttribute(IApiXmlConstants.ATTR_NAME, md.getName());
-				method.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, md.getSignature());
-				persistAnnotations(method);
-				parent.appendChild(method);
-				break;
-			case IElementDescriptor.FIELD:
-				IFieldDescriptor fd = (IFieldDescriptor) element;
-				Element field = document.createElement(IApiXmlConstants.ELEMENT_FIELD);
-				field.setAttribute(IApiXmlConstants.ATTR_NAME, fd.getName());
-				persistAnnotations(field);
-				parent.appendChild(field);
-				break;
+				case IElementDescriptor.METHOD: {
+					IMethodDescriptor md = (IMethodDescriptor) element;
+					Element method = document.createElement(IApiXmlConstants.ELEMENT_METHOD);
+					method.setAttribute(IApiXmlConstants.ATTR_NAME, md.getName());
+					method.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, md.getSignature());
+					persistAnnotations(method);
+					parent.appendChild(method);
+					break;
+				}
+				case IElementDescriptor.FIELD: {
+					IFieldDescriptor fd = (IFieldDescriptor) element;
+					Element field = document.createElement(IApiXmlConstants.ELEMENT_FIELD);
+					field.setAttribute(IApiXmlConstants.ATTR_NAME, fd.getName());
+					persistAnnotations(field);
+					parent.appendChild(field);
+					break;
+				}
 			}
 		}
 		
@@ -207,8 +227,8 @@ public class ApiDescription implements IApiDescription {
 		 * @param component the component the description is for or <code>null</code>
 		 */
 		void persistAnnotations(Element element) {
-			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(visibility));
-			element.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(restrictions));
+			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(this.visibility));
+			element.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(this.restrictions));
 		}
 	}
 		

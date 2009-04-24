@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -645,52 +645,57 @@ public class ApiDescriptionProcessor {
 	 */
 	private static int getRestrictions(final IJavaProject project, final Element element, final IElementDescriptor descriptor, boolean earlierversion) {
 		int res = RestrictionModifiers.NO_RESTRICTIONS;
-		switch(descriptor.getElementType()) {
-			case IElementDescriptor.FIELD: {
-				res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
-				break;
-			}
-			case IElementDescriptor.METHOD: {
-				IMethodDescriptor method  = (IMethodDescriptor) descriptor;
-				res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
-				if(!method.isConstructor()) {
-					res = annotateRestriction(element, IApiXmlConstants.ATTR_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, res);
+		if(element.hasAttribute(IApiXmlConstants.ATTR_RESTRICTIONS)) {
+			res = Integer.parseInt(element.getAttribute(IApiXmlConstants.ATTR_RESTRICTIONS));
+		}
+		else {
+			switch(descriptor.getElementType()) {
+				case IElementDescriptor.FIELD: {
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
+					break;
 				}
-				break;
-			}
-			case IElementDescriptor.TYPE: {
-				IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) descriptor;
-				res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
-				if(earlierversion && RestrictionModifiers.isImplementRestriction(res)) {
-					res |= RestrictionModifiers.NO_EXTEND;
+				case IElementDescriptor.METHOD: {
+					IMethodDescriptor method  = (IMethodDescriptor) descriptor;
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
+					if(!method.isConstructor()) {
+						res = annotateRestriction(element, IApiXmlConstants.ATTR_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, res);
+					}
+					break;
 				}
-				res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
-				if(!RestrictionModifiers.isExtendRestriction(res)) {
-					res = annotateRestriction(element, IApiXmlConstants.ATTR_SUBCLASS, RestrictionModifiers.NO_EXTEND, res);
-				}
-				res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
-				IType type = null;
-				if (project != null) {
-					try {
-						type = project.findType(rtype.getQualifiedName());
-						if (type != null) {
-							if(Flags.isInterface(type.getFlags())) {
-								res &= ~RestrictionModifiers.NO_INSTANTIATE;
-							}
-							else {
-								res &= ~RestrictionModifiers.NO_IMPLEMENT;
-								if(Flags.isFinal(type.getFlags())) {
-									res &= ~RestrictionModifiers.NO_EXTEND;
-								}
-								if(Flags.isAbstract(type.getFlags())) {
+				case IElementDescriptor.TYPE: {
+					IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) descriptor;
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
+					if(earlierversion && RestrictionModifiers.isImplementRestriction(res)) {
+						res |= RestrictionModifiers.NO_EXTEND;
+					}
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_EXTEND, RestrictionModifiers.NO_EXTEND, res);
+					if(!RestrictionModifiers.isExtendRestriction(res)) {
+						res = annotateRestriction(element, IApiXmlConstants.ATTR_SUBCLASS, RestrictionModifiers.NO_EXTEND, res);
+					}
+					res = annotateRestriction(element, IApiXmlConstants.ATTR_INSTANTIATE, RestrictionModifiers.NO_INSTANTIATE, res);
+					IType type = null;
+					if (project != null) {
+						try {
+							type = project.findType(rtype.getQualifiedName());
+							if (type != null) {
+								if(Flags.isInterface(type.getFlags())) {
 									res &= ~RestrictionModifiers.NO_INSTANTIATE;
 								}
+								else {
+									res &= ~RestrictionModifiers.NO_IMPLEMENT;
+									if(Flags.isFinal(type.getFlags())) {
+										res &= ~RestrictionModifiers.NO_EXTEND;
+									}
+									if(Flags.isAbstract(type.getFlags())) {
+										res &= ~RestrictionModifiers.NO_INSTANTIATE;
+									}
+								}
 							}
-						}
-					} 
-					catch (JavaModelException e) {}
+						} 
+						catch (JavaModelException e) {}
+					}
+					break;
 				}
-				break;
 			}
 		}
 		return res;
@@ -725,19 +730,24 @@ public class ApiDescriptionProcessor {
 	 */
 	private static int getVisibility(Element element) {
 		String attribute = element.getAttribute(IApiXmlConstants.ATTR_VISIBILITY);
-		if (ApiSettingsXmlVisitor.VALUE_API.equals(attribute)) {
-			return VisibilityModifiers.API;
+		try {
+			return Integer.parseInt(attribute);
 		}
-		if (ApiSettingsXmlVisitor.VALUE_PRIVATE.equals(attribute)) {
-			return VisibilityModifiers.PRIVATE;
+		catch(NumberFormatException nfe) {
+			if ("API".equals(attribute)) { //$NON-NLS-1$
+				return VisibilityModifiers.API;
+			}
+			if ("PRIVATE".equals(attribute)) { //$NON-NLS-1$
+				return VisibilityModifiers.PRIVATE;
+			}
+			if ("PRIVATE_PERMISSABLE".equals(attribute)) { //$NON-NLS-1$
+				return VisibilityModifiers.PRIVATE_PERMISSIBLE;
+			}
+			if ("SPI".equals(attribute)) { //$NON-NLS-1$
+				return VisibilityModifiers.SPI;
+			}
+			return -1;
 		}
-		if (ApiSettingsXmlVisitor.VALUE_PRIVATE_PERMISSABLE.equals(attribute)) {
-			return VisibilityModifiers.PRIVATE_PERMISSIBLE;
-		}
-		if (ApiSettingsXmlVisitor.VALUE_SPI.equals(attribute)) {
-			return VisibilityModifiers.SPI;
-		}
-		return -1;
 	}
 	
 	/**

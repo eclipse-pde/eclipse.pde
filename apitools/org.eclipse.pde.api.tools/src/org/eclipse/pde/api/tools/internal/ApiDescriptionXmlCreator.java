@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import java.util.Stack;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
-import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -31,21 +29,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * API settings visitor that generates XML for the settings.
+ * {@link IApiDescription} visitor that generates XML for the given {@link IApiComponent}.
  *  
  * @since 1.0.0
  */
-public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
-	
-	/**
-	 * Visibility attribute values.
-	 */
-	public static final String VALUE_API = "API"; //$NON-NLS-1$
-	public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
-	public static final String VALUE_PRIVATE = "private"; //$NON-NLS-1$
-	public static final String VALUE_PRIVATE_PERMISSABLE= "private_permissable"; //$NON-NLS-1$
-	public static final String VALUE_SPI = "SPI"; //$NON-NLS-1$
-	public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
+public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 	
 	/**
 	 * Component element
@@ -83,7 +71,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 * @param component API component
 	 * @throws CoreException if unable to construct the visitor
 	 */
-	public ApiSettingsXmlVisitor(IApiComponent component) throws CoreException {
+	public ApiDescriptionXmlCreator(IApiComponent component) throws CoreException {
 		this(component.getName(), component.getId());
 	}
 
@@ -95,7 +83,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 * 
 	 * @throws CoreException if unable to construct the visitor
 	 */
-	public ApiSettingsXmlVisitor(String componentName, String componentId) throws CoreException {
+	public ApiDescriptionXmlCreator(String componentName, String componentId) throws CoreException {
 		fDoc = Util.newDocument();
 		fComponent = fDoc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		fComponent.setAttribute(IApiXmlConstants.ATTR_NAME, componentName);
@@ -109,41 +97,6 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	}
 
 	/**
-	 * Adds visibility attributes to the given element.
-	 * 
-	 * @param element XML element
-	 * @param description API description
-	 */
-	private void addVisibilityAttributes(Element element, IApiAnnotations description) {
-		int modifiers = description.getVisibility();
-		String value = null;
-		switch (modifiers) {
-			case VisibilityModifiers.API: {
-				value = VALUE_API;
-				break;
-			}
-			case VisibilityModifiers.PRIVATE: {
-				value = VALUE_PRIVATE;
-				break;
-			}
-			case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
-				value = VALUE_PRIVATE_PERMISSABLE;
-				break;
-			}
-			case VisibilityModifiers.SPI: {
-				value = VALUE_SPI;
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-		if (value != null) {
-			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, value);
-		}
-	}
-	
-	/**
 	 * Annotates the attribute set of the specified {@link Element}
 	 * 
 	 * @param componentContext component context to which the API applies, or <code>null</code>
@@ -151,25 +104,10 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 	 * @param element the element to annotate
 	 */
 	private void annotateElementAttributes(IApiAnnotations description, Element element) {
-		int restrictions = description.getRestrictions();
-		if (RestrictionModifiers.isImplementRestriction(restrictions)) {
-			element.setAttribute(IApiXmlConstants.ATTR_IMPLEMENT, VALUE_FALSE);
-		}
-		if (RestrictionModifiers.isExtendRestriction(restrictions)) {
-			element.setAttribute(IApiXmlConstants.ATTR_EXTEND, VALUE_FALSE);
-		}
-		if(RestrictionModifiers.isOverrideRestriction(restrictions)) {
-			element.setAttribute(IApiXmlConstants.ATTR_OVERRIDE, VALUE_FALSE);
-		}
-		if (RestrictionModifiers.isInstantiateRestriction(restrictions)) {
-			element.setAttribute(IApiXmlConstants.ATTR_INSTANTIATE, VALUE_FALSE);
-		}
-		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
-			element.setAttribute(IApiXmlConstants.ATTR_REFERENCE, VALUE_FALSE);
-		}
+		element.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(description.getRestrictions()));
 		int visibility = description.getVisibility();
 		if (visibility != fPackageVisibility) {
-			addVisibilityAttributes(element, description);
+			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(visibility));
 		}
 	}
 	
@@ -219,6 +157,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 					// package visibility settings are stored in MANIFEST.MF, so omit them here.
 					// still keep track of the visibility to know if children should override
 					fPackageVisibility = description.getVisibility();
+					fPackage.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(fPackageVisibility));
 					fVisitedPackages.add(pkgName);
 				}
 				break;
@@ -229,7 +168,7 @@ public class ApiSettingsXmlVisitor extends ApiDescriptionVisitor {
 				Element type = (Element) fTypeStack.peek();
 				annotateElementAttributes(description, type);
 				fPackage.appendChild(type);
-				type.setAttribute(IApiXmlConstants.ATTR_NAME, Signatures.getTypeName(typeDesc.getQualifiedName()));
+				type.setAttribute(IApiXmlConstants.ATTR_NAME, Signatures.getSimpleTypeName(typeDesc.getQualifiedName()));
 				break;
 			}
 			case IElementDescriptor.METHOD: {

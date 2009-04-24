@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
-import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.model.ArchiveApiTypeContainer;
@@ -289,7 +289,7 @@ public class ApiFileGenerationTask extends Task {
 			}
 		}
 		try {
-			ApiSettingsXmlVisitor xmlVisitor = new ApiSettingsXmlVisitor(this.projectName, this.projectName);
+			ApiDescriptionXmlCreator xmlVisitor = new ApiDescriptionXmlCreator(this.projectName, this.projectName);
 			apiDescription.accept(xmlVisitor);
 			String xml = xmlVisitor.getXML();
 			Util.saveFile(apiDescriptionFile, xml);

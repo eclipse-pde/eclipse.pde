@@ -156,7 +156,7 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				if(annot.getVisibility() == VisibilityModifiers.PRIVATE) {
 					IApiComponent host = mcomponent.getHost();
 					if(host != null && host.getId().equals(rcomponent.getId())) {
-						visibility = new Integer(VisibilityModifiers.FRAGMENT_PERMISSIBLE);
+						visibility = new Integer(ApiUseReportConverter.FRAGMENT_PERMISSIBLE);
 					}
 					else {
 						IApiAccess access = fDescription.resolveAccessLevel(

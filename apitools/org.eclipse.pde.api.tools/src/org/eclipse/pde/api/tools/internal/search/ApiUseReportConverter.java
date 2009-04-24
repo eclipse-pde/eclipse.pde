@@ -172,7 +172,7 @@ public final class ApiUseReportConverter {
 						}
 						break;
 					}
-					case VisibilityModifiers.FRAGMENT_PERMISSIBLE: {
+					case ApiUseReportConverter.FRAGMENT_PERMISSIBLE: {
 						switch(type) {
 						case IReference.T_TYPE_REFERENCE: {
 							counts.total_fragment_permissible_type_count = count;
@@ -292,6 +292,14 @@ public final class ApiUseReportConverter {
 	private String xmlLocation = null;
 	private String htmlLocation = null;
 	private File htmlIndex = null;
+
+	/**
+	 * Visibility constant indicating an element has host-fragment level of visibility.
+	 *  i.e. fragments have {@link #PRIVATE_PERMISSIBLE}-like access to the internals of their host.
+	 *  
+	 *  @since 1.0.1
+	 */
+	public static final int FRAGMENT_PERMISSIBLE = 0x0000005;
 	
 	/**
 	 * Constructor
@@ -942,7 +950,7 @@ public final class ApiUseReportConverter {
 		writeOriginSummaryEntry(writer, 
 				origin, 
 				SearchMessages.ApiUseReportConverter_fragment_permissible, 
-				VisibilityModifiers.FRAGMENT_PERMISSIBLE,
+				ApiUseReportConverter.FRAGMENT_PERMISSIBLE,
 				counts.total_fragment_permissible_type_count, 
 				counts.total_fragment_permissible_method_count, 
 				counts.total_fragment_permissible_field_count);

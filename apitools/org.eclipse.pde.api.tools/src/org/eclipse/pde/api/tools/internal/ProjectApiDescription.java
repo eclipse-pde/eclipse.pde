@@ -138,15 +138,17 @@ public class ProjectApiDescription extends ApiDescription {
 		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
 		void persistXML(Document document, Element parent) {
-			Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
-			for (int i = 0; i < fFragments.length; i++) {
-				Element fragment = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT);
-				fragment.setAttribute(IApiXmlConstants.ATTR_HANDLE, fFragments[i].getHandleIdentifier());
-				pkg.appendChild(fragment);
+			if (hasApiVisibility(this)) {
+				Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
+				for (int i = 0; i < fFragments.length; i++) {
+					Element fragment = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT);
+					fragment.setAttribute(IApiXmlConstants.ATTR_HANDLE, fFragments[i].getHandleIdentifier());
+					pkg.appendChild(fragment);
+				}
+				pkg.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(this.visibility));
+				persistChildren(document, pkg, children);
+				parent.appendChild(pkg);
 			}
-			persistAnnotations(pkg);
-			persistChildren(document, pkg, children);
-			parent.appendChild(pkg);
 		}
 		
 		/* (non-Javadoc)
@@ -255,12 +257,14 @@ public class ProjectApiDescription extends ApiDescription {
 		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
 		void persistXML(Document document, Element parent) {
-			Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
-			type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
-			persistAnnotations(type);
-			type.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
-			persistChildren(document, type, children);
-			parent.appendChild(type);
+			if(hasApiVisibility(this)) {
+				Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
+				type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
+				persistAnnotations(type);
+				type.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
+				persistChildren(document, type, children);
+				parent.appendChild(type);
+			}
 		}
 		
 		/* (non-Javadoc)

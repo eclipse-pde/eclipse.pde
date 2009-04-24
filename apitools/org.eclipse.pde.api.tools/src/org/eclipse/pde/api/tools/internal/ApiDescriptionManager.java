@@ -466,12 +466,10 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 */
 	private int getInt(Element element, String attr) {
 		String attribute = element.getAttribute(attr);
-		if (attribute != null) {
-			try {
-				return Integer.parseInt(attribute);
-			} 
-			catch (NumberFormatException e) {}
-		}
+		try {
+			return Integer.parseInt(attribute);
+		} 
+		catch (NumberFormatException e) {}
 		return 0;
 	}
 	

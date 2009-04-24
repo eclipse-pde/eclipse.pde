@@ -53,7 +53,7 @@ import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
 import org.eclipse.pde.api.tools.builder.tests.leak.LeakTest;
 import org.eclipse.pde.api.tools.builder.tests.tags.TagTest;
 import org.eclipse.pde.api.tools.builder.tests.usage.UsageTest;
-import org.eclipse.pde.api.tools.internal.ApiSettingsXmlVisitor;
+import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -505,7 +505,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IFolder output = project.getFolder("bin");
 		copyFolder(output, componentDir);
 		// API Description
-		ApiSettingsXmlVisitor visitor = new ApiSettingsXmlVisitor(apiComponent);
+		ApiDescriptionXmlCreator visitor = new ApiDescriptionXmlCreator(apiComponent);
 		apiComponent.getApiDescription().accept(visitor);
 		String xml = visitor.getXML();
 		File desc = new File(componentDir, ".api_description");
