@@ -26,6 +26,7 @@ public class GatherBundleAction extends BundlesAction {
 	private GatheringComputer computer = null;
 	private String unpack = null;
 	private File manifestRoot = null;
+	private File bundleLocation = null;
 
 	/**
 	 * @param location
@@ -33,6 +34,7 @@ public class GatherBundleAction extends BundlesAction {
 	public GatherBundleAction(File location, File manifestRoot) {
 		super(new File[] {location});
 		this.manifestRoot = manifestRoot;
+		this.bundleLocation = location;
 	}
 
 	public IStatus perform(IPublisherInfo publisherInfo, IPublisherResult results, IProgressMonitor monitor) {
@@ -49,7 +51,7 @@ public class GatherBundleAction extends BundlesAction {
 		if (manifest == null)
 			return null;
 
-		BundleDescription bundle = createBundleDescription(manifest, bundleLocations[0]);
+		BundleDescription bundle = createBundleDescription(manifest, bundleLocation);
 		createShapeAdvice(bundle);
 		return new BundleDescription[] {bundle};
 	}
