@@ -149,8 +149,10 @@ public interface ITargetDefinition {
 	 * of {@link IBundleContainer#getBundles()} on each of the bundle containers
 	 * in this target.
 	 * <p>
-	 * If there are any problems with the bundles in this target, the associated
-	 * statuses can be accessed by calling {@link #getBundleStatus()} 
+	 * Some of the returned bundles may have non-OK statuses.  These bundles may be missing some
+	 * information (location, version, source target).  To get a bundle's status call
+	 * {@link IResolvedBundle#getStatus()}.  You can also use {@link #getBundleStatus()} to
+	 * get the complete set of problems.
 	 * </p>
 	 * @see #getBundleStatus()
 	 * @return resolved bundles or <code>null</code>

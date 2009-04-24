@@ -342,13 +342,13 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			IResolvedBundle[] resolved = fTarget.getBundles();
 			for (int i = 0; i < resolved.length; i++) {
-				if (resolved[i].getStatus().getSeverity() != IStatus.ERROR) {
+				if (resolved[i].getStatus().isOK()) {
 					infos.add(resolved[i].getBundleInfo());
 					included.add(resolved[i].getBundleInfo());
 				}
 			}
 
-			// Compute missing bundles (preference need to know disabled/missing bundles)
+			// Compute missing (not included) bundles (preference need to know disabled/missing bundles)
 			List missing = new ArrayList();
 			IBundleContainer[] containers = fTarget.getBundleContainers();
 			if (containers != null) {
