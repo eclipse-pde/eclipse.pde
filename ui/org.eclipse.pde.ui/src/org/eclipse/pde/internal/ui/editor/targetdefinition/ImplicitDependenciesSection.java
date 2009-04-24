@@ -232,7 +232,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		}
 
 		List targetBundles = new ArrayList();
-		IResolvedBundle[] allTargetBundles = getTarget().getBundles();
+		IResolvedBundle[] allTargetBundles = getTarget().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}

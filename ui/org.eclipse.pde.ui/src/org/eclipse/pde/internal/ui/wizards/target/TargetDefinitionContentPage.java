@@ -689,6 +689,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 			getTargetDefinition().setImplicitDependencies((BundleInfo[]) allDependencies.toArray(new BundleInfo[allDependencies.size()]));
 			fElementViewer.refresh();
+			updateImpButtons();
 		}
 	}
 
@@ -706,7 +707,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		}
 
 		List targetBundles = new ArrayList();
-		IResolvedBundle[] allTargetBundles = getTargetDefinition().getBundles();
+		IResolvedBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}
@@ -731,12 +732,14 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 			getTargetDefinition().setImplicitDependencies((BundleInfo[]) bundles.toArray((new BundleInfo[bundles.size()])));
 			fElementViewer.refresh();
+			updateImpButtons();
 		}
 	}
 
 	private void handleRemoveAll() {
 		getTargetDefinition().setImplicitDependencies(null);
 		fElementViewer.refresh();
+		updateImpButtons();
 	}
 
 	private void updateImpButtons() {
