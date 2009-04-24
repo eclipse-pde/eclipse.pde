@@ -215,7 +215,7 @@ public class TargetContentsGroup extends FilteredTree {
 														}*/;
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new TreeContentProvider());
-		fTree.setLabelProvider(new BundleContainerLabelProvider());
+		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();

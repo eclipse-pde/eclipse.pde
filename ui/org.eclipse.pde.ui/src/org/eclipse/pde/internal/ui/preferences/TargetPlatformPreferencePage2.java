@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
@@ -29,7 +31,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.shared.target.BundleContainerLabelProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.target.*;
@@ -319,22 +320,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 
 		Group group = SWTFactory.createGroup(comp, PDEUIMessages.TargetPlatformPreferencePage2_25, 1, 1, GridData.FILL_HORIZONTAL);
 		fDetails = new TableViewer(group);
-		fDetails.setLabelProvider(new BundleContainerLabelProvider() {
-			protected String getIncludedBundlesLabel(IBundleContainer container) {
-				// Rather than display x of y included, resolve and display common variables in the path
-				try {
-					if (container instanceof AbstractBundleContainer) {
-						String unresolved = ((AbstractBundleContainer) container).getLocation(false);
-						if (unresolved.indexOf("${eclipse_home}") >= 0 || unresolved.indexOf("${workspace_loc}") >= 0) { //$NON-NLS-1$ //$NON-NLS-2$
-							return "(" + ((AbstractBundleContainer) container).getLocation(true) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					}
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
-				}
-				return ""; //$NON-NLS-1$
-			}
-		});
+		fDetails.setLabelProvider(new StyledBundleLabelProvider(true, true));
 		fDetails.setContentProvider(new ArrayContentProvider());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 50;

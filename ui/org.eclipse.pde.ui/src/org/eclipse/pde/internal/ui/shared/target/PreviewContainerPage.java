@@ -51,7 +51,7 @@ public class PreviewContainerPage extends WizardPage {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(composite, Messages.PreviewContainerPage_3, 1);
 		fPreviewTable = new TableViewer(composite);
-		fPreviewTable.setLabelProvider(new BundleInfoLabelProvider(true));
+		fPreviewTable.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fPreviewTable.setContentProvider(ArrayContentProvider.getInstance());
 		fPreviewTable.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(composite);

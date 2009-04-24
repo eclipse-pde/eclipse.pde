@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -603,7 +605,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				return new BundleInfo[0];
 			}
 		});
-		fElementViewer.setLabelProvider(new BundleInfoLabelProvider(false));
+		fElementViewer.setLabelProvider(new StyledBundleLabelProvider(false, false));
 		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
@@ -662,7 +664,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	protected void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new BundleInfoLabelProvider(false));
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new StyledBundleLabelProvider(false, false));
 
 		try {
 			dialog.setElements(getValidBundles());

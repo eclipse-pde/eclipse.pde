@@ -172,7 +172,7 @@ public class TargetLocationsGroup {
 	private void initializeTreeViewer(Tree tree) {
 		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new BundleContainerContentProvider());
-		fTreeViewer.setLabelProvider(new BundleContainerLabelProvider());
+		fTreeViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTreeViewer.setComparator(new ViewerComparator());
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

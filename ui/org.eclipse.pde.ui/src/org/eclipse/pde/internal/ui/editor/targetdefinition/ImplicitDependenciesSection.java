@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -23,7 +25,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
-import org.eclipse.pde.internal.ui.shared.target.BundleInfoLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -113,7 +114,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 				return bundles;
 			}
 		});
-		fViewer.setLabelProvider(new BundleInfoLabelProvider(true));
+		fViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				BundleInfo bundle1 = (BundleInfo) e1;
@@ -189,7 +190,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	}
 
 	protected void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new BundleInfoLabelProvider(false));
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new StyledBundleLabelProvider(false, false));
 		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);

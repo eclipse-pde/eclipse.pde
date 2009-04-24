@@ -100,7 +100,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		gd.heightHint = 300;
 		fTree.getControl().setLayoutData(gd);
 
-		fTree.setLabelProvider(new BundleContainerLabelProvider());
+		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.setContentProvider(new ITreeContentProvider() {
 			public Object[] getChildren(Object element) {
 				if (element instanceof IBundleContainer) {
