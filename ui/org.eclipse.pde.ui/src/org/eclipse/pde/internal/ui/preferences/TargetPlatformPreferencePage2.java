@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
-
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
@@ -31,6 +29,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.target.*;
@@ -482,6 +481,11 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				}
 
 				fTableViewer.refresh(true);
+
+				if (fActiveTarget == newTarget) {
+					fTableViewer.setCheckedElements(new Object[] {newTarget});
+				}
+
 				fTableViewer.setSelection(new StructuredSelection(newTarget));
 			}
 		}
