@@ -1035,6 +1035,7 @@
                		<count value="1"/>
 	                  <iterate>
                          <and>
+                         	<instanceof value="org.eclipse.core.runtime.IAdaptable"/>
 		                  	<test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
                        		<or>
                        		<adapt type="org.eclipse.core.resources.IProject"/>
@@ -1071,6 +1072,7 @@
 	                  <count value="1"/>
 	                  <iterate>
 	                  	<and>
+                         	<instanceof value="org.eclipse.core.runtime.IAdaptable"/>
 		                  	<test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
                        		<or>
                        		<adapt type="org.eclipse.core.resources.IProject"/>
