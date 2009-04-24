@@ -25,7 +25,7 @@ public class ResolvedBundle implements IResolvedBundle {
 
 	private BundleInfo fInfo;
 	private IBundleContainer fContainer;
-	private boolean fIsSource = false;
+	private BundleInfo fSourceTarget;
 	private IStatus fStatus;
 	private boolean fIsOptional = false;
 	private boolean fIsFragment = false;
@@ -37,11 +37,11 @@ public class ResolvedBundle implements IResolvedBundle {
 	 * 
 	 * @param info underlying bundle
 	 * @param status any status regarding the bundle or <code>null</code> if OK
-	 * @param source whether the bundle is a source bundle
+	 * @param source <code>null</code> if this is an executable bundle.  To create a source bundle, this must be the bundle that this bundle will provide source for
 	 * @param optional whether the bundle is optional
 	 * @param whether the bundle is a fragment
 	 */
-	ResolvedBundle(BundleInfo info, IBundleContainer parentContainer, IStatus status, boolean source, boolean optional, boolean fragment) {
+	ResolvedBundle(BundleInfo info, IBundleContainer parentContainer, IStatus status, BundleInfo sourceTarget, boolean optional, boolean fragment) {
 		fInfo = info;
 		fContainer = parentContainer;
 		if (status == null) {
@@ -49,7 +49,7 @@ public class ResolvedBundle implements IResolvedBundle {
 		} else {
 			fStatus = status;
 		}
-		fIsSource = source;
+		fSourceTarget = sourceTarget;
 		fIsOptional = optional;
 		fIsFragment = fragment;
 	}
@@ -66,6 +66,13 @@ public class ResolvedBundle implements IResolvedBundle {
 	 */
 	public IBundleContainer getParentContainer() {
 		return fContainer;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IResolvedBundle#setParentContainer(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
+	 */
+	public void setParentContainer(IBundleContainer newParent) {
+		fContainer = newParent;
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +93,14 @@ public class ResolvedBundle implements IResolvedBundle {
 	 * @see org.eclipse.pde.internal.core.target.provisional.IResolvedBundle#isSourceBundle()
 	 */
 	public boolean isSourceBundle() {
-		return fIsSource;
+		return fSourceTarget != null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IResolvedBundle#getSourceTarget()
+	 */
+	public BundleInfo getSourceTarget() {
+		return fSourceTarget;
 	}
 
 	/**

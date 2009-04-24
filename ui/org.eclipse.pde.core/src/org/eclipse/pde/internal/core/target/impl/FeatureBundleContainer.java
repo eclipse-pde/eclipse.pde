@@ -192,7 +192,12 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 					matchInfos.add(new BundleInfo(plugin.getId(), plugin.getVersion(), null, BundleInfo.NO_LEVEL, false));
 				}
 			}
-			return AbstractBundleContainer.getMatchingBundles(bundles, (BundleInfo[]) matchInfos.toArray(new BundleInfo[matchInfos.size()]), null);
+
+			// Because we used the directory container to get our bundles, we need to replace their parent
+			for (int i = 0; i < bundles.length; i++) {
+				bundles[i].setParentContainer(this);
+			}
+			return AbstractBundleContainer.getMatchingBundles(bundles, (BundleInfo[]) matchInfos.toArray(new BundleInfo[matchInfos.size()]), null, this);
 		} finally {
 			if (model != null) {
 				model.dispose();

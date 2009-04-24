@@ -11,14 +11,26 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import com.ibm.icu.text.MessageFormat;
-import java.net.URI;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.*;
 import java.util.*;
 import java.util.List;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -34,6 +46,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.osgi.framework.BundleException;
 
 /**
  * UI Part that displays all of the bundle contents of a target.  The bundles can be
@@ -52,7 +65,7 @@ public class TargetContentsGroup extends FilteredTree {
 	private Button fDeselectButton;
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
-//	private Button fSelectRequiredButton;
+	private Button fSelectRequiredButton;
 	private Label fShowLabel;
 	private Button fShowSourceButton;
 	private Button fShowPluginsButton;
@@ -88,14 +101,18 @@ public class TargetContentsGroup extends FilteredTree {
 
 	public TargetContentsGroup(Composite parent) {
 		super(parent, SWT.NONE, null, true);
-		super.init(SWT.NONE, new PatternFilter());
+		PatternFilter filter = new PatternFilter();
+		filter.setIncludeLeadingWildcard(true);
+		super.init(SWT.NONE, filter);
 	}
 
 	public TargetContentsGroup(Composite parent, FormToolkit toolkit) {
 		// Hack to setup the toolkit before creating the controls
 		super(parent, SWT.NONE, null, true);
 		fToolkit = toolkit;
-		super.init(SWT.NONE, new PatternFilter());
+		PatternFilter filter = new PatternFilter();
+		filter.setIncludeLeadingWildcard(true);
+		super.init(SWT.NONE, filter);
 	}
 
 	/**
@@ -272,6 +289,14 @@ public class TargetContentsGroup extends FilteredTree {
 			fDeselectAllButton = fToolkit.createButton(buttonComp, Messages.IncludedBundlesTree_3, SWT.PUSH);
 			fDeselectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+			emptySpace = new Label(buttonComp, SWT.NONE);
+			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.widthHint = gd.heightHint = 5;
+			emptySpace.setLayoutData(gd);
+
+			fSelectRequiredButton = fToolkit.createButton(buttonComp, Messages.TargetContentsGroup_4, SWT.PUSH);
+			fSelectRequiredButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 			Composite filterComp = fToolkit.createComposite(buttonComp);
 			layout = new GridLayout();
 			layout.marginWidth = layout.marginHeight = 0;
@@ -304,6 +329,7 @@ public class TargetContentsGroup extends FilteredTree {
 					handleGroupChange();
 				}
 			});
+			fGroupComboPart.select(0);
 
 		} else {
 			Composite buttonComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_VERTICAL, 0, 0);
@@ -317,6 +343,13 @@ public class TargetContentsGroup extends FilteredTree {
 
 			fSelectAllButton = SWTFactory.createPushButton(buttonComp, Messages.IncludedBundlesTree_2, null);
 			fDeselectAllButton = SWTFactory.createPushButton(buttonComp, Messages.IncludedBundlesTree_3, null);
+
+			emptySpace = new Label(buttonComp, SWT.NONE);
+			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.widthHint = gd.heightHint = 5;
+			emptySpace.setLayoutData(gd);
+
+			fSelectRequiredButton = SWTFactory.createPushButton(buttonComp, Messages.TargetContentsGroup_4, null);
 
 			Composite filterComp = SWTFactory.createComposite(buttonComp, 1, 1, SWT.NONE, 0, 0);
 			filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
@@ -341,6 +374,7 @@ public class TargetContentsGroup extends FilteredTree {
 					handleGroupChange();
 				}
 			});
+			fGroupCombo.select(0);
 		}
 
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
@@ -372,6 +406,12 @@ public class TargetContentsGroup extends FilteredTree {
 			public void widgetSelected(SelectionEvent e) {
 				Object[] elements = ((ITreeContentProvider) fTree.getContentProvider()).getElements(fTree.getInput());
 				handleCheck(elements, false);
+			}
+		});
+
+		fSelectRequiredButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleCheck(getRequiredElements(fAllBundles, fAllChecked), true);
 			}
 		});
 
@@ -434,6 +474,13 @@ public class TargetContentsGroup extends FilteredTree {
 		};
 	}
 
+	/**
+	 * Returns the file path where the given resolved bundle can be found.
+	 * Used to group bundles by file path in the tree.
+	 * 
+	 * @param bundle bundle to lookup parent path for
+	 * @return path of parent directory, if unknown it will be a path object containing "Unknown"
+	 */
 	private IPath getParentPath(IResolvedBundle bundle) {
 		URI location = bundle.getBundleInfo().getLocation();
 		if (location == null) {
@@ -444,6 +491,166 @@ public class TargetContentsGroup extends FilteredTree {
 		return path;
 	}
 
+	/**
+	 * 
+	 * TODO SHOULD BE EQUIVALENT METHOD ELSEWHERE IN PDE
+	 * 
+	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
+	 * or in a directory at the specified location.
+	 * 
+	 * @param bundleLocation root location of the bundle
+	 * @return bundle manifest dictionary or <code>null</code> if none
+	 * @throws IOException if unable to parse
+	 */
+	protected Map loadManifest(File bundleLocation) throws IOException {
+		ZipFile jarFile = null;
+		InputStream manifestStream = null;
+		String extension = new Path(bundleLocation.getName()).getFileExtension();
+		try {
+			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
+				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
+				if (manifestEntry != null) {
+					manifestStream = jarFile.getInputStream(manifestEntry);
+				}
+			} else {
+				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
+				if (file.exists())
+					manifestStream = new FileInputStream(file);
+			}
+			if (manifestStream == null) {
+				return null;
+			}
+			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
+		} catch (BundleException e) {
+			PDEPlugin.log(e);
+		} finally {
+			try {
+				if (manifestStream != null) {
+					manifestStream.close();
+				}
+			} catch (IOException e) {
+				PDEPlugin.log(e);
+			}
+			try {
+				if (jarFile != null) {
+					jarFile.close();
+				}
+			} catch (IOException e) {
+				PDEPlugin.log(e);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Uses the target state to determine all bundles required by the
+	 * currently checked bundles and returns them so they can be checked in the tree.
+	 * 
+	 * @return list of plug-ins required by the currently checked plug-ins
+	 */
+	private Object[] getRequiredElements(final Collection allBundles, final Collection checkedBundles) {
+		final Set dependencies = new HashSet();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				try {
+					monitor.beginTask(Messages.TargetContentsGroup_5, 150);
+
+					// Get all the bundle locations
+					List allLocations = new ArrayList(allBundles.size());
+					for (Iterator iterator = allBundles.iterator(); iterator.hasNext();) {
+						IResolvedBundle current = (IResolvedBundle) iterator.next();
+						try {
+							// Some bundles, such as those with errors, may not have locations
+							URI location = current.getBundleInfo().getLocation();
+							if (location != null) {
+								allLocations.add(new File(location).toURL());
+							}
+						} catch (MalformedURLException e) {
+							PDEPlugin.log(e);
+							monitor.setCanceled(true);
+							return;
+						}
+					}
+					if (monitor.isCanceled()) {
+						return;
+					}
+					monitor.worked(20);
+
+					// Create a PDE State containing all of the target bundles					
+					PDEState state = new PDEState((URL[]) allLocations.toArray(new URL[allLocations.size()]), true, new SubProgressMonitor(monitor, 50));
+					if (monitor.isCanceled()) {
+						return;
+					}
+
+					// Figure out which of the models have been checked
+					IPluginModelBase[] models = state.getTargetModels();
+					List checkedModels = new ArrayList(checkedBundles.size());
+					for (Iterator iterator = checkedBundles.iterator(); iterator.hasNext();) {
+						BundleInfo bundle = ((IResolvedBundle) iterator.next()).getBundleInfo();
+						for (int j = 0; j < models.length; j++) {
+							if (models[j].getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName()) && models[j].getBundleDescription().getVersion().toString().equals(bundle.getVersion())) {
+								checkedModels.add(models[j]);
+								break;
+							}
+						}
+					}
+					monitor.worked(20);
+					if (monitor.isCanceled()) {
+						return;
+					}
+
+					// Get implicit dependencies as a list of strings
+					// This is wasteful since the dependency calculation puts them back into BundleInfos
+					BundleInfo[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
+					List implicitIDs = new ArrayList();
+					if (implicitDependencies != null) {
+						for (int i = 0; i < implicitDependencies.length; i++) {
+							implicitIDs.add(implicitDependencies[i].getSymbolicName());
+						}
+					}
+					monitor.worked(10);
+
+					// Get all dependency bundles
+					dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(), (String[]) implicitIDs.toArray(new String[implicitIDs.size()]), state.getState()));
+					monitor.worked(50);
+
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		try {
+			new ProgressMonitorDialog(getShell()).run(true, true, op);
+			List toCheck = new ArrayList();
+			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
+				IResolvedBundle bundle = (IResolvedBundle) iterator.next();
+				if (bundle.isSourceBundle()) {
+					String name = bundle.getSourceTarget().getSymbolicName();
+					if (name != null && dependencies.contains(name)) {
+						toCheck.add(bundle);
+					}
+				} else if (dependencies.contains(bundle.getBundleInfo().getSymbolicName())) {
+					toCheck.add(bundle);
+				}
+			}
+			return toCheck.toArray();
+		} catch (InvocationTargetException e) {
+			PDEPlugin.log(e);
+		} catch (InterruptedException e) {
+		}
+
+		return new Object[0];
+	}
+
+	/**
+	 * Sets the check state of the given elements to the given state.  Updates
+	 * all the datastructures that store the current check state and updates any
+	 * parent items in the tree.
+	 * 
+	 * @param changedElements list of changed elements
+	 * @param checkState new check state for the elements
+	 */
 	private void handleCheck(Object[] changedElements, boolean checkState) {
 		if (changedElements.length > 0) {
 			if (changedElements[0] instanceof IResolvedBundle) {
@@ -612,15 +819,14 @@ public class TargetContentsGroup extends FilteredTree {
 			// Selection is available is not everything is already selected and not both a parent and child item are selected
 			fSelectButton.setEnabled(!allSelected && !(hasResolveBundle && hasParent));
 			fDeselectButton.setEnabled(!noneSelected && !(hasResolveBundle && hasParent));
-//			fSelectRequiredButton.setEnabled(true);
 		} else {
 			fSelectButton.setEnabled(false);
 			fDeselectButton.setEnabled(false);
-//			fSelectRequiredButton.setEnabled(false);
 		}
 
 		fSelectAllButton.setEnabled(fTargetDefinition != null && fAllChecked.size() != fAllBundles.size());
 		fDeselectAllButton.setEnabled(fTargetDefinition != null && fAllChecked.size() != 0);
+		fSelectRequiredButton.setEnabled(fTargetDefinition != null && fAllChecked.size() > 0 && fAllChecked.size() != fAllBundles.size());
 
 		if (fTargetDefinition != null) {
 			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fAllChecked.size()), Integer.toString(fAllBundles.size())}));
@@ -794,7 +1000,7 @@ public class TargetContentsGroup extends FilteredTree {
 			fSelectAllButton.setEnabled(false);
 			fDeselectButton.setEnabled(false);
 			fDeselectAllButton.setEnabled(false);
-//			fSelectRequiredButton.setEnabled(false);
+			fSelectRequiredButton.setEnabled(false);
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}
 		fShowLabel.setEnabled(enabled);
@@ -827,17 +1033,16 @@ public class TargetContentsGroup extends FilteredTree {
 		}
 	}
 
+	/**
+	 * Content provider for the content tree.  Allows for different groupings to be used.
+	 *
+	 */
 	class TreeContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
 			return getBundleChildren(parentElement).toArray();
 		}
 
 		public Object getParent(Object element) {
-//			if (fGrouping == GROUP_BY_CONTAINER && element instanceof IResolvedBundle) {
-//				return ((IResolvedBundle) element).getParentContainer();
-//			} else if (fGrouping == GROUP_BY_FILE_LOC && element instanceof IResolvedBundle) {
-//				return getParentPath((IResolvedBundle) element);
-//			}
 			return null;
 		}
 

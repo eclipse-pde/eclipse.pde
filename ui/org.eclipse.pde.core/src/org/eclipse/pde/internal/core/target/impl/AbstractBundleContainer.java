@@ -47,6 +47,11 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	private IStatus fResolutionStatus;
 
 	/**
+	 * Status generated when this container resolved it's bundles, a multi-status containing all individual bundle statuses, possibly <code>null</code>
+	 */
+	private IStatus fBundleStatus;
+
+	/**
 	 * Bundle restrictions (subset) this container is restricted to or <code>null</code> if
 	 * no restrictions.
 	 */
@@ -117,6 +122,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				monitor.done();
 			}
 		}
+		fBundleStatus = null;
 		return fResolutionStatus;
 	}
 
@@ -130,6 +136,10 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		if (!fResolutionStatus.isOK()) {
 			return fResolutionStatus;
 		}
+
+		if (fBundleStatus != null) {
+			return fBundleStatus;
+		}
 		// build status from bundle list
 		IResolvedBundle[] bundles = getBundles();
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.AbstractBundleContainer_0, null);
@@ -140,9 +150,11 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		}
 		if (status.isOK()) {
 			// return the generic ok status vs a problem multi-status with no children
-			return Status.OK_STATUS;
+			fBundleStatus = Status.OK_STATUS;
+			return fBundleStatus;
 		}
-		return status;
+		fBundleStatus = status;
+		return fBundleStatus;
 	}
 
 	/* (non-Javadoc)
@@ -150,7 +162,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public final IResolvedBundle[] getBundles() {
 		if (isResolved()) {
-			return getMatchingBundles(fBundles, getIncludedBundles(), getOptionalBundles());
+			return getMatchingBundles(fBundles, getIncludedBundles(), getOptionalBundles(), this);
 		}
 		return null;
 	}
@@ -206,9 +218,10 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * @param collection bundles to resolve against match criteria
 	 * @param included bundles to include or <code>null</code> if no restrictions
 	 * @param optional optional bundles or <code>null</code> of no optional bundles
+	 * @param parentContainer parent bundle container to be set on any errors that are created, if <code>null</code> some returned contains may have a null parent
 	 * @return bundles that match this container's restrictions
 	 */
-	static IResolvedBundle[] getMatchingBundles(IResolvedBundle[] collection, BundleInfo[] included, BundleInfo[] optional) {
+	static IResolvedBundle[] getMatchingBundles(IResolvedBundle[] collection, BundleInfo[] included, BundleInfo[] optional, IBundleContainer parentContainer) {
 		if (included == null && optional == null) {
 			return collection;
 		}
@@ -231,13 +244,13 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		} else {
 			for (int i = 0; i < included.length; i++) {
 				BundleInfo info = included[i];
-				resolved.add(resolveBundle(bundleMap, info, false));
+				resolved.add(resolveBundle(bundleMap, info, false, parentContainer));
 			}
 		}
 		if (optional != null) {
 			for (int i = 0; i < optional.length; i++) {
 				BundleInfo option = optional[i];
-				IResolvedBundle resolveBundle = resolveBundle(bundleMap, option, true);
+				IResolvedBundle resolveBundle = resolveBundle(bundleMap, option, true, parentContainer);
 				IStatus status = resolveBundle.getStatus();
 				if (status.isOK()) {
 					// add to list if not there already
@@ -261,9 +274,10 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * @param bundleMap available bundles to resolve against
 	 * @param info name and version to match against
 	 * @param optional whether the bundle is optional
+	 * @param parentContainer bundle container the resolved bundle belongs too
 	 * @return resolved bundle
 	 */
-	private static IResolvedBundle resolveBundle(Map bundleMap, BundleInfo info, boolean optional) {
+	private static IResolvedBundle resolveBundle(Map bundleMap, BundleInfo info, boolean optional, IBundleContainer parentContainer) {
 		List list = (List) bundleMap.get(info.getSymbolicName());
 		if (list != null) {
 			String version = info.getVersion();
@@ -299,7 +313,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				sev = IStatus.INFO;
 				message = NLS.bind(Messages.AbstractBundleContainer_2, new Object[] {info.getVersion(), info.getSymbolicName()});
 			}
-			return new ResolvedBundle(info, null, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), false, optional, false);
+			return new ResolvedBundle(info, parentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), null, optional, false);
 		}
 		// DOES NOT EXIST
 		int sev = IStatus.ERROR;
@@ -308,7 +322,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			sev = IStatus.INFO;
 			message = NLS.bind(Messages.AbstractBundleContainer_4, info.getSymbolicName());
 		}
-		return new ResolvedBundle(info, null, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null), false, optional, false);
+		return new ResolvedBundle(info, parentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null), null, optional, false);
 	}
 
 	/**
@@ -498,17 +512,20 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		}
 	}
 
-	protected IResolvedBundle resolveBundle(BundleInfo info, boolean source) {
+	protected IResolvedBundle resolveBundle(BundleInfo info, boolean isSource) {
+		File file = null;
+		Map manifest = null;
 		boolean fragment = false;
 		IStatus status = null;
 		try {
-			File file = new File(info.getLocation());
-			Map manifest = loadManifest(file);
+			file = new File(info.getLocation());
+			manifest = loadManifest(file);
 			fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
 		} catch (CoreException e) {
 			status = e.getStatus();
 		}
-		return new ResolvedBundle(info, this, status, source, false, fragment);
+		return new ResolvedBundle(info, this, status, isSource ? getProvidedSource(file, info.getSymbolicName(), manifest) : null, false, fragment);
+
 	}
 
 	/**
@@ -547,7 +564,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 									info.setVersion(elements[0].getValue());
 								}
 							}
-							boolean source = isSourceBundle(file, name, manifest);
+							BundleInfo source = getProvidedSource(file, name, manifest);
 							boolean fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
 							ResolvedBundle rb = new ResolvedBundle(info, this, null, source, false, fragment);
 							rb.setSourcePath(fSourcePath);
@@ -563,53 +580,75 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	}
 
 	/**
-	 * Returns whether the given bundle is a source bundle.
-	 * Sets the last source path detected in an old-style source bundle.
+	 * If the given bundle is a source bundle, the bundle that this bundle provides source for will be returned.
+	 * If the given bundle is not a source bundle or there was a problem getting the source target, <code>null</code>
+	 * will be returned.
 	 * 
-	 * @param bundle location of the bundle in the file system
-	 * @param symbolicName symbolic name of the bundle
-	 * @param manifest the bundle's manifest
-	 * @return whether the given bundle is a source bundle
+	 * @param bundle location of the bundle in the file system, can be <code>null</code> to skip searching plugin.xml
+	 * @param symbolicName symbolic name of the bundle, can be <code>null</code> to skip searching of plugin.xml
+	 * @param manifest the bundle's manifest, can be <code>null</code> to skip searching of manifest entries
+	 * @return bundle for provided source or <code>null</code> if not a source bundle
 	 */
-	private boolean isSourceBundle(File bundle, String symbolicName, Map manifest) {
+	private BundleInfo getProvidedSource(File bundle, String symbolicName, Map manifest) {
 		fSourcePath = null;
-		if (manifest.containsKey(ICoreConstants.ECLIPSE_SOURCE_BUNDLE)) {
-			// this is the new source bundle identifier
-			return true;
-		}
-		// old source bundles were never jar'd
-		if (bundle.isFile()) {
-			return false;
-		}
-		// source bundles never have a class path
-		if (manifest.containsKey(Constants.BUNDLE_CLASSPATH)) {
-			return false;
-		}
-		// check for an "org.eclipse.pde.core.source" extension 
-		File pxml = new File(bundle, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-		if (!pxml.exists()) {
-			pxml = new File(bundle, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-		}
-		if (pxml.exists()) {
-			IExtensionRegistry registry = getRegistry();
-			RegistryContributor contributor = new RegistryContributor(symbolicName, symbolicName, null, null);
-			try {
-				registry.addContribution(new BufferedInputStream(new FileInputStream(pxml)), contributor, false, null, null, this);
-				IExtension[] extensions = registry.getExtensions(contributor);
-				for (int i = 0; i < extensions.length; i++) {
-					IExtension extension = extensions[i];
-					if (ICoreConstants.EXTENSION_POINT_SOURCE.equals(extension.getExtensionPointUniqueIdentifier())) {
-						IConfigurationElement[] elements = extension.getConfigurationElements();
-						if (elements.length == 1) {
-							fSourcePath = elements[0].getAttribute("path"); //$NON-NLS-1$
+		if (manifest != null) {
+			if (manifest.containsKey(ICoreConstants.ECLIPSE_SOURCE_BUNDLE)) {
+				try {
+					ManifestElement[] manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, (String) manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE));
+					if (manifestElements != null) {
+						for (int j = 0; j < manifestElements.length; j++) {
+							ManifestElement currentElement = manifestElements[j];
+							String binaryPluginName = currentElement.getValue();
+							String versionEntry = currentElement.getAttribute(Constants.VERSION_ATTRIBUTE);
+							// Currently the version attribute is required
+							if (binaryPluginName != null && binaryPluginName.length() > 0 && versionEntry != null && versionEntry.length() > 0) {
+								return new BundleInfo(binaryPluginName, versionEntry, null, BundleInfo.NO_LEVEL, false);
+							}
 						}
-						return true;
 					}
+				} catch (BundleException e) {
+					PDECore.log(e);
+					return null;
 				}
-			} catch (FileNotFoundException e) {
+			}
+			// source bundles never have a class path
+			if (manifest.containsKey(Constants.BUNDLE_CLASSPATH)) {
+				return null;
 			}
 		}
-		return false;
+
+		if (bundle != null && symbolicName != null) {
+			// old source bundles were never jar'd
+			if (bundle.isFile()) {
+				return null;
+			}
+
+			// check for an "org.eclipse.pde.core.source" extension 
+			File pxml = new File(bundle, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+			if (!pxml.exists()) {
+				pxml = new File(bundle, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+			}
+			if (pxml.exists()) {
+				IExtensionRegistry registry = getRegistry();
+				RegistryContributor contributor = new RegistryContributor(symbolicName, symbolicName, null, null);
+				try {
+					registry.addContribution(new BufferedInputStream(new FileInputStream(pxml)), contributor, false, null, null, this);
+					IExtension[] extensions = registry.getExtensions(contributor);
+					for (int i = 0; i < extensions.length; i++) {
+						IExtension extension = extensions[i];
+						if (ICoreConstants.EXTENSION_POINT_SOURCE.equals(extension.getExtensionPointUniqueIdentifier())) {
+							IConfigurationElement[] elements = extension.getConfigurationElements();
+							if (elements.length == 1) {
+								fSourcePath = elements[0].getAttribute("path"); //$NON-NLS-1$
+							}
+							return new BundleInfo(null, null, bundle.toURI(), BundleInfo.NO_LEVEL, false);
+						}
+					}
+				} catch (FileNotFoundException e) {
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

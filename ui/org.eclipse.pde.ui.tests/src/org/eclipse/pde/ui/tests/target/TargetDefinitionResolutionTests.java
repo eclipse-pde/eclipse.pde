@@ -393,4 +393,92 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertEquals("Wrong number of source bundles", 4, source);
 		assertEquals("Wrong number of fragments", 6, frag);
 	}
+	
+	/**
+	 * Tests that when resolving a set of bundles that include source bundles, the source bundles
+	 * are able to determine the bundle their source is for.
+	 * @throws Exception
+	 */
+	public void testSourceBundleRecognition() throws Exception {
+		ITargetDefinition definition = getNewTarget();
+		
+		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		
+		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		
+		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt", null);
+		
+		IBundleContainer featureContainer2 = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt.source", null);
+	
+		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer, featureContainer, featureContainer2});
+		definition.resolve(null);
+		
+		IResolvedBundle[] bundles = definition.getBundles();
+		
+		assertNotNull("Target didn't resolve",bundles);
+		
+		IStatus definitionStatus = definition.getBundleStatus();
+		assertEquals("Wrong severity", IStatus.OK, definitionStatus.getSeverity());
+		
+		// Ensure that all source bundles know what they provide source for.
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle bundle = bundles[i];
+			if (bundle.isSourceBundle()){
+				BundleInfo info = bundle.getSourceTarget();
+				assertNotNull("Missing source target for " + bundle,info);
+			} else {
+				assertNull(bundle.getSourceTarget());
+			}
+		}
+		
+		// Everything in the JDT feature has an equivalent named source bundle
+		bundles = featureContainer2.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			if (bundles[i].getBundleInfo().getSymbolicName().indexOf("doc") == -1){
+				assertTrue("Non-source bundle in source feature", bundles[i].isSourceBundle());
+				assertEquals("Incorrect source target", bundles[i].getBundleInfo().getSymbolicName(),bundles[i].getSourceTarget().getSymbolicName()+".source");
+			}
+		}
+	}
+	
+	/**
+	 * Tests that resolved bundles know what their parent container is
+	 * @throws Exception
+	 */
+	public void testGetParentContainer() throws Exception {
+		ITargetDefinition definition = getNewTarget();
+		
+		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		
+		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		
+		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt", null);
+	
+		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer, featureContainer});
+		definition.resolve(null);
+		
+		IResolvedBundle[] bundles = definition.getBundles();
+		
+		assertNotNull("Target didn't resolve",bundles);
+		
+		IStatus definitionStatus = definition.getBundleStatus();
+		assertEquals("Wrong severity", IStatus.OK, definitionStatus.getSeverity());
+		
+		bundles = directoryContainer.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			assertEquals("Wrong parent", directoryContainer, bundles[i].getParentContainer());
+		}
+		
+		bundles = profileContainer.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			assertEquals("Wrong parent", profileContainer, bundles[i].getParentContainer());
+		}
+		
+		bundles = featureContainer.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			assertEquals("Wrong parent", featureContainer, bundles[i].getParentContainer());
+		}
+	}
+	
+	
 }

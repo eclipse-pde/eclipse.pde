@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -79,6 +80,7 @@ public class PreviewContainerPage extends WizardPage {
 					IStatus result = container.resolve(fTarget, monitor);
 					if (monitor.isCanceled()) {
 						fInput = new Object[] {Messages.PreviewContainerPage_0};
+						throw new InterruptedException();
 					} else if (!result.isOK() && !result.isMultiStatus()) {
 						fInput = new Object[] {result};
 					} else {
@@ -92,6 +94,11 @@ public class PreviewContainerPage extends WizardPage {
 			PDEPlugin.log(e);
 			setErrorMessage(e.getMessage());
 		} catch (InterruptedException e) {
+			IWizardPage page = getPreviousPage();
+			setVisible(false);
+			getContainer().showPage(page);
+			page.setVisible(true);
+
 		}
 
 	}

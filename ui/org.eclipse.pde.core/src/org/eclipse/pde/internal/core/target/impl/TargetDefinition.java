@@ -390,7 +390,7 @@ public class TargetDefinition implements ITargetDefinition {
 		if (size == 0) {
 			return new IResolvedBundle[0];
 		}
-		return AbstractBundleContainer.getMatchingBundles(getBundles(), fImplicit, null);
+		return AbstractBundleContainer.getMatchingBundles(getBundles(), fImplicit, null, null);
 	}
 
 	/* (non-Javadoc)

@@ -104,6 +104,8 @@ public class Messages extends NLS {
 	public static String TargetContentsGroup_13;
 	public static String TargetContentsGroup_2;
 	public static String TargetContentsGroup_3;
+	public static String TargetContentsGroup_4;
+	public static String TargetContentsGroup_5;
 	public static String TargetContentsGroup_8;
 	public static String TargetContentsGroup_9;
 	public static String TargetLocationsGroup_1;

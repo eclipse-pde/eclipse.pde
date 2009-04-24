@@ -54,12 +54,29 @@ public interface IResolvedBundle {
 	public IBundleContainer getParentContainer();
 
 	/**
+	 * Sets the parent bundle container that this bundle belongs to.
+	 * 
+	 * @param newParent the new parent container
+	 */
+	public void setParentContainer(IBundleContainer newParent);
+
+	/**
 	 * Returns <code>true</code> if this bundle is a source bundle and 
 	 * <code>false</code> if this bundle is an executable bundle.
 	 * 
 	 * @return whether the resolved bundle is a source bundle
 	 */
 	public boolean isSourceBundle();
+
+	/**
+	 * If this bundle is a source bundle this method returns a bundle info
+	 * representing the executable bundle that this bundle provides source for.
+	 * The returned bundle info may not have a symbolic name and version set if
+	 * this source bundle is an old style source plug-in.
+	 * 
+	 * @return bundle info representing bundle this bundle provides source for or <code>null</code>
+	 */
+	public BundleInfo getSourceTarget();
 
 	/**
 	 * Returns the resolution status of this bundle.
