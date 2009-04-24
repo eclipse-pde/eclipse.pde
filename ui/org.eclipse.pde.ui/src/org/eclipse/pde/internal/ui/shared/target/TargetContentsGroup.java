@@ -621,13 +621,22 @@ public class TargetContentsGroup extends FilteredTree {
 			}
 		};
 		try {
+			// Calculate the dependencies
 			new ProgressMonitorDialog(getShell()).run(true, true, op);
+
+			// We want to check the dependents, the source of the dependents, and the source of the originally checked
+			Set checkedNames = new HashSet(checkedBundles.size());
+			for (Iterator iterator = checkedBundles.iterator(); iterator.hasNext();) {
+				IResolvedBundle current = (IResolvedBundle) iterator.next();
+				checkedNames.add(current.getBundleInfo().getSymbolicName());
+			}
+
 			List toCheck = new ArrayList();
 			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
 				IResolvedBundle bundle = (IResolvedBundle) iterator.next();
 				if (bundle.isSourceBundle()) {
 					String name = bundle.getSourceTarget().getSymbolicName();
-					if (name != null && dependencies.contains(name)) {
+					if (name != null && (dependencies.contains(name) || checkedNames.contains(name))) {
 						toCheck.add(bundle);
 					}
 				} else if (dependencies.contains(bundle.getBundleInfo().getSymbolicName())) {
