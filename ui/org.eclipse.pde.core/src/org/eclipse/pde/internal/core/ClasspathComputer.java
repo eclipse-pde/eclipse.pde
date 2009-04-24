@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,9 +158,12 @@ public class ClasspathComputer {
 		IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(jarFile);
 		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 			IClasspathEntry oldEntry = root.getRawClasspathEntry();
-			if (oldEntry.getSourceAttachmentPath() != null && !result.contains(oldEntry)) {
-				result.add(oldEntry);
-				return;
+			// If we have the same binary root but new or different source, we should recreate the entry 
+			if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null) || sourceAttachment.equals(oldEntry.getSourceAttachmentPath())) {
+				if (!result.contains(oldEntry)) {
+					result.add(oldEntry);
+					return;
+				}
 			}
 		}
 
