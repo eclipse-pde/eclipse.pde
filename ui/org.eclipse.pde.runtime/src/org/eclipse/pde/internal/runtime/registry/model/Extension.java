@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
 public class Extension extends ModelObject {
@@ -55,12 +65,34 @@ public class Extension extends ModelObject {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof Extension) {
-			Extension ext = (Extension) obj;
-			return namespaceIdentifier.endsWith(ext.namespaceIdentifier) && label.equals(ext.label) && extensionPointUniqueIdentifier.equals(ext.extensionPointUniqueIdentifier) && contributor.equals(ext.contributor);
-		}
-
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Extension other = (Extension) obj;
+		if (contributor == null) {
+			if (other.contributor != null)
+				return false;
+		} else if (!contributor.equals(other.contributor))
+			return false;
+		if (extensionPointUniqueIdentifier == null) {
+			if (other.extensionPointUniqueIdentifier != null)
+				return false;
+		} else if (!extensionPointUniqueIdentifier.equals(other.extensionPointUniqueIdentifier))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (namespaceIdentifier == null) {
+			if (other.namespaceIdentifier != null)
+				return false;
+		} else if (!namespaceIdentifier.equals(other.namespaceIdentifier))
+			return false;
+		return true;
 	}
 
 	public int hashCode() {
