@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.model.StubArchiveApiTypeContainer.ArchiveApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -29,8 +30,10 @@ import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.TraceAnnotationVisitor;
 
@@ -175,6 +178,109 @@ public class TypeStructureBuilder extends ClassAdapter {
 			ApiPlugin.log(e);
 		}
 		return visitor.fType;
+	}
+	/**
+	 * Builds a type structure with the given .class file bytes in the specified
+	 * API component.
+	 * 
+	 * @param bytes class file bytes
+	 * @param component originating API component
+	 * @param file associated class file
+	 * @return
+	 */
+	public static void setEnclosingMethod(IApiType enclosingType, ApiType currentAnonymousLocalType) {
+		IApiTypeRoot typeRoot = enclosingType.getTypeRoot();
+		if (typeRoot instanceof AbstractApiTypeRoot) {
+			AbstractApiTypeRoot abstractApiTypeRoot = (AbstractApiTypeRoot) typeRoot;
+			EnclosingMethodSetter visitor = new EnclosingMethodSetter(new ClassNode(), currentAnonymousLocalType.getName());
+			try {
+				ClassReader classReader = new ClassReader(abstractApiTypeRoot.getContents());
+				classReader.accept(visitor, ClassReader.SKIP_FRAMES);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				ApiPlugin.log(e);
+			} catch(CoreException e) {
+				// bytes could not be retrieved for abstractApiTypeRoot
+				ApiPlugin.log(e);
+			}
+			if (visitor.found) {
+				currentAnonymousLocalType.setEnclosingMethodInfo(visitor.name, visitor.signature);
+			}
+		}
+	}
+	static class EnclosingMethodSetter extends ClassAdapter {
+		String name;
+		String signature;
+		boolean found = false;
+		String typeName;
+
+		public EnclosingMethodSetter(ClassVisitor cv, String typeName) {
+			super(cv);
+			this.typeName = typeName.replace('.', '/');
+		}
+		public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+			if ("<clinit>".equals(name)) { //$NON-NLS-1$
+				return null;
+			}
+			if (!this.found) {
+				if ((access & (Opcodes.ACC_ABSTRACT | Opcodes.ACC_NATIVE)) == 0) {
+					this.name = name;
+					this.signature = desc;
+					if (signature != null) {
+						this.signature = signature;
+					}
+					MethodVisitor mv;
+					if ("<init>".equals(name)) { //$NON-NLS-1$
+						mv = new TypeNameFinderInConstructor(cv.visitMethod(access, name, desc, signature, exceptions), this);
+					} else {
+						mv = new TypeNameFinder(cv.visitMethod(access, name, desc, signature, exceptions), this);
+					}
+					return mv;
+				}
+			}
+			return null;
+		}
+	}
+	static class TypeNameFinder extends MethodAdapter {
+		protected EnclosingMethodSetter setter;
+		
+		public TypeNameFinder(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
+			super(mv);
+			this.setter = enclosingMethodSetter;
+		}
+		public void visitTypeInsn(int opcode, String type) {
+			if (setter.typeName.equals(type)) {
+				setter.found = true;
+			}
+		}
+	}
+	static class TypeNameFinderInConstructor extends TypeNameFinder {
+		int lineNumberStart;
+		int matchingLineNumber;
+		int currentLineNumber = -1;
+		
+		public TypeNameFinderInConstructor(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
+			super(mv, enclosingMethodSetter);
+		}
+		public void visitTypeInsn(int opcode, String type) {
+			if (!setter.found && setter.typeName.equals(type)) {
+				this.matchingLineNumber = this.currentLineNumber;
+				setter.found = true;
+			}
+		}
+		public void visitLineNumber(int line, Label start) {
+			if (this.currentLineNumber == -1) {
+				this.lineNumberStart = line;
+			}
+			this.currentLineNumber = line;
+		}
+		public void visitEnd() {
+			if (setter.found) {
+				// check that the line number is between the constructor bounds
+				if (this.matchingLineNumber < this.lineNumberStart || this.matchingLineNumber > this.currentLineNumber) {
+					setter.found = false;
+				}
+			}
+		}
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -444,6 +444,37 @@ public class ClassUsageTests extends UsageTest {
 		deployTest(typename, inc);
 	}
 	
+	/**
+	 * Tests an anonymous type defined in a static initializer illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends7F() {
+		x18(false);
+	}
+	
+	/**
+	 * Tests an anonymous type defined in a static initializer illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends7I() {
+		x18(true);
+	}
+	
+	private void x18(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
+		});
+		String typename = "testA11";
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testA11", CLASS_NAME}
+		});
+		deployTest(typename, inc);
+	}
+
 	public void testLocalClassExtends1F() {
 		x16(false);
 	}

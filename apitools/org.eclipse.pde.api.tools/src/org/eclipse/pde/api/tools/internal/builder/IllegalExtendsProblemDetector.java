@@ -22,6 +22,8 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -54,10 +56,31 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			this.type = type;
 			this.jtype = jtype;
 		}
-		
+		public boolean visit(AnonymousClassDeclaration node) {
+			if(method == null) {
+				ITypeBinding binding = node.resolveBinding();
+				String binaryName = binding.getBinaryName();
+				if(type.getName().endsWith(binaryName)) {
+					try {
+						IJavaElement element = jtype.getCompilationUnit().getElementAt(node.getStartPosition());
+						if(element != null) {
+							IJavaElement ancestor = element.getAncestor(IJavaElement.METHOD);
+							if(ancestor != null) {
+								method = (IMethod) ancestor;
+							}
+						}
+					}
+					catch(JavaModelException jme) {}
+					return false;
+				}
+			}
+			return true;
+		}
 		public boolean visit(TypeDeclaration node) {
-			if(method == null && (node.isLocalTypeDeclaration() || node.getNodeType() == ASTNode.ANNOTATION_TYPE_DECLARATION)) {
-				if(type.getName().endsWith(node.getName().getFullyQualifiedName())) {
+			if(method == null && node.isLocalTypeDeclaration()) {
+				ITypeBinding binding = node.resolveBinding();
+				String binaryName = binding.getBinaryName();
+				if(type.getName().endsWith(binaryName)) {
 					try {
 						IJavaElement element = jtype.getCompilationUnit().getElementAt(node.getStartPosition());
 						if(element.getElementType() == IJavaElement.TYPE) {
@@ -116,6 +139,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 	 */
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		ApiType ltype = (ApiType) reference.getMember();
+		String simpleTypeName = getSimpleTypeName(reference.getResolvedReference());
 		if(ltype.isAnonymous()) {
 			IApiType etype = ltype.getEnclosingType();
 			String signature = Signatures.getQualifiedTypeSignature(etype);
@@ -123,7 +147,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			if(method != null) {
 				signature = Signatures.getQualifiedMethodSignature(method);
 			}
-			return new String[] {signature, getSimpleTypeName(reference.getResolvedReference())};
+			return new String[] {signature, simpleTypeName};
 		}
 		if(ltype.isLocal()) {
 			//local types are always defined in methods, include enclosing method infos in message
@@ -134,14 +158,14 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 				return new String[] {
 						Signatures.getAnonymousTypeName(reference.getMember().getName()),
 						methodsig,
-						getSimpleTypeName(reference.getResolvedReference())
+						simpleTypeName
 				};
 			}
 			else {
 				return new String[] {
 						Signatures.getAnonymousTypeName(reference.getMember().getName()), 
 						getSimpleTypeName(etype), 
-						getSimpleTypeName(reference.getResolvedReference())};
+						simpleTypeName};
 			}
 		}
 		return super.getMessageArgs(reference);
@@ -196,7 +220,6 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		}
 		return super.getSourceRange(type, doc, reference);
 	}
-	
 	/**
 	 * Returns the enclosing {@link IMethod} for the given type or <code>null</code>
 	 * if it cannot be computed
@@ -221,7 +244,6 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		else {
 			//try to look it up
 			IMethod method = null;
-			ISourceRange range = jtype.getCompilationUnit().getSourceRange();
 			if(reference.getLineNumber() > -1) {
 				try {
 					int offset = document.getLineOffset(reference.getLineNumber());
@@ -231,9 +253,11 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			}
 			if(method == null) {
 				//look it up the hard way
+				ISourceRange range = jtype.getCompilationUnit().getSourceRange();
 				ASTParser parser = ASTParser.newParser(AST.JLS3);
 				parser.setSource(jtype.getCompilationUnit());
 				parser.setSourceRange(range.getOffset(), range.getLength());
+				parser.setResolveBindings(true);
 				ASTNode ptype = parser.createAST(null);
 				MethodFinder finder = new MethodFinder(type, jtype);
 				ptype.accept(finder);
@@ -256,19 +280,13 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 		}
 		return null;
 	}
-	
 	private IMethod quickLookup(final IType jtype, IDocument document, IReference reference, int offset) throws JavaModelException {
 		if(offset > -1) {
 			IJavaElement element = jtype.getCompilationUnit().getElementAt(offset);
 			if(element != null) {
-				if(element.getElementType() == IJavaElement.TYPE) {
-					IType ltype = (IType) element;
-					if(ltype.isAnonymous()) {
-						return quickLookup(jtype, document, reference, offset+1);
-					}
-				}
-				else if(element.getElementType() == IJavaElement.METHOD) {
-					return (IMethod) element;
+				IJavaElement ancestor = element.getAncestor(IJavaElement.METHOD);
+				if (ancestor != null) {
+					return (IMethod) ancestor;
 				}
 			}
 		}

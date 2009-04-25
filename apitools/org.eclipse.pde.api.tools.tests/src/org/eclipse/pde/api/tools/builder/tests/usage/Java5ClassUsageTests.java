@@ -382,6 +382,36 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		deployTest(typename, inc);
 	}
 	
+	/**
+	 * Tests a local anonymous field defined in a static initializer illegally extending a
+	 * restricted type using a full build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends7F() {
+		x17(false);
+	}
+	
+	/**
+	 * Tests a local anonymous field defined in a static initializer illegally extending a
+	 * restricted type using an incremental build.
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=246672
+	 */
+	public void testAnonymousClassExtends7I() {
+		x17(true);
+	}
+	
+	private void x17(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
+		});
+		String typename = "testGA7";
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testGA7<T>", CLASS_NAME}
+		});
+		deployTest(typename, inc);
+	}
 	public void testAnonymousClassExtendsGenericReturnF() {
 		x16(false);
 	}

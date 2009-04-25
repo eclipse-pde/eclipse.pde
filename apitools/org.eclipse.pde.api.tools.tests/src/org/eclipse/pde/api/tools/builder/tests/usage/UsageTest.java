@@ -70,9 +70,10 @@ public abstract class UsageTest extends ApiBuilderTest {
 		getEnv().setAutoBuilding(false);
 		if(pjs.length == 0) {
 			createExistingProjects("usageprojects", true, true, false);
+			ensureCompliance(new String[] {"usagetests"});
 		}
 		else {
-			//ensureCompliance(new String[] {"usagetests"});
+			ensureCompliance(new String[] {"usagetests"});
 			incrementalBuild();
 		}
 	}

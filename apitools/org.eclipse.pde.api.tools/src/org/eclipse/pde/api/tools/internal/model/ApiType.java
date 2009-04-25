@@ -56,6 +56,12 @@ public class ApiType extends ApiMember implements IApiType {
 	private static final IApiField[] EMPTY_FIELDS = new IApiField[0];
 	private static final IApiType[] EMPTY_TYPES = new IApiType[0];
 	
+	/*
+	 * Use to tag fEnclosingMethodName and fEnclosingMethodSignature when there is no enclosing method
+	 * but the EnclosingMethodAttribute is set (anonymous type in a field initializer). 
+	 */
+	private static final String NO_ENCLOSING_METHOD = Util.EMPTY_STRING;
+	
 	/**
 	 * Maps field name to field element.
 	 */
@@ -389,8 +395,16 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.jdt.core.Signature for more information
 	 */
 	public void setEnclosingMethodInfo(String name, String signature) {
-		fEnclosingMethodName = name;
-		fEnclosingMethodSignature = signature;
+		if (name != null) {
+			fEnclosingMethodName = name;
+		} else {
+			fEnclosingMethodName = NO_ENCLOSING_METHOD;
+		}
+		if (signature != null) {
+			fEnclosingMethodSignature = signature;
+		} else {
+			fEnclosingMethodSignature = NO_ENCLOSING_METHOD;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -399,8 +413,19 @@ public class ApiType extends ApiMember implements IApiType {
 	public IApiMethod getEnclosingMethod() {
 		if(fEnclosingMethod == null) { 
 			try {
+				IApiType enclosingType = getEnclosingType();
 				if(fEnclosingMethodName != null) {
-					fEnclosingMethod = getEnclosingType().getMethod(fEnclosingMethodName, fEnclosingMethodSignature);
+					if (fEnclosingMethodName != NO_ENCLOSING_METHOD) {
+						fEnclosingMethod = enclosingType.getMethod(fEnclosingMethodName, fEnclosingMethodSignature);
+					}
+				} else {
+					TypeStructureBuilder.setEnclosingMethod(enclosingType, this);
+					if(fEnclosingMethodName != null) {
+						fEnclosingMethod = enclosingType.getMethod(fEnclosingMethodName, fEnclosingMethodSignature);
+					} else {
+						// this prevents from trying to retrieve again the enclosing method when there is none
+						fEnclosingMethodName = NO_ENCLOSING_METHOD;
+					}
 				}
 			}
 			catch (CoreException ce) {}
