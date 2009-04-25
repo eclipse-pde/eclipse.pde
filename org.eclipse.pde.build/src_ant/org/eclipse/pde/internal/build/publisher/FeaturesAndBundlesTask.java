@@ -16,6 +16,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.equinox.internal.p2.updatesite.CategoryXMLAction;
 import org.eclipse.equinox.internal.p2.updatesite.SiteXMLAction;
 import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
@@ -24,6 +25,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 	private final ArrayList features = new ArrayList();
 	private final ArrayList bundles = new ArrayList();
 	private URI siteXML = null;
+	private URI categoryXML = null;
 	private String siteQualifier = ""; //$NON-NLS-1$
 
 	public void execute() throws BuildException {
@@ -37,6 +39,8 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 			application.addAction(new BundlesAction(b));
 		if (siteXML != null)
 			application.addAction(new SiteXMLAction(siteXML, siteQualifier));
+		if (categoryXML != null)
+			application.addAction(new CategoryXMLAction(categoryXML, siteQualifier));
 
 		try {
 			application.run(getPublisherInfo());
@@ -77,6 +81,16 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 	public void setSiteQualifier(String siteQualifier) {
 		if (siteQualifier != null && !siteQualifier.startsWith(ANT_PREFIX))
 			this.siteQualifier = siteQualifier;
+	}
+
+	public void setCategory(String value) {
+		if (value != null && value.length() > 0 && !value.startsWith(ANT_PREFIX)) {
+			try {
+				categoryXML = URIUtil.fromString(value);
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException("Category description location (" + value + ") must be a URL."); //$NON-NLS-1$//$NON-NLS-2$
+			}
+		}
 	}
 
 	public void setSite(String value) {

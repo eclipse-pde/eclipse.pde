@@ -85,7 +85,7 @@ public class AntScript implements IAntScript {
 		}
 	}
 
-	public void printP2PublishFeaturesAndBundles(String metadataRepository, String artifactRepository, FileSet[] bundles, FileSet[] features, String siteXML, String siteQualifier, URI[] contextMetadata) {
+	public void printP2PublishFeaturesAndBundles(String metadataRepository, String artifactRepository, FileSet[] bundles, FileSet[] features, String siteXML, String siteQualifier, String categoryDefintion, URI[] contextMetadata) {
 		printTab();
 		output.print("<eclipse.publish.featuresAndBundles"); //$NON-NLS-1$
 		if (metadataRepository.equals(artifactRepository)) {
@@ -95,6 +95,7 @@ public class AntScript implements IAntScript {
 			printAttribute("artifactRepository", artifactRepository, true); //$NON-NLS-1$
 		}
 		printAttribute("site", siteXML, false); //$NON-NLS-1$
+		printAttribute("category", categoryDefintion, false); //$NON-NLS-1$
 		printAttribute("siteQualifier", siteQualifier, false); //$NON-NLS-1$
 		output.println(">"); //$NON-NLS-1$
 		indent++;

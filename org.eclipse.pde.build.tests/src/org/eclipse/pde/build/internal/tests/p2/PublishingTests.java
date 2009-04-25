@@ -826,6 +826,9 @@ public class PublishingTests extends P2TestCase {
 
 		iuB = getIU(repo, "b");
 		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
+		
+		repo = null;
+		removeMetadataRepository(uri);
 	}
 
 	public void testBug267461_2() throws Exception {
@@ -982,6 +985,12 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("</site>																					\n");
 		IFile siteXML = buildFolder.getFile("site.xml");
 		Utils.writeBuffer(siteXML, buffer);
+		
+		//bug 272362
+		IFile categoryXML = buildFolder.getFile("category.xml");
+		String categoryString = buffer.toString();
+		categoryString = categoryString.replaceAll("new_category_1", "new_category_2");
+		Utils.writeBuffer(categoryXML, new StringBuffer(categoryString));
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
@@ -989,6 +998,7 @@ public class PublishingTests extends P2TestCase {
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("archivesFormat", "group,group,group-folder");
 		properties.put("p2.category.site", "file:" + siteXML.getLocation().toOSString());
+		properties.put("p2.category.definition", "file:" + categoryXML.getLocation().toOSString());
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
@@ -1001,6 +1011,7 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 
 		assertNotNull(getIU(metadata, "new_category_1"));
+		assertNotNull(getIU(metadata, "new_category_2"));
 	}
 
 	public void testBug264743_PublishExecutable() throws Exception {
@@ -1150,6 +1161,9 @@ public class PublishingTests extends P2TestCase {
 		getIU(metadata, "a");
 		getIU(metadata, "f2_root"); //bug 271848, mirroring from context
 		assertResourceFile(build2, "buildRepo/binary/f2_root_1.0.0");
+		
+		metadata = null;
+		removeMetadataRepository(repoURI);
 	}
 
 	public void testPublish_FeatureBasedProduct() throws Exception {

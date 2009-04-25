@@ -62,6 +62,18 @@ public class P2TestCase extends PDETestCase {
 		artifactManager = (IArtifactRepositoryManager) result;
 	}
 
+	public void removeMetadataRepository(URI location) throws Exception {
+		if (metadataManager == null)
+			initialize();
+		metadataManager.removeRepository(location);
+	}
+	
+	public void removeArtifactRepository(URI location) throws Exception {
+		if (artifactManager == null)
+			initialize();
+		artifactManager.removeRepository(location);
+	}
+	
 	public IMetadataRepository loadMetadataRepository(String metadataLocation) throws Exception {
 		if (metadataLocation == null)
 			return null;
