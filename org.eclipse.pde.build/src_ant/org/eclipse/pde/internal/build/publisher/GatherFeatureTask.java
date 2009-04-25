@@ -82,7 +82,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 
 			FileSet fileSet = new FileSet();
 			fileSet.setProject(getProject());
-			fileSet.setDir(new File(baseDirectory));
+			fileSet.setDir(new File(buildResultFolder));
 			String[] splitIncludes = Utils.getArrayFromString(include);
 			for (int i = 0; i < splitIncludes.length; i++) {
 				String entry = splitIncludes[i];
@@ -98,7 +98,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 				NameEntry fileExclude = fileSet.createExclude();
 				fileExclude.setName(splitIncludes[i]);
 			}
-			computer.addFiles(baseDirectory, fileSet.getDirectoryScanner().getIncludedFiles());
+			computer.addFiles(buildResultFolder, fileSet.getDirectoryScanner().getIncludedFiles());
 			return computer;
 		}
 		return null;

@@ -32,7 +32,7 @@ import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.P2InfUtils;
-import org.eclipse.pde.internal.build.site.QualifierReplacer;
+import org.eclipse.pde.internal.build.site.*;
 import org.osgi.framework.Constants;
 
 public class PublishingTests extends P2TestCase {
@@ -88,6 +88,40 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
+	public void testPublishFeature_versionReplacement() throws Exception {
+		IFolder buildFolder = newTest("PublishFeature_versions");
+		IFolder f = Utils.createFolder(buildFolder, "features/F");
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		
+		Utils.generateBundleManifest(bundle, "foo", "1.0.0.qualifier", null);
+		Utils.generatePluginBuildProperties(bundle, null);
+		Utils.writeBuffer(bundle.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
+		
+		Utils.generateFeature(buildFolder, "F", null, new String [] {"foo" }, "1.0.0.qualifier");
+		Properties properties = new Properties();
+		properties.put("bin.includes", "feature.xml");
+		Utils.storeBuildProperties(f, properties);
+		
+		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("topLevelElementId", "F");
+		buildProperties.put("p2.gathering", "true");
+		buildProperties.put("filteredDependencyCheck", "true");
+		buildProperties.put("archivesFormat", "group,group,group-folder");
+		buildProperties.put("forceContextQualifier", "12345");
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		
+		runBuild(buildFolder);
+		
+		IFile featureXML = buildFolder.getFile("feature.xml");
+		assertResourceFile(buildFolder, "tmp/eclipse/features/F_1.0.0.12345.jar");
+		Utils.extractFromZip(buildFolder, "tmp/eclipse/features/F_1.0.0.12345.jar", "feature.xml", featureXML);
+		
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		BuildTimeFeature model = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
+		assertEquals(model.getVersion(), "1.0.0.12345");
+		assertEquals(model.getPluginEntries()[0].getVersion(), "1.0.0.12345");
+	}
+	
 	public void testPublishBundle_customCallbacks() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_callbacks");
 
