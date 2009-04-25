@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.net.URI;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -141,6 +142,16 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 			return ((FeatureOptionsTab) fOptionsTab).doExportMetadata();
 		}
 		return false;
+	}
+
+	/**
+	 * @return the location of the category definition file.  Null if none specified.
+	 */
+	protected URI getCategoryDefinition() {
+		if (fOptionsTab instanceof FeatureOptionsTab) {
+			return ((FeatureOptionsTab) fOptionsTab).getCategoryDefinition();
+		}
+		return null;
 	}
 
 	public IWizardPage getNextPage() {

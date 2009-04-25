@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.File;
 import javax.xml.parsers.*;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
@@ -74,6 +75,8 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		info.signingInfo = fPage.getSigningInfo();
 		info.jnlpInfo = ((FeatureExportWizardPage) fPage).getJNLPInfo();
 		info.qualifier = fPage.getQualifier();
+		if (((FeatureExportWizardPage) fPage).getCategoryDefinition() != null)
+			info.categoryDefinition = URIUtil.toUnencodedString(((FeatureExportWizardPage) fPage).getCategoryDefinition());
 
 		final boolean installAfterExport = fPage.doInstall();
 		if (installAfterExport) {

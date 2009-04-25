@@ -26,5 +26,6 @@ public class FeatureExportInfo {
 	public String[] signingInfo;
 	public String[] jnlpInfo;
 	public String[][] targets;
+	public String categoryDefinition;
 
 }

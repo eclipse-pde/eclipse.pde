@@ -512,6 +512,13 @@ public class FeatureExportOperation extends Job {
 	}
 
 	/**
+	 * @return the location of the category definition file, or null if none is specified
+	 */
+	protected String getCategoryDefinition() {
+		return fInfo.categoryDefinition;
+	}
+
+	/**
 	* Adds the necessary properties to invoke the p2 metadata generator.  This method will
 	* be called when creating the ant build properties map.
 	* 
@@ -525,6 +532,8 @@ public class FeatureExportOperation extends Job {
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FINAL_MODE_OVERRIDE, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_COMPRESS, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, Boolean.toString(publishingP2Metadata()));
+			if (getCategoryDefinition() != null)
+				map.put(IBuildPropertiesConstants.PROPERTY_P2_CATEGORY_DEFINITION, getCategoryDefinition());
 			try {
 				String destination = ""; //$NON-NLS-1$
 				if (publishingP2Metadata()) {

@@ -1654,6 +1654,7 @@ public class PDEUIMessages extends NLS {
 	public static String ExportWizard_includeSourceInBinaryBundles;
 	public static String ExportWizard_generateAssociatedSourceBundles;
 	public static String ExportWizard_includesMetadata;
+	public static String ExportWizard_generateCategories;
 	public static String ExportWizard_multi_platform;
 	public static String ExportWizard_destination;
 	public static String ExportWizard_options;
