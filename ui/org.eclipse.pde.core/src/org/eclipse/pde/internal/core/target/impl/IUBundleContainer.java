@@ -213,7 +213,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// slice IUs and all prerequisites
-		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false);
+		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false, false);
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
