@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.core.exports;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.ant.core.*;
@@ -21,6 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -38,6 +38,9 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.*;
@@ -688,6 +691,31 @@ public class FeatureExportOperation extends Job {
 		String[] extraLocations = ExecutionEnvironmentProfileManager.getCustomProfileLocations();
 		if (extraLocations != null) {
 			generator.setEESources(extraLocations);
+		}
+
+		if (publishingP2Metadata()) {
+			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			if (service != null) {
+				ITargetHandle handle = service.getWorkspaceTargetHandle();
+				if (handle != null) {
+					try {
+						TargetDefinition definition = (TargetDefinition) handle.getTargetDefinition();
+						IProfile profile = definition.findProfile();
+						if (profile != null) {
+							String path = profile.getProperty(IProfile.PROP_CACHE);
+							if (path != null) {
+								URI uri = URIUtil.toURI(new Path(path).toFile().toURL());
+								URI[] contexts = new URI[] {uri};
+								generator.setContextMetadataRepositories(contexts);
+							}
+						}
+					} catch (CoreException e) {
+					} catch (URISyntaxException e) {
+					} catch (MalformedURLException e) {
+					}
+				}
+			}
+
 		}
 	}
 

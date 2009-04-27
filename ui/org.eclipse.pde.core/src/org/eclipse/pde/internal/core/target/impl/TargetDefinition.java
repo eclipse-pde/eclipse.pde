@@ -545,6 +545,25 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
+	 * Returns the existing profile for this target definition or <code>null</code> if none.
+	 *  
+	 * @return profile or <code>null</code>
+	 */
+	public IProfile findProfile() {
+		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
+		if (registry != null) {
+			AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
+			String id;
+			try {
+				id = handle.getProfileId();
+				return registry.getProfile(id);
+			} catch (CoreException e) {
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the profile for the this target handle, creating one if required.
 	 * 
 	 * @return profile
