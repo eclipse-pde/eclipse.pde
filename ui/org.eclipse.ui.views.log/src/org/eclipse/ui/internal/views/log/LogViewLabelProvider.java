@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
