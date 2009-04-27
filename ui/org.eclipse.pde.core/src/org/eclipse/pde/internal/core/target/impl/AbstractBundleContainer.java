@@ -208,6 +208,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public final void setIncludedBundles(BundleInfo[] bundles) {
 		fRestrictions = bundles;
+		fBundleStatus = null;
 	}
 
 	/**
@@ -393,6 +394,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	public void setOptionalBundles(BundleInfo[] bundles) {
 		fOptional = bundles;
+		fBundleStatus = null;
 	}
 
 	/**
