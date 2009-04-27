@@ -193,11 +193,8 @@ public class DSEditReferenceDialog extends FormDialog {
 		}
 
 		fTargetEntry.commit();
-		if (!fTargetEntry.getValue().equals("")) { //$NON-NLS-1$
-			if (!fTargetEntry.getValue()
-					.equals(fReference.getReferenceTarget())) {
-				fReference.setReferenceTarget(fTargetEntry.getValue());
-			}
+		if (!fTargetEntry.getValue().equals(fReference.getReferenceTarget())) {
+			fReference.setReferenceTarget(fTargetEntry.getValue());
 		}
 
 		if (fCardinality.getSelection() != null) {
