@@ -37,7 +37,7 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 			fFeatureIdText.setText(IdUtil.getValidId(projectName));
 		if (fInitialName == null)
 			fFeatureNameText.setText(projectName);
-		fFeatureVersionText.setText("1.0.0"); //$NON-NLS-1$
+		fFeatureVersionText.setText("1.0.0.qualifier"); //$NON-NLS-1$
 		setMessage(PDEUIMessages.NewFeatureWizard_MainPage_desc);
 	}
 

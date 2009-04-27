@@ -113,7 +113,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 
 	protected void initializeProductInfo(IProductModelFactory factory, IProduct product, String id) {
 		product.setProductId(id);
-		product.setVersion("1.0.0"); //$NON-NLS-1$
+		product.setVersion("1.0.0.qualifier"); //$NON-NLS-1$
 		IPluginElement element = getProductExtension(id);
 		if (element != null) {
 			IPluginAttribute attr = element.getAttribute("application"); //$NON-NLS-1$

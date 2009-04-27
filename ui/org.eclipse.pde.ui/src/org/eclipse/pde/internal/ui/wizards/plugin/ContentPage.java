@@ -165,7 +165,7 @@ public abstract class ContentPage extends WizardPage {
 			if ((fChangedGroups & PROPERTIES_GROUP) == 0) {
 				int oldfChanged = fChangedGroups;
 				fIdText.setText(id);
-				fVersionText.setText("1.0.0"); //$NON-NLS-1$
+				fVersionText.setText("1.0.0.qualifier"); //$NON-NLS-1$
 				fNameText.setText(IdUtil.getValidName(id));
 				fProviderText.setText(IdUtil.getValidProvider(id));
 				fChangedGroups = oldfChanged;

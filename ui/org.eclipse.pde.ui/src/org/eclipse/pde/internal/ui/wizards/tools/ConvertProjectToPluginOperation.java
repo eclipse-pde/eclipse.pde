@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -228,7 +228,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 		// If no version number exists, create one
 		if (pluginVersion == null) {
-			pluginVersion = "1.0.0"; //$NON-NLS-1$
+			pluginVersion = "1.0.0.qualifier"; //$NON-NLS-1$
 		}
 
 		// If no name exists, create one using the non-null pluginID
