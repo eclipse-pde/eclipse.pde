@@ -29,8 +29,9 @@ public class DictionaryServiceImpl implements DictionaryService {
     	List languages = new ArrayList();
     	for (int i = 0; i < fDictionaries.size(); i++ ) {
 			Dictionary dictionary = (Dictionary) fDictionaries.get(i);
-			list.add(dictionary.getLanguage());
+			languages.add(dictionary.getLanguage());
 		}
+    	return (String[]) languages.toArray(new String[fDictionaries.size()]);
     }
 
 }
