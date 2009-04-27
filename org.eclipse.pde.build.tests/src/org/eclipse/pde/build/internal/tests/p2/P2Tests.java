@@ -216,7 +216,7 @@ public class P2Tests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.core.runtime", "org.eclipse.equinox.simpleconfigurator"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.core.runtime", "org.eclipse.equinox.simpleconfigurator", "org.eclipse.equinox.preferences"}, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
@@ -240,6 +240,17 @@ public class P2Tests extends P2TestCase {
 
 		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + "org.eclipse.core.runtime");
 		assertTouchpoint(iu, "configure", "markStarted(started: true);");
+		
+		boolean fail = false;
+		try {
+			//bug 270524
+			getIU(repository, "tooling" + p2Config + "org.eclipse.equinox.preferences");
+			fail = true;
+		} catch (AssertionFailedError e) {
+			//expected
+		}
+		if (fail)
+			fail("Unexpected CU found");
 	}
 
 	public void testBug255518() throws Exception {
