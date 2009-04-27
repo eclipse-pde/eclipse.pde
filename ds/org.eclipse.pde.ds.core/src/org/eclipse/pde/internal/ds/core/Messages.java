@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Code 9 Corporation - initial API and implementation
+ *     EclipseSource Corporation - initial API and implementation
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 230232
  *******************************************************************************/
 
@@ -30,6 +30,7 @@ public class Messages extends NLS {
 	public static String DSErrorReporter_singleAndMultipleAttrValue;
 	public static String DSErrorReporter_emptyPropertyValue;
 	public static String DSErrorReporter_invalidImmediateValue;
+	public static String DSErrorReporter_invalidConfigurationPolicyValue;
 	public static String DSErrorReporter_invalidImmediateValueFactory;
 	public static String DSErrorReporter_duplicatedInterface;
 	public static String DSErrorReporter_cannotFindProperties;

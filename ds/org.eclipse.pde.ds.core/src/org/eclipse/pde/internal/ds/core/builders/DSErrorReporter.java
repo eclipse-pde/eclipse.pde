@@ -562,6 +562,26 @@ public class DSErrorReporter extends XMLErrorReporter {
 			// validate immediate values
 			validateImmediateAttribute(element, component);
 
+			validateConfigurationPolicyAttribute(element, component);
+
+		}
+	}
+
+	private void validateConfigurationPolicyAttribute(Element element,
+			IDSComponent component) {
+
+		String modified = component.getModifiedMethod();
+		String policy = component.getConfigurationPolicy();
+		if (policy != null && policy.length() > 0) {
+			if (policy
+					.equalsIgnoreCase(IDSConstants.VALUE_CONFIGURATION_POLICY_IGNORE)) {
+				if (modified != null && modified.length() > 0) {
+					report(
+							Messages.DSErrorReporter_invalidConfigurationPolicyValue,
+							getLine(element), WARNING,
+							DSMarkerFactory.CAT_OTHER);
+				}
+			}
 		}
 	}
 
