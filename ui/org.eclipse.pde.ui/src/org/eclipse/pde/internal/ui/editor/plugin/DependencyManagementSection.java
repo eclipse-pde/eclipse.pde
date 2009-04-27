@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
@@ -19,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -391,6 +392,8 @@ public class DependencyManagementSection extends TableSection implements IModelC
 					entry.addToken(pmodel.getPlugin().getId());
 				}
 				markDirty();
+				IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+				store.setDefault(IPreferenceConstants.PROP_AUTO_MANAGE, true);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -515,9 +518,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private HashSet createSecondaryDepSet() {
 		HashSet secondaryDepSet = new HashSet();
 		// Get the build model
@@ -677,10 +677,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		return true;
 	}
 
-	/**
-	 * @param sourceObjects
-	 * @return
-	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
 		if (sourceObjects == null) {
@@ -738,9 +734,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		return false;
 	}
 
-	/**
-	 * @return
-	 */
 	private BuildEntry getSecondaryDepBuildEntry() {
 		// Get the build model
 		IBuildModel buildModel = getBuildModel(true);
@@ -763,11 +756,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		return (BuildEntry) entry;
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @return
-	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
 		if ((targetObject instanceof String) == false) {
@@ -859,9 +847,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isTreeViewerSorted() {
 		if (fSortAction == null) {
 			return false;
