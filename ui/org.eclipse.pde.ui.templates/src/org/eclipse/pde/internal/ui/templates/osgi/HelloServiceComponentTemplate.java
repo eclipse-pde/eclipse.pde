@@ -22,13 +22,17 @@ import org.eclipse.pde.ui.IFieldData;
 public class HelloServiceComponentTemplate extends PDETemplateSection {
 
 	public static final String COMMAND = "command"; //$NON-NLS-1$
-	public static final String MESSAGE = "message"; //$NON-NLS-1$
+	public static final String WORD1 = "word1"; //$NON-NLS-1$
+	public static final String WORD2 = "word2"; //$NON-NLS-1$
+	public static final String WORD3 = "word3"; //$NON-NLS-1$
 	private String packageName = null;
 
 	public HelloServiceComponentTemplate() {
 		setPageCount(1);
 		addOption(COMMAND, PDETemplateMessages.HelloServiceComponentTemplate_commandTitle, PDETemplateMessages.HelloServiceComponentTemplate_command, 0);
-		addOption(MESSAGE, PDETemplateMessages.HelloServiceComponentTemplate_messageTitle, PDETemplateMessages.HelloServiceComponentTemplate_message, 0);
+		addOption(WORD1, PDETemplateMessages.HelloOSGiServiceTemplate_word1, "osgi", 0); //$NON-NLS-1$
+		addOption(WORD2, PDETemplateMessages.HelloOSGiServiceTemplate_word2, "eclipse", 0); //$NON-NLS-1$
+		addOption(WORD3, PDETemplateMessages.HelloOSGiServiceTemplate_word3, "equinox", 0); //$NON-NLS-1$
 	}
 
 	public void addPages(Wizard wizard) {
@@ -52,7 +56,7 @@ public class HelloServiceComponentTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void updateModel(IProgressMonitor monitor) { // do nothing
-		setManifestHeader("Service-Component", "OSGI-INF/component.xml"); //$NON-NLS-1$ //$NON-NLS-2$]
+		setManifestHeader("Service-Component", "OSGI-INF/*.xml"); //$NON-NLS-1$ //$NON-NLS-2$]
 	}
 
 	/* (non-Javadoc)

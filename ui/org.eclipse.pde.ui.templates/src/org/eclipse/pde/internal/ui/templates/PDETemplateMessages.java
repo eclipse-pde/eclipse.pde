@@ -255,6 +255,9 @@ public class PDETemplateMessages extends NLS {
 
 	// Hello world OSGi Service template
 	public static String HelloOSGiServiceTemplate_greeting;
+	public static String HelloOSGiServiceTemplate_word1;
+	public static String HelloOSGiServiceTemplate_word2;
+	public static String HelloOSGiServiceTemplate_word3;
 	public static String HelloOSGiServiceTemplate_pageDescription;
 	public static String HelloOSGiServiceTemplate_pageTitle;
 	public static String HelloOSGiServiceNewWizard_title;

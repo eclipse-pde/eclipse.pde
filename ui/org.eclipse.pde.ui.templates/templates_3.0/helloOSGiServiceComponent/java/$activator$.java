@@ -36,9 +36,6 @@ public class $activator$ implements BundleActivator, ServiceListener {
 		
 		// grab the service
 		service = (DictionaryService) dictionaryServiceTracker.getService();
-		
-		// register the dictionary
-		service.registerDictionary(new DictionaryImpl());
 	}
 
 	/*

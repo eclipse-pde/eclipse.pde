@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class HelloServiceComponentTemplateWizard extends NewPluginTemplateWizard
 	}
 
 	public String[] getImportPackages() {
-		return new String[] {"org.osgi.framework;version=\"1.3.0\"", "org.eclipse.osgi.framework.console;version=\"1.0.0\""}; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] {"org.osgi.framework;version=\"1.3.0\"", "org.osgi.util.tracker;version=\"1.3.1\"", "org.eclipse.osgi.framework.console;version=\"1.0.0\""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public IPluginReference[] getDependencies(String schemaVersion) {

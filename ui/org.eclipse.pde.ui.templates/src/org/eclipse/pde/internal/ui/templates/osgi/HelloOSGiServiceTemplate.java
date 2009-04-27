@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.osgi;
 
@@ -18,12 +19,19 @@ import org.eclipse.pde.internal.ui.templates.*;
 
 public class HelloOSGiServiceTemplate extends PDETemplateSection {
 
-	public static final String GREETING = "greeting"; //$NON-NLS-1$
+	public static final String LANGUAGE = "language"; //$NON-NLS-1$
+	public static final String WORD1 = "word1"; //$NON-NLS-1$
+	public static final String WORD2 = "word2"; //$NON-NLS-1$
+	public static final String WORD3 = "word3"; //$NON-NLS-1$
 	public static final String KEY_APPLICATION_CLASS = "applicationClass"; //$NON-NLS-1$
 
 	public HelloOSGiServiceTemplate() {
 		setPageCount(1);
-		addOption(GREETING, PDETemplateMessages.HelloOSGiServiceTemplate_greeting, PDETemplateMessages.HelloOSGiServiceTemplate_howdy, 0);
+		addOption(LANGUAGE, PDETemplateMessages.HelloOSGiServiceTemplate_greeting, PDETemplateMessages.HelloOSGiServiceTemplate_howdy, 0);
+		addOption(WORD1, PDETemplateMessages.HelloOSGiServiceTemplate_word1, "osgi", 0); //$NON-NLS-1$
+		addOption(WORD2, PDETemplateMessages.HelloOSGiServiceTemplate_word2, "eclipse", 0); //$NON-NLS-1$
+		addOption(WORD3, PDETemplateMessages.HelloOSGiServiceTemplate_word3, "equinox", 0); //$NON-NLS-1$
+
 	}
 
 	public void addPages(Wizard wizard) {
