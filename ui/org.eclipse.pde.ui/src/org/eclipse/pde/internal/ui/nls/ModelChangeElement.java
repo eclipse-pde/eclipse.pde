@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,13 +101,17 @@ public class ModelChangeElement {
 	}
 
 	private void generateValidKey(String key) {
-		int suffix = 0;
 		Properties properties = fParent.getProperties();
-		String newKey = fParent.getParentModel() instanceof IFragmentModel ? key + DELIM + FRAGMENT_PREFIX : key + DELIM;
-		while (properties.containsKey(newKey + suffix))
-			suffix += 1;
-		properties.setProperty(newKey + suffix, fValue);
-		fKey = newKey + suffix;
+		fKey = key;
+		// Only generate counter with key, if key already exists in properties
+		if (properties.containsKey(fKey)) {
+			String delimiter = fParent.getParentModel() instanceof IFragmentModel ? DELIM + FRAGMENT_PREFIX : DELIM;
+			int suffix = 0;
+			while (properties.containsKey(fKey + delimiter + suffix))
+				suffix += 1;
+			fKey += delimiter + suffix;
+		}
+		properties.setProperty(fKey, fValue);
 	}
 
 	public String getExternKey() {
