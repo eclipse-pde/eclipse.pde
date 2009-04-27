@@ -30,11 +30,51 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.Element;
 
 public class ProductExportOperation extends FeatureExportOperation {
+	private static final String STATUS_MESSAGE = "!MESSAGE"; //$NON-NLS-1$
+	private static final String STATUS_ENTRY = "!ENTRY"; //$NON-NLS-1$
+	private static final String STATUS_SUBENTRY = "!SUBENTRY"; //$NON-NLS-1$
 	private static final String ECLIPSE_APP_MACOS = "Eclipse.app/Contents/MacOS"; //$NON-NLS-1$
 	private static final String ECLIPSE_APP_CONTENTS = "Eclipse.app/Contents"; //$NON-NLS-1$
 	private String fFeatureLocation;
 	private String fRoot;
 	private IProduct fProduct;
+
+	protected static String errorMessage;
+
+	public static void setErrorMessage(String message) {
+		errorMessage = message;
+	}
+
+	public static String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public static IStatus parseErrorMessage(CoreException e) {
+		if (errorMessage == null)
+			return null;
+
+		MultiStatus status = null;
+		StringTokenizer tokenizer = new StringTokenizer(errorMessage, "\n"); //$NON-NLS-1$
+		for (; tokenizer.hasMoreTokens();) {
+			String line = tokenizer.nextToken().trim();
+			if (line.startsWith(STATUS_ENTRY) && tokenizer.hasMoreElements()) {
+				String next = tokenizer.nextToken();
+				if (next.startsWith(STATUS_MESSAGE)) {
+					status = new MultiStatus(PDECore.PLUGIN_ID, 0, next.substring(8), null);
+				}
+			} else if (line.startsWith(STATUS_SUBENTRY) && tokenizer.hasMoreElements() && status != null) {
+				String next = tokenizer.nextToken();
+				if (next.startsWith(STATUS_MESSAGE)) {
+					status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, next.substring(8)));
+				}
+			}
+		}
+		if (status != null)
+			return status;
+
+		//parsing didn't work, just set the message
+		return new MultiStatus(PDECore.PLUGIN_ID, 0, new IStatus[] {e.getStatus()}, errorMessage, null);
+	}
 
 	public ProductExportOperation(FeatureExportInfo info, String name, IProduct product, String root) {
 		super(info, name);
@@ -51,6 +91,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 			configurations = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()}};
 
 		cleanupBuildRepo();
+		errorMessage = null;
 
 		try {
 			monitor.beginTask("", 10); //$NON-NLS-1$
@@ -67,6 +108,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 			} catch (InvocationTargetException e) {
 				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 			} catch (CoreException e) {
+				if (errorMessage != null)
+					return parseErrorMessage(e);
 				return e.getStatus();
 			} finally {
 				// Clean up generated files
@@ -86,6 +129,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		} finally {
 			monitor.done();
+			errorMessage = null;
 		}
 		return Status.OK_STATUS;
 	}
