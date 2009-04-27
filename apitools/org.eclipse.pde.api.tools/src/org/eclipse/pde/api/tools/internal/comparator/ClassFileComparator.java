@@ -2787,22 +2787,20 @@ public class ClassFileComparator {
 	}
 
 	private String getMethodDisplayName(IApiMethod method, IApiType type) {
-		String methodName = method.getName();
+		String methodName = null;
 		if (method.isConstructor()) {
-			String typeName = type.getName();
-			int index = typeName.lastIndexOf('.');
-			if (index == -1) {
-				methodName = typeName;
-			} else {
-				int index2 = typeName.lastIndexOf('$');
-				if (index2 > index) {
-					methodName = typeName.substring(index2 + 1);
-				} else {
-					methodName = typeName.substring(index + 1);
-				}
-			}
+			methodName = type.getSimpleName();
+		} else {
+			methodName = method.getName();
 		}
-		return Signature.toString(method.getSignature(), methodName, null, false, false);
+		String signature = null;
+		String genericSignature = method.getGenericSignature();
+		if (genericSignature != null) {
+			signature = genericSignature;
+		} else {
+			signature = method.getSignature();
+		}
+		return Signature.toString(signature, methodName, null, false, false);
 	}
 
 	private SignatureDescriptor getSignatureDescriptor(String signature) {

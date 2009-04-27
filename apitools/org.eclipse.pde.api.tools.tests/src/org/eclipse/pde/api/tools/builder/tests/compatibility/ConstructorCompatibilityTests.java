@@ -267,7 +267,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter.AddTypeParameter(Object)", "U"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter.AddTypeParameter(T)", "U"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -294,7 +294,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter.RemoveTypeParameter(Object)", "U"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter.RemoveTypeParameter(T)", "U"};
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

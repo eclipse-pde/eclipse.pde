@@ -54,6 +54,22 @@ public class MissingSinceTagTests extends SinceTagTest {
 			setExpectedMessageArgs(args);		
 	}
 	/**
+	 * Tests adding a generic method
+	 */
+	private void xAddMethod2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod2.java");
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "foo(List<?>)");
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddMethod2I() throws Exception {
+		xAddMethod2(true);
+	}
+	
+	public void testAddMethod2F() throws Exception {
+		xAddMethod2(false);
+	}
+	/**
 	 * Tests adding a non-visible method
 	 */
 	private void xAddNonVisibleMethod2(boolean incremental) throws Exception {
@@ -205,5 +221,5 @@ public class MissingSinceTagTests extends SinceTagTest {
 	
 	public void testAddTypeF() throws Exception {
 		xAddType(false);
-	}		
+	}
 }
