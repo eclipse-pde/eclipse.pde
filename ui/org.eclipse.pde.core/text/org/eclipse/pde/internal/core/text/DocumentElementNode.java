@@ -205,7 +205,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Write all attributes
 		for (int i = 0; i < attributes.length; i++) {
 			IDocumentAttributeNode attribute = attributes[i];
-			if (isDefined(attribute)) {
+			if (isDefined(attribute) && !attribute.getAttributeName().startsWith("xmlns:")) { //$NON-NLS-1$
 				buffer.append(getAttributeIndent() + attribute.write());
 			}
 		}
