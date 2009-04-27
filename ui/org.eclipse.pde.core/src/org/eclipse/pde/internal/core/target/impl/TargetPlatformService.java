@@ -15,6 +15,7 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
@@ -585,6 +586,29 @@ public class TargetPlatformService implements ITargetPlatformService {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * Performs garbage collection based on remaining profiles. Should be called to avoid
+	 * having PDE's bundle pool area grow unbounded.
+	 */
+	public void garbageCollect() {
+		IProfileRegistry registry = (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
+		if (registry != null) {
+			IProfile[] profiles = registry.getProfiles();
+			if (profiles.length > 0) {
+				IProfile profile = null;
+				for (int i = 0; i < profiles.length; i++) {
+					if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+						profile = profiles[i];
+						break;
+					}
+				}
+				if (profile != null) {
+					new GarbageCollector().runGC(profile);
+				}
+			}
+		}
 	}
 
 	/* (non-Javadoc)

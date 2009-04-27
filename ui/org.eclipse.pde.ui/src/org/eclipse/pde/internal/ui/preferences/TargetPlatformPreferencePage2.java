@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -748,12 +751,25 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 		}
 
 		fMoved.clear();
+		boolean gc = !fRemoved.isEmpty();
 		fRemoved.clear();
 		if (toLoad != null) {
 			fActiveTarget = toLoad;
 		}
 		fTableViewer.refresh(true);
+		// start job to do GC
+		if (gc) {
+			final TargetPlatformService finalService = (TargetPlatformService) service;
+			Job job = new Job(PDEUIMessages.TargetPlatformPreferencePage2_26) {
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask(PDEUIMessages.TargetPlatformPreferencePage2_27, IProgressMonitor.UNKNOWN);
+					finalService.garbageCollect();
+					monitor.done();
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+		}
 		return super.performOk();
 	}
-
 }
