@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,19 +38,9 @@ public class PDEJavaHelper {
 	}*/
 
 	public static boolean isDiscouraged(String fullyQualifiedName, IJavaProject project, BundleDescription desc) {
-		if (fullyQualifiedName.indexOf('$') != -1)
-			fullyQualifiedName = fullyQualifiedName.replace('$', '.');
-
-		// just grab the package
-		int dot = fullyQualifiedName.lastIndexOf('.');
-		if (dot != -1) // check for the default package case
-			fullyQualifiedName = fullyQualifiedName.substring(0, dot);
-		else
-			fullyQualifiedName = "."; //$NON-NLS-1$
-
 		// allow classes within the project itself
 		try {
-			IType type = project.findType(fullyQualifiedName);
+			IType type = project.findType(fullyQualifiedName.replace('$', '.'));
 			if (type != null && type.exists()) {
 				HashMap map = PDEJavaHelper.getPackageFragmentsHash(project, Collections.EMPTY_LIST, false);
 				if (map.containsValue(type.getPackageFragment())) {
@@ -58,8 +48,14 @@ public class PDEJavaHelper {
 				}
 			}
 		} catch (JavaModelException e) {
-			return false;
 		}
+
+		// just grab the package
+		int dot = fullyQualifiedName.lastIndexOf('.');
+		if (dot != -1) // check for the default package case
+			fullyQualifiedName = fullyQualifiedName.substring(0, dot);
+		else
+			fullyQualifiedName = "."; //$NON-NLS-1$
 
 		State state = desc.getContainingState();
 		StateHelper helper = state.getStateHelper();
