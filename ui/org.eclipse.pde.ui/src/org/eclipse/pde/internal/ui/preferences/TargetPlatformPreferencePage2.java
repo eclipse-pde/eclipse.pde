@@ -756,6 +756,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 			fActiveTarget = toLoad;
 		}
 		fTableViewer.refresh(true);
+		updateButtons();
 		// start job to do GC
 		if (gc) {
 			final TargetPlatformService finalService = (TargetPlatformService) service;
