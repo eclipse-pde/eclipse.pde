@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.*;
@@ -111,7 +112,7 @@ public class PDECompilersConfigurationBlock {
 		 * @return the {@link IEclipsePreferences} node or <code>null</code>
 		 */
 		private IEclipsePreferences getNode(IScopeContext context, IWorkingCopyManager manager) {
-			IEclipsePreferences node = context.getNode(qualifier);
+			IEclipsePreferences node = context.getNode(this.qualifier);
 			if (manager != null) {
 				return manager.getWorkingCopy(node);
 			}
@@ -127,7 +128,7 @@ public class PDECompilersConfigurationBlock {
 		public String getStoredValue(IScopeContext context, IWorkingCopyManager manager) {
 			IEclipsePreferences node = getNode(context, manager);
 			if (node != null) {
-				return node.get(key, null);
+				return node.get(this.key, null);
 			}
 			return null;
 		}
@@ -159,9 +160,9 @@ public class PDECompilersConfigurationBlock {
 		public void setStoredValue(IScopeContext context, String value, IWorkingCopyManager manager) {
 			IEclipsePreferences node = getNode(context, manager);
 			if (value != null) {
-				node.put(key, value);
+				node.put(this.key, value);
 			} else {
-				node.remove(key);
+				node.remove(this.key);
 			}
 		}
 
@@ -169,7 +170,7 @@ public class PDECompilersConfigurationBlock {
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
-			return qualifier + '/' + key;
+			return qualifier + '/' + this.key;
 		}
 	}
 
@@ -342,6 +343,9 @@ public class PDECompilersConfigurationBlock {
 				fOldProjectSettings.put(fgAllKeys[i], fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager));
 			}
 		}
+		//make it load so we have access to the pde preferences initialized via pde core preferences 
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=273017 
+		PDECore.getDefault().getPreferencesManager();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,19 +30,23 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences preferences = new InstanceScope().getNode(PDECore.PLUGIN_ID);
 		defaultPreferences.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		defaultPreferences.put(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-		if (preferences.get(ICoreConstants.TARGET_MODE, defaultPreferences.get(ICoreConstants.TARGET_MODE, "")).equals(ICoreConstants.VALUE_USE_THIS)) //$NON-NLS-1$
+		if (preferences.get(ICoreConstants.TARGET_MODE, defaultPreferences.get(ICoreConstants.TARGET_MODE, "")).equals(ICoreConstants.VALUE_USE_THIS)) { //$NON-NLS-1$
 			preferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
-		else
+		} else {
 			defaultPreferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
-
+		}
 		// set defaults for the target environment variables.
 		defaultPreferences.put(ICoreConstants.OS, Platform.getOS());
 		defaultPreferences.put(ICoreConstants.WS, Platform.getWS());
 		defaultPreferences.put(ICoreConstants.NL, Locale.getDefault().toString());
 		defaultPreferences.put(ICoreConstants.ARCH, Platform.getOSArch());
-
 		defaultPreferences.putBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
-
+		try {
+			preferences.flush();
+			defaultPreferences.flush();
+		} catch (BackingStoreException bse) {
+			PDECore.log(bse);
+		}
 		//set defaults for compiler preferences in org.eclipse.pde pref node, not org.eclipse.pde.core
 		IEclipsePreferences prefs = new DefaultScope().getNode(PDE.PLUGIN_ID);
 		prefs.putInt(CompilerFlags.P_UNRESOLVED_IMPORTS, CompilerFlags.ERROR);
@@ -74,6 +78,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
+			PDECore.log(e);
 		}
 	}
 }
