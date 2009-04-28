@@ -55,9 +55,9 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 	}
 
 	protected void handleDispose(DisposeEvent event) {
+		super.handleDispose(event);
 		if (fColorManager != null)
 			fColorManager.dispose();
-		super.handleDispose(event);
 	}
 
 }
