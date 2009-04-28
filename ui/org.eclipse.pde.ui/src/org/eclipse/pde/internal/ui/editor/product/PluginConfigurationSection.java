@@ -272,6 +272,7 @@ public class PluginConfigurationSection extends TableSection {
 		configuration.setId(id);
 		product.addPluginConfigurations(new IPluginConfiguration[] {configuration});
 		fConfigurationsTable.setSelection(new StructuredSelection(configuration));
+		showControls();
 	}
 
 	private ILabelProvider getLabelProvider() {
@@ -304,51 +305,63 @@ public class PluginConfigurationSection extends TableSection {
 
 		table.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				// Clean up any previous editor control
-				clearEditors();
-
-				// Identify the selected row
-				Table table = fConfigurationsTable.getTable();
-				IStructuredSelection selection = (IStructuredSelection) fConfigurationsTable.getSelection();
-				if (selection.isEmpty())
-					return;
-				final TableItem item = table.getSelection()[0];
-				if (item != null && !isEditable())
-					return;
-
-				if (item != null) {
-					final IPluginConfiguration ppc = (IPluginConfiguration) selection.getFirstElement();
-					final Spinner spinner = new Spinner(table, SWT.BORDER);
-
-					spinner.setMinimum(0);
-					String level = item.getText(1);
-					int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
-					spinner.setSelection(defaultLevel);
-					spinner.addModifyListener(new ModifyListener() {
-						public void modifyText(ModifyEvent e) {
-							int selection = spinner.getSelection();
-							item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
-									: Integer.toString(selection));
-							ppc.setStartLevel(selection);
-						}
-					});
-					fLevelColumnEditor.setEditor(spinner, item, 1);
-
-					final CCombo combo = new CCombo(table, SWT.BORDER | SWT.READ_ONLY);
-					//TODO is there need for the default options ??
-					combo.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
-					combo.setText(item.getText(2));
-					combo.pack();
-					combo.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent e) {
-							item.setText(2, combo.getText());
-							ppc.setAutoStart(Boolean.valueOf(combo.getText()).booleanValue());
-						}
-					});
-					fAutoColumnEditor.setEditor(combo, item, 2);
-				}
+				showControls();
 			}
 		});
+
+		table.addFocusListener(new FocusAdapter() {
+
+			public void focusLost(FocusEvent e) {
+				clearEditors();
+			}
+
+		});
+	}
+
+	private void showControls() {
+		// Clean up any previous editor control
+		clearEditors();
+
+		// Identify the selected row
+		Table table = fConfigurationsTable.getTable();
+		IStructuredSelection selection = (IStructuredSelection) fConfigurationsTable.getSelection();
+		if (selection.isEmpty())
+			return;
+		final TableItem item = table.getSelection()[0];
+		if (item != null && !isEditable())
+			return;
+
+		if (item != null) {
+			final IPluginConfiguration ppc = (IPluginConfiguration) selection.getFirstElement();
+			final Spinner spinner = new Spinner(table, SWT.BORDER);
+
+			spinner.setMinimum(0);
+			String level = item.getText(1);
+			int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
+			spinner.setSelection(defaultLevel);
+			spinner.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					int selection = spinner.getSelection();
+					item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
+							: Integer.toString(selection));
+					ppc.setStartLevel(selection);
+				}
+			});
+			fLevelColumnEditor.setEditor(spinner, item, 1);
+
+			final CCombo combo = new CCombo(table, SWT.BORDER | SWT.READ_ONLY);
+			//TODO is there need for the default options ??
+			combo.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
+			combo.setText(item.getText(2));
+			combo.pack();
+			combo.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					item.setText(2, combo.getText());
+					ppc.setAutoStart(Boolean.valueOf(combo.getText()).booleanValue());
+				}
+			});
+			fAutoColumnEditor.setEditor(combo, item, 2);
+		}
 	}
 
 	private IProduct getProduct() {
