@@ -29,7 +29,7 @@ public interface IApiXmlConstants {
 	/**
 	 * Constant representing the current version for api profile files
 	 */
-	public static final String API_PROFILE_CURRENT_VERSION = "1"; //$NON-NLS-1$
+	public static final String API_PROFILE_CURRENT_VERSION = "2"; //$NON-NLS-1$
 	/**
 	 * Constant representing the current version for api report xml file
 	 */

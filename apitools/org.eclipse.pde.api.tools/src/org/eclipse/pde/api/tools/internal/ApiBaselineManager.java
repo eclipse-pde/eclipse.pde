@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -389,30 +388,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * @throws CoreException
 	 */
 	private String getProfileXML(IApiBaseline profile) throws CoreException {
-		// pool bundles by location
-		Map pools = new HashMap();
-		List unRooted = new ArrayList();
-		IApiComponent[] components = profile.getApiComponents();
-		for(int i = 0; i < components.length; i++) {
-			if(!components[i].isSystemComponent()) {
-				String location = components[i].getLocation();
-				File file = new File(location);
-				if (file.exists()) {
-					File dir = file.getParentFile();
-					if (dir != null) {
-						List pool = (List) pools.get(dir);
-						if (pool == null) {
-							pool = new ArrayList();
-							pools.put(dir, pool);
-						}
-						pool.add(components[i]);
-					} else {
-						unRooted.add(components[i]);
-					}
-				}
-				
-			}
-		}
 		Document document = Util.newDocument();
 		Element root = document.createElement(IApiXmlConstants.ELEMENT_APIPROFILE);
 		document.appendChild(root);
@@ -422,35 +397,17 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (location != null) {
 			root.setAttribute(IApiXmlConstants.ATTR_LOCATION, location);
 		}
-		// dump component pools
-		Element subroot = null;
-		File dir = null;
-		List comps = null;
-		IApiComponent comp = null;
 		Element celement = null;
-		for(Iterator iter = pools.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			dir = (File) entry.getKey();
-			subroot = document.createElement(IApiXmlConstants.ELEMENT_POOL);
-			root.appendChild(subroot);
-			subroot.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(dir.getAbsolutePath()).toPortableString());
-			comps = (List) entry.getValue();
-			for(Iterator iter2 = comps.iterator(); iter2.hasNext();) {
-				comp = (IApiComponent) iter2.next();
+		IApiComponent[] components = profile.getApiComponents();
+		for(int i = 0, max = components.length; i < max; i++) {
+			IApiComponent comp = components[i];
+			if (!comp.isSystemComponent()) {
 				celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
 				celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getId());
 				celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
-				subroot.appendChild(celement);
+				celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(comp.getLocation()).toPortableString());
+				root.appendChild(celement);
 			}
-		}
-		// dump un-pooled components
-		for(Iterator iter = unRooted.iterator(); iter.hasNext();) {
-			comp = (IApiComponent) iter.next();
-			celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
-			celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getId());
-			celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
-			celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(comp.getLocation()).toPortableString());
-			root.appendChild(celement);
 		}
 		return Util.serializeDocument(document);
 	}
@@ -507,7 +464,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 						}
 					}
 				}
-				// pooled components
+				// pooled components - only for xml file with version <= 1
+				// since version 2, pools have been removed
 				children = root.getElementsByTagName(IApiXmlConstants.ELEMENT_POOL);
 				IApiComponent component = null;
 				for(int j = 0; j < children.getLength(); j++) {
