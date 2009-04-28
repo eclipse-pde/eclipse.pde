@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
@@ -628,6 +626,7 @@ public class TargetPlatformPreferencePage2 extends PreferencePage implements IWo
 				fTableViewer.refresh(false);
 			}
 			fActiveTarget = deflt;
+			fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
 			fTableViewer.refresh(true);
 		}
 		super.performDefaults();
