@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
+import org.eclipse.pde.internal.core.target.*;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,7 +27,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.impl.*;
 
 /**
  * Sets the current target platform based on a target definition.

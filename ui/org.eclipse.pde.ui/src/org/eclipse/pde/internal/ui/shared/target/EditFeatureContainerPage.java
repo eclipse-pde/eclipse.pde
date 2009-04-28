@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.core.target.FeatureBundleContainer;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.target.impl.FeatureBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;

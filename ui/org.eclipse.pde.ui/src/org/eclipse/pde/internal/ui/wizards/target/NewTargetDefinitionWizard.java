@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.impl.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;

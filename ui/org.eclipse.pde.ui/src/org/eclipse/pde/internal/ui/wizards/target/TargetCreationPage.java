@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import java.io.*;
-import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetDefinitionManager;
-import org.eclipse.pde.internal.core.itarget.ITargetModel;
-import org.eclipse.pde.internal.core.target.TargetModel;
-import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
-import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -50,7 +44,6 @@ public class TargetCreationPage extends WizardSelectionPage {
 	private Button fExistingTargetButton;
 	private Combo fTargets;
 	private String[] fTargetIds;
-	private Button fPreviewButton;
 	private String templateTargetId;
 	private ITargetDefinition[] fTargetDefs = new ITargetDefinition[4];
 
@@ -73,24 +66,23 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 3, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(comp, PDEUIMessages.TargetCreationPage_0, 3);
 
-		fEmptyButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_1, 3);
-		fDefaultButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_2, 3);
-		fCurrentTPButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_3, 3);
+		fEmptyButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_1, 2);
+		fDefaultButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_2, 2);
+		fCurrentTPButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_3, 2);
 		fExistingTargetButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_4, 1);
 		fExistingTargetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fExistingTargetButton.getSelection();
 				fTargets.setEnabled(enabled);
-				fPreviewButton.setEnabled(enabled);
 			}
 		});
 
 		fEmptyButton.setSelection(true);
 
-		fTargets = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.READ_ONLY, 1, null);
+		fTargets = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.READ_ONLY, 1, GridData.BEGINNING, null);
 		fTargets.setEnabled(false);
 		initializeTargetCombo();
 		fTargets.addSelectionListener(new SelectionAdapter() {
@@ -101,47 +93,10 @@ public class TargetCreationPage extends WizardSelectionPage {
 			}
 		});
 
-		fPreviewButton = SWTFactory.createPushButton(comp, PDEUIMessages.TargetCreationPage_5, null);
-		fPreviewButton.setEnabled(false);
-		fPreviewButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				InputStream stream = null;
-				try {
-					URL url = getExternalTargetURL();
-					if (url != null)
-						stream = new BufferedInputStream(url.openStream());
-					if (stream != null) {
-						ITargetModel model = new TargetModel();
-						model.load(stream, false);
-						new OpenTargetProfileAction(getShell(), model, fTargets.getText()).run();
-					}
-				} catch (IOException e1) {
-				} catch (CoreException e2) {
-				} finally {
-					try {
-						if (stream != null)
-							stream.close();
-					} catch (IOException e3) {
-					}
-				}
-			}
-		});
-
 		Dialog.applyDialogFont(comp);
 		setSelectedNode(new EditTargetNode());
 		setControl(comp);
 		setPageComplete(true);
-	}
-
-	private URL getExternalTargetURL() {
-		TargetDefinitionManager manager = PDECore.getDefault().getTargetProfileManager();
-		IConfigurationElement elem = manager.getTarget(getTargetId());
-		if (elem != null) {
-			String path = elem.getAttribute("definition"); //$NON-NLS-1$
-			String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
-			return TargetDefinitionManager.getResourceURL(symbolicName, path);
-		}
-		return null;
 	}
 
 	protected void initializeTargetCombo() {

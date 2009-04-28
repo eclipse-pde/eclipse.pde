@@ -18,11 +18,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
-import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -94,8 +94,7 @@ public class JREBlock {
 		fEePrefButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String currentEE = parseEESelection(fEeCombo.getText());
-				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}; //$NON-NLS-1$
-				if (PDEPreferencesUtil.showPreferencePage(pageIDs, fTab.getControl().getShell())) {
+				if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", null) == Window.OK) { //$NON-NLS-1$
 					setEECombo();
 					setEEComboSelection(currentEE);
 				}
@@ -118,8 +117,7 @@ public class JREBlock {
 				String currentVM = fJreCombo.getText();
 				String currentEE = parseEESelection(fEeCombo.getText());
 				boolean useDefault = VMUtil.getDefaultVMInstallName().equals(currentVM);
-				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}; //$NON-NLS-1$
-				if (PDEPreferencesUtil.showPreferencePage(pageIDs, fTab.getControl().getShell())) {
+				if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", null) == Window.OK) { //$NON-NLS-1$
 					setJRECombo();
 					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
 						fJreCombo.setText(VMUtil.getDefaultVMInstallName());

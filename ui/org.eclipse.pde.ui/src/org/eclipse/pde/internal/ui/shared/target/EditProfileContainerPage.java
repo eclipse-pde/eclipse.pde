@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.pde.internal.core.target.impl.ProfileBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;

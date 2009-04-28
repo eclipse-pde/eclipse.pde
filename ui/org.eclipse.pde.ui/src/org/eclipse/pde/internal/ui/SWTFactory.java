@@ -566,8 +566,9 @@ public class SWTFactory {
 	 * @param shell the parent shell
 	 * @param id the id of preference page to show
 	 * @param page the actual page to show
+	 * @return the result of Window.open()
 	 */
-	public static void showPreferencePage(Shell shell, String id, Object data) {
-		PreferencesUtil.createPreferenceDialogOn(shell, id, new String[] {id}, data).open();
+	public static int showPreferencePage(Shell shell, String id, Object data) {
+		return PreferencesUtil.createPreferenceDialogOn(shell, id, new String[] {id}, data).open();
 	}
 }

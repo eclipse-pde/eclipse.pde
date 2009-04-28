@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.graphics.Image;
 
 public class TargetPlatformPreferenceNode implements IPreferenceNode {
-	protected TargetPlatformPreferencePage2 fPage;
+	protected TargetPlatformPreferencePage fPage;
 
 	/**
 	 * @see org.eclipse.jface.preference.IPreferenceNode#add(org.eclipse.jface.preference.IPreferenceNode)
@@ -29,7 +29,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#createPage()
 	 */
 	public void createPage() {
-		fPage = new TargetPlatformPreferencePage2();
+		fPage = new TargetPlatformPreferencePage();
 	}
 
 	/**

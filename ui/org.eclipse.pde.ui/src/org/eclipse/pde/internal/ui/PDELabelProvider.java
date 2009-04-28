@@ -31,7 +31,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.core.itarget.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -113,15 +112,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof PackageObject) {
 			return getObjectText((PackageObject) obj);
-		}
-		if (obj instanceof ITargetPlugin) {
-			return getObjectText((ITargetPlugin) obj);
-		}
-		if (obj instanceof ITargetFeature) {
-			return getObjectText((ITargetFeature) obj);
-		}
-		if (obj instanceof IAdditionalLocation) {
-			return getObjectText((IAdditionalLocation) obj);
 		}
 		if (obj instanceof ExecutionEnvironment) {
 			return getObjectText((ExecutionEnvironment) obj);
@@ -346,27 +336,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return preventNull(obj.getName());
 	}
 
-	public String getObjectText(ITargetPlugin obj) {
-		if (isFullNameModeEnabled()) {
-			String id = obj.getId();
-			IPluginModelBase model = PluginRegistry.findModel(obj.getId());
-			if (model != null) {
-				return model.getPluginBase().getTranslatedName();
-			}
-			return id != null ? id : "?"; //$NON-NLS-1$
-		}
-		return preventNull(obj.getId());
-	}
-
-	public String getObjectText(ITargetFeature obj) {
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
-		return (model != null) ? getObjectText(model, false) : preventNull(obj.getId());
-	}
-
-	public String getObjectText(IAdditionalLocation obj) {
-		return preventNull(obj.getPath());
-	}
-
 	public Image getImage(Object obj) {
 		if (obj instanceof IPlugin) {
 			return getObjectImage((IPlugin) obj);
@@ -467,15 +436,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof PackageObject) {
 			return getObjectImage((PackageObject) obj);
-		}
-		if (obj instanceof ITargetPlugin) {
-			return getObjectImage((ITargetPlugin) obj);
-		}
-		if (obj instanceof ITargetFeature) {
-			return getObjectImage((ITargetFeature) obj);
-		}
-		if (obj instanceof IAdditionalLocation) {
-			return getObjectImage((IAdditionalLocation) obj);
 		}
 		if (obj instanceof ExecutionEnvironment) {
 			return getObjectImage((ExecutionEnvironment) obj);
@@ -782,22 +742,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public Image getObjectImage(PackageObject obj) {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
-	}
-
-	public Image getObjectImage(ITargetPlugin obj) {
-		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), null);
-		if (desc != null) {
-			return desc.getHost() == null ? get(PDEPluginImages.DESC_PLUGIN_OBJ) : get(PDEPluginImages.DESC_FRAGMENT_OBJ);
-		}
-		return get(PDEPluginImages.DESC_PLUGIN_OBJ, 0);
-	}
-
-	public Image getObjectImage(ITargetFeature obj) {
-		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
-	}
-
-	public Image getObjectImage(IAdditionalLocation obj) {
-		return get(PDEPluginImages.DESC_SITE_OBJ);
 	}
 
 	public boolean isFullNameModeEnabled() {

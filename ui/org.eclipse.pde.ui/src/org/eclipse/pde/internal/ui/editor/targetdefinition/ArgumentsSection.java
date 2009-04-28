@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -137,7 +137,7 @@ public class ArgumentsSection extends SectionPart {
 		vmArgs.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getSection().getShell(), getTarget());
-				if (dialog.open() == Dialog.OK) {
+				if (dialog.open() == Window.OK) {
 					String[] args = dialog.getSelectedArguments();
 					if (args != null && args.length > 0) {
 						StringBuffer resultBuffer = new StringBuffer();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
@@ -25,7 +27,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.impl.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.*;

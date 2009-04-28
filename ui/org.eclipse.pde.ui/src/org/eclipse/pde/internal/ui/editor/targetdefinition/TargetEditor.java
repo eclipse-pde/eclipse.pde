@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.*;
@@ -20,7 +22,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.impl.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.*;

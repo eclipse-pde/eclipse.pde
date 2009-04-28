@@ -33,7 +33,6 @@ import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -128,7 +127,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			}
 
 			public void linkActivated(HyperlinkEvent e) {
-				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, PDEPlugin.getActiveWorkbenchShell()); //$NON-NLS-1$
+				SWTFactory.showPreferencePage(PDEPlugin.getActiveWorkbenchShell(), "org.eclipse.jdt.debug.ui.jreProfiles", null); //$NON-NLS-1$
 			}
 		});
 		GridData gd = new GridData();
@@ -534,11 +533,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return false;
 	}
 
-	/**
-	 * @param sourceEEObject
-	 * @param targetEEObject
-	 * @return
-	 */
 	private boolean validateDropMoveModel(ExecutionEnvironment sourceEEObject, ExecutionEnvironment targetEEObject) {
 		// Objects have to be from the same model
 		IBundleModel sourceModel = sourceEEObject.getModel();
@@ -549,11 +543,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return false;
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @return
-	 */
 	private boolean validateDropMoveSanity(Object targetObject, Object[] sourceObjects) {
 		// Validate target object
 		if ((targetObject instanceof ExecutionEnvironment) == false) {
@@ -638,10 +627,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		doSelect(true);
 	}
 
-	/**
-	 * @param sourceObjects
-	 * @return
-	 */
 	private boolean validateDragMoveSanity(Object[] sourceObjects) {
 		// Validate source
 		if (sourceObjects == null) {

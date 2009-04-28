@@ -14,8 +14,6 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.target.ContentPage;
-import org.eclipse.pde.internal.ui.editor.target.EnvironmentPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.layout.GridData;

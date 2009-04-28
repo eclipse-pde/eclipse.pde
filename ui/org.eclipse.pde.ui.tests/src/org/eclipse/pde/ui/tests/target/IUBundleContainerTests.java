@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.*;
+
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.pde.internal.core.target.impl.IUBundleContainer;
 
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 
@@ -34,7 +35,6 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadata
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;

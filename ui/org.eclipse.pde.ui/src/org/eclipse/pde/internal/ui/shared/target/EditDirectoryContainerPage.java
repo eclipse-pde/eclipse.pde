@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
+import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +24,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer;
-import org.eclipse.pde.internal.core.target.impl.DirectoryBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.PDEPlugin;

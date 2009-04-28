@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.HashSet;
@@ -21,7 +23,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;

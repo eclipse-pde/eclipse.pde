@@ -20,15 +20,16 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -262,7 +263,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					handle = selected.getHandle();
 				}
 				IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
-				if (PDEPreferencesUtil.showPreferencePage(targetNode, getShell())) {
+				if (showPreferencePage(targetNode, getShell())) {
 					refreshTargetDropDown();
 					// reselect same target, if possible
 					int index = -1;
@@ -309,7 +310,22 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					importDirectory.setText(chosen.toOSString());
 			}
 		});
+	}
 
+	private boolean showPreferencePage(final IPreferenceNode targetNode, Shell shell) {
+		PreferenceManager manager = new PreferenceManager();
+		manager.addToRoot(targetNode);
+		final PreferenceDialog dialog = new PreferenceDialog(shell, manager);
+		final boolean[] result = new boolean[] {false};
+		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				if (dialog.open() == Window.OK)
+					result[0] = true;
+			}
+		});
+		return result[0];
 	}
 
 	/**

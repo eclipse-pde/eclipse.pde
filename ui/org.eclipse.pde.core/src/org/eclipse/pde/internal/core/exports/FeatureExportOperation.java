@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
+import org.eclipse.pde.internal.core.target.TargetDefinition;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
@@ -38,7 +40,6 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.core.util.CoreUtility;

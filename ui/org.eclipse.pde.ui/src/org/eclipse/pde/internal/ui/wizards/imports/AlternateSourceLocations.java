@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.core.target.ResolvedBundle;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.impl.ResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 
 /**

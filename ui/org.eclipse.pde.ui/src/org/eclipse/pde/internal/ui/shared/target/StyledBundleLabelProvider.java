@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.core.target.*;
+
 import com.ibm.icu.text.MessageFormat;
 import java.net.URI;
 import org.eclipse.core.runtime.*;
@@ -17,7 +19,6 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.target.impl.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.ui.PDEPlugin;

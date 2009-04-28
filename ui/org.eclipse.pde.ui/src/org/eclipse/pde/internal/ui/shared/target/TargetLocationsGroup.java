@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.target.impl.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.impl.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;

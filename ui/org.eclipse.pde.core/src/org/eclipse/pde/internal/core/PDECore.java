@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -22,7 +24,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.target.impl.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.*;

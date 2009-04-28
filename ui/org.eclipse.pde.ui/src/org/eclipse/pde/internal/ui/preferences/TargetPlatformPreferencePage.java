@@ -1,640 +1,776 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2009 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import org.eclipse.pde.internal.core.target.*;
+
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.util.*;
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.itarget.*;
-import org.eclipse.pde.internal.core.target.TargetModel;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.target.NewTargetDefinitionWizard;
+import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.pde.internal.ui.wizards.target.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+/**
+ * Preference page for managing all known target definitions and setting one as the active target platform.
+ *
+ */
 public class TargetPlatformPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	public static final int PLUGINS_INDEX = 0;
-	public static final int ENVIRONMENT_INDEX = 1;
-	public static final int SOURCE_INDEX = 4;
+	private class TargetLabelProvider extends StyledCellLabelProvider {
 
-	private Label fHomeLabel;
-	private Combo fHomeText;
-	private Combo fProfileCombo;
-	private Button fBrowseButton;
-	private Button fLoadProfileButton;
-	private Button fTargetRealization;
+		// Definition corresponding to running host
+		private TargetDefinition fRunningHost;
 
-	private TargetPluginsTab fPluginsTab;
-	private TargetEnvironmentTab fEnvironmentTab;
-	private JavaArgumentsTab fArgumentsTab;
-	private TargetImplicitPluginsTab fImplicitDependenciesTab;
-	private TargetSourceTab fSourceTab;
-	private IConfigurationElement[] fElements;
+		public TargetLabelProvider() {
+			PDEPlugin.getDefault().getLabelProvider().connect(this);
+			TargetPlatformService service = (TargetPlatformService) getTargetService();
+			if (service != null) {
+				fRunningHost = (TargetDefinition) service.newDefaultTargetDefinition();
+			}
+		}
 
-	private PDEPreferencesManager fPreferences = null;
-	protected boolean fNeedsReload = false;
-	private String fOriginalText;
-	private int fIndex;
-	private TabFolder fTabFolder;
-	private boolean fContainsWorkspaceProfile = false;
-	private Button fResetButton;
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
+		 */
+		public void update(ViewerCell cell) {
+			final Object element = cell.getElement();
+			Styler style = new Styler() {
+				public void applyStyles(TextStyle textStyle) {
+					if (element.equals(fActiveTarget)) {
+						Font dialogFont = JFaceResources.getDialogFont();
+						FontData[] fontData = dialogFont.getFontData();
+						for (int i = 0; i < fontData.length; i++) {
+							FontData data = fontData[i];
+							data.setStyle(SWT.BOLD);
+						}
+						Display display = getShell().getDisplay();
+						textStyle.font = new Font(display, fontData);
+					}
+				}
+			};
+
+			ITargetDefinition targetDef = (ITargetDefinition) element;
+			ITargetHandle targetHandle = targetDef.getHandle();
+			String name = targetDef.getName();
+			if (name == null || name.length() == 0) {
+				name = targetHandle.toString();
+			}
+
+			if (targetDef.equals(fActiveTarget)) {
+				name = name + PDEUIMessages.TargetPlatformPreferencePage2_1;
+			}
+
+			StyledString styledString = new StyledString(name, style);
+			if (targetHandle instanceof WorkspaceFileTargetHandle) {
+				IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
+				String location = " - " + file.getFullPath(); //$NON-NLS-1$
+				styledString.append(location, StyledString.DECORATIONS_STYLER);
+			} else if (targetHandle instanceof ExternalFileTargetHandle) {
+				URI uri = ((ExternalFileTargetHandle) targetHandle).getLocation();
+				String location = " - " + uri.toASCIIString(); //$NON-NLS-1$
+				styledString.append(location, StyledString.DECORATIONS_STYLER);
+			} else {
+				String location = (String) cell.getItem().getData(DATA_KEY_MOVED_LOCATION);
+				if (location != null) {
+					location = " - " + location; //$NON-NLS-1$
+					styledString = new StyledString(name, style);
+					styledString.append(location, StyledString.QUALIFIER_STYLER);
+				}
+			}
+
+			cell.setText(styledString.toString());
+			cell.setStyleRanges(styledString.getStyleRanges());
+			cell.setImage(getImage(targetDef));
+			super.update(cell);
+		}
+
+		private Image getImage(ITargetDefinition target) {
+			int flag = 0;
+			if (target.equals(fActiveTarget) && target.isResolved()) {
+				if (target.getBundleStatus().getSeverity() == IStatus.WARNING) {
+					flag = SharedLabelProvider.F_WARNING;
+				} else if (target.getBundleStatus().getSeverity() == IStatus.ERROR) {
+					flag = SharedLabelProvider.F_ERROR;
+				}
+			}
+			if (fRunningHost != null && fRunningHost.isContentEquivalent(target)) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING, flag);
+			}
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION, flag);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#dispose()
+		 */
+		public void dispose() {
+			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+			super.dispose();
+		}
+	}
 
 	/**
-	 * MainPreferencePage constructor comment.
+	 * Constant key value used to store data in table items if they are moved to a new location
 	 */
-	public TargetPlatformPreferencePage() {
-		this(PLUGINS_INDEX);
-	}
+	private final static String DATA_KEY_MOVED_LOCATION = "movedLocation"; //$NON-NLS-1$
 
-	public TargetPlatformPreferencePage(int index) {
-		setDescription(PDEUIMessages.Preferences_TargetPlatformPage_Description);
-		fPreferences = PDECore.getDefault().getPreferencesManager();
-		fPluginsTab = new TargetPluginsTab(this);
-		fIndex = index;
-	}
+	// Table viewer
+	private CheckboxTableViewer fTableViewer;
 
-	public void dispose() {
-		// null pointer check - bug 168337
-		if (fPluginsTab != null)
-			fPluginsTab.dispose();
-		if (fSourceTab != null)
-			fSourceTab.dispose();
-		super.dispose();
-	}
+	// Buttons
+	private Button fReloadButton;
+	private Button fAddButton;
+	private Button fEditButton;
+	//private Button fDuplicateButton;
+	private Button fRemoveButton;
+	private Button fMoveButton;
 
+	// Text displaying additional information
+	private TableViewer fDetails;
+
+	/**
+	 * Initial collection of targets (handles are realized into definitions as working copies)
+	 */
+	private List fTargets = new ArrayList();
+
+	/**
+	 * Removed definitions (to be removed on apply) 
+	 */
+	private List fRemoved = new ArrayList();
+
+	/**
+	 * Moved definitions (to be moved on apply)
+	 */
+	private Map fMoved = new HashMap(1);
+
+	/**
+	 * The chosen active target (will be loaded on apply)
+	 */
+	private ITargetDefinition fActiveTarget;
+
+	/**
+	 * Previously active target handle or null
+	 */
+	private ITargetHandle fPrevious;
+
+	/**
+	 * Stores whether the current target platform is out of synch with the file system and must be reloaded
+	 */
+	private boolean isOutOfSynch = false;
+
+	/**
+	 * Composite containing a warning image and label for when the backing file for the active target could not be found
+	 */
+	private Composite fWarningComp;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	 */
 	public Control createContents(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		container.setLayout(layout);
-
-		createCurrentTargetPlatformGroup(container);
+		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		createTargetProfilesGroup(container);
-
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);
 		return container;
 	}
 
 	private void createTargetProfilesGroup(Composite container) {
-		Group profiles = new Group(container, SWT.NONE);
-		profiles.setText(PDEUIMessages.TargetPlatformPreferencePage_TargetGroupTitle);
-		profiles.setLayout(new GridLayout(4, false));
-		profiles.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Composite comp = SWTFactory.createComposite(container, 1, 1, GridData.FILL_BOTH, 0, 0);
+		((GridData) comp.getLayoutData()).widthHint = 350;
+		SWTFactory.createWrapLabel(comp, PDEUIMessages.TargetPlatformPreferencePage2_0, 2);
+		SWTFactory.createVerticalSpacer(comp, 1);
 
-		Link profile = new Link(profiles, SWT.NONE);
-		profile.setText(PDEUIMessages.TargetPlatformPreferencePage_CurrentProfileLabel);
-		profile.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (!fProfileCombo.getText().equals("")) //$NON-NLS-1$
-					new OpenTargetProfileAction(getShell(), getTargetModel(), fProfileCombo.getText()).run();
-				else
-					openTargetWizard();
+		Composite tableComposite = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH, 0, 0);
+		SWTFactory.createLabel(tableComposite, PDEUIMessages.TargetPlatformPreferencePage2_2, 2);
+
+		fTableViewer = CheckboxTableViewer.newCheckList(tableComposite, SWT.MULTI | SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 300;
+		fTableViewer.getControl().setLayoutData(gd);
+		fTableViewer.setLabelProvider(new TargetLabelProvider());
+		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				if (event.getChecked()) {
+					fTableViewer.setCheckedElements(new Object[] {event.getElement()});
+					handleActivate();
+				} else {
+					handleActivate();
+				}
+
 			}
 		});
-
-		fProfileCombo = new Combo(profiles, SWT.BORDER | SWT.READ_ONLY);
-		loadTargetCombo();
-		fProfileCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Button browse = new Button(profiles, SWT.PUSH);
-		browse.setText(PDEUIMessages.TargetPlatformPreferencePage_BrowseButton);
-		GridData gd = new GridData();
-		browse.setLayoutData(gd);
-		browse.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleTargetBrowse();
+		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateButtons();
+				updateDetails();
 			}
 		});
-		SWTUtil.setButtonDimensionHint(browse);
-
-		fLoadProfileButton = new Button(profiles, SWT.PUSH);
-		fLoadProfileButton.setText(PDEUIMessages.TargetPlatformPreferencePage_ApplyButton);
-		fLoadProfileButton.setLayoutData(new GridData());
-		fLoadProfileButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleLoadTargetProfile();
+		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleEdit();
 			}
 		});
-		fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
-
-		fProfileCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
-			}
-		});
-
-		SWTUtil.setButtonDimensionHint(fLoadProfileButton);
-	}
-
-	private void createCurrentTargetPlatformGroup(Composite container) {
-		Composite target = new Composite(container, SWT.NONE);
-		GridLayout layout = new GridLayout(4, false);
-		layout.marginHeight = layout.marginWidth = 0;
-		target.setLayout(layout);
-		target.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		fHomeLabel = new Label(target, SWT.NULL);
-		fHomeLabel.setText(PDEUIMessages.Preferences_TargetPlatformPage_PlatformHome);
-
-		fHomeText = new Combo(target, SWT.NONE);
-		fHomeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		ArrayList locations = new ArrayList();
-		for (int i = 0; i < 5; i++) {
-			String value = fPreferences.getString(ICoreConstants.SAVED_PLATFORM + i);
-			if (value.equals("")) //$NON-NLS-1$
-				break;
-			locations.add(value);
-		}
-		String homeLocation = fPreferences.getString(ICoreConstants.PLATFORM_PATH);
-		if (!locations.contains(homeLocation))
-			locations.add(0, homeLocation);
-		fHomeText.setItems((String[]) locations.toArray(new String[locations.size()]));
-		fHomeText.setText(homeLocation);
-		fOriginalText = fHomeText.getText();
-		fHomeText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				fNeedsReload = true;
-				fPreferences.setDefault(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(fHomeText.getText()));
-				fTargetRealization.setSelection(fPreferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
-			}
-		});
-
-		fBrowseButton = new Button(target, SWT.PUSH);
-		fBrowseButton.setText(PDEUIMessages.Preferences_TargetPlatformPage_PlatformHome_Button);
-		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		SWTUtil.setButtonDimensionHint(fBrowseButton);
-		fBrowseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleBrowse();
-			}
-		});
-
-		fResetButton = new Button(target, SWT.PUSH);
-		fResetButton.setText(PDEUIMessages.TargetPlatformPreferencePage_reset);
-		fResetButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		SWTUtil.setButtonDimensionHint(fResetButton);
-		fResetButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fHomeText.setText(TargetPlatform.getDefaultLocation());
-				fPluginsTab.handleReload(new ArrayList());
-				resetTargetProfile();
-			}
-		});
-
-		fTargetRealization = new Button(target, SWT.CHECK);
-		fTargetRealization.setText(PDEUIMessages.MainPreferencePage_targetPlatformRealization);
-		fTargetRealization.setSelection(fPreferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
-		fTargetRealization.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, fTargetRealization.getSelection());
-				fNeedsReload = true;
-			}
-		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 4;
-		fTargetRealization.setLayoutData(gd);
-
-		fTabFolder = new TabFolder(target, SWT.NONE);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 4;
-		fTabFolder.setLayoutData(gd);
-
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				createPluginsTab(fTabFolder);
-				createEnvironmentTab(fTabFolder);
-				createArgumentsTab(fTabFolder);
-				createExplicitTab(fTabFolder);
-				createSourceTab(fTabFolder);
-				fTabFolder.setSelection(fIndex);
-			}
-		});
-
-		fTabFolder.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (fTabFolder.getSelectionIndex() == ENVIRONMENT_INDEX) {
-					fEnvironmentTab.updateChoices();
+		fTableViewer.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.character == SWT.DEL) {
+					handleRemove();
 				}
 			}
 		});
-	}
 
-	private void createPluginsTab(TabFolder folder) {
-		Control block = fPluginsTab.createContents(folder);
-		block.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fPluginsTab.initialize();
-
-		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_pluginsTab);
-		tab.setControl(block);
-	}
-
-	private void createEnvironmentTab(TabFolder folder) {
-		fEnvironmentTab = new TargetEnvironmentTab(this);
-		Control block = fEnvironmentTab.createContents(folder);
-
-		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_environmentTab);
-		tab.setControl(block);
-	}
-
-	private void createSourceTab(TabFolder folder) {
-		fSourceTab = new TargetSourceTab(this);
-		Control block = fSourceTab.createContents(folder);
-
-		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_sourceCode);
-		tab.setControl(block);
-	}
-
-	private void createExplicitTab(TabFolder folder) {
-		fImplicitDependenciesTab = new TargetImplicitPluginsTab(this);
-		Control block = fImplicitDependenciesTab.createContents(folder);
-
-		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_implicitTab);
-		tab.setControl(block);
-	}
-
-	private void createArgumentsTab(TabFolder folder) {
-		fArgumentsTab = new JavaArgumentsTab(this);
-		Control block = fArgumentsTab.createControl(folder);
-
-		TabItem tab = new TabItem(folder, SWT.NONE);
-		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_agrumentsTab);
-		tab.setControl(block);
-	}
-
-	String getPlatformPath() {
-		return fHomeText.getText();
-	}
-
-	private void handleBrowse() {
-		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(PDEUIMessages.TargetPlatformPreferencePage_chooseInstall);
-		if (fHomeText.getText().length() > 0)
-			dialog.setFilterPath(fHomeText.getText());
-		String newPath = dialog.open();
-		if (newPath != null && !new Path(fHomeText.getText()).equals(new Path(newPath))) {
-			if (fHomeText.indexOf(newPath) == -1)
-				fHomeText.add(newPath, 0);
-			fHomeText.setText(newPath);
-			fPluginsTab.handleReload(new ArrayList());
-			fNeedsReload = false;
-			resetTargetProfile();
-		}
-	}
-
-	private void loadTargetCombo() {
-		String prefId = null;
-		String pref = fPreferences.getString(ICoreConstants.TARGET_PROFILE);
-		fProfileCombo.add(""); //$NON-NLS-1$
-
-		if (pref.startsWith("${workspace_loc:")) { //$NON-NLS-1$
-			try {
-				pref = pref.substring(16, pref.length() - 1);
-				IFile file = PDEPlugin.getWorkspace().getRoot().getFile(new Path(pref));
-				addWorkspaceTarget(file);
-			} catch (CoreException e) {
-			}
-		} else if (pref.length() > 3) {
-			prefId = pref.substring(3);
-		}
-
-		//load all pre-canned (ie. registered via extension) targets 
-		fElements = PDECore.getDefault().getTargetProfileManager().getSortedTargets();
-		for (int i = 0; i < fElements.length; i++) {
-			String name = fElements[i].getAttribute("name"); //$NON-NLS-1$
-			String id = fElements[i].getAttribute("id"); //$NON-NLS-1$
-			if (fProfileCombo.indexOf(name) == -1)
-				fProfileCombo.add(name);
-			if (id.equals(prefId))
-				fProfileCombo.setText(name);
-		}
-	}
-
-	private void addWorkspaceTarget(IFile file) throws CoreException {
-		// If a saved workspace profile no longer exists in the workspace, skip it.
-		if (file != null && file.exists()) {
-			TargetModel model = new TargetModel();
-			model.load(new BufferedInputStream(file.getContents()), false);
-			String value = model.getTarget().getName();
-			value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			if (fProfileCombo.indexOf(value) == -1)
-				fProfileCombo.add(value, 1); //index 0 for "" (null target)
-			fProfileCombo.setText(value);
-			fContainsWorkspaceProfile = true;
-		}
-	}
-
-	private void handleTargetBrowse() {
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-
-		dialog.setValidator(new FileValidator());
-		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.TargetPlatformPreferencePage_FileSelectionTitle);
-		dialog.setMessage(PDEUIMessages.TargetPlatformPreferencePage_FileSelectionMessage);
-		dialog.addFilter(new FileExtensionFilter("target")); //$NON-NLS-1$
-		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
-		IFile target = getTargetFile();
-		if (target != null)
-			dialog.setInitialSelection(target);
-
-		dialog.create();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.TARGET_SELECTION_DIALOG);
-		if (dialog.open() == Window.OK) {
-			IFile file = (IFile) dialog.getFirstResult();
-			try {
-				addWorkspaceTarget(file);
-				fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
-			} catch (CoreException e) {
-			}
-		}
-	}
-
-	private IFile getTargetFile() {
-		if (!fContainsWorkspaceProfile || !(fProfileCombo.getSelectionIndex() < (fProfileCombo.getItemCount() - fElements.length)))
-			return null;
-		String target = fProfileCombo.getText().trim();
-		if (target.equals("")) //$NON-NLS-1$
-			return null;
-		int beginIndex = target.lastIndexOf('[');
-		target = target.substring(beginIndex + 1, target.length() - 1);
-		IPath targetPath = new Path(target);
-		if (targetPath.segmentCount() < 2)
-			return null;
-		return PDEPlugin.getWorkspace().getRoot().getFile(targetPath);
-	}
-
-	private URL getExternalTargetURL() {
-		int offSet = fProfileCombo.getItemCount() - fElements.length;
-		if (offSet > fProfileCombo.getSelectionIndex())
-			return null;
-		IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
-		String path = elem.getAttribute("definition"); //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
-		return TargetDefinitionManager.getResourceURL(symbolicName, path);
-	}
-
-	private String getTargetDescription() {
-		int offSet = fProfileCombo.getItemCount() - fElements.length;
-		if (offSet > fProfileCombo.getSelectionIndex())
-			return null;
-		IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
-		IConfigurationElement[] children = elem.getChildren("description"); //$NON-NLS-1$
-		if (children.length > 0)
-			return children[0].getValue();
-		return null;
-	}
-
-	public void init(IWorkbench workbench) {
-	}
-
-	private ITargetModel getTargetModel() {
-		InputStream stream = null;
-		try {
-			IFile file = getTargetFile();
-			String desc = null;
-			if (file != null)
-				stream = new BufferedInputStream(file.getContents());
-			if (stream == null) {
-				URL url = getExternalTargetURL();
-				desc = getTargetDescription();
-				if (url != null)
-					stream = new BufferedInputStream(url.openStream());
-			}
-
-			if (stream != null) {
-				ITargetModel model = new TargetModel();
-				model.load(stream, false);
-				if (desc != null)
-					model.getTarget().setDescription(desc);
-				return model;
-			}
-		} catch (CoreException e) {
-		} catch (IOException e) {
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-			}
-		}
-		return null;
-	}
-
-	private void handleLoadTargetProfile() {
-		if (fProfileCombo.getText().equals(""))return; //$NON-NLS-1$	
-		ITargetModel model = getTargetModel();
-		if (model == null) {
-			MessageDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage_notFoundTitle, PDEUIMessages.TargetPlatformPreferencePage_notFoundDescription);
-			return;
-		}
-
-		if (!model.isLoaded()) {
-			MessageDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage_invalidTitle, PDEUIMessages.TargetPlatformPreferencePage_invalidDescription);
-			return;
-		}
-
-		ITarget target = model.getTarget();
-		ILocationInfo info = target.getLocationInfo();
-		String path;
-		if (info == null || info.useDefault()) {
-			path = TargetPlatform.getDefaultLocation();
-		} else {
-			try {
-				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-				path = manager.performStringSubstitution(info.getPath());
-			} catch (CoreException e) {
-				return;
-			}
-		}
-		if (!new Path(path).equals(new Path(fHomeText.getText())) || !areAdditionalLocationsEqual(target)) {
-			fHomeText.setText(path);
-			ArrayList additional = new ArrayList();
-			IAdditionalLocation[] locations = target.getAdditionalDirectories();
-			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-			for (int i = 0; i < locations.length; i++) {
+		// add the targets
+		ITargetPlatformService service = getTargetService();
+		if (service != null) {
+			ITargetHandle[] targets = service.getTargets(null);
+			for (int i = 0; i < targets.length; i++) {
 				try {
-					additional.add(manager.performStringSubstitution(locations[i].getPath()));
+					fTargets.add(targets[i].getTargetDefinition());
 				} catch (CoreException e) {
-					additional.add(locations[i]);
+					setErrorMessage(e.getMessage());
 				}
 			}
-			fPluginsTab.handleReload(additional);
+			fTableViewer.setInput(fTargets);
 		}
 
-		fPluginsTab.loadTargetProfile(target);
-		fEnvironmentTab.loadTargetProfile(target);
-		fArgumentsTab.loadTargetProfile(target);
-		fImplicitDependenciesTab.loadTargetProfile(target);
-		fSourceTab.loadTargetProfile(target);
+		fTableViewer.setComparator(new ViewerComparator() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				String name1 = ((TargetDefinition) e1).getName();
+				String name2 = ((TargetDefinition) e2).getName();
+				if (name1 == null) {
+					return -1;
+				}
+				if (name2 == null) {
+					return 1;
+				}
+				return name1.compareToIgnoreCase(name2);
+			}
+		});
+
+		Composite buttonComposite = SWTFactory.createComposite(tableComposite, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
+
+		fReloadButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_16, null);
+		fReloadButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleReload();
+			}
+		});
+
+		SWTFactory.createVerticalSpacer(buttonComposite, 1);
+
+		fAddButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_3, null);
+		fAddButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleAdd();
+			}
+		});
+
+		fEditButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_5, null);
+		fEditButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleEdit();
+			}
+		});
+
+		fRemoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_7, null);
+		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleRemove();
+			}
+		});
+
+		fMoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_13, null);
+		fMoveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleMove();
+			}
+		});
+
+		updateButtons();
+
+		Group group = SWTFactory.createGroup(comp, PDEUIMessages.TargetPlatformPreferencePage2_25, 1, 1, GridData.FILL_HORIZONTAL);
+		fDetails = new TableViewer(group);
+		fDetails.setLabelProvider(new StyledBundleLabelProvider(true, true));
+		fDetails.setContentProvider(new ArrayContentProvider());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 50;
+		fDetails.getControl().setLayoutData(gd);
+
+		if (service != null) {
+			try {
+				fPrevious = service.getWorkspaceTargetHandle();
+				Iterator iterator = fTargets.iterator();
+				while (iterator.hasNext()) {
+					ITargetDefinition target = (ITargetDefinition) iterator.next();
+					if (target.getHandle().equals(fPrevious)) {
+						fActiveTarget = target;
+						fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
+						fTableViewer.refresh(target);
+						break;
+					}
+				}
+				if (fPrevious != null && !fPrevious.exists()) {
+					setMessage(PDEUIMessages.TargetPlatformPreferencePage2_23, IStatus.WARNING);
+					fWarningComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+					Label warningImage = SWTFactory.createLabel(fWarningComp, "", 1); //$NON-NLS-1$
+					gd = new GridData();
+					gd.verticalAlignment = SWT.TOP;
+					warningImage.setLayoutData(gd);
+					warningImage.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
+					SWTFactory.createWrapLabel(fWarningComp, PDEUIMessages.TargetPlatformPreferencePage2_24, 1);
+					fWarningComp.moveAbove(tableComposite);
+				}
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+				setErrorMessage(PDEUIMessages.TargetPlatformPreferencePage2_23);
+			}
+			if (getMessage() == null && fActiveTarget == null) {
+				setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
+			}
+		}
 	}
 
-	private boolean areAdditionalLocationsEqual(ITarget target) {
-		IAdditionalLocation[] addtionalLocs = target.getAdditionalDirectories();
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		String value = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
-		StringTokenizer tokenzier = new StringTokenizer(value);
-		if (addtionalLocs.length != tokenzier.countTokens())
-			return false;
-		while (tokenzier.hasMoreTokens()) {
-			boolean found = false;
-			String location = tokenzier.nextToken();
-			for (int i = 0; i < addtionalLocs.length; i++) {
-				if (addtionalLocs[i].getPath().equals(location)) {
-					found = true;
+	/**
+	 * Validates the selected definition and sets it as the active platform
+	 */
+	private void handleActivate() {
+		Object[] checked = fTableViewer.getCheckedElements();
+		if (checked.length > 0) {
+			fActiveTarget = (ITargetDefinition) checked[0];
+			setMessage(null);
+			if (fWarningComp != null) {
+				Composite parent = fWarningComp.getParent();
+				fWarningComp.dispose();
+				fWarningComp = null;
+				parent.layout();
+			}
+			fTableViewer.refresh(true);
+			fTableViewer.setSelection(new StructuredSelection(fActiveTarget));
+		} else {
+			setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
+			fActiveTarget = null;
+			fTableViewer.refresh(true);
+		}
+	}
+
+	private void handleReload() {
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		if (!selection.isEmpty()) {
+			isOutOfSynch = false;
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell()) {
+				protected void configureShell(Shell shell) {
+					super.configureShell(shell);
+					shell.setText(PDEUIMessages.TargetPlatformPreferencePage2_12);
+				}
+			};
+			try {
+				dialog.run(true, true, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						if (monitor.isCanceled()) {
+							throw new InterruptedException();
+						}
+						// Resolve the target
+						fActiveTarget.resolve(monitor);
+						if (monitor.isCanceled()) {
+							throw new InterruptedException();
+						}
+					}
+				});
+			} catch (InvocationTargetException e) {
+				PDEPlugin.log(e);
+				setErrorMessage(e.getMessage());
+			} catch (InterruptedException e) {
+				// Do nothing, resolve will happen when user presses ok
+			}
+
+			if (fActiveTarget.isResolved()) {
+				// Check if the bundle resolution has errors
+				IStatus bundleStatus = fActiveTarget.getBundleStatus();
+				if (bundleStatus.getSeverity() == IStatus.ERROR) {
+					ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_14, PDEUIMessages.TargetPlatformPreferencePage2_15, bundleStatus, IStatus.ERROR);
+				}
+
+				// Compare the target to the existing platform
+				try {
+					if (bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious) && ((TargetDefinition) fPrevious.getTargetDefinition()).isContentEquivalent(fActiveTarget)) {
+						IStatus compare = getTargetService().compareWithTargetPlatform(fActiveTarget);
+						if (!compare.isOK()) {
+							MessageDialog.openInformation(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_17, PDEUIMessages.TargetPlatformPreferencePage2_18);
+							isOutOfSynch = true;
+						}
+					}
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+					setErrorMessage(e.getMessage());
+				}
+			}
+			fTableViewer.refresh(true);
+		}
+	}
+
+	/**
+	 * Open the new target platform wizard
+	 */
+	private void handleAdd() {
+		NewTargetDefinitionWizard2 wizard = new NewTargetDefinitionWizard2();
+		wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_4);
+		WizardDialog dialog = new WizardDialog(fAddButton.getShell(), wizard);
+		if (dialog.open() == Window.OK) {
+			ITargetDefinition def = wizard.getTargetDefinition();
+			fTargets.add(def);
+			if (fTargets.size() == 1) {
+				fActiveTarget = def;
+			}
+			fTableViewer.refresh(true);
+			fTableViewer.setSelection(new StructuredSelection(def));
+		}
+	}
+
+	/**
+	 * Opens the selected target for editing
+	 */
+	private void handleEdit() {
+		if (!fTableViewer.getSelection().isEmpty()) {
+			ITargetDefinition original = (ITargetDefinition) ((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
+			EditTargetDefinitionWizard wizard = new EditTargetDefinitionWizard(original, true);
+			wizard.setWindowTitle(PDEUIMessages.TargetPlatformPreferencePage2_6);
+			WizardDialog dialog = new WizardDialog(fEditButton.getShell(), wizard);
+			if (dialog.open() == Window.OK) {
+				// Replace all references to the original with the new target
+				ITargetDefinition newTarget = wizard.getTargetDefinition();
+				int index = fTargets.indexOf(original);
+				fTargets.add(index, newTarget);
+				fTargets.remove(original);
+
+				if (fMoved.containsKey(original)) {
+					Object moveLocation = fMoved.remove(original);
+					fMoved.put(newTarget, moveLocation);
+				}
+
+				if (original == fActiveTarget) {
+					fActiveTarget = newTarget;
+				}
+
+				fTableViewer.refresh(true);
+
+				if (fActiveTarget == newTarget) {
+					fTableViewer.setCheckedElements(new Object[] {newTarget});
+				}
+
+				fTableViewer.setSelection(new StructuredSelection(newTarget));
+			}
+		}
+	}
+
+	/**
+	 * Removes the selected targets
+	 */
+	private void handleRemove() {
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		if (!selection.isEmpty()) {
+			List selected = selection.toList();
+
+			// If we are going to remove a workspace file, prompt to ask the user first
+			boolean isWorkspace = false;
+			for (Iterator iterator = selected.iterator(); iterator.hasNext();) {
+				ITargetDefinition currentTarget = (ITargetDefinition) iterator.next();
+				if (currentTarget.getHandle() instanceof WorkspaceFileTargetHandle) {
+					isWorkspace = true;
 					break;
 				}
 			}
-			if (!found)
-				return false;
-		}
-		return true;
-	}
-
-	public void performDefaults() {
-		fHomeText.setText(TargetPlatform.getDefaultLocation());
-		fTargetRealization.setSelection(true);
-		fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, true);
-		fPluginsTab.handleReload(new ArrayList());
-		fEnvironmentTab.performDefaults();
-		fArgumentsTab.performDefaults();
-		fImplicitDependenciesTab.performDefauls();
-		fSourceTab.performDefaults();
-		resetTargetProfile();
-		super.performDefaults();
-	}
-
-	public boolean performOk() {
-		fPreferences.setDefault(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
-		fPreferences.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, fTargetRealization.getSelection());
-		if (fNeedsReload) {
-			String message = PDEUIMessages.Preferences_TargetPlatformPage_question;
-			if (new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
-				message = PDEUIMessages.Preferences_TargetPlatformPage_targetPlatformRealizationQuestion;
+			if (isWorkspace) {
+				PDEPreferencesManager preferences = new PDEPreferencesManager(IPDEUIConstants.PLUGIN_ID);
+				String choice = preferences.getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET);
+				if (!MessageDialogWithToggle.ALWAYS.equalsIgnoreCase(choice)) {
+					MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_19, PDEUIMessages.TargetPlatformPreferencePage2_20, PDEUIMessages.TargetPlatformPreferencePage2_21, false, PDEPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET);
+					preferences.savePluginPreferences();
+					if (dialog.getReturnCode() != IDialogConstants.YES_ID) {
+						return;
+					}
+				}
 			}
 
-			MessageDialog dialog = new MessageDialog(getShell(), PDEUIMessages.Preferences_TargetPlatformPage_title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 1);
-			if (dialog.open() == 1) {
-				getContainer().updateButtons();
-				return false;
+			if (fActiveTarget != null && selected.contains(fActiveTarget)) {
+				fActiveTarget = null;
+				setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
 			}
-			fPluginsTab.handleReload(new ArrayList());
-			resetTargetProfile();
-
-		}
-		// if performOK is getting run in lieu of performApply, we need update the fOriginalText so if the user changes it back to the first state, we know we need to reload
-		fOriginalText = fHomeText.getText();
-		fEnvironmentTab.performOk();
-		fSourceTab.performOk();
-		fPluginsTab.performOk();
-		fArgumentsTab.performOk();
-		fImplicitDependenciesTab.performOk();
-		saveTarget();
-		// the old page has been use - wipe out current target setting for new pref page
-		fPreferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
-		return super.performOk();
-	}
-
-	private void saveTarget() {
-		if (fProfileCombo.getText().equals("")) //$NON-NLS-1$
-			fPreferences.setValue(ICoreConstants.TARGET_PROFILE, ""); //$NON-NLS-1$ 
-		else if (fContainsWorkspaceProfile && (fProfileCombo.getSelectionIndex() < (fProfileCombo.getItemCount() - fElements.length))) {
-			String value = fProfileCombo.getText().trim();
-			int index = value.lastIndexOf('[');
-			value = value.substring(index + 1, value.length() - 1);
-			fPreferences.setValue(ICoreConstants.TARGET_PROFILE, "${workspace_loc:" + value + "}"); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			int offSet = fProfileCombo.getItemCount() - fElements.length;
-			IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
-			fPreferences.setValue(ICoreConstants.TARGET_PROFILE, "id:" + elem.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
+			fRemoved.addAll(selected);
+			fTargets.removeAll(selected);
+			// Quick hack because the first refresh loses the checkedState, which is being used to bold the active target
+			fTableViewer.refresh(false);
+			fTableViewer.refresh(true);
 		}
 	}
 
-	public String[] getPlatformLocations() {
-		return fHomeText.getItems();
-	}
-
-	public void resetNeedsReload() {
-		fNeedsReload = false;
-		String location = fHomeText.getText();
-		if (fHomeText.indexOf(location) == -1)
-			fHomeText.add(location, 0);
-	}
-
-	public void resetTargetProfile() {
-		fProfileCombo.select(0);
-		fLoadProfileButton.setEnabled(false);
-	}
-
-	public TargetSourceTab getSourceBlock() {
-		return fSourceTab;
-	}
-
-	protected IPluginModelBase[] getCurrentModels() {
-		return fPluginsTab.getCurrentModels();
-	}
-
-	protected PDEState getCurrentState() {
-		return fPluginsTab.getCurrentState();
-	}
-
-	protected String[] getImplicitPlugins() {
-		return fImplicitDependenciesTab.getImplicitPlugins();
-	}
-
-	private void openTargetWizard() {
-		NewTargetDefinitionWizard wizard = new NewTargetDefinitionWizard();
+	/**
+	 * Move the selected target to a workspace location
+	 */
+	private void handleMove() {
+		MoveTargetDefinitionWizard wizard = new MoveTargetDefinitionWizard(fMoved.values());
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-		wizard.setInitialPath(new Path(new String()));
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 450);
 		if (dialog.open() == Window.OK) {
-			IPath filePath = wizard.getFilePath();
-			IFile file = PDEPlugin.getWorkspace().getRoot().getFile(filePath);
-			try {
-				addWorkspaceTarget(file);
-			} catch (CoreException e) {
-			}
+			TableItem ti = fTableViewer.getTable().getItem(fTableViewer.getTable().getSelectionIndex());
+			IPath newTargetLoc = wizard.getTargetFileLocation();
+			IFile file = PDECore.getWorkspace().getRoot().getFile(newTargetLoc);
+			ti.setData(DATA_KEY_MOVED_LOCATION, file.getFullPath().toString());
+			IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+			fMoved.put(selection.getFirstElement(), wizard.getTargetFileLocation());
+			fTableViewer.refresh(true);
 		}
 	}
 
-	protected PDEExtensionRegistry getExtensionRegistry() {
-		return fPluginsTab.getCurrentExtensionRegistry();
+	/**
+	 * Update enabled state of buttons
+	 */
+	protected void updateButtons() {
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		int size = selection.size();
+		fEditButton.setEnabled(size == 1);
+		fRemoveButton.setEnabled(size > 0);
+		//fDuplicateButton.setEnabled(size == 1);
+		if (selection.getFirstElement() != null) {
+			fMoveButton.setEnabled(((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
+			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious));
+		} else {
+			fMoveButton.setEnabled(false);
+			fReloadButton.setEnabled(false);
+		}
 	}
 
+	/**
+	 * Updates the details text box with information about the currently selected target 
+	 */
+	protected void updateDetails() {
+		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
+		if (selection.size() == 1) {
+			fDetails.setInput(((ITargetDefinition) selection.getFirstElement()).getBundleContainers());
+		} else {
+			fDetails.setInput(null);
+		}
+	}
+
+	/**
+	 * Returns the target platform service or <code>null</code> if the service could
+	 * not be acquired.
+	 * 
+	 * @return target platform service or <code>null</code>
+	 */
+	private ITargetPlatformService getTargetService() {
+		return (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
+	public void init(IWorkbench workbench) {
+		// ensures default targets are created when page is opened (if not created yet)
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		manager.getExternalModelManager();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	public void performDefaults() {
+		// add a default target platform and select it (or just select it if present)
+		ITargetPlatformService service = getTargetService();
+		if (service instanceof TargetPlatformService) {
+			TargetPlatformService ts = (TargetPlatformService) service;
+			ITargetDefinition deflt = ts.newDefaultTargetDefinition();
+			Iterator iterator = fTargets.iterator();
+			ITargetDefinition reuse = null;
+			while (iterator.hasNext()) {
+				TargetDefinition existing = (TargetDefinition) iterator.next();
+				if (existing.isContentEquivalent(deflt)) {
+					reuse = existing;
+					break;
+				}
+			}
+			if (reuse != null) {
+				deflt = reuse;
+			} else {
+				fTargets.add(deflt);
+				fTableViewer.refresh(false);
+			}
+			fActiveTarget = deflt;
+			fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
+			fTableViewer.refresh(true);
+		}
+		super.performDefaults();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		ITargetPlatformService service = getTargetService();
+		if (service == null) {
+			return false;
+		}
+
+		// determine if default target has changed
+		ITargetDefinition toLoad = null;
+		boolean load = false;
+		try {
+			ITargetHandle activeHandle = null;
+			if (fActiveTarget != null) {
+				activeHandle = fActiveTarget.getHandle();
+			}
+			if (fPrevious == null) {
+				if (activeHandle != null) {
+					toLoad = fActiveTarget;
+					load = true;
+				}
+			} else {
+				if (activeHandle == null) {
+					// load empty
+					load = true;
+				} else if (!fPrevious.equals(activeHandle) || isOutOfSynch) {
+					toLoad = fActiveTarget;
+					load = true;
+				} else {
+					ITargetDefinition original = fPrevious.getTargetDefinition();
+					// TODO: should just check for structural changes
+					if (((TargetDefinition) original).isContentEquivalent(fActiveTarget)) {
+						load = false;
+					} else {
+						load = true;
+						toLoad = fActiveTarget;
+					}
+				}
+			}
+		} catch (CoreException e) {
+			ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_8, PDEUIMessages.TargetPlatformPreferencePage2_9, e.getStatus());
+			return false;
+		}
+
+		// Move the marked definitions to workspace
+		if (fMoved.size() > 0) {
+			Iterator iterator = fMoved.keySet().iterator();
+			while (iterator.hasNext()) {
+				try {
+					ITargetDefinition target = (ITargetDefinition) iterator.next();
+					//IPath path = Path.fromPortableString((String) fMoved.get(target));
+					IFile targetFile = PDECore.getWorkspace().getRoot().getFile((IPath) fMoved.get(target));
+
+					WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);
+					ITargetDefinition newTarget = service.newTarget();
+					service.copyTargetDefinition(target, newTarget);
+					wrkspcTargetHandle.save(newTarget);
+					fRemoved.add(target);
+					fTargets.remove(target);
+					ITargetDefinition workspaceTarget = wrkspcTargetHandle.getTargetDefinition();
+					fTargets.add(workspaceTarget);
+					fTableViewer.refresh(false);
+					if (target == fActiveTarget) {
+						load = true;
+						toLoad = workspaceTarget;
+					}
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
+			}
+		}
+
+		// Remove any definitions that have been removed
+		Iterator iterator = fRemoved.iterator();
+		while (iterator.hasNext()) {
+			ITargetDefinition target = (ITargetDefinition) iterator.next();
+			try {
+				service.deleteTarget(target.getHandle());
+			} catch (CoreException e) {
+				ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_8, PDEUIMessages.TargetPlatformPreferencePage2_11, e.getStatus());
+				return false;
+			}
+		}
+		// save others that are dirty
+		iterator = fTargets.iterator();
+		while (iterator.hasNext()) {
+			ITargetDefinition def = (ITargetDefinition) iterator.next();
+			boolean save = true;
+			if (def.getHandle().exists()) {
+				try {
+					ITargetDefinition original = def.getHandle().getTargetDefinition();
+					if (((TargetDefinition) original).isContentEqual(def)) {
+						save = false;
+					}
+				} catch (CoreException e) {
+					// failed to generate original
+					setErrorMessage(e.getMessage());
+					return false;
+				}
+			}
+			if (save) {
+				try {
+					service.saveTargetDefinition(def);
+				} catch (CoreException e) {
+					setErrorMessage(e.getMessage());
+					return false;
+				}
+			}
+		}
+
+		// set workspace target if required
+		if (load) {
+			LoadTargetDefinitionJob.load(toLoad);
+			fPrevious = toLoad == null ? null : toLoad.getHandle();
+		}
+
+		fMoved.clear();
+		boolean gc = !fRemoved.isEmpty();
+		fRemoved.clear();
+		if (toLoad != null) {
+			fActiveTarget = toLoad;
+		}
+		fTableViewer.refresh(true);
+		updateButtons();
+		// start job to do GC
+		if (gc) {
+			final TargetPlatformService finalService = (TargetPlatformService) service;
+			Job job = new Job(PDEUIMessages.TargetPlatformPreferencePage2_26) {
+				protected IStatus run(IProgressMonitor monitor) {
+					monitor.beginTask(PDEUIMessages.TargetPlatformPreferencePage2_27, IProgressMonitor.UNKNOWN);
+					finalService.garbageCollect();
+					monitor.done();
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+		}
+		return super.performOk();
+	}
 }
