@@ -666,6 +666,7 @@ public class PublishingTests extends P2TestCase {
 
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
 		Utils.generateFeature(buildFolder, "f", new String[] {"org.eclipse.rcp"}, new String[] {"p"});
+		Utils.writeBuffer(buildFolder.getFile("features/f/p2.inf"), new StringBuffer("properties.1.name=org.eclipse.equinox.p2.type.group\nproperties.1.value=false\n"));
 		Utils.writeBuffer(f.getFile("about.html"), new StringBuffer("about!\n"));
 		Properties properties = new Properties();
 		properties.put("bin.includes", "about.html, feature.xml");
@@ -698,6 +699,10 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString());
 		assertNotNull(repository);
 
+		//bug 274703
+		IInstallableUnit iu = getIU(repository, "f.feature.group");
+		assertFalse(Boolean.valueOf(iu.getProperty("org.eclipse.equinox.p2.type.group")).booleanValue());
+		
 		File buildFile = buildFolder.getLocation().toFile();
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/p_1.0.0.jar"), true);
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/features/f_1.0.0.jar"), true);
@@ -706,7 +711,7 @@ public class PublishingTests extends P2TestCase {
 		entries.add("META-INF/PDE_BUIL.SF");
 		entries.add("META-INF/PDE_BUIL.DSA");
 
-		IInstallableUnit iu = getIU(repository, "com.ibm.icu");
+		iu = getIU(repository, "com.ibm.icu");
 		assertNotNull(iu);
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/com.ibm.icu_" + iu.getVersion() + ".jar", entries);
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/com.ibm.icu_" + iu.getVersion() + ".jar"));
