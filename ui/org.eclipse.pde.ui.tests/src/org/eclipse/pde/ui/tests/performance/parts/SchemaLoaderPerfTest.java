@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,8 @@ package org.eclipse.pde.ui.tests.performance.parts;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
-import org.eclipse.test.performance.Dimension;
 
 /**
  * SchemaLoaderPerfTest
@@ -52,7 +50,6 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 		fTestIterations = 5;
 		fWarmupIterations = 50;
 		fRuns = 3000;
-		tagAsSummary("Loading " + fTestIterations + " large schemas", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun();
 	}
 

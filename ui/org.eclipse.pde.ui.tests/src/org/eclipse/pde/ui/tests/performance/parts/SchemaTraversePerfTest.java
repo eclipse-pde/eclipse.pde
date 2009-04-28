@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,12 @@
 package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.InputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.schema.EditableSchema;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
-import org.eclipse.test.performance.Dimension;
 
 /**
  * SchemaLoaderPerfTest
@@ -48,7 +45,6 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 	 * @throws Exception
 	 */
 	public void testSchemaTraverse() throws Exception {
-		tagAsSummary("Show hover info in manifest editor", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun();
 	}
 
