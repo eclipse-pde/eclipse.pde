@@ -207,13 +207,16 @@ public class BundleLauncherHelper {
 			buffer.append(model.getPluginBase().getVersion());
 		}
 
-		if (startLevel != null || autoStart != null)
+		boolean hasStartLevel = (startLevel != null && startLevel.length() > 0);
+		boolean hasAutoStart = (autoStart != null && autoStart.length() > 0);
+
+		if (hasStartLevel || hasAutoStart)
 			buffer.append('@');
-		if (startLevel != null)
+		if (hasStartLevel)
 			buffer.append(startLevel);
-		if (startLevel != null && autoStart != null)
+		if (hasStartLevel || hasAutoStart)
 			buffer.append(':');
-		if (autoStart != null)
+		if (hasAutoStart)
 			buffer.append(autoStart);
 		return buffer.toString();
 	}
