@@ -381,7 +381,9 @@ public class LaunchConfigurationHelper {
 		StringBuffer buffer = new StringBuffer();
 		int index = startData.indexOf(':');
 		String level = index > 0 ? startData.substring(0, index) : "default"; //$NON-NLS-1$
-		String auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
+		String auto = startData;
+		if (!startData.equals("start")) //$NON-NLS-1$
+			auto = index > 0 && index < startData.length() - 1 ? startData.substring(index + 1) : "default"; //$NON-NLS-1$
 		if ("default".equals(auto)) //$NON-NLS-1$
 			auto = Boolean.toString(defaultAuto);
 		if (!level.equals("default") || "true".equals(auto) || "start".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

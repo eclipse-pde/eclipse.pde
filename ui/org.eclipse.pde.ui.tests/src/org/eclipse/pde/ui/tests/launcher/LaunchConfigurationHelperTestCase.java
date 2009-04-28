@@ -31,6 +31,9 @@ public class LaunchConfigurationHelperTestCase extends TestCase {
 		assertEquals(LaunchConfigurationHelper.getStartData("1:start", false), "@1:start");
 		assertEquals(LaunchConfigurationHelper.getStartData("1:true", true), "@1:start");
 		assertEquals(LaunchConfigurationHelper.getStartData("1:start", true), "@1:start");
+		assertEquals(LaunchConfigurationHelper.getStartData("1:start", true), "@1:start");
+		assertEquals(LaunchConfigurationHelper.getStartData("start", false), "@start");
+		assertEquals(LaunchConfigurationHelper.getStartData("start", true), "@start");
 	}
 
 }
