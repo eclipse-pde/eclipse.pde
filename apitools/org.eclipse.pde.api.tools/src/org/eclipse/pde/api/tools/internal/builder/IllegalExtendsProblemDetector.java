@@ -195,7 +195,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 				return defaultSourcePosition(type, reference);
 			}
 			String name = getSimpleTypeName(reference.getResolvedReference());
-			Position pos = getMethodNameRange(name, doc, reference);
+			Position pos = getMethodNameRange(true, name, doc, reference);
 			if(pos == null) {
 				return defaultSourcePosition(type, reference);
 			}

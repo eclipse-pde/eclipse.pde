@@ -308,12 +308,13 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				if (reference.getLineNumber() >= 0) {
 					String referenceMemberName = reference.getReferencedMemberName();
 					String methodName = null;
-					if (Util.isConstructor(referenceMemberName)) {
+					boolean isConstructor = Util.isConstructor(referenceMemberName);
+					if (isConstructor) {
 						methodName = Signatures.getSimpleTypeName(reference.getReferencedTypeName().replace('$', '.'));
 					} else {
 						methodName = referenceMemberName;
 					}
-					Position pos = getMethodNameRange(methodName, document, reference);
+					Position pos = getMethodNameRange(isConstructor, methodName, document, reference);
 					if(pos == null) {
 						return defaultSourcePosition(type, reference);
 					}

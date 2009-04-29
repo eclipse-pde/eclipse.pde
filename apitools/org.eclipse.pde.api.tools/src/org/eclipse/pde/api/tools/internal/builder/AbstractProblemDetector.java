@@ -573,7 +573,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return method name range
 	 * @throws CoreException
 	 */
-	protected Position getMethodNameRange(String name, IDocument document, IReference reference) throws CoreException, BadLocationException {
+	protected Position getMethodNameRange(boolean isContructor, String name, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		int linenumber = reference.getLineNumber();
 		if (linenumber > 0) {
 			linenumber--;
@@ -591,8 +591,13 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		String line = document.get(offset, document.getLineLength(linenumber));
 		int start = line.indexOf('=');
 		if(start < 0) {
-			start = line.indexOf("new"); //$NON-NLS-1$
-			if(start < 0) {
+			if (isContructor) {
+				// new keyword should only be checked if the method is a constructor
+				start = line.indexOf("new"); //$NON-NLS-1$
+				if(start < 0) {
+					start = 0;
+				}
+			} else {
 				start = 0;
 			}
 		}

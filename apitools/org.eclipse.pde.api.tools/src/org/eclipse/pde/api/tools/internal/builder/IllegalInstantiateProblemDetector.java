@@ -39,7 +39,7 @@ public class IllegalInstantiateProblemDetector extends AbstractIllegalTypeRefere
 	 */
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		String name = getSimpleTypeName(reference.getResolvedReference());
-		Position pos = getMethodNameRange(name, document, reference);
+		Position pos = getMethodNameRange(true, name, document, reference);
 		if(pos == null) {
 			return defaultSourcePosition(type, reference);
 		}
