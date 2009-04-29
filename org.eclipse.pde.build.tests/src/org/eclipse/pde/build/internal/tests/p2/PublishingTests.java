@@ -41,8 +41,8 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("PublishBundle_simple");
 
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
-		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); }"));
-		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { int i = 0; }"));
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.c.d.B; public class A { B b = new B(); }"));
+		Utils.writeBuffer(bundle.getFile("src/b/c/d/B.java"), new StringBuffer("package b.c.d; public class B { int i = 0; }"));
 		Utils.writeBuffer(bundle.getFile("about.txt"), new StringBuffer("All about bundle."));
 		Utils.writeBuffer(bundle.getFile("META-INF/p2.inf"), new StringBuffer("instructions.install=myRandomAction(foo: bar);"));
 		Properties properties = new Properties();
@@ -75,7 +75,10 @@ public class PublishingTests extends P2TestCase {
 		HashSet contents = new HashSet();
 		contents.add("about.txt");
 		contents.add("A.class");
-		contents.add("b/B.class");
+		contents.add("b/");
+		contents.add("b/c/");
+		contents.add("b/c/d/");
+		contents.add("b/c/d/B.class");
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
 
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
@@ -292,9 +295,13 @@ public class PublishingTests extends P2TestCase {
 		entries.add("about_files/about_cairo.html");
 		entries.add("about_files/mpl-v11.txt");
 		entries.add("about_files/pixman-licenses.txt");
+		entries.add("about_files/");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.gtk.linux.x86_" + version, entries);
 
+		entries.add("Eclipse.app/");
+		entries.add("Eclipse.app/Contents/");
 		entries.add("Eclipse.app/Contents/Info.plist");
+		entries.add("Eclipse.app/Contents/MacOS/");
 		entries.add("Eclipse.app/Contents/MacOS/eclipse.ini");
 		entries.add("Eclipse.app/Contents/MacOS/launcher");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.carbon.macosx.ppc_" + version, entries);
