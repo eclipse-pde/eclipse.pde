@@ -60,6 +60,7 @@ public class MarkerMessages extends NLS {
 	public static String SinceTagResolution_invalid2;
 
 	public static String UnsupportedTagResolution_remove_unsupported_tag;
+	public static String UnsupportedTagResolution_remove_unsupported_tags;
 	public static String UpdateSinceTagOperation_title;
 
 	public static String VersionNumberingResolution_major0;

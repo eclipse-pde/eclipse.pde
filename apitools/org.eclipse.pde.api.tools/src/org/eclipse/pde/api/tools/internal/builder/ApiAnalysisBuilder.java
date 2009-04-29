@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -208,7 +207,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (DEBUG) {
 			System.out.println("\nStarting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		updateMonitor(monitor, 0);
+		Util.updateMonitor(monitor, 0);
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);
 		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		if (wbaseline == null) {
@@ -277,7 +276,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 				}	
 			}
-			updateMonitor(monitor, 0);
+			Util.updateMonitor(monitor, 0);
 		} catch(CoreException e) {
 			IStatus status = e.getStatus();
 			if (status == null || status.getCode() != ApiPlugin.REPORT_BASELINE_IS_DISPOSED) {
@@ -285,7 +284,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			ApiPlugin.log(e);
 		} finally {
-			updateMonitor(monitor, 0);
+			Util.updateMonitor(monitor, 0);
 			if(this.analyzer != null) {
 				this.analyzer.dispose();
 				this.analyzer = null;
@@ -297,7 +296,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					baseline.close();
 				}
 			}
-			updateMonitor(monitor, 0);
+			Util.updateMonitor(monitor, 0);
 			if (this.buildstate != null) {
 				for(int i = 0, max = projects.length; i < max; i++) {
 					IProject project = projects[i];
@@ -307,7 +306,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 				BuildState.saveBuiltState(this.currentproject, this.buildstate);
 				this.buildstate = null;
-				updateMonitor(monitor, 0);
+				Util.updateMonitor(monitor, 0);
 			}
 			if(monitor != null) {
 				monitor.done();
@@ -356,15 +355,15 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
 				localMonitor.subTask(BuilderMessages.building_workspace_profile);
-				updateMonitor(localMonitor, 1);
+				Util.updateMonitor(localMonitor, 1);
 				String id = currentModel.getBundleDescription().getSymbolicName();
 				// Compatibility checks
 				IApiComponent apiComponent = wbaseline.getApiComponent(id);
 				if(apiComponent != null) {
 					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.newChild(1));
-					updateMonitor(localMonitor, 1);
+					Util.updateMonitor(localMonitor, 1);
 					createMarkers();
-					updateMonitor(localMonitor, 1);
+					Util.updateMonitor(localMonitor, 1);
 				}
 			}
 		}
@@ -549,22 +548,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		return buff.toString();
 	}
 	
-	/**
-	 * Updates the given monitor with the given tick count and polls for cancellation. If the monitor
-	 * is cancelled an {@link OperationCanceledException} is thrown
-	 * @param monitor
-	 * @param ticks
-	 * @throws OperationCanceledException
-	 */
-	void updateMonitor(IProgressMonitor monitor, int ticks) throws OperationCanceledException {
-		if(monitor != null) {
-			monitor.worked(ticks);
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -577,10 +560,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			cleanupCompatibilityMarkers(this.currentproject);
 			cleanupUnsupportedTagMarkers(this.currentproject);
 			this.currentproject.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-			updateMonitor(localmonitor, 1);
+			Util.updateMonitor(localmonitor, 1);
 			//clean up the .api_settings
 			cleanupApiDescription(this.currentproject);
-			updateMonitor(localmonitor, 1);
+			Util.updateMonitor(localmonitor, 1);
 		}
 		finally {
 			BuildState.setLastBuiltState(this.currentproject, null);

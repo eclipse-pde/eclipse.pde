@@ -172,9 +172,9 @@ public class IncrementalApiBuilder {
 		try {
 			SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
 			collectAffectedSourceFiles(project, state);
-			this.builder.updateMonitor(localmonitor, 1);
+			Util.updateMonitor(localmonitor, 1);
 			localmonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, project.getName()));
-			this.builder.updateMonitor(localmonitor, 0);
+			Util.updateMonitor(localmonitor, 0);
 			if (this.context.hasTypes()) {
 				IPluginModelBase currentModel = this.builder.getCurrentModel();
 				if (currentModel != null) {
@@ -184,7 +184,7 @@ public class IncrementalApiBuilder {
 						return;
 					}
 					extClean(project, buildstate, localmonitor.newChild(1));
-					this.builder.updateMonitor(localmonitor, 1);
+					Util.updateMonitor(localmonitor, 1);
 					this.builder.getAnalyzer().analyzeComponent(buildstate, 
 							null, 
 							null, 
@@ -192,9 +192,9 @@ public class IncrementalApiBuilder {
 							comp, 
 							this.context, 
 							localmonitor.newChild(1));
-					this.builder.updateMonitor(localmonitor, 1);
+					Util.updateMonitor(localmonitor, 1);
 					this.builder.createMarkers();
-					this.builder.updateMonitor(localmonitor, 1);
+					Util.updateMonitor(localmonitor, 1);
 				}
 			}
 		}
@@ -376,7 +376,7 @@ public class IncrementalApiBuilder {
 		for (int i = 0; i < types.length; i++) {
 			state.cleanup(types[i]);
 		}
-		this.builder.updateMonitor(monitor, 0);
+		Util.updateMonitor(monitor, 0);
 		IResource resource = project.findMember(ApiAnalysisBuilder.MANIFEST_PATH);
 		if (resource != null) {
 			try {
@@ -390,7 +390,7 @@ public class IncrementalApiBuilder {
 						markers[i].delete();
 					}
 				}
-				this.builder.updateMonitor(monitor, 0);
+				Util.updateMonitor(monitor, 0);
 				//TODO we should find a way to cache markers to type names, that way to get all
 				//the manifest markers for a given type name is time of O(1)
 				markers = resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
@@ -400,7 +400,7 @@ public class IncrementalApiBuilder {
 						markers[i].delete();
 					}
 				}
-				this.builder.updateMonitor(monitor, 0);
+				Util.updateMonitor(monitor, 0);
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			}
