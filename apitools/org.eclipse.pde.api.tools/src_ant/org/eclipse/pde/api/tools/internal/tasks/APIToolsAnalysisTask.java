@@ -600,7 +600,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getId();
 				visitedApiComponentNames.add(name);
-				if (apiComponent.isSystemComponent()) continue;
+				if (apiComponent.isSystemComponent()) {
+					continue;
+				}
 				if (!Util.isApiToolsComponent(apiComponent)) {
 					allNonApiBundles.add(name);
 					continue;
