@@ -204,15 +204,7 @@ public class TargetContentsGroup extends FilteredTree {
 		}
 
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTree = new CheckboxTreeViewer(tree)/* {
-															public void refresh(boolean updateLabels) {
-																super.refresh(updateLabels);
-																if (updateLabels) {
-																	// We want to update the labels and buttons as users change the filtering
-																	updateButtons();
-																}
-															}
-														}*/;
+		fTree = new CheckboxTreeViewer(tree);
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new TreeContentProvider());
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
