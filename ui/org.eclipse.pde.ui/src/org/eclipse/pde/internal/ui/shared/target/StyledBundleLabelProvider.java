@@ -15,6 +15,7 @@ import java.net.URI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.target.*;
@@ -134,7 +135,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			appendIncludedBundles(styledString, container);
 		} else if (element instanceof IInstallableUnit) {
 			IInstallableUnit iu = (IInstallableUnit) element;
-			String name = iu.getProperty(IInstallableUnit.PROP_NAME);
+			String name = IUPropertyUtils.getIUProperty(iu, IInstallableUnit.PROP_NAME);
 			if (name == null) {
 				name = iu.getId();
 			}
