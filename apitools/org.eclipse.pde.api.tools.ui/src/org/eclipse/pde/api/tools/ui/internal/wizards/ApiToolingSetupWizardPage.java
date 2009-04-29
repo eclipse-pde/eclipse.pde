@@ -313,15 +313,22 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		for(int i = 0; i < projects.length; i++) {
 			try {
 				IProject project = projects[i];
-				if((project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature")) //$NON-NLS-1$
-							&& !project.hasNature(ApiPlugin.NATURE_ID)
-							&& !Util.isBinaryProject(project)) {
+				if(acceptProject(project)) {
 					pjs.add(project);
 				}
 			}
 			catch(CoreException ce) {}
 		}
 		return (IProject[]) pjs.toArray(new IProject[pjs.size()]);
+	}
+	
+	private boolean acceptProject(IProject project) throws CoreException {
+		if(project == null) {
+			return false;
+		}
+		return (project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature")) //$NON-NLS-1$
+			&& !project.hasNature(ApiPlugin.NATURE_ID)
+			&& !Util.isBinaryProject(project);
 	}
 	
 	/**
@@ -346,9 +353,12 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 									if(jps[i] instanceof IAdaptable) {
 										IAdaptable adapt = (IAdaptable) jps[i];
 										IProject pj = (IProject) adapt.getAdapter(IProject.class);
-										if(pj != null && !Util.isApiProject(pj)) {
-											pjs.add(pj);
+										try {
+											if(acceptProject(pj)) {
+												pjs.add(pj);
+											}
 										}
+										catch(CoreException ce){}
 									}
 								}
 								return pjs.toArray();
