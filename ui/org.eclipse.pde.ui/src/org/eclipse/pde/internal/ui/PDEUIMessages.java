@@ -28,8 +28,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddLibraryDialog_nospaces;
 
-	public static String AddTargetPluginsWizard_windowTitle;
-
 	public static String BaseExtensionPointMainPage_errorMsgPluginNotFound;
 
 	public static String BuildSiteJob_name;
@@ -43,8 +41,6 @@ public class PDEUIMessages extends NLS {
 	public static String ContentSection_0;
 
 	public static String ContentSection_1;
-
-	public static String ContentSection_includeOptional;
 
 	public static String DefinitionPage_0;
 
@@ -70,7 +66,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureEditor_exportTooltip;
 
-	public static String JavaArgumentsTab_appendLauncherIni;
 	public static String JavaArgumentsTab_addVMArgs;
 
 	public static String OrganizeManifestsProcessor_invalidParam;
@@ -151,21 +146,12 @@ public class PDEUIMessages extends NLS {
 	public static String ContainerRenameParticipant_renameFolders;
 	public static String ContainerRenameParticipant_renameBundleId;
 
-	public static String ContentSection_addDialogButtonLabel;
-
 	public static String ControlValidationUtility_errorMsgFilterInvalidSyntax;
 	public static String ControlValidationUtility_errorMsgKeyNotFound;
 	public static String ControlValidationUtility_errorMsgNotOnClasspath;
 	public static String ControlValidationUtility_errorMsgPluginUnresolved;
 	public static String ControlValidationUtility_errorMsgValueMustBeSpecified;
 	public static String ControlValidationUtility_errorMsgValueNotExternalized;
-
-	public static String DirectorySelectionPage_add;
-	public static String DirectorySelectionPage_description;
-	public static String DirectorySelectionPage_label;
-	public static String DirectorySelectionPage_message;
-	public static String DirectorySelectionPage_remove;
-	public static String DirectorySelectionPage_title;
 
 	public static String CalculateUsesAction_jobName;
 
@@ -335,8 +321,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String StateViewPage_suppliedByJRE;
 
-	public static String TargetContentPage_title;
-
 	public static String TargetCreationPage_0;
 
 	public static String TargetCreationPage_1;
@@ -346,8 +330,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetCreationPage_3;
 
 	public static String TargetCreationPage_4;
-
-	public static String TargetCreationPage_5;
 
 	public static String TargetCreationPage_6;
 
@@ -362,8 +344,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionsPage_sortAlpha;
 
 	public static String FileRenameParticipant_renameFiles;
-
-	public static String FileSystemProvisionerWizard_title;
 
 	public static String FormatManifestAction_actionText;
 
@@ -396,8 +376,6 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_updateStale;
 	public static String MainPreferencePage_targetDefinitionsGroup;
 
-	public static String MainPreferencePage_targetPlatformRealization;
-
 	public static String ManifestStructureCreator_errorMessage;
 
 	public static String MissingResourcePage_missingResource;
@@ -427,14 +405,6 @@ public class PDEUIMessages extends NLS {
 	public static String PDEFormPage_titleMessage;
 
 	public static String PDESourcePage_actionTextQuickOutline;
-
-	public static String ProvisionerListSelectionPage_description;
-
-	public static String ProvisionerListSelectionPage_pageName;
-
-	public static String ProvisionerListSelectionPage_tableLabel;
-
-	public static String ProvisionerListSelectionPage_title;
 
 	public static String QuickOutlinePopupDialog_infoTextPressEscToExit;
 
@@ -483,8 +453,6 @@ public class PDEUIMessages extends NLS {
 	public static String ShowDescriptionAction_schemaNotAvail;
 
 	public static String TableSection_itemCount;
-
-	public static String TargetPluginsTab_add;
 
 	public static String UpdateClasspathResolution_label;
 
@@ -546,11 +514,6 @@ public class PDEUIMessages extends NLS {
 	public static String WizardCheckboxTablePart_selectAll;
 	public static String WizardCheckboxTablePart_deselectAll;
 	public static String WizardCheckboxTablePart_counter;
-
-	// Editors #######################################
-
-	// Source ##################################
-	public static String SourcePage_errorMessage;
 
 	// Outline #################################
 	public static String ToggleLinkWithEditorAction_label;
@@ -976,16 +939,6 @@ public class PDEUIMessages extends NLS {
 	public static String Preferences_MainPage_useIds;
 	public static String Preferences_MainPage_useFullNames;
 
-	public static String Preferences_TargetPlatformPage_Description;
-	public static String Preferences_TargetPlatformPage_PlatformHome;
-	public static String Preferences_TargetPlatformPage_PlatformHome_Button;
-	public static String Preferences_TargetPlatformPage_title;
-	public static String Preferences_TargetPlatformPage_question;
-	public static String Preferences_TargetPlatformPage_targetPlatformRealizationQuestion;
-	public static String ExternalPluginsBlock_reload;
-	public static String ExternalPluginsBlock_addRequired;
-	public static String ExternalPluginsBlock_workingSet;
-
 	public static String Preferences_TargetEnvironmentPage_os;
 	public static String Preferences_TargetEnvironmentPage_ws;
 	public static String Preferences_TargetEnvironmentPage_nl;
@@ -993,11 +946,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SourceBlock_add;
 	public static String SourceBlock_remove;
-	public static String SourceBlock_target;
-	public static String SourceBlock_additional;
-	public static String SourceBlock_desc;
-
-	//
 
 	// Wizards #######################################
 	public static String NewFragmentProjectWizard_title;
@@ -1442,7 +1390,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExtensionPointMainPage_since;
 	public static String BaseExtensionPointMainPage_schemaLocation_title;
 	public static String BaseExtensionPointMainPage_schemaLocation_desc;
-	public static String SourcePreferencePage_dialogMessage;
 	public static String EditorPreferencePage_colorSettings;
 	public static String EditorPreferencePage_text;
 	public static String EditorPreferencePage_proc;
@@ -1806,11 +1753,6 @@ public class PDEUIMessages extends NLS {
 	public static String ApplicationSelectionDialog_dtitle;
 	public static String ApplicationSelectionDialog_rtitle;
 
-	public static String TargetPlatformPreferencePage_pluginsTab;
-	public static String TargetPlatformPreferencePage_sourceCode;
-	public static String TargetPlatformPreferencePage_environmentTab;
-	public static String EnvironmentBlock_jreGroup;
-	public static String EnvironmentBlock_jreNote;
 	public static String EnvironmentBlock_targetEnv;
 
 	//Product Editor#####################
@@ -2441,8 +2383,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ArgumentsSection_allPlatforms;
 
-	public static String TargetPlatformPreferencePage_agrumentsTab;
-
 	public static String JavaArgumentsTab_progamArgsGroup;
 
 	public static String JavaArgumentsTab_programVariables;
@@ -2499,8 +2439,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ArgumentsSection_description;
 
-	public static String ArgumentsSection_argumentsTextLabel;
-
 	public static String ArgumentsSection_variableButtonTitle;
 
 	public static String ArgumentsSection_argumentsButtonTitle;
@@ -2524,48 +2462,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetDefinitionEnvironmentPage_4;
 
 	public static String TargetDefinitionEnvironmentPage_5;
-
-	public static String TargetDefinitionSection_title;
-
-	public static String TargetDefinitionSection_name;
-
-	public static String TargetDefinitionSection_targetLocation;
-
-	public static String TargetDefinitionSection_sameAsHost;
-
-	public static String TargetDefinitionSection_location;
-
-	public static String TargetDefinitionSection_fileSystem;
-
-	public static String TargetDefinitionSection_variables;
-
-	public static String ContentSection_plugins;
-
-	public static String ContentSection_features;
-
-	public static String ContentSection_add;
-
-	public static String ContentSection_remove;
-
-	public static String ContentSection_removeAll;
-
-	public static String ContentSection_workingSet;
-
-	public static String ContentSection_required;
-
-	public static String ContentSection_allTarget;
-
-	public static String ContentSection_selectedOnly;
-
-	public static String ContentSection_targetContent;
-
-	public static String ContentSection_targetContentDesc;
-
-	public static String ContentSection_open;
-
-	public static String TargetOutlinePage_plugins;
-
-	public static String TargetOutlinePage_features;
 
 	public static String EditorUtilities_noImageData;
 
@@ -2605,18 +2501,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String EditorUtilities_incorrectImageDepth;
 
-	public static String TargetPlatformPreferencePage_TargetGroupTitle;
-
-	public static String TargetPlatformPreferencePage_CurrentProfileLabel;
-
-	public static String TargetPlatformPreferencePage_BrowseButton;
-
-	public static String TargetPlatformPreferencePage_ApplyButton;
-
-	public static String TargetPlatformPreferencePage_FileSelectionTitle;
-
-	public static String TargetPlatformPreferencePage_FileSelectionMessage;
-
 	public static String ImplicitDependenciesSection_0;
 
 	public static String ImplicitDependenicesSection_Add;
@@ -2631,80 +2515,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetImplicitPluginsTab_removeAll3;
 
-	public static String TargetPluginsTab_enableAll;
-	public static String TargetPluginsTab_enableSelected;
-	public static String TargetPluginsTab_disableAll;
-	public static String TargetPluginsTab_disableSelected;
-	public static String TargetPluginsTab_readingPlatform;
-	public static String TargetPluginsTab_newerTargetPlatform;
-
-	public static String TargetPlatformPreferencePage_implicitTab;
-
 	public static String ProductExportWizard_syncTitle;
 
 	public static String ProductExportWizardPage_exportOptionsGroup;
-
-	public static String OpenTargetProfileAction_title;
-
-	public static String OpenTargetProfileAction_missingProfile;
-
-	public static String OpenTargetProfileAction_invalidProfile;
-
-	public static String TargetProfileWindow_title;
-
-	public static String TargetProfileWindow_definition;
-
-	public static String TargetProfileWindow_plugins;
-
-	public static String TargetProfileWindow_features;
-
-	public static String TargetProfileWindow_environment;
-
-	public static String TargetProfileWindow_launching;
-
-	public static String TargetProfileWindow_implicit;
-
-	public static String TargetProfileWindow_jre;
-
-	public static String TargetProfileWindow_program;
-
-	public static String TargetProfileWindow_vm;
-
-	public static String TargetPluginsTab_groupPlugins;
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
 
 	public static String PluginsView_description;
 
-	public static String TargetProfileWindow_additionalLocations;
-
-	public static String LocationDialog_fileSystem;
-
-	public static String LocationDialog_variables;
-
-	public static String LocationDialog_locationExists;
-
-	public static String LocationDialog_emptyPath;
-
-	public static String LocationsSection_add;
-
-	public static String LocationsSection_edit;
-
-	public static String LocationsSection_remove;
-
-	public static String LocationsSection_title;
-
-	public static String LocationsSection_description;
-
-	public static String LocationDialog_title;
-
-	public static String LocationDialog_path;
-
 	public static String LocationSection_0;
-
-	public static String TargetPlatformPreferencePage_reset;
-
-	public static String TargetPlatformPreferencePage_chooseInstall;
 
 	public static String PointSelectionPage_newDepFound;
 
@@ -2768,21 +2587,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsWizardPage_removeUnusedKeys;
 
-	public static String TargetProfileWindow_targetDescription;
-
-	public static String TargetPlatformPreferencePage_notFoundTitle;
-
-	public static String TargetPlatformPreferencePage_notFoundDescription;
-
-	public static String TargetPlatformPreferencePage_invalidTitle;
-
-	public static String TargetPlatformPreferencePage_invalidDescription;
-
 	public static String TargetPlatformPreferencePage2_0;
 
 	public static String TargetPlatformPreferencePage2_1;
-
-	public static String TargetPlatformPreferencePage2_10;
 
 	public static String TargetPlatformPreferencePage2_11;
 
@@ -2834,10 +2641,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage2_9;
 
-	public static String TargetPluginsTab_features;
-
-	public static String TargetPluginsTab_plugins;
-
 	public static String ManifestEditorContributor_externStringsActionName;
 
 	public static String SplashSection_progressBar;
@@ -2866,10 +2669,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetEditor_1;
 
 	public static String TargetEditor_2;
-
-	public static String TargetErrorDialog_title;
-
-	public static String TargetErrorDialog_description;
 
 	public static String FeatureImportWizardPage_reloadLocation;
 

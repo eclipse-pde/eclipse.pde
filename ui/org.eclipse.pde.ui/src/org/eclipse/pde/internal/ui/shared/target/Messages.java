@@ -53,7 +53,6 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_15;
 	public static String BundleContainerTable_2;
 	public static String BundleContainerTable_3;
-	public static String BundleContainerTable_4;
 	public static String BundleContainerTable_8;
 	public static String BundleContainerTable_9;
 	public static String EditBundleContainerWizard_0;
