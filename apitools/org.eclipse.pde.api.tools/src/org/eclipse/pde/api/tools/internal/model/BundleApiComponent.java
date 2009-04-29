@@ -261,7 +261,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 				ApiDescriptionProcessor.annotateApiSettings(null, apiDesc, xml);
 			}
 		} catch (IOException e) {
-			abort("Unable to load component.xml", e); //$NON-NLS-1$
+			abort("Unable to load .api_description file ", e); //$NON-NLS-1$
 		}
 		return apiDesc;
 	}
