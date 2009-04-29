@@ -235,7 +235,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		if (dialog.open() == Window.OK) {
 			Object[] objects = dialog.getResult();
 			if (objects.length == 1) {
-				String result = ((IResource) objects[0]).getFullPath().toString();
+				String result = ((IResource) objects[0]).getRawLocation().toOSString();
 				if (result != null) {
 					if (combo.indexOf(result) == -1)
 						combo.add(result, 0);
@@ -244,5 +244,4 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 			}
 		}
 	}
-
 }
