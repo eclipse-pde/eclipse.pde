@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
 import java.net.URI;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -24,6 +32,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 
 public class FeatureOptionsTab extends ExportOptionsTab {
 
@@ -38,6 +47,32 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 	private Button fCategoryButton;
 	private Combo fCategoryCombo;
 	private Button fCategoryBrowse;
+
+	private class CategoryResourceListSelectionDialog extends FilteredResourcesSelectionDialog {
+
+		public CategoryResourceListSelectionDialog(Shell shell, boolean multi, IContainer container, int typesMask) {
+			super(shell, multi, container, typesMask);
+			addListFilter(new ViewerFilter() {
+
+				public boolean select(Viewer viewer, Object parentElement, Object element) {
+					IResource resource = (IResource) element;
+					if (resource != null && resource instanceof IFile) {
+						try {
+							IFile file = (IFile) resource;
+							IContentDescription description = file.getContentDescription();
+							if (description == null)
+								return false;
+							IContentType type = description.getContentType();
+							return type != null && type.getId().equalsIgnoreCase("org.eclipse.pde.categoryManifest"); //$NON-NLS-1$
+						} catch (CoreException e) {
+							PDEPlugin.logException(e);
+						}
+					}
+					return false;
+				}
+			});
+		}
+	}
 
 	public FeatureOptionsTab(FeatureExportWizardPage page) {
 		super(page);
@@ -191,17 +226,22 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 	}
 
 	protected void openFile(Combo combo, String[] filter) {
-		FileDialog dialog = new FileDialog(fPage.getShell(), SWT.OPEN);
+		CategoryResourceListSelectionDialog dialog = new CategoryResourceListSelectionDialog(fPage.getShell(), false, PDEPlugin.getWorkspace().getRoot(), IResource.FILE);
+		dialog.setInitialPattern("**"); //$NON-NLS-1$
+		dialog.create();
 		String path = combo.getText();
 		if (path.trim().length() == 0)
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
-		dialog.setFilterExtensions(filter);
-		dialog.setFileName(path);
-		String res = dialog.open();
-		if (res != null) {
-			if (combo.indexOf(res) == -1)
-				combo.add(res, 0);
-			combo.setText(res);
+		if (dialog.open() == Window.OK) {
+			Object[] objects = dialog.getResult();
+			if (objects.length == 1) {
+				String result = ((IResource) objects[0]).getFullPath().toString();
+				if (result != null) {
+					if (combo.indexOf(result) == -1)
+						combo.add(result, 0);
+					combo.setText(result);
+				}
+			}
 		}
 	}
 
