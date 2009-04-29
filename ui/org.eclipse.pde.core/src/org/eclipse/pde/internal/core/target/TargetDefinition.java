@@ -601,7 +601,7 @@ public class TargetDefinition implements ITargetDefinition {
 					Set installedIUs = new HashSet();
 					while (iterator.hasNext()) {
 						IInstallableUnit unit = (IInstallableUnit) iterator.next();
-						installedIUs.add(new IUDescriptor(unit.getId(), unit.getVersion().toString()));
+						installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
 					}
 					IBundleContainer[] containers = getBundleContainers();
 					if (containers != null) {
@@ -611,7 +611,7 @@ public class TargetDefinition implements ITargetDefinition {
 								String[] ids = bc.getIds();
 								Version[] versions = bc.getVersions();
 								for (int j = 0; j < versions.length; j++) {
-									installedIUs.remove(new IUDescriptor(ids[j], versions[j].toString()));
+									installedIUs.remove(new NameVersionDescriptor(ids[j], versions[j].toString()));
 								}
 							}
 						}

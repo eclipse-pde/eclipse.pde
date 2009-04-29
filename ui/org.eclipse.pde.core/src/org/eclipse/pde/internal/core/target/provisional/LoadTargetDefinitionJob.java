@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import org.eclipse.pde.internal.core.target.*;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,6 +25,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.*;
 
 /**
  * Sets the current target platform based on a target definition.
@@ -333,6 +332,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_reloadTaskName, 100);
 		try {
 			Set included = new HashSet();
+			Set duplicates = new HashSet();
 			List infos = new ArrayList();
 
 			if (!fTarget.isResolved()) {
@@ -341,11 +341,15 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				subMon.worked(20);
 			}
 
+			// collect all bundles, ignoring duplicates (symbolic name & version)
 			IResolvedBundle[] resolved = fTarget.getBundles();
 			for (int i = 0; i < resolved.length; i++) {
-				if (resolved[i].getStatus().isOK()) {
-					infos.add(resolved[i].getBundleInfo());
-					included.add(resolved[i].getBundleInfo());
+				BundleInfo bundleInfo = resolved[i].getBundleInfo();
+				NameVersionDescriptor desc = new NameVersionDescriptor(bundleInfo.getSymbolicName(), bundleInfo.getVersion());
+				if (!duplicates.contains(desc) && resolved[i].getStatus().isOK()) {
+					infos.add(bundleInfo);
+					included.add(bundleInfo);
+					duplicates.add(desc);
 				}
 			}
 
@@ -420,7 +424,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			try {
 				job.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 			}
 		} finally {
 			if (monitor != null) {

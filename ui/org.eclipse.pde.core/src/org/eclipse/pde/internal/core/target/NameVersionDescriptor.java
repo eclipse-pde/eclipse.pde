@@ -11,20 +11,20 @@
 package org.eclipse.pde.internal.core.target;
 
 /**
- * Installable unit descriptor - ID and version.
+ * Describes something with a name and version.
  */
-public class IUDescriptor {
+public class NameVersionDescriptor {
 
 	private String fId;
 	private String fVersion;
 
 	/**
-	 * Constructs an IU descriptor.
+	 * Constructs a descriptor.
 	 * 
-	 * @param id IU identifier
-	 * @param version IU version 
+	 * @param id name identifier
+	 * @param version version identifier 
 	 */
-	public IUDescriptor(String id, String version) {
+	public NameVersionDescriptor(String id, String version) {
 		fId = id;
 		fVersion = version;
 	}
@@ -33,8 +33,8 @@ public class IUDescriptor {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		if (obj instanceof IUDescriptor) {
-			IUDescriptor iud = (IUDescriptor) obj;
+		if (obj instanceof NameVersionDescriptor) {
+			NameVersionDescriptor iud = (NameVersionDescriptor) obj;
 			return fId.endsWith(iud.fId) && fVersion.equals(iud.fVersion);
 		}
 		return false;
