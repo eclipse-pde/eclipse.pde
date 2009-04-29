@@ -31,6 +31,10 @@ public class ActionMessages extends NLS {
 	public static String CompareWithAction_compared_with_against;
 	public static String CompareWithAction_comparing_apis;
 	public static String CompareTaskNoChanges;
+	public static String CompareToBaselineWizardPage_compare_with_baseline;
+	public static String CompareToBaselineWizardPage_compare_with_selected_baseline;
+	public static String CompareToBaselineWizardPage_create_baseline;
+	public static String CompareToBaselineWizardPage_open_baseline_pref_page;
 	public static String RemoveActiveSessionAction_label;
 	public static String RemoveActiveSessionAction_tooltip;
 	public static String RemoveAllSessionsAction_label;
@@ -69,6 +73,7 @@ public class ActionMessages extends NLS {
 	public static String ExpandAllAction_label;
 	public static String ExpandAllAction_tooltip;
 	public static String SessionDescription;
+	public static String AddNewBaseline;
 
 	static {
 		// initialize resource bundle

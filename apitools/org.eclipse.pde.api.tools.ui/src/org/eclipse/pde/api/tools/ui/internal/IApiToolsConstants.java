@@ -118,9 +118,14 @@ public interface IApiToolsConstants {
 	 */
 	public static final String IMG_OVR_WARNING = "IMG_OVR_WARNING"; //$NON-NLS-1$
 	/**
-	 * Wizard banner for editing an API profile
+	 * Wizard banner for editing an API baseline
 	 */
 	public static final String IMG_WIZBAN_PROFILE = "IMG_WIZBAN_PROFILE"; //$NON-NLS-1$
+	/**
+	 * Wizard banner for comparing a selected set of projects to a selected baseline
+	 * @since 1.0.l
+	 */
+	public static final String IMG_WIZBAN_COMPARE_TO_BASELINE = "IMG_WIZBAN_COMPARE_TO_BASELINE"; //$NON-NLS-1$
 	/**
 	 * Key for enabled export image
 	 */

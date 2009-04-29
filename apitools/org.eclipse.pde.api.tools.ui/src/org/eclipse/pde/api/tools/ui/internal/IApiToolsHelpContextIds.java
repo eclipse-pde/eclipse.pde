@@ -53,5 +53,10 @@ public interface IApiToolsHelpContextIds {
 	 * Constant representing the help id for the {@link ApiFiltersPropertyPage}
 	 */
 	public static final String APITOOLS_FILTERS_PROPERTY_PAGE = PREFIX + "apitools_filters_property_page"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing the help id for the {@link CompareToBaselineWizardPage}
+	 */
+	public static final String API_COMPARE_WIZARD_PAGE = PREFIX + "api_compare_wizard_page"; //$NON-NLS-1$
 		
 }

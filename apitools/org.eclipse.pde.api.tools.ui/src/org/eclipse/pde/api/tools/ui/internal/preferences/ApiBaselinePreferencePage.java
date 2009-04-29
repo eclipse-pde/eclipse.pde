@@ -67,6 +67,8 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class ApiBaselinePreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
+	
+	public static final String ID = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
 	/**
 	 * Override to tell the label provider about uncommitted {@link IApiProfile}
 	 * s that might have been set to be the new default

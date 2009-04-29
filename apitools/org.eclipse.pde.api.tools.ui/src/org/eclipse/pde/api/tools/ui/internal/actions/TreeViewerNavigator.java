@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.actions;
 
-import org.eclipse.pde.api.tools.ui.internal.actions.CompareWithAction.DeltaSession.TreeNode;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.pde.api.tools.ui.internal.actions.DeltaSession.TreeNode;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Navigation in the tree viewer.
@@ -166,7 +165,7 @@ class TreeViewerNavigator {
 
 	private boolean hasMatches(TreeItem item) {
 		Object element = item.getData();
-		if (element instanceof TreeNode) {
+		if (element instanceof DeltaSession.TreeNode) {
 			TreeNode node = (TreeNode) element;
 			return node.getData() != null && !node.hasChildren();
 		}

@@ -298,6 +298,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_SUCCESS, OVR + "success_ovr.gif"); //$NON-NLS-1$
 		// wizards
 		declareRegistryImage(reg, IApiToolsConstants.IMG_WIZBAN_PROFILE, WIZBAN + "profile_wiz.png"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_WIZBAN_COMPARE_TO_BASELINE, WIZBAN + "compare_wiz.png"); //$NON-NLS-1$
 		// enabled images
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_FILTER, ELCL + "filter_ps.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_REMOVE, ELCL + "remove_exc.gif"); //$NON-NLS-1$

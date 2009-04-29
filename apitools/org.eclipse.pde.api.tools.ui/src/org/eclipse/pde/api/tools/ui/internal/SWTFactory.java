@@ -221,6 +221,16 @@ public class SWTFactory {
 		l.setLayoutData(gd);
 		return l;
 	}
+	
+	public static Link createLink(Composite parent, String text, Font font, int hspan, int fill) {
+		Link l = new Link(parent, SWT.UNDERLINE_LINK);
+		l.setFont(font);
+		l.setText(text);
+		GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+		l.setLayoutData(gd);
+		return l;
+	}
 
 	
 	/**
