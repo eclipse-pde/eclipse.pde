@@ -244,6 +244,7 @@ set here?
 		<arg value="${p2.director.bundlepool}" />
 
 		<jvmarg value="-Declipse.p2.data.area=${p2.director.dataArea}" />
+		<jvmarg value="-Declipse.p2.profile=@none" />
 		<jvmarg line="${p2.director.extraVMArgs}" />
 		
 		<arg line="${p2.director.devMode}"/>
