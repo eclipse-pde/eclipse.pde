@@ -84,22 +84,32 @@ public class MethodUsageTests extends UsageTest {
 	}
 	
 	private void x1(boolean inc) {
-		setExpectedProblemIds(new int[] {
+		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
-		});
+		};
+		setExpectedProblemIds(pids);
 		String typename = "testM1";
-		setExpectedMessageArgs(new String[][] {
+		String[][] args = new String[][] {
 				{METHOD_CLASS_NAME, INNER_NAME1, "m1()"},
 				{METHOD_CLASS_NAME, INNER_NAME1, "m3()"},
 				{METHOD_CLASS_NAME, INNER_NAME2, "m1()"},
 				{METHOD_CLASS_NAME, INNER_NAME2, "m3()"},
 				{METHOD_CLASS_NAME, OUTER_NAME, "m1()"},
 				{METHOD_CLASS_NAME, OUTER_NAME, "m3()"},
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(26, pids[0], args[0]),
+				new LineMapping(27, pids[1], args[1]),
+				new LineMapping(37, pids[2], args[2]),
+				new LineMapping(38, pids[3], args[3]),
+				new LineMapping(49, pids[4], args[4]),
+				new LineMapping(50, pids[5], args[5])
 		});
 		deployTest(typename, inc);
 	}
@@ -121,18 +131,26 @@ public class MethodUsageTests extends UsageTest {
 	}
 	
 	private void x2(boolean inc) {
-		setExpectedProblemIds(new int[] {
+		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS)
-		});
+		};
+		setExpectedProblemIds(pids);
 		String typename = "testM2";
-		setExpectedMessageArgs(new String[][] {
+		String[][] args = new String[][] {
 				{METHOD_CLASS_NAME, typename, "m2()"},
 				{METHOD_CLASS_NAME, INNER_NAME1, "m2()"},
 				{METHOD_CLASS_NAME, INNER_NAME2, "m2()"},
 				{METHOD_CLASS_NAME, OUTER_NAME, "m2()"}
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(22, pids[0], args[0]),
+				new LineMapping(30, pids[1], args[1]),
+				new LineMapping(39, pids[2], args[2]),
+				new LineMapping(49, pids[3], args[3])
 		});
 		deployTest(typename, inc);
 	}
@@ -154,7 +172,7 @@ public class MethodUsageTests extends UsageTest {
 	}
 	
 	private void x3(boolean inc) {
-		setExpectedProblemIds(new int[] {
+		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
@@ -163,17 +181,29 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
-		});
+		};
+		setExpectedProblemIds(pids);
 		String typename = "testM3";
-		setExpectedMessageArgs(new String[][] {
+		String[][] args = new String[][] {
+				{METHOD_CLASS_NAME, typename, "m4()"},
+				{METHOD_CLASS_NAME, typename, "m6()"},
 				{METHOD_CLASS_NAME, INNER_NAME1, "m4()"},
 				{METHOD_CLASS_NAME, INNER_NAME1, "m6()"},
 				{METHOD_CLASS_NAME, INNER_NAME2, "m4()"},
 				{METHOD_CLASS_NAME, INNER_NAME2, "m6()"},
 				{METHOD_CLASS_NAME, OUTER_NAME, "m4()"},
 				{METHOD_CLASS_NAME, OUTER_NAME, "m6()"},
-				{METHOD_CLASS_NAME, typename, "m4()"},
-				{METHOD_CLASS_NAME, typename, "m6()"}
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(23, pids[0], args[0]),
+				new LineMapping(25, pids[1], args[1]),
+				new LineMapping(33, pids[2], args[2]),
+				new LineMapping(35, pids[3], args[3]),
+				new LineMapping(44, pids[4], args[4]),
+				new LineMapping(46, pids[5], args[5]),
+				new LineMapping(56, pids[6], args[6]),
+				new LineMapping(58, pids[7], args[7])
 		});
 		deployTest(typename, inc);
 	}
@@ -195,22 +225,32 @@ public class MethodUsageTests extends UsageTest {
 	}
 	
 	private void x4(boolean inc) {
-		setExpectedProblemIds(new int[] {
+		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
-		});
+		};
+		setExpectedProblemIds(pids);
 		String typename = "testM4";
-		setExpectedMessageArgs(new String[][] {
+		String[][] args = new String[][] {
 				{METHOD_INTERFACE_NAME, INNER_NAME1, "m1()"},
 				{METHOD_INTERFACE_NAME, INNER_NAME1, "m3()"},
 				{METHOD_INTERFACE_NAME, INNER_NAME2, "m1()"},
 				{METHOD_INTERFACE_NAME, INNER_NAME2, "m3()"},
 				{METHOD_INTERFACE_NAME, OUTER_NAME, "m1()"},
 				{METHOD_INTERFACE_NAME, OUTER_NAME, "m3()"},
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(27, pids[0], args[0]),
+				new LineMapping(28, pids[1], args[1]),
+				new LineMapping(38, pids[2], args[2]),
+				new LineMapping(39, pids[3], args[3]),
+				new LineMapping(50, pids[4], args[4]),
+				new LineMapping(51, pids[5], args[5])
 		});
 		deployTest(typename, inc);
 	}

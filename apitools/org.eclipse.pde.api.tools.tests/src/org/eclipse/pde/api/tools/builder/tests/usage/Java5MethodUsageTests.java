@@ -61,7 +61,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	 * Tests that accessing restricted enum methods are properly reported
 	 */
 	private void x1(boolean inc) {
-		setExpectedProblemIds(new int[] {
+		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
@@ -71,9 +71,10 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
-		});
+		};
+		setExpectedProblemIds(pids);
 		String typename = "testM5";
-		setExpectedMessageArgs(new String[][] {
+		String[][] args = new String[][] {
 				{METHOD_ENUM_NAME, INNER_NAME1, "m1()"},
 				{METHOD_ENUM_NAME, INNER_NAME1, "m3()"},
 				{METHOD_ENUM_NAME, INNER_NAME1, "m4()"},
@@ -83,6 +84,18 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				{METHOD_ENUM_NAME, OUTER_NAME, "m1()"},
 				{METHOD_ENUM_NAME, OUTER_NAME, "m3()"},
 				{METHOD_ENUM_NAME, OUTER_NAME, "m4()"}
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(25, pids[0], args[0]),
+				new LineMapping(27, pids[1], args[1]),
+				new LineMapping(28, pids[2], args[2]),
+				new LineMapping(37, pids[3], args[3]),
+				new LineMapping(39, pids[4], args[4]),
+				new LineMapping(40, pids[5], args[5]),
+				new LineMapping(50, pids[6], args[6]),
+				new LineMapping(52, pids[7], args[7]),
+				new LineMapping(53, pids[8], args[8])
 		});
 		deployTest(typename, inc);
 	}
@@ -99,22 +112,32 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	 * Tests that accessing restricted generic methods are properly reported
 	 */
 	private void x2(boolean inc) {
-		setExpectedProblemIds(new int[] {
+		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
-		});
+		};
+		setExpectedProblemIds(pids);
 		String typename = "testM6";
-		setExpectedMessageArgs(new String[][] {
+		String[][] args = new String[][] {
 				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m1()"},
 				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m2(T)"},
 				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m1()"},
 				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m2(T)"},
 				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m1()"},
 				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m2(T)"},
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(26, pids[0], args[0]),
+				new LineMapping(28, pids[1], args[1]),
+				new LineMapping(38, pids[2], args[2]),
+				new LineMapping(40, pids[3], args[3]),
+				new LineMapping(51, pids[4], args[4]),
+				new LineMapping(53, pids[5], args[5])
 		});
 		deployTest(typename, inc);
 	}
@@ -132,16 +155,23 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	 * are properly reported
 	 */
 	private void x3(boolean inc) {
-		setExpectedProblemIds(new int[] {
+		int[] pids = new int[] {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
-		});
+		};
+		setExpectedProblemIds(pids);
 		String typename = "testM7";
-		setExpectedMessageArgs(new String[][] {
+		String[][] args = new String[][] {
 				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME1, "m1(GenericClassUsageClass<?>)"},
 				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME2, "m1(GenericClassUsageClass<?>)"},
 				{GENERIC_METHOD_CLASS_NAME2, OUTER_NAME, "m1(GenericClassUsageClass<?>)"},
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(25, pids[0], args[0]),
+				new LineMapping(34, pids[1], args[1]),
+				new LineMapping(44, pids[2], args[2])
 		});
 		deployTest(typename, inc);
 	}
