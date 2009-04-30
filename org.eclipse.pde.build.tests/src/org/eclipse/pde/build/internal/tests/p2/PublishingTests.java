@@ -230,6 +230,11 @@ public class PublishingTests extends P2TestCase {
 
 		File[] features = new File(delta, "features").listFiles(filter);
 		assertTrue(features.length > 0);
+		Arrays.sort(features, new Comparator(){
+			public int compare(Object o1, Object o2) {
+				return -1 * ((File)o1).getName().compareTo(((File)o2).getName());
+			}
+		});
 		return features[0];
 	}
 
@@ -456,6 +461,9 @@ public class PublishingTests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
+		File executable = findExecutableFeature(delta);
+		String executableVersion = executable.getName().substring(executable.getName().indexOf('_') + 1);
+		
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer branding = new StringBuffer();
 		branding.append("<launcher name=\"branded\">           \n");
@@ -465,7 +473,9 @@ public class PublishingTests extends P2TestCase {
 		branding.append("      <bmp/>                          \n");
 		branding.append("   </win>                             \n");
 		branding.append("</launcher>                           \n");
-		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi"}, false, branding);
+		
+		//bug 273115 - no version
+		Utils.generateProduct(product, "org.example.rcp", null, null, new String[] {"org.eclipse.osgi"}, false, branding);
 
 		//steal the icons from test 237922
 		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
@@ -479,7 +489,8 @@ public class PublishingTests extends P2TestCase {
 		properties.put("product", product.getLocation().toOSString());
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
-		properties.put("configs", "win32,win32,x86 & macosx, carbon, ppc");
+		//bug 274527 - cocoa.x86_64
+		properties.put("configs", "win32,win32,x86 & macosx, carbon, ppc & macosx, cocoa, x86_64");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 
@@ -490,18 +501,24 @@ public class PublishingTests extends P2TestCase {
 		entries.add("branded.app/Contents/MacOS/branded.ini");
 		entries.add("branded.app/Contents/MacOS/branded");
 		entries.add("branded.app/Contents/Resources/mail.icns");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.carbon.macosx.ppc_1.0.0", entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.carbon.macosx.ppc_" + executableVersion, entries);
+		
+		entries.add("branded.app/Contents/Info.plist");
+		entries.add("branded.app/Contents/MacOS/branded.ini");
+		entries.add("branded.app/Contents/MacOS/branded");
+		entries.add("branded.app/Contents/Resources/mail.icns");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.cocoa.macosx.x86_64_" + executableVersion, entries);
 
 		entries.clear();
 		entries.add("branded.exe");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.win32.win32.x86_1.0.0", entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.win32.win32.x86_" + executableVersion, entries);
 
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
 
 		IInstallableUnit iu = getIU(repository, "org.example.rcp");
 		assertEquals(iu.getId(), "org.example.rcp");
-		assertEquals(iu.getVersion().toString(), "1.0.0");
+		assertEquals(iu.getVersion().toString(), "0.0.0");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.osgi");
 
 		//bug 218377
@@ -510,9 +527,17 @@ public class PublishingTests extends P2TestCase {
 
 		iu = getIU(repository, "org.example.rcp_root.carbon.macosx.ppc");
 		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
+		
+		iu = getIU(repository, "org.example.rcp_root.cocoa.macosx.x86_64");
+		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
 
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
+		
+		iu = getIU(repository, "org.eclipse.equinox.launcher.cocoa.macosx.x86_64");
+		entries.clear();
+		entries.add("eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_" + iu.getVersion() +"/");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", entries);
 	}
 
 	public void testAssemblePackage() throws Exception {

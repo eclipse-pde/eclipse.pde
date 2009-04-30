@@ -49,7 +49,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private String iconsList = null;
 	private String launcherProvider = null;
 	private String productId = null;
-	private String productVersion = null;
+	private String productVersion = Version.emptyVersion.toString();
 	private URI metadataURI = null;
 	private URI artifactURI = null;
 	private boolean removeMetadataRepo = true;
@@ -198,7 +198,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 
 	protected void publishBrandedIU(IMetadataRepository metadataRepo, IArtifactRepository artifactRepo, IInstallableUnit originalIU) {
 		String id = productId + "_root." + getConfigString(); //$NON-NLS-1$
-		Version version = new Version(productVersion);
+		Version version = Version.parseVersion(productVersion);
 		if (version.equals(Version.emptyVersion))
 			version = originalIU.getVersion();
 		InstallableUnitDescription newIUDescription = new MetadataFactory.InstallableUnitDescription();
@@ -368,7 +368,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	public void setProductVersion(String productVersion) {
-		this.productVersion = productVersion;
+		if (productVersion != null && !productVersion.startsWith(ANT_PREFIX))
+			this.productVersion = productVersion;
 	}
 
 	public void setRepository(String location) {

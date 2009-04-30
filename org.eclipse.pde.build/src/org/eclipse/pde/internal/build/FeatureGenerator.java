@@ -251,7 +251,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 					Config config = (Config) iterator.next();
 					String fragment = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
 					//macosx doesn't have the arch on its fragment 
-					if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
+					if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) //$NON-NLS-1$ //$NON-NLS-2$
 						fragment += '.' + config.getArch();
 
 					if (!fragments.contains(fragment)) {

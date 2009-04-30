@@ -201,16 +201,24 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "removeProgramArg(programArg:-startup);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
 			P2InfUtils.printBundleCU(buffer, index++, BUNDLE_EQUINOX_LAUNCHER, launcher.getVersion(), null, instructions);
 
+			String brandedRange = rangeString;
 			BuildTimeFeature executableFeature = assembly.getRootProvider(FEATURE_EQUINOX_EXECUTABLE, null);
 			if (executableFeature == null && havePDEUIState())
 				executableFeature = assembly.getRootProvider("org.eclipse.pde.container.feature", null); //$NON-NLS-1$
+
+			//in case of no version on the product, the branding defaults to the version of the launcher provider
+			if (executableFeature != null && versionString.equals(Version.emptyVersion.toString())) {
+				String brandedVersion = executableFeature.getVersion();
+				brandedRange = new VersionRange(new Version(brandedVersion), true, new Version(brandedVersion), true).toString();
+			}
+
 			List configs = getConfigInfos();
 			for (int i = 0; i < configs.size(); i++) {
 				Config config = (Config) configs.get(i);
 				if (config.equals(Config.genericConfig()))
 					continue;
 				String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
-				if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
+				if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) //$NON-NLS-1$ //$NON-NLS-2$
 					fragmentName += '.' + config.getArch();
 				BundleDescription fragment = assembly.getPlugin(fragmentName, null);
 				if (fragment != null) {
@@ -229,7 +237,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					if (executableFeature != null) {
 						//include the branded executable 
 						String brandedIU = productFile.getId() + "_root." + config.getWs() + '.' + config.getOs() + '.' + config.getArch(); //$NON-NLS-1$ 
-						P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, brandedIU, rangeString, config.getPlatformFilter(), true);
+						P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, brandedIU, brandedRange, config.getPlatformFilter(), true);
 
 						//include a CU for the branded exe
 						instructions = new String[4];
