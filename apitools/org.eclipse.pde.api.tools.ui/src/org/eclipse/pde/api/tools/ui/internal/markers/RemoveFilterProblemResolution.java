@@ -14,6 +14,7 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -100,16 +101,15 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 					localmonitor.worked(1);
 					continue;
 				}
-				component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(filter.getComponentId());
+				IResource resource = markers[i].getResource();
+				IProject project = resource.getProject();
+				component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project);
 				if(component instanceof PluginProjectApiComponent) {
 					try {
 						IApiFilterStore store = component.getFilterStore();
 						store.removeFilters(new IApiProblemFilter[] {filter});
-						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(filter.getComponentId());
-						if(project != null) {
-							Util.touchCorrespondingResource(project, markers[i].getResource(), Util.getTypeNameFromMarker(markers[i]));
-							pjs.add(project);
-						}
+						Util.touchCorrespondingResource(project, resource, Util.getTypeNameFromMarker(markers[i]));
+						pjs.add(project);
 					}
 					catch(CoreException ce) {
 						ApiPlugin.log(ce);

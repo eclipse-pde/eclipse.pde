@@ -167,7 +167,7 @@ public class RefactoringUtils {
 	 * @throws CoreException
 	 */
 	static IApiFilterStore resolveFilterStore(IProject project) throws CoreException {
-		IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
+		IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project);
 		if(component != null) {
 			return component.getFilterStore();
 		}

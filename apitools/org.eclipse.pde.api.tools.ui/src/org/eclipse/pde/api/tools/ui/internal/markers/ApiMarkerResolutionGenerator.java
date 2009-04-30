@@ -118,7 +118,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			String filterhandle = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, null);
 			String[] values = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
 			IProject project = marker.getResource().getProject();
-			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project.getName());
+			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project);
 			if(component != null) {
 				IApiFilterStore store = component.getFilterStore();
 				IPath path = new Path(values[1]);

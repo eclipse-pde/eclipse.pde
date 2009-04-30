@@ -333,7 +333,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		IProject project  = getProject();
 		IApiFilterStore store = null;
 		if(project != null) {
-			IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
+			IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project);
 			if(component != null) {
 				return component.getFilterStore();
 			}
