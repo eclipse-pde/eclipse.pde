@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDEClasspathContainer;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
@@ -43,6 +44,11 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		fFilteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
 		fFilteredTypes.add(WorkingSetSourceContainer.TYPE_ID);
 	}
+
+	/**
+	 * Lazily initialized.
+	 */
+	private double fOSGiRuntimeVersion = Double.MIN_VALUE;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
@@ -218,6 +224,19 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		}
 		fSourceContainerMap.clear();
 		super.dispose();
+	}
+
+	/**
+	 * Returns the version of the OSGi runtime being debugged, based on the target platform.
+	 * Cached per source lookup director.
+	 * 
+	 * @return OSGi runtime version
+	 */
+	double getOSGiRuntimeVersion() {
+		if (fOSGiRuntimeVersion == Double.MIN_VALUE) {
+			fOSGiRuntimeVersion = TargetPlatformHelper.getTargetVersion();
+		}
+		return fOSGiRuntimeVersion;
 	}
 
 }

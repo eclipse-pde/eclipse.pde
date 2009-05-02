@@ -73,7 +73,11 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (classLoaderObject != null) {
 			IJavaClassType type = (IJavaClassType) classLoaderObject.getJavaType();
 			if (OSGI_CLASSLOADER.equals(type.getName())) {
-				fResult = findSourceElement(classLoaderObject, sourcePath);
+				if (fDirector.getOSGiRuntimeVersion() < 3.5) {
+					fResult = findSourceElement34(classLoaderObject, sourcePath);
+				} else {
+					fResult = findSourceElement(classLoaderObject, sourcePath);
+				}
 			} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
 				fResult = findSourceElement_legacy(classLoaderObject, sourcePath);
 			} else if (MAIN_CLASS.equals(declaringTypeName)) {
@@ -93,6 +97,36 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		return var == null ? null : var.getValue().getValueString();
 	}
 
+	/**
+	 * Finds a source element in a 3.4 OSGi runtime.
+	 * 
+	 * @param object Bundle class loader object
+	 * @param typeName fully qualified name of the source type being searched for
+	 * @return source element
+	 * @throws CoreException
+	 */
+	protected Object findSourceElement34(IJavaObject object, String typeName) throws CoreException {
+		IJavaObject manager = getObject(object, "manager", false); //$NON-NLS-1$
+		if (manager != null) {
+			IJavaObject data = getObject(manager, "data", false); //$NON-NLS-1$
+			if (data != null) {
+				String location = getValue(data, "fileName"); //$NON-NLS-1$
+				String id = getValue(data, "symbolicName"); //$NON-NLS-1$
+				return getSourceElement(location, id, typeName);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds source in a 3.5 runtime. In 3.5, the OSGi runtime provides hooks to properly
+     * lookup source in fragments that replace/prepend jars in their host.
+	 * 
+	 * @param object Bundle class loader object
+	 * @param typeName fully qualified name of the source type being searched for 
+	 * @return source element
+	 * @throws CoreException
+	 */
 	protected Object findSourceElement(IJavaObject object, String typeName) throws CoreException {
 		IJavaObject manager = getObject(object, "manager", false); //$NON-NLS-1$
 		if (manager != null) {
