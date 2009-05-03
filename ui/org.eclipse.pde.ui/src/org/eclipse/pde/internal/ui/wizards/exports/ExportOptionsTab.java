@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274368 
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
@@ -311,7 +312,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	 */
 	protected void setEnabledForInstall(boolean enabled) {
 		fQualifierButton.setEnabled(enabled);
-		fQualifierText.setEnabled(enabled);
+		fQualifierText.setEnabled(enabled && fQualifierButton.getSelection());
 		fJarButton.setEnabled(enabled);
 	}
 
