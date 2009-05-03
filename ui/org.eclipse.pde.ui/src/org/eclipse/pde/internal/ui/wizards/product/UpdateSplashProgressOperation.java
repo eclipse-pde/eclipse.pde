@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007,2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274107 
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.wizards.product;
@@ -19,6 +20,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.text.build.PropertiesTextChangeListener;
@@ -29,54 +31,32 @@ import org.eclipse.text.edits.*;
 
 /**
  * UpdateSplashProgressOperation
- *
  */
 public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 
 	public static final String F_EXTENSION_PRODUCT = "org.eclipse.core.runtime.products"; //$NON-NLS-1$
-
 	public static final String F_ELEMENT_PRODUCT = "product"; //$NON-NLS-1$
-
 	public static final String F_ELEMENT_PROPERTY = "property"; //$NON-NLS-1$
-
 	public static final String F_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
-
 	public static final String F_ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
-
 	public static final String F_ATTRIBUTE_NAME_PREFCUST = "preferenceCustomization"; //$NON-NLS-1$
-
 	public static final String F_KEY_SHOW_PROGRESS = "org.eclipse.ui/SHOW_PROGRESS_ON_STARTUP"; //$NON-NLS-1$
-
 	public static final String F_FILE_NAME_PLUGIN_CUSTOM = "plugin_customization.ini"; //$NON-NLS-1$
 
 	private IPluginModelBase fModel;
-
 	private IProgressMonitor fMonitor;
-
 	private boolean fShowProgress;
-
 	private IProject fProject;
-
 	private String fProductID;
-
 	protected String fPluginId;
-
 	private ITextFileBufferManager fTextFileBufferManager;
-
 	private ITextFileBuffer fTextFileBuffer;
-
 	private PropertiesTextChangeListener fPropertiesListener;
 
-	/**
-	 * 
-	 */
 	public UpdateSplashProgressOperation() {
 		reset();
 	}
 
-	/**
-	 * 
-	 */
 	public void reset() {
 		// External Fields
 		fModel = null;
@@ -494,6 +474,23 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		addShowProgressEntry(pluginCustomModel);
 		// Create the file by saving the model
 		pluginCustomModel.save();
+
+		// add the file to build.properties
+		IFile buildProps = fProject.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		if (buildProps.exists()) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
+			model.load();
+			if (model.isLoaded()) {
+				IBuildEntry entry = model.getBuild().getEntry("bin.includes"); //$NON-NLS-1$
+				if (entry == null) {
+					entry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+					model.getBuild().add(entry);
+				}
+				if (!entry.contains(F_FILE_NAME_PLUGIN_CUSTOM))
+					entry.addToken(F_FILE_NAME_PLUGIN_CUSTOM);
+				model.save();
+			}
+		}
 	}
 
 	/**
