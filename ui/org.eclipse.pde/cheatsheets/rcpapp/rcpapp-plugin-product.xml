@@ -84,9 +84,9 @@
       <description>
          To define the product, perform the following steps:
       </description>
-      <subitem label="Input &quot;RCP Application&quot; into the &quot;Product Name&quot; text box" 
+      <subitem label="Input &quot;RCP Application&quot; into the &quot;Name&quot; text box on the &quot;General Information&quot; section" 
                skip="false"/>
-      <subitem label="Click the &quot;New...&quot; button next to the &quot;Product ID&quot; drop down menu to open the &quot;New Product Definition&quot; dialog box" 
+      <subitem label="Click the &quot;New...&quot; button next to the &quot;Product&quot; drop down menu to open the &quot;New Product Definition&quot; dialog box" 
                skip="false"/>
       <subitem label="Verify &quot;com.example.rcpapp&quot; is the inputted value for the &quot;Defining Plug-in&quot; text box" 
                skip="true"/>        
