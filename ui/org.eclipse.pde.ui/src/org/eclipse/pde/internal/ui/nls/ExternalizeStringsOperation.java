@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 201994
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274454
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
@@ -26,7 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -200,6 +201,12 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	}
 
 	public static String getPropertiesFileComment(IFile file) {
-		return NLS.bind("#Properties file for {0}", file.getProject().getName()); //$NON-NLS-1$
+		IPluginModelBase model = PluginRegistry.findModel(file.getProject());
+		if (model != null) {
+			IPluginBase pluginBase = model.getPluginBase();
+			if (pluginBase != null)
+				return NLS.bind("#Properties file for {0}", pluginBase.getId()); //$NON-NLS-1$
+		}
+		return NLS.bind("#{0}", file.getName()); //$NON-NLS-1$
 	}
 }
