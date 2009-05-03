@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.core.target.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
@@ -29,6 +27,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
@@ -44,7 +43,6 @@ import org.eclipse.ui.*;
 
 /**
  * Preference page for managing all known target definitions and setting one as the active target platform.
- *
  */
 public class TargetPlatformPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -563,7 +561,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fRemoveButton.setEnabled(size > 0);
 		//fDuplicateButton.setEnabled(size == 1);
 		if (selection.getFirstElement() != null) {
-			fMoveButton.setEnabled(((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
+			fMoveButton.setEnabled(size == 1 && ((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
 			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious));
 		} else {
 			fMoveButton.setEnabled(false);
