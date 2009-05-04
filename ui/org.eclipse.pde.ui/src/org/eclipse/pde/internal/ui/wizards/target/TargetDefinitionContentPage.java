@@ -483,7 +483,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		Group programGroup = SWTFactory.createGroup(container, PDEUIMessages.JavaArgumentsTab_progamArgsGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
-		fProgramArgs = SWTFactory.createText(programGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.LEFT_TO_RIGHT, 1, 200, 60, GridData.FILL_BOTH);
+		fProgramArgs = SWTFactory.createText(programGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
 		fProgramArgs.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setProgramArguments(fProgramArgs.getText().trim());
@@ -500,7 +500,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		vmGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		vmGroup.setText(PDEUIMessages.JavaArgumentsTab_vmArgsGroup);
 
-		fVMArgs = SWTFactory.createText(vmGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.LEFT_TO_RIGHT, 1, 200, 60, GridData.FILL_BOTH);
+		fVMArgs = SWTFactory.createText(vmGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
 		fVMArgs.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setVMArguments(fVMArgs.getText().trim());

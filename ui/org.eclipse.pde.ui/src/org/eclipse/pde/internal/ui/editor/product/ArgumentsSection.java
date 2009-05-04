@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274313     
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -86,7 +85,7 @@ public class ArgumentsSection extends PDESection {
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 
-		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI | SWT.WRAP | SWT.LEFT_TO_RIGHT);
+		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI | SWT.WRAP);
 		fProgramArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -96,7 +95,7 @@ public class ArgumentsSection extends PDESection {
 		});
 		fProgramArgs.setEditable(isEditable());
 
-		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI | SWT.WRAP | SWT.LEFT_TO_RIGHT);
+		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI | SWT.WRAP);
 		fVMArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fVMArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {

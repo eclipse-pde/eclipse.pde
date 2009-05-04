@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274313
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
@@ -92,7 +91,7 @@ public class ArgumentsSection extends SectionPart {
 		Composite programComp = toolkit.createComposite(fTabFolder);
 		programComp.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		programComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fProgramArguments = new FormEntry(programComp, toolkit, PDEUIMessages.ArgumentsSection_0, SWT.MULTI | SWT.WRAP | SWT.LEFT_TO_RIGHT);
+		fProgramArguments = new FormEntry(programComp, toolkit, PDEUIMessages.ArgumentsSection_0, SWT.MULTI | SWT.WRAP);
 		fProgramArguments.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArguments.setFormEntryListener(new SimpleFormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
@@ -121,7 +120,7 @@ public class ArgumentsSection extends SectionPart {
 		Composite vmComp = toolkit.createComposite(fTabFolder);
 		vmComp.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		vmComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fVMArguments = new FormEntry(vmComp, toolkit, PDEUIMessages.ArgumentsSection_1, SWT.MULTI | SWT.WRAP | SWT.LEFT_TO_RIGHT);
+		fVMArguments = new FormEntry(vmComp, toolkit, PDEUIMessages.ArgumentsSection_1, SWT.MULTI | SWT.WRAP);
 		fVMArguments.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fVMArguments.setFormEntryListener(new SimpleFormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
