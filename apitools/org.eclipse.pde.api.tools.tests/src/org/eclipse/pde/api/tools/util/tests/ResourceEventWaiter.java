@@ -46,10 +46,10 @@ public class ResourceEventWaiter extends AbstractApiEventWaiter implements IReso
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
-	public void resourceChanged(IResourceChangeEvent event) {
+	public synchronized void resourceChanged(IResourceChangeEvent event) {
 		if(accept(event)) {
 			setEvent(event);
-			notifyAll();
+			this.notifyAll();
 			unregister();
 		}
 	}

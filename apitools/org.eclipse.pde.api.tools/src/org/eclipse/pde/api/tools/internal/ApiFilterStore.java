@@ -116,7 +116,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(!fNeedsSaving) {
 			return;
 		}
-		WorkspaceJob job = new WorkspaceJob("") { //$NON-NLS-1$
+		WorkspaceJob job = new WorkspaceJob(Util.EMPTY_STRING) {
 			public IStatus runInWorkspace(IProgressMonitor monitor)	throws CoreException {
 				if(DEBUG) {
 					System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -133,7 +133,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						return Status.CANCEL_STATUS;
 					}
 					String xml = getStoreAsXml();
-					IFile file = project.getFile(new Path(".settings").append(IApiCoreConstants.API_FILTERS_XML_NAME)); //$NON-NLS-1$
+					IFile file = project.getFile(getFilterFilePath());
 					if(xml == null) {
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {

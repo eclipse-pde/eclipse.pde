@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
@@ -78,7 +79,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	protected void doSetup() throws Exception {
 		createExistingProjects(
 				"usageprojects", 
-				false, 
+				true, 
 				true, 
 				false);
 	}
@@ -167,7 +168,9 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 			IApiBaselineManager mgr = ApiPlugin.getDefault().getApiBaselineManager();
 			IApiBaseline baseline = mgr.getWorkspaceBaseline();
 			assertNotNull("The workspace baseline should not be null", baseline);
-			IApiComponent component = baseline.getApiComponent("usagetests");
+			IProject project = getEnv().getProject("usagetests");
+			assertNotNull("the testing project 'usagetests' must exist in the testing workspace", project);
+			IApiComponent component = baseline.getApiComponent(project);
 			assertNotNull("The API component for project 'usagetests' must exist", component);
 			IApiFilterStore store = component.getFilterStore();
 			assertNotNull("The filterstore for 'usagetests' must not be null", store);
