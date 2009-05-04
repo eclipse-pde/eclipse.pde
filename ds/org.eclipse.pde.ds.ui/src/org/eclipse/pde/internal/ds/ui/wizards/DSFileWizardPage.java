@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.ui.packageview.ClassPathContainer;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -308,6 +309,11 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 
 	protected void createLinkTarget() {
 		// NO-OP
+	}
+
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		Dialog.applyDialogFont(fGroup);
 	}
 
 	public boolean isPageComplete() {
