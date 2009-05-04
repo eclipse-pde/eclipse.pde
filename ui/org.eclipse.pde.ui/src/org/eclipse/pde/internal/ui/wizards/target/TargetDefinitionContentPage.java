@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -704,7 +702,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Set currentBundles = new HashSet();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
-				currentBundles.add(current[i].getSymbolicName());
+				if (!currentBundles.contains(current[i].getSymbolicName())) {
+					currentBundles.add(current[i].getSymbolicName());
+				}
 			}
 		}
 
@@ -714,8 +714,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}
 		for (int i = 0; i < allTargetBundles.length; i++) {
-			if (!currentBundles.contains(allTargetBundles[i].getBundleInfo().getSymbolicName())) {
-				targetBundles.add(allTargetBundles[i].getBundleInfo());
+			BundleInfo bundleInfo = allTargetBundles[i].getBundleInfo();
+			if (!currentBundles.contains(bundleInfo.getSymbolicName())) {
+				currentBundles.add(bundleInfo.getSymbolicName()); // to avoid duplicate entries
+				targetBundles.add(bundleInfo);
 			}
 		}
 
