@@ -65,7 +65,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 							IContentType type = description.getContentType();
 							return type != null && type.getId().equalsIgnoreCase("org.eclipse.pde.categoryManifest"); //$NON-NLS-1$
 						} catch (CoreException e) {
-							PDEPlugin.logException(e);
+							// do not log anything as we don't care, bug 274678
 						}
 					}
 					return false;
