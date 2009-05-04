@@ -16,7 +16,7 @@ import org.eclipse.jface.wizard.Wizard;
 /**
  * The wizard for comparing a selected set of projects against a selected {@link IApiBaseline}
  * 
- * @since 1.0.1
+ * @since 1.0.100
  */
 public class CompareToBaselineWizard extends Wizard {
 

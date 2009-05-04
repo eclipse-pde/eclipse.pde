@@ -41,6 +41,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.ui.internal.ApiImageDescriptor;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.actions.CollapseAllAction;
 import org.eclipse.pde.api.tools.ui.internal.actions.ExpandAllAction;
@@ -55,6 +56,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -302,6 +304,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		ApiPlugin.getDefault().getSessionManager().addSessionListener(this);
 		form.setContent(this.viewer.getTree());
 		getSite().setSelectionProvider(this.viewer);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IApiToolsHelpContextIds.API_TOOLING_VIEW);
 	}
 	private void hookDoubleClickAction() {
 		this.viewer.addDoubleClickListener(new IDoubleClickListener() {
