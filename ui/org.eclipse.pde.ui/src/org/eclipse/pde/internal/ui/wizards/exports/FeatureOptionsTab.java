@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 274853
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
@@ -221,8 +222,8 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		super.setEnabledForInstall(enabled);
 		fExportMetadata.setEnabled(enabled);
 		fCategoryButton.setEnabled(enabled);
-		fCategoryCombo.setEnabled(enabled);
-		fCategoryBrowse.setEnabled(enabled);
+		fCategoryCombo.setEnabled(enabled && fCategoryButton.getSelection());
+		fCategoryBrowse.setEnabled(enabled && fCategoryButton.getSelection());
 	}
 
 	protected void openFile(Combo combo, String[] filter) {
