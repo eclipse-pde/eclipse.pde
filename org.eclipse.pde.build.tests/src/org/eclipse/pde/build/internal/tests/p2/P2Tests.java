@@ -460,6 +460,8 @@ public class P2Tests extends P2TestCase {
 
 		IFolder repoFolder = buildFolder.getFolder("repo");
 		IArtifactRepository repository = loadArtifactRepository(repoLocation);
+		Map repoProps = repository.getProperties();
+		assertEquals(repoProps.get("publishPackFilesAsSiblings"), "true");
 		final String PACKED_FORMAT = "packed"; //$NON-NLS-1$
 		IArtifactKey[] keys = repository.getArtifactKeys();
 		for (int i = 0; i < keys.length; i++) {
