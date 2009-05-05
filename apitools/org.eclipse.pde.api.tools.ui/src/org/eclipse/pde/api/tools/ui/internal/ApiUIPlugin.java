@@ -327,7 +327,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			try {
-				IViewPart view = page.showView(id, null, IWorkbenchPage.VIEW_CREATE);
+				IViewPart view = page.showView(id);
 				page.bringToTop(view);
 			} catch (PartInitException e) {
 				log(e);

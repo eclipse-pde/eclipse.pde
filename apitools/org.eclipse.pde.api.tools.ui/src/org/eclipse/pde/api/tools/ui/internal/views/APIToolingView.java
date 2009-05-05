@@ -56,6 +56,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
@@ -285,26 +287,40 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	 */
 	public void createPartControl(Composite parent) {
 		ViewForm form = new ViewForm(parent, SWT.FLAT);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IApiToolsHelpContextIds.API_TOOLING_VIEW);
 		this.sessionDescription = SWTFactory.createLabel(form, null, 1);
 		form.setTopCenterSeparate(true);
 		form.setTopCenter(this.sessionDescription);
-		
+
 		this.viewer = new TreeViewer(form, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.viewer.setContentProvider(new ViewContentProvider());
 		this.viewer.setLabelProvider(new ViewLabelProvider());
-		ISession[] sessions = ApiPlugin.getDefault().getSessionManager().getSessions();
-		if (sessions.length > 0) {
-			this.viewer.setInput(sessions[0]);
-		}
+
+
 		createActions();
 		updateActions();
 		configureToolbar();
 		hookDoubleClickAction();
 
-		ApiPlugin.getDefault().getSessionManager().addSessionListener(this);
 		form.setContent(this.viewer.getTree());
 		getSite().setSelectionProvider(this.viewer);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IApiToolsHelpContextIds.API_TOOLING_VIEW);
+
+		final ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
+		ISession[] sessions = sessionManager.getSessions();
+		if (sessions.length > 0) {
+			ISession activeSession = sessionManager.getActiveSession();
+			if (sessions[0] != activeSession) {
+				sessionManager.activateSession(sessions[0]);
+			} else {
+				this.viewer.setInput(activeSession);
+				updateActions();
+			}
+		}
+	}
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		final ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
+		sessionManager.addSessionListener(this);
 	}
 	private void hookDoubleClickAction() {
 		this.viewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -404,7 +420,6 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		this.viewer.setInput(null);
 		updateActions();
 	}
-	
 	public void sessionActivated(final ISession session) {
 		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
