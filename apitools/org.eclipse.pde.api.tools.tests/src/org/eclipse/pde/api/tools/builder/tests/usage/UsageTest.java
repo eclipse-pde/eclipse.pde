@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
@@ -32,6 +33,10 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
  */
 public abstract class UsageTest extends ApiBuilderTest {
 
+	/**
+	 * 
+	 */
+	private static final String USAGE = "usage";
 	protected static final String TESTING_PACKAGE = "x.y.z";
 	protected static final String REPLACEMENT_PACKAGE = "x.y.z.replace";
 	protected static final String REF_PROJECT_NAME = "refproject";
@@ -98,7 +103,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
 	protected IPath getTestSourcePath() {
-		return new Path("usage");
+		return new Path(USAGE);
 	}
 
 	/* (non-Javadoc)
@@ -150,8 +155,8 @@ public abstract class UsageTest extends ApiBuilderTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		getEnv().setRevert(true);
 		doSetup();
+		getEnv().setRevert(false);
 	}
 	
 	/* (non-Javadoc)
@@ -159,8 +164,12 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
-		getEnv().setRevert(false);
+		//do not call super.tearDown() we can reuse the projects once they are created
+		//and changes are reverted
+		resetBuilderOptions();
+		setExpectedProblemIds(null);
+		setExpectedMessageArgs(null);
+		JavaCore.setOptions(JavaCore.getDefaultOptions());
 	}
 	
 	/**
@@ -233,6 +242,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 			expectingNoJDTProblems();
 			ApiProblem[] problems = getEnv().getProblemsFor(typepath, null);
 			assertProblems(problems);
+			deleteWorkspaceFile(typepath);
 		}
 		catch(Exception e) {
 			fail(e.getMessage());

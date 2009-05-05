@@ -1792,7 +1792,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(
 				Path.EMPTY.toPortableString(),
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
-				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID)},
+				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID)},
 				IElementDescriptor.RESOURCE,
 				IApiProblem.API_BASELINE_MISSING);
 		addProblem(problem);

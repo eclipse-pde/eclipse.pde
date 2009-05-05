@@ -69,7 +69,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
 			}
-			case IApiMarkerConstants.DEFAULT_API_PROFILE_MARKER_ID : {
+			case IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID : {
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
 			}
 			case IApiMarkerConstants.SINCE_TAG_MARKER_ID : {

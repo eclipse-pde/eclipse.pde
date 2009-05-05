@@ -53,6 +53,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		return new Path("compat");
 	}
 	
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
 	 */
@@ -182,6 +184,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			manager.addApiBaseline(baseline);
 			manager.setDefaultApiBaseline(baseline.getName());
 		}
+		getEnv().setRevertSourcePath(new Path(BASELINE));
 	}
 	
 	@Override

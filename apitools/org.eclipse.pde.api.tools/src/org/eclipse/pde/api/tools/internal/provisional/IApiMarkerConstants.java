@@ -99,10 +99,10 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String API_MARKER_ATTR_ID = "apiMarkerID"; //$NON-NLS-1$
 	/**
-	 * Constant representing the apiMarkerID value for default api profile markers.
+	 * Constant representing the apiMarkerID value for default API baseline markers.
 	 * Value is: <code>1</code>
 	 */
-	public static final int DEFAULT_API_PROFILE_MARKER_ID = 1;
+	public static final int DEFAULT_API_BASELINE_MARKER_ID = 1;
 	/**
 	 * Constant representing the apiMarkerID value for compatibility markers.
 	 * Value is: <code>2</code>

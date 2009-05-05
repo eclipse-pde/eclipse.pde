@@ -1053,7 +1053,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Resets all of the builder options to their defaults after each test run
 	 */
-	private void resetBuilderOptions() {
+	protected void resetBuilderOptions() {
 		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
 		// usage
 		inode.put(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);

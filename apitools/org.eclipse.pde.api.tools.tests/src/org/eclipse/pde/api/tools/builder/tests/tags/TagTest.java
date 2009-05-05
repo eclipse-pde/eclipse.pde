@@ -95,9 +95,6 @@ public abstract class TagTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-//		while (indexManager.awaitingJobsCount() > 0) {
-//			Thread.sleep(100);
-//		}
 		getEnv().setRevert(false);
 		super.tearDown();
 	}

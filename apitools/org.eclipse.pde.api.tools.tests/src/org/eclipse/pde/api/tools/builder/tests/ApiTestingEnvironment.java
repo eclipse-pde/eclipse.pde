@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.builder.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
 import org.eclipse.jdt.core.tests.util.AbstractCompilerTest;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -179,8 +177,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * returns all of the usage markers for the specified resource and its children
 	 * @param resource
-	 * @return
+	 * @return all API usage problem markers
 	 * @throws CoreException
+	 * 
+	 * @see {@link IApiMarkerConstants#API_USAGE_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUsageMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
@@ -195,7 +195,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * returns all of the usage markers for the specified resource and its children
 	 * @param resource
-	 * @return
+	 * @return all JDT problem markers that are on the resource backing the given path
 	 * @throws CoreException
 	 */
 	public IMarker[] getAllJDTMarkers(IPath path) throws CoreException {
@@ -205,7 +205,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * returns all of the usage markers for the specified resource and its children
 	 * @param resource
-	 * @return
+	 * @return all JDT problem markers on the given {@link IResource}
 	 * @throws CoreException
 	 */
 	protected IMarker[] getAllJDTMarkers(IResource resource) throws CoreException {
@@ -229,11 +229,15 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		System.arraycopy(buildpathMarkers, 0, allMarkers, javaModelMarkersLength, buildpathMarkersLength);
 		return allMarkers;
 	}
+	
 	/**
 	 * Returns all of the unsupported Javadoc tag markers on the specified resource
 	 * and all of its children.
 	 * @param resource
-	 * @return
+	 * @return all unsupported tag problem markers
+	 * @throws CoreException
+	 * 
+	 * @see {@link IApiMarkerConstants#UNSUPPORTED_TAG_PROBLEM_MARKER} 
 	 */
 	protected IMarker[] getAllUnsupportedTagMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
@@ -248,8 +252,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the compatibility markers on the given resource and its children
 	 * @param resource
-	 * @return
+	 * @return all compatibility problem markers
 	 * @throws CoreException
+	 * 
+	 * @see {@link IApiMarkerConstants#COMPATIBILITY_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllCompatibilityMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
@@ -264,10 +270,12 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the API profile markers on the given resource and its children
 	 * @param resource
-	 * @return
+	 * @return all API baseline problem markers
 	 * @throws CoreException
+	 * 
+	 * @see {@link IApiMarkerConstants#DEFAULT_API_BASELINE_PROBLEM_MARKER}
 	 */
-	protected IMarker[] getAllAPIProfileMarkers(IResource resource) throws CoreException {
+	protected IMarker[] getAllApiBaselineMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
 			return NO_MARKERS;
 		}
@@ -280,8 +288,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the since tag markers on the given resource and its children
 	 * @param resource
-	 * @return
+	 * @return all since tag problem markers
 	 * @throws CoreException
+	 * 
+	 * @see {@link IApiMarkerConstants#SINCE_TAGS_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllSinceTagMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
@@ -296,8 +306,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the version markers on the given resource and its children
 	 * @param resource
-	 * @return
+	 * @return all version problem markers
 	 * @throws CoreException
+	 * 
+	 * @see {@link IApiMarkerConstants#VERSION_NUMBERING_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllVersionMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
@@ -312,8 +324,10 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns all of the unused API problem filters markers on the given resource to infinite depth
 	 * @param resource
-	 * @return
+	 * @return all unused problem filter markers
 	 * @throws CoreException
+	 * 
+	 * @see {@link IApiMarkerConstants#UNUSED_FILTER_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUnusedApiProblemFilterMarkers(IResource resource) throws CoreException {
 		if(resource == null) {
@@ -327,7 +341,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	
 	/**
 	 * Returns all of the markers from the testing workspace
-	 * @return
+	 * @return all {@link IMarker}s currently set in the workspace
 	 */
 	public IMarker[] getMarkers() {
 		return getMarkersFor(getWorkspaceRootPath());
@@ -336,7 +350,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	/**
 	 * Returns the collection of API problem markers for the given element
 	 * @param root
-	 * @return
+	 * @return the array of {@link IMarker}s found on the resource that corresponds to the given path
 	 */
 	public IMarker[] getMarkersFor(IPath root) {
 		return getMarkersFor(root, null);
@@ -346,7 +360,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Return all problems with the specified element.
 	 * @param path
 	 * @param additionalMarkerType
-	 * @return
+	 * @return the array of {@link IMarker}s found on the resource that corresponds to the given path
 	 */
 	public IMarker[] getMarkersFor(IPath path, String additionalMarkerType){
 		IResource resource = getResource(path);
@@ -354,7 +368,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			ArrayList<IMarker> problems = new ArrayList<IMarker>();
 			addToList(problems, getAllUsageMarkers(resource));
 			addToList(problems, getAllCompatibilityMarkers(resource));
-			addToList(problems, getAllAPIProfileMarkers(resource));
+			addToList(problems, getAllApiBaselineMarkers(resource));
 			addToList(problems, getAllSinceTagMarkers(resource));
 			addToList(problems, getAllVersionMarkers(resource));
 			addToList(problems, getAllUnsupportedTagMarkers(resource));
@@ -371,6 +385,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return new IMarker[0];
 	}
 
+	/**
+	 * Looks up the {@link IResource} in the workspace from the given path
+	 * @param path
+	 * @return the {@link IResource} handle for the given path
+	 */
 	public IResource getResource(IPath path) {
 		IResource resource;
 		if(path.equals(getWorkspaceRootPath())){
@@ -388,6 +407,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return resource;
 	}
 	
+	/**
+	 * Adds the array of objects to the given list
+	 * @param list
+	 * @param objects
+	 */
 	private void addToList(List list, Object[] objects) {
 		if(list == null || objects == null) {
 			return;
@@ -409,7 +433,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	
 	/**
 	 * Returns the current workspace {@link IApiProfile}
-	 * @return
+	 * @return the workspace baseline
 	 */
 	protected IApiBaseline getWorkspaceProfile() {
 		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
@@ -462,7 +486,12 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 					}
 				}
 			}
-		} finally {
+		}
+		catch(Exception e) {
+			//dump the trace https://bugs.eclipse.org/bugs/show_bug.cgi?id=275005
+			e.printStackTrace();
+		}
+		finally {
 			// clear all changes
 			fAdded.clear();
 			fChanged.clear();
@@ -472,32 +501,26 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	
 	/**
 	 * Sets the default revert source path to the given path.
-	 * This path is only consulted if the workspace is to be reverted. Setting the path to <code>null</code>
-	 * will result in all workspace modifications being deleted if a call to {@link #revertWorkspace()} is made.
+	 * 
 	 * @param path
 	 */
-	protected void setRevertSourcePath(IPath path) {
+	public void setRevertSourcePath(IPath path) {
 		fRevertSourcePath = path;
 	}
 	
 	/**
 	 * @return the currently set source path to use when reverting changes to the workspace.
 	 */
-	protected IPath getRevertSourcePath() {
+	public IPath getRevertSourcePath() {
 		return fRevertSourcePath;
 	}
 	
 	/**
 	 * Reverts changes in the workspace - added, removed, changed files
+	 * 
+	 * @throws Exception if something happens trying to revert the workspace contents
 	 */
-	public void revertWorkspace() {
-		/*if(fRevertSourcePath == null) {
-			fAdded.clear();
-			fChanged.clear();
-			fRemoved.clear();
-			return;
-		}*/
-		
+	public void revertWorkspace() throws Exception {	
 		// remove each added file
 		Iterator<IPath> iterator = fAdded.iterator();
 		while (iterator.hasNext()) {
@@ -507,43 +530,37 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		
 		// revert each changed file
 		iterator = fChanged.iterator();
-		while (iterator.hasNext()) {
-			IPath path = (IPath) iterator.next();
-			IPath repl = TestSuiteHelper.getPluginDirectoryPath().
-				append(ApiBuilderTest.TEST_SOURCE_ROOT).append(CompatibilityTest.BASELINE).append(path);
-			updateWorkspaceFile(path, repl);
+		IPath revert = getRevertSourcePath();
+		if(revert != null) {
+			IPath path= null;
+			while (iterator.hasNext()) {
+				path = (IPath) iterator.next();
+				updateWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(ApiBuilderTest.TEST_SOURCE_ROOT).append(getRevertSourcePath()).append(path));
+			}
+			
+			// replace each deleted file
+			iterator = fRemoved.iterator();
+			while (iterator.hasNext()) {
+				path = (IPath) iterator.next();
+				createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(ApiBuilderTest.TEST_SOURCE_ROOT).append(getRevertSourcePath()).append(path));
+			}
 		}
-		
-		// replace each deleted file
-		iterator = fRemoved.iterator();
-		while (iterator.hasNext()) {
-			IPath path = (IPath) iterator.next();
-			IPath repl = TestSuiteHelper.getPluginDirectoryPath().
-				append(ApiBuilderTest.TEST_SOURCE_ROOT).append(CompatibilityTest.BASELINE).append(path);
-			createWorkspaceFile(path, repl);
-		}
-		
 	}
 	
 	/**
 	 * Deletes the workspace file at the specified location (full path).
 	 * 
 	 * @param workspaceLocation
+	 * @throws Exception
 	 */
-	private void deleteWorkspaceFile(IPath workspaceLocation) {
+	private void deleteWorkspaceFile(IPath workspaceLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		try {
 			file.delete(true, null);
 		} catch (CoreException e) {
-			try {
-				//try to bring the resource in to sync an re-delete
-				file.refreshLocal(IResource.DEPTH_ONE, null);
-				file.delete(true, null);
-			} catch (CoreException e1) {
-				ApiPlugin.log(e1);
-				return;
-			}
-			ApiPlugin.log(e);
+			//try to bring the resource in to sync an re-delete
+			file.refreshLocal(IResource.DEPTH_ONE, null);
+			file.delete(true, null);
 		}
 	}		
 	
@@ -553,25 +570,20 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * 
 	 * @param workspaceLocation
 	 * @param replacementLocation
+	 * @throws Exception
 	 */
-	private void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) {
+	private void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		File replacement = replacementLocation.toFile();
+		FileInputStream stream = null;
 		try {
-			FileInputStream stream = null;
-			try {
-				stream = new FileInputStream(replacement);
-				file.setContents(stream, false, true, null);
+			stream = new FileInputStream(replacement);
+			file.setContents(stream, false, true, null);
+		}
+		finally {
+			if(stream != null) {
+				stream.close();
 			}
-			finally {
-				if(stream != null) {
-					stream.close();
-				}
-			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		} catch (IOException e) {
-			ApiPlugin.log(e);
 		}
 	}	
 
@@ -581,25 +593,20 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * 
 	 * @param workspaceLocation
 	 * @param replacementLocation
+	 * @throws Exception
 	 */
-	private void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) {
+	private void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		File replacement = replacementLocation.toFile();
+		FileInputStream stream = null;
 		try {
-			FileInputStream stream = null;
-			try {
-				stream = new FileInputStream(replacement);
-				file.create(stream, false, null);
+			stream = new FileInputStream(replacement);
+			file.create(stream, false, null);
+		}
+		finally {
+			if(stream != null) {
+				stream.close();
 			}
-			finally {
-				if(stream != null) {
-					stream.close();
-				}
-			}
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
 		}
 	}
 	
