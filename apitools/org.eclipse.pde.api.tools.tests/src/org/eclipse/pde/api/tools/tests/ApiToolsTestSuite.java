@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
 import org.eclipse.pde.api.tools.search.tests.SearchEngineTests;
 import org.eclipse.pde.api.tools.search.tests.SkippedComponentTests;
 import org.eclipse.pde.api.tools.search.tests.UseSearchTests;
-import org.eclipse.pde.api.tools.util.tests.HeadlessApiProfileManagerTests;
+import org.eclipse.pde.api.tools.util.tests.HeadlessApiBaselineManagerTests;
 import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
 import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
 import org.eclipse.pde.api.tools.util.tests.TarExceptionTests;
@@ -60,7 +60,7 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(SearchEngineTests.class));
 		addTest(new TestSuite(SkippedComponentTests.class));
 		addTest(new TestSuite(UseSearchTests.class));
-		addTest(new TestSuite(HeadlessApiProfileManagerTests.class));
+		addTest(new TestSuite(HeadlessApiBaselineManagerTests.class));
 		addTest(new TestSuite(TagScannerTests.class));
 		addTest(new TestSuite(ComponentManifestTests.class));
 		addTest(new TestSuite(UtilTests.class));
