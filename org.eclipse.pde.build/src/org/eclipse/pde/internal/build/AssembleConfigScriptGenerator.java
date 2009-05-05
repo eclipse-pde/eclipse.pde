@@ -193,9 +193,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("kind", "artifact", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 			script.printTab();
-			script.print("\t<slicingOptions "); //$NON-NLS-1$
-			script.printAttribute("followStrict", TRUE, true); //$NON-NLS-1$
-			script.println("/>"); //$NON-NLS-1$
 
 			for (int i = 0; i < plugins.length; i++) {
 				BundleDescription plugin = plugins[i];
