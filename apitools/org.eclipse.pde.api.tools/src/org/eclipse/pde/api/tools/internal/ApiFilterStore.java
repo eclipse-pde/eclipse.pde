@@ -307,10 +307,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#dispose()
 	 */
 	public void dispose() {
-		if(fFilterMap != null) {
-			fFilterMap.clear();
-			fFilterMap = null;
-		}
+		clearFilters();
 		if(fUnusedFilters != null) {
 			fUnusedFilters.clear();
 			fUnusedFilters = null;
@@ -388,7 +385,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @return an xml string representation of this filter store
 	 * @throws CoreException
 	 */
-	private String getStoreAsXml() throws CoreException {
+	private synchronized String getStoreAsXml() throws CoreException {
 		if(fFilterMap == null) {
 			return null;
 		}
@@ -486,7 +483,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * Initializes the backing filter map for this store from the .api_filters file. Does nothing if the filter store has already been
 	 * initialized.
 	 */
-	private void initializeApiFilters() {
+	private synchronized void initializeApiFilters() {
 		if(fFilterMap != null) {
 			return;
 		}
@@ -614,7 +611,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @param problems the problems to add the the store
 	 * @param persist if the filters should be auto-persisted after they are added
 	 */
-	private void internalAddFilters(IApiProblem[] problems, boolean persist) {
+	private synchronized void internalAddFilters(IApiProblem[] problems, boolean persist) {
 		Set filters = null;
 		for(int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];
@@ -681,7 +678,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	/**
 	 * Start recording filter usage for this store.
 	 */
-	public void recordFilterUsage() {
+	public synchronized void recordFilterUsage() {
 		initializeApiFilters();
 		fUnusedFilters = new HashMap();
 		IResource resource = null;
@@ -829,10 +826,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					IFile file = (IFile) resource;
 					if(file.isAccessible()) {
 						try {
-							if(fFilterMap != null) {
-								fFilterMap.clear();
-								fFilterMap = null; 
-							}
+							clearFilters();
 							initializeApiFilters();
 						}
 						finally {
@@ -844,6 +838,16 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			if(needsbuild && ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 				Util.getBuildJob(new IProject[] {fProject.getProject()}).schedule();
 			}
+		}
+	}
+	
+	/**
+	 * Clears out the filter map
+	 */
+	private synchronized void clearFilters() {
+		if(fFilterMap != null) {
+			fFilterMap.clear();
+			fFilterMap = null; 
 		}
 	}
 }
