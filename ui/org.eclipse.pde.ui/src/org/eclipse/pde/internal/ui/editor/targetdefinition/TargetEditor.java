@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
-
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.*;
@@ -22,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.*;
@@ -79,7 +78,6 @@ public class TargetEditor extends FormEditor {
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Better error handling
 		commitPages(true);
 		ITargetDefinition target = getTarget();
 		if (target != null) {
@@ -182,6 +180,11 @@ public class TargetEditor extends FormEditor {
 	 * @see org.eclipse.ui.forms.editor.FormEditor#dispose()
 	 */
 	public void dispose() {
+		// Cancel any resolution jobs that are runnning
+		Job.getJobManager().cancel(getTargetChangedListener().getJobFamily());
+		getTargetChangedListener().setContentTree(null);
+		getTargetChangedListener().setLocationTree(null);
+
 		if (fInputListener != null) {
 			PDEPlugin.getWorkspace().removeResourceChangeListener(fInputListener);
 			fInputListener = null;
@@ -194,7 +197,6 @@ public class TargetEditor extends FormEditor {
 	 * @return target model
 	 */
 	public ITargetDefinition getTarget() {
-		// TODO Better error handling
 		if (fTarget == null) {
 			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 			if (service != null) {
@@ -213,11 +215,6 @@ public class TargetEditor extends FormEditor {
 					} catch (CoreException e) {
 					}
 				}
-				/*ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(URI)
-				
-				ITargetHandle fileHandle = service.getTarget(file)*/
-
-				// TODO Support storage editor input?
 				if (fTarget == null) {
 					fTarget = service.newTarget();
 				}
@@ -342,9 +339,14 @@ public class TargetEditor extends FormEditor {
 		}
 	}
 
+	/**
+	 * When changes are noticed in the target, this listener will resolve the
+	 * target and update the necessary pages in the editor.
+	 */
 	class TargetChangedListener implements ITargetChangedListener {
 		private TargetLocationsGroup fLocationTree;
 		private TargetContentsGroup fContentTree;
+		private Object fJobFamily = new Object();
 
 		public void setLocationTree(TargetLocationsGroup locationTree) {
 			fLocationTree = locationTree;
@@ -352,6 +354,13 @@ public class TargetEditor extends FormEditor {
 
 		public void setContentTree(TargetContentsGroup contentTree) {
 			fContentTree = contentTree;
+		}
+
+		/**
+		 * @return non-null object identifier for any jobs created by this listener
+		 */
+		public Object getJobFamily() {
+			return fJobFamily;
 		}
 
 		public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
@@ -367,11 +376,13 @@ public class TargetEditor extends FormEditor {
 					fContentTree.setEnabled(false);
 				}
 				if (fLocationTree != null) {
-					// TODO setting the input to null here makes the table blank while resolving
 					fLocationTree.setInput(getTarget());
 				}
-				// TODO Cancel any other started jobs? Bad if we do this every time a checkbox changes
+				Job.getJobManager().cancel(getJobFamily());
 				Job resolveJob = new Job(PDEUIMessages.TargetEditor_1) {
+					/* (non-Javadoc)
+					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+					 */
 					protected IStatus run(IProgressMonitor monitor) {
 						getTarget().resolve(monitor);
 						if (monitor.isCanceled()) {
@@ -379,6 +390,13 @@ public class TargetEditor extends FormEditor {
 						}
 						// Don't return any problems because we don't want an error dialog
 						return Status.OK_STATUS;
+					}
+
+					/* (non-Javadoc)
+					 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+					 */
+					public boolean belongsTo(Object family) {
+						return family.equals(getJobFamily());
 					}
 				};
 				resolveJob.addJobChangeListener(new JobChangeAdapter() {
