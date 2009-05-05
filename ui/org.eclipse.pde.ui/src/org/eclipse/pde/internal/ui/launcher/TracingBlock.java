@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262885
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -192,12 +193,6 @@ public class TracingBlock {
 				options = PDECore.getDefault().getTracingOptionsManager().getTracingOptions(options);
 			fMasterOptions.putAll(options);
 			masterCheckChanged(false);
-			IPluginModelBase model = getLastSelectedPlugin(config);
-			if (model != null) {
-				fPluginViewer.setSelection(new StructuredSelection(model));
-			} else {
-				pluginSelected(null, false);
-			}
 			String checked = config.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 			if (checked == null) {
 				fPluginViewer.setAllChecked(true);
@@ -208,12 +203,20 @@ public class TracingBlock {
 				ArrayList list = new ArrayList();
 				while (tokenizer.hasMoreTokens()) {
 					String id = tokenizer.nextToken();
+					IPluginModelBase model = PluginRegistry.findModel(id);
 					model = PluginRegistry.findModel(id);
 					if (model != null) {
 						list.add(model);
 					}
 				}
 				fPluginViewer.setCheckedElements(list.toArray());
+				IPluginModelBase model = getLastSelectedPlugin(config);
+				if (model != null) {
+					fPluginViewer.setSelection(new StructuredSelection(model));
+					pluginSelected(model, list.contains(model));
+				} else {
+					pluginSelected(null, false);
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
