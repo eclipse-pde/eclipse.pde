@@ -92,7 +92,9 @@ public class BuildScriptGeneratorTask extends Task {
 	public void run() throws CoreException {
 		initializeAntProperties(antProperties);
 		setEEProfileProperties(antProperties);
-		generator.setReportResolutionErrors(true);
+
+		if (!Boolean.valueOf(antProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS)).booleanValue())
+			generator.setReportResolutionErrors(true);
 		generator.setImmutableAntProperties(antProperties);
 		BundleHelper.getDefault().setLog(this);
 		generator.generate();
@@ -115,6 +117,10 @@ public class BuildScriptGeneratorTask extends Task {
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_P2_GATHERING);
 		if (Boolean.valueOf(value).booleanValue())
 			properties.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, "true"); //$NON-NLS-1$ 
+
+		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS);
+		if (Boolean.valueOf(value).booleanValue())
+			properties.put(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS, "true"); //$NON-NLS-1$ 
 	}
 
 	private void setEEProfileProperties(Properties antProperties) {

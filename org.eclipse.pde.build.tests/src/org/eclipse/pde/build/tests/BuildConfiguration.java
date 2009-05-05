@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class BuildConfiguration {
 	public static final String TRUE = "true";
@@ -72,6 +73,7 @@ public class BuildConfiguration {
 		Properties builderProperties = getBuildConfig();
 		builderProperties.put("buildDirectory", builder);
 		builderProperties.put("builder", builder);
+		builderProperties.put(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS, TRUE);
 		return builderProperties;
 	}
 
@@ -88,6 +90,7 @@ public class BuildConfiguration {
 		properties.put("type", type);
 		properties.put("id", id);
 		properties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		properties.put(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS, TRUE);
 		return properties;
 	}
 }

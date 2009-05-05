@@ -123,6 +123,8 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_COMPILE_PROBLEM_MARKER_EXISTS = "compilation.problem.marker.exists"; //$NON-NLS-1$
 	public static final String PROPERTY_COMPILATION_ERROR = "compilation.error.occured"; //$NON-NLS-1$
 
+	public static final String PROPERTY_SUPPRESS_RESOLUTION_ERRORS = "suppressResolutionErrors"; //$NON-NLS-1$
+
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 
 	public static final String PROPERTY_PACKAGER_MODE = "packagerMode"; //$NON-NLS-1$
