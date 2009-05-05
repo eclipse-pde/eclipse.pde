@@ -105,7 +105,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 		link.setToolTipText(ActionMessages.CompareToBaselineWizardPage_open_baseline_pref_page);
 		//do initialization
 		initialize();
-		getShell().setSize(400, 280);
+		getShell().pack();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_COMPARE_WIZARD_PAGE);
 	}
 
