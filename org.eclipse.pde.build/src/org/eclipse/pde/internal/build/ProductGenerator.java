@@ -355,7 +355,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		buffer.append(info.getSymbolicName());
 		if (info.getStartLevel() != BundleInfo.NO_LEVEL || info.isMarkedAsStarted())
 			buffer.append('@');
-		if (info.getStartLevel() != BundleInfo.NO_LEVEL) {
+		if (info.getStartLevel() > 0) {
 			buffer.append(info.getStartLevel());
 			if (info.isMarkedAsStarted())
 				buffer.append(':');

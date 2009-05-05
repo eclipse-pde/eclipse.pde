@@ -298,6 +298,9 @@ public class ProductTests extends PDETestCase {
 		buffer.append("   <plugins>                                                           \n");
 		buffer.append("      <plugin id=\"A\" version=\"1.0.0.v1\"  />                        \n");
 		buffer.append("   </plugins>                                                          \n");
+		buffer.append("   <configurations>                                                    \n");
+		buffer.append("     <plugin id=\"A\" autoStart=\"true\" startLevel=\"0\" />           \n"); //bug 274901
+		buffer.append("   </configurations>                                                   \n");
 		buffer.append("</product>                                                             \n");
 		Utils.writeBuffer(product, buffer);
 
@@ -317,6 +320,7 @@ public class ProductTests extends PDETestCase {
 		runProductBuild(buildFolder);
 
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/A_1.0.0.v1.jar");
+		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "osgi.bundles=A@start");
 	}
 
 	public void testBug246060() throws Exception {
@@ -399,7 +403,7 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(config, "osgi.bundles.defaultStartLevel=3");
 		assertLogContainsLine(config, "osgi.bundles=org.eclipse.equinox.simpleconfigurator@1:start");
 		assertLogContainsLine(info, "org.eclipse.core.runtime_" + versions.get("org.eclipse.core.runtime") + ",3,false" );
-		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ",0,false" );
+		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ",3,false" ); //bug 274901
 		assertLogContainsLine(info, "org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ",1,true" );
 	}
 	

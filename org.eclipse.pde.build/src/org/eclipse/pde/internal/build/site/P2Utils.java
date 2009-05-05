@@ -126,7 +126,10 @@ public class P2Utils {
 				if (userInfos != null && userInfos.size() > 0) {
 					if (userInfos.containsKey(modelName)) {
 						BundleInfo userInfo = (BundleInfo) userInfos.get(modelName);
-						info.setStartLevel(userInfo.getStartLevel());
+						int start = userInfo.getStartLevel();
+						if (start <= 0)
+							start = defaultStartLevel;
+						info.setStartLevel(start);
 						info.setMarkedAsStarted(userInfo.isMarkedAsStarted());
 					} else {
 						info.setStartLevel(defaultStartLevel);
