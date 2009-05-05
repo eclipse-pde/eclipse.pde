@@ -102,7 +102,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	public void testIsExistingName() {
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1");
 		fManager.addApiBaseline(baseline);
-		boolean result = fManager.isExistingBaselineName("test1");
+		boolean result = fManager.isExistingProfileName("test1");
 		assertTrue("the name test1 should be an existing name", result);
 	}
 	
@@ -110,7 +110,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that isExistingProfileName returns false when asked about an non-existent name
 	 */
 	public void testisExistingName2() {
-		boolean result = fManager.isExistingBaselineName("foobaseline");
+		boolean result = fManager.isExistingProfileName("foobaseline");
 		assertFalse("foobaseline is not an existing name", result);
 	}
 	
