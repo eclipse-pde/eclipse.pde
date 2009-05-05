@@ -523,20 +523,26 @@ public class TargetPlatformService implements ITargetPlatformService {
 		// Compare the platform bundles against the definition ones and collect any missing bundles
 		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
 		IResolvedBundle[] bundles = target.getAllBundles();
+		Set alreadyConsidered = new HashSet(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			IResolvedBundle bundle = bundles[i];
 			BundleInfo info = bundle.getBundleInfo();
 			File file = URIUtil.toFile(info.getLocation());
 			String location = file.getAbsolutePath();
 			stateLocations.remove(location);
-			if (!allLocations.contains(location)) {
-				// it's not in the state... if it's not really in the target either (missing) this
-				// is not an error
-				IStatus status = bundle.getStatus();
-				if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
-					// its in the target, missing in the state
-					IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
-					multi.add(s);
+			NameVersionDescriptor desc = new NameVersionDescriptor(info.getSymbolicName(), info.getVersion());
+			if (!alreadyConsidered.contains(desc)) {
+				alreadyConsidered.add(desc);
+				// ignore duplicates (symbolic name & version)
+				if (!allLocations.contains(location)) {
+					// it's not in the state... if it's not really in the target either (missing) this
+					// is not an error
+					IStatus status = bundle.getStatus();
+					if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
+						// its in the target, missing in the state
+						IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
+						multi.add(s);
+					}
 				}
 			}
 		}

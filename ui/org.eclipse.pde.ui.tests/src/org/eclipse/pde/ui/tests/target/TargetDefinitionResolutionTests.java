@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
@@ -266,6 +276,32 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		definition.resolve(null);
 		IResolvedBundle[] allBundles = definition.getAllBundles();
 		assertEquals(10, allBundles.length);
+		
+		try {
+			setTargetPlatform(definition);
+			IStatus status = getTargetService().compareWithTargetPlatform(definition);
+			assertTrue(status.isOK());
+		} finally {
+			resetTargetPlatform();
+		}
+	}
+	
+	/**
+	 * Tests that a target definition is in synch with the target platform when there
+	 * are duplicates in the target definition (duplicates should be ignored).
+	 * 
+	 * @throws Exception
+	 */
+	public void testTargetInSynchWithDuplicates() throws Exception {
+		IPath location = extractAbcdePlugins();
+		IPath dirPath = location.append("plugins");
+		ITargetDefinition definition = getNewTarget();
+		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
+		IBundleContainer container2 = getTargetService().newDirectoryContainer(dirPath.toOSString());
+		definition.setBundleContainers(new IBundleContainer[]{container, container2});
+		definition.resolve(null);
+		IResolvedBundle[] allBundles = definition.getAllBundles();
+		assertEquals(20, allBundles.length);
 		
 		try {
 			setTargetPlatform(definition);
