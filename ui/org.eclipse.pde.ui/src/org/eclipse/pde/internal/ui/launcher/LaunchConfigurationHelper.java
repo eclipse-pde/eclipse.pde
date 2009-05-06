@@ -33,6 +33,7 @@ public class LaunchConfigurationHelper {
 
 	private static final String PROP_OSGI_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
 	private static final String PROP_OSGI_BUNDLES = "osgi.bundles"; //$NON-NLS-1$
+	private static final String PROP_P2_DATA_AREA = "eclipse.p2.data.area"; //$NON-NLS-1$
 
 	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
 		try {
@@ -94,6 +95,12 @@ public class LaunchConfigurationHelper {
 			String bundleList = properties.getProperty(PROP_OSGI_BUNDLES);
 			if (bundleList != null)
 				properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), bundles, bundlesWithStartLevels));
+			String dataArea = properties.getProperty(PROP_P2_DATA_AREA);
+			if (dataArea != null) {
+				// Make the p2 data area in the configuration area itself, rather than a sibling of the configuration
+				// area (which is a the root pde.core shared metadata area) @see bug 272810
+				properties.setProperty(PROP_P2_DATA_AREA, "@config.dir/.p2"); //$NON-NLS-1$
+			}
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String) null);
 			if (templateLoc != null) {
