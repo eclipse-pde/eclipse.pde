@@ -200,7 +200,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printAttribute("token", "@FLAVOR@", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printAttribute("value", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 			script.println("/>"); //$NON-NLS-1$
-
+			generateCopyConfigs(product, productDir);
 			generateProductReplaceTask(product, newProduct);
 			productPath = newProduct;
 
@@ -240,6 +240,26 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.println();
 		generateSynchContext();
 		script.printTargetEnd();
+	}
+
+	protected void generateCopyConfigs(ProductFile product, String productDir) {
+		if (!product.haveCustomConfig())
+			return;
+		for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
+			Config config = (Config) iterator.next();
+			String entry = product.getConfigIniPath(config.getOs());
+			if (entry == null)
+				continue;
+			File entryFile = new File(entry);
+			if (entryFile.exists() && entryFile.isAbsolute())
+				continue;
+			String path = findConfigFile(product, config.getOs());
+			if (path != null) {
+				//non-null path exists, but isn't necessarily absolute
+				File configFile = new File(path);
+				script.printCopyFileTask(configFile.getAbsolutePath(), productDir + '/' + entry, true);
+			}
+		}
 	}
 
 	protected void generateSynchContext() {

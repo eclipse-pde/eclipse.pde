@@ -71,7 +71,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 
 			//configuration/config.ini
-			String custom = findConfigFile(config.getOs());
+			String custom = findConfigFile(productFile, config.getOs());
 			if (custom != null) {
 				try {
 					Utils.copyFile(custom, rootLocation + "/configuration/config.ini"); //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 
 		//only do start level cus if the .product said nothing
-		if (productFile.getConfigurationInfo().size() > 0)
+		if (productFile.getConfigurationInfo().size() > 0 || productFile.haveCustomConfig())
 			cus = false;
 
 		StringBuffer buffer = new StringBuffer();
@@ -256,38 +256,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (name != null)
 			return name;
 		return "eclipse"; //$NON-NLS-1$
-	}
-
-	private String findConfigFile(String os) {
-		String path = productFile.getConfigIniPath(os);
-		if (path == null)
-			return null;
-
-		String result = findFile(path, false);
-		if (result != null)
-			return result;
-
-		// couldn't find productFile, try it as a path directly
-		File f = new File(path);
-		if (f.exists() && f.isFile())
-			return f.getAbsolutePath();
-
-		// relative to the working directory
-		f = new File(getWorkingDirectory(), path);
-		if (f.exists() && f.isFile())
-			return f.getAbsolutePath();
-
-		// relative to the working directory/plugins
-		f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, path); //$NON-NLS-1$
-		if (f.exists() && f.isFile())
-			return f.getAbsolutePath();
-
-		//relative to .product file
-		f = new File(new File(productFile.getLocation()).getParent(), path);
-		if (f.exists() && f.isFile())
-			return f.getAbsolutePath();
-
-		return null;
 	}
 
 	private void initialize() throws CoreException {

@@ -1456,4 +1456,51 @@ public class PublishingTests extends P2TestCase {
 		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", "eclipse/configuration/config.ini", ini);
 		assertLogContainsLine(ini, "osgi.instance.area.default=@user.home/workspace");
 	}
+	
+	public void testBug262464_customConfig() throws Exception {
+		IFolder buildFolder = newTest("262464");
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+
+		Utils.generateBundle(bundle, "bundle.foo");
+		Properties customConfig = new Properties();
+		customConfig.put("osgi.bundles", "org.eclipse.equinox.common@2:start, org.eclipse.equinox.app@start");
+		customConfig.put("org.eclipse.update.reconcile", "false");
+		Utils.storeProperties(bundle.getFile("config.ini"), customConfig);
+
+		IFile product = bundle.getFile("bundle.product");
+		StringBuffer extra = new StringBuffer();
+		extra.append("<configIni use=\"default\">  \n");
+		extra.append("   <win32>/bundle/config.ini</win32>\n");
+		extra.append("</configIni>\n");
+		String[] entries = new String[] {"org.eclipse.equinox.common", "org.eclipse.osgi", "org.eclipse.equinox.app", "org.eclipse.equinox.registry"};
+		Utils.generateProduct(product, "bundle.product", "1.0.0", null, entries, false, extra);
+		
+		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("product", product.getLocation().toOSString());
+		buildProperties.put("configs", "win32,win32,x86");
+		buildProperties.put("includeLaunchers", "false");
+		buildProperties.put("p2.gathering", "true");
+		buildProperties.put("filteredDependencyCheck", "true");
+		buildProperties.put("archivesFormat", "win32,win32,x86-folder");
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		runProductBuild(buildFolder);
+		
+		IFolder productFolder = buildFolder.getFolder("features/org.eclipse.pde.build.container.feature/product");
+		//check we copied the config.ini file
+		assertResourceFile(productFolder.getFile("bundle/config.ini"));
+		//check that build didn't generate default CUs
+		IFile p2Inf = productFolder.getFile("p2.inf");
+		assertEquals(p2Inf.getLocation().toFile().length(), 0);
+		
+		URI repoURI = URIUtil.fromString("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		IMetadataRepository metadata = loadMetadataRepository(repoURI);
+		
+		IFile config = buildFolder.getFile("tmp/eclipse/configuration/config.ini");
+		IInstallableUnit iu = getIU(metadata, "org.eclipse.equinox.common");
+		String line = "org.eclipse.equinox.common_" + iu.getVersion() + ".jar@2\\:start";
+		assertLogContainsLine(config, line);
+		iu = getIU(metadata, "org.eclipse.equinox.app");
+		line = "org.eclipse.equinox.app_" + iu.getVersion() + ".jar@4\\:start";
+		assertLogContainsLine(config, line);
+	}
 }

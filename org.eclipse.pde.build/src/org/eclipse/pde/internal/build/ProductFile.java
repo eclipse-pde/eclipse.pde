@@ -248,6 +248,10 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		return specific == null ? configPath : specific;
 	}
 
+	public boolean haveCustomConfig() {
+		return configPath != null || platformSpecificConfigPaths.size() > 0;
+	}
+
 	public String getId() {
 		if (uid != null)
 			return uid;

@@ -454,6 +454,38 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return null;
 	}
 
+	protected String findConfigFile(ProductFile productFile, String os) {
+		String path = productFile.getConfigIniPath(os);
+		if (path == null)
+			return null;
+
+		String result = findFile(path, false);
+		if (result != null)
+			return result;
+
+		// couldn't find productFile, try it as a path directly
+		File f = new File(path);
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		// relative to the working directory
+		f = new File(getWorkingDirectory(), path);
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		// relative to the working directory/plugins
+		f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, path); //$NON-NLS-1$
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		//relative to .product file
+		f = new File(new File(productFile.getLocation()).getParent(), path);
+		if (f.exists() && f.isFile())
+			return f.getAbsolutePath();
+
+		return null;
+	}
+
 	private String checkFile(IPath base, Path target, boolean makeRelative) {
 		IPath path = base.append(target.removeFirstSegments(1));
 		String result = path.toOSString();
