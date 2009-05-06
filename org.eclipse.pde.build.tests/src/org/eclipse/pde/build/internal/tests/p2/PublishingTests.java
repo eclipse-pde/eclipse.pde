@@ -95,16 +95,16 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("PublishFeature_versions");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
-		
+
 		Utils.generateBundleManifest(bundle, "foo", "1.0.0.qualifier", null);
 		Utils.generatePluginBuildProperties(bundle, null);
 		Utils.writeBuffer(bundle.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
-		
-		Utils.generateFeature(buildFolder, "F", null, new String [] {"foo" }, "1.0.0.qualifier");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"foo"}, "1.0.0.qualifier");
 		Properties properties = new Properties();
 		properties.put("bin.includes", "feature.xml");
 		Utils.storeBuildProperties(f, properties);
-		
+
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "F");
 		buildProperties.put("p2.gathering", "true");
@@ -112,19 +112,19 @@ public class PublishingTests extends P2TestCase {
 		buildProperties.put("archivesFormat", "group,group,group-folder");
 		buildProperties.put("forceContextQualifier", "12345");
 		Utils.storeBuildProperties(buildFolder, buildProperties);
-		
+
 		runBuild(buildFolder);
-		
+
 		IFile featureXML = buildFolder.getFile("feature.xml");
 		assertResourceFile(buildFolder, "tmp/eclipse/features/F_1.0.0.12345.jar");
 		Utils.extractFromZip(buildFolder, "tmp/eclipse/features/F_1.0.0.12345.jar", "feature.xml", featureXML);
-		
+
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature model = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
 		assertEquals(model.getVersion(), "1.0.0.12345");
 		assertEquals(model.getPluginEntries()[0].getVersion(), "1.0.0.12345");
 	}
-	
+
 	public void testPublishBundle_customCallbacks() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_callbacks");
 
@@ -230,9 +230,9 @@ public class PublishingTests extends P2TestCase {
 
 		File[] features = new File(delta, "features").listFiles(filter);
 		assertTrue(features.length > 0);
-		Arrays.sort(features, new Comparator(){
+		Arrays.sort(features, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return -1 * ((File)o1).getName().compareTo(((File)o2).getName());
+				return -1 * ((File) o1).getName().compareTo(((File) o2).getName());
 			}
 		});
 		return features[0];
@@ -463,7 +463,7 @@ public class PublishingTests extends P2TestCase {
 
 		File executable = findExecutableFeature(delta);
 		String executableVersion = executable.getName().substring(executable.getName().indexOf('_') + 1);
-		
+
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer branding = new StringBuffer();
 		branding.append("<launcher name=\"branded\">           \n");
@@ -473,7 +473,7 @@ public class PublishingTests extends P2TestCase {
 		branding.append("      <bmp/>                          \n");
 		branding.append("   </win>                             \n");
 		branding.append("</launcher>                           \n");
-		
+
 		//bug 273115 - no version
 		Utils.generateProduct(product, "org.example.rcp", null, null, new String[] {"org.eclipse.osgi"}, false, branding);
 
@@ -502,7 +502,7 @@ public class PublishingTests extends P2TestCase {
 		entries.add("branded.app/Contents/MacOS/branded");
 		entries.add("branded.app/Contents/Resources/mail.icns");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.carbon.macosx.ppc_" + executableVersion, entries);
-		
+
 		entries.add("branded.app/Contents/Info.plist");
 		entries.add("branded.app/Contents/MacOS/branded.ini");
 		entries.add("branded.app/Contents/MacOS/branded");
@@ -527,16 +527,16 @@ public class PublishingTests extends P2TestCase {
 
 		iu = getIU(repository, "org.example.rcp_root.carbon.macosx.ppc");
 		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
-		
+
 		iu = getIU(repository, "org.example.rcp_root.cocoa.macosx.x86_64");
 		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
 
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
-		
+
 		iu = getIU(repository, "org.eclipse.equinox.launcher.cocoa.macosx.x86_64");
 		entries.clear();
-		entries.add("eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_" + iu.getVersion() +"/");
+		entries.add("eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_" + iu.getVersion() + "/");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", entries);
 	}
 
@@ -734,7 +734,7 @@ public class PublishingTests extends P2TestCase {
 		//bug 274703
 		IInstallableUnit iu = getIU(repository, "f.feature.group");
 		assertFalse(Boolean.valueOf(iu.getProperty("org.eclipse.equinox.p2.type.group")).booleanValue());
-		
+
 		File buildFile = buildFolder.getLocation().toFile();
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/p_1.0.0.jar"), true);
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/features/f_1.0.0.jar"), true);
@@ -863,7 +863,7 @@ public class PublishingTests extends P2TestCase {
 
 		iuB = getIU(repo, "b");
 		assertTrue(Boolean.valueOf((String) iuB.getProperties().get("pde.build")).booleanValue());
-		
+
 		repo = null;
 		removeMetadataRepository(uri);
 	}
@@ -1022,7 +1022,7 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("</site>																					\n");
 		IFile siteXML = buildFolder.getFile("site.xml");
 		Utils.writeBuffer(siteXML, buffer);
-		
+
 		//bug 272362
 		IFile categoryXML = buildFolder.getFile("category.xml");
 		String categoryString = buffer.toString();
@@ -1103,9 +1103,9 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.win32.win32.x86");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.gtk.linux.x86");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
-		
-		iu = getIU(metadata, "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
-		assertTouchpoint(iu, "install", "(linkTarget:Eclipse.app/Contents/MacOS/launcher");
+
+//		iu = getIU(metadata, "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
+//		assertTouchpoint(iu, "install", "(linkTarget:Eclipse.app/Contents/MacOS/launcher");
 
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.win32.win32.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.gtk.linux.x86_3.3.200");
@@ -1201,7 +1201,7 @@ public class PublishingTests extends P2TestCase {
 		getIU(metadata, "a");
 		getIU(metadata, "f2_root"); //bug 271848, mirroring from context
 		assertResourceFile(build2, "buildRepo/binary/f2_root_1.0.0");
-		
+
 		metadata = null;
 		removeMetadataRepository(repoURI);
 	}
@@ -1294,14 +1294,14 @@ public class PublishingTests extends P2TestCase {
 			assertTrue(e.getMessage().indexOf("A Problem occured while running the director") > -1);
 		}
 
-		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] {"Installation failed.", "Missing requirement: uid.product 1.0.0.I10232 requires 'foo bar [1.0.0]' but it could not be found"});
+		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] {"Installation failed.", "Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo bar [1.0.0]' but it could not be found"});
 	}
 
 	public void testBug272907() throws Exception {
 		IFolder buildFolder = newTest("272907");
 		IFolder foo = Utils.createFolder(buildFolder, "plugins/foo");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
-		
+
 		Utils.generateBundleManifest(foo, "foo", "1.0.0", null);
 		Properties buildProperties = new Properties();
 		buildProperties.put("source.src.jar", "src/");
@@ -1315,7 +1315,7 @@ public class PublishingTests extends P2TestCase {
 		buildProperties = new Properties();
 		buildProperties.put("bin.includes", "feature.xml");
 		Utils.storeBuildProperties(f, buildProperties);
-		
+
 		//bug 274702
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("requires.0.namespace=org.eclipse.equinox.p2.iu	\n");
@@ -1342,12 +1342,12 @@ public class PublishingTests extends P2TestCase {
 		entries.add("src.jar");
 		entries.add("foob.class");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/foo_1.0.0.jar", entries);
-		
+
 		URI repoURI = URIUtil.fromString("file:" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString());
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 		IInstallableUnit iu = getIU(metadata, "f.feature.group");
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "testid0");
-		
+
 		iu = getIU(metadata, "testid0");
 		assertProvides(iu, P2InfUtils.NAMESPACE_IU, "testid0");
 	}
