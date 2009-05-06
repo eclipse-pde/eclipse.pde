@@ -256,6 +256,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 
 		for (int i = 0; i < data.length; i++) {
 			ITouchpointInstruction instruction = data[i].getInstruction(INSTALL);
+			if (instruction == null)
+				continue;
 			String[] actions = Utils.getArrayFromString(instruction.getBody(), ";"); //$NON-NLS-1$
 			for (int j = 0; j < actions.length; j++) {
 				if (actions[j].startsWith(CHMOD)) {

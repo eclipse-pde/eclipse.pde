@@ -147,7 +147,8 @@ public class P2TestCase extends PDETestCase {
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
 		ITouchpointData[] data = iu.getTouchpointData();
 		for (int i = 0; i < data.length; i++) {
-			if (data[i].getInstruction(phase).getBody().indexOf(action) > -1)
+			ITouchpointInstruction instruction = data[i].getInstruction(phase);
+			if (instruction != null && instruction.getBody().indexOf(action) > -1)
 				return;
 		}
 		fail("Action not found:" + action);

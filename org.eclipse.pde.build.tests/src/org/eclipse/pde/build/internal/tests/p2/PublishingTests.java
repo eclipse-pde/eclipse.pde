@@ -1105,8 +1105,8 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.gtk.linux.x86");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
 
-//		iu = getIU(metadata, "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
-//		assertTouchpoint(iu, "install", "(linkTarget:Eclipse.app/Contents/MacOS/launcher");
+		iu = getIU(metadata, "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
+		assertTouchpoint(iu, "configure", "(linkTarget:Eclipse.app/Contents/MacOS/launcher,targetDir:${installFolder},linkName:launcher)");
 
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.win32.win32.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.gtk.linux.x86_3.3.200");
