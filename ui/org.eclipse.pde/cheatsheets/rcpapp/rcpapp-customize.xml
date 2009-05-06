@@ -114,14 +114,8 @@
                skip="true"/>
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>
-      <subitem label="Note:  Eclipse expects a file called &quot;splash.bmp&quot; to be located in the root of the specified plug-in" 
+      <subitem label="Note:  Eclipse expects a file called &quot;splash.bmp&quot; to be located in the root of the specified plug-in. Verify that the root folder of &quot;com.example.rcpapp&quot; plug-in has the &quot;splash.bmp&apos;." 
                skip="true"/>
-      <subitem label="Locate the &quot;splash.bmp&quot; file located in the &quot;icons&quot; directory under the &quot;com.example.rcpapp&quot; project within the &quot;Package Explorer view&quot;" 
-               skip="false"/>                
-      <subitem label="Right-click on the &quot;splash.bmp&quot; file and select &quot;Refactor-&gt;Move...&quot; from the context menu" 
-               skip="false"/>                
-      <subitem label="Select &quot;com.example.rcpapp&quot; from the &quot;Move&quot; dialog box and click &quot;OK&quot;" 
-               skip="false"/>   
    </item>   
 
    <!-- Item -->

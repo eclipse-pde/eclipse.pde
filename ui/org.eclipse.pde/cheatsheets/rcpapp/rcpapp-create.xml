@@ -51,8 +51,11 @@
                skip="false"/>
       <subitem label="Select the &quot;Yes&quot; radio button under the &quot;Rich Client Application&quot; heading on the &quot;Plug-in Content&quot; page and click &quot;Next &gt;&quot;" 
                skip="false"/>
-      <subitem label="Select the &quot;Hello RCP&quot; template from the list of &quot;Available Templates&quot; and click &quot;Finish&quot;" 
-               skip="false"/>           
+      <subitem label="Select the &quot;Hello RCP&quot; template from the list of &quot;Available Templates&quot; and click &quot;Next&quot;" 
+               skip="false"/>
+      <subitem
+            label="Select the &quot;Add branding&quot; check box and click &quot;Finish&quot;">
+      </subitem>           
    </item>
 
    <!-- Item -->
