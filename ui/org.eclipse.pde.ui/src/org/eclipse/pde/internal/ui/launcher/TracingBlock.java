@@ -64,6 +64,12 @@ public class TracingBlock {
 			public void widgetSelected(SelectionEvent e) {
 				masterCheckChanged(true);
 				fTab.updateLaunchConfigurationDialog();
+				if (fTracingCheck.getSelection()) {
+					IStructuredSelection selection = (IStructuredSelection) fPluginViewer.getSelection();
+					if (!selection.isEmpty()) {
+						pluginSelected((IPluginModelBase) selection.getFirstElement(), fPluginViewer.getChecked(selection.getFirstElement()));
+					}
+				}
 			}
 		});
 
@@ -212,7 +218,7 @@ public class TracingBlock {
 				fPluginViewer.setCheckedElements(list.toArray());
 				IPluginModelBase model = getLastSelectedPlugin(config);
 				if (model != null) {
-					fPluginViewer.setSelection(new StructuredSelection(model));
+					fPluginViewer.setSelection(new StructuredSelection(model), true);
 					pluginSelected(model, list.contains(model));
 				} else {
 					pluginSelected(null, false);
