@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -24,9 +22,12 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.*;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
@@ -112,6 +113,9 @@ public class PDECore extends Plugin {
 	private FeatureModelManager fFeatureModelManager;
 
 	private TargetDefinitionManager fTargetProfileManager;
+
+	private PackageAdmin fPackageAdmin = null;
+	private ServiceTracker fServiceTracker = null;
 
 	// Schema registry
 	private SchemaRegistry fSchemaRegistry;
@@ -233,9 +237,37 @@ public class PDECore extends Plugin {
 		return fModelManager != null && fModelManager.isInitialized();
 	}
 
+	private Bundle getBundle(String symbolicName) {
+		if (fPackageAdmin == null)
+			return null;
+		Bundle[] bundles = fPackageAdmin.getBundles(symbolicName, null);
+		if (bundles == null)
+			return null;
+		// Return the first bundle that is not installed or uninstalled
+		for (int i = 0; i < bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+				return bundles[i];
+			}
+		}
+		return null;
+	}
+
+	private boolean startEarly(String bundleName) throws BundleException {
+		Bundle bundle = getBundle(bundleName);
+		if (bundle == null)
+			return false;
+		bundle.start(Bundle.START_TRANSIENT);
+		return true;
+	}
+
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext = context;
+
+		fServiceTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+		fServiceTracker.open();
+		fPackageAdmin = (PackageAdmin) fServiceTracker.getService();
+
 		fJavaElementChangeListener = new JavaElementChangeListener();
 		fJavaElementChangeListener.start();
 		fPluginRebuilder = new PluginRebuilder();
@@ -244,6 +276,10 @@ public class PDECore extends Plugin {
 		fFeatureRebuilder.start();
 
 		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable());
+
+		// for now we need to start this bundle to ensure required services
+		// are present when we need them (like IProfileRegistry)
+		startEarly("org.eclipse.equinox.p2.exemplarysetup"); //$NON-NLS-1$
 	}
 
 	public BundleContext getBundleContext() {
@@ -293,6 +329,9 @@ public class PDECore extends Plugin {
 			fTargetPlatformService.unregister();
 			fTargetPlatformService = null;
 		}
+
+		fServiceTracker.close();
+		fPackageAdmin = null;
 	}
 
 	/**
@@ -305,6 +344,10 @@ public class PDECore extends Plugin {
 		ServiceReference reference = fBundleContext.getServiceReference(serviceName);
 		if (reference == null)
 			return null;
-		return fBundleContext.getService(reference);
+		Object service = fBundleContext.getService(reference);
+		if (service != null) {
+			fBundleContext.ungetService(reference);
+		}
+		return service;
 	}
 }
