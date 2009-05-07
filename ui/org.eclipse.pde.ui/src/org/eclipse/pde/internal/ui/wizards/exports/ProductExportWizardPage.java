@@ -64,10 +64,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 		initialize();
 		pageChanged();
-		if (getErrorMessage() != null) {
-			setMessage(getErrorMessage());
-			setErrorMessage(null);
-		}
+
 		setControl(container);
 		hookHelpContext(container);
 		Dialog.applyDialogFont(container);
