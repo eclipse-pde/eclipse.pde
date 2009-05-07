@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -74,17 +73,13 @@ public class CompareOperation extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
-		SubMonitor progress = SubMonitor.convert(monitor, 100);
+		monitor.beginTask(ActionMessages.CompareDialogCollectingElementTaskName, IProgressMonitor.UNKNOWN);
 		String baselineName = this.baseline.getName();
-		progress.subTask(ActionMessages.CompareDialogCollectingElementTaskName);
-		SubMonitor loopProgress = progress.newChild(10).setWorkRemaining(this.selection.size());
-		final IApiScope scope = walkStructureSelection(this.selection, loopProgress);
+		final IApiScope scope = walkStructureSelection(this.selection, monitor);
 		try {
-			progress.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
-			SubMonitor compareProgress = progress.newChild(98).setWorkRemaining(scope.getApiElements().length);
+			monitor.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
 			try {
-				
-				IDelta delta = ApiComparator.compare(scope, baseline, VisibilityModifiers.API, false, compareProgress);
+				IDelta delta = ApiComparator.compare(scope, baseline, VisibilityModifiers.API, false, monitor);
 				int size = this.selection.size();
 				String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
 						new Integer(size), 
@@ -99,7 +94,6 @@ public class CompareOperation extends Job {
 						});
 				}
 				ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(description, delta, baselineName), true);
-				progress.worked(1);
 				return Status.OK_STATUS;
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
@@ -135,7 +129,6 @@ public class CompareOperation extends Job {
 		for (int i=0; i < length; i++) {
 			Object currentSelection = selected[i];
 			if (currentSelection instanceof IJavaElement) {
-				monitor.worked(1);
 				IJavaElement element =(IJavaElement) currentSelection;
 				IJavaProject javaProject = element.getJavaProject();
 				try {
