@@ -1472,17 +1472,20 @@ public class PublishingTests extends P2TestCase {
 		StringBuffer extra = new StringBuffer();
 		extra.append("<configIni use=\"default\">  \n");
 		extra.append("   <win32>/bundle/config.ini</win32>\n");
+		extra.append("   <linux>/bundle/config.ini</linux>\n");
+		extra.append("   <macosx>/bundle/config.ini</macosx>\n");
 		extra.append("</configIni>\n");
 		String[] entries = new String[] {"org.eclipse.equinox.common", "org.eclipse.osgi", "org.eclipse.equinox.app", "org.eclipse.equinox.registry"};
 		Utils.generateProduct(product, "bundle.product", "1.0.0", null, entries, false, extra);
 
+		String configString = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("product", product.getLocation().toOSString());
-		buildProperties.put("configs", "win32,win32,x86");
+		buildProperties.put("configs", configString);
 		buildProperties.put("includeLaunchers", "false");
 		buildProperties.put("p2.gathering", "true");
 		buildProperties.put("filteredDependencyCheck", "true");
-		buildProperties.put("archivesFormat", "win32,win32,x86-folder");
+		buildProperties.put("archivesFormat", configString + "-folder");
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		runProductBuild(buildFolder);
 
