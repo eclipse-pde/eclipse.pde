@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Deepak Azad <deepak.azad@in.ibm.com> - bug 249066
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -66,13 +67,22 @@ public class DependencyAnalysisSection extends PDESection {
 				else if (e.getHref().equals("loops")) //$NON-NLS-1$
 					doFindLoops();
 				else if (e.getHref().equals("references")) //$NON-NLS-1$
-					new OpenPluginReferencesAction(PluginRegistry.findModel(getProject())).run();
+					new OpenPluginReferencesAction(PluginRegistry.findModel(getPlugin().getId())).run();
 				else if (e.getHref().equals("hierarchy")) //$NON-NLS-1$
-					new OpenPluginDependenciesAction(PluginRegistry.findModel(getProject())).run();
+					new OpenPluginDependenciesAction(PluginRegistry.findModel(getPlugin().getId())).run();
 			}
 		});
 
 		section.setClient(formText);
+	}
+
+	protected IPlugin getPlugin() {
+		IBaseModel model = getPage().getModel();
+		IPlugin plugin = null;
+		if (model instanceof IPluginModel) {
+			plugin = ((IPluginModel) model).getPlugin();
+		}
+		return plugin;
 	}
 
 	protected void doFindLoops() {
