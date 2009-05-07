@@ -102,7 +102,7 @@ public class P2Tests extends P2TestCase {
 		assertRequires(iu, "toolingtest.product", "test.product.ini");
 		assertRequires(iu, "toolingtest.product", "test.product.config");
 		assertRequires(iu, ius, true);
-		
+
 		iu = getIU(repository, "test.product.launcher." + p2Config + ".test" + (Platform.getOS().equals("win32") ? ".exe" : ""));
 		assertTouchpoint(iu, "configure", "setLauncherName(name:test");
 	}
@@ -179,7 +179,7 @@ public class P2Tests extends P2TestCase {
 		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86");
 		//testing relative paths, just check that the value starts with org.eclipse.equinox..., don't bother worrying about dir separator
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:org.eclipse.equinox.simpleconfigurator.configUrl, propValue:file:org.eclipse.equinox.simpleconfigurator");
-		
+
 		iu = getIU(repository, "rcp.product");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
 	}
@@ -240,7 +240,7 @@ public class P2Tests extends P2TestCase {
 
 		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + "org.eclipse.core.runtime");
 		assertTouchpoint(iu, "configure", "markStarted(started: true);");
-		
+
 		boolean fail = false;
 		try {
 			//bug 270524
@@ -565,7 +565,7 @@ public class P2Tests extends P2TestCase {
 		properties = new Properties();
 		properties.put("bin.includes", "META-INF/, ., build.properties");
 		Utils.generatePluginBuildProperties(c, properties);
-		
+
 		runBuild(buildFolder);
 
 		assertResourceFile(buildFolder, "repo1/plugins/a_1.0.0.v1.jar");
@@ -581,9 +581,10 @@ public class P2Tests extends P2TestCase {
 		test.append("    <p2.artifact.mirror baseLine=\"${compareAgainst}\"                                          \n");
 		test.append("                        source=\"${compareFrom}\"                                               \n");
 		test.append("                        destination=\"${newLocation}\"                                          \n");
+		test.append("                        destinationName=\"testRepoName\"                                        \n");
 		test.append("                        comparatorId=\"org.eclipse.equinox.p2.repository.tools.jar.comparator\" \n");
 		test.append("                        comparatorLog=\"${basedir}/compare.log\"                                \n");
-		test.append("                        ignoreErrors=\"true\"                                                  \n");
+		test.append("                        ignoreErrors=\"true\"                                                   \n");
 		test.append("    />                                                                                          \n");
 		test.append("  </target>                                                                                     \n");
 		test.append("</project>                                                                                      \n");
@@ -597,8 +598,10 @@ public class P2Tests extends P2TestCase {
 		properties.put("newLocation", finalLocation);
 		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
 
+		IArtifactRepository artifact = loadArtifactRepository(finalLocation);
+		assertEquals(artifact.getName(), "testRepoName"); //bug 274094
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
-		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] { "canonical: osgi.bundle,b,1.0.0", "Difference found for B.class"} );
+		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: osgi.bundle,b,1.0.0", "Difference found for B.class"});
 		try {
 			assertLogContainsLine(buildFolder.getFile("compare.log"), "build.properties");
 			fail("we expected no errors/warnings");
@@ -704,7 +707,7 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("267461");
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
-		
+
 		IFile productFile = buildFolder.getFile("rcp.product");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
@@ -726,7 +729,7 @@ public class P2Tests extends P2TestCase {
 
 		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
 		IInstallableUnit iu = getIU(metadata, "uid.product");
-		
+
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
