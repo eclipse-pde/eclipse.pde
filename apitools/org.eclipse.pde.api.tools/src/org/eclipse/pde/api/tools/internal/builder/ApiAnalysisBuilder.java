@@ -205,7 +205,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			return NO_PROJECTS;
 		}
 		if (DEBUG) {
-			System.out.println("\nStarting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("\nApiAnalysis builder - Starting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		Util.updateMonitor(monitor, 0);
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);

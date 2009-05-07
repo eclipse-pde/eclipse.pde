@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -68,7 +69,7 @@ public class UpdateBundleVersionOperation {
 				};
 				PDEModelUtility.modifyModel(mod, null);
 			}
-			Util.getBuildJob(new IProject[] {project}).schedule();
+			Util.getBuildJob(new IProject[] {project}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			if (monitor != null) {
 				monitor.worked(1);
 			}

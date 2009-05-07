@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Assert;
@@ -59,6 +60,10 @@ import org.w3c.dom.NodeList;
  * @since 1.0.0
  */
 public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener {
+	/**
+	 * Constant representing the name of the .settings folder
+	 */
+	private static final String SETTINGS_FOLDER = ".settings"; //$NON-NLS-1$
 	public static final String GLOBAL = "!global!"; //$NON-NLS-1$
 	public static final int CURRENT_STORE_VERSION = 2;
 	/**
@@ -133,7 +138,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						return Status.CANCEL_STATUS;
 					}
 					String xml = getStoreAsXml();
-					IFile file = project.getFile(getFilterFilePath());
+					IFile file = project.getFile(getFilterFilePath(false));
 					if(xml == null) {
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {
@@ -491,7 +496,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			System.out.println("initializing api filter map for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		fFilterMap = new HashMap(5);
-		IPath filepath = getFilterFilePath();
+		IPath filepath = getFilterFilePath(true);
 		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath, true);
 		if(file == null) {
 			if(DEBUG) {
@@ -665,16 +670,16 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		catch(NumberFormatException nfe) {}
 		return -1;
 	}
-	
 	/**
 	 * @return the {@link IPath} to the filters file
 	 */
-	private IPath getFilterFilePath() {
-		IPath path = fProject.getPath();
-		path = path.append(".settings").append(IApiCoreConstants.API_FILTERS_XML_NAME); //$NON-NLS-1$
-		return path;
+	private IPath getFilterFilePath(boolean includeproject) {
+		if(includeproject) {
+			IPath path = fProject.getPath();
+			return path.append(SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
+		}
+		return new Path(SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
 	}
-	
 	/**
 	 * Start recording filter usage for this store.
 	 */
@@ -797,7 +802,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
-			IPath path = getFilterFilePath();
+			IPath path = getFilterFilePath(true);
 			IResourceDelta leafdelta = event.getDelta().findMember(path);
 			if(leafdelta == null) {
 				return;
@@ -836,11 +841,11 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				}
 			}
 			if(needsbuild && ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				Util.getBuildJob(new IProject[] {fProject.getProject()}).schedule();
+				Util.getBuildJob(new IProject[] {fProject.getProject()}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			}
 		}
 	}
-	
+
 	/**
 	 * Clears out the filter map
 	 */

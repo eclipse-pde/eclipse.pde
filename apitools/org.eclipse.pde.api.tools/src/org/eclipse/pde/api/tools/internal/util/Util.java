@@ -102,6 +102,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -190,23 +191,21 @@ public final class Util {
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				Job[] buildJobs = Job.getJobManager().find(ResourcesPlugin.FAMILY_MANUAL_BUILD);
-				for (int i= 0; i < buildJobs.length; i++) {
-					Job curr= buildJobs[i];
-					if (curr != this && curr instanceof BuildJob) {
-						BuildJob job= (BuildJob) curr;
-						if (job.isCoveredBy(this)) {
-							curr.cancel(); // cancel all other build jobs of our kind
-						}
-					}
-				}
+				//cancelBuild(ResourcesPlugin.FAMILY_AUTO_BUILD);
+				cancelBuild(ResourcesPlugin.FAMILY_MANUAL_BUILD);
 			}
 			try {
 				if (fProjects != null) {
 					SubMonitor localmonitor = SubMonitor.convert(monitor, UtilMessages.Util_0, fProjects.length*2);
-					for (int i = 0; i < fProjects.length; i++) {
-						localmonitor.subTask(NLS.bind(UtilMessages.Util_5, fProjects[i].getName())); 
-						fProjects[i].build(this.fBuildType, ApiPlugin.BUILDER_ID, null, localmonitor.newChild(1));
+					for (int i = 0, max = fProjects.length; i < max; i++) {
+						// clear last build state for project to force a full build using our builder
+						// This makes it possible to have only an incremental build from the java builder
+						IProject currentProject = fProjects[i];
+						if (this.fBuildType == IncrementalProjectBuilder.FULL_BUILD) {
+							BuildState.setLastBuiltState(currentProject, null);
+						}
+						localmonitor.subTask(NLS.bind(UtilMessages.Util_5, currentProject.getName())); 
+						currentProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.newChild(1));
 						localmonitor.worked(1);
 					}
 				}
@@ -219,6 +218,19 @@ public final class Util {
 				monitor.done();
 			}
 			return Status.OK_STATUS;
+		}
+		
+		private void cancelBuild(Object jobfamily) {
+			Job[] buildJobs = Job.getJobManager().find(jobfamily);
+			for (int i= 0; i < buildJobs.length; i++) {
+				Job curr = buildJobs[i];
+				if (curr != this && curr instanceof BuildJob) {
+					BuildJob job = (BuildJob) curr;
+					if (job.isCoveredBy(this)) {
+						curr.cancel(); // cancel all other build jobs of our kind
+					}
+				}
+			}
 		}
 	}
 	
