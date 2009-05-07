@@ -74,7 +74,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
 		IJavaProject javaProject = createProject(projectName);
-		IProject project  = javaProject.getProject();
+		IProject project = javaProject.getProject();
 		setProjectCompliance(javaProject, compliance);
 		return project != null ? project.getFullPath() : Path.EMPTY;
 	}
@@ -123,7 +123,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * If a project with the same name already exists in the testing workspace
 	 * it will be deleted and new project created.
 	 * @param projectName
-	 * @return the newly created {@link IJavaProject}
+	 * @return the newly created {@link IJavaProject} or <code>null</code> if there is an exception creating the project
 	 */
 	protected IJavaProject createProject(String projectName) {
 		IJavaProject jproject = null;
@@ -137,6 +137,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 		catch(CoreException ce) {
 			ApiPlugin.log(ce);
+			ce.printStackTrace();
 		}
 		return jproject;
 	}
