@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,7 +209,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			}
 			return false;
 		}
-		return !(((Boolean) pkg.getDirective(ICoreConstants.INTERNAL_DIRECTIVE)).booleanValue());
+		return true;
 	}
 
 	protected final void findImportPackages(IBundle bundle, Set ignorePkgs) {
