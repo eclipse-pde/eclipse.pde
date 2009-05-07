@@ -309,13 +309,6 @@ public class PluginConfigurationSection extends TableSection {
 			}
 		});
 
-		table.addFocusListener(new FocusAdapter() {
-
-			public void focusLost(FocusEvent e) {
-				clearEditors();
-			}
-
-		});
 	}
 
 	private void showControls() {
