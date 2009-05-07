@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
@@ -27,6 +25,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
@@ -339,7 +338,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			}
 		} else if (settings != null) {
 			String stringURI = settings.get(SETTINGS_SELECTED_REPOSITORY);
-			if (stringURI != null) {
+			if (stringURI != null && stringURI.trim().length() > 0) {
 				try {
 					uri = new URI(stringURI);
 				} catch (URISyntaxException e) {
