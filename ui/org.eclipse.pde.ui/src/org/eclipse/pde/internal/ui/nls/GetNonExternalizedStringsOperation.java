@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 252329
+ *     David Green <dgreen99@gmail.com> - bug 275240
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
@@ -167,12 +168,14 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			PluginExtensionNode parentNode = (PluginExtensionNode) parent;
 			IDocumentAttributeNode[] attributes = parentNode.getNodeAttributes();
 			ISchemaElement schemaElement = schema.findElement(parentNode.getXMLTagName());
-			for (int j = 0; j < attributes.length; j++) {
-				IPluginAttribute attr = (IPluginAttribute) attributes[j];
-				ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
-				if (attInfo != null && attInfo.isTranslatable())
-					if (isNotTranslated(attr.getValue()))
-						fModelChangeTable.addToChangeTable(memModel, file, attr, selected(file));
+			if (schemaElement != null) {
+				for (int j = 0; j < attributes.length; j++) {
+					IPluginAttribute attr = (IPluginAttribute) attributes[j];
+					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
+					if (attInfo != null && attInfo.isTranslatable())
+						if (isNotTranslated(attr.getValue()))
+							fModelChangeTable.addToChangeTable(memModel, file, attr, selected(file));
+				}
 			}
 		}
 
