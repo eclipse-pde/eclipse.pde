@@ -140,6 +140,14 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 		mng.setMessage(null);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
+	 */
+	public boolean canLeaveThePage() {
+		((TargetEditor) getEditor()).setDirty(isDirty());
+		return true;
+	}
+
 	// TODO Hook up help toolbar action
 //	protected String getHelpResource() {
 //		return "/org.eclipse.pde.doc.user/guide/tools/editors/target_definition_editor/overview.htm"; //$NON-NLS-1$

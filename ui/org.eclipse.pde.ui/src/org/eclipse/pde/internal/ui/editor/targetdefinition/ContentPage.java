@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
@@ -33,7 +30,7 @@ public class ContentPage extends FormPage {
 	public static final String PAGE_ID = "content"; //$NON-NLS-1$
 
 	public ContentPage(TargetEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.ContentPage_0); 
+		super(editor, PAGE_ID, PDEUIMessages.ContentPage_0);
 	}
 
 	/**
@@ -50,7 +47,7 @@ public class ContentPage extends FormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEUIMessages.ContentPage_1); 
+		form.setText(PDEUIMessages.ContentPage_1);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
 		toolkit.decorateFormHeading(form.getForm());
@@ -74,6 +71,14 @@ public class ContentPage extends FormPage {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 1));
 		managedForm.addPart(new ContentSection(this, body));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
+	 */
+	public boolean canLeaveThePage() {
+		((TargetEditor) getEditor()).setDirty(isDirty());
+		return true;
 	}
 
 	// TODO Hook up help toolbar action

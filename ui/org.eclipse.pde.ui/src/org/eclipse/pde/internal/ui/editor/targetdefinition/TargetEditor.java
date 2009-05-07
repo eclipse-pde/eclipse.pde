@@ -51,6 +51,7 @@ public class TargetEditor extends FormEditor {
 	private List fManagedFormPages = new ArrayList(2);
 	private FileInputListener fInputListener;
 	private TargetChangedListener fTargetChangedListener;
+	private boolean fDirty;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
@@ -79,6 +80,7 @@ public class TargetEditor extends FormEditor {
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		commitPages(true);
+		fDirty = false;
 		ITargetDefinition target = getTarget();
 		if (target != null) {
 			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
@@ -133,8 +135,8 @@ public class TargetEditor extends FormEditor {
 		setInput(new FileEditorInput(file));
 		setPartName(getEditorInput().getName());
 		commitPages(true);
+		fDirty = false;
 		editorDirtyStateChanged();
-
 	}
 
 	/* (non-Javadoc)
@@ -142,6 +144,17 @@ public class TargetEditor extends FormEditor {
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
+	}
+
+	protected void setDirty(boolean dirty) {
+		fDirty = fDirty || dirty;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
+	 */
+	public boolean isDirty() {
+		return fDirty || super.isDirty();
 	}
 
 	/* (non-Javadoc)

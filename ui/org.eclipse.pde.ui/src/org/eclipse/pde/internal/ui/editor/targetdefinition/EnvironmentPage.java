@@ -74,4 +74,11 @@ public class EnvironmentPage extends FormPage {
 		managedForm.addPart(new ImplicitDependenciesSection(this, body));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
+	 */
+	public boolean canLeaveThePage() {
+		((TargetEditor) getEditor()).setDirty(isDirty());
+		return true;
+	}
 }
