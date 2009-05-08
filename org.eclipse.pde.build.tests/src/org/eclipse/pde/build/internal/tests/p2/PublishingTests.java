@@ -548,9 +548,6 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.osgi");
 
 		//bug 218377
-		iu = getIU(repository, "org.example.rcp_root.win32.win32.x86");
-		assertTouchpoint(iu, "install", "targetFile:branded.exe");
-
 		iu = getIU(repository, "org.example.rcp_root.carbon.macosx.ppc");
 		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
 
@@ -1106,7 +1103,7 @@ public class PublishingTests extends P2TestCase {
 		IFolder build2 = Utils.createFolder(buildFolder, "../build2");
 
 		IFile productFile = build2.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", null, "rcp", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"}, false, null);
 
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("configs", "win32,win32,x86 & linux,gtk,x86 & macosx,carbon,ppc");
@@ -1134,6 +1131,11 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(metadata, "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
 		assertTouchpoint(iu, "configure", "(linkTarget:Eclipse.app/Contents/MacOS/launcher,targetDir:${installFolder},linkName:launcher)");
 
+		//bug 273059, the action will be written out of a map, so there is no order on the parameters
+		iu = getIU(metadata, "rcp.product_root.carbon.macosx.ppc");
+		assertTouchpoint(iu, "configure", "linkTarget:rcp.app/Contents/MacOS/rcp");
+		assertTouchpoint(iu, "configure", "linkName:rcp");
+		
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.win32.win32.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.gtk.linux.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.carbon.macosx.ppc_3.3.200");

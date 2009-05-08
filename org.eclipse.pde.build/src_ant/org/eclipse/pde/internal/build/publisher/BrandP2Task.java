@@ -240,8 +240,12 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	private static final String CHMOD = "chmod"; //$NON-NLS-1$
+	private static final String LN = "ln"; //$NON-NLS-1$
+	private static final String LINK_TARGET = "linkTarget"; //$NON-NLS-1$
+	private static final String LINK_NAME = "linkName"; //$NON-NLS-1$
 	private static final String TARGET_FILE = "targetFile"; //$NON-NLS-1$
 	private static final String INSTALL = "install"; //$NON-NLS-1$
+	private static final String CONFIGURE = "configure"; //$NON-NLS-1$
 
 	private ITouchpointData[] brandTouchpointData(ITouchpointData[] data) {
 		boolean haveChmod = false;
@@ -255,49 +259,69 @@ public class BrandP2Task extends Repo2RunnableTask {
 			brandedLauncher = launcherName;
 
 		for (int i = 0; i < data.length; i++) {
-			ITouchpointInstruction instruction = data[i].getInstruction(INSTALL);
-			if (instruction == null)
-				continue;
-			String[] actions = Utils.getArrayFromString(instruction.getBody(), ";"); //$NON-NLS-1$
-			for (int j = 0; j < actions.length; j++) {
-				if (actions[j].startsWith(CHMOD)) {
-					Map map = parseAction(actions[j]);
-					String newFile = null;
-					String targetFile = (String) map.get(TARGET_FILE);
-					targetFile = targetFile.replace('\\', '/');
-					if (targetFile.equals(brandedLauncher))
-						return data; //data has properly branded chmod, nothing to do
+			Map instructions = new HashMap(data[i].getInstructions());
 
-					if ((config.getOs().equals("macosx") && (targetFile.endsWith(".app/Contents/MacOS/launcher") || targetFile.endsWith(".app/Contents/MacOS/eclipse"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							(config.getOs().equals("win32") && (targetFile.equals("launcher.exe") || targetFile.equals("eclipse.exe"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							(targetFile.equals("launcher") || targetFile.equals("eclipse"))) { //$NON-NLS-1$ //$NON-NLS-2$
-						newFile = brandedLauncher;
-					}
-					if (newFile != null) {
-						map.put(TARGET_FILE, newFile);
-						actions[j] = CHMOD + toString(map);
-						haveChmod = true;
-						break;
+			String[] phases = new String[] {INSTALL, CONFIGURE};
+			for (int phase = 0; phase < phases.length; phase++) {
+				ITouchpointInstruction instruction = data[i].getInstruction(phases[phase]);
+				if (instruction == null)
+					continue;
+
+				boolean phaseChanged = false;
+				String[] actions = Utils.getArrayFromString(instruction.getBody(), ";"); //$NON-NLS-1$
+				for (int j = 0; j < actions.length; j++) {
+					if (actions[j].startsWith(CHMOD)) {
+						Map map = parseAction(actions[j]);
+						String targetFile = (String) map.get(TARGET_FILE);
+						targetFile = targetFile.replace('\\', '/');
+						if (targetFile.equals(brandedLauncher)) {
+							haveChmod = true;
+							continue; //data has properly branded chmod, nothing to do
+						}
+
+						if ((config.getOs().equals("macosx") && (targetFile.endsWith(".app/Contents/MacOS/launcher") || targetFile.endsWith(".app/Contents/MacOS/eclipse"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								(config.getOs().equals("win32") && (targetFile.equals("launcher.exe") || targetFile.equals("eclipse.exe"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								(targetFile.equals("launcher") || targetFile.equals("eclipse"))) //$NON-NLS-1$ //$NON-NLS-2$
+						{
+							map.put(TARGET_FILE, brandedLauncher);
+							actions[j] = CHMOD + toString(map);
+							haveChmod = true;
+							phaseChanged = true;
+							break;
+						}
+					} else if (actions[j].startsWith(LN) && config.getOs().equals("macosx")) { //$NON-NLS-1$
+						//for now only checking links on mac
+						Map map = parseAction(actions[j]);
+						String linkTarget = (String) map.get(LINK_TARGET);
+						if (linkTarget.endsWith(".app/Contents/MacOS/launcher") || linkTarget.endsWith(".app/Contents/MacOS/eclipse")) { //$NON-NLS-1$ //$NON-NLS-2$
+							map.put(LINK_TARGET, brandedLauncher);
+							map.put(LINK_NAME, launcherName);
+							actions[j] = LN + toString(map);
+							phaseChanged = true;
+						}
 					}
 				}
+				if (phaseChanged) {
+					TouchpointInstruction newInstruction = new TouchpointInstruction(toString(actions, ";"), instruction.getImportAttribute()); //$NON-NLS-1$
+					instructions.put(phases[phase], newInstruction);
+				}
 			}
-			if (haveChmod) {
-				TouchpointInstruction newInstruction = new TouchpointInstruction(toString(actions, ";"), instruction.getImportAttribute()); //$NON-NLS-1$
-				Map instructions = new HashMap(data[i].getInstructions());
-				instructions.put(INSTALL, newInstruction);
-				data[i] = new TouchpointData(instructions);
-				return data;
-			}
+
+			data[i] = new TouchpointData(instructions);
 		}
 
-		String body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
-		TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
-		Map instructions = new HashMap();
-		instructions.put(INSTALL, newInstruction);
-		ArrayList newData = new ArrayList(data.length + 1);
-		newData.addAll(Arrays.asList(data));
-		newData.add(new TouchpointData(instructions));
-		return (ITouchpointData[]) newData.toArray(new ITouchpointData[newData.size()]);
+		//add a chmod if there wasn't one before
+		if (!haveChmod && !config.getOs().equals("win32")) { //$NON-NLS-1$
+			String body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
+			TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
+			Map instructions = new HashMap();
+			instructions.put(INSTALL, newInstruction);
+			ArrayList newData = new ArrayList(data.length + 1);
+			newData.addAll(Arrays.asList(data));
+			newData.add(new TouchpointData(instructions));
+			data = (ITouchpointData[]) newData.toArray(new ITouchpointData[newData.size()]);
+		}
+		return data;
 	}
 
 	private String toString(String[] elements, String separator) {
