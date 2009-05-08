@@ -80,6 +80,10 @@ public class CompareOperation extends Job {
 			monitor.subTask(ActionMessages.CompareDialogComputeDeltasTaskName);
 			try {
 				IDelta delta = ApiComparator.compare(scope, baseline, VisibilityModifiers.API, false, monitor);
+				if (delta == null) {
+					// we don't want to continue. The .log file should already contain details about the failure
+					return Status.CANCEL_STATUS;
+				}
 				int size = this.selection.size();
 				String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
 						new Integer(size), 
