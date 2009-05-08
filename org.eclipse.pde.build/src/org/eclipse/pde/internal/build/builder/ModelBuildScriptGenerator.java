@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
 import org.eclipse.pde.internal.build.site.ProfileManager;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.osgi.framework.Version;
 
 /**
  * Generic class for generating scripts for plug-ins and fragments.
@@ -117,6 +118,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private boolean signJars = false;
 	private Map workspaceOutputFolders = null;
 
+	private boolean generateErrorPropertyAttribute = true;
+
 	/**
 	 * @see AbstractScriptGenerator#generate()
 	 */
@@ -179,6 +182,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$
 		String[] classpathInfo = getClasspathEntries(model);
 		dotOnTheClasspath = specialDotProcessing(getBuildProperties(), classpathInfo);
+		generateErrorPropertyAttribute = shouldGenerateErrorAttribute();
 
 		//Persist this information for use in the assemble script generation
 		Properties bundleProperties = (Properties) model.getUserObject();
@@ -1329,7 +1333,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 			javac.setSrcdir(sources);
 			javac.setLogExtension(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
-			javac.setErrorProperty(PROPERTY_COMPILATION_ERROR);
+			if (generateErrorPropertyAttribute)
+				javac.setErrorProperty(PROPERTY_COMPILATION_ERROR);
 			generateCompilerSettings(javac, entry, classpath);
 
 			script.print(javac);
@@ -1370,6 +1375,48 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references);
 		}
 		script.printTargetEnd();
+	}
+
+	/*
+	 * The "errorProperty" attribute on the javac task requires ant 1.7.1 or greater
+	 */
+	private boolean shouldGenerateErrorAttribute() {
+		//When exporting from the UI it is hard to know the ant version, for now don't generate the attribute
+		if (havePDEUIState())
+			return false;
+
+		//version string should look something like: "Apache Ant version 1.7.1 compiled on June 27 2008"
+		String versionString = getImmutableAntProperty(IBuildPropertiesConstants.PROPERTY_ANT_VERSION);
+		if (versionString != null) {
+			int idx = versionString.indexOf("version"); //$NON-NLS-1$
+			if (idx > 0) {
+				versionString = versionString.substring(idx + 7).trim();
+				idx = 0;
+				int segment = 0;
+				//try and be flexible, find the first 3 segments of numbers, stop at any other character
+				for (char c = versionString.charAt(idx); idx < versionString.length() && segment < 3; c = versionString.charAt(++idx)) {
+					if (c == '.')
+						segment++;
+					else if (!Character.isDigit(c))
+						break;
+				}
+				if (idx > 0) {
+					try {
+						Version antVersion = new Version(versionString.substring(0, idx));
+						if (antVersion.compareTo(new Version(1, 7, 1)) >= 0)
+							return true;
+
+						IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_OLD_ANT, NLS.bind(Messages.warning_ant171Required, PROPERTY_P2_PUBLISHONERROR), null);
+						BundleHelper.getDefault().getLog().log(status);
+						return false;
+					} catch (IllegalArgumentException e) {
+						// shouldn't really happen, but catch just in case
+					}
+				}
+			}
+		}
+		//we don't know a version, assume someone knew what they were doing with their setup.
+		return true;
 	}
 
 	private String getEmbeddedManifestFile(CompiledEntry jarEntry, String destdir) {

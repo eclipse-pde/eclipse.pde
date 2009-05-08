@@ -124,6 +124,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_COMPILATION_ERROR = "compilation.error.occured"; //$NON-NLS-1$
 
 	public static final String PROPERTY_SUPPRESS_RESOLUTION_ERRORS = "suppressResolutionErrors"; //$NON-NLS-1$
+	public static final String PROPERTY_ANT_VERSION = "ant.version"; //$NON-NLS-1$
 
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 

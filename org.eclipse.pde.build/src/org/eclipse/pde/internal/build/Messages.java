@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	public static String warning_missingPassword;
 	public static String warning_fallBackVersion;
 	public static String warning_problemsParsingMapFileEntry;
+	public static String warning_ant171Required;
 
 	// error
 	public static String error_pluginCycle;

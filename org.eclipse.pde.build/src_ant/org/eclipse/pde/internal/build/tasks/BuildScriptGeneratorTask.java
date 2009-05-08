@@ -121,6 +121,10 @@ public class BuildScriptGeneratorTask extends Task {
 		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS);
 		if (Boolean.valueOf(value).booleanValue())
 			properties.put(IBuildPropertiesConstants.PROPERTY_SUPPRESS_RESOLUTION_ERRORS, "true"); //$NON-NLS-1$ 
+
+		value = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_ANT_VERSION);
+		if (value != null)
+			properties.put(IBuildPropertiesConstants.PROPERTY_ANT_VERSION, value);
 	}
 
 	private void setEEProfileProperties(Properties antProperties) {
