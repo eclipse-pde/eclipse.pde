@@ -740,6 +740,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return (bundleProperties != null && bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE));
 	}
 
+	public static boolean hasBundleShapeHeader(BundleDescription bundle) {
+		Properties bundleProperties = (Properties) bundle.getUserObject();
+		return (bundleProperties != null && bundleProperties.containsKey(ECLIPSE_BUNDLE_SHAPE));
+	}
+
 	public static String[] getSourceBundleHeader(BundleDescription bundle) {
 		Properties bundleProperties = (Properties) bundle.getUserObject();
 		if (bundleProperties == null || !bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE))

@@ -631,7 +631,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 		} else {
 			script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
-			if (associatedEntry != null && associatedEntry.unpackSet())
+			//if the feature specifies the bundle shape, or the bundle itself doesn't have a preferred shape, then use the feature shape value (true by default)
+			if (associatedEntry != null && (associatedEntry.unpackSet() || !Utils.hasBundleShapeHeader(model)))
 				script.println("   unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			if (Utils.isSourceBundle(model)) {
 				script.println("   gatheredSource=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources\""); //$NON-NLS-1$//$NON-NLS-2$

@@ -95,12 +95,25 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("PublishFeature_versions");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		IFolder bar = Utils.createFolder(buildFolder, "plugins/bar");
 
 		Utils.generateBundleManifest(bundle, "foo", "1.0.0.qualifier", null);
 		Utils.generatePluginBuildProperties(bundle, null);
 		Utils.writeBuffer(bundle.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
+		
+		Attributes extra = new Attributes();
+		extra.put(new Attributes.Name("Eclipse-BundleShape"), "jar");
+		Utils.generateBundleManifest(bar, "bar", "1.0.0.qualifier", extra);
+		Utils.generatePluginBuildProperties(bar, null);
+		Utils.writeBuffer(bar.getFile("src/bar.java"), new StringBuffer("public class bar { int i; }"));
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"foo"}, "1.0.0.qualifier");
+		//bug 274672, write the feature manually since generateFeature always adds an unpack attribute
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"F\" version=\"1.0.0.qualifier\">		\n");
+		buffer.append("  <plugin id=\"foo\" version=\"0.0.0\" />			\n");
+		buffer.append("  <plugin id=\"bar\" version=\"0.0.0\" />			\n");
+		buffer.append("</feature>											\n");
+		Utils.writeBuffer(f.getFile("feature.xml"), buffer);
 		Properties properties = new Properties();
 		properties.put("bin.includes", "feature.xml");
 		Utils.storeBuildProperties(f, properties);
@@ -119,6 +132,19 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "tmp/eclipse/features/F_1.0.0.12345.jar");
 		Utils.extractFromZip(buildFolder, "tmp/eclipse/features/F_1.0.0.12345.jar", "feature.xml", featureXML);
 
+		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("tmp/eclipse").getLocationURI());
+		IInstallableUnit iu = getIU(repo, "foo");
+		assertTouchpoint(iu, "zipped", "true");
+		
+		iu = getIU(repo, "bar");
+		boolean hasZipped = false;
+		try {
+			assertTouchpoint(iu, "zipped", "true");
+			hasZipped = true;
+		} catch (AssertionFailedError e) {
+		}
+		assertFalse(hasZipped);
+		
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature model = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
 		assertEquals(model.getVersion(), "1.0.0.12345");
