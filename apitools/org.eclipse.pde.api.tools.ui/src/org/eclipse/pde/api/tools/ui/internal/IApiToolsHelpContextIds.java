@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.ui.internal;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.CompareToBaselineWizard;
+import org.eclipse.pde.api.tools.ui.internal.actions.ExportDialog;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsPreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ProjectSelectionDialog;
@@ -62,5 +63,9 @@ public interface IApiToolsHelpContextIds {
 	 * Constant representing the help id for the {@link APIToolingView}
 	 */
 	public static final String API_TOOLING_VIEW = PREFIX + "api_tooling_view"; //$NON-NLS-1$
+	/**
+	 * Constant representing the help id for the {@link ExportDialog}
+	 */
+	public static final String API_COMPARE_EXPORT_DIALOG = PREFIX + "api_compare_export_dialog"; //$NON-NLS-1$
 	
 }

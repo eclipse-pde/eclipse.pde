@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A simple input dialog for soliciting an input string from the user.
@@ -249,6 +251,7 @@ public class ExportDialog extends Dialog {
 
 		applyDialogFont(comp);
 		initialize();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_COMPARE_EXPORT_DIALOG);
 		return parent;
 	}
 	/**
