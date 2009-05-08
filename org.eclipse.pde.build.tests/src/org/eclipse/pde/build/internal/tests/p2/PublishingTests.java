@@ -91,6 +91,49 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
+	public void testPublishFeature_rootFiles() throws Exception {
+		IFolder buildFolder = newTest("PublishFeature_rootFiles");
+		IFolder f = Utils.createFolder(buildFolder, "features/f");
+		
+		Utils.generateFeature(buildFolder, "f", null, null);
+		StringBuffer buffer = new StringBuffer("I am a file");
+		Utils.writeBuffer(f.getFile("app/contents/file"), buffer);
+		Utils.writeBuffer(f.getFile("app/second"), buffer);
+		Properties rootProperties = new Properties();
+		//bug 274203
+		rootProperties.put("root.folder.contents", "absolute:file:" + f.getFile("app/contents/file").getLocation().toOSString());
+		rootProperties.put("root", "file:app/second");
+		rootProperties.put("root.permissions.755", "file, second");
+		rootProperties.put("root.permissions.766", "contents/file");
+		Utils.storeBuildProperties(f, rootProperties);
+		
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
+		properties.put("p2.gathering", "true");
+		properties.put("filteredDependencyCheck", "true");
+		generateScripts(buildFolder, properties);
+
+		String buildXMLPath = f.getFile("build.xml").getLocation().toOSString();
+		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+		
+		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		getIU(meta, "f.feature.group");
+		IInstallableUnit iu = getIU(meta, "f_root");
+		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:second, permissions:755)");
+		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:contents/file, permissions:766)");
+		boolean fail = false;
+		try {
+			assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:file, permissions:755)");
+			fail = true;
+		} catch (AssertionFailedError e){
+		}
+		assertFalse(fail);
+		
+		Set entries = new HashSet();
+		entries.add("contents/file");
+		entries.add("second");
+		assertZipContents(buildFolder, "buildRepo/binary/f_root_1.0.0", entries);
+	}
+	
 	public void testPublishFeature_versionReplacement() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_versions");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");

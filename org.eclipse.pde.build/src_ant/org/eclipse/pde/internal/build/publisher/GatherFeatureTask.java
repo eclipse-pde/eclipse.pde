@@ -121,7 +121,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			else
 				config = reorderConfig(config);
 			GatheringComputer computer = new GatheringComputer();
-			Set configFileSets = new HashSet();
+			Map configFileSets = new HashMap();
 			ArrayList permissionsKeys = new ArrayList();
 			for (Iterator rootEntries = rootMap.keySet().iterator(); rootEntries.hasNext();) {
 				String key = (String) rootEntries.next();
@@ -166,7 +166,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 								else
 									computer.addFile(base.getAbsolutePath(), found[k]);
 							}
-							configFileSets.add(fileset);
+							configFileSets.put(fileset, key);
 						}
 					}
 				}
@@ -188,15 +188,37 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 					nameSelector.setName(names[i]);
 					orSelector.addFilename(nameSelector);
 				}
-				for (Iterator s = configFileSets.iterator(); s.hasNext();) {
-					FileSet fileset = (FileSet) ((FileSet) s.next()).clone();
-					fileset.addOr(orSelector);
-					String[] found = fileset.getDirectoryScanner().getIncludedFiles();
-					advice.addPermissions(config, permissionKey.substring(Utils.ROOT_PERMISSIONS.length()), found);
+				for (Iterator s = configFileSets.keySet().iterator(); s.hasNext();) {
+					FileSet fileset = (FileSet) s.next();
+					String finalFolder = (String) configFileSets.get(fileset);
+					String[] found = selectFiles(orSelector, finalFolder, fileset.getDirectoryScanner().getIncludedFiles());
+					if (found.length > 0)
+						advice.addPermissions(config, permissionKey.substring(Utils.ROOT_PERMISSIONS.length()), found);
 				}
 			}
 		}
 		return advice;
+	}
+
+	/*
+	 * Select from the given files those that match the passed in group of OR'ed FilenameSelectors
+	 * We can't just use the selectors directly on the fileset because the files may be going to different
+	 * folders.  They will end up under the given folder, which is either the root, or the folder corresponding 
+	 * to "root.folder" properties. 
+	 */
+	private String[] selectFiles(OrSelector selector, String folder, String[] files) {
+		String prefix = (folder.length() > 0) ? folder + '/' : ""; //$NON-NLS-1$
+		ArrayList result = new ArrayList();
+
+		for (int i = 0; i < files.length; i++) {
+			String finalLocation = prefix + files[i];
+			//FilenameSelector is checking based on File.separatorChar, so normalize
+			finalLocation = finalLocation.replace('/', File.separatorChar).replace('\\', File.separatorChar);
+			//FilenameSelector objects only care about the filename and not the other arguments
+			if (selector.isSelected(null, finalLocation, null))
+				result.add(finalLocation.replace('\\', '/')); //we work with '/'
+		}
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 
 	public void setBuildResultFolder(String buildResultFolder) {
