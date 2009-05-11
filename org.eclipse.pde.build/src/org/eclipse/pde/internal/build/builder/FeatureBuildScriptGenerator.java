@@ -51,10 +51,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		this.feature = feature;
 
 		if (featureRootLocation == null) {
-			featureRootLocation = feature.getURL().getPath();
-			int i = featureRootLocation.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
-			if (i != -1)
-				featureRootLocation = featureRootLocation.substring(0, i);
+			featureRootLocation = feature.getRootLocation();
 		}
 	}
 
@@ -647,12 +644,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			if (includedFeature.isBinary())
 				continue;
 
-			String includedFeatureDirectory = includedFeature.getURL().getPath();
-			int j = includedFeatureDirectory.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
-			if (j != -1)
-				includedFeatureDirectory = includedFeatureDirectory.substring(0, j);
-			IPath location;
-			location = Utils.makeRelative(new Path(includedFeatureDirectory), new Path(featureRootLocation));
+			String includedFeatureDirectory = includedFeature.getRootLocation();
+			IPath location = Utils.makeRelative(new Path(includedFeatureDirectory), new Path(featureRootLocation));
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), Utils.getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 		//}

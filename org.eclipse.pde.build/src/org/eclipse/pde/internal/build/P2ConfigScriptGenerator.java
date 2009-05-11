@@ -386,7 +386,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		Set featureSet = BuildDirector.p2Gathering ? new HashSet() : null;
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
-			IPath featureLocation = new Path(feature.getURL().getPath()).removeLastSegments(1);
+			IPath featureLocation = new Path(feature.getRootLocation());
 			if (feature.isBinary()) {
 				binaryFeatures.add(new FileSet(featureLocation.removeLastSegments(1).toOSString(), null, featureLocation.lastSegment(), null, null, null, null));
 			} else {
@@ -405,7 +405,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				oldExecutableFeature = feature;
 				script.printAntCallTask(TARGET_P2_COMPATIBILITY_GATHER_EXECUTABLE, true, null);
 			} else {
-				IPath featureLocation = new Path(feature.getURL().getPath()).removeLastSegments(1);
+				IPath featureLocation = new Path(feature.getRootLocation());
 				String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 				printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 			}
@@ -434,7 +434,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	private void generateCompatibilityGatherExecutable(BuildTimeFeature executableFeature) {
-		IPath featureLocation = new Path(executableFeature.getURL().getPath()).removeLastSegments(1);
+		IPath featureLocation = new Path(executableFeature.getRootLocation());
 		String featureFullName = executableFeature.getId() + "_" + executableFeature.getVersion(); //$NON-NLS-1$
 
 		File productDir = new File(getWorkingDirectory(), DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product"); //$NON-NLS-1$

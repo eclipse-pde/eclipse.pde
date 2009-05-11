@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
@@ -417,7 +416,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (feature.isBinary())
 			return null;
 		try {
-			return AbstractScriptGenerator.readProperties(new Path(feature.getURL().getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK);
+			return AbstractScriptGenerator.readProperties(new Path(feature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
 		} catch (CoreException e) {
 			return null;
 		}
@@ -455,10 +454,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
-			String placeToGather = feature.getURL().getPath();
-			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
-			if (j != -1)
-				placeToGather = placeToGather.substring(0, j);
+			String placeToGather = feature.getRootLocation();
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
 		}
 
@@ -637,10 +633,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		Set featureSet = BuildDirector.p2Gathering ? new HashSet() : null;
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
-			String placeToGather = feature.getURL().getPath();
-			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
-			if (j != -1)
-				placeToGather = placeToGather.substring(0, j);
+			String placeToGather = feature.getRootLocation();
 			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 			if (BuildDirector.p2Gathering)
@@ -652,10 +645,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
 			if (BuildDirector.p2Gathering && featureSet.contains(feature))
 				continue;
-			String placeToGather = feature.getURL().getPath();
-			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
-			if (j != -1)
-				placeToGather = placeToGather.substring(0, j);
+			String placeToGather = feature.getRootLocation();
 			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 		}

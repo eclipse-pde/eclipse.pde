@@ -9,8 +9,9 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.File;
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Utils;
@@ -154,12 +155,20 @@ public class BuildTimeFeature extends Feature {
 		this.url = url;
 	}
 
+	/**
+	 * @return the local filesystem location of the directory containing the feature.xml file. 
+	 */
 	public String getRootLocation() {
 		if (rootLocation == null) {
 			URL location = getURL();
 			if (location == null)
 				return null;
-			rootLocation = location.getPath();
+			try {
+				URI locationURI = URIUtil.toURI(location);
+				rootLocation = URIUtil.toFile(locationURI).getAbsolutePath();
+			} catch (URISyntaxException e) {
+				rootLocation = location.getPath();
+			}
 			int i = rootLocation.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (i != -1)
 				rootLocation = rootLocation.substring(0, i);

@@ -82,8 +82,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		}
 
 		for (int i = 0; i < features.length; i++) {
-			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
-			featureLocation = featureLocation.removeLastSegments(1);
+			IPath featureLocation = new Path(features[i].getRootLocation()); // Here we assume that all the features are local
 			String location = featureLocation.toOSString();
 			if (baseLocation != null && baseLocation.isPrefixOf(featureLocation)) {
 				IPath relative = featureLocation.removeFirstSegments(baseLocation.segmentCount());
