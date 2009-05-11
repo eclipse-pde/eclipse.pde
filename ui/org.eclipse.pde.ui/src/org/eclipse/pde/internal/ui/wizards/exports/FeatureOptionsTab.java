@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 import java.io.File;
 import java.net.URI;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -58,20 +58,37 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					IResource resource = (IResource) element;
 					if (resource != null && resource instanceof IFile) {
-						try {
-							IFile file = (IFile) resource;
-							IContentDescription description = file.getContentDescription();
-							if (description == null)
-								return false;
-							IContentType type = description.getContentType();
-							return type != null && type.getId().equalsIgnoreCase("org.eclipse.pde.categoryManifest"); //$NON-NLS-1$
-						} catch (CoreException e) {
-							// do not log anything as we don't care, bug 274678
-						}
+						IFile file = (IFile) resource;
+						String extension = file.getFileExtension();
+						return extension != null && extension.toLowerCase().equals("xml"); //$NON-NLS-1$
 					}
 					return false;
 				}
 			});
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog#validateItem(java.lang.Object)
+		 */
+		protected IStatus validateItem(Object item) {
+			if (item instanceof IResource) {
+				IResource resource = (IResource) item;
+				if (resource != null && resource instanceof IFile) {
+					try {
+						IFile file = (IFile) resource;
+						IContentDescription description = file.getContentDescription();
+						if (description != null) {
+							IContentType type = description.getContentType();
+							if (type != null && type.getId().equalsIgnoreCase("org.eclipse.pde.categoryManifest")) { //$NON-NLS-1$
+								return Status.OK_STATUS;
+							}
+						}
+					} catch (CoreException e) {
+						// do not log anything as we don't care, bug 274678
+					}
+				}
+			}
+			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.FeatureOptionsTab_0);
 		}
 	}
 
@@ -204,7 +221,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 
 		fCategoryBrowse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				openFile(fCategoryCombo, new String[] {"*.xml", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
+				openFile(fCategoryCombo);
 			}
 		});
 	}
@@ -226,7 +243,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		fCategoryBrowse.setEnabled(enabled && fCategoryButton.getSelection());
 	}
 
-	protected void openFile(Combo combo, String[] filter) {
+	protected void openFile(Combo combo) {
 		CategoryResourceListSelectionDialog dialog = new CategoryResourceListSelectionDialog(fPage.getShell(), false, PDEPlugin.getWorkspace().getRoot(), IResource.FILE);
 		dialog.setInitialPattern("**"); //$NON-NLS-1$
 		dialog.create();
