@@ -66,7 +66,7 @@ public class LocationsSection extends SectionPart {
 		fEditor.getTargetChangedListener().setLocationTree(fContainerGroup);
 		fContainerGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContainerGroup.addTargetChangedListener(new ITargetChangedListener() {
-			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
+			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
 				markDirty();
 			}
 		});

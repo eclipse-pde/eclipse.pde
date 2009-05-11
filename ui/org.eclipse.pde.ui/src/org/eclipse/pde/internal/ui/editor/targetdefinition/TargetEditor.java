@@ -186,7 +186,7 @@ public class TargetEditor extends FormEditor {
 
 		fInputListener = new FileInputListener(file);
 		PDEPlugin.getWorkspace().addResourceChangeListener(fInputListener);
-		getTargetChangedListener().contentsChanged(getTarget(), null, true);
+		getTargetChangedListener().contentsChanged(getTarget(), null, true, false);
 	}
 
 	/* (non-Javadoc)
@@ -376,8 +376,8 @@ public class TargetEditor extends FormEditor {
 			return fJobFamily;
 		}
 
-		public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
-			if (!resolve || definition.isResolved()) {
+		public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
+			if (!forceResolve && (!resolve || definition.isResolved())) {
 				if (fContentTree != null && source != fContentTree) {
 					fContentTree.setInput(getTarget());
 				}

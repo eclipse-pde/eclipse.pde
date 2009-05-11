@@ -66,7 +66,7 @@ public class ContentSection extends SectionPart {
 		fEditor.getTargetChangedListener().setContentTree(fContentGroup);
 		fContentGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContentGroup.addTargetChangedListener(new ITargetChangedListener() {
-			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
+			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
 				markDirty();
 			}
 		});

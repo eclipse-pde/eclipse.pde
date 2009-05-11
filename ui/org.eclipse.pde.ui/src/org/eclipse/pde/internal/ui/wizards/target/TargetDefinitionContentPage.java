@@ -164,8 +164,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	private void initializeListeners() {
 		ITargetChangedListener listener = new ITargetChangedListener() {
-			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
-				if (resolve && !definition.isResolved()) {
+			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
+				if (forceResolve || (resolve && !definition.isResolved())) {
 					try {
 						getContainer().run(true, true, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {

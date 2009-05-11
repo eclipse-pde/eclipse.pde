@@ -128,10 +128,10 @@ public class TargetContentsGroup extends FilteredTree {
 	/**
 	 * Informs the target content listeners that check state has changed
 	 */
-	public void contentChanged(Object[] changed) {
+	public void contentChanged() {
 		Object[] listeners = fChangeListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			((ITargetChangedListener) listeners[i]).contentsChanged(fTargetDefinition, this, false);
+			((ITargetChangedListener) listeners[i]).contentsChanged(fTargetDefinition, this, false, false);
 		}
 	}
 
@@ -737,7 +737,7 @@ public class TargetContentsGroup extends FilteredTree {
 					saveIncludedBundleState(fTargetDefinition.getBundleContainers());
 				}
 			}
-			contentChanged(changedElements);
+			contentChanged();
 			updateButtons();
 			// Update the parent container labels with the new count
 			if (fGrouping == GROUP_BY_CONTAINER) {

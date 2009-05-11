@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -254,7 +253,7 @@ public class TargetLocationsGroup {
 		Shell parent = fTreeViewer.getTree().getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		if (dialog.open() != Window.CANCEL) {
-			contentsChanged();
+			contentsChanged(false);
 			fTreeViewer.refresh();
 			updateButtons();
 		}
@@ -295,7 +294,7 @@ public class TargetLocationsGroup {
 						fTarget.setBundleContainers((IBundleContainer[]) newContainers.toArray(new IBundleContainer[newContainers.size()]));
 
 						// Update the table
-						contentsChanged();
+						contentsChanged(false);
 						fTreeViewer.refresh();
 						updateButtons();
 						fTreeViewer.setSelection(new StructuredSelection(newContainer), true);
@@ -320,7 +319,9 @@ public class TargetLocationsGroup {
 					}
 				}
 				fTarget.setBundleContainers((IBundleContainer[]) newBundleContainers.toArray(new IBundleContainer[newBundleContainers.size()]));
-				contentsChanged();
+
+				// If we remove a site container, we must force a re-resolve bug 275458 / bug 275401
+				contentsChanged(container instanceof IUBundleContainer);
 				fTreeViewer.refresh(false);
 				updateButtons();
 			}
@@ -328,8 +329,9 @@ public class TargetLocationsGroup {
 	}
 
 	private void handleRemoveAll() {
+		// Force the target to resolve to cancel any resolve jobs
 		fTarget.setBundleContainers(null);
-		contentsChanged();
+		contentsChanged(true);
 		fTreeViewer.refresh(false);
 		updateButtons();
 	}
@@ -345,10 +347,10 @@ public class TargetLocationsGroup {
 	 * Informs the reporter for this table that something has changed
 	 * and is dirty.
 	 */
-	private void contentsChanged() {
+	private void contentsChanged(boolean force) {
 		Object[] listeners = fChangeListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			((ITargetChangedListener) listeners[i]).contentsChanged(fTarget, this, true);
+			((ITargetChangedListener) listeners[i]).contentsChanged(fTarget, this, true, force);
 		}
 	}
 

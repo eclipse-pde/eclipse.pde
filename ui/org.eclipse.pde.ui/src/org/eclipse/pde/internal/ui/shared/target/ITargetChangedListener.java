@@ -30,7 +30,8 @@ public interface ITargetChangedListener {
 	 * @param definition target definition whose contents have changed or <code>null</code> if the definition is not available
 	 * @param source the ui part that changed the contents, used to avoid unnecessary refreshes
 	 * @param resolve whether the definition must be resolved to catch up to all changes
+	 * @param forceResolve whether the definition should be resolved even if all contents are marked as resolved
 	 */
-	public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve);
+	public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve);
 
 }
