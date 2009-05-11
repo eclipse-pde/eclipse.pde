@@ -100,7 +100,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/schema_editor/definition.htm"; //$NON-NLS-1$
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/schema_editor/page_schema_definition.htm"; //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {

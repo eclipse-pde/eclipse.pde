@@ -51,7 +51,7 @@ public class SchemaOverviewPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/schema_editor/overview.htm"; //$NON-NLS-1$
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/schema_editor/page_schema_overview.htm"; //$NON-NLS-1$
 	}
 
 	public void setActive(boolean active) {
