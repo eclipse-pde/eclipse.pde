@@ -228,7 +228,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			return false;
 		}
 
-		if (fJavaButton.getSelection()) {
+		// this method can be called before controls are created, so ensure the
+		// check box is not null
+		if (fJavaButton != null && fJavaButton.getSelection()) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IProject dmy = workspace.getRoot().getProject("project"); //$NON-NLS-1$
 			IStatus status;
