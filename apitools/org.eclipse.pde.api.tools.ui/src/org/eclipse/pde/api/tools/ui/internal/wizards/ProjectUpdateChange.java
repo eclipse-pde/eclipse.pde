@@ -77,6 +77,9 @@ public class ProjectUpdateChange extends Change {
 		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, new String[] {fProject.getName()}));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if(pm == null) {
 			pm = new NullProgressMonitor();

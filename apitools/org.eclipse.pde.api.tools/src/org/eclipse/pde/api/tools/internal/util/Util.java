@@ -196,7 +196,7 @@ public final class Util {
 			}
 			try {
 				if (fProjects != null) {
-					SubMonitor localmonitor = SubMonitor.convert(monitor, UtilMessages.Util_0, fProjects.length*2);
+					SubMonitor localmonitor = SubMonitor.convert(monitor, UtilMessages.Util_0, fProjects.length);
 					for (int i = 0, max = fProjects.length; i < max; i++) {
 						// clear last build state for project to force a full build using our builder
 						// This makes it possible to have only an incremental build from the java builder
@@ -205,8 +205,11 @@ public final class Util {
 							BuildState.setLastBuiltState(currentProject, null);
 						}
 						localmonitor.subTask(NLS.bind(UtilMessages.Util_5, currentProject.getName())); 
-						currentProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.newChild(1));
-						localmonitor.worked(1);
+						if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+							currentProject.touch(null);
+						} else {
+							currentProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.newChild(1));
+						}
 					}
 				}
 			} catch (CoreException e) {

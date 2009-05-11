@@ -67,6 +67,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	static boolean DEBUG = Util.DEBUG;
 	
 	/**
+	 * Project relative path to the .settings folder
+	 * @since 1.0.1
+	 */
+	static final IPath SETTINGS_PATH = new Path(".settings"); //$NON-NLS-1$
+	
+	/**
 	 * Project relative path to the manifest file.
 	 */
 	static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
@@ -74,7 +80,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Project relative path to the .api_filters file
 	 */
-	static final IPath FILTER_PATH = new Path(".settings").append(IApiCoreConstants.API_FILTERS_XML_NAME); //$NON-NLS-1$
+	static final IPath FILTER_PATH = SETTINGS_PATH.append(IApiCoreConstants.API_FILTERS_XML_NAME);
 	
 	/**
 	 * Empty listing of projects to be returned by the builder if there is nothing to do
@@ -246,6 +252,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						else {	
 							IResourceDelta manifest = null;
 							IResourceDelta filters = null;
+							boolean filterbuild = false;
 							for (int i = 0; i < deltas.length; i++) {
 								manifest = deltas[i].findMember(MANIFEST_PATH);
 								if(manifest != null) {
@@ -253,10 +260,23 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								}
 								filters = deltas[i].findMember(FILTER_PATH);
 								if(filters != null){
-									break;
+									switch(filters.getKind()) {
+										case IResourceDelta.ADDED:
+										case IResourceDelta.REMOVED: {
+											filterbuild = true;
+											break;
+										}
+										case IResourceDelta.CHANGED: {
+											filterbuild = (filters.getFlags() & IResourceDelta.REPLACED) > 0;
+											break;
+										}
+									}
+									if(filterbuild) {
+										break;
+									}
 								}
 							}
-							if (manifest != null || filters != null) {
+							if (manifest != null || filterbuild) {
 								if (DEBUG) {
 									System.out.println("Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
 		 						}

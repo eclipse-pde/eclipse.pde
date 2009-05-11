@@ -157,6 +157,9 @@ public class BuildContext implements IBuildContext {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#containsChangedType(java.lang.String)
 	 */
 	public boolean containsChangedType(String typename) {
+		if(typename == null) {
+			return false;
+		}
 		return structchanged != null && structchanged.includes(typename);
 	}
 
@@ -164,6 +167,9 @@ public class BuildContext implements IBuildContext {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#containsDependentType(java.lang.String)
 	 */
 	public boolean containsDependentType(String typename) {
+		if(typename == null) {
+			return false;
+		}
 		return dependents != null && dependents.includes(typename);
 	}
 
@@ -171,6 +177,9 @@ public class BuildContext implements IBuildContext {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#containsRemovedType(java.lang.String)
 	 */
 	public boolean containsRemovedType(String typename) {
+		if(typename == null) {
+			return false;
+		}
 		return removed != null && removed.includes(typename);
 	}
 }
