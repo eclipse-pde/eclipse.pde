@@ -50,13 +50,24 @@ public class PDECore extends Plugin {
 	private static IPluginModelBase[] registryPlugins;
 	private static PDEExtensionRegistry fExtensionRegistry = null;
 
+	/**
+	 * The singleton preference manager instance
+	 * 
+	 * @since 3.5
+	 */
 	private static PDEPreferencesManager fPreferenceManager;
 
 	public static PDECore getDefault() {
 		return inst;
 	}
 
-	public PDEPreferencesManager getPreferencesManager() {
+	/**
+	 * Returns the singleton instance of if the {@link PDEPreferencesManager} for this bundle
+	 * @return the preference manager for this bundle
+	 * 
+	 * @since 3.5
+	 */
+	public synchronized PDEPreferencesManager getPreferencesManager() {
 		if (fPreferenceManager == null) {
 			fPreferenceManager = new PDEPreferencesManager(PLUGIN_ID);
 		}
@@ -293,7 +304,9 @@ public class PDECore extends Plugin {
 			((TargetPlatformService) tps).cleanOrphanedTargetDefinitionProfiles();
 		}
 
-		PDECore.getDefault().getPreferencesManager().savePluginPreferences();
+		if (fPreferenceManager != null) {
+			fPreferenceManager.savePluginPreferences();
+		}
 
 		fJavaElementChangeListener.shutdown();
 		fPluginRebuilder.stop();
