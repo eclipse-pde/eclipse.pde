@@ -100,6 +100,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 			else if(outerName == null) {
 				fType.setLocal();
+				fType.setSimpleName(innerName);
 			}
 		}
 		if (outerName != null && innerName != null) {
@@ -111,6 +112,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 				fType.addMemberType(currentName, access);
 			} else if (currentName.equals(fType.getName())) {
 				fType.setModifiers(access);
+				fType.setSimpleName(innerName);
 			}
 		}
 	}

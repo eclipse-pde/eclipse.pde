@@ -51,6 +51,7 @@ public class ApiType extends ApiMember implements IApiType {
 	private String fSuperclassName;
 	private String[] fSuperInterfaceNames;
 	private String fEnclosingTypeName;
+	private String fSimpleName;
 	
 	private static final IApiMethod[] EMPTY_METHODS = new IApiMethod[0];
 	private static final IApiField[] EMPTY_FIELDS = new IApiField[0];
@@ -347,6 +348,10 @@ public class ApiType extends ApiMember implements IApiType {
 		fSuperclassName = superName;
 	}
 
+	public void setSimpleName(String simpleName) {
+		fSimpleName = simpleName;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isAnnotation()
 	 */
@@ -612,52 +617,19 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#getSimpleName()
 	 */
 	public String getSimpleName() {
+		if (this.isAnonymous()) {
+			return null;
+		}
+		if (this.isLocal() || this.isMemberType()) {
+			return this.fSimpleName;
+		}
 		String name = getName();
-		if(this.isLocal() || this.isAnonymous()) {
-			return getAnonymousTypeName(name);
-		}
-		int index = name.lastIndexOf('$');
-		if (index == -1) {
-			index = name.lastIndexOf('.');
-		}
+		int index = name.lastIndexOf('.');
 		if (index != -1) {
 			return name.substring(index + 1);
 		}
 		return name;
 	}
-	
-	/**
-	 * Returns the name of an anonymous or local type with all 
-	 * qualification removed.
-	 * For example:
-	 * <pre><code>
-	 *  Class$3inner --> inner
-	 *  Class$3 --> null
-	 * </code></pre>
-	 * @param name the name to resolve
-	 * @return the name of an anonymous or local type with qualification removed or <code>null</code>
-	 * if the anonymous type has no name
-	 */
-	protected String getAnonymousTypeName(String name) {
-		if(name != null) {
-			int idx = name.lastIndexOf('$');
-			if(idx > -1) {
-				String num = name.substring(idx+1, name.length());
-				try {
-					Integer.parseInt(num);
-					return null;
-				}
-				catch(NumberFormatException nfe) {}
-				for(int i = 0; i < name.length(); i++) {
-					if(!Character.isDigit(num.charAt(i))) {
-						return num.substring(i, num.length());
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#getEnclosingType()
 	 */
