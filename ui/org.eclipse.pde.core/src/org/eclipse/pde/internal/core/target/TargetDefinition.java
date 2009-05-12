@@ -564,6 +564,49 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
+	 * Returns whether software site containers are configured to provision for all environments
+	 * versus a single environment.
+	 * 
+	 * @return whether all environments will be provisioned
+	 */
+	private boolean isAllEnvironments() {
+		IBundleContainer[] containers = getBundleContainers();
+		if (containers != null) {
+			for (int i = 0; i < containers.length; i++) {
+				if (containers[i] instanceof IUBundleContainer) {
+					IUBundleContainer iu = (IUBundleContainer) containers[i];
+					if (iu.getIncludeAllEnvironments()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the mode used to provision this target - slice versus plan or <code>null</code> if
+	 * this target has no software sites.
+	 * 
+	 * @return provisioning mode or <code>null</code>
+	 */
+	private String getProvisionMode() {
+		IBundleContainer[] containers = getBundleContainers();
+		if (containers != null) {
+			for (int i = 0; i < containers.length; i++) {
+				if (containers[i] instanceof IUBundleContainer) {
+					IUBundleContainer iu = (IUBundleContainer) containers[i];
+					if (iu.getIncludeAllRequired()) {
+						return TargetDefinitionPersistenceHelper.MODE_PLANNER;
+					}
+					return TargetDefinitionPersistenceHelper.MODE_SLICER;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the profile for the this target handle, creating one if required.
 	 * 
 	 * @return profile
@@ -578,13 +621,34 @@ public class TargetDefinition implements ITargetDefinition {
 		String id = handle.getProfileId();
 		IProfile profile = registry.getProfile(id);
 		if (profile != null) {
-			// ensure environment & NL settings are still the same (else we need a new profile)
-			String property = generateEnvironmentProperties();
-			String value = profile.getProperty(IProfile.PROP_ENVIRONMENTS);
 			boolean recreate = false;
-			if (!property.equals(value)) {
-				recreate = true;
+			// check if all environments setting is the same
+			boolean all = false;
+			String value = profile.getProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS);
+			if (value != null) {
+				all = Boolean.valueOf(value).booleanValue();
+				if (!Boolean.toString(isAllEnvironments()).equals(value)) {
+					recreate = true;
+				}
 			}
+			// ensure environment & NL settings are still the same (else we need a new profile)
+			String property = null;
+			if (!recreate && !all) {
+				property = generateEnvironmentProperties();
+				value = profile.getProperty(IProfile.PROP_ENVIRONMENTS);
+				if (!property.equals(value)) {
+					recreate = true;
+				}
+			}
+			// check provisioning mode: slice versus plan
+			String mode = getProvisionMode();
+			if (mode != null) {
+				value = profile.getProperty(AbstractTargetHandle.PROP_PROVISION_MODE);
+				if (!mode.equals(value)) {
+					recreate = true;
+				}
+			}
+
 			if (!recreate) {
 				property = generateNLProperty();
 				value = profile.getProperty(IProfile.PROP_NL);
@@ -635,6 +699,11 @@ public class TargetDefinition implements ITargetDefinition {
 			// set up environment & NL properly so OS specific fragments are down loaded/installed
 			properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
 			properties.put(IProfile.PROP_NL, generateNLProperty());
+			String mode = getProvisionMode();
+			if (mode != null) {
+				properties.put(AbstractTargetHandle.PROP_PROVISION_MODE, mode);
+				properties.put(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(isAllEnvironments()));
+			}
 			profile = registry.addProfile(id, properties);
 		}
 		return profile;

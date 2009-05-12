@@ -48,7 +48,19 @@ abstract class AbstractTargetHandle implements ITargetHandle {
 	 * Installable unit property to mark IU's that have been installed in a profile by
 	 * a bundle container (rather than as a secondary/required IU).
 	 */
-	static final String PROP_INSTALLED_IU = ""; //$NON-NLS-1$
+	static final String PROP_INSTALLED_IU = PDECore.PLUGIN_ID + ".installed_iu"; //$NON-NLS-1$
+
+	/**
+	 * Profile property that keeps track of provisioning mode for the target
+	 * (slice versus plan).
+	 */
+	static final String PROP_PROVISION_MODE = PDECore.PLUGIN_ID + ".provision_mode"; //$NON-NLS-1$
+
+	/**
+	 * Profile property that keeps track of provisioning mode for the target
+	 * (all environments/true versus false).
+	 */
+	static final String PROP_ALL_ENVIRONMENTS = PDECore.PLUGIN_ID + ".all_environments"; //$NON-NLS-1$	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getTargetDefinition()

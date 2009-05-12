@@ -65,6 +65,26 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	private URI[] fRepos;
 
 	/**
+	 * Whether this container must have all required IUs of the selected IUs available and included
+	 * in the target to resolve successfully.  If this option is true, the planner will be used to resolve
+	 * otherwise the slicer is used.  The planner can describe any missing requirements as errors.
+	 * <p>
+	 * <code>true</code> by default
+	 * </p>
+	 */
+	private boolean fIncludeAllRequired = true;
+
+	/**
+	 * Whether this container should download and include environment (platform) specific units for all
+	 * available platforms (vs only the current target definition's environment settings).  Only supported 
+	 * by the slicer so {@link fIncludeAllRequired} must be turned off for this setting to be used.
+	 * <p>
+	 * <code>false</code> by default
+	 * </p>
+	 */
+	private boolean fIncludeMultipleEnvironments = false;
+
+	/**
 	 * Query for bundles in a profile. Every IU that ends up being installed as a bundle
 	 * provides a capability in the name space "osgi.bundle".
 	 */
@@ -99,7 +119,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		fIds = ids;
 		fVersions = new Version[versions.length];
 		for (int i = 0; i < versions.length; i++) {
-			fVersions[i] = new Version(versions[i]);
+			fVersions[i] = Version.create(versions[i]);
 
 		}
 		if (repositories == null || repositories.length == 0) {
@@ -149,6 +169,23 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		if (fIncludeAllRequired) {
+			return resolveWithPlanner(definition, monitor);
+		}
+		return resolveWithSlicer(definition, monitor);
+	}
+
+	/**
+	 * Used to resolve the contents of this container if the user is including all required software.  The p2 planner is used
+	 * to determine the complete set of IUs required to run the selected software.  If all requirements are met, the bundles
+	 * are downloaded from the repository into the bundle pool and added to the target definition.
+	 * 
+	 * @param definition definition being resolved
+	 * @param monitor for reporting progress
+	 * @return set of bundles included in this container
+	 * @throws CoreException if there is a problem with the requirements or there is a problem downloading
+	 */
+	private IResolvedBundle[] resolveWithPlanner(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
 		subMonitor.beginTask(Messages.IUBundleContainer_0, 200);
 
@@ -203,7 +240,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// execute the provisioning plan
 		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
 		IEngine engine = getEngine();
-		IStatus result = engine.perform(profile, phases, plan.getOperands(), context, new SubProgressMonitor(subMonitor, 140));
+		Operand[] operands = plan.getOperands();
+		List allOps = new ArrayList(operands.length + 1);
+		for (int i = 0; i < operands.length; i++) {
+			allOps.add(operands[i]);
+		}
+		allOps.add(new PropertyOperand(AbstractTargetHandle.PROP_PROVISION_MODE, null, TargetDefinitionPersistenceHelper.MODE_PLANNER));
+		allOps.add(new PropertyOperand(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, null, Boolean.toString(false)));
+		IStatus result = engine.perform(profile, phases, (Operand[]) allOps.toArray(new Operand[allOps.size()]), context, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -224,6 +268,162 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		BundleQuery query = new BundleQuery();
 		Collector collector = new Collector();
 		slice.query(query, collector, new SubProgressMonitor(subMonitor, 10));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
+		Map bundles = new LinkedHashMap();
+		IFileArtifactRepository repo = getBundlePool(profile);
+		Iterator iterator = collector.iterator();
+		while (iterator.hasNext()) {
+			IInstallableUnit unit = (IInstallableUnit) iterator.next();
+			IArtifactKey[] artifacts = unit.getArtifacts();
+			for (int i = 0; i < artifacts.length; i++) {
+				IArtifactKey key = artifacts[i];
+				File file = repo.getArtifactFile(key);
+				if (file == null) {
+					// TODO: missing bundle
+				} else {
+					IResolvedBundle bundle = generateBundle(file);
+					if (bundle != null) {
+						bundles.put(bundle.getBundleInfo(), bundle);
+					}
+				}
+			}
+		}
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
+		// remove all bundles from previous IU containers (so we don't get duplicates from multi-locations
+		IBundleContainer[] containers = definition.getBundleContainers();
+		for (int i = 0; i < containers.length; i++) {
+			IBundleContainer container = containers[i];
+			if (container == this) {
+				break;
+			}
+			if (container instanceof IUBundleContainer) {
+				IUBundleContainer bc = (IUBundleContainer) container;
+				IResolvedBundle[] included = bc.getBundles();
+				if (included != null) {
+					for (int j = 0; j < included.length; j++) {
+						bundles.remove(included[j].getBundleInfo());
+					}
+				}
+			}
+		}
+		subMonitor.worked(10);
+		subMonitor.done();
+		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+	}
+
+	/**
+	 * Used to resolve the contents of this container when the user has chosen to manage the dependencies in the target
+	 * themselves.  The selected IUs and any required software that can be found will be retrieved from the repositories 
+	 * and added to the target.  Any missing required software will be ignored.
+	 * 
+	 * @param definition definition being resolved
+	 * @param monitor for reporting progress
+	 * @return set of resolved bundles included in this container
+	 * @throws CoreException if there is a problem interacting with the repositories
+	 */
+	private IResolvedBundle[] resolveWithSlicer(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
+		subMonitor.beginTask(Messages.IUBundleContainer_0, 200);
+
+		// retrieve profile
+		IProfile profile = ((TargetDefinition) definition).getProfile();
+		subMonitor.worked(10);
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
+		// resolve IUs
+		IInstallableUnit[] units = getInstallableUnits(profile);
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
+		URI[] repositories = resolveRepositories();
+		int repoCount = repositories.length;
+		if (repoCount == 0) {
+			return new IResolvedBundle[0];
+		}
+
+		IProgressMonitor loadMonitor = new SubProgressMonitor(subMonitor, 10);
+		loadMonitor.beginTask(null, repoCount * 10);
+		IMetadataRepository[] metadataRepos = new IMetadataRepository[repoCount];
+		IMetadataRepositoryManager manager = getRepoManager();
+		for (int i = 0; i < repoCount; ++i)
+			metadataRepos[i] = manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10));
+		loadMonitor.done();
+
+		IQueryable allMetadata;
+		if (repoCount == 1) {
+			allMetadata = metadataRepos[0];
+		} else {
+			allMetadata = new CompoundQueryable(metadataRepos);
+		}
+
+		// slice IUs and all prerequisites
+		PermissiveSlicer slicer = null;
+		if (getIncludeAllEnvironments()) {
+			slicer = new PermissiveSlicer(allMetadata, new Properties(), true, false, true, true, false);
+		} else {
+			Properties props = new Properties();
+			props.setProperty("osgi.os", definition.getOS() != null ? definition.getOS() : Platform.getOS()); //$NON-NLS-1$
+			props.setProperty("osgi.ws", definition.getWS() != null ? definition.getWS() : Platform.getWS()); //$NON-NLS-1$
+			props.setProperty("osgi.arch", definition.getArch() != null ? definition.getArch() : Platform.getOSArch()); //$NON-NLS-1$
+			props.setProperty("osgi.nl", definition.getNL() != null ? definition.getNL() : Platform.getNL()); //$NON-NLS-1$
+			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
+		}
+		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
+		Collector collector = slice.query(new InstallableUnitQuery(null), new Collector(), new SubProgressMonitor(subMonitor, 10));
+
+		if (subMonitor.isCanceled() || collector.isEmpty()) {
+			return new IResolvedBundle[0];
+		}
+
+		ArrayList operands = new ArrayList(collector.size());
+		Iterator itor = collector.iterator();
+		while (itor.hasNext()) {
+			operands.add(new InstallableUnitOperand(null, (IInstallableUnit) itor.next()));
+		}
+		for (int i = 0; i < units.length; i++) {
+			IInstallableUnit unit = units[i];
+			operands.add(new InstallableUnitPropertyOperand(unit, AbstractTargetHandle.PROP_INSTALLED_IU, null, Boolean.toString(true)));
+		}
+		operands.add(new PropertyOperand(AbstractTargetHandle.PROP_PROVISION_MODE, null, TargetDefinitionPersistenceHelper.MODE_SLICER));
+		operands.add(new PropertyOperand(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, null, Boolean.toString(getIncludeAllEnvironments())));
+
+		// execute the provisioning plan
+		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
+		IEngine engine = getEngine();
+		ProvisioningContext context = new ProvisioningContext(repositories);
+		context.setArtifactRepositories(repositories);
+		IStatus result = engine.perform(profile, phases, (Operand[]) operands.toArray(new Operand[operands.size()]), context, new SubProgressMonitor(subMonitor, 140));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+		if (!result.isOK()) {
+			throw new CoreException(result);
+		}
+
+		// slice IUs and all prerequisites
+		slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false, false);
+		slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
+		// query for bundles
+		collector = slice.query(new BundleQuery(), new Collector(), new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -408,8 +608,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public boolean isContentEqual(AbstractBundleContainer container) {
 		if (container instanceof IUBundleContainer) {
 			IUBundleContainer iuContainer = (IUBundleContainer) container;
-			if (isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos)) {
-				return super.isContentEqual(container);
+			if (iuContainer.getIncludeAllRequired() == getIncludeAllRequired()) {
+				// include all targets only matters if include all required is turned off
+				if (getIncludeAllRequired() || iuContainer.getIncludeAllEnvironments() == getIncludeAllEnvironments()) {
+					if (isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos)) {
+						return super.isContentEqual(container);
+					}
+				}
 			}
 		}
 		return false;
@@ -438,6 +643,89 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 		}
 		return fRepos;
+	}
+
+	/**
+	 * Sets whether all required units must be available to resolve this container.  When <code>true</code>
+	 * the resolve operation will use the planner to determine the complete set of IUs required to
+	 * make the selected IUs runnable.  If any dependencies are missing, the resolve operation will return an
+	 * error explaining what problems exist.  When <code>false</code> the resolve operation will use the slicer
+	 * to determine what units to include.  Any required units that are not available in the repositories will
+	 * be ignored.
+	 * <p>
+	 * Since there is only one profile per target and the planner and slicer resolve methods are incompatible
+	 * it is highly recommended that the parent target be passed to this method so all other IUBundleContainers
+	 * in the target can be updated with the new setting. 
+	 * </p>
+	 * @param include whether all required units must be available to resolve this container
+	 * @param definition parent target, used to update other IUBundleContainers with this setting, can be <code>null</code>
+	 */
+	public void setIncludeAllRequired(boolean include, ITargetDefinition definition) {
+		fIncludeAllRequired = include;
+		if (definition != null) {
+			IBundleContainer[] containers = definition.getBundleContainers();
+			if (containers != null) {
+				for (int i = 0; i < containers.length; i++) {
+					if (containers[i] instanceof IUBundleContainer && containers[i] != this) {
+						((IUBundleContainer) containers[i]).setIncludeAllRequired(include, null);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns whether all required units must be available to resolve this container.  When <code>true</code>
+	 * the resolve operation will use the planner to determine the complete set of IUs required to
+	 * make the selected IUs runnable.  If any dependencies are missing, the resolve operation will return an
+	 * error explaining what problems exist.  When <code>false</code> the resolve operation will use the slicer
+	 * to determine what units to include.  Any required units that are not available in the repositories will
+	 * be ignored.
+	 *  
+	 * @return whether all required units must be available to resolve this container
+	 */
+	public boolean getIncludeAllRequired() {
+		return fIncludeAllRequired;
+	}
+
+	/**
+	 * Sets whether all environment (platform) specific installable units should
+	 * be included in this container when it is resolved.  This feature is not supported
+	 * by the planner so will only have an effect if the include all required setting
+	 * is turned off ({@link #getIncludeAllRequired()}).
+	 * <p>
+	 * There is only one profile per target and this setting can only be set for the
+	 * entire target definition.  It is highly recommended that the parent target be passed
+	 * to this method so all other IUBundleContainers in the target can be updated with the 
+	 * new setting. 
+	 * </p>
+	 * @param include whether environment specific units should be included
+	 * @param definition parent target, used to update other IUBundleContainers with this setting, can be <code>null</code>
+	 */
+	public void setIncludeAllEnvironments(boolean include, ITargetDefinition definition) {
+		fIncludeMultipleEnvironments = include;
+		if (definition != null) {
+			IBundleContainer[] containers = definition.getBundleContainers();
+			if (containers != null) {
+				for (int i = 0; i < containers.length; i++) {
+					if (containers[i] instanceof IUBundleContainer && containers[i] != this) {
+						((IUBundleContainer) containers[i]).setIncludeAllEnvironments(include, null);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns whether all environment (platform) specific installable units should
+	 * be included in this container when it is resolved.  This feature is not supported
+	 * by the planner so will only have an effect if the include all required setting
+	 * is turned off ({@link #getIncludeAllRequired()}).
+	 * 
+	 * @return whether environment specific units should be included
+	 */
+	public boolean getIncludeAllEnvironments() {
+		return fIncludeMultipleEnvironments;
 	}
 
 	/**

@@ -69,6 +69,10 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String INSTALLABLE_UNIT = "unit"; //$NON-NLS-1$
 	private static final String REPOSITORY = "repository"; //$NON-NLS-1$
+	private static final String ATTR_INCLUDE_MODE = "includeMode"; //$NON-NLS-1$
+	public static final String MODE_SLICER = "slicer"; //$NON-NLS-1$
+	public static final String MODE_PLANNER = "planner"; //$NON-NLS-1$
+	private static final String ATTR_INCLUDE_ALL_PLATFORMS = "includeAllPlatforms"; //$NON-NLS-1$
 	private static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
@@ -455,6 +459,8 @@ public class TargetDefinitionPersistenceHelper {
 			}
 		} else if (container instanceof IUBundleContainer) {
 			IUBundleContainer iubc = (IUBundleContainer) container;
+			containerElement.setAttribute(ATTR_INCLUDE_MODE, iubc.getIncludeAllRequired() ? MODE_PLANNER : MODE_SLICER);
+			containerElement.setAttribute(ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(iubc.getIncludeAllEnvironments()));
 			String[] ids = iubc.getIds();
 			Version[] versions = iubc.getVersions();
 			for (int i = 0; i < ids.length; i++) {
@@ -530,6 +536,8 @@ public class TargetDefinitionPersistenceHelper {
 			String version = location.getAttribute(ATTR_VERSION);
 			container = getTargetPlatformService().newFeatureContainer(path, location.getAttribute(ATTR_ID), version.length() > 0 ? version : null);
 		} else if (IUBundleContainer.TYPE.equals(type)) {
+			String includeMode = location.getAttribute(ATTR_INCLUDE_MODE);
+			String includeAllPlatforms = location.getAttribute(ATTR_INCLUDE_ALL_PLATFORMS);
 			NodeList list = location.getChildNodes();
 			List ids = new ArrayList();
 			List versions = new ArrayList();
@@ -564,6 +572,17 @@ public class TargetDefinitionPersistenceHelper {
 			String[] iuVer = (String[]) versions.toArray(new String[versions.size()]);
 			URI[] uris = (URI[]) repos.toArray(new URI[repos.size()]);
 			container = new IUBundleContainer(iuIDs, iuVer, uris);
+			if (includeMode != null && includeMode.trim().length() > 0) {
+				if (includeMode.equals(MODE_PLANNER)) {
+					((IUBundleContainer) container).setIncludeAllRequired(true, null);
+				} else if (includeMode.equals(MODE_SLICER)) {
+					((IUBundleContainer) container).setIncludeAllRequired(false, null);
+				}
+			}
+			if (includeAllPlatforms != null && includeAllPlatforms.trim().length() > 0) {
+				((IUBundleContainer) container).setIncludeAllEnvironments(Boolean.valueOf(includeAllPlatforms).booleanValue(), null);
+			}
+
 		}
 
 		NodeList list = location.getChildNodes();

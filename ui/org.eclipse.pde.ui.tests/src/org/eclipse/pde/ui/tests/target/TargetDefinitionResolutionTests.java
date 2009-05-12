@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
+
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 import java.io.File;
@@ -490,7 +494,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 		
 		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt", null);
-	
+		
 		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer, featureContainer});
 		definition.resolve(null);
 		
@@ -517,5 +521,53 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		}
 	}
 	
+	/**
+	 * Tests the two options on IU bundle containers for controlling how the site will be resolved
+	 * @throws Exception
+	 */
+	public void testSiteContainerIncludeSettings() throws Exception{
+		ITargetDefinition target = getNewTarget();
+		IUBundleContainer containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null);
+		IUBundleContainer containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null);
+		target.setBundleContainers(new IBundleContainer[]{containerA, containerB});
+		
+		// Check default settings
+		assertTrue(containerA.getIncludeAllRequired());
+		assertFalse(containerA.getIncludeAllEnvironments());
+		assertTrue(containerB.getIncludeAllRequired());
+		assertFalse(containerB.getIncludeAllEnvironments());
+		
+		// Check basic changes
+		containerA.setIncludeAllRequired(false, null);
+		containerA.setIncludeAllEnvironments(true, null);
+		assertFalse(containerA.getIncludeAllRequired());
+		assertTrue(containerA.getIncludeAllEnvironments());
+		containerA.setIncludeAllEnvironments(false, null);
+		containerA.setIncludeAllRequired(true, null);
+		assertTrue(containerA.getIncludeAllRequired());
+		assertFalse(containerA.getIncludeAllEnvironments());
+		
+		// Check that all containers are updated in the target if target is passed as argument
+		containerA.setIncludeAllRequired(false, target);
+		assertFalse(containerA.getIncludeAllRequired());
+		assertFalse(containerA.getIncludeAllEnvironments());
+		assertFalse(containerB.getIncludeAllRequired());
+		assertFalse(containerB.getIncludeAllEnvironments());
+		containerB.setIncludeAllRequired(true, target);
+		assertTrue(containerA.getIncludeAllRequired());
+		assertFalse(containerA.getIncludeAllEnvironments());
+		assertTrue(containerB.getIncludeAllRequired());
+		assertFalse(containerB.getIncludeAllEnvironments());
+		containerA.setIncludeAllEnvironments(true, target);
+		assertTrue(containerA.getIncludeAllRequired());
+		assertTrue(containerA.getIncludeAllEnvironments());
+		assertTrue(containerB.getIncludeAllRequired());
+		assertTrue(containerB.getIncludeAllEnvironments());
+		containerB.setIncludeAllEnvironments(false, target);
+		assertTrue(containerA.getIncludeAllRequired());
+		assertFalse(containerA.getIncludeAllEnvironments());
+		assertTrue(containerB.getIncludeAllRequired());
+		assertFalse(containerB.getIncludeAllEnvironments());
+	}
 	
 }

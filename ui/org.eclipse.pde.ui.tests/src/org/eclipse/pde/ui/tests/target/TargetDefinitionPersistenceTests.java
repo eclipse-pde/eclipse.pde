@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.internal.core.target.*;
+import java.net.URI;
+
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 
 import java.io.*;
 import java.net.*;
@@ -23,6 +25,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
@@ -206,7 +209,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	}
 	
 	
-	protected void initComplexDefiniton(ITargetDefinition definition){
+	protected void initComplexDefiniton(ITargetDefinition definition) throws URISyntaxException {
 		definition.setName("name");
 		definition.setOS("os");
 		definition.setWS("ws");
@@ -251,9 +254,16 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		BundleInfo[] completeRestrictions = new BundleInfo[0];
 		emptyProfileContainer.setIncludedBundles(completeRestrictions);
 		
-		definition.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer, emptyProfileContainer});
+		// Site bundle containers with different settings
+		IUBundleContainer siteContainer = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[]{}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")});
+		siteContainer.setIncludeAllRequired(false, null);
+		siteContainer.setIncludeAllEnvironments(true, null);
+		IUBundleContainer siteContainer2 = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1","unit2"},new String[]{"1.0", "2.0"}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")});
+		siteContainer2.setIncludeAllRequired(true, null);
+		siteContainer2.setIncludeAllEnvironments(false, null);
+		
+		definition.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer, emptyProfileContainer, siteContainer, siteContainer2});
 	}
-	
 	
 	/**
 	 * Tests that an empty target definition can be serialized to xml, then deserialized without

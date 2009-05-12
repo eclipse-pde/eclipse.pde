@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +19,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
@@ -298,7 +297,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						} catch (CoreException e) {
 							PDEPlugin.log(e);
 						}
-						addPage(new EditIUContainerPage(profile));
+						addPage(new EditIUContainerPage(fTarget, profile));
 					}
 
 					public boolean performFinish() {

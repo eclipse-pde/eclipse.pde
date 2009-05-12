@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.*;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -53,7 +52,7 @@ public class EditBundleContainerWizard extends Wizard {
 		} else if (fContainer instanceof IUBundleContainer) {
 			try {
 				// TODO Use proper API to get the profile if available
-				fPage = new EditIUContainerPage((IUBundleContainer) fContainer, ((TargetDefinition) fTarget).getProfile());
+				fPage = new EditIUContainerPage((IUBundleContainer) fContainer, fTarget, ((TargetDefinition) fTarget).getProfile());
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
