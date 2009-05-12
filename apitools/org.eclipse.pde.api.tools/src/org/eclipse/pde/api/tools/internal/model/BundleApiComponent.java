@@ -141,8 +141,8 @@ public class BundleApiComponent extends AbstractApiComponent {
 		} finally {
 			synchronized(this) {
 				fManifest = null;
+				fBundleDescription = null;
 			}
-			fBundleDescription = null;
 		}
 	}
 	
@@ -197,7 +197,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @param state PDE state
 	 * @throws CoreException on failure
 	 */
-	protected void init(long bundleId) throws CoreException {
+	protected synchronized void init(long bundleId) throws CoreException {
 		try {
 			Dictionary manifest = getManifest();
 			if (isBinaryBundle() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(getBaseline().getName())) {
@@ -401,15 +401,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#createApiTypeContainers()
 	 */
-	protected List createApiTypeContainers() throws CoreException {
+	protected synchronized List createApiTypeContainers() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		List containers = new ArrayList(5);
 		try {
@@ -772,15 +766,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getExecutionEnvironments()
 	 */
-	public String[] getExecutionEnvironments() throws CoreException {
+	public synchronized String[] getExecutionEnvironments() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		return fBundleDescription.getExecutionEnvironments();
 	}
@@ -788,15 +776,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getId()
 	 */
-	public String getId() throws CoreException {
+	public synchronized String getId() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		return fBundleDescription.getSymbolicName();
 	}
@@ -804,15 +786,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getRequiredComponents()
 	 */
-	public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
+	public synchronized IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		BundleSpecification[] requiredBundles = fBundleDescription.getRequiredBundles();
 		IRequiredComponentDescription[] req = new IRequiredComponentDescription[requiredBundles.length];
@@ -829,15 +805,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getVersion()
 	 */
-	public String getVersion() throws CoreException {
+	public synchronized String getVersion() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		return fBundleDescription.getVersion().toString();
 	}
@@ -847,15 +817,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * 
 	 * @return bundle description
 	 */
-	public BundleDescription getBundleDescription() throws CoreException {
+	public synchronized BundleDescription getBundleDescription() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		return fBundleDescription;
 	}
@@ -915,13 +879,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized boolean isSourceComponent() throws CoreException {
 		if (this.fManifest == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		ManifestElement[] sourceBundle = null;
 		try {
@@ -994,15 +952,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#isFragment()
 	 */
-	public boolean isFragment() throws CoreException {
+	public synchronized boolean isFragment() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		return fBundleDescription.getHost() != null;
 	}
@@ -1010,15 +962,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHost()
 	 */
-	public IApiComponent getHost() throws CoreException {
+	public synchronized IApiComponent getHost() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		HostSpecification host = fBundleDescription.getHost();
 		if(host != null) {
@@ -1030,15 +976,9 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#hasFragments()
 	 */
-	public boolean hasFragments() throws CoreException {
+	public synchronized boolean hasFragments() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		return fBundleDescription.getFragments().length != 0;
 	}
@@ -1150,25 +1090,34 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors()
 	 */
-	public ResolverError[] getErrors() throws CoreException {
+	public synchronized ResolverError[] getErrors() throws CoreException {
 		if (this.fBundleDescription == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		IApiElement ancestor = getAncestor(IApiElement.BASELINE);
 		if (ancestor != null) {
 			if (ancestor instanceof ApiBaseline) {
 				ApiBaseline baseline = (ApiBaseline) ancestor;
 				ResolverError[] resolverErrors = baseline.getState().getResolverErrors(this.fBundleDescription);
-				if (resolverErrors.length == 0) return null;
+				if (resolverErrors.length == 0) {
+					return null;
+				}
 				return resolverErrors;
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * @throws CoreException with the baseline disposed information
+	 */
+	protected void baselineDisposed() throws CoreException {
+		throw new CoreException(
+				new Status(
+						IStatus.ERROR,
+						ApiPlugin.PLUGIN_ID,
+						ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
+						ApiPlugin.BASELINE_IS_DISPOSED,
+						null));
 	}
 }

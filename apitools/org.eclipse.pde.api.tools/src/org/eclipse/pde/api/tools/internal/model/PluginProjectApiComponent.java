@@ -24,9 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -289,13 +287,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
 		if (this.fPathToOutputContainers == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		IApiTypeContainer container = (IApiTypeContainer) fPathToOutputContainers.get(path);
 		if (container == null) {
@@ -335,13 +327,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	private IApiTypeContainer getApiTypeContainer(String location, IApiComponent component) throws CoreException {
 		if (this.fOutputLocationToContainer == null) {
-			throw new CoreException(
-					new Status(
-							IStatus.ERROR,
-							ApiPlugin.PLUGIN_ID,
-							ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-							ApiPlugin.BASELINE_IS_DISPOSED,
-							null));
+			baselineDisposed();
 		}
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {
