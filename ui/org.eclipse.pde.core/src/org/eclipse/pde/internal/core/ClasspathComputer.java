@@ -159,7 +159,7 @@ public class ClasspathComputer {
 		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 			IClasspathEntry oldEntry = root.getRawClasspathEntry();
 			// If we have the same binary root but new or different source, we should recreate the entry 
-			if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null) || sourceAttachment.equals(oldEntry.getSourceAttachmentPath())) {
+			if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null) || (sourceAttachment != null && sourceAttachment.equals(oldEntry.getSourceAttachmentPath()))) {
 				if (!result.contains(oldEntry)) {
 					result.add(oldEntry);
 					return;
