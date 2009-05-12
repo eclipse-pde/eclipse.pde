@@ -113,6 +113,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			} else if (currentName.equals(fType.getName())) {
 				fType.setModifiers(access);
 				fType.setSimpleName(innerName);
+				fType.setMemberType();
 			}
 		}
 	}

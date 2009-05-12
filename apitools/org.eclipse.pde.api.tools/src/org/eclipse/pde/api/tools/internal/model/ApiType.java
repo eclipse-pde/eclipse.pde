@@ -116,7 +116,12 @@ public class ApiType extends ApiMember implements IApiType {
 	 * If this is a local type or not (class defined in a method)
 	 */
 	private boolean fLocal = false;
-	
+
+	/**
+	 * If this is a member type or not (class defined in a method)
+	 */
+	private boolean fMemberType = false;
+
 	/**
 	 * cached enclosing type once it has been successfully calculated
 	 */
@@ -388,6 +393,13 @@ public class ApiType extends ApiMember implements IApiType {
 	}
 	
 	/**
+	 * Used when building a type structure.
+	 */
+	public void setMemberType() {
+		fMemberType = true;
+	}
+
+	/**
 	 * Used when building a type structure for pre-1.5 sources
 	 */
 	public void setLocal() {
@@ -466,7 +478,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiType#isMemberType()
 	 */
 	public boolean isMemberType() {
-		return fEnclosingTypeName != null && !(fLocal || fAnonymous);
+		return fMemberType;
 	}
 	
 	/* (non-Javadoc)
