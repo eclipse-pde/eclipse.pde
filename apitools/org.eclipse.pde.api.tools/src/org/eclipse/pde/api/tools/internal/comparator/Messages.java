@@ -106,6 +106,8 @@ public class Messages extends NLS {
 								return 2;
 							case IDelta.TYPE :
 								return 3;
+							case IDelta.REEXPORTED_TYPE :
+								return 109;
 						}
 						break;
 					case IDelta.CHANGED :
