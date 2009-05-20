@@ -282,6 +282,9 @@ public final class Util {
 	private static int DELETE_MAX_WAIT = 10000;
 
 	public static final IPath MANIFEST_PROJECT_RELATIVE_PATH = new Path(JarFile.MANIFEST_NAME);
+
+	public static final String ORG_ECLIPSE_SWT = "org.eclipse.swt"; //$NON-NLS-1$
+
 	static {
 		String property = System.getProperty("DEBUG"); //$NON-NLS-1$
 		DEBUG = property != null && property.equalsIgnoreCase("TRUE"); //$NON-NLS-1$

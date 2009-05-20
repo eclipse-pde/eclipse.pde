@@ -252,7 +252,7 @@ public class ApiFileGenerationTask extends Task {
 		File[] allFiles = null;
 		Map manifestMap = null;
 		IApiTypeContainer classFileContainer = null;
-		if (!this.projectLocation.endsWith("org.eclipse.swt")) { //$NON-NLS-1$
+		if (!this.projectLocation.endsWith(Util.ORG_ECLIPSE_SWT)) {
 			// create the directory class file container used to resolve signatures during tag scanning
 			String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
 			List allContainers = new ArrayList();

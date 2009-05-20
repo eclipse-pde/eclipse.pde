@@ -411,7 +411,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			// build the classpath from bundle and all fragments
 			all.add(this);
 			boolean considerFragments = true;
-			if ("org.eclipse.swt".equals(getId())) { //$NON-NLS-1$
+			if (Util.ORG_ECLIPSE_SWT.equals(getId())) {
 				// if SWT is a project to be built/analyzed don't consider its fragments
 				considerFragments = !isApiEnabled();
 			}

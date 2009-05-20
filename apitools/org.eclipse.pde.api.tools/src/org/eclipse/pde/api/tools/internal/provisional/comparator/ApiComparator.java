@@ -495,7 +495,7 @@ public class ApiComparator {
 			String typeName = typeRoot2.getTypeName();
 			IApiTypeRoot typeRoot = null;
 			String id = component.getId();
-			if ("org.eclipse.swt".equals(id)) { //$NON-NLS-1$
+			if (Util.ORG_ECLIPSE_SWT.equals(id)) {
 				typeRoot = component.findTypeRoot(typeName);
 			} else {
 				typeRoot = component.findTypeRoot(typeName, id);
@@ -798,7 +798,7 @@ public class ApiComparator {
 		IApiTypeContainer[] typeRootContainers = null;
 		IApiTypeContainer[] typeRootContainers2 = null;
 		
-		final boolean isSWT = "org.eclipse.swt".equals(id); //$NON-NLS-1$
+		final boolean isSWT = Util.ORG_ECLIPSE_SWT.equals(id);
 		if (isSWT) {
 			typeRootContainers = component.getApiTypeContainers();
 			typeRootContainers2 = component2.getApiTypeContainers();
@@ -845,7 +845,7 @@ public class ApiComparator {
 										IApiComponent p = providers[index];
 										if (!p.equals(component2)) {
 											String id2 = p.getId();
-											if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
+											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 												typeRoot2 = p.findTypeRoot(typeName);
 											} else {
 												typeRoot2 = p.findTypeRoot(typeName, id2);
@@ -1014,7 +1014,7 @@ public class ApiComparator {
 													IApiComponent p = providers[index];
 													if (!p.equals(component2)) {
 														String id2 = p.getId();
-														if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
+														if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 															typeRoot2 = p.findTypeRoot(typeName);
 														} else {
 															typeRoot2 = p.findTypeRoot(typeName, id2);

@@ -397,35 +397,10 @@ public class DeltaSession implements ISession {
 									try {
 										String componentVersionId = delta.getComponentVersionId();
 										if (componentVersionId != null) {
-											int indexOfOpen = componentVersionId.lastIndexOf('(');
-											String componentID = componentVersionId.substring(0, indexOfOpen);
-											String version = componentVersionId.substring(indexOfOpen + 1, componentVersionId.length() - 1);
-											IApiBaseline baseline = ApiBaselineManager.getManager().getApiBaseline(baselineName);
-											int modifiers = 0;
-											if (baseline != null) {
-												IApiComponent apiComponent = baseline.getApiComponent(componentID);
-												if (apiComponent != null && version.equals(apiComponent.getVersion())) {
-													IApiTypeRoot typeRoot = apiComponent.findTypeRoot(typeName);
-													if (typeRoot != null) {
-														IApiType structure = typeRoot.getStructure();
-														modifiers = structure.getModifiers();
-													}
-												}
-											}
-											if (modifiers == 0) {
-												// try the workspace baseline
-												baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
-												if (baseline != null) {
-													IApiComponent apiComponent = baseline.getApiComponent(componentID);
-													if (apiComponent != null && version.equals(apiComponent.getVersion())) {
-														IApiTypeRoot typeRoot = apiComponent.findTypeRoot(typeName);
-														if (typeRoot != null) {
-															IApiType structure = typeRoot.getStructure();
-															modifiers = structure.getModifiers();
-														}
-													}
-												}
-											}
+											int modifiers = retrieveTypeModifiers(
+													delta,
+													typeName,
+													componentVersionId);
 											if (Flags.isEnum(modifiers)) {
 												id = ITreeNode.ENUM;
 											} else if (Flags.isAnnotation(modifiers)) {
@@ -446,6 +421,107 @@ public class DeltaSession implements ISession {
 						node3.add(new TreeNode(0, delta.getMessage(), delta));
 					}
 				}
+			}
+			private int retrieveTypeModifiers(IDelta delta,
+					String typeName,
+					String componentVersionId) throws CoreException {
+				int indexOfOpen = componentVersionId.lastIndexOf('(');
+				String componentID = componentVersionId.substring(0, indexOfOpen);
+				IApiBaseline baseline = ApiBaselineManager.getManager().getApiBaseline(baselineName);
+				int modifiers = 0;
+				if (baseline != null) {
+					IApiComponent apiComponent = baseline.getApiComponent(componentID);
+					int kind = delta.getKind();
+					if (apiComponent != null && (kind == IDelta.REMOVED)) {
+						// need to handle reexported types
+						IApiTypeRoot typeRoot = null;
+						String id = apiComponent.getId();
+						switch(delta.getFlags()) {
+							case IDelta.REEXPORTED_TYPE :
+							case IDelta.REEXPORTED_API_TYPE :
+								// handle re-exported types
+								// check if the type is provided by a required component (it could have been moved/re-exported)
+								String packageName = Util.EMPTY_STRING;
+								int indexOf = typeName.lastIndexOf('.');
+								if (indexOf != -1) {
+									packageName = typeName.substring(0, indexOf);
+								}
+								IApiComponent[] providers = apiComponent.getBaseline().resolvePackage(apiComponent, packageName);
+								int index = 0;
+								while (typeRoot == null && index < providers.length) {
+									IApiComponent p = providers[index];
+									if (!p.equals(apiComponent)) {
+										String id2 = p.getId();
+										if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
+											typeRoot = p.findTypeRoot(typeName);
+										} else {
+											typeRoot = p.findTypeRoot(typeName, id2);
+										}
+									}
+									index++;
+								}
+								break;
+							default :
+								if (Util.ORG_ECLIPSE_SWT.equals(id)) {
+									typeRoot = apiComponent.findTypeRoot(typeName);
+								} else{
+									typeRoot = apiComponent.findTypeRoot(typeName, id);
+								}
+						}
+						if (typeRoot != null) {
+							IApiType structure = typeRoot.getStructure();
+							modifiers = structure.getModifiers();
+						}
+					}
+				}
+				if (modifiers == 0) {
+					// try the workspace baseline
+					baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
+					if (baseline != null) {
+						IApiComponent apiComponent = baseline.getApiComponent(componentID);
+						if (apiComponent != null) {
+							IApiTypeRoot typeRoot = null;
+							String id = apiComponent.getId();
+							switch(delta.getFlags()) {
+								case IDelta.REEXPORTED_TYPE :
+								case IDelta.REEXPORTED_API_TYPE :
+									// handle re-exported types
+									// check if the type is provided by a required component (it could have been moved/re-exported)
+									String packageName = Util.EMPTY_STRING;
+									int indexOf = typeName.lastIndexOf('.');
+									if (indexOf != -1) {
+										packageName = typeName.substring(0, indexOf);
+									}
+									IApiComponent[] providers = apiComponent.getBaseline().resolvePackage(apiComponent, packageName);
+									int index = 0;
+									while (typeRoot == null && index < providers.length) {
+										IApiComponent p = providers[index];
+										if (!p.equals(apiComponent)) {
+											String id2 = p.getId();
+											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
+												typeRoot = p.findTypeRoot(typeName);
+											} else {
+												typeRoot = p.findTypeRoot(typeName, id2);
+											}
+										}
+										index++;
+									}
+									break;
+								default :
+									if (Util.ORG_ECLIPSE_SWT.equals(id)) {
+										typeRoot = apiComponent.findTypeRoot(typeName);
+									} else{
+										typeRoot = apiComponent.findTypeRoot(typeName, id);
+									}
+							}
+							if (typeRoot != null) {
+								IApiType structure = typeRoot.getStructure();
+								modifiers = structure.getModifiers();
+							}
+						}
+					}
+				}
+				return modifiers;
 			}
 		}
 		if (this.delta == ApiComparator.NO_DELTA) {

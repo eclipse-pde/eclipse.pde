@@ -866,7 +866,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		IApiTypeRoot classFile = null;
 		try {
-			if ("org.eclipse.swt".equals(id)) { //$NON-NLS-1$
+			if (Util.ORG_ECLIPSE_SWT.equals(id)) {
 				classFile = component.findTypeRoot(typeName);
 			} else {
 				classFile = component.findTypeRoot(typeName, id);
@@ -885,7 +885,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				IApiComponent p = providers[index];
 				if (!p.equals(component)) {
 					String id2 = p.getId();
-					if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
+					if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 						classFile = p.findTypeRoot(typeName);
 					} else {
 						classFile = p.findTypeRoot(typeName, id2);
@@ -1349,7 +1349,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							IApiType type = null;
 							try {
 								String id = component.getId();
-								if ("org.eclipse.swt".equals(id)) { //$NON-NLS-1$
+								if (Util.ORG_ECLIPSE_SWT.equals(id)) {
 									typeRoot = component.findTypeRoot(typeName);
 								} else {
 									typeRoot = component.findTypeRoot(typeName, id);
@@ -1363,7 +1363,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 										IApiComponent p = providers[index];
 										if (!p.equals(component)) {
 											String id2 = p.getId();
-											if ("org.eclipse.swt".equals(id2)) { //$NON-NLS-1$
+											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 												typeRoot = p.findTypeRoot(typeName);
 											} else {
 												typeRoot = p.findTypeRoot(typeName, id2);
