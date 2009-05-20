@@ -57,7 +57,6 @@ public class Messages extends NLS {
 	public static String DSImplementationDetails_browse;
 	public static String DSImplementationDetails_selectType;
 
-	public static String DSPage_pageId;
 	public static String DSPage_errorTitle;
 	public static String DSPage_errorMessage;
 	public static String DSPage_formTitle;
