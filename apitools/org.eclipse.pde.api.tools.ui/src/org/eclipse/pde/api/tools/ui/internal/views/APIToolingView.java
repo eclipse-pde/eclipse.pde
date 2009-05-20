@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ISession;
@@ -294,6 +295,19 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 
 		this.viewer = new TreeViewer(form, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.viewer.setContentProvider(new ViewContentProvider());
+		this.viewer.setComparator(
+			new ViewerComparator() {
+				public int category(Object element) {
+					ITreeNode node = (ITreeNode) element;
+					switch(node.getId()) {
+						case ITreeNode.PACKAGE :
+							return 1;
+						default:
+							return 0;
+					}
+				}
+			}
+		);
 		this.viewer.setLabelProvider(new ViewLabelProvider());
 
 
