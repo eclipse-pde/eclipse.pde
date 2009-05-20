@@ -108,14 +108,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		GridData data = (GridData) fExportMetadata.getLayoutData();
 		data.horizontalIndent = 20;
 
-		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		IFeatureModel model = manager.getDeltaPackFeature();
-		if (model != null) {
-			fMultiPlatform = new Button(comp, SWT.CHECK);
-			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
-		}
 		Composite categoryComposite = new Composite(comp, SWT.NONE);
-
 		data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.horizontalIndent = 20;
 		categoryComposite.setLayoutData(data);
@@ -139,6 +132,14 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		fCategoryBrowse.setText(PDEUIMessages.ExportWizard_browse);
 		fCategoryBrowse.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fCategoryBrowse);
+
+		// Only visible for delta pack/multiple platform support enabled
+		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+		IFeatureModel model = manager.getDeltaPackFeature();
+		if (model != null) {
+			fMultiPlatform = new Button(comp, SWT.CHECK);
+			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
+		}
 
 	}
 
@@ -241,6 +242,9 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		fCategoryButton.setEnabled(enabled);
 		fCategoryCombo.setEnabled(enabled && fCategoryButton.getSelection());
 		fCategoryBrowse.setEnabled(enabled && fCategoryButton.getSelection());
+		if (fMultiPlatform != null) {
+			fMultiPlatform.setEnabled(enabled);
+		}
 	}
 
 	protected void openFile(Combo combo) {
