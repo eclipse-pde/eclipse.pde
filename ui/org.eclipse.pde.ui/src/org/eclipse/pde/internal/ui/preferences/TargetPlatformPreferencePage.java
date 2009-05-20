@@ -50,6 +50,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		// Definition corresponding to running host
 		private TargetDefinition fRunningHost;
+		private Font fTextFont;
 
 		public TargetLabelProvider() {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -57,6 +58,23 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			if (service != null) {
 				fRunningHost = (TargetDefinition) service.newDefaultTargetDefinition();
 			}
+		}
+
+		/**
+		 * @return a bold dialog font
+		 */
+		private Font getBoldFont() {
+			if (fTextFont == null) {
+				Font dialogFont = JFaceResources.getDialogFont();
+				FontData[] fontData = dialogFont.getFontData();
+				for (int i = 0; i < fontData.length; i++) {
+					FontData data = fontData[i];
+					data.setStyle(SWT.BOLD);
+				}
+				Display display = getShell().getDisplay();
+				fTextFont = new Font(display, fontData);
+			}
+			return fTextFont;
 		}
 
 		/* (non-Javadoc)
@@ -67,14 +85,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			Styler style = new Styler() {
 				public void applyStyles(TextStyle textStyle) {
 					if (element.equals(fActiveTarget)) {
-						Font dialogFont = JFaceResources.getDialogFont();
-						FontData[] fontData = dialogFont.getFontData();
-						for (int i = 0; i < fontData.length; i++) {
-							FontData data = fontData[i];
-							data.setStyle(SWT.BOLD);
-						}
-						Display display = getShell().getDisplay();
-						textStyle.font = new Font(display, fontData);
+						textStyle.font = getBoldFont();
 					}
 				}
 			};
@@ -134,6 +145,10 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		 */
 		public void dispose() {
 			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+			if (fTextFont != null) {
+				fTextFont.dispose();
+				fTextFont = null;
+			}
 			super.dispose();
 		}
 	}
