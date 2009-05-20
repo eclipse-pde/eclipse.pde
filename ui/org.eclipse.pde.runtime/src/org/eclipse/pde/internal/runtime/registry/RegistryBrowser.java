@@ -678,8 +678,10 @@ public class RegistryBrowser extends ViewPart {
 
 					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							fTreeViewer.refresh();
-							updateTitle();
+							if (!fTreeViewer.getTree().isDisposed()) {
+								fTreeViewer.refresh();
+								updateTitle();
+							}
 						}
 					});
 				}
