@@ -121,6 +121,7 @@ public class DSEditReferenceDialog extends FormDialog {
 		updateFields();
 
 		setInterfaceEntryListeners();
+		toolkit.paintBordersFor(entryContainer);
 	}
 
 
