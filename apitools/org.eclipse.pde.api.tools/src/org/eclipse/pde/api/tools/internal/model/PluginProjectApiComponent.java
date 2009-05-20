@@ -186,7 +186,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.BundleApiComponent#createClassFileContainers()
 	 */
-	protected List createApiTypeContainers() throws CoreException {
+	protected synchronized List createApiTypeContainers() throws CoreException {
 		// first populate build.properties cache so we can create class file containers
 		// from bundle classpath entries
 		fPathToOutputContainers = new HashMap(4);
