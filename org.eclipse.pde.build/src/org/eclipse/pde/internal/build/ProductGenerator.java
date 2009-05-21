@@ -155,6 +155,17 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	private void generateP2InfCUs(StringBuffer buffer, int startIndex, boolean cus, boolean launchers) {
 		int index = startIndex;
+
+		String productVersionString = productFile.getVersion();
+		String productRangeString = null;
+		if (productVersionString.endsWith(PROPERTY_QUALIFIER)) {
+			Version productVersion = new Version(productVersionString);
+			productVersionString = productVersion.getMajor() + "." + productVersion.getMinor() + "." + productVersion.getMicro() + ".$qualifier$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			productRangeString = "[" + productVersionString + "," + productVersionString + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		} else {
+			productRangeString = new VersionRange(new Version(productVersionString), true, new Version(productVersionString), true).toString();
+		}
+
 		if (cus) {
 			BundleInfo[] infos = getDefaultStartInfo();
 			for (int i = 0; i < infos.length && infos[i] != null; i++) {
@@ -172,7 +183,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					instructions[P2InfUtils.INSTRUCTION_CONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:false);"; //$NON-NLS-1$
 					instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] += "setProgramProperty(propName:org.eclipse.update.reconcile, propValue:);"; //$NON-NLS-1$
 				}
-				P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
+				if (!GENERIC_VERSION_NUMBER.equals(productVersionString))
+					P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), productVersionString, bundle.getVersion(), bundle.getPlatformFilter(), instructions);
+				else
+					P2InfUtils.printBundleCU(buffer, index++, bundle.getSymbolicName(), bundle.getVersion(), bundle.getPlatformFilter(), instructions);
 
 			}
 		}
@@ -180,15 +194,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		BundleDescription launcher = assembly.getPlugin(BUNDLE_EQUINOX_LAUNCHER, null);
 		if (launcher != null && launchers) {
 			VersionRange launcherRange = new VersionRange(launcher.getVersion(), true, launcher.getVersion(), true);
-			String versionString = productFile.getVersion();
-			String rangeString = null;
-			if (versionString.endsWith(PROPERTY_QUALIFIER)) {
-				Version productVersion = new Version(versionString);
-				versionString = productVersion.getMajor() + "." + productVersion.getMinor() + "." + productVersion.getMicro() + ".$qualifier$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				rangeString = "[" + versionString + "," + versionString + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			} else {
-				rangeString = new VersionRange(new Version(versionString), true, new Version(versionString), true).toString();
-			}
 
 			// include the launcher jar
 			P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, BUNDLE_EQUINOX_LAUNCHER, launcherRange, launcher.getPlatformFilter(), true);
@@ -201,13 +206,13 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "removeProgramArg(programArg:-startup);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
 			P2InfUtils.printBundleCU(buffer, index++, BUNDLE_EQUINOX_LAUNCHER, launcher.getVersion(), null, instructions);
 
-			String brandedRange = rangeString;
+			String brandedRange = productRangeString;
 			BuildTimeFeature executableFeature = assembly.getRootProvider(FEATURE_EQUINOX_EXECUTABLE, null);
 			if (executableFeature == null && havePDEUIState())
 				executableFeature = assembly.getRootProvider("org.eclipse.pde.container.feature", null); //$NON-NLS-1$
 
 			//in case of no version on the product, the branding defaults to the version of the launcher provider
-			if (executableFeature != null && versionString.equals(Version.emptyVersion.toString())) {
+			if (executableFeature != null && productVersionString.equals(Version.emptyVersion.toString())) {
 				String brandedVersion = executableFeature.getVersion();
 				brandedRange = new VersionRange(new Version(brandedVersion), true, new Version(brandedVersion), true).toString();
 			}
@@ -232,6 +237,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					instructions[P2InfUtils.INSTRUCTION_UNINSTALL] = UNINSTALL_INSTRUCTION;
 					instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);"; //$NON-NLS-1$
 					instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "removeProgramArg(programArg:--launcher.library);removeProgramArg(programArg:@artifact);"; //$NON-NLS-1$
+					//launcher CU gets same version as launcher
 					P2InfUtils.printBundleCU(buffer, index++, fragment.getSymbolicName(), fragment.getVersion(), fragment.getPlatformFilter(), instructions);
 
 					if (executableFeature != null) {
@@ -244,7 +250,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 						String launcherName = getLauncherName(executableFeature);
 						instructions[P2InfUtils.INSTRUCTION_CONFIGURE] = "setLauncherName(name:" + launcherName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 						instructions[P2InfUtils.INSTRUCTION_UNCONFIGURE] = "setLauncherName()"; //$NON-NLS-1$
-						P2InfUtils.printIU(buffer, index++, brandedIU, versionString, config.getPlatformFilter(), instructions);
+						P2InfUtils.printIU(buffer, index++, brandedIU, productVersionString, config.getPlatformFilter(), instructions);
 					}
 				}
 			}

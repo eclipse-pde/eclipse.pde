@@ -743,9 +743,10 @@ public class PublishingTests extends P2TestCase {
 		assertTrue(productIu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
 		assertTouchpoint(productIu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
 
-		getIU(finalRepo, "toolingorg.eclipse.equinox.common");
+		IInstallableUnit iu = getIU(finalRepo, "toolingorg.eclipse.equinox.common");
+		assertEquals(iu.getVersion(), productIu.getVersion());
 
-		IInstallableUnit iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
+		iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
 		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
 		assertEquals(iu.getVersion(), productIu.getVersion());
 	}
@@ -968,8 +969,10 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
+		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
 
 		iu = getIU(metadata, "toolingorg.eclipse.equinox.simpleconfigurator");
+		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
 		assertTouchpoint(iu, "configure", "setStartLevel(startLevel:1);markStarted(started:true);");
 		assertFalse(buildFolder.getFile("tmp/eclipse/eclipse.exe").exists());
 	}

@@ -24,29 +24,35 @@ public class P2InfUtils {
 
 	private static final VersionRange BUNDLE_RANGE = new VersionRange("[1.0.0, 2.0.0)"); //$NON-NLS-1$
 
-	public static void printBundleCU(StringBuffer buffer, int i, String name, Version version, String filter, String[] instructions) {
-		VersionRange range = new VersionRange(version, true, version, true);
+	public static void printBundleCU(StringBuffer buffer, int i, String name, Version hostVersion, String filter, String[] instructions) {
+		printBundleCU(buffer, i, name, hostVersion.toString(), hostVersion, filter, instructions);
+	}
 
+	public static void printBundleCU(StringBuffer buffer, int i, String name, String cuVersion, Version hostVersion, String filter, String[] instructions) {
+		VersionRange hostRange = new VersionRange(hostVersion, true, hostVersion, true);
+		//cuVersion may not be a proper OSGi version at this point (ie 1.0.0.$qualifier$)
+		String cuRange = "[" + cuVersion + "," + cuVersion + "]"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		String prefix = "units." + i + '.'; //$NON-NLS-1$
 
-		printRequires(buffer, null, i, NAMESPACE_IU, "@FLAVOR@" + name, range, filter, true); //$NON-NLS-1$
+		//generate requirement to the new CU we are creating
+		printRequires(buffer, null, i, NAMESPACE_IU, "@FLAVOR@" + name, cuRange, filter, true); //$NON-NLS-1$
 
 		buffer.append(prefix + "id=@FLAVOR@" + name + '\n'); //$NON-NLS-1$ 
-		buffer.append(prefix + "version=" + version + '\n'); //$NON-NLS-1$
+		buffer.append(prefix + "version=" + cuVersion + '\n'); //$NON-NLS-1$
 		buffer.append(prefix + "properties.1.name=org.eclipse.pde.build.default\n"); //$NON-NLS-1$
 		buffer.append(prefix + "properties.1.value=true\n"); //$NON-NLS-1$
 		if (filter != null)
 			buffer.append(prefix + "filter=" + filter + '\n'); //$NON-NLS-1$ 
 
-		printProvides(buffer, prefix, 1, NAMESPACE_IU, "@FLAVOR@" + name, version.toString()); //$NON-NLS-1$
+		printProvides(buffer, prefix, 1, NAMESPACE_IU, "@FLAVOR@" + name, cuVersion); //$NON-NLS-1$
 		printProvides(buffer, prefix, 2, NAMESPACE_FLAVOR, "@FLAVOR@", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		printInstructions(buffer, prefix, instructions);
 
-		printHostRequires(buffer, prefix, 1, NAMESPACE_OSGI, name, range, false);
+		printHostRequires(buffer, prefix, 1, NAMESPACE_OSGI, name, hostRange, false);
 		printHostRequires(buffer, prefix, 2, NAMESPACE_TYPE, "bundle", BUNDLE_RANGE, false); //$NON-NLS-1$ 
 
-		printRequires(buffer, prefix, 1, NAMESPACE_OSGI, name, range, null, false);
+		printRequires(buffer, prefix, 1, NAMESPACE_OSGI, name, hostRange, null, false);
 		printRequires(buffer, prefix, 2, NAMESPACE_TYPE, "bundle", BUNDLE_RANGE, null, false); //$NON-NLS-1$
 	}
 
