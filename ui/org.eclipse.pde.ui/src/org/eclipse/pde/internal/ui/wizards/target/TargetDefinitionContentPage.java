@@ -90,6 +90,33 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private Button fRemoveAllButton;
 
 	/**
+	 * Wrappers the default progress monitor to avoid opening a dialog if the
+	 * operation is blocked.  Instead the blocked message is set as a sbutask. 
+	 * See bug 276904 [Progress] WizardDialog opens second dialog when blocked
+	 */
+	class ResolutionProgressMonitor extends ProgressMonitorWrapper {
+
+		ResolutionProgressMonitor(IProgressMonitor monitor) {
+			super(monitor);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#setBlocked(org.eclipse.core.runtime.IStatus)
+		 */
+		public void setBlocked(IStatus reason) {
+			subTask(reason.getMessage());
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#clearBlocked()
+		 */
+		public void clearBlocked() {
+			subTask(""); //$NON-NLS-1$
+		}
+
+	}
+
+	/**
 	 * @param pageName
 	 */
 	public TargetDefinitionContentPage(ITargetDefinition target) {
@@ -169,7 +196,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					try {
 						getContainer().run(true, true, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								getTargetDefinition().resolve(monitor);
+								getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
 								if (monitor.isCanceled()) {
 									throw new InterruptedException();
 								}
@@ -212,7 +239,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 						try {
 							getContainer().run(true, true, new IRunnableWithProgress() {
 								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-									getTargetDefinition().resolve(monitor);
+									getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
 									if (monitor.isCanceled()) {
 										throw new InterruptedException();
 									}
