@@ -86,6 +86,24 @@ public abstract class AbstractTargetTest extends TestCase {
 	}	
 
 	/**
+	 * Extracts the classic plug-ins archive, if not already done, and returns a path to the
+	 * root directory containing the plug-ins.
+	 * 
+	 * @return path to the plug-ins directory
+	 * @throws Exception
+	 */
+	protected IPath extractClassicNonBundleManifestPlugins() throws Exception {
+		// extract the 3.0.2 skeleton
+		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath location = stateLocation.append("eclipse-nbm");
+		if (location.toFile().exists()) {
+			return location.append("plugins");
+		}
+		doUnZip(location,"/tests/targets/eclipse-nbm.zip");
+		return location.append("plugins");
+	}	
+	
+	/**
 	 * Unzips the given archive to the specified location.
 	 * 
 	 * @param location path in the local file system

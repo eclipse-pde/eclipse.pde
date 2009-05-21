@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+
 import org.eclipse.pde.internal.core.target.*;
 
 import java.io.*;
@@ -434,6 +436,26 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			assertTrue("Missing source for " + expected[i], names.contains(expected[i]));	
 		}
 	}
+	
+	/**
+	 * Tests reading a 3.0 style plug-in that has a MANIFEST file that is not a bundle
+	 * manifest.
+	 * 
+	 * @throws Exception
+	 */
+	public void testClassicPluginsWithNonBundleManifest() throws Exception {
+		// extract the plug-in
+		IPath location = extractClassicNonBundleManifestPlugins();
+		
+		// the new way
+		ITargetDefinition definition = getNewTarget();
+		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.resolve(null);
+		IResolvedBundle[] bundles = definition.getAllBundles();
+		assertEquals("Wrong number of bundles", 1, bundles.length);
+		assertEquals("Wrong bundle", "org.eclipse.core.variables", bundles[0].getBundleInfo().getSymbolicName());				
+	}	
 
 	/**
 	 * Returns the given input stream as a byte array

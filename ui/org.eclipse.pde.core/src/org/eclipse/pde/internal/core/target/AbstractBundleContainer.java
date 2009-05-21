@@ -441,8 +441,8 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * or in a directory at the specified location.
 	 * 
 	 * @param bundleLocation root location of the bundle
-	 * @return bundle manifest dictionary or <code>null</code> if none
-	 * @throws CoreException if manifest has invalid syntax
+	 * @return bundle manifest dictionary
+	 * @throws CoreException if manifest has invalid syntax or is missing
 	 */
 	protected Map loadManifest(File bundleLocation) throws CoreException {
 		ZipFile jarFile = null;
@@ -460,34 +460,26 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				if (file.exists()) {
 					manifestStream = new FileInputStream(file);
 				} else {
-					File pxml = new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-					File fxml = new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-					if (pxml.exists() || fxml.exists()) {
-						// support classic non-OSGi plug-in
-						PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
-						if (converter != null) {
-							try {
-								Dictionary convert = converter.convertManifest(bundleLocation, false, null, false, null);
-								if (convert != null) {
-									Map map = new HashMap(convert.size(), 1.0f);
-									Enumeration keys = convert.keys();
-									while (keys.hasMoreElements()) {
-										Object key = keys.nextElement();
-										map.put(key, convert.get(key));
-									}
-									return map;
-								}
-							} catch (PluginConversionException e) {
-								throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_2, bundleLocation.getAbsolutePath()), e));
-							}
-						}
+					Map map = loadPluginXML(bundleLocation);
+					if (map != null) {
+						return map; // else fall through to invalid manifest
 					}
 				}
 			}
 			if (manifestStream == null) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
 			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
+			Map map = ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
+			// Validate manifest - BSN must be present.
+			// Else look for plugin.xml in case it's an old style plug-in
+			String bsn = (String) map.get(Constants.BUNDLE_SYMBOLICNAME);
+			if (bsn == null && bundleLocation.isDirectory()) {
+				map = loadPluginXML(bundleLocation); // not a bundle manifest, try plugin.xml
+			}
+			if (map == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
+			}
+			return map;
 		} catch (BundleException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} catch (IOException e) {
@@ -512,6 +504,40 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		} catch (IOException e) {
 			PDECore.log(e);
 		}
+	}
+
+	/**
+	 * Parses an old style plug-in's (or fragment's) XML definition file into a dictionary.
+	 * The plug-in must be in a directory at the specified location.
+	 * 
+	 * @param pluginDir root location of the plug-in
+	 * @return bundle manifest dictionary or <code>null</code> if none
+	 * @throws CoreException if manifest has invalid syntax
+	 */
+	private Map loadPluginXML(File pluginDir) throws CoreException {
+		File pxml = new File(pluginDir, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+		File fxml = new File(pluginDir, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+		if (pxml.exists() || fxml.exists()) {
+			// support classic non-OSGi plug-in
+			PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
+			if (converter != null) {
+				try {
+					Dictionary convert = converter.convertManifest(pluginDir, false, null, false, null);
+					if (convert != null) {
+						Map map = new HashMap(convert.size(), 1.0f);
+						Enumeration keys = convert.keys();
+						while (keys.hasMoreElements()) {
+							Object key = keys.nextElement();
+							map.put(key, convert.get(key));
+						}
+						return map;
+					}
+				} catch (PluginConversionException e) {
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_2, pluginDir.getAbsolutePath()), e));
+				}
+			}
+		}
+		return null;
 	}
 
 	protected IResolvedBundle resolveBundle(BundleInfo info, boolean isSource) {
@@ -548,35 +574,33 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 */
 	protected IResolvedBundle generateBundle(File file) throws CoreException {
 		Map manifest = loadManifest(file);
-		if (manifest != null) {
-			try {
-				String header = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
-				if (header != null) {
-					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header);
-					if (elements != null) {
-						String name = elements[0].getValue();
-						if (name != null) {
-							BundleInfo info = new BundleInfo();
-							info.setSymbolicName(name);
-							info.setLocation(file.toURI());
-							header = (String) manifest.get(Constants.BUNDLE_VERSION);
-							if (header != null) {
-								elements = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, header);
-								if (elements != null) {
-									info.setVersion(elements[0].getValue());
-								}
+		try {
+			String header = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+			if (header != null) {
+				ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header);
+				if (elements != null) {
+					String name = elements[0].getValue();
+					if (name != null) {
+						BundleInfo info = new BundleInfo();
+						info.setSymbolicName(name);
+						info.setLocation(file.toURI());
+						header = (String) manifest.get(Constants.BUNDLE_VERSION);
+						if (header != null) {
+							elements = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, header);
+							if (elements != null) {
+								info.setVersion(elements[0].getValue());
 							}
-							BundleInfo source = getProvidedSource(file, name, manifest);
-							boolean fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
-							ResolvedBundle rb = new ResolvedBundle(info, this, null, source, false, fragment);
-							rb.setSourcePath(fSourcePath);
-							return rb;
 						}
+						BundleInfo source = getProvidedSource(file, name, manifest);
+						boolean fragment = manifest.containsKey(Constants.FRAGMENT_HOST);
+						ResolvedBundle rb = new ResolvedBundle(info, this, null, source, false, fragment);
+						rb.setSourcePath(fSourcePath);
+						return rb;
 					}
 				}
-			} catch (BundleException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, file.getAbsolutePath()), e));
 			}
+		} catch (BundleException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, file.getAbsolutePath()), e));
 		}
 		return null;
 	}
