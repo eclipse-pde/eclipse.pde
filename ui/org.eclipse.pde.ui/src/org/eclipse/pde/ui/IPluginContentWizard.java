@@ -71,7 +71,7 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * part of the binary build must be listed in <code>bin.includes</code>
 	 * variable. Since the tokens obtained by this method will be passed to the
 	 * variable as-is, it is legal to use all wild cards also legal in
-	 * <code>build.properties,
+	 * <code>build.properties</code>,
 	 * such as "*.gif".
 	 * 
 	 * @return an array of new file and folder names
