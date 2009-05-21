@@ -706,6 +706,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @see IApiBaseline#dispose()
 	 */
 	public void dispose() {
+		if(fState == null) {
+			//already disposed or nothing to dispose
+			return;
+		}
 		if (ApiPlugin.isRunningInFramework()) {
 			JavaRuntime.removeVMInstallChangedListener(this);
 		}

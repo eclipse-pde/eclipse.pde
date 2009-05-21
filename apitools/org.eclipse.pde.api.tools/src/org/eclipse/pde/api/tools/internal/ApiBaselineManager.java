@@ -65,9 +65,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -75,14 +72,14 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * This manager is used to maintain (persist, restore, access, update) Api profiles.
+ * This manager is used to maintain (persist, restore, access, update) Api baselines.
  * This manager is lazy, in that caches are built and maintained when requests
  * are made for information, nothing is pre-loaded when the manager is initialized.
  * 
  * @since 1.0.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public final class ApiBaselineManager implements IApiBaselineManager, ISaveParticipant, IElementChangedListener, IPluginModelListener, IResourceChangeListener {
+public final class ApiBaselineManager implements IApiBaselineManager, ISaveParticipant, IElementChangedListener, IResourceChangeListener {
 	
 	/**
 	 * Constant used for controlling tracing in the API tool builder
@@ -131,7 +128,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	private HashSet hasinfos = null;
 	
 	/**
-	 * The current default {@link IApiProfile}
+	 * The current default {@link IApiBaseline}
 	 */
 	private String defaultbaseline = null;
 	
@@ -163,7 +160,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			ApiPlugin.getDefault().addSaveParticipant(this);
 			JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
-			PDECore.getDefault().getModelManager().addPluginModelListener(this);
 			savelocation = ApiPlugin.getDefault().getStateLocation().append(".api_profiles").addTrailingSeparator(); //$NON-NLS-1$
 		}
 	}
@@ -180,7 +176,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfileManager#getApiProfile(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.IApiBaselineManager#getApiProfile(java.lang.String)
 	 */
 	public synchronized IApiBaseline getApiBaseline(String name) {
 		initializeStateCache();
@@ -188,7 +184,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfileManager#getApiProfiles()
+	 * @see org.eclipse.pde.api.tools.IApiBaselineManager#getApiProfiles()
 	 */
 	public synchronized IApiBaseline[] getApiBaselines() {
 		initializeStateCache();
@@ -196,7 +192,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfileManager#addApiProfile(org.eclipse.pde.api.tools.model.component.IApiProfile)
+	 * @see org.eclipse.pde.api.tools.IApiBaselineManager#addApiProfile(org.eclipse.pde.api.tools.model.component.IApiBaseline)
 	 */
 	public synchronized void addApiBaseline(IApiBaseline newbaseline) {
 		if(newbaseline != null) {
@@ -210,7 +206,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfileManager#removeApiProfile(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.IApiBaselineManager#removeApiProfile(java.lang.String)
 	 */
 	public synchronized boolean removeApiBaseline(String name) {
 		if(name != null) {
@@ -587,7 +583,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			if(ApiPlugin.isRunningInFramework()) {
 				ApiPlugin.getDefault().removeSaveParticipant(this);
 				JavaCore.removeElementChangedListener(this);
-				PDECore.getDefault().getModelManager().removePluginModelListener(this);
 				ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 			}
 		}
@@ -601,7 +596,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
 	 */
-	public void prepareToSave(ISaveContext context) throws CoreException {	}
+	public void prepareToSave(ISaveContext context) throws CoreException {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
@@ -609,7 +604,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	public void rollback(ISaveContext context) {}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfileManager#getDefaultApiProfile()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#getDefaultApiBaseline()
 	 */
 	public synchronized IApiBaseline getDefaultApiBaseline() {
 		initializeStateCache();
@@ -617,7 +612,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiProfileManager#setDefaultApiProfile(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#setDefaultApiBaseline(java.lang.String)
 	 */
 	public void setDefaultApiBaseline(String name) {
 		fNeedsSaving = true;
@@ -645,17 +640,22 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * Disposes the workspace profile such that a new one will be created
 	 * on the next request.
 	 */
-	private synchronized void disposeWorkspaceBaseline() {
+	private synchronized void disposeWorkspaceBaseline(IProject project) {
 		if (workspacebaseline != null) {
-			workspacebaseline.dispose();
-			StubApiComponent.disposeAllCaches();
-			workspacebaseline = null;
+			if (acceptProject(project) || workspacebaseline.getApiComponent(project) != null) {
+				if(DEBUG) {
+					System.out.println("disposing workspace baseline"); //$NON-NLS-1$
+				}
+				workspacebaseline.dispose();
+				StubApiComponent.disposeAllCaches();
+				workspacebaseline = null;
+			}
 		}
 	}
 
 	/**
-	 * Creates a workspace {@link IApiProfile}
-	 * @return a new workspace {@link IApiProfile} or <code>null</code>
+	 * Creates a workspace {@link IApiBaseline}
+	 * @return a new workspace {@link IApiBaseline} or <code>null</code>
 	 */
 	private IApiBaseline createWorkspaceBaseline() throws CoreException {
 		long time = System.currentTimeMillis();
@@ -704,43 +704,58 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	private synchronized void processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject project) {
 		try {
-			IJavaElementDelta delta = null;
 			for(int i = 0; i < deltas.length; i++) {
-				delta = deltas[i];
+				IJavaElementDelta delta = deltas[i];
 				switch(delta.getElement().getElementType()) {
 					case IJavaElement.JAVA_PROJECT: {
 						IJavaProject proj = (IJavaProject) delta.getElement();
 						IProject pj = proj.getProject();
-						if (acceptProject(pj)) {
-							int flags = delta.getFlags();
-							switch (delta.getKind()) {
-								//process the project changed only if the project is API aware
-								case IJavaElementDelta.CHANGED: {
-									if( (flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 ||
-										(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0 ||
-										(flags & IJavaElementDelta.F_CLOSED) != 0 ||
-										(flags & IJavaElementDelta.F_OPENED) != 0) {
-											if(DEBUG) {
-												System.out.println("--> processing CLASSPATH CHANGE/CLOSE/OPEN project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+						int flags = delta.getFlags();
+						switch (delta.getKind()) {
+							case IJavaElementDelta.CHANGED: {
+								if( (flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 ||
+									(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0 ||
+									(flags & IJavaElementDelta.F_CLOSED) != 0 ||
+									(flags & IJavaElementDelta.F_OPENED) != 0) {
+										if(DEBUG) {
+											System.out.println("--> processing CLASSPATH CHANGE/CLOSE/OPEN project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+										}
+										disposeWorkspaceBaseline(pj);
+								}
+								if (!acceptProject(pj)) {
+									return;
+								}
+								if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
+									if(DEBUG) {
+										System.out.println("--> processing child deltas of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+									}
+									processJavaElementDeltas(delta.getAffectedChildren(), proj);
+								} else {
+									IResourceDelta[] resourcedeltas = delta.getResourceDeltas();
+									if(resourcedeltas != null) {
+										IResourceDelta rdelta = null;
+										for (int j = 0; j < resourcedeltas.length; j++) {
+											rdelta = resourcedeltas[j].findMember(new Path(Util.MANIFEST_NAME));
+											if(rdelta!= null && rdelta.getKind() == IResourceDelta.CHANGED && (rdelta.getFlags() & IResourceDelta.CONTENT) > 0) {
+												if(DEBUG) {
+													System.out.println("--> processing manifest delta"); //$NON-NLS-1$
+												}
+												disposeWorkspaceBaseline(pj);
+												break;
 											}
-											disposeWorkspaceBaseline();
-									} else if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-										if(DEBUG) {
-											System.out.println("--> processing child deltas of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 										}
-										processJavaElementDeltas(delta.getAffectedChildren(), proj);
 									}
-									break;
 								}
-								case IJavaElementDelta.REMOVED: {
-									if((flags & IJavaElementDelta.F_MOVED_TO) != 0) {
-										if(DEBUG) {
-											System.out.println("--> processing PROJECT RENAME: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-										}
-										disposeWorkspaceBaseline();
+								break;
+							}
+							case IJavaElementDelta.REMOVED: {
+								if((flags & IJavaElementDelta.F_MOVED_TO) != 0) {
+									if(DEBUG) {
+										System.out.println("--> processing PROJECT RENAME: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 									}
-									break;
+									disposeWorkspaceBaseline(pj);
 								}
+								break;
 							}
 						}
 						break;
@@ -780,7 +795,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * When a packaged is removed, we:
 	 * <ol>
 	 * <li>Remove the package from the cache of resolved providers
-	 * 	of that package (in the API profile)</li>
+	 * 	of that package (in the API baseline)</li>
 	 * </ol>
 	 * @param project
 	 * @param fragment
@@ -800,29 +815,11 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	private boolean acceptProject(IProject project) {
 		try {
-			if (!project.isOpen()) {
-				return true;
-			}
-			return project.exists() && project.hasNature(ApiPlugin.NATURE_ID);
+			return project.isAccessible() && project.hasNature(ApiPlugin.NATURE_ID);
 		}
 		catch(CoreException e) {
 			return false;
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * 
-	 * Whenever a bundle definition changes (add/removed/changed), the 
-	 * workspace profile becomes potentially invalid as the bundle description
-	 * may have changed in some way to invalidate our underlying OSGi state.
-	 * 
-	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
-	 */
-	public void modelsChanged(PluginModelDelta delta) {
-		if(!ApiPlugin.isRunningInFramework()) {
-			return;
-		}
-		disposeWorkspaceBaseline();
 	}
 
 	/* (non-Javadoc)
@@ -836,11 +833,13 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
 			IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);
+			boolean dispose = false;
+			IResource resource = null;
+			IProject modifiedProject = null;
 			for (int i = 0; i < children.length; i++) {
-				IResourceDelta d = children[i];
-				IResource resource = d.getResource();
-				if (resource.getType() == IResource.PROJECT) {
-					if ((d.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+				resource = children[i].getResource();
+				if (children[i].getResource().getType() == IResource.PROJECT) {
+					if ((children[i].getFlags() & IResourceDelta.DESCRIPTION) != 0) {
 						IProject project = (IProject)resource;
 						if (project.isAccessible()) {
 							try {
@@ -853,10 +852,14 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 							} catch (CoreException e) {
 								ApiPlugin.log(e.getStatus());
 							}
+							modifiedProject = project;
+							dispose = true;
 						}
-						disposeWorkspaceBaseline();
 					}
 				}
+			}
+			if(dispose) {
+				disposeWorkspaceBaseline(modifiedProject);
 			}
 		}
 	}

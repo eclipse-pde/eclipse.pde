@@ -241,6 +241,7 @@ public final class Util {
 
 	public static final String EMPTY_STRING = "";//$NON-NLS-1$
 	public static final String DEFAULT_PACKAGE_NAME = EMPTY_STRING;
+	public static final String MANIFEST_NAME = "MANIFEST.MF"; //$NON-NLS-1$
 	
 	public static final String DOT_CLASS_SUFFIX = ".class"; //$NON-NLS-1$
 	public static final String DOT_JAVA_SUFFIX = ".java"; //$NON-NLS-1$

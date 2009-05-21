@@ -486,6 +486,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public void stop(BundleContext context) throws Exception {
 		try {
 			ApiDescriptionManager.shutdown();
+			ApiBaselineManager.getManager().stop();
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 		}
 		finally {
