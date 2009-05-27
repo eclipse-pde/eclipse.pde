@@ -215,13 +215,15 @@ public class PluginConfigurationSection extends TableSection {
 				boolean match = false;
 				for (int j = 0; j < configs.length; ++j) {
 					String id = allPlugins[i].getId();
-					if (PluginRegistry.findModel(id) instanceof IFragmentModel || id.equals(configs[j].getId())) {
+					if (id.equals(configs[j].getId())) {
 						match = true;
 						break;
 					}
 				}
 				if (!match) {
-					plugins.add(allPlugins[i]);
+					// ensure we don't add fragments
+					if (!(PluginRegistry.findModel(allPlugins[i].getId()) instanceof IFragmentModel))
+						plugins.add(allPlugins[i]);
 				}
 			}
 			dialog.setElements(plugins.toArray(new IProductPlugin[plugins.size()]));
