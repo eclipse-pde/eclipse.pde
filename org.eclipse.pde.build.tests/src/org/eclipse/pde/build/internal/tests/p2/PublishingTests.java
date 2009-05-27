@@ -329,6 +329,12 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("   </target>														\n");
 		buffer.append("</project>														\n");
 		Utils.writeBuffer(f.getFile("customBuildCallbacks.xml"), buffer);
+		
+		buffer = new StringBuffer();
+		buffer.append("provides.0.name=my.provides\n");
+		buffer.append("provides.0.namespace=test\n");
+		buffer.append("provides.0.version=1.2.3\n");
+		Utils.writeBuffer(f.getFile("p2.inf"), buffer);
 
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
 		properties.put("p2.gathering", "true");
@@ -340,7 +346,15 @@ public class PublishingTests extends P2TestCase {
 		HashSet contents = new HashSet();
 		contents.add("a.txt");
 		contents.add("feature.xml");
-		assertZipContents(buildFolder, "buildRepo/features/f_1.0.0.jar", contents);
+		contents.add("p2.inf");
+		assertZipContents(buildFolder, "buildRepo/features/f_1.0.0.jar", contents, false);
+		//p2.inf was not expected in the jar
+		assertEquals(contents.size(), 1);
+		assertTrue(contents.contains("p2.inf"));
+		
+		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		IInstallableUnit iu = getIU(repo, "f.feature.group");
+		assertProvides(iu, "test", "my.provides");
 	}
 
 	public void testPublishFeature_ExecutableFeature() throws Exception {
@@ -1082,10 +1096,21 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateFeature(buildFolder, "f", null, null);
 		Properties properties = new Properties();
 		properties.put("root", "absolute:file:" + licenseFile.getLocation().toOSString());
+		properties.put("customBuildCallbacks", "customBuildCallbacks.xml");
 		Utils.storeBuildProperties(f, properties);
 
-		//bug 270894
 		StringBuffer buffer = new StringBuffer();
+		buffer.append("<project name=\"customGather\" default=\"noDefault\">			\n");
+		buffer.append("   <target name=\"pre.gather.bin.parts\">						\n");
+		buffer.append("      <concat destfile=\"${feature.directory}/a.txt\">			\n");
+		buffer.append("        Mary had a little lamb.									\n");
+		buffer.append("      </concat>													\n");
+		buffer.append("   </target>														\n");
+		buffer.append("</project>														\n");
+		Utils.writeBuffer(f.getFile("customBuildCallbacks.xml"), buffer);
+
+		//bug 270894
+		buffer = new StringBuffer();
 		buffer.append("<site>																					\n");
 		buffer.append("   <feature url=\"features/f_1.0.0.qualifier.jar\" id=\"f\" version=\"1.0.0.qualifier\">	\n");
 		buffer.append("      <category name=\"new_category_1\"/>												\n");
@@ -1122,6 +1147,15 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "new_category_1");
 		assertTrue(!iu.getVersion().toString().equals("0.0.0"));
 		assertNotNull(getIU(metadata, "new_category_2"));
+		
+		assertFalse(buildFolder.getFile("tmp/eclipse/features/f_1.0.0.jar").exists());
+		iu = null;
+		try {
+			//don't want to find this
+			iu = getIU(metadata, "f.feature.jar");
+		} catch (AssertionFailedError e) {
+		}
+		assertNull(iu);
 	}
 
 	public void testBug264743_PublishExecutable() throws Exception {

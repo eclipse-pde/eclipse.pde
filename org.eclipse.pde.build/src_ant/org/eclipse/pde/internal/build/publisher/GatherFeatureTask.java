@@ -31,8 +31,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		if (targetFolder == null)
 			action = new GatherFeatureAction(new File(baseDirectory), new File(buildResultFolder));
 		else {
-			File folder = new File(targetFolder);
-			action = new GatherFeatureAction(folder, folder);
+			action = new GatherFeatureAction(new File(baseDirectory), new File(targetFolder));
 		}
 		action.setComputer(computer);
 		setGroupId(action);
@@ -58,12 +57,18 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	protected GatheringComputer createFeatureComputer() {
 		Properties properties = getBuildProperties();
 
+		String include = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+		String exclude = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
+
+		if (include == null)
+			return null;
+
 		if (targetFolder != null) {
 			FileSet fileSet = new FileSet();
 			fileSet.setProject(getProject());
 			fileSet.setDir(new File(targetFolder));
-			NameEntry include = fileSet.createInclude();
-			include.setName("**"); //$NON-NLS-1$
+			NameEntry includeEntry = fileSet.createInclude();
+			includeEntry.setName("**"); //$NON-NLS-1$
 
 			String[] files = fileSet.getDirectoryScanner().getIncludedFiles();
 			if (files != null && files.length > 0) {
@@ -73,9 +78,6 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			}
 			return null;
 		}
-
-		String include = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		String exclude = (String) properties.get(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
 
 		if (include != null) {
 			GatheringComputer computer = new GatheringComputer();
