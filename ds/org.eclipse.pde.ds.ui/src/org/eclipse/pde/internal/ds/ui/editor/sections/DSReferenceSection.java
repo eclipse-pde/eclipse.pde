@@ -82,7 +82,8 @@ public class DSReferenceSection extends TableSection implements
 			String name = reference.getReferenceName();
 			if (name == null || name.length() == 0)
 				name = reference.getReferenceInterface();
-
+			if (name == null)
+				name = ""; //$NON-NLS-1$ // Better than an NPE
 			StyledString styledString = new StyledString(name);
 			String bind = reference.getReferenceBind();
 			String unbind = reference.getReferenceUnbind();

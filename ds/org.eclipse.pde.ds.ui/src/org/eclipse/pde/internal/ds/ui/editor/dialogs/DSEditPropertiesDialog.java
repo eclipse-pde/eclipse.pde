@@ -111,7 +111,7 @@ public class DSEditPropertiesDialog extends FormDialog {
 
 	private void handleOKPressed() {
 		fEntry.commit();
-		if (!fEntry.getValue().equals("")) { //$NON-NLS-1$
+		if (!(fEntry.getValue().equals("") && fProperties.getEntry() == null)) { //$NON-NLS-1$
 			if (!fEntry.getValue().equals(fProperties.getEntry())) {
 				fProperties.setEntry(fEntry.getValue());
 			}

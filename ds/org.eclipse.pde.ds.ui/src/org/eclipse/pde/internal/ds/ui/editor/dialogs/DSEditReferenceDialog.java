@@ -171,12 +171,14 @@ public class DSEditReferenceDialog extends FormDialog {
 
 	private void handleOKPressed() {
 		fNameEntry.commit();
-		if (!fNameEntry.getValue().equals(fReference.getReferenceName())) {
-			fReference.setReferenceName(fNameEntry.getValue());
+		if (!(fNameEntry.getValue().equals("") && fReference.getReferenceName() == null)) { //$NON-NLS-1$
+			if (!fNameEntry.getValue().equals(fReference.getReferenceName())) {
+				fReference.setReferenceName(fNameEntry.getValue());
+			}
 		}
 
 		fInterfaceEntry.commit();
-		if (!fInterfaceEntry.getValue().equals("")) { //$NON-NLS-1$
+		if (!(fInterfaceEntry.getValue().equals("") && fReference.getReferenceInterface() == null)) { //$NON-NLS-1$
 			if (!fInterfaceEntry.getValue().equals(
 					fReference.getReferenceInterface())) {
 				fReference.setReferenceInterface(fInterfaceEntry.getValue());
@@ -184,19 +186,26 @@ public class DSEditReferenceDialog extends FormDialog {
 		}
 
 		fBindEntry.commit();
-		if (!fBindEntry.getValue().equals(fReference.getReferenceBind())) {
-			fReference.setReferenceBind(fBindEntry.getValue());
+		if (!(fBindEntry.getValue().equals("") && fReference.getReferenceBind() == null)) { //$NON-NLS-1$
+			if (!fBindEntry.getValue().equals(fReference.getReferenceBind())) {
+				fReference.setReferenceBind(fBindEntry.getValue());
+			}
 		}
 
 
 		fUnBindEntry.commit();
-		if (!fUnBindEntry.getValue().equals(fReference.getReferenceUnbind())) {
-			fReference.setReferenceUnbind(fUnBindEntry.getValue());
+		if (!(fUnBindEntry.getValue().equals("") && fReference.getReferenceUnbind() == null)) { //$NON-NLS-1$
+			if (!fUnBindEntry.getValue()
+					.equals(fReference.getReferenceUnbind())) {
+				fReference.setReferenceUnbind(fUnBindEntry.getValue());
+			}
 		}
 
 		fTargetEntry.commit();
-		if (!fTargetEntry.getValue().equals(fReference.getReferenceTarget())) {
-			fReference.setReferenceTarget(fTargetEntry.getValue());
+		if ( !(fTargetEntry.getValue().equals("") && fReference.getReferenceTarget() == null)) { //$NON-NLS-1$
+			if (!fTargetEntry.getValue().equals(fReference.getReferenceTarget())) {
+				fReference.setReferenceTarget(fTargetEntry.getValue());
+			}
 		}
 
 		if (fCardinality.getSelection() != null) {

@@ -107,7 +107,7 @@ public class DSEditProvideDialog extends FormDialog {
 
 	private void handleOKPressed() {
 		fInterfaceEntry.commit();
-		if (!fInterfaceEntry.getValue().equals("")) { //$NON-NLS-1$
+		if (!(fInterfaceEntry.getValue().equals("") && fProvide.getInterface() == null)) { //$NON-NLS-1$
 			if (!fInterfaceEntry.getValue().equals(
 					fProvide.getInterface())) {
 				fProvide.setInterface(fInterfaceEntry.getValue());
