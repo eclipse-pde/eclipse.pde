@@ -23,7 +23,10 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
+import org.eclipse.equinox.internal.provisional.p2.core.VersionRange;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.query.Collector;
@@ -1440,7 +1443,10 @@ public class PublishingTests extends P2TestCase {
 		extra.append("   <programArgsMac>-showsplash org.eclipse.platform</programArgsMac>							\n");
 		extra.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>	\n");
 		extra.append(" </launcherArgs>																				\n");
-		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi"}, false, extra);
+		extra.append(" <configurations>																				\n");
+		extra.append("    <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"2\" />			\n");
+		extra.append(" </configurations>																			\n");
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"}, false, extra);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
@@ -1467,10 +1473,23 @@ public class PublishingTests extends P2TestCase {
 		} catch (Error e) {
 			assertNull(e.getMessage());
 		}
+		
+		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
+		assertEquals(iu.getVersion().toString(), "1.0.0");
+		
+		IInstallableUnit common = getIU(repo, "org.eclipse.equinox.common");
+		IRequiredCapability [] required = iu.getRequiredCapabilities();
+		assertEquals(required.length, 2);
+		if(required[0].getName().equals("org.eclipse.equinox.common"))
+			assertEquals(required[0].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
+		else
+			assertEquals(required[1].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 	}
 
+	
 	public void testPublish_P2InfConfigProperty() throws Exception {
-		IFolder buildFolder = newTest("268498");
+		IFolder buildFolder = newTest("infConfig");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
 
 		File delta = Utils.findDeltaPack();
