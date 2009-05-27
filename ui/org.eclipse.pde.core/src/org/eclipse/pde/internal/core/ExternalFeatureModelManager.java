@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -74,7 +73,7 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 		return (IFeatureModel[]) models.toArray(new IFeatureModel[models.size()]);
 	}
 
-	private Vector fListeners = new Vector();
+	private ListenerList fListeners = new ListenerList();
 
 	private IFeatureModel[] fModels;
 
@@ -105,8 +104,9 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 	}
 
 	private void fireModelProviderEvent(IModelProviderEvent e) {
-		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			IModelProviderListener listener = (IModelProviderListener) iter.next();
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IModelProviderListener listener = (IModelProviderListener) listeners[i];
 			listener.modelsChanged(e);
 		}
 	}
@@ -151,11 +151,31 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 		return new IFeatureModel[0];
 	}
 
-	public void loadModels(String platformHome, String additionalLocations) {
-		IFeatureModel[] oldModels = fModels != null ? fModels : new IFeatureModel[0];
-		fModels = createModels(platformHome, parseAdditionalLocations(additionalLocations), null);
-		fPlatformHome = platformHome;
-		notifyListeners(oldModels, fModels);
+	/**
+	 * Loads new feature models and notifies listeners.
+	 * 
+	 * @param platformHome new location of platform home
+	 * @param additionalLocations additional locations
+	 * @param force whether to force load models - <code>true</code> loads models, and 
+	 *  <code>false</code> only loads models if platform home location has actually changed
+	 */
+	private void loadModels(String platformHome, String additionalLocations, boolean force) {
+		IFeatureModel[] oldModels = null;
+		IFeatureModel[] newModels = null;
+		synchronized (this) {
+			if (!force) {
+				if (equalPaths(platformHome, fPlatformHome)) {
+					return;
+				}
+			}
+			oldModels = fModels != null ? fModels : new IFeatureModel[0];
+			fModels = createModels(platformHome, parseAdditionalLocations(additionalLocations), null);
+			fPlatformHome = platformHome;
+			newModels = new IFeatureModel[fModels.length];
+			System.arraycopy(fModels, 0, newModels, 0, fModels.length);
+		}
+		// Release lock when notifying listeners. See bug 270891.
+		notifyListeners(oldModels, newModels);
 	}
 
 	private ArrayList parseAdditionalLocations(String additionalLocations) {
@@ -180,10 +200,8 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 
 	}
 
-	private synchronized void platformPathChanged(String newHome) {
-		if (!equalPaths(newHome, fPlatformHome)) {
-			loadModels(newHome, fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS));
-		}
+	private void platformPathChanged(String newHome) {
+		loadModels(newHome, fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS), false);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {
@@ -202,13 +220,15 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 		fPref.removePreferenceChangeListener(this);
 	}
 
-	public synchronized void startup() {
-		fPref.addPreferenceChangeListener(this);
-		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS));
+	public void startup() {
+		synchronized (this) {
+			fPref.addPreferenceChangeListener(this);
+		}
+		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS), true);
 	}
 
-	public synchronized void reload() {
-		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS));
+	public void reload() {
+		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS), true);
 	}
 
 	public IFeatureModel[] getModels() {
