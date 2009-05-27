@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.NameVersionDescriptor;
+
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
@@ -570,4 +572,33 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertFalse(containerB.getIncludeAllEnvironments());
 	}
 	
+	public void testNameVersionDescriptor() {
+		NameVersionDescriptor d1 = new NameVersionDescriptor("a.b.c", "1.0.0");
+		NameVersionDescriptor d2 = new NameVersionDescriptor("a.b.c", "1.0.0");
+		assertEquals(d1, d2);
+		
+		d1 = new NameVersionDescriptor("a.b.c", "1.0.0");
+		d2 = new NameVersionDescriptor("a.b.c", "1.0.1");
+		assertFalse(d1.equals(d2));
+
+		d1 = new NameVersionDescriptor("a.b.c", "1.0.0");
+		d2 = new NameVersionDescriptor("a.b.e", "1.0.0");
+		assertFalse(d1.equals(d2));
+	
+		d1 = new NameVersionDescriptor("a.b.c", null);
+		d2 = new NameVersionDescriptor("a.b.c", null);
+		assertEquals(d1, d2);
+
+		d1 = new NameVersionDescriptor("a.b.c", null);
+		d2 = new NameVersionDescriptor("a.b.e", null);
+		assertFalse(d1.equals(d2));
+	
+		d1 = new NameVersionDescriptor("a.b.c", null);
+		d2 = new NameVersionDescriptor("a.b.c", "1.0.0");
+		assertFalse(d1.equals(d2));
+	
+		d1 = new NameVersionDescriptor("a.b.c", "1.0.0");
+		d2 = new NameVersionDescriptor("a.b.c", null);
+		assertFalse(d1.equals(d2));
+	}	
 }

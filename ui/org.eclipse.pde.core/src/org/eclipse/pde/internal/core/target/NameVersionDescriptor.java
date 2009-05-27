@@ -22,7 +22,7 @@ public class NameVersionDescriptor {
 	 * Constructs a descriptor.
 	 * 
 	 * @param id name identifier
-	 * @param version version identifier 
+	 * @param version version identifier, can be <code>null</code>
 	 */
 	public NameVersionDescriptor(String id, String version) {
 		fId = id;
@@ -35,7 +35,9 @@ public class NameVersionDescriptor {
 	public boolean equals(Object obj) {
 		if (obj instanceof NameVersionDescriptor) {
 			NameVersionDescriptor iud = (NameVersionDescriptor) obj;
-			return fId.endsWith(iud.fId) && fVersion.equals(iud.fVersion);
+			if (fId.endsWith(iud.fId)) {
+				return (fVersion != null && fVersion.equals(iud.fVersion)) || (fVersion == null && iud.fVersion == null);
+			}
 		}
 		return false;
 	}
@@ -44,7 +46,7 @@ public class NameVersionDescriptor {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fId.hashCode() + fVersion.hashCode();
+		return fId.hashCode() + fVersion != null ? fVersion.hashCode() : 0;
 	}
 
 	/* (non-Javadoc)
