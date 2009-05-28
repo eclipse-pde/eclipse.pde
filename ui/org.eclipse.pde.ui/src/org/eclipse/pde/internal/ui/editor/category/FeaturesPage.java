@@ -65,7 +65,7 @@ public class FeaturesPage extends PDEFormPage {
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_CATEGORY_OBJ));
 		fBlock.createContent(managedForm);
 		fCategorySection.fireSelection();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_FEATURES);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CATEGORY_EDITOR);
 	}
 
 	private IDetailsPage createFeatureDetails() {

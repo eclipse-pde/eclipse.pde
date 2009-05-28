@@ -36,7 +36,7 @@ public class CategoryDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_DEFINITION_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.CATEGORY_FILE_PAGE);
 	}
 
 	protected void createAdvancedControls(Composite parent) {

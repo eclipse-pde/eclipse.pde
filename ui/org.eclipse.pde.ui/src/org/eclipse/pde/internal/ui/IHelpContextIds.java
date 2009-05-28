@@ -109,6 +109,7 @@ public interface IHelpContextIds {
 	public static final String EXTERNALIZE_STRINGS_PAGE = PREFIX + "externalize_strings_page"; //$NON-NLS-1$
 	public static final String CHEAT_SHEET_PAGE = PREFIX + "cheat_sheet_page"; //$NON-NLS-1$
 	public static final String PRODUCT_FILE_PAGE = PREFIX + "product_file_page"; //$NON-NLS-1$
+	public static final String CATEGORY_FILE_PAGE = PREFIX + "category_file_page"; //$NON-NLS-1$
 	//This TARGET_DEFINITION_PAGE points to old target help.
 	public static final String TARGET_DEFINITION_PAGE = PREFIX + "target_definition_page"; //$NON-NLS-1$
 	//These are the new target help links
@@ -224,8 +225,6 @@ public interface IHelpContextIds {
 	public static final String MANIFEST_SITE_BUILD = PREFIX + "manifest_sute_build"; //$NON-NLS-1$
 	public static final String MANIFEST_SITE_FEATURES = PREFIX + "manifest_site_features"; //$NON-NLS-1$
 	public static final String MANIFEST_SITE_ARCHIVES = PREFIX + "manifest_site_archives"; //$NON-NLS-1$
-	public static final String NEW_CATEGORY_DEF_DIALOG = PREFIX + "new_category_def_dialog"; //$NON-NLS-1$
-	public static final String NEW_FEATURE_DIALOG = PREFIX + "new_feature_dialog"; //$NON-NLS-1$
 	public static final String NEW_ARCHIVE_DIALOG = PREFIX + "new_archive_dialog"; //$NON-NLS-1$
 
 	// Simple Cheat Sheet Editor
@@ -243,6 +242,9 @@ public interface IHelpContextIds {
 
 	// Context Help Editor
 	public static final String CTX_HELP_EDITOR = PREFIX + "ctx_help_editor"; //$NON-NLS-1$
+
+	// Category Editor
+	public static final String CATEGORY_EDITOR = PREFIX + "category_editor"; //$NON-NLS-1$
 
 	// Editor Outline
 	public static final String OUTLINE_SORT_ACTION = PREFIX + "outline_sort_action"; //$NON-NLS-1$
