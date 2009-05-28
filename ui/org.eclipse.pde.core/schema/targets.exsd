@@ -115,7 +115,7 @@ Target definition files should be edited using the target definition editor prov
      &lt;target 
        id=&quot;org.eclipse.pde.core.rcpTarget&quot;
        name=&quot;Eclipse RCP&quot;
-       path=&quot;targets/rcp.target&quot;/&gt;
+       definition=&quot;targets/rcp.target&quot;/&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 
