@@ -154,7 +154,11 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		restoreWidgetState();
 		setControl(composite);
 		setPageComplete(false);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.P2_PROVISIONING_PAGE);
+		if (fEditContainer == null) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCATION_ADD_SITE_WIZARD);
+		} else {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCATION_EDIT_SITE_WIZARD);
+		}
 	}
 
 	/**

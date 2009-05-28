@@ -263,7 +263,7 @@ public class TargetEditor extends FormEditor {
 		editorDirtyStateChanged();
 	}
 
-	public void contributeToToolbar(final ScrolledForm form, String helpURL) {
+	public void contributeToToolbar(final ScrolledForm form, String contextID) {
 		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
 			protected Control createControl(Composite parent) {
 				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE);
@@ -286,12 +286,12 @@ public class TargetEditor extends FormEditor {
 				return hyperlink;
 			}
 		};
-		final String href = ""; //$NON-NLS-1$
+		final String helpContextID = contextID;
 		Action help = new Action("help") { //$NON-NLS-1$
 			public void run() {
 				BusyIndicator.showWhile(form.getForm().getDisplay(), new Runnable() {
 					public void run() {
-						PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+						PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID);
 					}
 				});
 			}
@@ -309,6 +309,7 @@ public class TargetEditor extends FormEditor {
 	 */
 	public void addForm(IManagedForm managedForm) {
 		fManagedFormPages.add(managedForm);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(managedForm.getForm().getBody(), IHelpContextIds.TARGET_EDITOR);
 	}
 
 	/**

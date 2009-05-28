@@ -14,9 +14,11 @@ import java.util.Collection;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Defines the Page to get the location where the new target file has to be created
@@ -66,5 +68,10 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 			setErrorMessage(null);
 		}
 		return super.validatePage();
+	}
+
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.MOVE_TARGET_WIZARD);
 	}
 }

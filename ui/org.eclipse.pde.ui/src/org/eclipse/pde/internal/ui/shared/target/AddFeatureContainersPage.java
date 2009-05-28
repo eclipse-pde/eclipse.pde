@@ -28,6 +28,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for creating one or more feature bundle containers.
@@ -42,6 +43,10 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	private Button fDeselectAllButton;
 	private Button fIncludeVersionButton;
 	private CheckboxTableViewer fFeatureTable;
+
+	protected AddFeatureContainersPage() {
+		super(null, "AddFeatureContainers"); //$NON-NLS-1$
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
@@ -63,6 +68,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	protected void createLocationArea(Composite parent) {
 		super.createLocationArea(parent);
 		createTableArea(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.LOCATION_ADD_FEATURE_WIZARD);
 	}
 
 	/* (non-Javadoc)

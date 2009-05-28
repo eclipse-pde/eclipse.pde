@@ -161,6 +161,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
 		fLocationTree = TargetLocationsGroup.createInDialog(pluginTabContainer);
 		fLocationTab.setControl(pluginTabContainer);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(pluginTabContainer, IHelpContextIds.EDIT_TARGET_WIZARD_LOCATIONS_TAB);
 
 		TabItem contentTab = new TabItem(tabs, SWT.NONE);
 		contentTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
@@ -168,6 +169,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		SWTFactory.createWrapLabel(contentTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
 		fContentTree = new TargetContentsGroup(contentTabContainer);
 		contentTab.setControl(contentTabContainer);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentTabContainer, IHelpContextIds.EDIT_TARGET_WIZARD_CONTENT_TAB);
 
 		TabItem envTab = new TabItem(tabs, SWT.NONE);
 		envTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_3);
@@ -175,15 +177,19 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		createTargetEnvironmentGroup(envTabContainer);
 		createJREGroup(envTabContainer);
 		envTab.setControl(envTabContainer);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(envTabContainer, IHelpContextIds.EDIT_TARGET_WIZARD_ENVIRONMENT_TAB);
 
 		TabItem argsTab = new TabItem(tabs, SWT.NONE);
 		argsTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_4);
 		argsTab.setControl(createArgumentsGroup(tabs));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(argsTab.getControl(), IHelpContextIds.EDIT_TARGET_WIZARD_ARGUMENT_TAB);
 
 		TabItem depTab = new TabItem(tabs, SWT.NONE);
 		depTab.setText(PDEUIMessages.TargetDefinitionEnvironmentPage_5);
 		depTab.setControl(createImplicitTabContents(tabs));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(depTab.getControl(), IHelpContextIds.EDIT_TARGET_WIZARD_IMPLICIT_TAB);
 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.EDIT_TARGET_WIZARD);
 		initializeListeners();
 		targetChanged(getTargetDefinition());
 		setControl(comp);
@@ -361,7 +367,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				getTargetDefinition().setNL(getModelValue(value));
 			}
 		});
-
 	}
 
 	/**
@@ -541,7 +546,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		Button vmVars = SWTFactory.createPushButton(buttons, PDEUIMessages.JavaArgumentsTab_vmVariables, null, GridData.HORIZONTAL_ALIGN_END);
 		vmVars.addSelectionListener(getVariablesListener(fVMArgs));
-
 		return container;
 	}
 
@@ -601,7 +605,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		createImpLabel(container);
 		createImpTable(container);
 		createImpButtons(container);
-		// TODO: PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.IMPLICIT_PLUGINS_PREFERENCE_PAGE);
 		return container;
 	}
 

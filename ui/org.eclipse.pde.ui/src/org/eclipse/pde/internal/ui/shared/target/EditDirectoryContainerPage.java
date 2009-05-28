@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
-import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +21,16 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
+import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -77,6 +76,11 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		super("EditDirectoryContainer"); //$NON-NLS-1$
 	}
 
+	public EditDirectoryContainerPage(IBundleContainer container, String name) {
+		super(name);
+		fContainer = container;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -88,6 +92,13 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		createLocationArea(comp);
 		setControl(comp);
 		initializeInputFields(fContainer);
+		if ("EditDirectoryContainer".equalsIgnoreCase(getName())) { //$NON-NLS-1$
+			if (fContainer == null) {
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.LOCATION_ADD_DIRECTORY_WIZARD);
+			} else {
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.LOCATION_EDIT_DIRECTORY_WIZARD);
+			}
+		}
 	}
 
 	/**

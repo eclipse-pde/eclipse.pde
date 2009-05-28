@@ -143,6 +143,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		sashForm.setWeights(new int[] {70, 30});
 		initViewerContents(wizardSelectionViewer);
 		setControl(comp);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.ADD_LOCATION_WIZARD);
 	}
 
 	/**

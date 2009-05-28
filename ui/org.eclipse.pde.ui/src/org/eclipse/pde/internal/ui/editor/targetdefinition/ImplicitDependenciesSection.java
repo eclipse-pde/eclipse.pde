@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
-
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -25,12 +23,14 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.SectionPart;
@@ -199,7 +199,8 @@ public class ImplicitDependenciesSection extends SectionPart {
 		} catch (CoreException e) {
 			dialog.setMessage(e.getMessage());
 		}
-
+		dialog.create();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPLICIT_DEPENDENCIES_SELECTION_DIALOG);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			ArrayList pluginsToAdd = new ArrayList();

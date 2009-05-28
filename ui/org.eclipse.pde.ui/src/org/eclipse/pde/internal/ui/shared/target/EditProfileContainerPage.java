@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +18,15 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for creating a profile (installation) bundle container.
@@ -58,11 +59,11 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	private static final String SETTINGS_CONFIG_3 = "config3"; //$NON-NLS-1$
 
 	public EditProfileContainerPage() {
-		super();
+		super(null, "EditProfileContainer"); //$NON-NLS-1$
 	}
 
 	public EditProfileContainerPage(IBundleContainer container) {
-		super(container);
+		super(container, "EditProfileContainer"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -89,6 +90,12 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		super.createLocationArea(parent);
 
 		Composite configComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+
+		if (fContainer == null) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.LOCATION_ADD_INSTALLATION_WIZARD);
+		} else {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.LOCATION_EDIT_INSTALLATION_WIZARD);
+		}
 
 		fUseDefaultConfig = new Button(configComp, SWT.CHECK | SWT.RIGHT);
 		GridData gd = new GridData();

@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -52,11 +53,10 @@ public class ContentPage extends FormPage {
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
 		toolkit.decorateFormHeading(form.getForm());
 		fillBody(managedForm, toolkit);
-		// TODO Finish help
-		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), ""); //$NON-NLS-1$
+		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), IHelpContextIds.TARGET_EDITOR_CONTENT_PAGE);
 		((TargetEditor) getEditor()).addForm(managedForm);
 		form.updateToolBar();
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TARGET_OVERVIEW_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TARGET_EDITOR_CONTENT_PAGE);
 	}
 
 	/* (non-Javadoc)
@@ -80,10 +80,4 @@ public class ContentPage extends FormPage {
 		((TargetEditor) getEditor()).setDirty(isDirty());
 		return true;
 	}
-
-	// TODO Hook up help toolbar action
-//	protected String getHelpResource() {
-//		return "/org.eclipse.pde.doc.user/guide/tools/editors/target_definition_editor/overview.htm"; //$NON-NLS-1$
-//	}
-
 }

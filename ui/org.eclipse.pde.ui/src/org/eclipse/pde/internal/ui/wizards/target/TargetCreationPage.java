@@ -19,13 +19,13 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * First wizard page used to create a target definition. Defines the location where
@@ -97,6 +97,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 		setSelectedNode(new EditTargetNode());
 		setControl(comp);
 		setPageComplete(true);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.NEW_TARGET_WIZARD);
 	}
 
 	protected void initializeTargetCombo() {

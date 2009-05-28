@@ -19,10 +19,10 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page that displays the contents of a bundle container in a table
@@ -54,6 +54,7 @@ public class PreviewContainerPage extends WizardPage {
 		fPreviewTable.setContentProvider(ArrayContentProvider.getInstance());
 		fPreviewTable.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(composite);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCATION_PREVIEW_WIZARD);
 	}
 
 	/**

@@ -19,17 +19,10 @@ public interface IHelpContextIds {
 	public static final String BUILD_OPTIONS_PREFERENCE_PAGE = PREFIX + "build_options_preference_page"; //$NON-NLS-1$
 	public static final String EDITOR_PREFERENCE_PAGE = PREFIX + "editor_preference_page"; //$NON-NLS-1$
 	public static final String OSGI_PREFERENCE_PAGE = PREFIX + "osgi_preference_page"; //$NON-NLS-1$
-	public static final String SOURCE_PREFERENCE_PAGE = PREFIX + "source_preference_page"; //$NON-NLS-1$
-	public static final String TARGET_PLUGINS_PREFERENCE_PAGE = PREFIX + "target_plugins_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_PROVISIONERS_PREFERENCE_PAGE = PREFIX + "target_provisioners_preference_page"; //$NON-NLS-1$
-	public static final String IMPLICIT_PLUGINS_PREFERENCE_PAGE = PREFIX + "implicit_plugins_preference_page"; //$NON-NLS-1$
-	public static final String IMPLICIT_PLUGINS_SELECTION_DIALOG = PREFIX + "implicit_plugins_selection_dialog"; //$NON-NLS-1$
-	public static final String LAUNCHING_ARGS_PREFERENCE_PAGE = PREFIX + "launching_args_preference_page"; //$NON-NLS-1$
 	public static final String COMPILERS_PREFERENCE_PAGE = PREFIX + "compilers_preference_page"; //$NON-NLS-1$
 	public static final String PROJECT_SELECTION_DIALOG = PREFIX + "project_selection_dialog"; //$NON-NLS-1$
-	public static final String TARGET_ENVIRONMENT_PREFERENCE_PAGE = PREFIX + "target_environment_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
-	public static final String TARGET_SELECTION_DIALOG = PREFIX + "target_selection_dialog"; //$NON-NLS-1$
 
 	// Property Pages
 	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
@@ -40,7 +33,7 @@ public interface IHelpContextIds {
 
 	public static final String DEPENDENCIES_VIEW = PREFIX + "dependencies_view"; //$NON-NLS-1$
 	public static final String HISTORY_ACTION = PREFIX + "history_action"; //$NON-NLS-1$
-	public static final String TARGET_STATE_VIEW = PREFIX + "target_state_view"; //$NON-NLS-1$
+	public static final String TARGET_STATE_VIEW = PREFIX + "target_platform_state"; //$NON-NLS-1$
 	public static final String HISTORY_LIST_ACTION = PREFIX + "history_list_action"; //$NON-NLS-1$
 	public static final String HISTORY_LIST_DIALOG = PREFIX + "history_list_dialog"; //$NON-NLS-1$
 
@@ -116,7 +109,27 @@ public interface IHelpContextIds {
 	public static final String EXTERNALIZE_STRINGS_PAGE = PREFIX + "externalize_strings_page"; //$NON-NLS-1$
 	public static final String CHEAT_SHEET_PAGE = PREFIX + "cheat_sheet_page"; //$NON-NLS-1$
 	public static final String PRODUCT_FILE_PAGE = PREFIX + "product_file_page"; //$NON-NLS-1$
+	//This TARGET_DEFINITION_PAGE points to old target help.
 	public static final String TARGET_DEFINITION_PAGE = PREFIX + "target_definition_page"; //$NON-NLS-1$
+	//These are the new target help links
+	public static final String NEW_TARGET_WIZARD = PREFIX + "new_target_wizard"; //$NON-NLS-1$
+	public static final String EDIT_TARGET_WIZARD = PREFIX + "edit_target_wizard"; //$NON-NLS-1$
+	public static final String EDIT_TARGET_WIZARD_LOCATIONS_TAB = PREFIX + "edit_target_wizard_locations_tab"; //$NON-NLS-1$
+	public static final String EDIT_TARGET_WIZARD_ARGUMENT_TAB = PREFIX + "edit_target_wizard_argument_tab"; //$NON-NLS-1$
+	public static final String EDIT_TARGET_WIZARD_CONTENT_TAB = PREFIX + "edit_target_wizard_content_tab"; //$NON-NLS-1$
+	public static final String EDIT_TARGET_WIZARD_ENVIRONMENT_TAB = PREFIX + "edit_target_wizard_environment_tab"; //$NON-NLS-1$
+	public static final String EDIT_TARGET_WIZARD_IMPLICIT_TAB = PREFIX + "edit_target_wizard_implicit_tab"; //$NON-NLS-1$
+	public static final String MOVE_TARGET_WIZARD = PREFIX + "move_target_wizard"; //$NON-NLS-1$
+	public static final String ADD_LOCATION_WIZARD = PREFIX + "add_location_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_PREVIEW_WIZARD = PREFIX + "location_preview_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_EDIT_DIRECTORY_WIZARD = PREFIX + "location_edit_directory_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_ADD_DIRECTORY_WIZARD = PREFIX + "location_add_directory_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_ADD_FEATURE_WIZARD = PREFIX + "location_add_feature_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_EDIT_FEATURE_WIZARD = PREFIX + "location_edit_feature_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_ADD_INSTALLATION_WIZARD = PREFIX + "location_add_installation_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_EDIT_INSTALLATION_WIZARD = PREFIX + "location_edit_installation_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_ADD_SITE_WIZARD = PREFIX + "location_add_site_wizard"; //$NON-NLS-1$
+	public static final String LOCATION_EDIT_SITE_WIZARD = PREFIX + "location_edit_site_wizard"; //$NON-NLS-1$
 	public static final String TOC_PAGE = PREFIX + "toc_page"; //$NON-NLS-1$
 
 	public static final String XHTML_CONVERSION_PAGE = PREFIX + "xhtml_conversion_page"; //$NON-NLS-1$
@@ -167,6 +180,9 @@ public interface IHelpContextIds {
 	public static final String PLUGIN_IMPORT_FINISH_DIALOG = PREFIX + "plugin_import_finish_dialog"; //$NON-NLS-1$
 
 	public static final String FILTERED_PLUGIN_ARTIFACTS_DIALOG = PREFIX + "filtered_plugin_artifacts_dialog"; //$NON-NLS-1$
+
+	public static final String IMPLICIT_DEPENDENCIES_SELECTION_DIALOG = PREFIX + "implicit_dependencies_selection_dialog"; //$NON-NLS-1$
+	public static final String ARGS_FROM_CONTAINER_SELECTION_DIALOG = PREFIX + "import_arguments_dialog"; //$NON-NLS-1$
 
 	// Generic source page
 	public static final String MANIFEST_SOURCE_PAGE = PREFIX + "manifest_source_page"; //$NON-NLS-1$
@@ -239,15 +255,12 @@ public interface IHelpContextIds {
 	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
 	public static final String LICENSING_PAGE = PREFIX + "licensing_page"; //$NON-NLS-1$
 
-	public static final String ENVIRONMENT_PAGE = PREFIX + "environment_page"; //$NON-NLS-1$	
-	public static final String TARGET_OVERVIEW_PAGE = PREFIX + "target_overview_page"; //$NON-NLS-1$
+	public static final String TARGET_EDITOR = PREFIX + "target_editor"; //$NON-NLS-1$
+	public static final String TARGET_EDITOR_ENVIRONMENT_PAGE = PREFIX + "target_editor_environment_page"; //$NON-NLS-1$	
+	public static final String TARGET_EDITOR_DEFINITION_PAGE = PREFIX + "target_editor_definition_page"; //$NON-NLS-1$
+	public static final String TARGET_EDITOR_CONTENT_PAGE = PREFIX + "target_editor_content_page"; //$NON-NLS-1$
 
 	// Tools
 	public static final String ORGANIZE_MANIFESTS = PREFIX + "organize_manifest"; //$NON-NLS-1$
-
-	// Provisioning
-	public static final String FILE_SYSTEM_PROVISIONING_PAGE = PREFIX + "file_system_provisioning_page"; //$NON-NLS-1$
-	public static final String UPDATE_SITE_PROVISIONING_PAGE = PREFIX + "update_site_provisioning_page"; //$NON-NLS-1$
-	public static final String P2_PROVISIONING_PAGE = PREFIX + "p2_provisioning_page"; //$NON-NLS-1$
 
 }

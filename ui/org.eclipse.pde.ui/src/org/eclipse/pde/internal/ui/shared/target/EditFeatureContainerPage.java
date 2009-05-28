@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.FeatureBundleContainer;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.target.FeatureBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page for editing a feature bundle container, currently none of the options can be changed
@@ -28,7 +27,7 @@ import org.eclipse.swt.widgets.Text;
 public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 
 	public EditFeatureContainerPage(IBundleContainer container) {
-		super(container);
+		super(container, "EditFeatureContainer"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -51,6 +50,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	protected void createLocationArea(Composite parent) {
 		FeatureBundleContainer container = (FeatureBundleContainer) getBundleContainer();
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.LOCATION_EDIT_FEATURE_WIZARD);
 
 		SWTFactory.createLabel(comp, Messages.EditFeatureContainerPage_2, 1);
 		Text text = SWTFactory.createText(comp, SWT.READ_ONLY | SWT.BORDER, 1);

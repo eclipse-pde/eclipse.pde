@@ -19,14 +19,14 @@ import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A dialog where the user can select arguments provided by installation (profile) containers in
@@ -87,6 +87,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 			}
 		}
 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.ARGS_FROM_CONTAINER_SELECTION_DIALOG);
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 10, 10);
 		((GridLayout) comp.getLayout()).verticalSpacing = 10;
 
