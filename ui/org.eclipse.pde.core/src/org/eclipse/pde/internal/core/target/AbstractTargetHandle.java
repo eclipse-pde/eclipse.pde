@@ -25,13 +25,13 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
  * 
  * @since 3.5
  */
-abstract class AbstractTargetHandle implements ITargetHandle {
+public abstract class AbstractTargetHandle implements ITargetHandle {
 
 	/**
 	 * Path to the local directory where the local bundle pool is stored for p2 profile
 	 * based targets.
 	 */
-	static final IPath BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".bundle_pool"); //$NON-NLS-1$
+	public static final IPath BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".bundle_pool"); //$NON-NLS-1$
 
 	/**
 	 * Path to the local directory where install folders are created for p2 profile

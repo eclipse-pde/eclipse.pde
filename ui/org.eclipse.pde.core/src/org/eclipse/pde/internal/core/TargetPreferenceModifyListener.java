@@ -35,6 +35,7 @@ public class TargetPreferenceModifyListener extends PreferenceModifyListener {
 				node.remove(ICoreConstants.IMPLICIT_DEPENDENCIES);
 				node.remove(ICoreConstants.NL);
 				node.remove(ICoreConstants.PLATFORM_PATH);
+				node.remove(ICoreConstants.POOLED_BUNDLES);
 				node.remove(ICoreConstants.PROGRAM_ARGS);
 				node.remove(ICoreConstants.OS);
 				for (int i = 0; i < 4; i++) {

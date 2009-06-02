@@ -12,9 +12,12 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.net.URL;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.target.AbstractTargetHandle;
+import org.eclipse.pde.internal.core.target.NameVersionDescriptor;
 
 public class ExternalModelManager extends AbstractModelManager {
 
@@ -39,6 +42,38 @@ public class ExternalModelManager extends AbstractModelManager {
 			}
 			for (int i = 0; i < fModels.length; i++) {
 				fModels[i].setEnabled(!result.contains(fModels[i].getPluginBase().getId()));
+			}
+		}
+		// enable pooled bundles properly (only if part of the profile)
+		String pooled = pref.getString(ICoreConstants.POOLED_BUNDLES);
+		if (pooled != null && pooled.trim().length() > 0) {
+			if (ICoreConstants.VALUE_SAVED_NONE.equals(pooled)) {
+				// all pooled bundles are disabled
+				for (int i = 0; i < fModels.length; i++) {
+					if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(fModels[i].getInstallLocation()))) {
+						fModels[i].setEnabled(false);
+					}
+				}
+			} else {
+				StringTokenizer tokenizer = new StringTokenizer(pooled, ","); //$NON-NLS-1$
+				Set enabled = new HashSet();
+				while (tokenizer.hasMoreTokens()) {
+					String id = tokenizer.nextToken();
+					if (tokenizer.hasMoreTokens()) {
+						String ver = tokenizer.nextToken();
+						if (ICoreConstants.VALUE_SAVED_NONE.equals(ver)) { // indicates null version
+							ver = null;
+						}
+						enabled.add(new NameVersionDescriptor(id, ver));
+					}
+				}
+				for (int i = 0; i < fModels.length; i++) {
+					if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(fModels[i].getInstallLocation()))) {
+						IPluginBase base = fModels[i].getPluginBase();
+						NameVersionDescriptor desc = new NameVersionDescriptor(base.getId(), base.getVersion());
+						fModels[i].setEnabled(enabled.contains(desc));
+					}
+				}
 			}
 		}
 	}

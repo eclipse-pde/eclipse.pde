@@ -343,10 +343,18 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			// collect all bundles, ignoring duplicates (symbolic name & version)
 			IResolvedBundle[] resolved = fTarget.getBundles();
+			List pooled = new ArrayList();
+			boolean considerPool = false;
 			for (int i = 0; i < resolved.length; i++) {
 				BundleInfo bundleInfo = resolved[i].getBundleInfo();
 				NameVersionDescriptor desc = new NameVersionDescriptor(bundleInfo.getSymbolicName(), bundleInfo.getVersion());
+				File file = new File(bundleInfo.getLocation());
+				boolean inPool = AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(file.getAbsolutePath()));
+				considerPool = considerPool || inPool;
 				if (!duplicates.contains(desc) && resolved[i].getStatus().isOK()) {
+					if (inPool) {
+						pooled.add(desc);
+					}
 					infos.add(bundleInfo);
 					included.add(bundleInfo);
 					duplicates.add(desc);
@@ -417,6 +425,35 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
 			} else {
 				pref.setValue(ICoreConstants.CHECKED_PLUGINS, checked.toString());
+			}
+
+			// saved POOLED_BUNDLES
+			if (pooled.isEmpty()) {
+				if (considerPool) {
+					// all pooled bundles are excluded
+					pref.setValue(ICoreConstants.POOLED_BUNDLES, ICoreConstants.VALUE_SAVED_NONE);
+				} else {
+					// nothing in the pool
+					pref.setValue(ICoreConstants.POOLED_BUNDLES, ""); //$NON-NLS-1$
+				}
+			} else {
+				StringBuffer buf = new StringBuffer();
+				Iterator iterator2 = pooled.iterator();
+				while (iterator2.hasNext()) {
+					NameVersionDescriptor desc = (NameVersionDescriptor) iterator2.next();
+					buf.append(desc.getId());
+					buf.append(',');
+					String version = desc.getVersion();
+					if (version == null) {
+						buf.append(ICoreConstants.VALUE_SAVED_NONE); // indicates null version
+					} else {
+						buf.append(version);
+					}
+					if (iterator2.hasNext()) {
+						buf.append(',');
+					}
+				}
+				pref.setValue(ICoreConstants.POOLED_BUNDLES, buf.toString());
 			}
 
 			Job job = new TargetPlatformResetJob(state);

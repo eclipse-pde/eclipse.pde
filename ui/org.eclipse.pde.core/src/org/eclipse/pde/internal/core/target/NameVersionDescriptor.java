@@ -35,7 +35,7 @@ public class NameVersionDescriptor {
 	public boolean equals(Object obj) {
 		if (obj instanceof NameVersionDescriptor) {
 			NameVersionDescriptor iud = (NameVersionDescriptor) obj;
-			if (fId.endsWith(iud.fId)) {
+			if (fId.equals(iud.fId)) {
 				return (fVersion != null && fVersion.equals(iud.fVersion)) || (fVersion == null && iud.fVersion == null);
 			}
 		}
@@ -47,6 +47,14 @@ public class NameVersionDescriptor {
 	 */
 	public int hashCode() {
 		return fId.hashCode() + fVersion != null ? fVersion.hashCode() : 0;
+	}
+
+	public String getId() {
+		return fId;
+	}
+
+	public String getVersion() {
+		return fVersion;
 	}
 
 	/* (non-Javadoc)
