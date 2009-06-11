@@ -568,8 +568,7 @@ public class ReferenceExtractor extends ClassAdapter {
 					this.linePositionTracker.addLocation(reference);
 				}
 			} else if (cst instanceof String) {
-				String str = (String) cst;
-				this.stringLiteral = (Util.EMPTY_STRING.equals(str) ? null : str);
+				this.stringLiteral = (String) cst;
 			}
 		}
 		
@@ -1126,7 +1125,7 @@ public class ReferenceExtractor extends ClassAdapter {
 				else {
 					refs = processInnerClass(type, fReferenceKinds);
 				}
-				if(refs != null && !refs.isEmpty()) {
+				if(refs != null) {
 					this.collector.addAll(refs);
 				}
 			}
@@ -1143,7 +1142,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 */
 	private Set processInnerClass(IApiType type, int refkinds) throws CoreException {
 		HashSet refs = new HashSet();
-		ReferenceExtractor extractor = new ReferenceExtractor(type, this.collector, refkinds);
+		ReferenceExtractor extractor = new ReferenceExtractor(type, refs, refkinds);
 		ClassReader reader = new ClassReader(((AbstractApiTypeRoot)type.getTypeRoot()).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return refs;
