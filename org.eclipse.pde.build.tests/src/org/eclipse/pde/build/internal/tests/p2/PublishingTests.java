@@ -473,17 +473,10 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(repository, "a");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
-		iu = getIU(repository, "org.eclipse.team.cvs.ssh");
-		assertNotNull(iu);
-		entries.add("plugins/org.eclipse.team.cvs.ssh_" + iu.getVersion() + ".jar");
-		IFile file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.ssh_" + iu.getVersion() + ".jar");
-		assertTrue(file.exists());
-		assertJarVerifies(file.getLocation().toFile());
-
 		iu = getIU(repository, "org.eclipse.team.cvs.core");
 		assertNotNull(iu);
 		entries.add("plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
-		file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
+		IFile file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
 
