@@ -88,8 +88,8 @@ public class FetchTests extends PDETestCase {
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
 
-		assertResourceFile(buildFolder, "plugins/com.ibm.icu.base_3.6.1.v20070417.jar");
-		assertResourceFile(buildFolder, "plugins/com.ibm.icu.base_3.6.0.20061215.jar");
+		assertResourceFile(buildFolder, "plugins/com.ibm.icu.base_3.6.1.v20080530.jar");
+		assertResourceFile(buildFolder, "plugins/com.ibm.icu.base_3.6.0.v20080530.jar");
 	}
 	
 	public void testP2Get() throws Exception {

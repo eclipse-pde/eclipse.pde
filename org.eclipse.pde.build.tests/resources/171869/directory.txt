@@ -1,5 +1,5 @@
-plugin@com.ibm.icu.base,3.4.5=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R200706192011/bundles/com.ibm.icu.base_3.4.5.jar
+plugin@com.ibm.icu.base,3.4.5=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090529135407/bundles/com.ibm.icu.base_3.4.5.jar
 
-plugin@com.ibm.icu.base,3.6.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R200706192011/bundles/com.ibm.icu.base_3.6.0.20061215.jar
+plugin@com.ibm.icu.base,3.6.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090529135407/bundles/com.ibm.icu.base_3.6.0.v20080530.jar
 
-plugin@com.ibm.icu.base,3.6.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R200706192011/bundles/com.ibm.icu.base_3.6.1.v20070417.jar
+plugin@com.ibm.icu.base,3.6.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090529135407/bundles/com.ibm.icu.base_3.6.1.v20080530.jar
