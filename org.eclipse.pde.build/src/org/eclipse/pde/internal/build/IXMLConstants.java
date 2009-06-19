@@ -108,6 +108,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_PRODUCT = "product"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_LOCATION = "baseLocation"; //$NON-NLS-1$
 	public static final String PROPERTY_LOG_EXTENSION = "logExtension"; //$NON-NLS-1$
+	public static final String PROPERTY_LOG_EXTENSION_PARAM = "logExtension.param"; //$NON-NLS-1$
 
 	public static final String PROPERTY_NL = "nl"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_NL = "basenl"; //$NON-NLS-1$ 

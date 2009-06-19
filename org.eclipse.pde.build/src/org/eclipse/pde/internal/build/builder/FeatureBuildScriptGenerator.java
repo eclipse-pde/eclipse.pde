@@ -179,9 +179,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		String destinationTempFolder = new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString();
 		script.printMkdirTask(destinationTempFolder);
 		script.printProperty(PROPERTY_DESTINATION_TEMP_FOLDER, destinationTempFolder);
+		script.printConditionIsSet(PROPERTY_LOG_EXTENSION_PARAM, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION_PARAM);
 		Map params = new HashMap(1);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, destinationTempFolder);
+		params.put(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION_PARAM), Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
 		script.printAntCallTask(TARGET_ALL_CHILDREN, false, params);
 		script.printTargetEnd();
 	}
@@ -255,10 +257,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_ZIP_LOGS, TARGET_INIT, null, null, null);
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printMkdirTask(featureTempFolder);
+		script.printConditionIsSet(PROPERTY_LOG_EXTENSION_PARAM, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION_PARAM);
 		Map params = new HashMap(1);
 		params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString());
+		params.put(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION_PARAM), Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
 		script.printAntCallTask(TARGET_ALL_CHILDREN, false, params);
 		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION)).append(featureFullName + ".log.zip"); //$NON-NLS-1$
 		script.printZipTask(destination.toString(), featureTempFolder, true, false, null);

@@ -889,6 +889,15 @@ public class ScriptGenerationTests extends PDETestCase {
 		entries.add("plugins/P1_1.0.0/@dot.log");
 		entries.add("plugins/P2_1.0.0/@dot.log");
 		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
+		
+		//bug 279609
+		properties.put("logExtension", ".xml");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		entries.add("plugins/P1_1.0.0/@dot.xml");
+		entries.add("plugins/P2_1.0.0/@dot.xml");
+		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
 	}
 
 	public void testBug239843_1() throws Exception {
