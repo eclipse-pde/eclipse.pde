@@ -452,25 +452,31 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (urlfragments.length > 2 && urlfragments[0].equals(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR)) {
 			String modelLocation = null;
 			BundleDescription bundle = null;
-			if (urlfragments[1].equalsIgnoreCase(PLUGIN) || urlfragments[1].equalsIgnoreCase(FRAGMENT))
+			if (urlfragments[1].equalsIgnoreCase(PLUGIN) || urlfragments[1].equalsIgnoreCase(FRAGMENT)) {
 				bundle = generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]);
-
-			if (urlfragments.length == 3) {
-				addPlugin(bundle, classpath, location);
-				return null;
-			}
-
-			modelLocation = generator.getLocation(bundle);
-
-			if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
-				String message = NLS.bind(Messages.exception_url, generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, null));
-			}
-			if (modelLocation != null) {
-				for (int i = 3; i < urlfragments.length; i++) {
-					modelLocation += '/' + urlfragments[i];
+				if (bundle == null) {
+					String message = NLS.bind(Messages.exception_url, generator.getModel().getSymbolicName() + '/' + generator.getPropertiesFileName() + ": " + url); //$NON-NLS-1$
+					MultiStatus status = new MultiStatus(PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, null);
+					message = NLS.bind(Messages.exception_missingElement, urlfragments[2]);
+					status.add(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
+					throw new CoreException(status);
 				}
-				return relativePath = Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
+
+				if (urlfragments.length == 3) {
+					addPlugin(bundle, classpath, location);
+					return null;
+				}
+
+				modelLocation = generator.getLocation(bundle);
+				if (modelLocation != null) {
+					for (int i = 3; i < urlfragments.length; i++) {
+						modelLocation += '/' + urlfragments[i];
+					}
+					return relativePath = Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
+				}
+			} else if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_url, generator.getModel().getSymbolicName() + '/' + generator.getPropertiesFileName() + ": " + url); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, null));
 			}
 		}
 
@@ -480,7 +486,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			try {
 				relativePath = Utils.makeRelative(new Path(FileLocator.resolve(extraURL).getFile()), new Path(location)).toOSString();
 			} catch (IOException e) {
-				String message = NLS.bind(Messages.exception_url, generator.getPropertiesFileName() + "::" + url); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_url, generator.getModel().getSymbolicName() + '/' + generator.getPropertiesFileName() + ": " + url); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));
 			}
 		} catch (MalformedURLException e) {

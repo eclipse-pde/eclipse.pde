@@ -1220,4 +1220,23 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 		assertJarVerifies(tempJar, true);
 	}
+	
+	public void testBug279583() throws Exception {
+		IFolder buildFolder = newTest("279583");
+
+		String bundleId = "org.eclipse.pde.build.test.279583";
+		Utils.generateBundleManifest(buildFolder, bundleId, "1.0.0", null);
+		Properties extraProperties = new Properties();
+		extraProperties.put("jars.extra.classpath", "platform:/plugins/foo/k.jar");
+		Utils.generatePluginBuildProperties(buildFolder, extraProperties);
+
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", bundleId);
+		properties.put("baseLocation", buildFolder.getLocation().toOSString());
+		try {
+			generateScripts(buildFolder, properties);
+			fail("We expected an exception");
+		} catch(Exception e){
+			assertEquals(e.getMessage(), "Malformed URL exception: org.eclipse.pde.build.test.279583/build.properties: platform:/plugins/foo/k.jar.");
+		}
+	}
 }
