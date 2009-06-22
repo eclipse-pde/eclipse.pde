@@ -144,7 +144,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		try {
 			propertyStream = new BufferedInputStream(new FileInputStream(packagingPropertiesLocation));
 			try {
-				packagingProperties.load(new BufferedInputStream(propertyStream));
+				packagingProperties.load(propertyStream);
 			} finally {
 				propertyStream.close();
 			}

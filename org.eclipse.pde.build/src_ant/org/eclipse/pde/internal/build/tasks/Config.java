@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.build.tasks;
 public class Config {
 
 	public static String ANY = "*"; //$NON-NLS-1$
-	private String ws;
-	private String os;
-	private String arch;
+	private final String ws;
+	private final String os;
+	private final String arch;
 
 	private static Config genericConfig; //singleton
 
@@ -82,11 +82,11 @@ public class Config {
 		String newWs = ws;
 		String newArch = arch;
 
-		if (os == ANY)
+		if (ANY.equals(os))
 			newOs = value;
-		if (ws == ANY)
+		if (ANY.equals(ws))
 			newWs = value;
-		if (arch == ANY)
+		if (ANY.equals(arch))
 			newArch = value;
 
 		return newOs + separator + newWs + separator + newArch;

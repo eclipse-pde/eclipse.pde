@@ -157,7 +157,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	}
 
 	// All the information that will go into the assemble file for a specific info
-	protected class AssemblyLevelConfigInfo {
+	protected static class AssemblyLevelConfigInfo {
 		// the plugins that are contained into this config
 		private final Collection plugins = new LinkedHashSet(20);
 		// the features that are contained into this config

@@ -69,7 +69,7 @@ public class ManifestModifier extends Task {
 				os.close();
 			}
 		} catch (IOException e1) {
-			new BuildException("Problem writing the content of the manifest : " + manifestLocation); //$NON-NLS-1$
+			throw new BuildException("Problem writing the content of the manifest : " + manifestLocation); //$NON-NLS-1$
 		}
 	}
 
@@ -102,7 +102,7 @@ public class ManifestModifier extends Task {
 				is.close();
 			}
 		} catch (IOException e) {
-			new BuildException("Problem reading the content of the manifest : " + manifestLocation); //$NON-NLS-1$
+			throw new BuildException("Problem reading the content of the manifest : " + manifestLocation); //$NON-NLS-1$
 		}
 	}
 

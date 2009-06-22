@@ -492,7 +492,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		generateFeatureVersionSuffix = value;
 	}
 
-	private class ArchiveTable extends HashMap {
+	private static class ArchiveTable extends HashMap {
 		private static final long serialVersionUID = -3063402400461435816L;
 
 		public ArchiveTable(int size) {

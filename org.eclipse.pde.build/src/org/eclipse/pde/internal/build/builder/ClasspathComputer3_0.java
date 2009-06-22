@@ -472,7 +472,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					for (int i = 3; i < urlfragments.length; i++) {
 						modelLocation += '/' + urlfragments[i];
 					}
-					return relativePath = Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
+					return Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
 				}
 			} else if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
 				String message = NLS.bind(Messages.exception_url, generator.getModel().getSymbolicName() + '/' + generator.getPropertiesFileName() + ": " + url); //$NON-NLS-1$

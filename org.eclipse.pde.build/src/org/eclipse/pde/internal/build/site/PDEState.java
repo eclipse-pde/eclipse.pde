@@ -568,7 +568,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			} finally {
 				propertyStream.close();
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			//ignore because compiled plug-ins do not have such files
 		}
 		return result;

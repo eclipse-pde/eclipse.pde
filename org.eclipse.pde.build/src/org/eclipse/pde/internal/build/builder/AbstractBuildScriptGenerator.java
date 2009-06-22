@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.*;
@@ -32,22 +33,22 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	private boolean includePlatformIndependent = true;
 
-	/** flag indicating whether or not the missing properties file should be logged */ 
+	/** flag indicating whether or not the missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = true;
 
 	static private Properties executionEnvironmentMappings = null;
-	
+
 	abstract protected Properties getBuildProperties() throws CoreException;
 
-	static public Properties getExecutionEnvironmentMappings(){
-		if(executionEnvironmentMappings != null)
+	static public Properties getExecutionEnvironmentMappings() {
+		if (executionEnvironmentMappings != null)
 			return executionEnvironmentMappings;
-		
-		executionEnvironmentMappings = new Properties();
+
+		Properties properties = new Properties();
 		InputStream stream = null;
 		try {
 			stream = BundleHelper.getDefault().getBundle().getEntry("data/env.properties").openStream(); //$NON-NLS-1$
-			executionEnvironmentMappings.load(stream);
+			properties.load(stream);
 		} catch (IOException e) {
 			//ignore
 		} finally {
@@ -58,9 +59,10 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 				//ignore
 			}
 		}
+		executionEnvironmentMappings = properties;
 		return executionEnvironmentMappings;
 	}
-	
+
 	public void setDevEntries(String entries) {
 		devEntries = new DevClassPathHelper(entries);
 	}
@@ -72,7 +74,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	public void includePlatformIndependent(boolean value) {
 		includePlatformIndependent = value;
 	}
-	
+
 	public boolean isPlatformIndependentIncluded() {
 		return includePlatformIndependent;
 	}
@@ -87,9 +89,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	public List selectConfigs(IPlatformEntry element) {
 		List result = new ArrayList(getConfigInfos());
 
-		if (((element.getOS() == null || element.getOS().equals(Config.ANY)) && includePlatformIndependent == false) && 
-			((element.getWS() == null || element.getWS().equals(Config.ANY)) && includePlatformIndependent == false) && 
-			((element.getArch() == null || element.getArch().equals(Config.ANY)) && includePlatformIndependent == false)) {
+		if (((element.getOS() == null || element.getOS().equals(Config.ANY)) && includePlatformIndependent == false) && ((element.getWS() == null || element.getWS().equals(Config.ANY)) && includePlatformIndependent == false) && ((element.getArch() == null || element.getArch().equals(Config.ANY)) && includePlatformIndependent == false)) {
 			result.clear();
 			return result;
 		}
@@ -97,21 +97,21 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (element.getOS() != null && !element.getOS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (! isMatching(element.getOS(), config.getOs()) )
+				if (!isMatching(element.getOS(), config.getOs()))
 					iter.remove();
 			}
 		}
 		if (element.getWS() != null && !element.getWS().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (! isMatching(element.getWS(), config.getWs()) )
+				if (!isMatching(element.getWS(), config.getWs()))
 					iter.remove();
 			}
 		}
 		if (element.getArch() != null && !element.getArch().equals(Config.ANY)) {
 			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				Config config = (Config) iter.next();
-				if (! isMatching(element.getArch(), config.getArch()))
+				if (!isMatching(element.getArch(), config.getArch()))
 					iter.remove();
 			}
 		}
@@ -122,11 +122,12 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken().toUpperCase();
-			if (configValue.equalsIgnoreCase(token)) return true;
+			if (configValue.equalsIgnoreCase(token))
+				return true;
 		}
 		return false;
 	}
-	
+
 	public Set getCompiledElements() {
 		if (compiledElements == null)
 			compiledElements = new HashSet();
@@ -153,7 +154,6 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 			return false;
 		return ignoreMissingPropertiesFile;
 	}
-	
 
 	/**
 	 * @param value The ignoreMissingPropertiesFile to set.

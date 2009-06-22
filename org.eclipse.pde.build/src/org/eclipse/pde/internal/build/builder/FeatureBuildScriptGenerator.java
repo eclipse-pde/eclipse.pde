@@ -49,10 +49,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	public FeatureBuildScriptGenerator(BuildTimeFeature feature) {
 		this.feature = feature;
-
-		if (featureRootLocation == null) {
-			featureRootLocation = feature.getRootLocation();
-		}
+		featureRootLocation = feature.getRootLocation();
 	}
 
 	public void setDirector(BuildDirector director) {

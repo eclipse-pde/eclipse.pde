@@ -635,7 +635,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	public class MapFileEntry implements Comparable {
+	public static class MapFileEntry implements Comparable {
 		String id;
 		Version v;
 

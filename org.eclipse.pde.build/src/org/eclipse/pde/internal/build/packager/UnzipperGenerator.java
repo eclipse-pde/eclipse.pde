@@ -56,7 +56,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		try {
 			propertyStream = new BufferedInputStream(new FileInputStream(packagingPropertiesLocation));
 			try {
-				packagingProperties.load(new BufferedInputStream(propertyStream));
+				packagingProperties.load(propertyStream);
 			} finally {
 				propertyStream.close();
 			}

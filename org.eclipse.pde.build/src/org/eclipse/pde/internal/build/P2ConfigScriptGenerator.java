@@ -202,7 +202,6 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 			generateCopyConfigs(product, productDir);
 			generateProductReplaceTask(product, newProduct);
-			productPath = newProduct;
 
 			script.printTab();
 			script.print("<p2.publish.product"); //$NON-NLS-1$

@@ -770,16 +770,19 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		localizationEntry = localization + ".properties"; //$NON-NLS-1$
 		File localizationFile = new File(sourcePluginDirURL.toFile(), localizationEntry);
+		BufferedOutputStream out = null;
 		try {
 			localizationFile.getParentFile().mkdirs();
-			localizationProperties.store(new BufferedOutputStream(new FileOutputStream(localizationFile)), "#Source Bundle Localization"); //$NON-NLS-1$
+			out = new BufferedOutputStream(new FileOutputStream(localizationFile));
+			localizationProperties.store(out, "#Source Bundle Localization"); //$NON-NLS-1$
 		} catch (IOException e) {
 			//	what?
+		} finally {
+			Utils.close(out);
 		}
 
 		File manifestFile = new File(sourcePluginDirURL.toFile(), Constants.BUNDLE_FILENAME_DESCRIPTOR);
 		manifestFile.getParentFile().mkdirs();
-		BufferedOutputStream out = null;
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(manifestFile));
 			try {
