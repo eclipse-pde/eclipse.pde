@@ -88,20 +88,13 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);
 
 			ProductFile product = configScriptGenerator.getProductFile();
-			String productPath = product != null ? product.getLocation() : null;
+			String productPath = null;
 			if (product != null) {
-				String productDir = getWorkingDirectory() + '/' + DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product"; //$NON-NLS-1$
-				File productFile = new File(productPath);
-				String newProduct = new File(productDir, productFile.getName()).getAbsolutePath();
-				script.printCopyFileTask(productPath, newProduct, true);
-
-				File parent = new File(productPath).getParentFile();
-				File p2Inf = new File(parent, "p2.inf"); //$NON-NLS-1$
-				if (p2Inf.exists())
-					script.printCopyTask(p2Inf.getAbsolutePath(), productDir, null, false, true);
-
-				generateProductReplaceTask(product, newProduct);
-				productPath = newProduct;
+				File productFile = new File(product.getLocation());
+				String modLocation = getProductDir() + productFile.getName();
+				script.printAvailableTask(PROPERTY_P2_PRODUCT_MOD, modLocation, modLocation);
+				script.printProperty(PROPERTY_P2_PRODUCT_MOD, product.getLocation());
+				productPath = Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_MOD);
 			}
 
 			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$

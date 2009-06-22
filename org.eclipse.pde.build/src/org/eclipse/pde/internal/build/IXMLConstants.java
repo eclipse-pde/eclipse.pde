@@ -71,6 +71,7 @@ public interface IXMLConstants {
 	public static final String TARGET_ROOT_TARGET = "rootTarget"; //$NON-NLS-1$
 	public static final String TARGET_CUSTOM_ASSEMBLY = "customAssembly"; //$NON-NLS-1$
 	public static final String TARGET_P2_METADATA = "generate.p2.metadata"; //$NON-NLS-1$
+	public static final String TARGET_P2_REPLACE_PRODUCT = "replace.p2.product"; //$NON-NLS-1$
 	public static final String TARGET_P2_SIGN_REPO = "sign.p2.repository"; //$NON-NLS-1$
 	public static final String TARGET_RUN_DIRECTOR = "runDirector"; //$NON-NLS-1$
 	public static final String TARGET_RUN_DIRECTOR_CONDITION = "runDirector.condition"; //$NON-NLS-1$

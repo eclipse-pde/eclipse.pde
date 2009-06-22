@@ -182,6 +182,20 @@ public class P2Tests extends P2TestCase {
 
 		iu = getIU(repository, "rcp.product");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
+
+		iu = getIU(repository, "toolingrcp.product.launcher.win32.win32.x86");
+		assertEquals("1.0.0.v1234", iu.getVersion().toString());
+
+		properties.put("p2.director.installPath", buildFolder.getFolder("install").getLocation().toOSString());
+		properties.put("p2.repo", "file:" + buildFolder.getFolder("repo").getLocation().toOSString());
+		properties.put("p2.director.iu", "rcp.product");
+		properties.put("os", "win32");
+		properties.put("ws", "win32");
+		properties.put("arch", "x86");
+		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
 	}
 
 	public void testBug222962() throws Exception {

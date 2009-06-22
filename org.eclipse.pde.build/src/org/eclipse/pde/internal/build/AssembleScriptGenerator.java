@@ -35,6 +35,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		return DEFAULT_ASSEMBLE_NAME + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	protected String getProductDir() {
+		return Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product/"; //$NON-NLS-1$
+	}
+
 	protected AssembleConfigScriptGenerator getConfigScriptGenerator() {
 		return new AssembleConfigScriptGenerator();
 	}
@@ -48,6 +52,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			printProjectDeclaration();
 			printAssembleMacroDef();
 			generateMainTarget();
+			generateReplaceProductTarget();
 			generateMetadataTarget();
 			script.printProjectEnd();
 		} finally {
@@ -88,6 +93,8 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 		if (BuildDirector.p2Gathering) {
 			generateP2ConfigFileTargetCall();
+		} else if (configScriptGenerator.getProductFile() != null && configScriptGenerator.haveP2Bundles()) {
+			script.printAntCallTask(TARGET_P2_REPLACE_PRODUCT, true, null);
 		}
 
 		if (shouldGroupConfigs()) {
@@ -169,32 +176,40 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.println("/>"); //$NON-NLS-1$
 	}
 
+	protected void generateReplaceProductTarget() {
+		ProductFile product = configScriptGenerator.getProductFile();
+		if (product != null) {
+			String productPath = product.getLocation();
+			File productFile = new File(productPath);
+			String newProduct = getProductDir() + productFile.getName();
+			File p2Inf = new File(productFile.getParentFile(), "p2.inf"); //$NON-NLS-1$
+
+			script.printTargetDeclaration(TARGET_P2_REPLACE_PRODUCT, null, null, null, null);
+			script.printCopyFileTask(productPath, newProduct, true);
+			if (p2Inf.exists())
+				script.printCopyTask(p2Inf.getAbsolutePath(), getProductDir(), null, false, true);
+			generateProductReplaceTask(product, newProduct);
+			script.printTargetEnd();
+			script.println();
+		}
+	}
+
 	protected void generateMetadataTarget() {
 		if (BuildDirector.p2Gathering)
 			return;
 		if (configScriptGenerator.haveP2Bundles()) {
-			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
-
 			ProductFile product = configScriptGenerator.getProductFile();
-			String productPath = product != null ? product.getLocation() : null;
-			if (product != null) {
-				String productDir = getWorkingDirectory() + '/' + DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product"; //$NON-NLS-1$
-				File productFile = new File(productPath);
-				String newProduct = new File(productDir, productFile.getName()).getAbsolutePath();
-				script.printCopyFileTask(productPath, newProduct, true);
-
-				File parent = new File(productPath).getParentFile();
-				File p2Inf = new File(parent, "p2.inf"); //$NON-NLS-1$
-				if (p2Inf.exists())
-					script.printCopyTask(p2Inf.getAbsolutePath(), productDir, null, false, true);
-				generateProductReplaceTask(product, newProduct);
-				productPath = newProduct;
-			}
-
+			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, PROPERTY_RUN_PACKAGER, null);
 			script.printConditionIsSet("mode", "incremental", PROPERTY_RUN_PACKAGER, "final"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			script.printProperty(PROPERTY_P2_APPEND, "true"); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
+			if (product != null) {
+				File productFile = new File(product.getLocation());
+				String modLocation = getProductDir() + productFile.getName();
+				script.printAvailableTask(PROPERTY_P2_PRODUCT_MOD, modLocation, modLocation);
+				script.printProperty(PROPERTY_P2_PRODUCT_MOD, product.getLocation());
+			}
 			script.printTab();
 			script.print("<p2.generator "); //$NON-NLS-1$
 			script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
@@ -207,7 +222,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.printAttribute("mode", "${mode}", true); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (product != null) {
-				script.printAttribute("productFile", productPath, true); //$NON-NLS-1$
+				script.printAttribute("productFile", Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_MOD), true); //$NON-NLS-1$
 				if (versionsList) {
 					if (product.useFeatures())
 						script.printAttribute("versionAdvice", getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX, true); //$NON-NLS-1$

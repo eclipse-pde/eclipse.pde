@@ -545,7 +545,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 	}
 
-	protected void generateProductReplaceTask(ProductFile product, String productDirectory) {
+	protected void generateProductReplaceTask(ProductFile product, String productFilePath) {
 		if (product == null)
 			return;
 
@@ -565,7 +565,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		List productEntries = product.getProductEntries();
 		String mappings = Utils.getEntryVersionMappings((FeatureEntry[]) productEntries.toArray(new FeatureEntry[productEntries.size()]), site);
 
-		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productDirectory) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productFilePath) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("                    selfVersion=\"" + version + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (product.useFeatures())
 			script.println("                    featureIds=\"" + mappings + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$

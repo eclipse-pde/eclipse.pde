@@ -774,6 +774,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.println("/>"); //$NON-NLS-1$
 			}
 			if (rootFileProviders.size() > 0) {
+				if (productFile != null) {
+					script.println();
+					File modFile = new File(productFile.getLocation());
+					String modLocation = Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product/" + modFile.getName(); //$NON-NLS-1$
+					script.printAvailableTask(PROPERTY_P2_PRODUCT_MOD, modLocation, modLocation);
+					script.printProperty(PROPERTY_P2_PRODUCT_MOD, productFile.getLocation());
+				}
 				script.printTab();
 				script.print("<p2.generator "); //$NON-NLS-1$
 				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$
@@ -793,7 +800,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 					script.printAttribute("mode", Utils.getPropertyFormat(PROPERTY_P2_GENERATION_MODE), true); //$NON-NLS-1$
 				if (productFile != null) {
 					script.printAttribute("exe", rootFolder + '/' + Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$
-					script.printAttribute("productFile", productFile.getLocation(), true); //$NON-NLS-1$
+					script.printAttribute("productFile", Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_MOD), true); //$NON-NLS-1$
 				}
 				script.println("/>"); //$NON-NLS-1$
 			}
