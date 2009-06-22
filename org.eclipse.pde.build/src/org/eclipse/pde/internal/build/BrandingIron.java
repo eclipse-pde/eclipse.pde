@@ -144,14 +144,15 @@ public class BrandingIron implements IXMLConstants {
 		}
 
 		File rootFolder = getCanonicalFile(new File(initialRoot));
-		if (!rootFolder.equals(target)) {
+		File targetFolder = getCanonicalFile(new File(target));
+		if (!rootFolder.equals(targetFolder)) {
 			rootFolder.delete();
 			if (rootFolder.exists()) {
 				//if the rootFolder still exists, its because there were other files that need to be moved over
-				moveContents(rootFolder, new File(target));
+				moveContents(rootFolder, targetFolder);
 			}
+			rootFolder.getParentFile().delete();
 		}
-		rootFolder.getParentFile().delete();
 	}
 
 	/**
