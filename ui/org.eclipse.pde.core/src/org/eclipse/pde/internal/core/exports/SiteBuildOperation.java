@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.P2Utils;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.*;
@@ -202,11 +201,12 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 			if (siteXML.exists() && siteXML.getLocationURI() != null) {
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_CATEGORY_SITE, URIUtil.toUnencodedString(siteXML.getLocationURI()));
 			}
+
 			ISiteDescription description = fSiteModel.getSite().getDescription();
-			if (description != null && description.getName() != null && description.getName().length() > 0) {
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, description.getName());
-				map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, description.getName());
-			}
+			String name = description != null && description.getName() != null && description.getName().length() > 0 ? description.getName() : PDECoreMessages.SiteBuildOperation_0;
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_METADATA_REPO_NAME, name);
+			map.put(IBuildPropertiesConstants.PROPERTY_P2_ARTIFACT_REPO_NAME, name);
+
 			try {
 				String destination = new File(fBuildTempMetadataLocation).toURL().toString();
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_BUILD_REPO, destination);
