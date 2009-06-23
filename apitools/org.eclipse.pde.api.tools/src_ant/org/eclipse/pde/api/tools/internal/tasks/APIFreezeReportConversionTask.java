@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -51,6 +52,7 @@ public class APIFreezeReportConversionTask extends Task {
 		private String key;
 		private Map map;
 		private String typename;
+		private int elementType;
 
 		public ConverterDefaultHandler(boolean debug) {
 			this.map = new HashMap();
@@ -61,6 +63,7 @@ public class APIFreezeReportConversionTask extends Task {
 			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				Entry entry = new Entry(
 						flags,
+						elementType,
 						key,
 						typename,
 						this.arguments);
@@ -119,6 +122,7 @@ public class APIFreezeReportConversionTask extends Task {
 				}
 				componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
 				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
+				elementType = Util.getDeltaElementTypeValue(attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE));
 				typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				key = attributes.getValue(IApiXmlConstants.ATTR_KEY);
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
@@ -135,11 +139,13 @@ public class APIFreezeReportConversionTask extends Task {
 	static class Entry {
 		String[] arguments;
 		int flags;
+		int elementType;
 		String key;
 		String typeName;
 
 		public Entry(
 				int flags,
+				int elementType,
 				String key,
 				String typeName,
 				String[] arguments) {
@@ -198,6 +204,41 @@ public class APIFreezeReportConversionTask extends Task {
 						buffer.append('.');
 						buffer.append(this.key);
 						break;
+					case IDelta.DEPRECATION :
+						switch(this.elementType) {
+							case IDelta.ANNOTATION_ELEMENT_TYPE :
+							case IDelta.INTERFACE_ELEMENT_TYPE :
+							case IDelta.ENUM_ELEMENT_TYPE :
+							case IDelta.CLASS_ELEMENT_TYPE :
+								buffer.append('.');
+								buffer.append(this.key);
+								break;
+							case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+								indexOf = key.indexOf('(');
+								if (indexOf == -1) {
+									return null;
+								}
+								index = indexOf;
+								selector = key.substring(0, index);
+								descriptor = key.substring(index, key.length());
+								buffer.append('#');
+								buffer.append(Signature.toString(descriptor, selector, null, false, false));
+								break;
+							case IDelta.METHOD_ELEMENT_TYPE :
+								indexOf = key.indexOf('(');
+								if (indexOf == -1) {
+									return null;
+								}
+								index = indexOf;
+								selector = key.substring(0, index);
+								descriptor = key.substring(index, key.length());
+								buffer.append('#');
+								buffer.append(Signature.toString(descriptor, selector, null, false, true));
+								break;
+							case IDelta.FIELD_ELEMENT_TYPE :
+								buffer.append('#');
+								buffer.append(this.key);
+						}
 				}
 			} else {
 				switch(this.flags) {

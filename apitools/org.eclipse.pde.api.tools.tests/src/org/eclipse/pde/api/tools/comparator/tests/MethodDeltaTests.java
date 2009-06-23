@@ -31,7 +31,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(MethodDeltaTests.class);
 //		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-//		suite.addTest(new MethodDeltaTests("test106"));
+//		suite.addTest(new MethodDeltaTests("test123"));
 //		return suite;
 	}
 
@@ -2750,5 +2750,47 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertTrue("Not visible", Util.isVisible(child.getOldModifiers()));
 		assertEquals("Wrong element type", IDelta.API_COMPONENT_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Added deprecation
+	 */
+	public void test123() {
+		deployBundles("test123");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DEPRECATION, child.getFlags());
+		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Removed deprecation
+	 */
+	public void test124() {
+		deployBundles("test124");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
+		assertEquals("Wrong flag", IDelta.DEPRECATION, child.getFlags());
+		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
 }

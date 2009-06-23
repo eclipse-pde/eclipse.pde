@@ -1,0 +1,5 @@
+/**
+ * @deprecated
+ */
+public interface X {
+}
