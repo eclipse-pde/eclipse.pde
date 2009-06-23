@@ -1,0 +1,5 @@
+/**
+ * @deprecated
+ */
+public class X {
+}

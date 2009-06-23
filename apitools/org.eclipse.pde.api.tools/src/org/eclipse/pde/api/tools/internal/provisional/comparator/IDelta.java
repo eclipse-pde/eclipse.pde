@@ -854,6 +854,18 @@ public interface IDelta {
 	 */
 	public static final int REEXPORTED_API_TYPE = 71;
 	/**
+	 * Delta kind flag that denotes adding or removing the deprecated modifiers on the corresponding element.
+	 * <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * <li>{@link #REMOVED}</li>
+	 * </ul>
+	 * 
+	 * @see #getFlags()
+	 */
+	public static final int DEPRECATION = 72;
+	/**
 	 * Return true if the receiver has no children deltas, false otherwise.
 	 * 
 	 * @return true if the receiver has no children deltas, false otherwise.
