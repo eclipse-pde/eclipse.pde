@@ -25,6 +25,7 @@ public interface IHelpContextIds {
 	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
 
 	// Property Pages
+	public static final String PLUGIN_DEVELOPMENT_PROPERTY_PAGE = PREFIX + "plugin_development_property_page"; //$NON-NLS-1$
 	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
 	public static final String COMPILERS_PROPERTY_PAGE = PREFIX + "compilers_property_page"; //$NON-NLS-1$
 

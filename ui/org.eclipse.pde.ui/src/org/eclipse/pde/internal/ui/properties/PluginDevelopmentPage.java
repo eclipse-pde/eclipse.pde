@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,17 +15,20 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+/**
+ * Top level PDE property page for projects.
+ */
 public class PluginDevelopmentPage extends PropertyPage implements IWorkbenchPropertyPage {
 
 	private Button fExtensionButton;
@@ -35,6 +38,9 @@ public class PluginDevelopmentPage extends PropertyPage implements IWorkbenchPro
 		noDefaultAndApplyButton();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -64,10 +70,26 @@ public class PluginDevelopmentPage extends PropertyPage implements IWorkbenchPro
 		}
 	}
 
+	/**
+	 * Returns the preference settings scoped to the given project if available
+	 * @param project project to get preferences for
+	 * @return preferences for the project or <code>null</code>
+	 */
 	private Preferences getPreferences(IProject project) {
 		return new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PLUGIN_DEVELOPMENT_PROPERTY_PAGE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 */
 	public boolean performOk() {
 		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));
 		if (pref != null) {
