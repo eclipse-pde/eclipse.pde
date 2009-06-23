@@ -176,9 +176,6 @@ public interface IHelpContextIds {
 
 	public static final String NEW_CS_CATEGORY_NAME_DIALOG = PREFIX + "new_cs_category_name_dialog"; //$NON-NLS-1$
 
-	public static final String TARGET_ERROR_DIALOG = PREFIX + "target_error_dialog"; //$NON-NLS-1$
-	public static final String TARGET_LOCATION_DIALOG = PREFIX + "target_location_dialog"; //$NON-NLS-1$
-
 	public static final String PLUGIN_IMPORT_FINISH_DIALOG = PREFIX + "plugin_import_finish_dialog"; //$NON-NLS-1$
 
 	public static final String FILTERED_PLUGIN_ARTIFACTS_DIALOG = PREFIX + "filtered_plugin_artifacts_dialog"; //$NON-NLS-1$
