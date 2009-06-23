@@ -916,9 +916,9 @@ public abstract class AbstractPluginBlock {
 				fDialog.open();
 				fDialog = null;
 			} else if (fOperation.isEmpty()) {
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
 			} else {
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
+				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
 			}
 		} else {
 			fDialog.refresh(fOperation.getInput());
