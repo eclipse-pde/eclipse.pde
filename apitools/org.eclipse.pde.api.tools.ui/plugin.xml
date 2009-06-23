@@ -128,6 +128,10 @@
             adaptable="false"
             id="org.eclipse.pde.api.tools.ui.compare"
             objectClass="org.eclipse.jdt.core.IJavaElement">
+		 <visibility>
+            <objectState name="JavaElementActionFilter" value="isEnabled">
+            </objectState>
+		 </visibility>
          <action
                class="org.eclipse.pde.api.tools.ui.internal.actions.CompareWithAction"
                enablesFor="+"
