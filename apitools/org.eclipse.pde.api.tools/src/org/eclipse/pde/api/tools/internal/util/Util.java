@@ -28,7 +28,6 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -609,29 +608,7 @@ public final class Util {
 			}
 		}
 	}
-	/**
-	 * Return an int value that represents the given element type
-	 * Returns -1 if the element type cannot be determined.
-	 * 
-	 * @param elementType the given element type
-	 * @return an int that represents the given element type constant.
-	 */
-	public static int getDeltaElementTypeValue(String elementType) {
-		Class IDeltaClass = IDelta.class;
-		try {
-			Field field = IDeltaClass.getField(elementType);
-			return field.getInt(null);
-		} catch (SecurityException e) {
-			// ignore
-		} catch (IllegalArgumentException e) {
-			// ignore
-		} catch (NoSuchFieldException e) {
-			// ignore
-		} catch (IllegalAccessException e) {
-			// ignore
-		}
-		return -1;
-	}
+	
 	/**
 	 * Return a string that represents the given element type
 	 * Returns {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
@@ -739,7 +716,6 @@ public final class Util {
 			case IDelta.REEXPORTED_API_TYPE : return "REEXPORTED_API_TYPE"; //$NON-NLS-1$
 			case IDelta.REEXPORTED_TYPE : return "REEXPORTED_TYPE"; //$NON-NLS-1$
 			case IDelta.METHOD_MOVED_DOWN : return "METHOD_MOVED_DOWN"; //$NON-NLS-1$
-			case IDelta.DEPRECATION : return "DEPRECATION"; //$NON-NLS-1$
 		}
 		return UNKNOWN_FLAGS;
 	}
@@ -2045,11 +2021,6 @@ public final class Util {
 		return EMPTY_STRING;
 	}
 	
-	/**
-	 * Returns the string representation of the {@link IApiElement} type
-	 * @param type
-	 * @return the string of the {@link IApiElement} type
-	 */
 	public static String getApiElementType(int type) {
 		switch(type) {
 			case IApiElement.API_TYPE_CONTAINER :

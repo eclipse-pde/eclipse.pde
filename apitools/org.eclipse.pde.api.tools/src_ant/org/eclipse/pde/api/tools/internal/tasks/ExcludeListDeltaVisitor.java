@@ -88,7 +88,6 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 			case IDelta.FIELD :
 			case IDelta.REEXPORTED_API_TYPE :
 			case IDelta.REEXPORTED_TYPE :
-			case IDelta.DEPRECATION :
 				buffer.append('#').append(delta.getKey());
 				break;
 			case IDelta.MAJOR_VERSION :
@@ -113,7 +112,6 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 					int modifiers = delta.getNewModifiers();
 					if (Flags.isPublic(modifiers)) {
 						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
 							case IDelta.TYPE_MEMBER :
 							case IDelta.METHOD :
 							case IDelta.CONSTRUCTOR :
@@ -135,7 +133,6 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 						}
 					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
 						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
 							case IDelta.TYPE_MEMBER :
 							case IDelta.METHOD :
 							case IDelta.CONSTRUCTOR :
@@ -163,14 +160,6 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 								super.processLeafDelta(delta);
 							}
 					}
-					break;
-				case IDelta.REMOVED :
-					switch(delta.getFlags()) {
-						case IDelta.DEPRECATION :
-							if (!checkExclude(delta)) {
-								super.processLeafDelta(delta);
-							}
-				}
 			}
 		} else {
 			switch(delta.getKind()) {

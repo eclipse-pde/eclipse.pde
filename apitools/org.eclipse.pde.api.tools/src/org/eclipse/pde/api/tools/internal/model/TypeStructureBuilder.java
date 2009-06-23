@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.pde.api.tools.internal.model.StubArchiveApiTypeContainer.ArchiveApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -75,10 +74,6 @@ public class TypeStructureBuilder extends ClassAdapter {
 			enclosingName = name.substring(0, index).replace('/', '.');
 		}
 		// TODO: inner types should be have enclosing type as parent instead of component
-		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-			access &= ~Opcodes.ACC_DEPRECATED;
-			access |= ClassFileConstants.AccDeprecated;
-		}
 		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, access, enclosingName, fFile);
 		if (superName != null) {
 			fType.setSuperclassName(superName.replace('/', '.'));
@@ -92,6 +87,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 		}
 		super.visit(version, access, name, signature, superName, interfaces);
 	}
+	
 	/**
 	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
 	 */
@@ -133,10 +129,6 @@ public class TypeStructureBuilder extends ClassAdapter {
 	 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-			access &= ~Opcodes.ACC_DEPRECATED;
-			access |= ClassFileConstants.AccDeprecated;
-		}
 		fType.addField(name, desc, signature, access, value);
 		return null;
 	}
@@ -146,10 +138,6 @@ public class TypeStructureBuilder extends ClassAdapter {
 	 */
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		String[] names = null;
-		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-			access &= ~Opcodes.ACC_DEPRECATED;
-			access |= ClassFileConstants.AccDeprecated;
-		}
 		if (exceptions != null && exceptions.length > 0) {
 			names = new String[exceptions.length];
 			for (int i = 0; i < names.length; i++) {
@@ -275,13 +263,6 @@ public class TypeStructureBuilder extends ClassAdapter {
 		
 		public TypeNameFinderInConstructor(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
 			super(mv, enclosingMethodSetter);
-		}
-		/* (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String)
-		 */
-		public void visitFieldInsn(int opcode, String owner, String name,
-				String desc) {
-			super.visitFieldInsn(opcode, owner, name, desc);
 		}
 		public void visitTypeInsn(int opcode, String type) {
 			if (!setter.found && setter.typeName.equals(type)) {

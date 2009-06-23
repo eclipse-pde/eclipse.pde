@@ -1094,31 +1094,6 @@ public class ClassFileComparator {
 				this.initialDescriptorRestrictions |= RestrictionModifiers.NO_EXTEND;
 			}
 
-			if (Flags.isDeprecated(typeAccess)) {
-				if (!Flags.isDeprecated(typeAccess2)) {
-					this.addDelta(
-							getElementType(this.type1),
-							IDelta.REMOVED,
-							IDelta.DEPRECATION,
-							this.currentDescriptorRestrictions,
-							typeAccess,
-							typeAccess2,
-							this.type1,
-							this.type1.getName(),
-							Util.getDescriptorName(type1));
-				}
-			} else if (Flags.isDeprecated(typeAccess2)) {
-				this.addDelta(
-						getElementType(this.type1),
-						IDelta.ADDED,
-						IDelta.DEPRECATION,
-						this.currentDescriptorRestrictions,
-						typeAccess,
-						typeAccess2,
-						this.type1,
-						this.type1.getName(),
-						Util.getDescriptorName(type1));
-			}
 			if (Flags.isProtected(typeAccess)) {
 				if (Flags.isPrivate(typeAccess2) || Util.isDefault(typeAccess2)) {
 					// report delta - decrease access: protected to default or private
@@ -1978,32 +1953,6 @@ public class ClassFileComparator {
 					name,
 					new String[] {Util.getDescriptorName(this.type1), name});
 		}
-		if (Flags.isDeprecated(access)) {
-			if (!Flags.isDeprecated(access2)) {
-				this.addDelta(
-						IDelta.FIELD_ELEMENT_TYPE,
-						IDelta.REMOVED,
-						IDelta.DEPRECATION,
-						restrictions,
-						access,
-						access2,
-						this.type1,
-						name,
-						new String[] {Util.getDescriptorName(this.type1), name});
-			}
-		} else if (Flags.isDeprecated(access2)) {
-			// report delta - non-volatile to volatile
-			this.addDelta(
-					IDelta.FIELD_ELEMENT_TYPE,
-					IDelta.ADDED,
-					IDelta.DEPRECATION,
-					restrictions,
-					access,
-					access2,
-					this.type1,
-					name,
-					new String[] {Util.getDescriptorName(this.type1), name});
-		}
 		if (field.getConstantValue() != null) {
 			if (field2.getConstantValue() == null) {
 				if (!changeFinalToNonFinal) {
@@ -2766,32 +2715,6 @@ public class ClassFileComparator {
 					getElementType(method),
 					IDelta.CHANGED,
 					IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED,
-					restrictions,
-					access,
-					access2,
-					this.type1,
-					key,
-					new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
-		}
-		if (Flags.isDeprecated(access)) {
-			if (!Flags.isDeprecated(access2)) {
-				this.addDelta(
-						getElementType(method),
-						IDelta.REMOVED,
-						IDelta.DEPRECATION,
-						restrictions,
-						access,
-						access2,
-						this.type1,
-						key,
-						new String[] {Util.getDescriptorName(this.type1), methodDisplayName});
-			}
-		} else if (Flags.isDeprecated(access2)) {
-			// report delta - non-volatile to volatile
-			this.addDelta(
-					getElementType(method),
-					IDelta.ADDED,
-					IDelta.DEPRECATION,
 					restrictions,
 					access,
 					access2,

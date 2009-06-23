@@ -91,27 +91,11 @@ public class Messages extends NLS {
 	private static int getKey(IDelta delta) {
 		switch(delta.getElementType()) {
 			case IDelta.ANNOTATION_ELEMENT_TYPE :
-				switch(delta.getKind()) {
-					case IDelta.ADDED :
-						switch(delta.getFlags()) {
-							case IDelta.METHOD_WITH_DEFAULT_VALUE :
-								return 1;
-							case IDelta.DEPRECATION :
-								return 110;
-						}
-						break;
-					case IDelta.CHANGED :
-						switch(delta.getFlags()) {
-							case IDelta.DECREASE_ACCESS :
-								return 101;
-						}
-						break;
-					case IDelta.REMOVED :
-						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
-								return 111;
-						}
-						break;
+				if (delta.getKind() == IDelta.ADDED && delta.getFlags() == IDelta.METHOD_WITH_DEFAULT_VALUE) {
+					return 1;
+				}
+				if (delta.getKind() == IDelta.CHANGED && delta.getFlags() == IDelta.DECREASE_ACCESS) {
+					return 101;
 				}
 				break;
 			case IDelta.API_COMPONENT_ELEMENT_TYPE :
@@ -151,8 +135,6 @@ public class Messages extends NLS {
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
 						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
-								return 110;
 							case IDelta.CLINIT :
 								return 7;
 							case IDelta.CONSTRUCTOR :
@@ -207,8 +189,6 @@ public class Messages extends NLS {
 						break;
 					case IDelta.REMOVED :
 						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
-								return 111;
 							case IDelta.CLINIT :
 								return 25;
 							case IDelta.CONSTRUCTOR :
@@ -249,8 +229,6 @@ public class Messages extends NLS {
 								return 36;
 							case IDelta.METHOD :
 								return 37;
-							case IDelta.DEPRECATION :
-								return 110;
 						}
 						break;
 					case IDelta.REMOVED :
@@ -258,8 +236,6 @@ public class Messages extends NLS {
 							case IDelta.CONSTRUCTOR :
 							case IDelta.API_CONSTRUCTOR :
 								return 38;
-							case IDelta.DEPRECATION :
-								return 111;
 						}
 						break;
 					case IDelta.CHANGED :
@@ -277,8 +253,6 @@ public class Messages extends NLS {
 								return 18;
 							case IDelta.VALUE :
 								return 40;
-							case IDelta.DEPRECATION :
-								return 110;
 						}
 						break;
 					case IDelta.CHANGED :
@@ -320,14 +294,11 @@ public class Messages extends NLS {
 							}
 						break;
 					case IDelta.REMOVED :
-						switch(delta.getFlags()) {
-							case IDelta.VALUE :
-								if (Flags.isProtected(delta.getNewModifiers())) {
-									return 52;
-								}
-								return 53;
-							case IDelta.DEPRECATION :
-								return 111;
+						if (delta.getFlags() == IDelta.VALUE) {
+							if (Flags.isProtected(delta.getNewModifiers())) {
+								return 52;
+							}
+							return 53;
 						}
 				}
 				break;
@@ -340,8 +311,6 @@ public class Messages extends NLS {
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
 						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
-								return 110;
 							case IDelta.FIELD :
 								return 54;
 							case IDelta.METHOD :
@@ -372,8 +341,6 @@ public class Messages extends NLS {
 								return 60;
 							case IDelta.METHOD_MOVED_UP :
 								return 61;
-							case IDelta.DEPRECATION :
-								return 111;
 						}
 				}
 				break;
@@ -381,8 +348,6 @@ public class Messages extends NLS {
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
 						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
-								return 110;
 							case IDelta.ANNOTATION_DEFAULT_VALUE :
 								return 62;
 							case IDelta.CHECKED_EXCEPTION :
@@ -439,8 +404,6 @@ public class Messages extends NLS {
 								return 76;
 							case IDelta.UNCHECKED_EXCEPTION :
 								return 77;
-							case IDelta.DEPRECATION :
-								return 111;
 						}
 					}
 				break;
@@ -448,8 +411,6 @@ public class Messages extends NLS {
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
 						switch(delta.getFlags()) {
-							case IDelta.DEPRECATION :
-								return 110;
 							case IDelta.CHECKED_EXCEPTION :
 								return 85;
 							case IDelta.TYPE_PARAMETERS :
@@ -476,8 +437,6 @@ public class Messages extends NLS {
 								return 90;
 							case IDelta.UNCHECKED_EXCEPTION :
 								return 91;
-							case IDelta.DEPRECATION :
-								return 111;
 						}
 					}
 				break;
