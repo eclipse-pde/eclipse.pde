@@ -150,6 +150,20 @@ public class ProductTests extends PDETestCase {
 		assertTrue(brand.icons.indexOf("mail.ico") > 0);
 	}
 
+	public void test186224() throws Exception {
+		IFolder buildFolder = newTest("186224");
+
+		Utils.generateProduct(buildFolder.getFile("features/foo/foo.product"), null, "1.0.0", null, new String[] {"org.eclipse.osgi"}, false);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", "/foo/foo.product");
+		properties.put("configs", "win32,win32,x86");
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/productBuild.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"generateFeature", "generate"}, buildFolder.getLocation().toOSString(), properties);
+	}
+
 	public void test237747() throws Exception {
 		IFolder buildFolder = newTest("237747");
 
@@ -402,11 +416,11 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(config, "org.eclipse.update.reconcile=false");
 		assertLogContainsLine(config, "osgi.bundles.defaultStartLevel=3");
 		assertLogContainsLine(config, "osgi.bundles=org.eclipse.equinox.simpleconfigurator@1:start");
-		assertLogContainsLine(info, "org.eclipse.core.runtime_" + versions.get("org.eclipse.core.runtime") + ",3,false" );
-		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ",3,false" ); //bug 274901
-		assertLogContainsLine(info, "org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ",1,true" );
+		assertLogContainsLine(info, "org.eclipse.core.runtime_" + versions.get("org.eclipse.core.runtime") + ",3,false");
+		assertLogContainsLine(info, "org.eclipse.equinox.app_" + versions.get("org.eclipse.equinox.app") + ",3,false"); //bug 274901
+		assertLogContainsLine(info, "org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ",1,true");
 	}
-	
+
 	public void testBug266056_2() throws Exception {
 		IFolder buildFolder = newTest("266056_2");
 
@@ -433,7 +447,7 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(config, "osgi.bundles=org.eclipse.core.runtime,org.eclipse.update.configurator,org.eclipse.equinox.common@start");
 
 	}
-	
+
 	public void testBug269540() throws Exception {
 		IFolder buildFolder = newTest("269540");
 
@@ -447,7 +461,7 @@ public class ProductTests extends PDETestCase {
 		Utils.generateBundleManifest(a, "A", "1.0.0", manifestAdditions);
 		Utils.generatePluginBuildProperties(a, null);
 		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
-				
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<launcher name=\"rcp\">                    \n");
 		buffer.append("   <win useIco=\"true\">                   \n");
@@ -455,24 +469,24 @@ public class ProductTests extends PDETestCase {
 		buffer.append("   </win>                                  \n");
 		buffer.append("</launcher>                                \n");
 		IFile product = buildFolder.getFile("foo.product");
-		Utils.generateProduct(product, "rcp", "1.0.0", null, "rcp", new String [] { "A" }, false, buffer);
-		
+		Utils.generateProduct(product, "rcp", "1.0.0", null, "rcp", new String[] {"A"}, false, buffer);
+
 		//steal the icons from test 237922
 		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
 		IFile icoFile = a.getFile("mail.ico");
 		icoFile.create(ico.openStream(), IResource.FORCE, null);
-		
+
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("product", product.getLocation().toOSString());
 		buildProperties.put("filteredDependencies", "true");
 		buildProperties.put("pluginPath", delta.getAbsolutePath());
 		buildProperties.put("configs", "win32, win32, x86");
 		//buildProperties.put("archivesFormat", "win32,win32,x86 - folder");
-		
+
 		Utils.storeBuildProperties(buildFolder, buildProperties);
-		
+
 		runProductBuild(buildFolder);
-		
+
 		Set entries = new HashSet();
 		entries.add("eclipse/plugins/A_1.0.0.jar");
 		entries.add("eclipse/rcp.exe");

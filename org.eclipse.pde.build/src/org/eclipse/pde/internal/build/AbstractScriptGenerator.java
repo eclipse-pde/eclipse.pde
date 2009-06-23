@@ -390,7 +390,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public ProductFile loadProduct(String product, String os) throws CoreException {
-		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
+		if (product == null || product.startsWith("${") || product.length() == 0) { //$NON-NLS-1$
 			return null;
 		}
 		String productPath = findFile(product, false);
@@ -405,6 +405,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				f = new File(getWorkingDirectory(), product);
 				if (!f.exists() || !f.isFile()) {
 					f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, product); //$NON-NLS-1$
+					if (!f.exists() || !f.isFile()) {
+						f = new File(getWorkingDirectory() + '/' + DEFAULT_FEATURE_LOCATION, product);
+					}
 				}
 			}
 		}

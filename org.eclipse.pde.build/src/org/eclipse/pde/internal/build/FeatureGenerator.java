@@ -190,29 +190,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			xml.delete();
 		}
 
-		if (productFile != null && !productFile.startsWith("${") && productFile.length() > 0) { //$NON-NLS-1$
-			String productPath = findFile(productFile, false);
-			File f = null;
-			if (productPath != null) {
-				f = new File(productPath);
-			} else {
-				// couldn't find productFile, try it as a path directly
-				f = new File(productFile);
-				if (!f.exists() || !f.isFile()) {
-					// doesn't exist, try it as a path relative to the working directory
-					f = new File(getWorkingDirectory(), productFile);
-					if (!f.exists() || !f.isFile()) {
-						f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, productFile); //$NON-NLS-1$
-					}
-				}
-			}
-			if (f.exists() && f.isFile()) {
-				product = new ProductFile(f.getAbsolutePath(), null);
-			} else {
-				IStatus error = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PRODUCT_FILE, NLS.bind(Messages.exception_missingElement, productFile), null);
-				throw new CoreException(error);
-			}
-		}
+		product = loadProduct(productFile);
 	}
 
 	/*
