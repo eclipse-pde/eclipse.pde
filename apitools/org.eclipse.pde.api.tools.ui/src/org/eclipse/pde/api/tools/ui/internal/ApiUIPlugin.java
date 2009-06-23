@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -79,6 +80,8 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools.ui"; //$NON-NLS-1$
 	private final static String WIZBAN = ICONS_PATH + "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
 	
+	private ActionFilterAdapterFactory fActionFilterAdapterFactory;
+
 	/**
 	 * Declare an Image in the registry table.
 	 * @param reg	image registry
@@ -340,6 +343,8 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		fBundleContext = context;
 		ApiPlugin.getDefault().getSessionManager().addSessionListener(this.sessionListener);
+		fActionFilterAdapterFactory= new ActionFilterAdapterFactory();
+		Platform.getAdapterManager().registerAdapters(fActionFilterAdapterFactory, IJavaElement.class);
 		super.start(context);
 	}
 	
@@ -355,6 +360,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		fCompositeImages.clear();
 		fBundleContext = null;
 		ApiPlugin.getDefault().getSessionManager().removeSessionListener(this.sessionListener);
+		Platform.getAdapterManager().unregisterAdapters(fActionFilterAdapterFactory, IJavaElement.class);
 		super.stop(context);
 	}
 }
