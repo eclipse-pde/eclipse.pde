@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     EclipseSource Corporation - initial API and implementation
+ *     Anyware Technologies - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.sections;
 
@@ -20,9 +21,9 @@ import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.IActionSetContributionItem;
-import org.eclipse.ui.internal.PluginAction;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -139,17 +140,27 @@ public class ActiveMenuSection implements ISpySection {
 
 	private void createActionContributionItemText(Object object, StringBuffer buffer, SpyFormToolkit toolkit, FormText text, Class clazz, PluginAction pluginAction) {
 		try {
-			Field field = clazz.getDeclaredField("delegate"); //$NON-NLS-1$
-			field.setAccessible(true);
-			IActionDelegate delegate = (IActionDelegate) field.get(pluginAction);
-			if (delegate == null) { // have to invoke createDelegate if we don't have one yet...
-				Method method = clazz.getDeclaredMethod("createDelegate", null); //$NON-NLS-1$
-				method.setAccessible(true);
-				method.invoke(pluginAction, null);
-				delegate = (IActionDelegate) field.get(pluginAction);
+			RetargetAction retargetAction = null;
+			IActionDelegate delegate = null;
+			if (pluginAction instanceof WWinPluginAction) {
+				// such an action *may* have a retarget action
+				Field field = clazz.getDeclaredField("retargetAction"); //$NON-NLS-1$
+				field.setAccessible(true);
+				retargetAction = (RetargetAction) field.get(pluginAction);
 			}
-
-			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_6, new Class[] {delegate.getClass()}));
+			// if there's no retarget action OR if the pluginAction is not a WWinPluginAction, let's try to find the action delegate
+			if (retargetAction == null) {
+				Field field = clazz.getDeclaredField("delegate"); //$NON-NLS-1$
+				field.setAccessible(true);
+				delegate = (IActionDelegate) field.get(pluginAction);
+				if (delegate == null) { // have to invoke createDelegate if we don't have one yet...
+					Method method = clazz.getDeclaredMethod("createDelegate", null); //$NON-NLS-1$
+					method.setAccessible(true);
+					method.invoke(pluginAction, null);
+					delegate = (IActionDelegate) field.get(pluginAction);
+				}
+			}
+			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_6, new Class[] {(retargetAction == null) ? delegate.getClass() : retargetAction.getActionHandler().getClass()}));
 			PackageAdmin admin = PDERuntimePlugin.getDefault().getPackageAdmin();
 			Bundle bundle = admin.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "menu item", buffer, text); //$NON-NLS-1$
