@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
+ *     Heiko Seeberger - changes for bug 237764
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.sections;
 
@@ -38,6 +39,9 @@ public class ActivePartSection implements ISpySection {
 			return;
 
 		final IWorkbenchPart part = HandlerUtil.getActivePart(event);
+		if (part == null)
+			return; // (Bug 237764) if no active part let's do nothing ...
+
 		String partType = part instanceof IEditorPart ? "editor" : "view"; //$NON-NLS-1$ //$NON-NLS-2$
 		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 
