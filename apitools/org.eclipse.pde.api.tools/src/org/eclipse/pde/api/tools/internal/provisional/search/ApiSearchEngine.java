@@ -55,6 +55,7 @@ public final class ApiSearchEngine {
 	 * Visitor used to extract references from the component is is passed to
 	 */
 	class ReferenceExtractor extends ApiTypeContainerVisitor {
+		static final int COLLECTOR_MAX = 2500;
 		private List collector = null;
 		private IApiSearchRequestor requestor = null;
 		private IApiSearchReporter reporter = null;
@@ -88,10 +89,18 @@ public final class ApiSearchEngine {
 						type, 
 						getResolvedReferences(requestor, type, monitor.newChild(1)), 
 						monitor.newChild(1)));
-				
 			}
 			catch(CoreException ce) {
 				ApiPlugin.log(ce);
+			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor#end(java.lang.String, org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot)
+		 */
+		public void end(String packageName, IApiTypeRoot typeroot) {
+			if(this.collector.size() >= COLLECTOR_MAX) {
+				reportResults();
 			}
 		}
 		
@@ -106,6 +115,10 @@ public final class ApiSearchEngine {
 		 * @see org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor#endVisitPackage(java.lang.String)
 		 */
 		public void endVisitPackage(String packageName) {
+			reportResults();
+		}
+		
+		private void reportResults() {
 			reporter.reportResults(this.element, (IReference[]) collector.toArray(new IReference[collector.size()]));
 			collector.clear();
 		}
@@ -214,7 +227,8 @@ public final class ApiSearchEngine {
 					ReferenceExtractor visitor = new ReferenceExtractor(requestor, reporter, element, localmonitor.newChild(1));
 					IApiComponent comp = (IApiComponent) element;
 					comp.accept(visitor);
-					localmonitor.worked(1);
+					comp.close();
+					Util.updateMonitor(localmonitor, 1);
 					break;
 				}
 				case IApiElement.FIELD:
@@ -236,7 +250,7 @@ public final class ApiSearchEngine {
 					break;
 				}
 			}
-			localmonitor.worked(1);
+			Util.updateMonitor(localmonitor, 1);
 		}
 		finally {
 			localmonitor.done();
