@@ -15,8 +15,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -26,7 +24,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Default implementation of an {@link IApiSearchRequestor} to use with the
@@ -47,11 +44,6 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 * The mask to use while searching
 	 */
 	private int fSearchMask = 0;
-	
-	/**
-	 * The listing of components to ignore
-	 */
-	private Set fExcludeList = null;
 	
 	/**
 	 * The search scope for this requestor
@@ -76,18 +68,17 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * Constructor
 	 * @param elements an array of {@link IApiElement}s for the search engine to use
+	 * @param scope the raw list of {@link IApiElement}s to extract references from
 	 * @param searchkinds the kinds of references to search for. 
 	 * <br>Options include: 
 	 * <ol>
 	 * <li>{@link #INCLUDE_API}</li>
 	 * <li>{@link #INCLUDE_INTERNAL}</li>
 	 * </ol>
-	 * @param excludelist an array of component ids that should be excluded from the search
 	 */
-	public ApiUseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds, Set excludelist) {
+	public ApiUseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds) {
 		fSearchMask = searchkinds;
 		fComponentIds = elementnames;
-		fExcludeList = excludelist;
 		prepareScope(scope);
 	}
 	
@@ -156,27 +147,11 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 */
 	private void prepareScope(IApiElement[] elements) {
 		if(elements != null) {
-			try {
-				TreeSet comps = new TreeSet(componentsorter);
-				IApiComponent[] components = null;
-				IApiComponent component = null;
-				for(int i = 0; i < elements.length; i++) {
-					component = elements[i].getApiComponent();
-					if(component.isSystemComponent()) {
-						continue;
-					}
-					comps.add(component);
-					components = ((ApiBaseline)component.getBaseline()).getVisibleDependentComponents(new IApiComponent[] {component});
-					for (int j = 0; j < components.length; j++) {
-						if(acceptComponent0(components[j])) {
-							comps.add(components[j]);
-						}
-					}
-				}
-				components = (IApiComponent[]) comps.toArray(new IApiComponent[comps.size()]);
-				fScope = new ApiUseSearchScope(components);
+			TreeSet comps = new TreeSet(componentsorter);
+			for(int i = 0; i < elements.length; i++) {
+				comps.add(elements[i].getApiComponent());
 			}
-			catch(CoreException ce) {}
+			fScope = new ApiUseSearchScope((IApiComponent[]) comps.toArray(new IApiComponent[comps.size()]));
 		}
 	}
 	
@@ -185,37 +160,6 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 */
 	public IApiSearchScope getScope() {
 		return fScope;
-	}
-
-	/**
-	 * Checks the given {@link IApiComponent} to see if we allow it to appear in the scope or not
-	 * @param component
-	 * @return true if the given component should be allowed in the scope false otherwise
-	 * @throws CoreException
-	 */
-	private boolean acceptComponent0(IApiComponent component) throws CoreException {
-		return component != null &&  
-				!fExcludeList.contains(component.getId()) && 
-				isApiComponent(component);
-	}
-	
-	/**
-	 * Utility method to determine if the given {@link IApiComponent} represents a project that
-	 * is API tools enabled
-	 * @param component
-	 * @return true if the project represented by the given component is API tools enabled false otherwise
-	 */
-	private boolean isApiComponent(IApiComponent component) {
-		if(includesNonApiProjects()) {
-			return true;
-		}
-		if(component instanceof PluginProjectApiComponent) {
-			PluginProjectApiComponent comp = (PluginProjectApiComponent) component;
-			return comp.hasApiDescription();
-		}
-		else {
-			return Util.isApiToolsComponent(component);
-		}
 	}
 	
 	/* (non-Javadoc)

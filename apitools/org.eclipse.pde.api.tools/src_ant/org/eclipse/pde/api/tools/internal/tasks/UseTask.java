@@ -234,8 +234,7 @@ public class UseTask extends CommonUtilsTask {
 		IApiSearchRequestor requestor = new ApiUseSearchRequestor(
 				getBaselineIds(baseline),
 				getScope(scope), 
-				getSearchFlags(), 
-				this.excludeset);
+				getSearchFlags());
 		ApiSearchEngine.setDebug(this.debug);
 		engine.search(baseline, requestor, reporter, null);
 	}
@@ -277,7 +276,7 @@ public class UseTask extends CommonUtilsTask {
 		}
 		File file = new File(this.reportLocation);
 		if(file.exists()) {
-			scrubReportLocation(file);
+			Util.delete(file);
 		}
 		if(this.debug) {
 			System.out.println("done in: "+ (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$

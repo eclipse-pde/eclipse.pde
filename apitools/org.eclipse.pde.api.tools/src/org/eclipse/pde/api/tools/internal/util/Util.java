@@ -1826,7 +1826,9 @@ public final class Util {
 	 * @return true iff the file was really delete, false otherwise
 	 */
 	public static boolean delete(File file) {
-		if (!file.exists()) return true;
+		if (!file.exists()) {
+			return true;
+		}
 		// flush all directory content
 		if (file.isDirectory()) {
 			flushDirectoryContent(file);
