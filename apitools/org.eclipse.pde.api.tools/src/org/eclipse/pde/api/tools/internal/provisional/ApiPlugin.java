@@ -46,6 +46,7 @@ import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
+import org.eclipse.pde.api.tools.internal.util.FileManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -488,6 +489,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			ApiDescriptionManager.shutdown();
 			ApiBaselineManager.getManager().stop();
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			FileManager.getManager().deleteFiles();
 		}
 		finally {
 			super.stop(context);

@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -68,6 +69,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.util.FileManager;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
@@ -82,6 +84,9 @@ import org.xml.sax.SAXException;
  * @since 1.0.0
  */
 public class BundleApiComponent extends AbstractApiComponent {
+	
+	static final String TMP_API_FILE_PREFIX = "api"; //$NON-NLS-1$
+	static final String TMP_API_FILE_POSTFIX = "tmp"; //$NON-NLS-1$
 	
 	/**
 	 * Dictionary parsed from MANIFEST.MF
@@ -526,42 +531,33 @@ public class BundleApiComponent extends AbstractApiComponent {
 				if (path.equals(".")) { //$NON-NLS-1$
 					return new ArchiveApiTypeContainer(this, fLocation);
 				} else {
-					// TODO: use temporary space from OSGi if in a framework
+					//classpath element can be jar or folder
+					//https://bugs.eclipse.org/bugs/show_bug.cgi?id=279729
 					zip = new ZipFile(fLocation);
 					ZipEntry entry = zip.getEntry(path);
 					if (entry != null) {
-						InputStream inputStream = null;
-						File tempFile;
-						FileOutputStream outputStream = null;
-						try {
-							inputStream = zip.getInputStream(entry);
-							tempFile = File.createTempFile("api", "tmp"); //$NON-NLS-1$ //$NON-NLS-2$
-							tempFile.deleteOnExit();
-							outputStream = new FileOutputStream(tempFile);
-							byte[] bytes = new byte[8096];
-							while (inputStream.available() > 0) {
-								int read = inputStream.read(bytes);
-								if (read > 0) {
-									outputStream.write(bytes, 0, read);
-								}
+						File tmpfolder = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+						if(entry.isDirectory()) {
+							//extract the dir and all children
+							File dir = File.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
+							dir.deleteOnExit();
+							//hack to create a tmp directory
+							// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
+							if(dir.delete()) {
+								dir.mkdir();
+								FileManager.getManager().recordTempFileRoot(dir.getAbsolutePath());
 							}
-						} finally {
-							if (inputStream != null) {
-								try {
-									inputStream.close();
-								} catch(IOException e) {
-									ApiPlugin.log(e);
-								}
-							}
-							if (outputStream != null) {
-								try {
-									outputStream.close();
-								} catch(IOException e) {
-									ApiPlugin.log(e);
-								}
+							extractDirectory(zip, entry.getName(), dir);
+							if(dir.isDirectory() && dir.exists()) {
+								return new DirectoryApiTypeContainer(this, dir.getCanonicalPath());
 							}
 						}
-						return new ArchiveApiTypeContainer(this, tempFile.getCanonicalPath());
+						else {
+							File file = extractEntry(zip, entry, tmpfolder, true);
+							if(Util.isArchive(file.getName())) {
+								return new ArchiveApiTypeContainer(this, file.getCanonicalPath());
+							}
+						}
 					}
 				}
 			} finally {
@@ -573,6 +569,83 @@ public class BundleApiComponent extends AbstractApiComponent {
 		return null;
 	}
 		
+	/**
+	 * Extracts a directory from the archive given a path prefix for entries to retrieve.
+	 * <code>null</code> can be passed in as a prefix, causing all entries to be be extracted from 
+	 * the archive.
+	 * 
+	 * @param zip the {@link ZipFile} to extract from
+	 * @param pathprefix the prefix'ing path to include for extraction
+	 * @param parent the parent directory to extract to
+	 * @throws IOException if the {@link ZipFile} cannot be read or extraction fails to write the file(s)
+	 */
+	void extractDirectory(ZipFile zip, String pathprefix, File parent) throws IOException {
+		Enumeration entries = zip.entries();
+		String prefix = (pathprefix == null ? Util.EMPTY_STRING : pathprefix);
+		ZipEntry entry = null;
+		File file = null;
+		while (entries.hasMoreElements()) {
+			entry = (ZipEntry) entries.nextElement();
+			if(entry.getName().startsWith(prefix)) {
+				file = new File(parent, entry.getName());
+				if (entry.isDirectory()) {
+					file.mkdir();
+					continue;
+				}
+				extractEntry(zip, entry, parent, false);
+			}
+		}
+	}
+	
+	/**
+	 * Extracts a non-directory entry from a zip file and returns the File handle
+	 * @param zip the zip to extract from
+	 * @param entry the entry to extract
+	 * @param parent the parent directory to add the extracted entry to
+	 * @param temp if a temp file should be created for the entry
+	 * @return the file handle to the extracted entry, <code>null</code> otherwise
+	 * @throws IOException
+	 */
+	File extractEntry(ZipFile zip, ZipEntry entry, File parent, boolean temp) throws IOException {
+		InputStream inputStream = null;
+		File file;
+		FileOutputStream outputStream = null;
+		try {
+			inputStream = zip.getInputStream(entry);
+			if(temp) {
+				file = File.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
+				file.deleteOnExit();
+			}
+			else {
+				file = new File(parent, entry.getName());
+			}
+			outputStream = new FileOutputStream(file);
+			byte[] bytes = new byte[8096];
+			while (inputStream.available() > 0) {
+				int read = inputStream.read(bytes);
+				if (read > 0) {
+					outputStream.write(bytes, 0, read);
+				}
+			}
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch(IOException e) {
+					ApiPlugin.log(e);
+				}
+			}
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch(IOException e) {
+					ApiPlugin.log(e);
+				}
+			}
+		}
+		return file;
+	}
+	
 	/**
 	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
 	 * or in a directory at the specified location.
