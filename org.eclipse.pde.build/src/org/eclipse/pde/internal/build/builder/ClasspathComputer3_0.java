@@ -158,7 +158,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			String pattern = exports[i].getName().replaceAll("\\.", "/") + "/*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			String rule = (discouraged ? '~' : '+') + pattern;
 
-			String rules = (String) packages.get(exporter.getSymbolicName());
+			String packagesKey = exporter.getSymbolicName() + "_" + exporter.getVersion(); //$NON-NLS-1$
+			String rules = (String) packages.get(packagesKey);
 			if (rules != null) {
 				if (rules.indexOf(rule) == -1)
 					rules = rules + File.pathSeparator + rule;
@@ -166,7 +167,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				rules = rule;
 			}
 
-			packages.put(exporter.getSymbolicName(), rules);
+			packages.put(packagesKey, rules);
 		}
 	}
 
@@ -304,15 +305,16 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry 
 	// classpath : The classpath in which we want to add this path 
 	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
-		String pluginId = model != null ? model.getSymbolicName() : null;
+		String pluginKey = model != null ? model.getSymbolicName() + "_" + model.getVersion() : null; //$NON-NLS-1$
 		String rules = ""; //$NON-NLS-1$
 		//only add access rules to libraries that are not part of the current bundle
 		//and are not this bundle's host if we are a fragment
 		BundleDescription currentBundle = generator.getModel();
 		if (model != null && model != currentBundle && (currentBundle.getHost() == null || currentBundle.getHost().getSupplier() != model)) {
-			String packageKey = pluginId;
+			String packageKey = pluginKey;
 			if (model.isResolved() && model.getHost() != null) {
-				packageKey = ((BundleDescription) model.getHost().getSupplier()).getSymbolicName();
+				BundleDescription host = (BundleDescription) model.getHost().getSupplier();
+				packageKey = host.getSymbolicName() + "_" + host.getVersion(); //$NON-NLS-1$
 			}
 			if (visiblePackages.containsKey(packageKey)) {
 				rules = "[" + (String) visiblePackages.get(packageKey) + File.pathSeparator + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -331,9 +333,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			else
 				path = basePath.append(libraryPath).toOSString();
 		}
-		path = ModelBuildScriptGenerator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
+		path = ModelBuildScriptGenerator.replaceVariables(path, pluginKey == null ? false : generator.getCompiledElements().contains(pluginKey));
 		String secondaryPath = null;
-		if (generator.getCompiledElements().contains(pluginId)) {
+		if (generator.getCompiledElements().contains(pluginKey)) {
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null)
 				path = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 			secondaryPath = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + model.getSymbolicName() + '_' + model.getVersion() + '/' + libraryName; //$NON-NLS-1$

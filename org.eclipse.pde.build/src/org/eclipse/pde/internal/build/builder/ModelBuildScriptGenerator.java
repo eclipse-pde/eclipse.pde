@@ -1038,7 +1038,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			//if there were no build.properties, then it is a binary plugin
 			binaryPlugin = true;
 		} else {
-			getCompiledElements().add(model.getSymbolicName());
+			getCompiledElements().add(model.getSymbolicName() + "_" + model.getVersion()); //$NON-NLS-1$
 		}
 		Properties bundleProperties = (Properties) model.getUserObject();
 		if (bundleProperties == null) {
