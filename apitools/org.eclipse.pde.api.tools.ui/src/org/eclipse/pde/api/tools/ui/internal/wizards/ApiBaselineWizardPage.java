@@ -589,7 +589,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
 			return false;
 		}
-		if(!name.equals(originalname) && (((ApiBaselineManager)ApiPlugin.getDefault().getApiBaselineManager()).isExistingBaselineName(name) &&
+		if(!name.equals(originalname) && (((ApiBaselineManager)ApiPlugin.getDefault().getApiBaselineManager()).isExistingProfileName(name) &&
 				!ApiBaselinePreferencePage.isRemovedBaseline(name))) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
 			return false;
