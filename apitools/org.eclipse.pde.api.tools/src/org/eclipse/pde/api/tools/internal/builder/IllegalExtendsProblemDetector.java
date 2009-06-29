@@ -156,14 +156,14 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			if(method != null) {
 				String methodsig = Signatures.getQualifiedMethodSignature(method);
 				return new String[] {
-						Signatures.getAnonymousTypeName(reference.getMember().getName()),
+						Signatures.getAnonymousTypeName(ltype.getName()),
 						methodsig,
 						simpleTypeName
 				};
 			}
 			else {
 				return new String[] {
-						Signatures.getAnonymousTypeName(reference.getMember().getName()), 
+						Signatures.getAnonymousTypeName(ltype.getName()), 
 						getSimpleTypeName(etype), 
 						simpleTypeName};
 			}
@@ -266,13 +266,12 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			if(method != null && method.exists()) {
 				ApiType etype = (ApiType) type.getEnclosingType();
 				IApiMethod[] methods = etype.getMethods();
-				String mname = null, msig = null;
+				String msig = null;
 				for (int i = 0; i < methods.length; i++) {
-					mname = Signatures.getMethodName(methods[i]);
-					msig = methods[i].getSignature();;
-					if(mname.equals(method.getElementName()) &&
+					msig = methods[i].getSignature();
+					if(Signatures.getMethodName(methods[i]).equals(method.getElementName()) &&
 							Signatures.matchesSignatures(msig.replace('/', '.'), method.getSignature())) {
-						type.setEnclosingMethodInfo(mname, msig);
+						type.setEnclosingMethodInfo(methods[i].getName(), msig);
 					}
 				}
 				return method;
