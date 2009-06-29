@@ -36,9 +36,30 @@ public class FetchTests extends PDETestCase {
 		}
 
 		assertResourceFile(buildFolder, "log.log");
-		assertLogContainsLine(buildFolder.getFile("log.log"), "[eclipse.fetch] Could not retrieve feature.xml and/or build.properties:");
+		assertLogContainsLine(buildFolder.getFile("log.log"), "Could not retrieve feature.xml or build.properties for feature org.eclipse.rcp");
 	}
 
+	public void testFetchFeature() throws Exception {
+		IFolder buildFolder = newTest("fetchFeature");
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("feature@org.eclipse.cvs=v20090619,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,org.eclipse.cvs-feature\n");
+		buffer.append("plugin@org.eclipse.cvs=v20090520,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,org.eclipse.sdk-feature/plugins/org.eclipse.cvs\n");
+		buffer.append("plugin@org.eclipse.team.cvs.core=I20090430-0408,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ssh2=I20090508-2000,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ui=I20090521-1750,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,\n");
+		Utils.writeBuffer(buildFolder.getFile("directory.txt"), buffer);
+		
+		Properties fetchProperties = new Properties();
+		fetchProperties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		fetchProperties.put("type", "feature");
+		fetchProperties.put("id", "org.eclipse.cvs");
+		
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
+	}
+	
 	public void testBug248767_2() throws Exception {
 		IFolder buildFolder = newTest("248767_2");
 		IFolder base = Utils.createFolder(buildFolder, "base");

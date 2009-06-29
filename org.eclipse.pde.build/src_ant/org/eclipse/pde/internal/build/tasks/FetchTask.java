@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -99,6 +99,7 @@ public class FetchTask extends Task {
 	public void execute() throws BuildException {
 		try {
 			BundleHelper.getDefault().setLog(this);
+			generator.setScriptRunner(new AntScriptRunner(this));
 			generator.generate();
 			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
@@ -125,7 +126,7 @@ public class FetchTask extends Task {
 	public void setPluginPath(String pluginPath) {
 		generator.setPluginPath(Utils.getArrayFromString(pluginPath, File.pathSeparator));
 	}
-	
+
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent.
 	 * @param configInfo an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).

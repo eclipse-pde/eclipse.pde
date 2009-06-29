@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.build.IFetchFactory;
 import org.eclipse.pde.internal.build.ant.AntScript;
+import org.eclipse.pde.internal.build.ant.IScriptRunner;
 import org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
@@ -74,6 +75,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	public static final String FETCH_FILE_PREFIX = "fetch_"; //$NON-NLS-1$
 
 	private String scriptName;
+	private IScriptRunner scriptRunner;
 
 	public FetchScriptGenerator() {
 		super();
@@ -474,20 +476,23 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// Run the Ant script to go to and retrieve the feature.xml. Call the Update
 		// code to construct the feature object to return.
 		try {
-			AntRunner runner = new AntRunner();
-			runner.setBuildFileLocation(target.getAbsolutePath());
 			Map retrieveProp = new HashMap();
 			retrieveProp.put("fetch.failonerror", "true"); //$NON-NLS-1$//$NON-NLS-2$
-			runner.addUserProperties(retrieveProp);
-			//This has to be hardcoded here because of the way AntRunner stipulates that 
-			//loggers are passed in. Otherwise this would be a Foo.class.getName()
-			runner.addBuildLogger("org.eclipse.pde.internal.build.tasks.SimpleBuildLogger"); //$NON-NLS-1$
+			if (scriptRunner != null) {
+				scriptRunner.runScript(target, TARGET_MAIN, retrieveProp);
+			} else {
+				AntRunner runner = new AntRunner();
+				runner.setBuildFileLocation(target.getAbsolutePath());
+				runner.addUserProperties(retrieveProp);
+				//This has to be hardcoded here because of the way AntRunner stipulates that 
+				//loggers are passed in. Otherwise this would be a Foo.class.getName()
+				runner.addBuildLogger("org.eclipse.pde.internal.build.tasks.SimpleBuildLogger"); //$NON-NLS-1$
 
-			runner.run();
+				runner.run();
+			}
 		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, NLS.bind(Messages.error_retrieveFailed, elementName), e));
 		}
-
 		try {
 			BuildTimeFeatureFactory factory = BuildTimeFeatureFactory.getInstance();
 			File featureFolder = new File(destination.toString());
@@ -759,6 +764,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	public void setRecursiveGeneration(boolean recursiveGeneration) {
 		this.recursiveGeneration = recursiveGeneration;
+	}
+
+	public void setScriptRunner(IScriptRunner runner) {
+		this.scriptRunner = runner;
 	}
 
 	private void setDirectory(SortedMap dir) {
