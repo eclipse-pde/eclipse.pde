@@ -425,7 +425,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 		
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_13, 4);
 		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
 		gd.horizontalSpan = 4;
 		tree.setLayoutData(gd);
@@ -589,7 +589,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
 			return false;
 		}
-		if(!name.equals(originalname) && (((ApiBaselineManager)ApiPlugin.getDefault().getApiBaselineManager()).isExistingProfileName(name) &&
+		if(!name.equals(originalname) && (((ApiBaselineManager)ApiPlugin.getDefault().getApiBaselineManager()).isExistingBaselineName(name) &&
 				!ApiBaselinePreferencePage.isRemovedBaseline(name))) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
 			return false;
