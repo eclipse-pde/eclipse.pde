@@ -553,7 +553,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 							}
 						}
 						else {
-							File file = extractEntry(zip, entry, tmpfolder, true);
+							File file = extractEntry(zip, entry, tmpfolder, false);
 							if(Util.isArchive(file.getName())) {
 								return new ArchiveApiTypeContainer(this, file.getCanonicalPath());
 							}
