@@ -97,25 +97,6 @@ public abstract class CommonUtilsTask extends Task {
 	}
 	
 	/**
-	 * Cleans the location if it exists
-	 * @param file
-	 */
-	protected void scrubReportLocation(File file) {
-		if(file.exists() && file.isDirectory()) {
-			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if(files[i].isDirectory()) {
-					scrubReportLocation(files[i]);
-				}
-				else {
-					files[i].delete();
-				}
-			}
-			file.delete();
-		}
-	}
-	
-	/**
 	 * Deletes an {@link IApiBaseline} from the given folder
 	 * @param referenceLocation
 	 * @param folder

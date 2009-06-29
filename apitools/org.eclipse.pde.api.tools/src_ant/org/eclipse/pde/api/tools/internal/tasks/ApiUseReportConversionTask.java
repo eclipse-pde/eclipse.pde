@@ -15,6 +15,7 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.search.ApiUseReportConverter;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Default task for converting the XML output from the apitooling.apiuse ant task
@@ -90,7 +91,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			}
 		}
 		try {
-			scrubReportLocation(new File(this.htmlReportsLocation));
+			Util.delete(new File(this.htmlReportsLocation));
 			ApiUseReportConverter converter = new ApiUseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation);
 			ApiUseReportConverter.setDebug(this.debug);
 			converter.convert(this.xsltFileLocation, null);
