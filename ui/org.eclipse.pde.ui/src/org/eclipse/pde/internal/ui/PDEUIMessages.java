@@ -2411,8 +2411,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String EnvironmentPage_title;
 
-	public static String JRESection_title;
-
 	public static String JRESection_description;
 
 	public static String JRESection_defaultJRE;
@@ -2420,8 +2418,6 @@ public class PDEUIMessages extends NLS {
 	public static String JRESection_JREName;
 
 	public static String JRESection_ExecutionEnv;
-
-	public static String EnvironmentSection_title;
 
 	public static String EnvironmentSection_description;
 
@@ -2458,6 +2454,8 @@ public class PDEUIMessages extends NLS {
 	public static String TargetDefinitionContentPage_7;
 
 	public static String TargetDefinitionContentPage_8;
+
+	public static String TargetDefinitionContentPage_LocationDescription;
 
 	public static String TargetDefinitionEnvironmentPage_3;
 

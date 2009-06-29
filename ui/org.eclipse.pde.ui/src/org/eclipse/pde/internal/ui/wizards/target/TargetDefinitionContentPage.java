@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -158,7 +160,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fLocationTab.setText(PDEUIMessages.LocationSection_0);
 
 		Composite pluginTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
-		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
+		SWTFactory.createWrapLabel(pluginTabContainer, PDEUIMessages.TargetDefinitionContentPage_LocationDescription, 2, 400);
 		fLocationTree = TargetLocationsGroup.createInDialog(pluginTabContainer);
 		fLocationTab.setControl(pluginTabContainer);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(pluginTabContainer, IHelpContextIds.EDIT_TARGET_WIZARD_LOCATIONS_TAB);
@@ -327,6 +329,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Group group = SWTFactory.createGroup(container, PDEUIMessages.EnvironmentBlock_targetEnv, 2, 1, GridData.FILL_HORIZONTAL);
 
 		initializeChoices();
+
+		SWTFactory.createWrapLabel(group, PDEUIMessages.EnvironmentSection_description, 2);
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_os, 1);
 

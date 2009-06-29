@@ -57,7 +57,7 @@ public class LocationsSection extends SectionPart {
 		section.setLayoutData(sectionData);
 		section.setText(PDEUIMessages.LocationSection_0);
 
-		section.setDescription(PDEUIMessages.ContentSection_1);
+		section.setDescription(PDEUIMessages.TargetDefinitionContentPage_LocationDescription);
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));

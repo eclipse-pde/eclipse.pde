@@ -71,7 +71,7 @@ public class JRESection extends SectionPart {
 	 * @param toolkit form toolkit used to create the widgets
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEUIMessages.JRESection_title);
+		section.setText(PDEUIMessages.EnvironmentBlock_jreTitle);
 		section.setDescription(PDEUIMessages.JRESection_description);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);

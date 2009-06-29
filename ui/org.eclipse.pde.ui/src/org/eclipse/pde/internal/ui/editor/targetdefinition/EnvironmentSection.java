@@ -74,7 +74,7 @@ public class EnvironmentSection extends SectionPart {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		section.setText(PDEUIMessages.EnvironmentSection_title);
+		section.setText(PDEUIMessages.EnvironmentBlock_targetEnv);
 		section.setDescription(PDEUIMessages.EnvironmentSection_description);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = SWT.TOP;
