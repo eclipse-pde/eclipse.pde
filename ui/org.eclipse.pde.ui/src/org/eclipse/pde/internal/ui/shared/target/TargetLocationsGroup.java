@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.util.ArrayList;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.jface.viewers.*;
@@ -24,8 +24,7 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
 import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -47,7 +46,6 @@ public class TargetLocationsGroup {
 	private Button fAddButton;
 	private Button fEditButton;
 	private Button fRemoveButton;
-	private Button fRemoveAllButton;
 	private Button fShowContentButton;
 
 	private ITargetDefinition fTarget;
@@ -110,10 +108,18 @@ public class TargetLocationsGroup {
 		comp.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 
-		Tree atree = toolkit.createTree(comp, SWT.V_SCROLL | SWT.H_SCROLL);
+		Tree atree = toolkit.createTree(comp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI);
 		atree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		atree.setLayoutData(gd);
+		atree.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
+					handleRemove();
+				}
+
+			}
+		});
 
 		Composite buttonComp = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout();
@@ -124,7 +130,6 @@ public class TargetLocationsGroup {
 		fAddButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_0, SWT.PUSH);
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
-		fRemoveAllButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_3, SWT.PUSH);
 
 		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
 
@@ -141,11 +146,18 @@ public class TargetLocationsGroup {
 	private void createDialogContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 
-		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.MULTI);
 		atree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
 		atree.setLayoutData(gd);
+		atree.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
+					handleRemove();
+				}
+			}
+		});
 
 		Composite buttonComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH);
 		GridLayout layout = new GridLayout();
@@ -157,7 +169,6 @@ public class TargetLocationsGroup {
 		fAddButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_0, null);
 		fEditButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_1, null);
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
-		fRemoveAllButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_3, null);
 
 		fShowContentButton = SWTFactory.createCheckButton(comp, Messages.TargetLocationsGroup_1, null, false, 2);
 
@@ -218,14 +229,6 @@ public class TargetLocationsGroup {
 		fRemoveButton.setLayoutData(new GridData());
 		fRemoveButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fRemoveButton);
-
-		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveAll();
-			}
-		});
-		fRemoveAllButton.setLayoutData(new GridData());
-		SWTFactory.setButtonDimensionHint(fRemoveAllButton);
 
 		fShowContentButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -306,41 +309,47 @@ public class TargetLocationsGroup {
 
 	private void handleRemove() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		if (!selection.isEmpty()) {
-			Object selected = selection.getFirstElement();
-			IBundleContainer container = null;
-			if (selected instanceof IBundleContainer) {
-				container = (IBundleContainer) selected;
-				IBundleContainer[] currentContainers = fTarget.getBundleContainers();
-				ArrayList newBundleContainers = new ArrayList(currentContainers.length);
-				for (int i = 0; i < currentContainers.length; i++) {
-					if (!currentContainers[i].equals(container)) {
-						newBundleContainers.add(currentContainers[i]);
+		IBundleContainer[] containers = fTarget.getBundleContainers();
+		if (!selection.isEmpty() && containers != null && containers.length > 0) {
+			Set newContainers = new HashSet();
+			newContainers.addAll(Arrays.asList(fTarget.getBundleContainers()));
+			Iterator iterator = selection.iterator();
+			boolean removedSite = false;
+			while (iterator.hasNext()) {
+				Object currentSelection = iterator.next();
+				if (currentSelection instanceof IBundleContainer) {
+					if (currentSelection instanceof IUBundleContainer) {
+						removedSite = true;
 					}
+					newContainers.remove(currentSelection);
 				}
-				fTarget.setBundleContainers((IBundleContainer[]) newBundleContainers.toArray(new IBundleContainer[newBundleContainers.size()]));
-
-				// If we remove a site container, we must force a re-resolve bug 275458 / bug 275401
-				contentsChanged(container instanceof IUBundleContainer);
-				fTreeViewer.refresh(false);
-				updateButtons();
 			}
-		}
-	}
+			if (newContainers.size() > 0) {
+				fTarget.setBundleContainers((IBundleContainer[]) newContainers.toArray(new IBundleContainer[newContainers.size()]));
+			} else {
+				fTarget.setBundleContainers(null);
+			}
 
-	private void handleRemoveAll() {
-		// Force the target to resolve to cancel any resolve jobs
-		fTarget.setBundleContainers(null);
-		contentsChanged(true);
-		fTreeViewer.refresh(false);
-		updateButtons();
+			// If we remove a site container, the content change update must force a re-resolve bug 275458 / bug 275401
+			contentsChanged(removedSite);
+			fTreeViewer.refresh(false);
+			updateButtons();
+		}
 	}
 
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		fEditButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
-		fRemoveButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
-		fRemoveAllButton.setEnabled(fTarget != null && fTarget.getBundleContainers() != null && fTarget.getBundleContainers().length > 0);
+		// If any container is selected, allow the remove (the remove ignores non-container entries)
+		boolean removeAllowed = false;
+		Iterator iter = selection.iterator();
+		while (iter.hasNext()) {
+			if (iter.next() instanceof IBundleContainer) {
+				removeAllowed = true;
+				break;
+			}
+		}
+		fRemoveButton.setEnabled(removeAllowed);
 	}
 
 	/**
