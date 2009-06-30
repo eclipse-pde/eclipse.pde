@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
+import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
@@ -49,6 +50,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisi
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -109,17 +111,20 @@ public class TestSuiteHelper {
 	 * @throws CoreException
 	 */
 	public static IApiBaseline createTestingBaseline(String testDirectory) throws CoreException {
-		return createTestingBaseline(new Path(testDirectory));
+		return createTestingBaseline(null, new Path(testDirectory));
 	}
 	
 	/**
-	 * Creates a testing {@link IApiComponent}
-	 * @param name
-	 * @param id
-	 * @param description
-	 * @return a new {@link IApiComponent} for testing
+	 * Creates a testing {@link IApiComponent} that has a testing baseline created for it
+	 * 
+	 * @param baselinename the name for the owning testing {@link IApiBaseline} or <code>null</code>
+	 * @param name the name for the component
+	 * @param id the id for the component
+	 * @param description an {@link IApiDescription} for the component or <code>null</code>
+	 * 
+	 * @return a new {@link IApiComponent} for testing purposes only
 	 */
-	public static IApiComponent createTestingApiComponent(final String name, final String id, final IApiDescription description) {
+	public static IApiComponent createTestingApiComponent(final String baselinename, final String name, final String id, final IApiDescription description) {
 		return new IApiComponent() {
 			public String[] getPackageNames() throws CoreException {
 				return null;
@@ -164,7 +169,7 @@ public class TestSuiteHelper {
 			public void dispose() {
 			}
 			public IApiBaseline getBaseline() {
-				return null;
+				return ApiModelFactory.newApiBaseline(baselinename);
 			}
 			public IApiFilterStore getFilterStore() {
 				return null;
@@ -215,20 +220,35 @@ public class TestSuiteHelper {
 	}
 	
 	/**
+	 * Creates a testing {@link IApiComponent}
+	 * @param name
+	 * @param id
+	 * @param description
+	 * @return a new {@link IApiComponent} for testing
+	 */
+	public static IApiComponent createTestingApiComponent(final String name, final String id, final IApiDescription description) {
+		return createTestingApiComponent(null, name, id, description);
+	}
+	
+	/**
 	 * Creates a simple baseline from bundles in the specified directory of 
 	 * the test plug-in project.
+	 * 
+	 * @param baselineid the name for the testing baseline
+	 * @param testDirectory the dir the test baseline resides in
 	 * 
 	 * @return Testing API baseline. If for some reason the testing directory is not available
 	 * <code>null</code> is returned
 	 * @throws CoreException
 	 */
-	public static IApiBaseline createTestingBaseline(IPath testDirectory) throws CoreException {
+	public static IApiBaseline createTestingBaseline(String baselineid, IPath testDirectory) throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(testDirectory);
 		File file = path.toFile();
+		String name = baselineid == null ? "test" : baselineid;
 		if(file.exists()) {
 			File eeFile = getEEDescriptionFile();
-			IApiBaseline baseline = newApiBaseline("test", eeFile);
+			IApiBaseline baseline = newApiBaseline(name, eeFile);
 			// create a component for each jar/directory in the folder
 			File[] files = file.listFiles();
 			List<IApiComponent> components = new ArrayList<IApiComponent>();
@@ -272,6 +292,27 @@ public class TestSuiteHelper {
 		return ApiModelFactory.newApiBaseline(name, eeFile);
 	}
 
+	/**
+	 * Creates a new {@link IApiType} for testing
+	 * @param componentid
+	 * @param name
+	 * @param sig
+	 * @param genericsig
+	 * @param flags
+	 * @param enclosingname
+	 * @return a new testing {@link IApiType}
+	 */
+	public static IApiType createTestingApiType(String baselineid, String componentid, String name, String sig, String genericsig, int flags, String enclosingname) {
+		return new ApiType(
+				TestSuiteHelper.createTestingApiComponent(baselineid, componentid, componentid, null), 
+				name, 
+				sig, 
+				genericsig, 
+				flags, 
+				enclosingname, 
+				null);
+	}
+	
 	/**
 	 * Gets the .ee file supplied to run tests based on system
 	 * property.

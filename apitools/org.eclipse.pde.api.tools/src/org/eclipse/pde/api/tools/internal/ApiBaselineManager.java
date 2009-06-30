@@ -56,6 +56,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
+import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -224,6 +225,12 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					success &= file.delete();
 				}
 				fNeedsSaving = true;
+				
+				//flush the model cache
+				try {
+					ApiModelCache.getCache().removeElementInfo(profile);
+				}
+				catch(CoreException ce){}
 				return success;
 			}
 		}
@@ -649,6 +656,11 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				workspacebaseline.dispose();
 				StubApiComponent.disposeAllCaches();
 				workspacebaseline = null;
+				//flush the model cache
+				try {
+					ApiModelCache.getCache().removeElementInfo(workspacebaseline);
+				}
+				catch(CoreException ce) {}
 			}
 		}
 	}

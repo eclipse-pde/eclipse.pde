@@ -64,6 +64,9 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		if (fApiTypeContainers == null) {
 			return;
 		}
+		//clean component cache elements
+		ApiModelCache.getCache().removeElementInfo(this);
+		
 		MultiStatus multi = null;
 		IStatus single = null;
 		IApiTypeContainer[] containers = getApiTypeContainers();
