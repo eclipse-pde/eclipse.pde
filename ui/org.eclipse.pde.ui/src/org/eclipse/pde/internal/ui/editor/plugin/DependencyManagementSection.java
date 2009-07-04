@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Anyware Technologies - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -407,6 +408,9 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		IPluginModelBase model = PluginRegistry.findModel(currentProj);
 		if (model != null) {
 			currentPlugins.add(model.getPluginBase().getId());
+			if (model.isFragmentModel()) {
+				currentPlugins.add(((IFragmentModel) model).getFragment().getPluginId());
+			}
 		}
 
 		ArrayList result = new ArrayList();
