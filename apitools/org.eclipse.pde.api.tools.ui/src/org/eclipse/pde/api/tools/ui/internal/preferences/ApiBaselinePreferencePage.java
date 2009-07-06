@@ -214,11 +214,10 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 			tableviewer.setCheckedElements(new Object[] {baseline});
 		}
 		origdefault = newdefault = (baseline == null ? null : baseline.getName());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIBASELINE_PREF_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APIBASELINE_PREF_PAGE);
 
 		block = new ApiBaselinesConfigurationBlock((IWorkbenchPreferenceContainer)getContainer());
 		block.createControl(comp, this);
-		SWTFactory.createVerticalSpacer(parent, 1);
 		Dialog.applyDialogFont(comp);
 		return comp;
 	}
