@@ -67,6 +67,16 @@ import com.ibm.icu.text.MessageFormat;
 public final class ApiUseReportConverter {
 
 	/**
+	 * Colour white for normal / permissible references
+	 */
+	private static final String NORMAL_REFS_COLOUR = "#FFFFFF"; //$NON-NLS-1$
+
+	/**
+	 * Colour red for internal references
+	 */
+	private static final String INTERNAL_REFS_COLOUR = "#F6CECE"; //$NON-NLS-1$
+
+	/**
 	 * Default handler to collect a total reference count
 	 */
 	static final class UseDefaultHandler extends DefaultHandler {
@@ -746,12 +756,14 @@ public final class ApiUseReportConverter {
 		CountGroup counts = null;
 		String link = null;
 		File summary = null;
+		String colour = null;
 		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry entry = (Map.Entry)  iter.next();
 			origin = (File) entry.getKey();
 			counts = (CountGroup) entry.getValue();
 			summary = new File(origin, origin.getName()+".html"); //$NON-NLS-1$
 			link = extractLinkFrom(report.referee, summary.getAbsolutePath());
+			colour = (counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR);
 			writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_referee_index_entry, 
 					new String[] {link, 
 						origin.getName(),
@@ -759,7 +771,8 @@ public final class ApiUseReportConverter {
 						Integer.toString(counts.getTotalInternalRefCount()),
 						Integer.toString(counts.getTotalPermissableRefCount()),
 						Integer.toString(counts.getTotalFragmentPermissibleRefCount()),
-						Integer.toString(counts.getTotalOtherRefCount())}));
+						Integer.toString(counts.getTotalOtherRefCount()),
+						colour}));
 		}
 	}
 	
@@ -860,6 +873,7 @@ public final class ApiUseReportConverter {
 	private void writeIndexEntry(PrintWriter writer, Report report) throws IOException {
 		File refereehtml = new File(report.referee, report.referee.getName()+".html"); //$NON-NLS-1$
 		String link = extractLinkFrom(this.reportsRoot, refereehtml.getAbsolutePath());
+		String colour = (report.counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR);
 		writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_referee_index_entry,  
 				new String[] {
 					link,
@@ -868,7 +882,8 @@ public final class ApiUseReportConverter {
 					Integer.toString(report.counts.getTotalInternalRefCount()),
 					Integer.toString(report.counts.getTotalPermissableRefCount()),
 					Integer.toString(report.counts.getTotalFragmentPermissibleRefCount()),
-					Integer.toString(report.counts.getTotalOtherRefCount())}));
+					Integer.toString(report.counts.getTotalOtherRefCount()),
+					colour}));
 	}
 	
 	/**
