@@ -545,7 +545,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 							// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
 							if(dir.delete()) {
 								dir.mkdir();
-								FileManager.getManager().recordTempFileRoot(dir.getAbsolutePath());
+								FileManager.getManager().recordTempFileRoot(dir.getCanonicalPath());
 							}
 							extractDirectory(zip, entry.getName(), dir);
 							if(dir.isDirectory() && dir.exists()) {
@@ -553,8 +553,15 @@ public class BundleApiComponent extends AbstractApiComponent {
 							}
 						}
 						else {
-							File file = extractEntry(zip, entry, tmpfolder, false);
+							File file = extractEntry(zip, entry, tmpfolder);
 							if(Util.isArchive(file.getName())) {
+								File parent = file.getParentFile();
+								if(!parent.equals(tmpfolder)) {
+									FileManager.getManager().recordTempFileRoot(parent.getCanonicalPath());
+								}
+								else {
+									FileManager.getManager().recordTempFileRoot(file.getCanonicalPath());
+								}
 								return new ArchiveApiTypeContainer(this, file.getCanonicalPath());
 							}
 						}
@@ -592,7 +599,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 					file.mkdir();
 					continue;
 				}
-				extractEntry(zip, entry, parent, false);
+				extractEntry(zip, entry, parent);
 			}
 		}
 	}
@@ -602,22 +609,19 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @param zip the zip to extract from
 	 * @param entry the entry to extract
 	 * @param parent the parent directory to add the extracted entry to
-	 * @param temp if a temp file should be created for the entry
 	 * @return the file handle to the extracted entry, <code>null</code> otherwise
 	 * @throws IOException
 	 */
-	File extractEntry(ZipFile zip, ZipEntry entry, File parent, boolean temp) throws IOException {
+	File extractEntry(ZipFile zip, ZipEntry entry, File parent) throws IOException {
 		InputStream inputStream = null;
 		File file;
 		FileOutputStream outputStream = null;
 		try {
 			inputStream = zip.getInputStream(entry);
-			if(temp) {
-				file = File.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
-				file.deleteOnExit();
-			}
-			else {
-				file = new File(parent, entry.getName());
+			file = new File(parent, entry.getName());
+			File lparent = file.getParentFile();
+			if(!lparent.exists()) {
+				lparent.mkdirs();
 			}
 			outputStream = new FileOutputStream(file);
 			byte[] bytes = new byte[8096];
