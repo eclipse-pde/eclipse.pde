@@ -38,6 +38,7 @@ import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
@@ -195,7 +196,7 @@ public class ApiFileGenerationTask extends Task {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(
-				Messages.bind(Messages.api_generation_printArguments,
+				NLS.bind(Messages.api_generation_printArguments,
 					new String[] {
 						this.projectName,
 						this.projectLocation,
@@ -226,7 +227,7 @@ public class ApiFileGenerationTask extends Task {
 				System.err.println("Must be a directory : " + this.projectLocation); //$NON-NLS-1$
 			}
 			throw new BuildException(
-					Messages.bind(Messages.api_generation_projectLocationNotADirectory, this.projectLocation));
+					NLS.bind(Messages.api_generation_projectLocationNotADirectory, this.projectLocation));
 		}
 		// check if the project contains the api tools nature
 		File dotProjectFile = new File(root, ".project"); //$NON-NLS-1$
@@ -243,7 +244,7 @@ public class ApiFileGenerationTask extends Task {
 				System.err.println("Must be a directory : " + this.targetFolder); //$NON-NLS-1$
 			}
 			throw new BuildException(
-				Messages.bind(Messages.api_generation_targetFolderNotADirectory, this.targetFolder));
+				NLS.bind(Messages.api_generation_targetFolderNotADirectory, this.targetFolder));
 		}
 		File apiDescriptionFile = new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		if (apiDescriptionFile.exists()) {
@@ -260,7 +261,7 @@ public class ApiFileGenerationTask extends Task {
 			for (int i = 0; i < allBinaryLocations.length; i++) {
 				container = getContainer(allBinaryLocations[i]);
 				if (container == null) {
-					throw new BuildException(Messages.bind(Messages.api_generation_invalidBinaryLocation, allBinaryLocations[i]));
+					throw new BuildException(NLS.bind(Messages.api_generation_invalidBinaryLocation, allBinaryLocations[i]));
 				}
 				allContainers.add(container);
 			}
@@ -392,7 +393,7 @@ public class ApiFileGenerationTask extends Task {
 	 * @param path
 	 * @return true if the given path name ends with one of the collected API package names 
 	 */
-	private boolean isApi(String path) {
+	boolean isApi(String path) {
 		String pkg = null;
 		for(Iterator iter = this.apiPackages.iterator(); iter.hasNext();) {
 			pkg = (String) iter.next();

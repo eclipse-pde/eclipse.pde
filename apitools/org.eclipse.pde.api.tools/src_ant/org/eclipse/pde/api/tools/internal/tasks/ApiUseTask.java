@@ -16,6 +16,7 @@ import java.io.StringWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.search.XMLApiSearchReporter;
@@ -191,7 +192,7 @@ public class ApiUseTask extends UseTask {
 		if (this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println(Messages.bind(
+			writer.println(NLS.bind(
 					Messages.ApiUseTask_missing_report_location, 
 					new String[] {this.reportLocation}));
 			writer.flush();

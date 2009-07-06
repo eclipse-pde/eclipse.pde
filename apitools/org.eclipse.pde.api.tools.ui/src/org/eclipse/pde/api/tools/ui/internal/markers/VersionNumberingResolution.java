@@ -30,7 +30,7 @@ import org.eclipse.ui.progress.UIJob;
  * @since 1.0.0
  */
 public class VersionNumberingResolution implements IMarkerResolution2 {
-	private String newVersionValue;
+	String newVersionValue;
 	// major or minor version
 	private int kind;
 	private String description;

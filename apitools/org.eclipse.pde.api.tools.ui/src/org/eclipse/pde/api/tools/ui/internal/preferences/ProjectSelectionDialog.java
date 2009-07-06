@@ -84,7 +84,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	
 	// the visual selection widget group
 	private TableViewer fTableViewer;
-	private Set fProjectsWithSpecifics;
+	Set fProjectsWithSpecifics;
 
 	// sizing constants
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 250;
@@ -175,7 +175,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	 * Handles the change in selection of the viewer and updates the status of the dialog at the same time
 	 * @param objects
 	 */
-	private void doSelectionChanged(Object[] objects) {
+	void doSelectionChanged(Object[] objects) {
 		if (objects.length != 1) {
 			updateStatus(new Status(IStatus.ERROR, ApiUIPlugin.getPluginIdentifier(), "")); //$NON-NLS-1$
 			setSelectionResult(null);

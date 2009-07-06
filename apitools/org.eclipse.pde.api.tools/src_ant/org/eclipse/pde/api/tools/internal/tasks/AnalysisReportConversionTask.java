@@ -29,6 +29,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -189,8 +190,8 @@ public class AnalysisReportConversionTask extends Task {
 					});
 		}
 	}
-	private static final Problem[] NO_PROBLEMS = new Problem[0];
-	private static final String[] NO_NON_API_BUNDLES = new String[0];
+	static final Problem[] NO_PROBLEMS = new Problem[0];
+	static final String[] NO_NON_API_BUNDLES = new String[0];
 	boolean debug;
 
 	private String htmlReportsLocation;
@@ -257,7 +258,7 @@ public class AnalysisReportConversionTask extends Task {
 					MessageFormat.format(
 						Messages.fullReportTask_indexheader,
 						new String[] {
-							Messages.bind(Messages.fullReportTask_nonApiBundleSummary, allNonApiBundleSummary.link)
+							NLS.bind(Messages.fullReportTask_nonApiBundleSummary, allNonApiBundleSummary.link)
 						}));
 			} else {
 				writer.println(
@@ -280,7 +281,7 @@ public class AnalysisReportConversionTask extends Task {
 			writer.println(Messages.fullReportTask_indexfooter);
 			writer.flush();
 		} catch (IOException e) {
-			throw new BuildException(Messages.bind(Messages.ioexception_writing_html_file, htmlFile.getAbsolutePath()));
+			throw new BuildException(NLS.bind(Messages.ioexception_writing_html_file, htmlFile.getAbsolutePath()));
 		} finally {
 			if (writer != null) {
 				writer.close();
@@ -344,7 +345,7 @@ public class AnalysisReportConversionTask extends Task {
 		File parent = htmlFile.getParentFile();
 		if (!parent.exists()) {
 			if (!parent.mkdirs()) {
-				throw new BuildException(Messages.bind(Messages.could_not_create_file, htmlName));
+				throw new BuildException(NLS.bind(Messages.could_not_create_file, htmlName));
 			}
 		}
 		PrintWriter writer = null;
@@ -365,7 +366,7 @@ public class AnalysisReportConversionTask extends Task {
 			}
 			writer.flush();
 		} catch (IOException e) {
-			throw new BuildException(Messages.bind(Messages.ioexception_writing_html_file, htmlName));
+			throw new BuildException(NLS.bind(Messages.ioexception_writing_html_file, htmlName));
 		} finally {
 			if (writer != null) {
 				writer.close();
@@ -385,10 +386,7 @@ public class AnalysisReportConversionTask extends Task {
 		}
 		this.reportsRoot = new File(this.xmlReportsLocation);
 		if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
-			throw new BuildException(
-				Messages.bind(
-					Messages.invalid_directory_name,
-					this.xmlReportsLocation));
+			throw new BuildException(NLS.bind(Messages.invalid_directory_name, this.xmlReportsLocation));
 		}
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = null;
@@ -409,10 +407,7 @@ public class AnalysisReportConversionTask extends Task {
 		this.htmlRoot = new File(this.htmlReportsLocation);
 		if (!this.htmlRoot.exists()) {
 			if (!this.htmlRoot.mkdirs()) {
-				throw new BuildException(
-					Messages.bind(
-						Messages.could_not_create_file,
-						this.htmlReportsLocation));
+				throw new BuildException(NLS.bind(Messages.could_not_create_file, this.htmlReportsLocation));
 			}
 		}
 		if (this.debug) {

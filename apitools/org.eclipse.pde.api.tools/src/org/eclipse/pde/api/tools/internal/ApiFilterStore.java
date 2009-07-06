@@ -38,9 +38,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -69,7 +69,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	/**
 	 * Constant used for controlling tracing in the plug-in workspace component
 	 */
-	private static boolean DEBUG = Util.DEBUG;
+	static boolean DEBUG = Util.DEBUG;
 	
 	/**
 	 * Method used for initializing tracing in the plug-in workspace component
@@ -98,10 +98,10 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	/**
 	 * The backing {@link IJavaProject}
 	 */
-	private IJavaProject fProject = null;
+	IJavaProject fProject = null;
 	
-	private boolean fNeedsSaving = false;
-	private boolean fTriggeredChange = false;
+	boolean fNeedsSaving = false;
+	boolean fTriggeredChange = false;
 	
 	/**
 	 * Constructor
@@ -127,9 +127,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					if(monitor == null) {
-						monitor = new NullProgressMonitor();
-					}
+					SubMonitor localmonitor = SubMonitor.convert(monitor);
 					IProject project = fProject.getProject();
 					if(!project.isAccessible()) {
 						if(DEBUG) {
@@ -143,9 +141,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {
 							IFolder folder = (IFolder) file.getParent();
-							file.delete(true, monitor);
+							file.delete(true, localmonitor);
 							if(folder.members().length == 0 && folder.isAccessible()) {
-								folder.delete(true, monitor);
+								folder.delete(true, localmonitor);
 							}
 							fTriggeredChange = true;
 						}
@@ -159,12 +157,12 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						if(!file.exists()) {
 							IFolder folder = (IFolder) file.getParent();
 							if(!folder.exists()) {
-								folder.create(true, true, monitor);
+								folder.create(true, true, localmonitor);
 							}
-							file.create(xstream, true, monitor);
+							file.create(xstream, true, localmonitor);
 						}
 						else {
-							file.setContents(xstream, true, false, monitor);
+							file.setContents(xstream, true, false, localmonitor);
 						}
 					}
 					finally {
@@ -390,7 +388,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @return an xml string representation of this filter store
 	 * @throws CoreException
 	 */
-	private synchronized String getStoreAsXml() throws CoreException {
+	synchronized String getStoreAsXml() throws CoreException {
 		if(fFilterMap == null) {
 			return null;
 		}
@@ -673,7 +671,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	/**
 	 * @return the {@link IPath} to the filters file
 	 */
-	private IPath getFilterFilePath(boolean includeproject) {
+	IPath getFilterFilePath(boolean includeproject) {
 		if(includeproject) {
 			IPath path = fProject.getPath();
 			return path.append(SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);

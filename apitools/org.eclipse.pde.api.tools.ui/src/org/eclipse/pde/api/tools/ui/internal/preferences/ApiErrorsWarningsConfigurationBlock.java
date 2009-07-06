@@ -415,12 +415,12 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final int VERSION_MANAGEMENT_PAGE_ID = 2;
 	private static final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
 
-	private static Key[] fgAllApiComponentResolutionKeys = {
+	static Key[] fgAllApiComponentResolutionKeys = {
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
 		KEY_UNUSED_PROBLEM_FILTERS
 	};
 
-	private static Key[] fgAllCompatibilityKeys = {
+	static Key[] fgAllCompatibilityKeys = {
 		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_ANNOTATION_REMOVED_FIELD,
@@ -491,7 +491,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
 	};
 
-	private static Key[] fgAllApiScanningKeys = {
+	static Key[] fgAllApiScanningKeys = {
 		KEY_NOIMPLEMENT,
 		KEY_NOEXTEND,
 		KEY_NOREFERENCE,
@@ -506,7 +506,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 	};
 
-	private static Key[] fgAllVersionManagementKeys = {
+	static Key[] fgAllVersionManagementKeys = {
 		KEY_MISSING_SINCE_TAG,
 		KEY_MALFORMED_SINCE_TAG,
 		KEY_INVALID_SINCE_TAG_VERSION,
@@ -1365,7 +1365,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * @param obj
 	 * @return
 	 */
-	private ScrolledComposite getScrollingParent(Object obj) {
+	ScrolledComposite getScrollingParent(Object obj) {
 		if(obj instanceof ExpandableComposite) {
 			ExpandableComposite ecomp = (ExpandableComposite) obj;
 			Composite parent = ecomp.getParent();
@@ -1385,7 +1385,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	/**
 	 * Handles one of the expandable composites being expanded 
 	 */
-	private void handleExpand(ScrolledComposite composite) {
+	void handleExpand(ScrolledComposite composite) {
 		if(composite == null) {
 			return;
 		}

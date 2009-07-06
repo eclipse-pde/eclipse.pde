@@ -65,7 +65,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	private String fErrorMessage = null;
 	private Image fImageHandle = null;
 	private ASTParser fParser = null;
-	private HashSet fExistingTags = null;
+	HashSet fExistingTags = null;
 	
 	/**
 	 * Collects all of the existing API Tools Javadoc tags form a given Javadoc node
@@ -230,11 +230,12 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * @throws JavaModelException
 	 */
 	private int getType(IJavaElement element) throws JavaModelException {
-		while (element != null && element.getElementType() != IJavaElement.TYPE) {
-			element = element.getParent();
+		IJavaElement lelement = element;
+		while (lelement != null && lelement.getElementType() != IJavaElement.TYPE) {
+			lelement = lelement.getParent();
 		}
-		if (element instanceof IType) {
-			IType type = (IType) element;
+		if (lelement instanceof IType) {
+			IType type = (IType) lelement;
 			if(type.isAnnotation()) {
 				return IApiJavadocTag.TYPE_ANNOTATION;
 			}

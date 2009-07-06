@@ -134,10 +134,10 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 	
-	private TreeViewer fViewer = null;
-	private Button fRemoveButton;
+	TreeViewer fViewer = null;
+	Button fRemoveButton;
 	private IProject fProject = null;
-	private ArrayList fChangeset = new ArrayList();
+	ArrayList fChangeset = new ArrayList();
 	private ArrayList fInputset = null;
 	
 	/* (non-Javadoc)
@@ -209,7 +209,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 * Performs the remove
 	 * @param selection
 	 */
-	private void handleRemove(IStructuredSelection selection) {
+	void handleRemove(IStructuredSelection selection) {
 		HashSet deletions = collectDeletions(selection);
 		if(deletions.size() > 0) {
 			fChangeset.addAll(deletions);
@@ -329,7 +329,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	 * @return the {@link IApiFilterStore} from the backing project
 	 * @throws CoreException
 	 */
-	private IApiFilterStore getFilterStore() throws CoreException {
+	IApiFilterStore getFilterStore() throws CoreException {
 		IProject project  = getProject();
 		IApiFilterStore store = null;
 		if(project != null) {

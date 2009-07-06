@@ -49,7 +49,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	/**
 	 * The main configuration block for the page
 	 */
-	private ApiErrorsWarningsConfigurationBlock block = null;
+	ApiErrorsWarningsConfigurationBlock block = null;
 	private Link link = null;
 	
 	private HashMap fPageData = null;

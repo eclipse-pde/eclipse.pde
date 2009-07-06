@@ -143,10 +143,10 @@ public final class Util {
 		 * @param name
 		 * @param project
 		 */
-		private BuildJob(String name, IProject[] projects) {
+		BuildJob(String name, IProject[] projects) {
 			this(name, projects, IncrementalProjectBuilder.FULL_BUILD);
 		}
-		private BuildJob(String name, IProject[] projects, int buildType) {
+		BuildJob(String name, IProject[] projects, int buildType) {
 			super(name);
 			fProjects = projects;
 			this.fBuildType = buildType;
@@ -2294,7 +2294,7 @@ public final class Util {
 					}
 				}
 			} catch (PatternSyntaxException e) {
-				throw new Exception(UtilMessages.bind(
+				throw new Exception(NLS.bind(
 						UtilMessages.comparison_invalidRegularExpression,
 						componentname));
 			}

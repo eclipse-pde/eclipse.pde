@@ -79,19 +79,23 @@ public class ApiBaselinePreferencePage extends PreferencePage implements
 		}
 	}
 
-	private IApiBaselineManager manager = ApiPlugin.getDefault()
+	IApiBaselineManager manager = ApiPlugin.getDefault()
 			.getApiBaselineManager();
 
 	private static HashSet removed = new HashSet(8);
-	private CheckboxTableViewer tableviewer = null;
-	private ArrayList backingcollection = new ArrayList(8);
-	private String newdefault = null;
-	private Button newbutton = null, removebutton = null, editbutton = null;
+	CheckboxTableViewer tableviewer = null;
+	ArrayList backingcollection = new ArrayList(8);
+	String newdefault = null;
+	private Button newbutton = null;
+
+	Button removebutton = null;
+
+	Button editbutton = null;
 	protected static int rebuildcount = 0;
-	private String origdefault = null;
-	private boolean dirty = false;
+	String origdefault = null;
+	boolean dirty = false;
 	private boolean defaultcontentchanged = false;
-	private boolean defaultchanged = false;
+	boolean defaultchanged = false;
 
 	/**
 	 * The main configuration block for the page

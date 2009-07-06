@@ -243,12 +243,12 @@ public class APIFreezeReportConversionTask extends Task {
 			} else {
 				switch(this.flags) {
 					case IDelta.MAJOR_VERSION :
-						buffer.append(Messages.bind(
+						buffer.append(NLS.bind(
 								Messages.deltaReportTask_entry_major_version,
 								this.arguments));
 						break;
 					case IDelta.MINOR_VERSION :
-						buffer.append(Messages.bind(
+						buffer.append(NLS.bind(
 								Messages.deltaReportTask_entry_minor_version,
 								this.arguments));
 						break;

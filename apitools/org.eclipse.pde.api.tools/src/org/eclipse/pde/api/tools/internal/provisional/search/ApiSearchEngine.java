@@ -144,7 +144,7 @@ public final class ApiSearchEngine {
 	 * @return The listing of resolved references from the given {@link IApiType}
 	 * @throws CoreException
 	 */
-	private List getResolvedReferences(IApiSearchRequestor requestor, IApiType type, IProgressMonitor monitor) throws CoreException {
+	List getResolvedReferences(IApiSearchRequestor requestor, IApiType type, IProgressMonitor monitor) throws CoreException {
 		String name = type.getSimpleName();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 
 				MessageFormat.format(SearchMessages.ApiSearchEngine_extracting_refs_from, new String[] {(name == null ? SearchMessages.ApiSearchEngine_anonymous_type : name)}), 2);
@@ -167,7 +167,7 @@ public final class ApiSearchEngine {
 	 * @return
 	 * @throws CoreException
 	 */
-	private List acceptReferences(IApiSearchRequestor requestor, IApiType type, List references, IProgressMonitor monitor) throws CoreException {
+	List acceptReferences(IApiSearchRequestor requestor, IApiType type, List references, IProgressMonitor monitor) throws CoreException {
 		ArrayList refs = new ArrayList();
 		Reference ref = null;
 		SubMonitor localmonitor = SubMonitor.convert(monitor, references.size());
@@ -220,7 +220,7 @@ public final class ApiSearchEngine {
 					reporter.reportResults(element, (IReference[]) refs.toArray(new IReference[refs.size()]));
 					break;
 				}
-				case IApiComponent.COMPONENT: {
+				case IApiElement.COMPONENT: {
 					if(localmonitor.isCanceled()) {
 						reporter.reportResults(element, NO_REFERENCES);
 					}

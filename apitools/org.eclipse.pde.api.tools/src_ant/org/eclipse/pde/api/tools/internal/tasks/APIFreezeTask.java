@@ -19,6 +19,7 @@ import java.io.StringWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -43,7 +44,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(
-				Messages.bind(Messages.printArguments,
+				NLS.bind(Messages.printArguments,
 					new String[] {
 						this.referenceBaselineLocation,
 						this.currentBaselineLocation,
@@ -120,7 +121,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 				if (!outputDir.exists()) {
 					if (!outputDir.mkdirs()) {
 						throw new BuildException(
-							Messages.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
+							NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
 					}
 				}
 			}

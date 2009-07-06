@@ -322,10 +322,7 @@ public class TarFile {
 			if(nextEOF == 0) {
 				return -1;
 			}
-			if(len > nextEOF) {
-				len = nextEOF;
-			}
-			int size = super.read(b, off, len);
+			int size = super.read(b, off, (len > nextEOF ? nextEOF : len));
 			nextEntry -= size;
 			nextEOF -= size;
 			bytesread += size;

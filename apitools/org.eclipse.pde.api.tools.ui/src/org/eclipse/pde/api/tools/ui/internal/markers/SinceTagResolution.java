@@ -31,8 +31,8 @@ import org.eclipse.ui.progress.UIJob;
  * @since 1.0.0
  */
 public class SinceTagResolution implements IMarkerResolution2 {
-	private int kind;
-	private String newVersionValue;
+	int kind;
+	String newVersionValue;
 	
 	public SinceTagResolution(IMarker marker) {
 		this.kind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));

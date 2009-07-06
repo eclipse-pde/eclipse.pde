@@ -211,28 +211,28 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 			delta = deltas[i];
 			switch(delta.getElement().getElementType()) {
 				case IJavaElement.JAVA_PROJECT: {
-					proj = (IJavaProject) delta.getElement();
+					IJavaProject jproj = (IJavaProject) delta.getElement();
 					switch (delta.getKind()) {
 						case IJavaElementDelta.CHANGED:
 							int flags = delta.getFlags();
 							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
-								clean(proj, false, true);
+								clean(jproj, false, true);
 								flushElementCache(delta);
 							} else if((flags & (IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED
 									| IJavaElementDelta.F_CLASSPATH_CHANGED)) != 0) {
-								if (proj != null) {
-									projectClasspathChanged(proj);
+								if (jproj != null) {
+									projectClasspathChanged(jproj);
 								}
 							} else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
-								if (proj != null) {
-									projectChanged(proj);
+								if (jproj != null) {
+									projectChanged(jproj);
 								}
 							} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-								processJavaElementDeltas(delta.getAffectedChildren(), proj);
+								processJavaElementDeltas(delta.getAffectedChildren(), jproj);
 							}
 							break;
 						case IJavaElementDelta.REMOVED:
-							clean(proj, true, true);
+							clean(jproj, true, true);
 							break;
 					}
 					break;

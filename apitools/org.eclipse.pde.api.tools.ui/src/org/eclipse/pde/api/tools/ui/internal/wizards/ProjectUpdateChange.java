@@ -15,9 +15,9 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -81,18 +81,16 @@ public class ProjectUpdateChange extends Change {
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		if(pm == null) {
-			pm = new NullProgressMonitor();
-		}
-		pm.beginTask(IApiToolsConstants.EMPTY_STRING, 1);
-		pm.setTaskName(WizardMessages.ProjectUpdateChange_adding_nature_and_builder);
+		SubMonitor localmonitor = SubMonitor.convert(pm);
+		localmonitor.beginTask(IApiToolsConstants.EMPTY_STRING, 1);
+		localmonitor.setTaskName(WizardMessages.ProjectUpdateChange_adding_nature_and_builder);
 		IProjectDescription description = this.fProject.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];
 		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
 		newNatures[prevNatures.length] = ApiPlugin.NATURE_ID;
 		description.setNatureIds(newNatures);
-		this.fProject.setDescription(description, pm);
+		this.fProject.setDescription(description, localmonitor);
 		IJavaProject javaProject = JavaCore.create(this.fProject);
 		// make sure we get rid of the previous api description file
 		ApiDescriptionManager.getDefault().clean(javaProject, true, true);
@@ -106,9 +104,7 @@ public class ProjectUpdateChange extends Change {
 			 */
 			BuildState.setLastBuiltState(this.fProject, null);
 		}
-		if(!pm.isCanceled()) {
-			pm.worked(1);
-		}
+		Util.updateMonitor(localmonitor, 1);
 		return null;
 	}
 }

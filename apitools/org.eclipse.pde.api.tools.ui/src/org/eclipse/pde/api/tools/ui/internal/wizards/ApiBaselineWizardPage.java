@@ -314,13 +314,13 @@ public class ApiBaselineWizardPage extends WizardPage {
 		}
 	}
 	
-	private IApiBaseline fProfile = null;
+	IApiBaseline fProfile = null;
 	private String originalname = null;
 	/**
 	 * Flag to know if the baselines' content has actually changed, or just some other attribute
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=267875
 	 */
-	private boolean contentchange = false;
+	boolean contentchange = false;
 	
 	/**
 	 * We need to know if we are initializing the page to not respond to changed events
@@ -335,7 +335,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 	 */
 	private Text nametext = null;
 	private TreeViewer treeviewer = null;
-	private Combo locationcombo = null;
+	Combo locationcombo = null;
 	private Button browsebutton = null,
 				   reloadbutton = null;
 	/**

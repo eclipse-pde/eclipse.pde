@@ -209,11 +209,12 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	 * @return true if the modifiers match, false otherwise
 	 */
 	protected boolean matchesSourceModifiers(IApiMember member) {
-		while (member != null) {
-			int modifiers = member.getModifiers();
+		IApiMember lmember = member;
+		while (lmember != null) {
+			int modifiers = lmember.getModifiers();
 			if (Flags.isPublic(modifiers) || Flags.isProtected(modifiers)) {
 				try {
-					member = member.getEnclosingType();
+					lmember = lmember.getEnclosingType();
 				} catch (CoreException e) {
 					ApiPlugin.log(e.getStatus());
 					return false;

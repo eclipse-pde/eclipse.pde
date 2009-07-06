@@ -121,24 +121,24 @@ public class ReferenceAnalyzer {
 	/**
 	 * Scan status
 	 */
-	private MultiStatus fStatus;	
+	MultiStatus fStatus;	
 	
 	/**
 	 * Bit mask of reference kinds that problem detectors care about.
 	 */
-	private int fAllReferenceKinds = 0;
+	int fAllReferenceKinds = 0;
 	
 	/**
 	 * List of references to consider/resolve.
 	 */
-	private List fReferences = new LinkedList();
+	List fReferences = new LinkedList();
 	
 	/**
 	 * Problem detectors indexed by the log base 2 of each reference kind they
 	 * are interested in. Provides a fast way to hand references off to interested
 	 * problem detectors.
 	 */
-	private IApiProblemDetector[][] fIndexedDetectors;
+	IApiProblemDetector[][] fIndexedDetectors;
 
 	/**
 	 * Method used for initializing tracing
@@ -238,7 +238,7 @@ public class ReferenceAnalyzer {
 	 * @param bitConstant a single bit constant (0x1 << n)
 	 * @return log base 2 of the constant (the power of 2 the constant is equal to)
 	 */
-	private int getLog2(int bitConstant) {
+	int getLog2(int bitConstant) {
 		double logX = Math.log(bitConstant);
 		double pow = logX / LOG2;
 		return (int)Math.round(pow);

@@ -170,11 +170,12 @@ public class TagScanner {
 		}
 		
 		private int getEnclosingType(ASTNode node) {
-			while (!(node instanceof AbstractTypeDeclaration)) {
-				node = node.getParent();
+			ASTNode lnode = node;
+			while (!(lnode instanceof AbstractTypeDeclaration)) {
+				lnode = lnode.getParent();
 			}
-			if (node instanceof TypeDeclaration) {
-				if (((TypeDeclaration)node).isInterface()) {
+			if (lnode instanceof TypeDeclaration) {
+				if (((TypeDeclaration)lnode).isInterface()) {
 					return IApiJavadocTag.TYPE_INTERFACE;
 				}
 			}
@@ -219,14 +220,15 @@ public class TagScanner {
 				restrictions |= jtm.getRestrictionsForTag(tagname, type, member);
 			}
 			if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
-				if (descriptor.getElementType() == IElementDescriptor.METHOD) {
+				IElementDescriptor ldesc = descriptor;
+				if (ldesc.getElementType() == IElementDescriptor.METHOD) {
 					try {
-						descriptor = resolveMethod((IMethodDescriptor)descriptor);
+						ldesc = resolveMethod((IMethodDescriptor)ldesc);
 					} catch (CoreException e) {
 						fException = e;
 					}
 				}
-				fDescription.setRestrictions(descriptor, restrictions);
+				fDescription.setRestrictions(ldesc, restrictions);
 			}
 		}
 		
@@ -529,11 +531,12 @@ public class TagScanner {
 				}
 			}
 		}
-		if(options == null) {
-			options = JavaCore.getOptions();
+		Map loptions = options;
+		if(loptions == null) {
+			loptions = JavaCore.getOptions();
 		}
-		options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-		parser.setCompilerOptions(options);
+		loptions.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
+		parser.setCompilerOptions(loptions);
 		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(new NullProgressMonitor());
 		Visitor visitor = new Visitor(description, container);
 		cunit.accept(visitor);

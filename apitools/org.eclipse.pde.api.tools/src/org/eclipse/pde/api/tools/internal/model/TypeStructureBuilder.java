@@ -74,12 +74,13 @@ public class TypeStructureBuilder extends ClassAdapter {
 		if (index > -1) {
 			enclosingName = name.substring(0, index).replace('/', '.');
 		}
+		int laccess = access;
 		// TODO: inner types should be have enclosing type as parent instead of component
-		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-			access &= ~Opcodes.ACC_DEPRECATED;
-			access |= ClassFileConstants.AccDeprecated;
+		if ((laccess & Opcodes.ACC_DEPRECATED) != 0) {
+			laccess &= ~Opcodes.ACC_DEPRECATED;
+			laccess |= ClassFileConstants.AccDeprecated;
 		}
-		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, access, enclosingName, fFile);
+		fType = new ApiType(fComponent, name.replace('/', '.'), simpleSig.toString(), signature, laccess, enclosingName, fFile);
 		if (superName != null) {
 			fType.setSuperclassName(superName.replace('/', '.'));
 		}
@@ -90,7 +91,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 			fType.setSuperInterfaceNames(names);
 		}
-		super.visit(version, access, name, signature, superName, interfaces);
+		super.visit(version, laccess, name, signature, superName, interfaces);
 	}
 	/**
 	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
@@ -133,11 +134,12 @@ public class TypeStructureBuilder extends ClassAdapter {
 	 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
+		int laccess = access;
 		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-			access &= ~Opcodes.ACC_DEPRECATED;
-			access |= ClassFileConstants.AccDeprecated;
+			laccess &= ~Opcodes.ACC_DEPRECATED;
+			laccess |= ClassFileConstants.AccDeprecated;
 		}
-		fType.addField(name, desc, signature, access, value);
+		fType.addField(name, desc, signature, laccess, value);
 		return null;
 	}
 
@@ -146,9 +148,10 @@ public class TypeStructureBuilder extends ClassAdapter {
 	 */
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		String[] names = null;
-		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-			access &= ~Opcodes.ACC_DEPRECATED;
-			access |= ClassFileConstants.AccDeprecated;
+		int laccess = access;
+		if ((laccess & Opcodes.ACC_DEPRECATED) != 0) {
+			laccess &= ~Opcodes.ACC_DEPRECATED;
+			laccess |= ClassFileConstants.AccDeprecated;
 		}
 		if (exceptions != null && exceptions.length > 0) {
 			names = new String[exceptions.length];
@@ -156,8 +159,8 @@ public class TypeStructureBuilder extends ClassAdapter {
 				names[i] = exceptions[i].replace('/', '.');
 			}
 		}
-		final ApiMethod method = fType.addMethod(name, desc, signature, access, names);
-		return new MethodAdapter(super.visitMethod(access, name, desc, signature, exceptions)) {
+		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
+		return new MethodAdapter(super.visitMethod(laccess, name, desc, signature, exceptions)) {
 			public AnnotationVisitor visitAnnotationDefault() {
 				return new TraceAnnotationVisitor() {
 					public void visitEnd() {

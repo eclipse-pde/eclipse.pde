@@ -45,9 +45,9 @@ public class ApiErrorsWarningsPropertyPage extends PropertyPage {
 	 */
 	private HashMap fPageData = null;
 	
-	private	ApiErrorsWarningsConfigurationBlock block = null;
-	private Button pspecific = null;
-	private Link link = null;
+	ApiErrorsWarningsConfigurationBlock block = null;
+	Button pspecific = null;
+	Link link = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)

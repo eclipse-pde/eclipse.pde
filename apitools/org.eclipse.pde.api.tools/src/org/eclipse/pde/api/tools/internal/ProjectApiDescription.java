@@ -106,7 +106,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	class PackageNode extends ManifestNode {
 
-		private IPackageFragment[] fFragments;
+		IPackageFragment[] fFragments;
 		/**
 		 * Constructs a new node.
 		 * 
@@ -184,7 +184,7 @@ public class ProjectApiDescription extends ApiDescription {
 		
 		private boolean fRefreshing = false;
 		
-		private IType fType;
+		IType fType;
 
 		/**
 		 * Constructs a node for a reference type.
@@ -512,7 +512,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Refreshes package nodes if required.
 	 */
-	private synchronized void refreshPackages() {
+	synchronized void refreshPackages() {
 		if (fRefreshingInProgress) {
 			return;
 		}
@@ -575,7 +575,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @param root package fragment root
 	 * @return class file container or <code>null</code> if none
 	 */
-	private synchronized IApiTypeContainer getApiTypeContainer(IPackageFragmentRoot root) throws CoreException {
+	synchronized IApiTypeContainer getApiTypeContainer(IPackageFragmentRoot root) throws CoreException {
 		if (fClassFileContainers == null) {
 			fClassFileContainers = new HashMap(8);
 		}

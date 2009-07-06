@@ -28,8 +28,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -175,11 +175,11 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	private static final String SETTINGS_SECTION = "ApiToolingSetupWizardPage"; //$NON-NLS-1$
 	private static final String SETTINGS_REMOVECXML = "remove_componentxml"; //$NON-NLS-1$
 	
-	private CheckboxTableViewer tableviewer = null;
-	private HashSet checkedset = new HashSet();
-	private Button removecxml = null;
-	private UpdateJob updatejob = new UpdateJob();
-	private StringFilter filter = new StringFilter();
+	CheckboxTableViewer tableviewer = null;
+	HashSet checkedset = new HashSet();
+	Button removecxml = null;
+	UpdateJob updatejob = new UpdateJob();
+	StringFilter filter = new StringFilter();
 	private Text checkcount = null;
 	
 	/**
@@ -404,7 +404,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * @param project
 	 * @param cxml
 	 */
-	private void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
+	void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
 		try {
 			HashMap map = new HashMap();
 			ApiDescriptionProcessor.collectTagUpdates(project, cxml, map);
@@ -443,16 +443,14 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	 * @return the mapping of text edits to the IFile they occur on
 	 */
 	private void collectChanges() {
+		final ApiToolingSetupRefactoring refactoring = (ApiToolingSetupRefactoring) getRefactoring();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Object[] projects = checkedset.toArray(new IProject[checkedset.size()]);
 				IProject project = null;
-				if(monitor == null) {
-					monitor = new NullProgressMonitor();
-				}
-				monitor.beginTask(IApiToolsConstants.EMPTY_STRING, projects.length);
-				monitor.setTaskName(WizardMessages.ApiToolingSetupWizardPage_7);
-				ApiToolingSetupRefactoring refactoring = (ApiToolingSetupRefactoring) getRefactoring();
+				SubMonitor localmonitor = SubMonitor.convert(monitor);
+				localmonitor.beginTask(IApiToolsConstants.EMPTY_STRING, projects.length);
+				localmonitor.setTaskName(WizardMessages.ApiToolingSetupWizardPage_7);
 				refactoring.resetRefactoring();
 				boolean remove = removecxml.getSelection();
 				CompositeChange pchange = null;
@@ -461,7 +459,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 					pchange = new CompositeChange(project.getName());
 					refactoring.addChange(pchange);
 					pchange.add(new ProjectUpdateChange(project));
-					monitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new String[] {project.getName()}));
+					localmonitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new String[] {project.getName()}));
 					IResource cxml = project.findMember(IApiCoreConstants.COMPONENT_XML_NAME);
 					if(cxml != null) {
 						//collect the changes for doc
@@ -470,10 +468,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 							pchange.add(new DeleteResourceChange(cxml.getFullPath(), true));
 						}
 					}
-					if(monitor.isCanceled()) {
-						break;
-					}
-					monitor.worked(1);
+					Util.updateMonitor(localmonitor, 1);
 				}
 			}
 		};

@@ -23,7 +23,7 @@ public class ApiAccess implements IApiAccess {
 
 	public static final IApiAccess NORMAL_ACCESS = new NormalAccess();
 	
-	private static class NormalAccess implements IApiAccess {
+	static class NormalAccess implements IApiAccess {
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.provisional.IApiAccess#getAccessLevel()
 		 */

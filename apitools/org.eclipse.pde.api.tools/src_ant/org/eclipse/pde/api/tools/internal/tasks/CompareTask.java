@@ -54,7 +54,7 @@ public class CompareTask extends CommonUtilsTask {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(
-				Messages.bind(Messages.printArguments,
+				NLS.bind(Messages.printArguments,
 					new String[] {
 						this.referenceBaselineLocation,
 						this.currentBaselineLocation,
@@ -118,7 +118,7 @@ public class CompareTask extends CommonUtilsTask {
 								}
 							}
 						} catch (PatternSyntaxException e) {
-							throw new BuildException(Messages.bind(
+							throw new BuildException(NLS.bind(
 									UtilMessages.comparison_invalidRegularExpression,
 									componentName));
 						}
@@ -155,7 +155,7 @@ public class CompareTask extends CommonUtilsTask {
 		if (!outputDir.exists()) {
 			if (!outputDir.mkdirs()) {
 				throw new BuildException(
-					Messages.bind(
+					NLS.bind(
 							Messages.errorCreatingParentReportFile,
 							outputDir.getAbsolutePath()
 					));

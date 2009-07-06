@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.Messages;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
@@ -76,7 +77,7 @@ public class ApiScope implements IApiScope {
 							new Status(
 									IStatus.ERROR,
 									ApiPlugin.PLUGIN_ID,
-									Messages.bind(
+									NLS.bind(
 											Messages.ApiScope_0,
 											Util.getApiElementType(type))));
 			}

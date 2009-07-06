@@ -29,7 +29,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class AddNoReferenceTagResolution implements IMarkerResolution2 {
 
-	private IMarker fBackingMarker = null;
+	IMarker fBackingMarker = null;
 	
 	/**
 	 * Constructor

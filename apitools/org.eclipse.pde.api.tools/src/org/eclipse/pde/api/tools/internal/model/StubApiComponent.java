@@ -63,15 +63,16 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 
 	private static File getFileFor(int eeValue, String name) {
 		try {
+			String lname = name;
 			switch(eeValue) {
 				case ProfileModifiers.CDC_1_0_FOUNDATION_1_0 :
 				case ProfileModifiers.CDC_1_1_FOUNDATION_1_1 :
 				case ProfileModifiers.OSGI_MINIMUM_1_0 :
 				case ProfileModifiers.OSGI_MINIMUM_1_1 :
 				case ProfileModifiers.OSGI_MINIMUM_1_2 :
-					name = name.replace('/', '_');
+					lname = lname.replace('/', '_');
 			}
-			String stubName = name + ".zip"; //$NON-NLS-1$
+			String stubName = lname + ".zip"; //$NON-NLS-1$
 			URL stub = null;
 			if (Platform.isRunning()) {
 				stub = ApiPlugin.getDefault().getBundle().getResource(STUB_PATH + stubName);

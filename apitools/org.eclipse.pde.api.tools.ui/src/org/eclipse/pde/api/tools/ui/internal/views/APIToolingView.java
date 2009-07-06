@@ -77,16 +77,16 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	public static final String ID = "org.eclipse.pde.api.tools.ui.views.apitooling.views.apitoolingview"; //$NON-NLS-1$
 
 	public TreeViewer viewer;
-	private Label sessionDescription = null;
-	private IAction removeActiveSessionAction;
-	private IAction removeAllSessionsAction;
-	private IAction selectSessionAction;
-	private Action doubleClickAction;
-	private ExportSessionAction exportSessionAction;
-	private NavigateAction nextAction;
-	private NavigateAction previousAction;
-	private ExpandAllAction expandallAction;
-	private CollapseAllAction collapseallAction;
+	Label sessionDescription = null;
+	IAction removeActiveSessionAction;
+	IAction removeAllSessionsAction;
+	IAction selectSessionAction;
+	Action doubleClickAction;
+	ExportSessionAction exportSessionAction;
+	NavigateAction nextAction;
+	NavigateAction previousAction;
+	ExpandAllAction expandallAction;
+	CollapseAllAction collapseallAction;
 	private IPropertySheetPage page;
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {

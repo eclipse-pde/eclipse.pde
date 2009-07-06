@@ -210,7 +210,7 @@ public class IncrementalApiBuilder {
 	 * in the given build context
 	 * @param file
 	 */
-	private void addTypeToContext(IFile file) {
+	void addTypeToContext(IFile file) {
 		String type = resolveTypeName(file);
 		if(type == null) {
 			return;

@@ -520,7 +520,7 @@ public class ApiDescriptionProcessor {
 	 * @throws CoreException
 	 * @throws BadLocationException
 	 */
-	private static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List members, Map collector) throws CoreException, BadLocationException {
+	static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List members, Map collector) throws CoreException, BadLocationException {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		ICompilationUnit cunit = type.getCompilationUnit();
 		if(cunit != null) {
@@ -713,12 +713,13 @@ public class ApiDescriptionProcessor {
 	 */
 	private static int annotateRestriction(Element element, String name, int flag, int res) {
 		String value = element.getAttribute(name);
+		int lres = res;
 		if (value.length() > 0) {
 			if (!Boolean.valueOf(value).booleanValue()) {
-				res = res | flag;
+				lres = res | flag;
 			}
 		}
-		return res;
+		return lres;
 	}
 	
 	/**

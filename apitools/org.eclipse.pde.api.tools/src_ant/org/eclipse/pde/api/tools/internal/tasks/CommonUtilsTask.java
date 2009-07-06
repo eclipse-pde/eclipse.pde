@@ -21,6 +21,7 @@ import java.util.Set;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -73,7 +74,7 @@ public abstract class CommonUtilsTask extends Task {
 			File[] files = dir.listFiles();
 			if(files == null) {
 				throw new BuildException(
-						Messages.bind(Messages.directoryIsEmpty,
+						NLS.bind(Messages.directoryIsEmpty,
 						dir.getAbsolutePath()));
 			}
 			List components = new ArrayList();
@@ -117,7 +118,7 @@ public abstract class CommonUtilsTask extends Task {
 		File file = new File(location);
 		File locationFile = file;
 		if (!locationFile.exists()) {
-			throw new BuildException(Messages.bind(Messages.fileDoesnotExist, location));
+			throw new BuildException(NLS.bind(Messages.fileDoesnotExist, location));
 		}
 		if (isArchive(location)) {
 			File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
@@ -126,14 +127,14 @@ public abstract class CommonUtilsTask extends Task {
 				// delete existing folder
 				if (!Util.delete(installDir)) {
 					throw new BuildException(
-						Messages.bind(
+						NLS.bind(
 							Messages.couldNotDelete,
 							installDir.getAbsolutePath()));
 				}
 			}
 			if (!installDir.mkdirs()) {
 				throw new BuildException(
-						Messages.bind(
+						NLS.bind(
 								Messages.couldNotCreate,
 								installDir.getAbsolutePath()));
 			}
@@ -145,7 +146,7 @@ public abstract class CommonUtilsTask extends Task {
 				}
 			} catch (IOException e) {
 				throw new BuildException(
-					Messages.bind(
+					NLS.bind(
 						Messages.couldNotUnzip,
 						new String[] {
 								location,
@@ -153,7 +154,7 @@ public abstract class CommonUtilsTask extends Task {
 						}));
 			} catch (TarException e) {
 				throw new BuildException(
-						Messages.bind(
+						NLS.bind(
 								Messages.couldNotUntar,
 								new String[] {
 										location,
@@ -234,13 +235,13 @@ public abstract class CommonUtilsTask extends Task {
 		File dir = new File(this.reportLocation);
 		if (!dir.exists()) {
 			if (!dir.mkdirs()) {
-				throw new BuildException(Messages.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
+				throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
 			}
 		}
 		File reportComponentIDDir = new File(dir, componentID);
 		if (!reportComponentIDDir.exists()) {
 			if (!reportComponentIDDir.mkdirs()) {
-				throw new BuildException(Messages.bind(Messages.errorCreatingReportDirectory, reportComponentIDDir));
+				throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, reportComponentIDDir));
 			}
 		}
 		File reportFile = new File(reportComponentIDDir, reportname);

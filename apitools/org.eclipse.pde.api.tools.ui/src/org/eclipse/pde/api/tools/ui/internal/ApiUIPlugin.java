@@ -120,16 +120,18 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 *  if the image descriptor can't create the requested image.
 	 */
 	public static Image getImage(ImageDescriptor descriptor) {
-		if (descriptor == null)
-			descriptor= ImageDescriptor.getMissingImageDescriptor();
+		ImageDescriptor ldesc = descriptor;
+		if (ldesc == null)
+			ldesc = ImageDescriptor.getMissingImageDescriptor();
 			
-		Image result= (Image)fCompositeImages.get(descriptor);
+		Image result = (Image)fCompositeImages.get(ldesc);
 		if (result != null)
 			return result;
 	 
-		result= descriptor.createImage();
-		if (result != null)
-			fCompositeImages.put(descriptor, result);
+		result = ldesc.createImage();
+		if (result != null) {
+			fCompositeImages.put(ldesc, result);
+		}
 		return result;
 	}
 	

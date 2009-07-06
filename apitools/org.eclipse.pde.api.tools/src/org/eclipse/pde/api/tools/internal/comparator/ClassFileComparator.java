@@ -256,7 +256,7 @@ public class ClassFileComparator {
 	protected void reportStatus(IStatus newstatus) {
 		if(this.status == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_0, new String[] {this.type1.getName()});
-			this.status = new MultiStatus(ApiPlugin.PLUGIN_ID, Status.ERROR, msg, null);
+			this.status = new MultiStatus(ApiPlugin.PLUGIN_ID, IStatus.ERROR, msg, null);
 		}
 		this.status.add(newstatus);
 	}
@@ -3220,7 +3220,7 @@ public class ClassFileComparator {
 			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
-			reportStatus(new Status(Status.ERROR, component.getId(), msg));
+			reportStatus(new Status(IStatus.ERROR, component.getId(), msg));
 			return null;
 		}
 		IApiTypeRoot result = Util.getClassFile(components, typeName); 
@@ -3229,7 +3229,7 @@ public class ClassFileComparator {
 			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
-			reportStatus(new Status(Status.ERROR, component.getId(), msg));
+			reportStatus(new Status(IStatus.ERROR, component.getId(), msg));
 			return null;
 		}
 		return result;

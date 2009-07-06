@@ -113,7 +113,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	/**
 	 * Location of the archive in the local file system.
 	 */
-	private String fLocation;
+	String fLocation;
 	
 	/**
 	 * Cache of package names to class file paths in that package,
@@ -269,7 +269,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 * @return zip file
 	 * @throws IOException if unable to open the archive
 	 */
-	private synchronized ZipFile open() throws CoreException {
+	synchronized ZipFile open() throws CoreException {
 		if (fZipFile == null) {
 			try {
 				fZipFile = new ZipFile(fLocation);

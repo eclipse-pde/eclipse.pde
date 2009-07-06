@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -47,7 +48,7 @@ public class UpdateProjectSettingsOperation extends UIJob {
 	 * @see IApiProblemFilter#getKinds()
 	 */
 	public UpdateProjectSettingsOperation(IMarker marker) {
-		super(MarkerMessages.bind(MarkerMessages.UpdateProjectSettingsOperation_0, PreferenceMessages.ReportApiComponentResolutionFailureDescription));
+		super(NLS.bind(MarkerMessages.UpdateProjectSettingsOperation_0, PreferenceMessages.ReportApiComponentResolutionFailureDescription));
 		fBackingMarker = marker;
 	}
 
@@ -59,7 +60,7 @@ public class UpdateProjectSettingsOperation extends UIJob {
 		if (notNull && monitor.isCanceled()) return Status.CANCEL_STATUS;
 		if (notNull) {
 			monitor.beginTask(
-					MarkerMessages.bind(MarkerMessages.UpdateProjectSettingsOperation_title, PreferenceMessages.ReportApiComponentResolutionFailureDescription),
+					NLS.bind(MarkerMessages.UpdateProjectSettingsOperation_title, PreferenceMessages.ReportApiComponentResolutionFailureDescription),
 					3);
 		}
 		try{

@@ -56,7 +56,7 @@ public class DeltaProcessor {
 	 * @param delta
 	 * @return true if the delta represents a compatible change or not
 	 */
-	private static boolean isCompatible0(IDelta delta) {
+	static boolean isCompatible0(IDelta delta) {
 		switch(delta.getElementType()) {
 			case IDelta.API_PROFILE_ELEMENT_TYPE : {
 				return isApiProfileCompatible(delta);

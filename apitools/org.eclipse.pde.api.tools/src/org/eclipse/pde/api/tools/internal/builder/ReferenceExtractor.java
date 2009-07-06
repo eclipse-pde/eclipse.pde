@@ -445,17 +445,18 @@ public class ReferenceExtractor extends ClassAdapter {
 		 * @return Type
 		 */
 		private Type getTypeFromDescription(String desc) {
-			while (desc.charAt(0) == '[') {
-				desc = desc.substring(1);
+			String ldesc = desc;
+			while (ldesc.charAt(0) == '[') {
+				ldesc = ldesc.substring(1);
 			}
 			Type type = null;
-			if (desc.length() == 1 && Signature.getTypeSignatureKind(desc) == Signature.BASE_TYPE_SIGNATURE) {
-				type = Type.getType(desc);
+			if (ldesc.length() == 1 && Signature.getTypeSignatureKind(ldesc) == Signature.BASE_TYPE_SIGNATURE) {
+				type = Type.getType(ldesc);
 			} else {
-				if (desc.endsWith(";")) { //$NON-NLS-1$
-					type = Type.getType(desc);
+				if (ldesc.endsWith(";")) { //$NON-NLS-1$
+					type = Type.getType(ldesc);
 				} else {
-					type = Type.getObjectType(desc);
+					type = Type.getObjectType(ldesc);
 				}
 			}
 			return type;
@@ -753,7 +754,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	private Set collector = null;
 	
 	/**
-	 * The full internal name of the class we are extracting refs from
+	 * The full internal name of the class we are extracting references from
 	 */
 	private String classname = null;
 
@@ -767,19 +768,19 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * element descriptor is pushed onto the stack. When a member
 	 * is exited, the stack is popped.
 	 */
-	private Stack fMemberStack = new Stack();
+	Stack fMemberStack = new Stack();
 
 	/**
 	 * Stack of super types *names* (String) being visited. When a type is
 	 * entered, its super type is pushed onto the stack. When a type
 	 * is exited, the stack is popped.
 	 */
-	private Stack fSuperStack = new Stack();
+	Stack fSuperStack = new Stack();
 	
 	/**
 	 * Mapping of anonymous type names to their reference
 	 */
-	private HashMap fAnonymousTypes = new HashMap();
+	HashMap fAnonymousTypes = new HashMap();
 
 	/**
 	 * Whether to extract references to elements within the classfile
@@ -809,7 +810,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * not within a field).
 	 */
 	private ClassFileSignatureVisitor signaturevisitor = new ClassFileSignatureVisitor();
-	private static int TYPE = 0, FIELD = 1, METHOD = 2;
+	static int TYPE = 0, FIELD = 1, METHOD = 2;
 
 	/**
 	 * Constructor

@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -201,21 +202,21 @@ public final class ApiUseReportConverter {
 	 * A group of counters to origin meta-data
 	 */
 	static final class CountGroup {
-		private int total_api_field_count = 0;
-		private int total_private_field_count = 0;
-		private int total_permissable_field_count = 0;
-		private int total_fragment_permissible_field_count = 0;
-		private int total_other_field_count = 0;
-		private int total_api_method_count = 0;
-		private int total_private_method_count = 0;
-		private int total_permissable_method_count = 0;
-		private int total_fragment_permissible_method_count = 0;
-		private int total_other_method_count = 0;
-		private int total_api_type_count = 0;
-		private int total_private_type_count = 0;
-		private int total_permissable_type_count = 0;
-		private int total_fragment_permissible_type_count = 0;
-		private int total_other_type_count = 0;
+		int total_api_field_count = 0;
+		int total_private_field_count = 0;
+		int total_permissable_field_count = 0;
+		int total_fragment_permissible_field_count = 0;
+		int total_other_field_count = 0;
+		int total_api_method_count = 0;
+		int total_private_method_count = 0;
+		int total_permissable_method_count = 0;
+		int total_fragment_permissible_method_count = 0;
+		int total_other_method_count = 0;
+		int total_api_type_count = 0;
+		int total_private_type_count = 0;
+		int total_permissable_type_count = 0;
+		int total_fragment_permissible_type_count = 0;
+		int total_other_type_count = 0;
 		
 		public int getTotalRefCount() {
 			return total_api_field_count +
@@ -259,11 +260,11 @@ public final class ApiUseReportConverter {
 	/**
 	 * Describes one project with references
 	 */
-	private final static class Report {
-		private File referee = null;
-		private TreeMap origintorefslist = new TreeMap(Util.filesorter);
-		private TreeMap origintocountgroup = new TreeMap(Util.filesorter);
-		private CountGroup counts = new CountGroup();
+	final static class Report {
+		File referee = null;
+		TreeMap origintorefslist = new TreeMap(Util.filesorter);
+		TreeMap origintocountgroup = new TreeMap(Util.filesorter);
+		CountGroup counts = new CountGroup();
 	}
 	
 	/**
@@ -340,7 +341,7 @@ public final class ApiUseReportConverter {
 			this.htmlRoot = new File(this.htmlLocation);
 			if (!this.htmlRoot.exists()) {
 				if (!this.htmlRoot.mkdirs()) {
-					throw new Exception(SearchMessages.bind(SearchMessages.could_not_create_file, this.htmlLocation));
+					throw new Exception(NLS.bind(SearchMessages.could_not_create_file, this.htmlLocation));
 				}
 			}
 			else {
@@ -356,7 +357,7 @@ public final class ApiUseReportConverter {
 			}
 			this.reportsRoot = new File(this.xmlLocation);
 			if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
-				throw new Exception(SearchMessages.bind(SearchMessages.invalid_directory_name, this.xmlLocation));
+				throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, this.xmlLocation));
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_xslt_file);
 			if(localmonitor.isCanceled()) {
@@ -394,7 +395,7 @@ public final class ApiUseReportConverter {
 				for (int i = 0; i < referees.length; i++) {
 					report = new Report();
 					report.referee = referees[i];
-					smonitor.setTaskName(SearchMessages.bind(SearchMessages.ApiUseReportConverter_preparing_report_info_for, new String[] {referees[i].getName()}));
+					smonitor.setTaskName(NLS.bind(SearchMessages.ApiUseReportConverter_preparing_report_info_for, new String[] {referees[i].getName()}));
 					origins = getDirectories(referees[i]);
 					for (int j = 0; j < origins.length; j++) {
 						xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
@@ -471,7 +472,7 @@ public final class ApiUseReportConverter {
 			try {
 				for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
 					report = (Report) iter.next();
-					localmonitor.setTaskName(SearchMessages.bind(SearchMessages.ApiUseReportConverter_writing_group_reports_for, new String[] {report.referee.getName()}));
+					localmonitor.setTaskName(NLS.bind(SearchMessages.ApiUseReportConverter_writing_group_reports_for, new String[] {report.referee.getName()}));
 					if(DEBUG) {
 						start = System.currentTimeMillis();
 						System.out.println("Writing report for "+report.referee.getName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -634,10 +635,10 @@ public final class ApiUseReportConverter {
 			writeW3Footer(writer);
 		}
 		catch(IOException ioe) {
-			throw new Exception(SearchMessages.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
 		catch (CoreException e) {
-			throw new Exception(SearchMessages.bind(SearchMessages.ApiUseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ApiUseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
 		finally {
 			if (writer != null) {
@@ -725,7 +726,7 @@ public final class ApiUseReportConverter {
 			writeW3Footer(writer);
 		}
 		catch(IOException ioe) {
-			throw new Exception(SearchMessages.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
 		finally {
 			if (writer != null) {
@@ -842,7 +843,7 @@ public final class ApiUseReportConverter {
 			writeW3Footer(writer);
 			writer.flush();
 		} catch (IOException e) {
-			throw new Exception(SearchMessages.bind(SearchMessages.ioexception_writing_html_file, htmlIndex.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, htmlIndex.getAbsolutePath()));
 		} finally {
 			if (writer != null) {
 				writer.close();
@@ -903,7 +904,7 @@ public final class ApiUseReportConverter {
 			writer.flush();
 		}
 		catch(IOException ioe) {
-			throw new Exception(SearchMessages.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
 		finally {
 			if (writer != null) {

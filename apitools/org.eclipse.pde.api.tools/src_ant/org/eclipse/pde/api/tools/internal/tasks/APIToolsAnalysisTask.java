@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
@@ -538,7 +539,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
 			writer.println(
-				Messages.bind(Messages.printArguments,
+				NLS.bind(Messages.printArguments,
 					new String[] {
 						this.referenceBaselineLocation,
 						this.currentBaselineLocation,

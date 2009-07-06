@@ -40,12 +40,12 @@ public class OpenPropertyPageResolution implements IMarkerResolution2 {
 	/**
 	 * The id of the property page to open
 	 */
-	private String fPageId = null;
+	String fPageId = null;
 	
 	/**
 	 * The element the page is to be opened on
 	 */
-	private IAdaptable fElement = null;
+	IAdaptable fElement = null;
 	
 	/**
 	 * Constructor

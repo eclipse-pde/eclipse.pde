@@ -51,7 +51,7 @@ public class ApiBaselinesConfigurationBlock {
 	 * Provides data information for created controls
 	 */
 	protected static class ControlData {
-		private Key key;
+		Key key;
 		private String[] values;
 		
 		/**
@@ -235,12 +235,12 @@ public class ApiBaselinesConfigurationBlock {
 	/**
 	 * The context of settings locations to search for values in
 	 */
-	private IScopeContext[] fLookupOrder = null;
+	IScopeContext[] fLookupOrder = null;
 	
 	/**
 	 * the working copy manager to work with settings
 	 */
-	private IWorkingCopyManager fManager = null;
+	IWorkingCopyManager fManager = null;
 	
 	/**
 	 * The main composite for the configuration block, used for enabling/disabling the block 
@@ -256,7 +256,7 @@ public class ApiBaselinesConfigurationBlock {
 	/**
 	 * Flag used to know if the page needs saving or not
 	 */
-	private boolean fDirty = false;
+	boolean fDirty = false;
 	
 	/**
 	 * The parent this block has been added to 

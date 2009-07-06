@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.ISession;
 import org.eclipse.pde.api.tools.internal.provisional.ITreeModel;
@@ -533,6 +534,6 @@ public class DeltaSession implements ISession {
 	}
 	
 	public String getDescription() {
-		return ActionMessages.bind(ActionMessages.SessionDescription, new String[] { this.timestamp, this.description });
+		return NLS.bind(ActionMessages.SessionDescription, new String[] { this.timestamp, this.description });
 	}
 }

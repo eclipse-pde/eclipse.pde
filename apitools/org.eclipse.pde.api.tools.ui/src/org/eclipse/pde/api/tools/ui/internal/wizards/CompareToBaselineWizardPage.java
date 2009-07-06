@@ -55,7 +55,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 	
 	private IStructuredSelection selection = null;
 	private Combo baselinecombo = null;
-	private String baselineName = null;
+	String baselineName = null;
 	private Link link = null;
 	
 	/**
@@ -126,7 +126,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 	/**
 	 * Initialize the page controls, etc
 	 */
-	private void initialize() {
+	void initialize() {
 		IApiBaselineManager apiBaselineManager = ApiPlugin.getDefault().getApiBaselineManager();
 		IApiBaseline defaultBaseline = apiBaselineManager.getDefaultApiBaseline();
 		String defaultBaselineName = defaultBaseline != null ? defaultBaseline.getName() : null;
@@ -193,7 +193,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 	 * @param selection
 	 * @return the {@link IAdaptable} for the current selection context
 	 */
-	private IAdaptable getAdaptable() {
+	IAdaptable getAdaptable() {
 		Object o = this.selection.getFirstElement();
 		if(o instanceof IAdaptable) {
 			IAdaptable adapt = (IAdaptable) o;

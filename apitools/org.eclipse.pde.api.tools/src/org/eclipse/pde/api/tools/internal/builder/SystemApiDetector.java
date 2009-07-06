@@ -245,7 +245,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	 */
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		switch(reference.getReferenceType()) {
-			case Reference.T_TYPE_REFERENCE : {
+			case IReference.T_TYPE_REFERENCE : {
 				int linenumber = reference.getLineNumber();
 				if (linenumber > 0) {
 					linenumber--;
@@ -295,7 +295,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					return pos;
 				}
 			}
-			case Reference.T_FIELD_REFERENCE : {
+			case IReference.T_FIELD_REFERENCE : {
 				int linenumber = reference.getLineNumber();
 				if (linenumber > 0) {
 					return getFieldNameRange(reference.getReferencedTypeName(), reference.getReferencedMemberName(), document, reference);
@@ -304,7 +304,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				IApiField field = (IApiField) reference.getMember();
 				return getSourceRangeForField(type, reference, field);
 			}
-			case Reference.T_METHOD_REFERENCE : {
+			case IReference.T_METHOD_REFERENCE : {
 				if (reference.getLineNumber() >= 0) {
 					String referenceMemberName = reference.getReferencedMemberName();
 					String methodName = null;

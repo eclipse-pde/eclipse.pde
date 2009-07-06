@@ -195,7 +195,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						buffer.append(',');
 					}
 					buffer.append(
-						BuilderMessages.bind(
+						NLS.bind(
 								BuilderMessages.reportUnsatisfiedConstraint,
 								new String[] {
 										constraint.getName(),

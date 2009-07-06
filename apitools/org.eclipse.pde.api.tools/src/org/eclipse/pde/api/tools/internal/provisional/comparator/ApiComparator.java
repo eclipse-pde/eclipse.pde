@@ -46,7 +46,7 @@ public class ApiComparator {
 	/**
 	 * Constant used for controlling tracing in the API comparator
 	 */
-	private static boolean DEBUG = Util.DEBUG;
+	static boolean DEBUG = Util.DEBUG;
 
 	public static final IDelta NO_DELTA = new Delta();
 	
@@ -1205,7 +1205,7 @@ public class ApiComparator {
 		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
 	}
 
-	private static boolean isAPI(int visibility,
+	static boolean isAPI(int visibility,
 			IApiType typeDescriptor) {
 		int access = typeDescriptor.getModifiers();
 		return VisibilityModifiers.isAPI(visibility)
