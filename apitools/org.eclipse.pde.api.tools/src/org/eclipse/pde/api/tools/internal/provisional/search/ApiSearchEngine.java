@@ -17,6 +17,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceResolver;
@@ -289,26 +292,38 @@ public final class ApiSearchEngine {
 			long start = System.currentTimeMillis();
 			long loopstart = 0;
 			String taskname = null;
+			MultiStatus mstatus = null;
 			for (int i = 0; i < scopeelements.length; i++) {
-				taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new String[] {scopeelements[i].getApiComponent().getId(), fRequestorContext});
-				localmonitor.setTaskName(taskname);
-				if(DEBUG) {
-					loopstart = System.currentTimeMillis();
-					System.out.println("Searching "+scopeelements[i].getApiComponent().getId()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new String[] {scopeelements[i].getApiComponent().getId(), fRequestorContext});
+					localmonitor.setTaskName(taskname);
+					if(DEBUG) {
+						loopstart = System.currentTimeMillis();
+						System.out.println("Searching "+scopeelements[i].getApiComponent().getId()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					searchReferences(requestor, scopeelements[i], reporter, localmonitor.newChild(1));
+					localmonitor.setTaskName(taskname);
+					if(localmonitor.isCanceled()) {
+						reporter.reportResults(scopeelements[i], NO_REFERENCES);
+						return;
+					}
+					localmonitor.worked(1);
+					if(DEBUG) {
+						System.out.println(Math.round((((float)(i+1))/scopeelements.length)*100)+"% done in "+(System.currentTimeMillis()-loopstart)+" ms"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
-				searchReferences(requestor, scopeelements[i], reporter, localmonitor.newChild(1));
-				localmonitor.setTaskName(taskname);
-				if(localmonitor.isCanceled()) {
-					reporter.reportResults(scopeelements[i], NO_REFERENCES);
-					return;
-				}
-				localmonitor.worked(1);
-				if(DEBUG) {
-					System.out.println(Math.round((((float)(i+1))/scopeelements.length)*100)+"% done in "+(System.currentTimeMillis()-loopstart)+" ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				catch(CoreException ce) {
+					if(mstatus == null) {
+						mstatus = new MultiStatus(ApiPlugin.PLUGIN_ID, IStatus.ERROR, null, null);
+					}
+					mstatus.add(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ce.getMessage(), ce));
 				}
 			}
 			if(DEBUG) {
 				System.out.println("Total Search Time: "+((System.currentTimeMillis()-start)/1000)+" seconds");  //$NON-NLS-1$//$NON-NLS-2$
+			}
+			if(mstatus != null) {
+				throw new CoreException(mstatus);
 			}
 		}
 		finally {
