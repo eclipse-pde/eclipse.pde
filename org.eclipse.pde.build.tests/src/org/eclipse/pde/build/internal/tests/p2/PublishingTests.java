@@ -97,7 +97,7 @@ public class PublishingTests extends P2TestCase {
 	public void testPublishFeature_rootFiles() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_rootFiles");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
-		
+
 		Utils.generateFeature(buildFolder, "f", null, null);
 		StringBuffer buffer = new StringBuffer("I am a file");
 		Utils.writeBuffer(f.getFile("app/contents/file"), buffer);
@@ -109,7 +109,7 @@ public class PublishingTests extends P2TestCase {
 		rootProperties.put("root.permissions.755", "file, second");
 		rootProperties.put("root.permissions.766", "contents/file");
 		Utils.storeBuildProperties(f, rootProperties);
-		
+
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
 		properties.put("p2.gathering", "true");
 		properties.put("filteredDependencyCheck", "true");
@@ -117,7 +117,7 @@ public class PublishingTests extends P2TestCase {
 
 		String buildXMLPath = f.getFile("build.xml").getLocation().toOSString();
 		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
-		
+
 		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		getIU(meta, "f.feature.group");
 		IInstallableUnit iu = getIU(meta, "f_root");
@@ -127,16 +127,16 @@ public class PublishingTests extends P2TestCase {
 		try {
 			assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:file, permissions:755)");
 			fail = true;
-		} catch (AssertionFailedError e){
+		} catch (AssertionFailedError e) {
 		}
 		assertFalse(fail);
-		
+
 		Set entries = new HashSet();
 		entries.add("contents/file");
 		entries.add("second");
 		assertZipContents(buildFolder, "buildRepo/binary/f_root_1.0.0", entries);
 	}
-	
+
 	public void testPublishFeature_versionReplacement() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_versions");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
@@ -146,7 +146,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateBundleManifest(bundle, "foo", "1.0.0.qualifier", null);
 		Utils.generatePluginBuildProperties(bundle, null);
 		Utils.writeBuffer(bundle.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
-		
+
 		Attributes extra = new Attributes();
 		extra.put(new Attributes.Name("Eclipse-BundleShape"), "jar");
 		Utils.generateBundleManifest(bar, "bar", "1.0.0.qualifier", extra);
@@ -181,7 +181,7 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("tmp/eclipse").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "foo");
 		assertTouchpoint(iu, "zipped", "true");
-		
+
 		iu = getIU(repo, "bar");
 		boolean hasZipped = false;
 		try {
@@ -190,7 +190,7 @@ public class PublishingTests extends P2TestCase {
 		} catch (AssertionFailedError e) {
 		}
 		assertFalse(hasZipped);
-		
+
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature model = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
 		assertEquals(model.getVersion(), "1.0.0.12345");
@@ -329,7 +329,7 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("   </target>														\n");
 		buffer.append("</project>														\n");
 		Utils.writeBuffer(f.getFile("customBuildCallbacks.xml"), buffer);
-		
+
 		buffer = new StringBuffer();
 		buffer.append("provides.0.name=my.provides\n");
 		buffer.append("provides.0.namespace=test\n");
@@ -351,7 +351,7 @@ public class PublishingTests extends P2TestCase {
 		//p2.inf was not expected in the jar
 		assertEquals(contents.size(), 1);
 		assertTrue(contents.contains("p2.inf"));
-		
+
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "f.feature.group");
 		assertProvides(iu, "test", "my.provides");
@@ -930,9 +930,21 @@ public class PublishingTests extends P2TestCase {
 		customBuffer.append("</project>																				\n");
 		Utils.writeBuffer(build2.getFile("customTargets.xml"), customBuffer);
 
+		//bug 269122
+		customBuffer = new StringBuffer();
+		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/customAssembly.xml\"/>	\n");
+		customBuffer.append("   <target name=\"post.gather.bin.parts\">												\n");
+		customBuffer.append("      <echo message=\"post bin parts!\" />												\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("</project>																				\n");
+		Utils.writeBuffer(build2.getFile("customAssembly.xml"), customBuffer);
+
 		runBuild(build2);
 
-		assertLogContainsLines(build2.getFile("log.log"), new String[] {"pre Process Repos!", "post Process Repos!"});
+		IFile log = build2.getFile("log.log");
+		assertLogContainsLines(log, new String[] {"pre Process Repos!", "post Process Repos!"});
+		assertLogContainsLines(log, new String[] {"post bin parts!"});
 
 		//reusing the metadata from part 1
 		uri = URIUtil.fromString("file:" + build2.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());
@@ -1140,7 +1152,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "new_category_1");
 		assertTrue(!iu.getVersion().toString().equals("0.0.0"));
 		assertNotNull(getIU(metadata, "new_category_2"));
-		
+
 		assertFalse(buildFolder.getFile("tmp/eclipse/features/f_1.0.0.jar").exists());
 		iu = null;
 		try {
@@ -1211,7 +1223,7 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(metadata, "rcp.product_root.carbon.macosx.ppc");
 		assertTouchpoint(iu, "configure", "linkTarget:rcp.app/Contents/MacOS/rcp");
 		assertTouchpoint(iu, "configure", "linkName:rcp");
-		
+
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.win32.win32.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.gtk.linux.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.carbon.macosx.ppc_3.3.200");
@@ -1500,21 +1512,20 @@ public class PublishingTests extends P2TestCase {
 		} catch (Error e) {
 			assertNull(e.getMessage());
 		}
-		
+
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
-		
+
 		IInstallableUnit common = getIU(repo, "org.eclipse.equinox.common");
-		IRequiredCapability [] required = iu.getRequiredCapabilities();
+		IRequiredCapability[] required = iu.getRequiredCapabilities();
 		assertEquals(required.length, 2);
-		if(required[0].getName().equals("org.eclipse.equinox.common"))
+		if (required[0].getName().equals("org.eclipse.equinox.common"))
 			assertEquals(required[0].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 		else
 			assertEquals(required[1].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 	}
 
-	
 	public void testPublish_P2InfConfigProperty() throws Exception {
 		IFolder buildFolder = newTest("infConfig");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
