@@ -98,7 +98,7 @@ public class ApiModelCacheTests extends TestCase {
 		String typename = "testtype3";
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.TYPE);
 		assertNull("The element 'testtype3' should not exist in the cache", element);
-		assertFalse("The element 'testtype3' should not havde been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE));
+		assertFalse("The element 'testtype3' should not have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE));
 	}
 	
 	/**
@@ -110,6 +110,55 @@ public class ApiModelCacheTests extends TestCase {
 		String typename = "testtype3";
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.TYPE);
 		assertNull("The element 'testtype3' should not exist in the cache", element);
-		assertFalse("The element 'testtype3' should not havde been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE));
+		assertFalse("The element 'testtype3' should not have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "testtype3", IApiElement.TYPE));
+	}
+	
+	/**
+	 * Tests adding some member types to the cache and removing them via the root type
+	 * 
+	 * @throws Exception
+	 */
+	public void testAddRemoveMemerTypeStringInfo() throws Exception {
+		String roottypename = "a.b.c.testee1";
+		cacheType("a.b.c.testee1");
+		cacheType("a.b.c.testee1$inner");
+		cacheType("a.b.c.testee1$inner1");
+		cacheType("a.b.c.testee1$inner2");
+		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, roottypename, IApiElement.TYPE);
+		assertNotNull("The element 'a.b.c.testee1' should exist in the cache", element);
+		assertNotNull("The element 'a.b.c.testee1$inner' should exist in the cache", 
+				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner", IApiElement.TYPE));
+		assertNotNull("The element 'a.b.c.testee1$inner1' should exist in the cache", 
+				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE));
+		assertNotNull("The element 'a.b.c.testee1$inner2' should exist in the cache", 
+				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner2", IApiElement.TYPE));
+		assertTrue("the type 'a.b.c.testee1$inner1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE));
+		assertTrue("The type 'a.b.c.testee1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, roottypename, IApiElement.TYPE));
+		assertTrue("The cache should be empty", ApiModelCache.getCache().isEmpty());
+	}
+	
+	/**
+	 * Tests adding some member types to the cache and removing them via the root type
+	 * 
+	 * @throws Exception
+	 */
+	public void testAddRemoveMemerTypeElementInfo() throws Exception {
+		String roottypename = "a.b.c.testee1";
+		cacheType("a.b.c.testee1");
+		cacheType("a.b.c.testee1$inner");
+		cacheType("a.b.c.testee1$inner1");
+		cacheType("a.b.c.testee1$inner2");
+		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner1", IApiElement.TYPE);
+		assertNotNull("The element 'a.b.c.testee1$inner1' should exist in the cache", element);
+		assertTrue("the type 'a.b.c.testee1$inner1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(element));
+		
+		assertNotNull("The element 'a.b.c.testee1$inner' should exist in the cache", 
+				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner", IApiElement.TYPE));
+		assertNotNull("The element 'a.b.c.testee1$inner2' should exist in the cache", 
+				ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, "a.b.c.testee1$inner2", IApiElement.TYPE));
+		element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, roottypename, IApiElement.TYPE);
+		assertNotNull("The element 'a.b.c.testee1' should exist in the cache", element);
+		assertTrue("The type 'a.b.c.testee1' should have been removed from the cache", ApiModelCache.getCache().removeElementInfo(element));
+		assertTrue("The cache should be empty", ApiModelCache.getCache().isEmpty());
 	}
 }

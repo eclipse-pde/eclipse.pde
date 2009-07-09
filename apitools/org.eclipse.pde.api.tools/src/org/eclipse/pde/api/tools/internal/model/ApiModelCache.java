@@ -67,6 +67,7 @@ public final class ApiModelCache {
 	static ApiModelCache fInstance = null;
 	
 	Cache fRootCache = null;
+	Cache fMemberTypeCache = null;
 	
 	/**
 	 * Constructor - no instantiation
@@ -83,6 +84,21 @@ public final class ApiModelCache {
 			fInstance = new ApiModelCache();
 		}
 		return fInstance;
+	}
+	
+	/**
+	 * Returns the key to use in a cache. The key is of the form:
+	 * <code>[baselineid].[componentid].[typename]</code><br>
+	 * 
+	 * @param baseline
+	 * @param component
+	 * @param typename
+	 * @return the member type cache key to use
+	 */
+	private String getCacheKey(String baseline, String component, String typename) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(baseline).append('.').append(component).append('.').append(typename);
+		return buffer.toString();
 	}
 	
 	/**
@@ -115,11 +131,48 @@ public final class ApiModelCache {
 						typecache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
 						compcache.put(comp.getId(), typecache);
 					}
-					typecache.put(element.getName(), element);
+					ApiType type = (ApiType) element;
+					if(type.isMemberType() || isMemberType(type.getName()) /*cache even a root type with a '$' in its name here as well*/) {
+						if(this.fMemberTypeCache == null) {
+							this.fMemberTypeCache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+						}
+						String key = getCacheKey(baseline.getName(), id, getRootName(type.getName()));
+						Cache mcache = (Cache) this.fMemberTypeCache.get(key);
+						if(mcache == null) {
+							mcache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+							this.fMemberTypeCache.put(key, mcache);
+						}
+						mcache.put(type.getName(), type);
+					}
+					else {
+						typecache.put(element.getName(), element);
+					}
 				}
 				break;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the root type name assuming that the '$' char is a member type boundary 
+	 * @param typename
+	 * @return the pruned name or the original name
+	 */
+	private String getRootName(String typename) {
+		int idx = typename.indexOf('$');
+		if(idx > -1) {
+			return typename.substring(0, idx);
+		}
+		return typename;
+	}
+	
+	/**
+	 * Method to see if the type boundary char appears in the type name
+	 * @param typename
+	 * @return true if the type name contains '$' false otherwise
+	 */
+	private boolean isMemberType(String typename) {
+		return typename.indexOf('$') > -1;
 	}
 	
 	/**
@@ -139,12 +192,22 @@ public final class ApiModelCache {
 		}
 		switch(type) {
 			case IApiElement.TYPE: {
-				if(fRootCache != null) {
-					Cache compcache = (Cache) fRootCache.get(baselineid);
-					if(compcache != null) {
-						Cache typecache = (Cache) compcache.get(componentid);
-						if(typecache != null && identifier != null) {
-							return (IApiElement) typecache.get(identifier);
+				if(isMemberType(identifier)) {
+					if(this.fMemberTypeCache != null) {
+						Cache mcache = (Cache) this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
+						if(mcache != null) {
+							return (IApiElement) mcache.get(identifier);
+						}
+					}
+				}
+				else {
+					if(this.fRootCache != null) {
+						Cache compcache = (Cache) fRootCache.get(baselineid);
+						if(compcache != null) {
+							Cache typecache = (Cache) compcache.get(componentid);
+							if(typecache != null && identifier != null) {
+								return (IApiElement) typecache.get(identifier);
+							}
 						}
 					}
 				}
@@ -170,26 +233,45 @@ public final class ApiModelCache {
 		}
 		switch(type) {
 			case IApiElement.TYPE: {
-				if(fRootCache != null && componentid != null && identifier != null) {
-					Cache compcache = (Cache) fRootCache.get(baselineid);
+				if(componentid != null && identifier != null) {
 					boolean removed = true;
-					if(compcache != null) {
-						Cache typecache = (Cache) compcache.get(componentid);
-						if(typecache != null) {
-							removed &= typecache.remove(identifier) != null;
-							if(typecache.isEmpty()) {
-								removed &= compcache.remove(componentid) != null;
-							}
-							if(compcache.isEmpty()) {
-								removed &= fRootCache.remove(baselineid) != null;
+					//clean member type cache
+					if(this.fMemberTypeCache != null) {
+						if(isMemberType(identifier)) {
+							Cache mcache = (Cache) this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
+							if(mcache != null) {
+								return mcache.remove(identifier) != null;
 							}
 						}
-						return removed;
+						else {
+							this.fMemberTypeCache.remove(getCacheKey(baselineid, componentid, getRootName(identifier)));
+						}
+					}
+					if(fRootCache != null) {
+						Cache compcache = (Cache) fRootCache.get(baselineid);
+						if(compcache != null) {
+							Cache typecache = (Cache) compcache.get(componentid);
+							if(typecache != null) {
+								removed &= typecache.remove(identifier) != null;
+								if(typecache.isEmpty()) {
+									removed &= compcache.remove(componentid) != null;
+								}
+								if(compcache.isEmpty()) {
+									removed &= fRootCache.remove(baselineid) != null;
+								}
+								return removed;
+							}
+							
+						}
+					}
+					else {
+						return false;
 					}
 				}
 				break;
 			}
 			case IApiElement.COMPONENT: {
+				flushMemberCache();
 				if(fRootCache != null && componentid != null) {
 					Cache compcache = (Cache) fRootCache.get(baselineid);
 					if(compcache != null) {
@@ -203,6 +285,7 @@ public final class ApiModelCache {
 				break;
 			}
 			case IApiElement.BASELINE: {
+				flushMemberCache();
 				if(fRootCache != null) {
 					return fRootCache.remove(baselineid) != null;
 				}
@@ -236,6 +319,7 @@ public final class ApiModelCache {
 				break;
 			}
 			case IApiElement.BASELINE: {
+				flushMemberCache();
 				if(fRootCache != null) {
 					IApiBaseline baseline = (IApiBaseline) element;
 					return fRootCache.remove(baseline.getName()) != null;
@@ -253,6 +337,16 @@ public final class ApiModelCache {
 		if(fRootCache != null) {
 			fRootCache.flush();
 		}
+		flushMemberCache();
+	}
+	
+	/**
+	 * Flushes the cache of member types
+	 */
+	private void flushMemberCache() {
+		if(this.fMemberTypeCache != null) {
+			this.fMemberTypeCache.flush();
+		}
 	}
 	
 	/**
@@ -261,9 +355,13 @@ public final class ApiModelCache {
 	 * @return true if the cache has no entries, false otherwise
 	 */
 	public boolean isEmpty() {
+		boolean empty = true;
 		if(fRootCache != null) {
-			return fRootCache.isEmpty();
+			empty &= fRootCache.isEmpty();
 		}
-		return true;
+		if(this.fMemberTypeCache != null) {
+			empty &= this.fMemberTypeCache.isEmpty();
+		}
+		return empty;
 	}
 }
