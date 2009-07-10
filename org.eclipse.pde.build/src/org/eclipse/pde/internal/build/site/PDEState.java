@@ -479,15 +479,11 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (description != null && (!resolved || description.isResolved()))
 			return description;
 
-		int qualifierIdx = -1;
-		if ((qualifierIdx = parsedVersion.getQualifier().indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
+		if (parsedVersion.getQualifier().indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER) > -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
-
-			String qualifierPrefix = qualifierIdx > 0 ? parsedVersion.getQualifier().substring(0, qualifierIdx - 1) : ""; //$NON-NLS-1$
-
+			VersionRange qualifierRange = Utils.createVersionRange(version);
 			for (int i = 0; i < bundles.length; i++) {
-				Version bundleVersion = bundles[i].getVersion();
-				if (bundleVersion.getMajor() == parsedVersion.getMajor() && bundleVersion.getMinor() == parsedVersion.getMinor() && bundleVersion.getMicro() == parsedVersion.getMicro() && bundleVersion.getQualifier().compareTo(qualifierPrefix) >= 0)
+				if (qualifierRange.isIncluded(bundles[i].getVersion()) && (!resolved || bundles[i].isResolved()))
 					return bundles[i];
 			}
 		}

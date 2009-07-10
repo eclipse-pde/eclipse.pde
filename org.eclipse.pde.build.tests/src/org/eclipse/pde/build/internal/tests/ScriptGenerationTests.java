@@ -889,7 +889,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		entries.add("plugins/P1_1.0.0/@dot.log");
 		entries.add("plugins/P2_1.0.0/@dot.log");
 		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
-		
+
 		//bug 279609
 		properties.put("logExtension", ".xml");
 		Utils.storeBuildProperties(buildFolder, properties);
@@ -1229,7 +1229,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 		assertJarVerifies(tempJar, true);
 	}
-	
+
 	public void testBug279583() throws Exception {
 		IFolder buildFolder = newTest("279583");
 
@@ -1244,14 +1244,14 @@ public class ScriptGenerationTests extends PDETestCase {
 		try {
 			generateScripts(buildFolder, properties);
 			fail("We expected an exception");
-		} catch(Exception e){
+		} catch (Exception e) {
 			assertEquals(e.getMessage(), "Malformed URL exception: org.eclipse.pde.build.test.279583/build.properties: platform:/plugins/foo/k.jar.");
 		}
 	}
-	
+
 	public void testBug281592() throws Exception {
 		IFolder buildFolder = newTest("281592");
-		
+
 		IFolder B = Utils.createFolder(buildFolder, "plugins/B");
 		Attributes additionalAttributes = new Attributes();
 		Utils.generatePluginBuildProperties(B, null);
@@ -1267,7 +1267,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("   }                        \n");
 		code.append("}                           \n");
 		Utils.writeBuffer(B.getFile("src/b/B.java"), code);
-		
+
 		IFolder D = Utils.createFolder(buildFolder, "plugins/D");
 		additionalAttributes = new Attributes();
 		Utils.generatePluginBuildProperties(D, null);
@@ -1284,27 +1284,52 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("   }                      \n");
 		code.append("}                         \n");
 		Utils.writeBuffer(D.getFile("src/d/D.java"), code);
-		
-		
+
 		IFolder X2 = Utils.createFolder(buildFolder, "plugins/X_2");
 		additionalAttributes = new Attributes();
 		Utils.generatePluginBuildProperties(X2, null);
 		additionalAttributes.put(new Attributes.Name("Export-Package"), "x;version=\"2.0.1\"");
 		Utils.generateBundleManifest(X2, "X", "2.0.0", additionalAttributes);
 		Utils.writeBuffer(X2.getFile("src/x/X.java"), new StringBuffer("package x;\n public class X { public static void f(){} }"));
-		
+
 		IFolder X3 = Utils.createFolder(buildFolder, "plugins/X_3");
 		additionalAttributes = new Attributes();
 		Utils.generatePluginBuildProperties(X3, null);
 		additionalAttributes.put(new Attributes.Name("Export-Package"), "x;version=\"3.0.2\"");
 		Utils.generateBundleManifest(X3, "X", "3.0.0", additionalAttributes);
 		Utils.writeBuffer(X3.getFile("src/x/X.java"), new StringBuffer("package x;\n public class X { public static void g(){} }"));
-		
-		Utils.generateFeature(buildFolder, "f", null, new String[] { "B", "D", "X;version=2.0.0", "X;version=3.0.0"});
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"B", "D", "X;version=2.0.0", "X;version=3.0.0"});
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("logExtension", ".xml");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
+	}
+
+	public void testBug252711() throws Exception {
+		IFolder buildFolder = newTest("252711");
+
+		IFolder aBinary = Utils.createFolder(buildFolder, "base/plugins/a_3.4.2.v_833");
+		Utils.generateBundleManifest(aBinary, "a; singleton:=true", "3.4.2.v_833", null);
+
+		IFolder aBinary2 = Utils.createFolder(buildFolder, "base/plugins/b_1.0.0");
+		Utils.generateBundleManifest(aBinary2, "b; singleton:=true", "1.0.0", null);
+
+		IFolder aSource = Utils.createFolder(buildFolder, "plugins/a");
+		Utils.generateBundle(aSource, "a; singleton:=true", "3.4.2.Branch_qualifier");
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;version=\"3.4.2.Branch_qualifier\""});
+
+		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
+		buildProperties.put("baseLocation", buildFolder.getFolder("base").getLocation().toOSString());
+
+		String failedMessage = null;
+		try {
+			generateScripts(buildFolder, buildProperties);
+		} catch (Throwable e) {
+			failedMessage = e.getMessage();
+		}
+		assertTrue(failedMessage != null && failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
 	}
 }

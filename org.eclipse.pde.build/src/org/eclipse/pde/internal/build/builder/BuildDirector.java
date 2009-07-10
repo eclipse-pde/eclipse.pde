@@ -493,7 +493,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			//and generate the script if one the configuration is being built. The generated scripts
 			//are configuration agnostic so we only generate once.
 			Set matchingEntries = (Set) ((Properties) model.getUserObject()).get(PLUGIN_ENTRY);
-			if (matchingEntries.isEmpty())
+			if (matchingEntries == null || matchingEntries.isEmpty())
 				return;
 
 			Iterator entryIter = matchingEntries.iterator();

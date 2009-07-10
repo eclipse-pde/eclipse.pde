@@ -107,6 +107,11 @@ public class Utils {
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 
+	static public void generateBundle(IFolder folder, String bundleId, String version) throws CoreException, IOException {
+		generateBundleManifest(folder, bundleId, version, null);
+		generatePluginBuildProperties(folder, null);
+		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+	}
 	static public void storeBuildProperties(IFolder buildFolder, Properties buildProperties) throws FileNotFoundException, IOException {
 		storeProperties(buildFolder.getFile("build.properties"), buildProperties);
 	}
