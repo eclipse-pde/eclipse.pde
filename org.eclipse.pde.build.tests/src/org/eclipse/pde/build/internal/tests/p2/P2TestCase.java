@@ -155,7 +155,7 @@ public class P2TestCase extends PDETestCase {
 		Collector collector = repository.query(new InstallableUnitQuery(name), new Collector(), null);
 
 		IInstallableUnit unit = null;
-		if (collector.size() > 1) 
+		if (collector.size() > 0) 
 			unit = (IInstallableUnit) collector.iterator().next();
 		if (assertNotNull) {
 			assertEquals(collector.size(), 1);
