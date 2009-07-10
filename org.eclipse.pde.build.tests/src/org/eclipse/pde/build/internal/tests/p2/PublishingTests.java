@@ -1034,13 +1034,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "rcp.product");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
 
-		iu = null;
-		try {
-			//don't want to find this
-			iu = getIU(metadata, "toolingorg.eclipse.equinox.common");
-		} catch (AssertionFailedError e) {
-		}
-		assertNull(iu);
+		assertNull(getIU(metadata, "toolingorg.eclipse.equinox.common", false));
 
 		//bug 271141
 		assertFalse(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86.zip").exists());
@@ -1154,13 +1148,7 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(getIU(metadata, "new_category_2"));
 
 		assertFalse(buildFolder.getFile("tmp/eclipse/features/f_1.0.0.jar").exists());
-		iu = null;
-		try {
-			//don't want to find this
-			iu = getIU(metadata, "f.feature.jar");
-		} catch (AssertionFailedError e) {
-		}
-		assertNull(iu);
+		assertNull(getIU(metadata, "f.feature.jar", false));
 	}
 
 	public void testBug264743_PublishExecutable() throws Exception {
@@ -1637,5 +1625,52 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(metadata, "org.eclipse.equinox.app");
 		line = "org.eclipse.equinox.app_" + iu.getVersion() + ".jar@4\\:start";
 		assertLogContainsLine(config, line);
+	}
+	
+	public void testBug283060() throws Exception {
+		IFolder buildFolder = newTest("283060");
+		IFolder F = Utils.createFolder(buildFolder, "features/F");
+		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"F\" version=\"1.0.0\">		\n");
+		buffer.append("  <requires>											\n");	
+		buffer.append("     <import plugin=\"org.eclipse.equinox.simpleconfigurator\" version=\"1.0.100\" match=\"equivalent\" />	\n");
+		buffer.append("     <import plugin=\"org.eclipse.core.jobs\" version=\"3.4.100\" match=\"equivalent\" />	\n");
+		buffer.append("     <import plugin=\"org.eclipse.equinox.common\" version=\"3.5.0\" match=\"equivalent\" />	\n");
+		buffer.append("     <import plugin=\"org.eclipse.osgi\" version=\"3.5.0\" match=\"equivalent\" />	\n");
+		buffer.append("  </requires>											\n");
+		buffer.append("</feature>											\n");
+		Utils.writeBuffer(F.getFile("feature.xml"), buffer);
+		Properties properties = new Properties();
+		properties.put("bin.includes", "feature.xml");
+		Utils.writeBuffer(F.getFile("feature.xml"), buffer);
+		
+		IFile product = rcp.getFile("rcp.product");
+		StringBuffer extra = new StringBuffer();
+		extra.append(" <configurations>																					\n");
+		extra.append("    <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"2\" />				\n");
+		extra.append("    <plugin id=\"org.eclipse.equinox.simpleconfigurator\" autoStart=\"true\" startLevel=\"1\" />	\n");
+		extra.append(" </configurations>																				\n");
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"F"}, true, extra);
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("configs", "win32,win32,x86");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		properties.put("p2.gathering", "true");
+		properties.put("p2.context.repos", URIUtil.toUnencodedString(createCompositeFromBase(buildFolder.getFolder("context"))));
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IFile bundlesInfo = buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info");
+		assertResourceFile(bundlesInfo);
+		assertLogContainsLine(bundlesInfo, ",2,true");
+			
+		//bug 283091
+		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		assertNull(getIU(meta, "org.eclipse.equinox.app", false));
 	}
 }

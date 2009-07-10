@@ -210,6 +210,15 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printAttribute("repository", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$ 
 			script.printAttribute("productFile", newProduct, true); //$NON-NLS-1$
 			script.println(">"); //$NON-NLS-1$
+
+			URI[] context = getContextMetadata();
+			for (int i = 0; context != null && i < context.length; i++) {
+				script.printTab();
+				script.print("\t<contextRepository"); //$NON-NLS-1$
+				script.printAttribute("location", URIUtil.toUnencodedString(context[i]), true); //$NON-NLS-1$
+				script.println("/>"); //$NON-NLS-1$
+			}
+
 			for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
 				Config config = (Config) iterator.next();
 				if (Config.genericConfig().equals(config))
@@ -278,6 +287,11 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			return;
 
 		script.printStartTag("p2.mirror"); //$NON-NLS-1$
+		script.printTab();
+		script.print("\t<slicingOptions"); //$NON-NLS-1$
+		script.printAttribute("includeNonGreedy", FALSE, true); //$NON-NLS-1$
+		script.println("/>"); //$NON-NLS-1$
+
 		script.printTab();
 		script.print("\t<source"); //$NON-NLS-1$
 		script.printAttribute("location", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$

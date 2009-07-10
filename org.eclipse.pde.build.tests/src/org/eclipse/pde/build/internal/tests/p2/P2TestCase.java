@@ -1,23 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
+ * Contributors: IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests.p2;
 
+import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository;
+import org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
@@ -67,13 +67,13 @@ public class P2TestCase extends PDETestCase {
 			initialize();
 		metadataManager.removeRepository(location);
 	}
-	
+
 	public void removeArtifactRepository(URI location) throws Exception {
 		if (artifactManager == null)
 			initialize();
 		artifactManager.removeRepository(location);
 	}
-	
+
 	public IMetadataRepository loadMetadataRepository(String metadataLocation) throws Exception {
 		if (metadataLocation == null)
 			return null;
@@ -81,7 +81,7 @@ public class P2TestCase extends PDETestCase {
 		URI location = URIUtil.fromString(metadataLocation);
 		return loadMetadataRepository(location);
 	}
-	
+
 	public IMetadataRepository loadMetadataRepository(URI location) throws Exception {
 		if (location == null)
 			return null;
@@ -89,7 +89,7 @@ public class P2TestCase extends PDETestCase {
 			initialize();
 		IMetadataRepository repository = metadataManager.loadRepository(location, null);
 		assertNotNull(repository);
-		return repository;		
+		return repository;
 	}
 
 	public IArtifactRepository loadArtifactRepository(String artifactLocation) throws Exception {
@@ -102,6 +102,27 @@ public class P2TestCase extends PDETestCase {
 		IArtifactRepository repository = artifactManager.loadRepository(location, null);
 		assertNotNull(repository);
 		return repository;
+	}
+
+	public URI createCompositeFromBase(IFolder repository) throws Exception {
+		if (metadataManager == null)
+			initialize();
+
+		URI baseURI = repository.getLocationURI();
+
+		File base = new File(Platform.getInstallLocation().getURL().getPath());
+		base = new File(base, "p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile");
+		File[] profiles = base.listFiles();
+		Arrays.sort(profiles);
+		File profile = profiles[profiles.length - 1];
+
+		CompositeMetadataRepository repo = (CompositeMetadataRepository) metadataManager.createRepository(baseURI, "base composite", IMetadataRepositoryManager.TYPE_COMPOSITE_REPOSITORY, null);
+		repo.addChild(profile.toURI());
+
+		CompositeArtifactRepository artifact = (CompositeArtifactRepository) artifactManager.createRepository(baseURI, "base composite", IArtifactRepositoryManager.TYPE_COMPOSITE_REPOSITORY, null);
+		artifact.addChild(URIUtil.toURI(Platform.getInstallLocation().getURL()));
+
+		return baseURI;
 	}
 
 	public void assertMD5(IFolder repository, IArtifactDescriptor descriptor) throws Exception {
@@ -127,23 +148,32 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public IInstallableUnit getIU(IMetadataRepository repository, String name) {
+		return getIU(repository, name, true);
+	}
+
+	public IInstallableUnit getIU(IMetadataRepository repository, String name, boolean assertNotNull) {
 		Collector collector = repository.query(new InstallableUnitQuery(name), new Collector(), null);
-		assertEquals(collector.size(), 1);
-		IInstallableUnit unit = (IInstallableUnit) collector.iterator().next();
-		assertNotNull(unit);
+
+		IInstallableUnit unit = null;
+		if (collector.size() > 1) 
+			unit = (IInstallableUnit) collector.iterator().next();
+		if (assertNotNull) {
+			assertEquals(collector.size(), 1);
+			assertNotNull(unit);
+		}
 		return unit;
 	}
 
-	public void assertManagerDoesntContain(URI repo){
+	public void assertManagerDoesntContain(URI repo) {
 		if (metadataManager == null)
 			initialize();
 		assertFalse(metadataManager.contains(repo));
-		
+
 		if (artifactManager == null)
 			initialize();
 		assertFalse(artifactManager.contains(repo));
 	}
-	
+
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
 		ITouchpointData[] data = iu.getTouchpointData();
 		for (int i = 0; i < data.length; i++) {
