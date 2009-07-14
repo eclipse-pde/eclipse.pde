@@ -713,6 +713,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (ApiPlugin.isRunningInFramework()) {
 			JavaRuntime.removeVMInstallChangedListener(this);
 		}
+		clearCachedElements();
 		IApiComponent[] components = getApiComponents();
 		for (int i = 0; i < components.length; i++) {
 			components[i].dispose();
@@ -740,12 +741,21 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline#close()
 	 */
 	public void close() throws CoreException {
+		clearCachedElements();
 		IApiComponent[] components = getApiComponents();
 		for (int i = 0; i < components.length; i++) {
 			components[i].close();
 		}
 	}
 
+	/**
+	 * Clears all element infos from the cache for this baseline
+	 * @since 1.1
+	 */
+	void clearCachedElements() {
+		ApiModelCache.getCache().removeElementInfo(this);
+	}
+	
 	/* (non-Javadoc)
 	 * @see IApiBaseline#getDependentComponents(IApiComponent[])
 	 */

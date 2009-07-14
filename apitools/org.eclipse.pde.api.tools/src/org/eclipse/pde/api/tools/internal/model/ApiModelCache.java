@@ -302,7 +302,7 @@ public final class ApiModelCache {
 	 * @throws CoreException if there is a problem accessing any of the {@link IApiElement} info
 	 * in order to remove it from the cache - pass the exception along.
 	 */
-	public boolean removeElementInfo(IApiElement element) throws CoreException {
+	public boolean removeElementInfo(IApiElement element) {
 		if(element == null) {
 			return false;
 		}
@@ -312,8 +312,11 @@ public final class ApiModelCache {
 				if(fRootCache != null) {
 					IApiComponent comp = element.getApiComponent();
 					if(comp != null) {
-						IApiBaseline baseline = comp.getBaseline();
-						return removeElementInfo(baseline.getName(), comp.getId(), element.getName(), element.getType());
+						try {
+							IApiBaseline baseline = comp.getBaseline();
+							return removeElementInfo(baseline.getName(), comp.getId(), element.getName(), element.getType());
+						}
+						catch(CoreException ce) {}
 					}
 				}
 				break;

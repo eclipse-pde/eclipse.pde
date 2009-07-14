@@ -227,10 +227,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				fNeedsSaving = true;
 				
 				//flush the model cache
-				try {
-					ApiModelCache.getCache().removeElementInfo(profile);
-				}
-				catch(CoreException ce){}
+				ApiModelCache.getCache().removeElementInfo(profile);
 				return success;
 			}
 		}
@@ -656,11 +653,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				workspacebaseline.dispose();
 				StubApiComponent.disposeAllCaches();
 				workspacebaseline = null;
-				//flush the model cache
-				try {
-					ApiModelCache.getCache().removeElementInfo(workspacebaseline);
-				}
-				catch(CoreException ce) {}
 			}
 		}
 	}
