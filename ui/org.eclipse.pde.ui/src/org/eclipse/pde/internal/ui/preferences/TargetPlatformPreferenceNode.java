@@ -52,7 +52,7 @@ public class TargetPlatformPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.pde.ui.TargetPlatformPreferencePage2"; //$NON-NLS-1$
+		return "org.eclipse.pde.ui.TargetPlatformPreferencePage"; //$NON-NLS-1$
 	}
 
 	/**
