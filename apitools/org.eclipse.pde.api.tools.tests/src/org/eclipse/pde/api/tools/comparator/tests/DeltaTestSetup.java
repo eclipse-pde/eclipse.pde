@@ -42,8 +42,6 @@ public abstract class DeltaTestSetup extends TestCase {
 	private static final String WORKSPACE_NAME = "tests_deltas_workspace";
 
 	private static IPath WORKSPACE_ROOT;
-	
-	private IApiBaseline before = null, after = null;
 
 	static {
 		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
@@ -176,13 +174,14 @@ public abstract class DeltaTestSetup extends TestCase {
 	}
 
 	protected IApiBaseline getAfterState() {
+		IApiBaseline state = null;
 		try {
-			after = TestSuiteHelper.createTestingBaseline(AFTER, getBaseLineFolder(AFTER));
+			state = TestSuiteHelper.createTestingBaseline(getBaseLineFolder(AFTER));
 		} catch (CoreException e) {
 			e.printStackTrace();
 			assertTrue("Should not happen", false);
 		}
-		return after;
+		return state;
 	}
 	
 	private IPath getBaseLineFolder(String name) {
@@ -190,13 +189,14 @@ public abstract class DeltaTestSetup extends TestCase {
 	}
 
 	protected IApiBaseline getBeforeState() {
+		IApiBaseline state = null;
 		try {
-			before = TestSuiteHelper.createTestingBaseline(BEFORE, getBaseLineFolder(BEFORE));
+			state = TestSuiteHelper.createTestingBaseline(getBaseLineFolder(BEFORE));
 		} catch (CoreException e) {
 			e.printStackTrace();
 			assertTrue("Should not happen", false);
 		}
-		return before;
+		return state;
 	}
 
 	public abstract String getTestRoot();
@@ -208,13 +208,6 @@ public abstract class DeltaTestSetup extends TestCase {
 	}
 	
 	protected void tearDown() throws Exception {
-		//clean up
-		if(this.after != null) {
-			this.after.dispose();
-		}
-		if(this.before != null) {
-			this.before.dispose();
-		}
 		// remove workspace root
 		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
 		super.tearDown();

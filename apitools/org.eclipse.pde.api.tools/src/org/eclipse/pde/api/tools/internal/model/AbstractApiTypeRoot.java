@@ -15,7 +15,6 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -69,18 +68,7 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getStructure()
 	 */
 	public IApiType getStructure() throws CoreException {
-		ApiModelCache cache = ApiModelCache.getCache();
-		IApiComponent comp = getApiComponent();
-		IApiType type = null;
-		if(comp != null) {
-			IApiBaseline baseline = comp.getBaseline();
-			type = (IApiType) cache.getElementInfo(baseline.getName(), comp.getId(), this.getTypeName(), IApiElement.TYPE);
-		}
-		if(type == null) {
-			type = TypeStructureBuilder.buildTypeStructure(getContents(), getApiComponent(), this);
-			cache.cacheElementInfo(type);
-		}
-		return type;
+		return TypeStructureBuilder.buildTypeStructure(getContents(), getApiComponent(), this);
 	}
 	
 	/**

@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.builder.BuildContext;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -36,8 +35,8 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public class OSGiLessAnalysisTests extends TestCase {
 	
 	public void testAnalyzer() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("baseline", new Path("test-analyzer-1"));
-		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", new Path("test-analyzer-2"));
+		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-analyzer-1");
+		IApiBaseline current = TestSuiteHelper.createTestingBaseline("test-analyzer-2");
 		BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 		IApiComponent component = current.getApiComponent("test.bundle.a");
 		assertNotNull("Missing API component test.bundle.a", component);
@@ -65,7 +64,5 @@ public class OSGiLessAnalysisTests extends TestCase {
 			expectedIds.remove(new Integer(problems[i].getId()));
 		}
 		assertTrue("Did not find expected problems", expectedIds.isEmpty());
-		baseline.dispose();
-		current.dispose();
 	}
 }

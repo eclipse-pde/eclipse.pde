@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ElementChangedEvent;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
@@ -40,14 +39,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode;
 import org.eclipse.pde.api.tools.internal.ProjectApiDescription.TypeNode;
-import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.ScannerMessages;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Element;
@@ -217,7 +214,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 							int flags = delta.getFlags();
 							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
 								clean(proj, false, true);
-								flushElementCache(delta);
 							} else if((flags & (IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED
 									| IJavaElementDelta.F_CLASSPATH_CHANGED)) != 0) {
 								if (proj != null) {
@@ -268,7 +264,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 											IJavaElementDelta.F_FINE_GRAINED | 
 											IJavaElementDelta.F_PRIMARY_RESOURCE)) != 0){
 								if (proj != null) {
-									flushElementCache(delta);
 									projectChanged(proj);
 									return true;
 								}
@@ -278,7 +273,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 						case IJavaElementDelta.ADDED :
 						case IJavaElementDelta.REMOVED : {
 							if (proj != null) {
-								flushElementCache(delta);
 								projectChanged(proj);
 								return true;
 							}
@@ -290,36 +284,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 		return false;
 	}
 
-	/**
-	 * Flushes the changed element from the model cache
-	 * @param delta
-	 */
-	void flushElementCache(IJavaElementDelta delta) {
-		IJavaElement element = delta.getElement();
-		switch(element.getElementType()) {
-		case IJavaElement.COMPILATION_UNIT: {
-			ICompilationUnit unit = (ICompilationUnit) element;
-			IType type = unit.findPrimaryType();
-			if(type != null) {
-				ApiModelCache.getCache().removeElementInfo(
-						ApiBaselineManager.WORKSPACE_API_BASELINE_ID,
-						element.getJavaProject().getElementName(), 
-						type.getFullyQualifiedName(), 
-						IApiElement.TYPE);
-			}
-			break;
-		}
-		case IJavaElement.JAVA_PROJECT: {
-			ApiModelCache.getCache().removeElementInfo(
-					ApiBaselineManager.WORKSPACE_API_BASELINE_ID,
-					element.getElementName(), 
-					null, 
-					IApiElement.COMPONENT);
-			break;
-		}
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
 	 */

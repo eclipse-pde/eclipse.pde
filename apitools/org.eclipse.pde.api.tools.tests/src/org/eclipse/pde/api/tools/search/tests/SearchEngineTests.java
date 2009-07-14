@@ -65,8 +65,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testSearchSeparateScope() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
 					new String[] {P2_NAME, P3_NAME}, 
@@ -85,8 +84,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testSearchExcludeOne() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excludeone.txt"));
 			TEST_REPORTER.setExpectedReferences(
@@ -106,8 +104,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testSearchExcludeAll() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excludeall.txt"));
 			//expecting no reported references
@@ -126,8 +123,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testExcludeRegexOne() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excluderegex.txt"));
 			TEST_REPORTER.setExpectedReferences(
@@ -147,8 +143,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testExcludeRegexAll() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excluderegexall.txt"));
 			//expecting no reported references
@@ -167,8 +162,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testSearchApiOnly() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API);
 			TEST_REPORTER.setExpectedReferences(
 					new String[] {P2_NAME, P3_NAME}, 
@@ -187,8 +181,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testSearchInternalOnly() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
 					new String[] {P2_NAME, P3_NAME}, 
@@ -207,8 +200,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testSearchWithDebugOn() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API);
 			TEST_REPORTER.setExpectedReferences(
 					new String[] {P2_NAME, P3_NAME}, 
@@ -229,8 +221,7 @@ public class SearchEngineTests extends SearchTest {
 	public void testBadRegex() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
-			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
-			TEST_REQUESTOR.setScopeBaseline(this.scope);
+			TEST_REQUESTOR.setScopeBaseline(getTestScope(DEFAULT_SCOPE_PROJECTS));
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
 			TEST_REPORTER.setExpectedReferences(
 					new String[] {P2_NAME, P3_NAME}, 

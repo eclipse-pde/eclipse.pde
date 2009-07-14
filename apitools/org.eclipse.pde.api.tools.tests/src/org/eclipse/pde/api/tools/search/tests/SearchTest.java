@@ -164,12 +164,6 @@ public abstract class SearchTest extends TestCase {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		if(this.baseline != null) {
-			this.baseline.dispose();
-		}
-		if(this.scope != null) {
-			this.scope.dispose();
-		}
 		super.tearDown();
 	}
 }
