@@ -230,11 +230,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public IApiMethod getMethod(String name, String signature) {
 		if (fMethods != null) {
-			String resolvedName = name;
-			if(!this.isAnonymous() && this.getSimpleName().equals(name)) {
-				resolvedName = "<init>"; //$NON-NLS-1$
-			}
-			return (IApiMethod) fMethods.get(new MethodKey(resolvedName, signature));
+			return (IApiMethod) fMethods.get(new MethodKey(name, signature));
 		}
 		return null;
 	}
