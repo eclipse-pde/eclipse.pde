@@ -568,7 +568,8 @@ public class ReferenceExtractor extends ClassAdapter {
 					this.linePositionTracker.addLocation(reference);
 				}
 			} else if (cst instanceof String) {
-				this.stringLiteral = (String) cst;
+				String str = (String) cst;
+				this.stringLiteral = (Util.EMPTY_STRING.equals(str) ? null : str);
 			}
 		}
 		
@@ -1125,7 +1126,7 @@ public class ReferenceExtractor extends ClassAdapter {
 				else {
 					refs = processInnerClass(type, fReferenceKinds);
 				}
-				if(refs != null) {
+				if(refs != null && !refs.isEmpty()) {
 					this.collector.addAll(refs);
 				}
 			}
