@@ -52,6 +52,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private Label fCountLabel;
+	private int fCountTotal;
 	private TableViewer fAvailableListViewer;
 	private Text fFilterText;
 	private VersionFilter fVersionFilter;
@@ -436,7 +437,12 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void updateCount() {
-		fCountLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_DetailedPage_count, (new String[] {new Integer(fImportListViewer.getTable().getItemCount()).toString(), new Integer(fAvailableListViewer.getTable().getItemCount()).toString()})));
+		if (fCountTotal <= 0) {
+			// Since we filter the list of available plug-ins the total may differ from the model count
+			fCountTotal = fAvailableListViewer.getTable().getItemCount();
+		}
+
+		fCountLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_DetailedPage_count, (new String[] {Integer.toString(fImportListViewer.getTable().getItemCount()), Integer.toString(fCountTotal)})));
 		fCountLabel.getParent().layout();
 	}
 
