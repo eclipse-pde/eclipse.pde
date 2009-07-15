@@ -265,6 +265,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	 */
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		super.dispose();
 	}
 
 	private void validatePage() {
