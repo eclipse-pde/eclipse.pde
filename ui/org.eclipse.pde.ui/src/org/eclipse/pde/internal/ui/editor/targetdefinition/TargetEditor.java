@@ -387,7 +387,7 @@ public class TargetEditor extends FormEditor {
 				}
 			} else {
 				if (fContentTree != null) {
-					fContentTree.setEnabled(false);
+					fContentTree.setInput(null);
 				}
 				if (fLocationTree != null) {
 					fLocationTree.setInput(getTarget());
