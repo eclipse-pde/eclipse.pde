@@ -8,7 +8,9 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.tests;
+package org.eclipse.pde.ui.tests.wizards;
+
+import org.eclipse.pde.ui.tests.PDETestCase;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;

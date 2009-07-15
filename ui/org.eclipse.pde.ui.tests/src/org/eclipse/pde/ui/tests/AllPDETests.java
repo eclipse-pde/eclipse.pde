@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
+import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
+
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
 
 import junit.framework.Test;
@@ -29,6 +31,7 @@ public class AllPDETests {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
 		suite.addTest(AllTargetTests.suite());
 		suite.addTest(AllNewProjectTests.suite());
+		suite.addTest(AllPreferenceTests.suite());
 		suite.addTest(AllImportTests.suite());
 		suite.addTest(AllBundleModelTests.suite());
 		suite.addTest(AllXMLModelTests.suite());

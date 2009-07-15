@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
+import org.eclipse.pde.ui.tests.wizards.NewProjectTestCase;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -25,7 +27,6 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard.ReplaceQuery;
-import org.eclipse.pde.ui.tests.NewProjectTestCase;
 
 public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 

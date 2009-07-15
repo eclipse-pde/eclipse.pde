@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.tests.runtime;
+package org.eclipse.pde.ui.tests.preferences;
 
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
