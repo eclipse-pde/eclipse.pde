@@ -93,6 +93,6 @@ public class FeaturesPage extends PDEFormPage {
 	}
 
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/category_editor/definition_page.htm"; //$NON-NLS-1$
+		return IHelpContextIds.CATEGORY_EDITOR;
 	}
 }

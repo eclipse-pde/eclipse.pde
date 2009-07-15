@@ -32,7 +32,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/overview.htm"; //$NON-NLS-1$
+		return IHelpContextIds.OVERVIEW_PAGE;
 	}
 
 	/* (non-Javadoc)

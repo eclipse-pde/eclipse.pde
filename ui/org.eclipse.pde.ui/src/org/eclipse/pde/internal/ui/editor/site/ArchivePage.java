@@ -49,6 +49,6 @@ public class ArchivePage extends PDEFormPage {
 	}
 
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/site_editor/archives.htm"; //$NON-NLS-1$
+		return IHelpContextIds.MANIFEST_SITE_ARCHIVES;
 	}
 }

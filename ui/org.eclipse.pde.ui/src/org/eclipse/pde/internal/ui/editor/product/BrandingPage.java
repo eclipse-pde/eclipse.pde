@@ -32,7 +32,7 @@ public class BrandingPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/branding.htm"; //$NON-NLS-1$
+		return IHelpContextIds.BRANDING_PAGE;
 	}
 
 	/* (non-Javadoc)

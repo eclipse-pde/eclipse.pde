@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPluginImages;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.swt.custom.StyledText;
@@ -34,9 +33,10 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
- * The main page for the context help editor.  Contains a tree displaying the 
- * structure of the xml and a details section.  UI elements are handled by 
+ * The main page for the context help editor. Contains a tree displaying the
+ * structure of the xml and a details section. UI elements are handled by
  * CtxHelpBlock.
+ * 
  * @since 3.4
  * @see CtxHelpEditor
  * @see CtxHelpBlock
@@ -58,8 +58,12 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		return fBlock;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
+	 * eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
@@ -67,27 +71,33 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 
 		// Ensure the model was loaded properly
 		if ((model == null) || (model.isLoaded() == false)) {
-			createFormErrorContent(managedForm, CtxHelpMessages.CtxHelpPage_errTitle, CtxHelpMessages.CtxHelpPage_errMsg, null);
+			createFormErrorContent(managedForm,
+					CtxHelpMessages.CtxHelpPage_errTitle,
+					CtxHelpMessages.CtxHelpPage_errMsg, null);
 			return;
 		}
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CTX_HELP_EDITOR);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
+				IHelpContextIds.CTX_HELP_EDITOR);
 
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
 		// Form image
-		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().get(PDEUserAssistanceUIPluginImages.DESC_CTXHELP_CONTEXT_OBJ));
+		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
+				.get(PDEUserAssistanceUIPluginImages.DESC_CTXHELP_CONTEXT_OBJ));
 		form.setText(CtxHelpMessages.CtxHelpPage_formText);
 		// Create the master details block
 		fBlock.createContent(managedForm);
-		// Force the selection in the masters tree section to load the 
+		// Force the selection in the masters tree section to load the
 		// proper details section
 		fBlock.getMasterSection().fireSelection();
 		// Register this page to be informed of model change events
 		model.addModelChangedListener(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
@@ -98,8 +108,12 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
+	 * .core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 		fBlock.modelChanged(event);
@@ -112,14 +126,19 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		return fBlock.getSelection();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
 		super.setActive(active);
 		if (active) {
-			IFormPage page = getPDEEditor().findPage(CtxHelpInputContext.CONTEXT_ID);
-			if (page instanceof CtxHelpSourcePage && ((CtxHelpSourcePage) page).getInputContext().isInSourceMode()) {
+			IFormPage page = getPDEEditor().findPage(
+					CtxHelpInputContext.CONTEXT_ID);
+			if (page instanceof CtxHelpSourcePage
+					&& ((CtxHelpSourcePage) page).getInputContext()
+							.isInSourceMode()) {
 				ISourceViewer viewer = ((CtxHelpSourcePage) page).getViewer();
 				if (viewer == null) {
 					return;
@@ -135,24 +154,29 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 					return;
 				}
 
-				IDocumentRange range = ((CtxHelpSourcePage) page).getRangeElement(offset, true);
+				IDocumentRange range = ((CtxHelpSourcePage) page)
+						.getRangeElement(offset, true);
 				if (range instanceof IDocumentAttributeNode) {
-					range = ((IDocumentAttributeNode) range).getEnclosingElement();
+					range = ((IDocumentAttributeNode) range)
+							.getEnclosingElement();
 				} else if (range instanceof IDocumentTextNode) {
 					range = ((IDocumentTextNode) range).getEnclosingElement();
 				}
 
 				if (range instanceof CtxHelpObject) {
-					fBlock.getMasterSection().setSelection(new StructuredSelection(range));
+					fBlock.getMasterSection().setSelection(
+							new StructuredSelection(range));
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/ctx_help_editor/ctx_help_editor.htm"; //$NON-NLS-1$
+		return IHelpContextIds.CTX_HELP_EDITOR;
 	}
 }

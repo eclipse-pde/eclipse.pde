@@ -14,7 +14,8 @@ import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.swt.SWT;
@@ -100,7 +101,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/schema_editor/page_schema_definition.htm"; //$NON-NLS-1$
+		return IHelpContextIds.SCHEMA_EDITOR_MAIN;
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {

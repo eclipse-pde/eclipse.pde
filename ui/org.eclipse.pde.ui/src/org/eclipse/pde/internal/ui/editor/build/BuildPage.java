@@ -46,7 +46,7 @@ public class BuildPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/build.htm"; //$NON-NLS-1$
+		return IHelpContextIds.BUILD_PAGE;
 	}
 
 	protected void createFormContent(IManagedForm mform) {

@@ -69,7 +69,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/extension_points.htm"; //$NON-NLS-1$
+		return IHelpContextIds.MANIFEST_PLUGIN_EXT_POINTS;
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {

@@ -38,7 +38,7 @@ public class DependenciesPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/configuration.htm"; //$NON-NLS-1$
+		return IHelpContextIds.CONFIGURATION_PAGE;
 	}
 
 	/* (non-Javadoc) 

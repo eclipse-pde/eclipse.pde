@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPluginImages;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.ui.PlatformUI;
@@ -49,17 +48,21 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock = new CompCSBlock(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/composite_cs_editor/editor.htm"; //$NON-NLS-1$
+		return IHelpContextIds.COMPOSITE_CS_EDITOR;
 	}
 
-	// TODO: MP: LOW: CompCS: Clean-up and reuse externalized strings
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
+	 * eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
 		// Bug: Two veritical scrollbars appear when resizing the editor
@@ -75,15 +78,19 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 				e = ((AbstractModel) model).getException();
 			}
 			// Create a formatted error page
-			createFormErrorContent(managedForm, Messages.CompCSPage_loadFailure, Messages.CompCSPage_error, e);
+			createFormErrorContent(managedForm,
+					Messages.CompCSPage_loadFailure, Messages.CompCSPage_error,
+					e);
 			return;
 		}
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
 		// Form image
-		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().get(PDEUserAssistanceUIPluginImages.DESC_CHEATSHEET_OBJ));
+		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
+				.get(PDEUserAssistanceUIPluginImages.DESC_CHEATSHEET_OBJ));
 		// Form title
-		String title = PDETextHelper.translateReadText(model.getCompCS().getFieldName());
+		String title = PDETextHelper.translateReadText(model.getCompCS()
+				.getFieldName());
 		if (title.length() > 0) {
 			form.setText(title);
 		} else {
@@ -92,16 +99,19 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		// Create the masters details block
 		// Note: Scrolled form #2 created here
 		fBlock.createContent(managedForm);
-		// Force the selection in the masters tree section to load the 
+		// Force the selection in the masters tree section to load the
 		// proper details section
 		fBlock.getMastersSection().fireSelection();
 		// Register this page to be informed of model change events
 		model.addModelChangedListener(this);
 		// Set context-sensitive help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.COMPOSITE_CS_EDITOR);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
+				IHelpContextIds.COMPOSITE_CS_EDITOR);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
@@ -113,8 +123,12 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
+	 * .core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 
@@ -125,10 +139,14 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 				// Ignore
 			} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
 				String changeProperty = event.getChangedProperty();
-				if ((changeProperty != null) && changeProperty.equals(ICompCSConstants.ATTRIBUTE_NAME)) {
+				if ((changeProperty != null)
+						&& changeProperty
+								.equals(ICompCSConstants.ATTRIBUTE_NAME)) {
 					// Has to be a String if the property is a title
 					// Update the form page title
-					getManagedForm().getForm().setText(PDETextHelper.translateReadText((String) event.getNewValue()));
+					getManagedForm().getForm().setText(
+							PDETextHelper.translateReadText((String) event
+									.getNewValue()));
 				}
 			}
 		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -158,7 +176,8 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
 			String newValue = ((ICompCS) object).getFieldName();
 			// Update page title
-			getManagedForm().getForm().setText(PDETextHelper.translateReadText(newValue));
+			getManagedForm().getForm().setText(
+					PDETextHelper.translateReadText(newValue));
 		}
 	}
 

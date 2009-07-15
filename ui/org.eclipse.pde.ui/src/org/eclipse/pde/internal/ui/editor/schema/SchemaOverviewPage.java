@@ -12,7 +12,8 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
@@ -51,7 +52,7 @@ public class SchemaOverviewPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/schema_editor/page_schema_overview.htm"; //$NON-NLS-1$
+		return IHelpContextIds.SCHEMA_EDITOR_DOC;
 	}
 
 	public void setActive(boolean active) {
@@ -88,9 +89,6 @@ public class SchemaOverviewPage extends PDEFormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_DOC);
 	}
 
-	/**
-	 * @return
-	 */
 	private ControlContribution createUIControlConPreviewRefDoc() {
 		return new ControlContribution("Preview") { //$NON-NLS-1$
 			protected Control createControl(Composite parent) {

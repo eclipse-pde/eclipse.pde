@@ -27,7 +27,6 @@ import org.eclipse.pde.internal.ua.core.toc.text.TocObject;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPluginImages;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.swt.custom.StyledText;
@@ -39,7 +38,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * TocPage
- *
+ * 
  */
 public class TocPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "tocPage"; //$NON-NLS-1$
@@ -62,8 +61,12 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		return fBlock;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.
+	 * eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
@@ -75,15 +78,17 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 			return;
 		}
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TOC_EDITOR);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
+				IHelpContextIds.TOC_EDITOR);
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
 		// Form image
-		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().get(PDEUserAssistanceUIPluginImages.DESC_TOC_OBJ));
+		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
+				.get(PDEUserAssistanceUIPluginImages.DESC_TOC_OBJ));
 		setFormTitle(form, model);
 		// Create the master details block
 		fBlock.createContent(managedForm);
-		// Force the selection in the masters tree section to load the 
+		// Force the selection in the masters tree section to load the
 		// proper details section
 		fBlock.getMasterSection().fireSelection();
 		// Register this page to be informed of model change events
@@ -92,15 +97,17 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 	private void createErrorContent(IManagedForm managedForm, TocModel model) {
 		Exception e = null;
-		//e = ((AbstractModel)model).getException();
+		// e = ((AbstractModel)model).getException();
 
 		// Create a formatted error page
-		createFormErrorContent(managedForm, TocMessages.TocPage_errorMessage, TocMessages.TocPage_errorMessage2, e);
+		createFormErrorContent(managedForm, TocMessages.TocPage_errorMessage,
+				TocMessages.TocPage_errorMessage2, e);
 	}
 
 	private void setFormTitle(ScrolledForm form, TocModel model) {
 		// Form title
-		String title = PDETextHelper.translateReadText(model.getToc().getFieldLabel());
+		String title = PDETextHelper.translateReadText(model.getToc()
+				.getFieldLabel());
 		if (title.length() > 0) {
 			form.setText(title);
 		} else {
@@ -108,7 +115,9 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
@@ -120,8 +129,12 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde
+	 * .core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 
@@ -132,10 +145,13 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 				// Ignore
 			} else if (object.getType() == ITocConstants.TYPE_TOC) {
 				String changeProperty = event.getChangedProperty();
-				if ((changeProperty != null) && changeProperty.equals(ITocConstants.ATTRIBUTE_LABEL)) {
+				if ((changeProperty != null)
+						&& changeProperty.equals(ITocConstants.ATTRIBUTE_LABEL)) {
 					// Has to be a String if the property is a title
 					// Update the form page title
-					getManagedForm().getForm().setText(PDETextHelper.translateReadText((String) event.getNewValue()));
+					getManagedForm().getForm().setText(
+							PDETextHelper.translateReadText((String) event
+									.getNewValue()));
 				}
 			}
 		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -165,7 +181,8 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 				String newValue = ((Toc) object).getFieldLabel();
 
 				// Update page title
-				getManagedForm().getForm().setText(PDETextHelper.translateReadText(newValue));
+				getManagedForm().getForm().setText(
+						PDETextHelper.translateReadText(newValue));
 			}
 		}
 	}
@@ -173,8 +190,11 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 	public void setActive(boolean active) {
 		super.setActive(active);
 		if (active) {
-			IFormPage page = getPDEEditor().findPage(TocInputContext.CONTEXT_ID);
-			if (page instanceof TocSourcePage && ((TocSourcePage) page).getInputContext().isInSourceMode()) {
+			IFormPage page = getPDEEditor()
+					.findPage(TocInputContext.CONTEXT_ID);
+			if (page instanceof TocSourcePage
+					&& ((TocSourcePage) page).getInputContext()
+							.isInSourceMode()) {
 				ISourceViewer viewer = ((TocSourcePage) page).getViewer();
 				if (viewer == null) {
 					return;
@@ -190,24 +210,29 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 					return;
 				}
 
-				IDocumentRange range = ((TocSourcePage) page).getRangeElement(offset, true);
+				IDocumentRange range = ((TocSourcePage) page).getRangeElement(
+						offset, true);
 				if (range instanceof IDocumentAttributeNode) {
-					range = ((IDocumentAttributeNode) range).getEnclosingElement();
+					range = ((IDocumentAttributeNode) range)
+							.getEnclosingElement();
 				} else if (range instanceof IDocumentTextNode) {
 					range = ((IDocumentTextNode) range).getEnclosingElement();
 				}
 
 				if (range instanceof TocObject) {
-					fBlock.getMasterSection().setSelection(new StructuredSelection(range));
+					fBlock.getMasterSection().setSelection(
+							new StructuredSelection(range));
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/toc_editor/page_toc.htm"; //$NON-NLS-1$
+		return IHelpContextIds.TOC_EDITOR;
 	}
 }

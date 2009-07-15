@@ -29,9 +29,6 @@ public class SplashPage extends PDEFormPage {
 
 	public static final String PAGE_ID = "splash"; //$NON-NLS-1$
 
-	/**
-	 * @param editor
-	 */
 	public SplashPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.SplashPage_splashName);
 	}
@@ -40,8 +37,7 @@ public class SplashPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		// TODO: MP: SPLASH: Update help document reference in header
-		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/splash.htm"; //$NON-NLS-1$
+		return IHelpContextIds.SPLASH_PAGE;
 	}
 
 	/* (non-Javadoc)
