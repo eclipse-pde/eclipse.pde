@@ -43,6 +43,7 @@ public class ActionMessages extends NLS {
 	public static String SelectSessionAction_tooltip;
 	public static String SelectSessionActionEntry_label;
 	public static String DeltaDetailsDialogTitle;
+	public static String ExportSessionAction_failed_to_create_parent_folders;
 	public static String ExportSessionAction_label;
 	public static String ExportSessionAction_tooltip;
 	public static String EnterFileNameForExport;
