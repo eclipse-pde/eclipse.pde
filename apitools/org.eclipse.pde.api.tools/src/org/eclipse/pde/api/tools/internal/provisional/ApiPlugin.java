@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
@@ -165,7 +166,8 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String API_FILTER_STORE_DEBUG = PLUGIN_ID + "/debug/apifilterstore"; //$NON-NLS-1$
 	private static final String API_REFERENCE_ANALYZER_DEBUG = PLUGIN_ID + "/debug/refanalyzer"; //$NON-NLS-1$
 	private static final String PROBLEM_DETECTOR_DEBUG = PLUGIN_ID + "/debug/problemdetector"; //$NON-NLS-1$
-	private static final String REFERENCE_RESOLVER_DEBUG = PLUGIN_ID + "debug/refresolver"; //$NON-NLS-1$
+	private static final String REFERENCE_RESOLVER_DEBUG = PLUGIN_ID + "/debug/refresolver"; //$NON-NLS-1$
+	private static final String API_DESCRIPTION = PLUGIN_ID + "/debug/apidescription"; //$NON-NLS-1$
 
 	public final static String TRUE = "true"; //$NON-NLS-1$
 
@@ -606,6 +608,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			option = Platform.getDebugOption(PROBLEM_DETECTOR_DEBUG);
 			if(option != null) {
 				AbstractProblemDetector.setDebug(option.equals(TRUE));
+			}
+			option = Platform.getDebugOption(API_DESCRIPTION);
+			if(option != null) {
+				ApiDescription.setDebug(option.equals(TRUE));
 			}
 		}
 	}

@@ -268,8 +268,8 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 											IJavaElementDelta.F_FINE_GRAINED | 
 											IJavaElementDelta.F_PRIMARY_RESOURCE)) != 0){
 								if (proj != null) {
-									flushElementCache(delta);
 									projectChanged(proj);
+									flushElementCache(delta);
 									return true;
 								}
 							}
@@ -278,8 +278,8 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 						case IJavaElementDelta.ADDED :
 						case IJavaElementDelta.REMOVED : {
 							if (proj != null) {
-								flushElementCache(delta);
 								projectChanged(proj);
+								flushElementCache(delta);
 								return true;
 							}
 						}

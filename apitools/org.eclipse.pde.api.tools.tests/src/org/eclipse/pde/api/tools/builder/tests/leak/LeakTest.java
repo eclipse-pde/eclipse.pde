@@ -18,6 +18,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 
@@ -129,11 +131,56 @@ public abstract class LeakTest extends ApiBuilderTest {
 				ClassExtendsLeak.class,
 				ClassImplementsLeak.class,
 				InterfaceExtendsLeak.class,
-				ConstructorParameterLeak.class,
+				/*ConstructorParameterLeak.class,
 				MethodParameterLeak.class,
-				MethodReturnTypeLeak.class,
+				MethodReturnTypeLeak.class,*/
 				FieldTypeLeak.class
 		};
 		return classes;
+	}
+	
+	/**
+	 * Deploys a full build with the given package and source names, where: 
+	 * <ol>
+	 * <li>the listing of internal package names will set all those packages that exist to be x-internal=true in the manifest</li>
+	 * <li>the listing of fully qualified type names will each be checked for set expected problem id</li>
+	 * <li>all other packages specified in packagenames that do not appear in internalpnames will be set to exported</li>
+	 * </ol>
+	 * @param packagenames the names of the packages to create in the testing project
+	 * @param sourcenames the names of the source files to create in the testing project. Each source will be placed in the 
+	 * corresponding package from the packagnames array, i.e. sourcenames[0] will be placed in packagenames[0]
+	 * @param internalpnames the names of packages to mark as x-internal=true in the manifest of the project
+	 * @param expectingproblemson the fully qualified names of the types we are expecting to see problems on
+	 * @param expectingproblems the problem ids we expect to see on each of the types specified in the expectingproblemson array
+	 * @param buildtype the type of build to run. One of:
+	 * <ol>
+	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
+	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
+	 * </ol>
+	 * @param buildworkspace true if the entire workspace should be built, false if only the created project should be built
+	 */
+	protected void deployLeakTest(String[] packagenames, String[] sourcenames, String[] internalpnames, String[] expectingproblemson, boolean expectingproblems, int buildtype, boolean buildworkspace) {
+		try {
+			IPath path = assertProject(sourcenames, packagenames, internalpnames);
+			doBuild(buildtype, (buildworkspace ? null : path));
+			// should be no compilation problems
+			expectingNoJDTProblems();
+			if(expectingproblems || expectingproblemson != null) {
+				IJavaProject jproject = getEnv().getJavaProject(path);
+				for(int i = 0; i < expectingproblemson.length; i++) {
+					IType type = jproject.findType(expectingproblemson[i]);
+					assertNotNull("The type "+expectingproblemson[i]+" must exist", type);
+					expectingOnlySpecificProblemsFor(type.getPath(), getExpectedProblemIds());
+				}
+				assertProblems(getEnv().getProblems());
+			}
+			else {
+				expectingNoProblems();
+			}
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
 	}
 }

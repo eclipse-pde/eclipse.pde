@@ -33,3 +33,6 @@ org.eclipse.pde.api.tools/debug/apifilterstore=false
 
 #for api analyzer
 org.eclipse.pde.api.tools/debug/apianalyzer=false
+
+#for api descriptions
+org.eclipse.pde.api.tools/debug/apidescription=false

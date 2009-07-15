@@ -208,6 +208,13 @@ public class ProjectApiDescription extends ApiDescription {
 		 */
 		protected synchronized ManifestNode refresh() {
 			if (fRefreshing) {
+				if(DEBUG) {
+					StringBuffer buffer = new StringBuffer();
+					buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
+					buffer.append(this);
+					buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
+					System.out.println(buffer.toString());
+				}
 				return this;
 			}
 			try {
@@ -218,6 +225,12 @@ public class ProjectApiDescription extends ApiDescription {
 					try {
 						resource = unit.getUnderlyingResource();
 					} catch (JavaModelException e) {
+						if(DEBUG) {
+							StringBuffer buffer = new StringBuffer();
+							buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
+							buffer.append(unit);
+							System.out.println(buffer.toString());
+						}
 						// exception if the resource does not exist
 						if (!e.getJavaModelStatus().isDoesNotExist()) {
 							ApiPlugin.log(e.getStatus());
@@ -227,6 +240,13 @@ public class ProjectApiDescription extends ApiDescription {
 					if (resource != null && resource.exists()) {
 						long stamp = resource.getModificationStamp();
 						if (stamp != fTimeStamp) {
+							if(DEBUG) {
+								StringBuffer buffer = new StringBuffer();
+								buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
+								buffer.append(this);
+								buffer.append(" tag scanning the new type"); //$NON-NLS-1$
+								System.out.println(buffer.toString());
+							}
 							modified();
 							children.clear();
 							restrictions = RestrictionModifiers.NO_RESTRICTIONS;
@@ -239,12 +259,27 @@ public class ProjectApiDescription extends ApiDescription {
 							}
 						}
 					} else {
+						if(DEBUG) {
+							StringBuffer buffer = new StringBuffer();
+							buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
+							buffer.append(this);
+							buffer.append(" does not exist or is null"); //$NON-NLS-1$
+							System.out.println(buffer.toString());
+						}
 						// element has been removed
 						modified();
 						parent.children.remove(element);
 						return null;
 					}
 				} else {
+					if(DEBUG) {
+						StringBuffer buffer = new StringBuffer();
+						buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
+						buffer.append(fType);
+						buffer.append(" refreshing type manifest node: "); //$NON-NLS-1$
+						buffer.append(this);
+						System.out.println(buffer.toString());
+					}
 					// TODO: binary type
 				}
 			} finally {
@@ -514,6 +549,13 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	synchronized void refreshPackages() {
 		if (fRefreshingInProgress) {
+			if(DEBUG) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
+				buffer.append(this);
+				buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
+				System.out.println(buffer.toString());
+			}
 			return;
 		}
 		// check if in synch
