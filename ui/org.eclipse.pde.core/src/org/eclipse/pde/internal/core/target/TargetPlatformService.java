@@ -144,6 +144,21 @@ public class TargetPlatformService implements ITargetPlatformService {
 				if (target.exists())
 					local.add(target);
 			}
+		} else {
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+			String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+			if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
+				try {
+					URI uri = new URI(memento);
+					String scheme = uri.getScheme();
+					if (ExternalFileTargetHandle.SCHEME.equals(scheme)) {
+						ITargetHandle target = getTarget(uri);
+						local.add(target);
+					}
+				} catch (URISyntaxException e) {
+					// ignore
+				}
+			}
 		}
 		return (ITargetHandle[]) local.toArray(new ITargetHandle[local.size()]);
 	}
