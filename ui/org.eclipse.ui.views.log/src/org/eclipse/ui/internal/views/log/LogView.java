@@ -506,10 +506,12 @@ public class LogView extends ViewPart implements ILogListener {
 		};
 		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, filter, true);
 		// need to give filter Textbox some space from the border
-		Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
-		GridData gd = (GridData) filterComposite.getLayoutData();
-		gd.verticalIndent = 2;
-		gd.horizontalIndent = 1;
+		if (fFilteredTree.getFilterControl() != null) {
+			Composite filterComposite = fFilteredTree.getFilterControl().getParent(); // FilteredTree new look lays filter Text on additional composite
+			GridData gd = (GridData) filterComposite.getLayoutData();
+			gd.verticalIndent = 2;
+			gd.horizontalIndent = 1;
+		}
 		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		fFilteredTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fFilteredTree.setInitialText(Messages.LogView_show_filter_initialText);

@@ -35,16 +35,19 @@ public class RegistryFilteredTree extends FilteredTree {
 		setLayout(layout);
 
 		FormData data = new FormData();
-		data.top = new FormAttachment(0, 2);
-		data.left = new FormAttachment(0, 2);
-		data.right = new FormAttachment(100, -2);
-		filterComposite.setLayoutData(data);
-
-		data = new FormData();
-		data.top = new FormAttachment(filterComposite, 2);
 		data.left = new FormAttachment(0, 0);
 		data.right = new FormAttachment(100, 0);
 		data.bottom = new FormAttachment(100, 0);
+		if (showFilterControls) {
+			FormData filterData= new FormData();
+			filterData.top = new FormAttachment(0, 2);
+			filterData.left = new FormAttachment(0, 2);
+			filterData.right = new FormAttachment(100, -2);
+			filterComposite.setLayoutData(filterData);
+			data.top = new FormAttachment(filterComposite, 2);
+		} else {
+			data.top = new FormAttachment(0, 0);
+		}
 		treeComposite.setLayoutData(data);
 	}
 
