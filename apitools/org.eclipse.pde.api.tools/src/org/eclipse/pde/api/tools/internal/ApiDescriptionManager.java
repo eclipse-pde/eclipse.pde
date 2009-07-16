@@ -205,7 +205,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 * 
 	 * @param deltas
 	 */
-	private synchronized boolean processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject proj) {
+	private synchronized void processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject proj) {
 		IJavaElementDelta delta = null;
 		for(int i = 0; i < deltas.length; i++) {
 			delta = deltas[i];
@@ -250,7 +250,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 							| IJavaElementDelta.F_ADDED_TO_CLASSPATH
 							| IJavaElementDelta.F_REMOVED_FROM_CLASSPATH)) != 0) {
 						projectClasspathChanged(proj);
-						return true;
 					} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
 						processJavaElementDeltas(delta.getAffectedChildren(), proj);
 					}
@@ -283,7 +282,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 				}
 			}
 		}
-		return false;
 	}
 
 	/**
