@@ -507,10 +507,11 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		if (getApiComponent() == null) {
+		IApiComponent component = getApiComponent();
+		if (component == null) {
 			return getName().hashCode();
 		}
-		return getApiComponent().hashCode() + getName().hashCode();
+		return component.hashCode() + getName().hashCode();
 	}
 	
 	/**

@@ -240,9 +240,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 				case IJavaElement.PACKAGE_FRAGMENT : {
 					int flags = delta.getFlags();
 					if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-						if (processJavaElementDeltas(delta.getAffectedChildren(), proj)) {
-							return true;
-						}
+						processJavaElementDeltas(delta.getAffectedChildren(), proj);
 					}
 					break;
 				}
@@ -254,9 +252,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 						projectClasspathChanged(proj);
 						return true;
 					} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-						if (processJavaElementDeltas(delta.getAffectedChildren(), proj)) {
-							return true;
-						}
+						processJavaElementDeltas(delta.getAffectedChildren(), proj);
 					}
 					break;
 				}
@@ -270,7 +266,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 								if (proj != null) {
 									projectChanged(proj);
 									flushElementCache(delta);
-									return true;
+									continue;
 								}
 							}
 							break;
@@ -280,7 +276,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 							if (proj != null) {
 								projectChanged(proj);
 								flushElementCache(delta);
-								return true;
+								continue;
 							}
 						}
 					}
@@ -296,27 +292,33 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 */
 	void flushElementCache(IJavaElementDelta delta) {
 		IJavaElement element = delta.getElement();
+		if((delta.getFlags() & IJavaElementDelta.F_MOVED_TO) > 0) {
+			element = delta.getMovedToElement();
+		}
+		if((delta.getFlags() & IJavaElementDelta.F_MOVED_FROM) > 0) {
+			element = delta.getMovedFromElement();
+		}
 		switch(element.getElementType()) {
-		case IJavaElement.COMPILATION_UNIT: {
-			ICompilationUnit unit = (ICompilationUnit) element;
-			IType type = unit.findPrimaryType();
-			if(type != null) {
+			case IJavaElement.COMPILATION_UNIT: {
+				ICompilationUnit unit = (ICompilationUnit) element;
+				IType type = unit.findPrimaryType();
+				if(type != null) {
+					ApiModelCache.getCache().removeElementInfo(
+							ApiBaselineManager.WORKSPACE_API_BASELINE_ID,
+							element.getJavaProject().getElementName(), 
+							type.getFullyQualifiedName(), 
+							IApiElement.TYPE);
+				}
+				break;
+			}
+			case IJavaElement.JAVA_PROJECT: {
 				ApiModelCache.getCache().removeElementInfo(
 						ApiBaselineManager.WORKSPACE_API_BASELINE_ID,
-						element.getJavaProject().getElementName(), 
-						type.getFullyQualifiedName(), 
-						IApiElement.TYPE);
+						element.getElementName(), 
+						null, 
+						IApiElement.COMPONENT);
+				break;
 			}
-			break;
-		}
-		case IJavaElement.JAVA_PROJECT: {
-			ApiModelCache.getCache().removeElementInfo(
-					ApiBaselineManager.WORKSPACE_API_BASELINE_ID,
-					element.getElementName(), 
-					null, 
-					IApiElement.COMPONENT);
-			break;
-		}
 		}
 	}
 	
