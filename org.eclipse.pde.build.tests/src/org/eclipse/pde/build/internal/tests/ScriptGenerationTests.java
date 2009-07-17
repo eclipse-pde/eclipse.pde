@@ -1303,6 +1303,59 @@ public class ScriptGenerationTests extends PDETestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("logExtension", ".xml");
+		properties.put("baseLocation", "");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+	}
+
+	public void testBug279622() throws Exception {
+		IFolder buildFolder = newTest("279622");
+
+		IFolder B = Utils.createFolder(buildFolder, "plugins/B");
+		Attributes additionalAttributes = new Attributes();
+		Utils.generatePluginBuildProperties(B, null);
+		additionalAttributes.put(new Attributes.Name("Export-Package"), "b");
+		additionalAttributes.put(new Attributes.Name("Import-Package"), "x;version=\"[3.0.0,4.0.0)\"");
+		Utils.generateBundleManifest(B, "B", "1.0.0", additionalAttributes);
+		StringBuffer code = new StringBuffer();
+		code.append("package b;                  \n");
+		code.append("import x.X;                 \n");
+		code.append("public class B{             \n");
+		code.append("   static public void f() { \n");
+		code.append("      X.g();                \n");
+		code.append("   }                        \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(B.getFile("src/b/B.java"), code);
+
+		IFolder D = Utils.createFolder(buildFolder, "plugins/D");
+		additionalAttributes = new Attributes();
+		Utils.generatePluginBuildProperties(D, null);
+		additionalAttributes.put(new Attributes.Name("Import-Package"), "b, x;version=\"[2.0.0, 3.0.0)\"");
+		Utils.generateBundleManifest(D, "D", "1.0.0", additionalAttributes);
+		code = new StringBuffer();
+		code.append("package d;                \n");
+		code.append("import x.X;               \n");
+		code.append("import b.B;               \n");
+		code.append("public class D{           \n");
+		code.append("   public void f() {      \n");
+		code.append("      B.f();              \n");
+		code.append("      X.f();              \n");
+		code.append("   }                      \n");
+		code.append("}                         \n");
+		Utils.writeBuffer(D.getFile("src/d/D.java"), code);
+
+		IFolder X2 = Utils.createFolder(buildFolder, "plugins/X_2");
+		additionalAttributes = new Attributes();
+		Utils.generatePluginBuildProperties(X2, null);
+		additionalAttributes.put(new Attributes.Name("Export-Package"), "x;version=\"2.0.1\", x;version=\"3.0.2\"");
+		Utils.generateBundleManifest(X2, "X", "2.0.0", additionalAttributes);
+		Utils.writeBuffer(X2.getFile("src/x/X.java"), new StringBuffer("package x;\n public class X { public static void f(){} public static void g(){} }"));
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"B", "D", "X"});
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("logExtension", ".xml");
+		properties.put("baseLocation", "");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 	}
