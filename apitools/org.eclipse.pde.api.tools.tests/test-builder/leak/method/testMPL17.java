@@ -19,7 +19,7 @@ public class testMPL17 {
 
 }
 
-class outer17 {
+class outermpl17 {
 	
 	/**
 	 * @param inter

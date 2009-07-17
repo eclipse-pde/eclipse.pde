@@ -81,7 +81,7 @@ public class InterfaceUsageTests extends UsageTest {
 	
 	private void x1(boolean inc) {
 		expectingNoProblems();
-		deployTest("testI1", inc);
+		deployUsageTest("testI1", inc);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class InterfaceUsageTests extends UsageTest {
 				{INTERFACE_NAME, OUTER_NAME},
 				{INTERFACE_NAME, typename}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**

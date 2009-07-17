@@ -49,6 +49,7 @@ import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
@@ -408,7 +409,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	protected synchronized List createApiTypeContainers() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		List containers = new ArrayList(5);
 		try {
@@ -541,7 +542,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 							//extract the dir and all children
 							File dir = File.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
 							dir.deleteOnExit();
-							//hack to create a tmp directory
+							//hack to create a temp directory
 							// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
 							if(dir.delete()) {
 								dir.mkdir();
@@ -845,7 +846,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized String[] getExecutionEnvironments() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		return fBundleDescription.getExecutionEnvironments();
 	}
@@ -855,7 +856,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized String getId() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		return fBundleDescription.getSymbolicName();
 	}
@@ -865,7 +866,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		BundleSpecification[] requiredBundles = fBundleDescription.getRequiredBundles();
 		IRequiredComponentDescription[] req = new IRequiredComponentDescription[requiredBundles.length];
@@ -884,7 +885,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized String getVersion() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		return fBundleDescription.getVersion().toString();
 	}
@@ -896,7 +897,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized BundleDescription getBundleDescription() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		return fBundleDescription;
 	}
@@ -956,7 +957,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized boolean isSourceComponent() throws CoreException {
 		if (this.fManifest == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		ManifestElement[] sourceBundle = null;
 		try {
@@ -1031,7 +1032,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized boolean isFragment() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		return fBundleDescription.getHost() != null;
 	}
@@ -1041,7 +1042,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized IApiComponent getHost() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		HostSpecification host = fBundleDescription.getHost();
 		if(host != null) {
@@ -1055,7 +1056,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 */
 	public synchronized boolean hasFragments() throws CoreException {
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		return fBundleDescription.getFragments().length != 0;
 	}
@@ -1168,33 +1169,31 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors()
 	 */
 	public synchronized ResolverError[] getErrors() throws CoreException {
+		ApiBaseline baseline = (ApiBaseline) getBaseline();
 		if (this.fBundleDescription == null) {
-			baselineDisposed();
+			baselineDisposed(baseline);
 		}
-		IApiElement ancestor = getAncestor(IApiElement.BASELINE);
-		if (ancestor != null) {
-			if (ancestor instanceof ApiBaseline) {
-				ApiBaseline baseline = (ApiBaseline) ancestor;
-				ResolverError[] resolverErrors = baseline.getState().getResolverErrors(this.fBundleDescription);
-				if (resolverErrors.length == 0) {
-					return null;
-				}
-				return resolverErrors;
+		if (baseline != null) {
+			ResolverError[] resolverErrors = baseline.getState().getResolverErrors(this.fBundleDescription);
+			if (resolverErrors.length == 0) {
+				return null;
 			}
+			return resolverErrors;
 		}
 		return null;
 	}
 	
 	/**
+	 * @param baseline the baseline that is disposed
 	 * @throws CoreException with the baseline disposed information
 	 */
-	protected void baselineDisposed() throws CoreException {
+	protected void baselineDisposed(IApiBaseline baseline) throws CoreException {
 		throw new CoreException(
 				new Status(
 						IStatus.ERROR,
 						ApiPlugin.PLUGIN_ID,
 						ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-						ApiPlugin.BASELINE_IS_DISPOSED,
+						NLS.bind(Messages.BundleApiComponent_baseline_disposed, baseline.getName()),
 						null));
 	}
 }

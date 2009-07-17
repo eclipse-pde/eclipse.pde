@@ -16,13 +16,14 @@ import java.lang.reflect.Method;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 
 /**
@@ -33,7 +34,8 @@ import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
  */
 public abstract class TagTest extends ApiBuilderTest {
 
-	protected final String TESTING_PACKAGE = "a.b.c";
+	protected static IPath WORKSPACE_PATH = new Path("tagproject/src/a/b/c");
+	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("tagproject/src");
 	
 	/**
 	 * Constructor
@@ -77,27 +79,6 @@ public abstract class TagTest extends ApiBuilderTest {
 		return classes;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		// for the first compatibility test create workspace projects
-		ApiTestingEnvironment env = getEnv();
-		if (env != null) {
-			env.setRevert(true);
-		}
-		super.setUp();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception {
-		getEnv().setRevert(false);
-		super.tearDown();
-	}
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
 	 * @param suite
@@ -192,42 +173,65 @@ public abstract class TagTest extends ApiBuilderTest {
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
 	protected String getTestingProjectName() {
-		return "tagtest";
+		return "tagproject";
 	}
 	
 	/**
-	 * Deploys a full build test for API Javadoc tags using the given source file in the specified package,
+	 * Deploys a build test for API Javadoc tags using the given source file,
 	 * looking for problems specified from {@link #getExpectedProblemIds()()}
-	 * @param packagename
 	 * @param sourcename
-	 * @param expectingproblems
-	 * @param buildtype the type of build to perform. One of:
-	 * <ol>
-	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
-	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
-	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
-	 * </ol>
-	 * @param buildworkspace true if the workspace should be built, false if the created project should be built
+	 * @param incremental if an incremental build should take place
+	 * @param usedefault if the default package should be used or not
 	 */
-	protected void deployTagTest(String packagename, String sourcename, boolean expectingproblems, int buildtype, boolean buildworkspace) {
+	protected void deployTagTest(String sourcename, boolean incremental, boolean usedefault) {
 		try {
-			IPath path = assertProject(sourcename, packagename);
-			doBuild(buildtype, (buildworkspace ? null : path));
-			expectingNoJDTProblems();
-			IJavaProject jproject = getEnv().getJavaProject(path);
-			IType type = jproject.findType(packagename, sourcename);
-			assertNotNull("The type "+sourcename+" from package "+packagename+" must exist", type);
-			IPath sourcepath = type.getPath();
-			if(expectingproblems) {
-				expectingOnlySpecificProblemsFor(sourcepath, getExpectedProblemIds());
-				assertProblems(getEnv().getProblems());
+			IPath path = WORKSPACE_PATH.append(sourcename);
+			if(usedefault) {
+				path = WORKSPACE_PATH_DEFAULT.append(sourcename);
+			}
+			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
+			if(incremental) {
+				incrementalBuild();
 			}
 			else {
-				expectingNoProblemsFor(sourcepath);
+				fullBuild();
 			}
+			expectingNoJDTProblemsFor(path);
+			ApiProblem[] problems = getEnv().getProblemsFor(path, null);
+			assertProblems(problems);
 		}
 		catch(Exception e) {
 			fail(e.getMessage());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		ApiTestingEnvironment env = getEnv();
+		if (env != null) {
+			env.setRevert(true);
+			env.setRevertSourcePath(null);
+		}
+		super.setUp();
+		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
+		if (!project.exists()) {
+			// populate the workspace with initial plug-ins/projects
+			createExistingProjects("tagprojects", true, true, false);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		ApiTestingEnvironment env = getEnv();
+		if (env != null) {
+			env.setRevert(false);
 		}
 	}
 }

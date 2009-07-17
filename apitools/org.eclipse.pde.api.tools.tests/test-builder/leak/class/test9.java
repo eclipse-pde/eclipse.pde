@@ -18,6 +18,6 @@ import internal.x.y.z.Iinternal;
 public class test9 {
 
 }
-class outer implements Iinternal {
+class outer9 implements Iinternal {
 	
 }

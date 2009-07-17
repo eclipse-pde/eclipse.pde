@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -78,11 +77,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 				{"@noreference", BuilderMessages.TagValidator_an_interface},
 				{"@noreference", BuilderMessages.TagValidator_an_interface}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test1", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test1.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceTag2I() {
@@ -101,11 +96,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_an_interface}	
 		});
-		deployTagTest("", 
-				"test2", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test2.java", inc, true);
 	}
 
 	public void testInvalidInterfaceTag3I() {
@@ -127,11 +118,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 				{"@nooverride", BuilderMessages.TagValidator_an_interface},
 				{"@nooverride", BuilderMessages.TagValidator_an_interface}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test3", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test3.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceTag4I() {
@@ -150,11 +137,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_an_interface}	
 		});
-		deployTagTest("", 
-				"test4", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test4.java", inc, true);
 	}
 
 	public void testInvalidInterfaceTag5I() {
@@ -176,11 +159,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test5", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test5.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceTag6I() {
@@ -199,10 +178,6 @@ public class InvalidInterfaceTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}	
 		});
-		deployTagTest("", 
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test6.java", inc, true);
 	}
 }

@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -476,5 +479,44 @@ public class FileUtils {
 			//	skip
 		}
 		return org.eclipse.jdt.core.tests.util.Util.waitUntilResourceDeleted(project);
+	}
+
+	/**
+	 * Copy the folder contents to the local file system.
+	 * 
+	 * @param folder workspace folder
+	 * @param dir local directory
+	 */
+	public static void copyFolder(IFolder folder, File dir) throws Exception {
+		IResource[] members = folder.members();
+		for (int i = 0; i < members.length; i++) {
+			IResource res = members[i];
+			if (res.getType() == IResource.FILE) {
+				IFile file = (IFile) res;
+				FileUtils.copyFile(dir, file);
+			} else {
+				IFolder nested = (IFolder) res;
+				File next = new File(dir, nested.getName());
+				next.mkdirs();
+				copyFolder(nested, next);
+			}
+		}
+	}
+
+	/**
+	 * Copies the given file to the given directory.
+	 * 
+	 * @param dir
+	 * @param file
+	 */
+	public static void copyFile(File dir, IFile file) throws Exception {
+		File local = new File(dir, file.getName());
+		local.createNewFile();
+		FileOutputStream stream = new FileOutputStream(local);
+		InputStream contents = file.getContents();
+		byte[] bytes = Util.getInputStreamAsByteArray(contents, -1);
+		stream.write(bytes);
+		contents.close();
+		stream.close();
 	}
 }

@@ -13,11 +13,11 @@ package x.y.z;
 /**
  *
  */
-public class test30 extends outer {
+public class test30 extends outer30 {
 
 }
 
-class outer {
+class outer30 {
 	
 	public void exposeMethod() {}
 }

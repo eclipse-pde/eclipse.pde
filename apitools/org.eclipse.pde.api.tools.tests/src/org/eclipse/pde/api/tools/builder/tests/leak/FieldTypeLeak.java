@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.leak;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -89,13 +88,7 @@ public class FieldTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"}
 		});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -128,13 +121,7 @@ public class FieldTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"}
 		});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -156,13 +143,7 @@ public class FieldTypeLeak extends LeakTest {
 	private void x3(boolean inc) {
 		expectingNoProblems();
 		String typename = "testFTL3";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -195,13 +176,7 @@ public class FieldTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"}
 		});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -221,7 +196,6 @@ public class FieldTypeLeak extends LeakTest {
 	}
 	
 	private void x5(boolean inc) {
-		//TODO uncomment once bug 246139 is fixed
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
 		String typename = "testFTL5";
 		String innertype = "inner";
@@ -235,13 +209,7 @@ public class FieldTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"}
 		});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -262,14 +230,9 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x6(boolean inc) {
 		String typename = "testFTL6";
+		expectingNoProblems();
 		// no problems expected
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}	
 	
 	/**
@@ -290,14 +253,9 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x7(boolean inc) {
 		String typename = "testFTL7";
+		expectingNoProblems();
 		// no problems expected
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}		
 	
 	/**
@@ -326,12 +284,6 @@ public class FieldTypeLeak extends LeakTest {
 				{fieldType, typename, "f3"},
 				{fieldType, typename, "f4"},
 		});
-		deployLeakTest(new String[] {TESTING_PACKAGE}, 
-				new String[] {typename}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}	
 }

@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -100,11 +99,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@noextend"},
 				{"@noinstantiate"}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test1", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test1.java", inc, false);
 	}
 	
 	/**
@@ -129,11 +124,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@noimplement"},
 				{"@noimplement"}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test2", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test2.java", inc, false);
 	}
 	
 	/**
@@ -158,11 +149,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@noreference"},
 				{"@noreference"}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test3", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test3.java", inc, false);
 	}
 	
 	/**
@@ -187,11 +174,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@noreference"},
 				{"@noreference"}	
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test4", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test4.java", inc, false);
 	}
 	
 	/**
@@ -217,11 +200,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@noreference"},
 				{"@noreference"}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test5", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test5.java", inc, false);
 	}
 	
 	/**
@@ -249,11 +228,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@nooverride"},
 				{"@nooverride"}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test6", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test6.java", inc, false);
 	}
 	
 	/**
@@ -281,11 +256,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@noreference"},
 				{"@noreference"},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test7", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test7.java", inc, false);
 	}
 	
 	/**
@@ -313,10 +284,6 @@ public class InvalidDuplicateTagsTests extends TagTest {
 				{"@noreference"},
 				{"@noreference"},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test8", 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployTagTest("test8.java", inc, false);
 	}
 }

@@ -13,6 +13,6 @@ package internal.x.y.z;
 /**
  * 
  */
-public class internal {
-
+public interface Iinternal {
+	//empty
 }

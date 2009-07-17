@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.leak;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -87,13 +86,7 @@ public class MethodParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, typename, "m2(internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m3(internal)"}, 
 				{TESTING_INTERNAL_CLASS_NAME, typename, "m4(internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m5(internal)"}, 
 				{TESTING_INTERNAL_CLASS_NAME, typename, "m6(internal)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -115,13 +108,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x2(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL2";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -147,13 +134,7 @@ public class MethodParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m2(Iinternal)"}, {TESTING_INTERNAL_INTERFACE_NAME, typename, "m3(Iinternal)"}, 
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4(Iinternal)"}, {TESTING_INTERNAL_INTERFACE_NAME, typename, "m5(Iinternal)"}, 
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m6(Iinternal)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	/**
 	 * Tests that a variety of methods leaking internal parameters are detected properly 
@@ -174,13 +155,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x4(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL4";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -208,13 +183,7 @@ public class MethodParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m4(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m5(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m5(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m6(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m6(Iinternal, Object, double, internal)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -236,13 +205,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x6(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL6";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -270,13 +233,7 @@ public class MethodParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m4(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m5(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m5(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m6(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner", "m6(Iinternal, Object, double, internal)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -298,13 +255,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x8(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL8";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -332,13 +283,7 @@ public class MethodParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner3", "m4(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner3", "m4(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner3", "m5(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner3", "m5(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner3", "m6(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, "inner3", "m6(Iinternal, Object, double, internal)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -360,13 +305,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x10(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL10";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -395,13 +334,7 @@ public class MethodParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m1(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m1(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m2(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m2(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m3(Iinternal, Object, double, internal)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -430,13 +363,7 @@ public class MethodParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m1(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m1(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m2(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m2(Iinternal, Object, double, internal)"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3(Iinternal, Object, double, internal)"}, {TESTING_INTERNAL_CLASS_NAME, typename, "m3(Iinternal, Object, double, internal)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -458,13 +385,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x13(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL13";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -486,13 +407,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x14(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL14";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -514,13 +429,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x15(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL15";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -542,13 +451,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x16(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL16";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -557,13 +460,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x17(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL17";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -600,13 +497,7 @@ public class MethodParameterLeak extends LeakTest {
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
 		String typename = "testMPL18";
 		setExpectedMessageArgs(new String[][] {{"outer18", typename, "methodLeak(outer18)"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE}, 
-				new String[] {typename}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}	
 	
 	public void tesMethodParameterLeak19F() {
@@ -625,13 +516,7 @@ public class MethodParameterLeak extends LeakTest {
 	private void x19(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL19";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	public void tesMethodParameterLeak20F() {
@@ -650,12 +535,6 @@ public class MethodParameterLeak extends LeakTest {
 	private void x20(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMPL20";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 }

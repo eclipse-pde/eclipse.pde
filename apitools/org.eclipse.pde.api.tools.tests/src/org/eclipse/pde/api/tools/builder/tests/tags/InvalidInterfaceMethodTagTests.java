@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
@@ -66,11 +65,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
 				{"@noextend", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test1", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test1.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceMethodTag2I() {
@@ -90,11 +85,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@noextend", BuilderMessages.TagValidator_an_interface_method},
 				{"@noextend", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest("", 
-				"test2", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test2.java", inc, true);
 	}
 	
 	public void testInvalidInterfaceMethodTag3I() {
@@ -118,11 +109,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test3", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test3.java", inc, false);
 	}
 
 	public void testInvalidInterfaceMethodTag4I() {
@@ -142,11 +129,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest("", 
-				"test4", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test4.java", inc, true);
 	}
 	
 	public void testInvalidInterfaceMethodTag5I() {
@@ -170,11 +153,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
 				{"@noimplement", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test5", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test5.java", inc, false);
 	}
 
 	public void testInvalidInterfaceMethodTag6I() {
@@ -194,11 +173,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@noimplement", BuilderMessages.TagValidator_an_interface_method},
 				{"@noimplement", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest("", 
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test6.java", inc, true);
 	}
 	
 	public void testInvalidInterfaceMethodTag7I() {
@@ -223,11 +198,7 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
 				{"@nooverride", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test7", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test7.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceMethodTag8I() {
@@ -247,10 +218,6 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
 				{"@nooverride", BuilderMessages.TagValidator_an_interface_method}
 		});
-		deployTagTest("", 
-				"test8", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test8.java", inc, true);
 	}
 }

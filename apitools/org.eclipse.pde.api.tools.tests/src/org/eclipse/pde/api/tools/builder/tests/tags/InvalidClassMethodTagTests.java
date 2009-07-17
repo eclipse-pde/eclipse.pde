@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
@@ -77,11 +76,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@noimplement", BuilderMessages.TagValidator_a_static_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test1", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test1.java", inc, false);
 	}
 	
 	public void testInvalidClassMethodTag2I() {
@@ -103,11 +98,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@noimplement", BuilderMessages.TagValidator_a_static_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
 		});
-		deployTagTest("", 
-				"test2", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test2.java", inc, true);
 	}
 
 	public void testInvalidClassMethodTag3I() {
@@ -141,11 +132,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@noextend", BuilderMessages.TagValidator_a_static_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test3", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test3.java", inc, false);
 	}
 
 	public void testInvalidClassMethodTag4I() {
@@ -167,11 +154,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@noextend", BuilderMessages.TagValidator_a_static_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 		});
-		deployTagTest("", 
-				"test4", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test4.java", inc, true);
 	}
 
 	public void testInvalidClassMethodTag5I() {
@@ -205,11 +188,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@noinstantiate", BuilderMessages.TagValidator_a_static_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test5", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test5.java", inc, false);
 	}
 
 	public void testInvalidClassMethodTag6I() {
@@ -231,11 +210,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@noinstantiate", BuilderMessages.TagValidator_a_static_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 		});
-		deployTagTest("", 
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test6.java", inc, true);
 	}
 
 	public void testInvalidClassMethodTag7I() {
@@ -257,11 +232,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_private_method},
 				{"@nooverride", BuilderMessages.TagValidator_private_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test7", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test7.java", inc, false);
 	}
 	
 	public void testInvalidClassMethodTag8I() {
@@ -280,11 +251,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_private_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test8", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test8.java", inc, false);
 	}
 	
 	public void testInvalidClassMethodTag9I() {
@@ -306,11 +273,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_a_final_method},
 				{"@nooverride", BuilderMessages.TagValidator_a_final_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test9", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test9.java", inc, false);
 	}
 
 	public void testInvalidClassMethodTag10I() {
@@ -329,11 +292,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_a_final_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test10", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test10.java", inc, false);
 	}
 
 	public void testInvalidClassMethodTag11I() {
@@ -355,11 +314,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@noreference", BuilderMessages.TagValidator_private_method},
 				{"@noreference", BuilderMessages.TagValidator_private_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test11", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test11.java", inc, false);
 	}
 
 	public void testInvalidClassMethodTag12I() {
@@ -379,11 +334,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_private_method},
 		});
-		deployTagTest("", 
-				"test12", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test12.java", inc, true);
 	}
 	
 	public void testInvalidClassMethodTag13I() {
@@ -404,11 +355,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_a_static_method},
 				{"@nooverride", BuilderMessages.TagValidator_a_static_final_method},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test13", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test13.java", inc, false);
 	}
 	
 	public void testInvalidClassMethodTag14I() {
@@ -430,10 +377,6 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_a_method_in_a_final_class},
 				{"@nooverride", BuilderMessages.TagValidator_a_method_in_a_final_class},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test14", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test14.java", inc, false);
 	}
 }

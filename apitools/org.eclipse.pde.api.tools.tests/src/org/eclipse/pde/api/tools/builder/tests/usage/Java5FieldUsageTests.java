@@ -72,7 +72,7 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 				{FIELD_ENUM_NAME, OUTER_NAME, "f3"},
 				{FIELD_ENUM_NAME, OUTER_NAME, "f2"}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testFieldUsage2F() {
@@ -91,6 +91,6 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	private void x2(boolean inc) {
 		expectingNoProblems();
 		String typename = "testF7";
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 }

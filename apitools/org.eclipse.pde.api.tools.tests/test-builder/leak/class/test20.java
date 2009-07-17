@@ -31,6 +31,6 @@ public class test20 implements Iinternal {
 	}
 }
 
-class outer extends internal {
+class outer20 extends internal {
 	
 }

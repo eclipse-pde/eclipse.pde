@@ -81,8 +81,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			FieldCompatibilityTests.class,
 			MethodCompatibilityTests.class,
 			ConstructorCompatibilityTests.class,
-			/*SinceTagTest.class,
-			VersionTest.class,*/
+			SinceTagTest.class,
+			VersionTest.class,
 			BundleMergeSplitTests.class,
 			BundleVersionTests.class,
 		};
@@ -167,11 +167,13 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			IApiBaseline profile = manager.getWorkspaceBaseline();
 			projects = getEnv().getWorkspace().getRoot().getProjects();
 			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(BASELINE);
+			IApiComponent component = null;
 			for (int i = 0; i < projects.length; i++) {
-				exportApiComponent(
-						projects[i],
-						profile.getApiComponent(projects[i].getName()), 
-						baselineLocation);
+				component = profile.getApiComponent(projects[i].getName());
+					exportApiComponent(
+							projects[i],
+							component, 
+							baselineLocation);
 			}
 			baseline = ApiModelFactory.newApiBaseline("API-baseline");
 			IApiComponent[] components = new IApiComponent[projects.length];
@@ -251,7 +253,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	protected void performDeletionCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
-			deleteWorkspaceFile(workspaceFile);
+			deleteWorkspaceFile(workspaceFile, true);
 			if (incremental) {
 				incrementalBuild();
 			} else {

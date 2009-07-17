@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.leak;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -83,13 +82,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		String typename = "Etest1";
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -111,13 +104,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 	private void x2(boolean inc) {
 		expectingNoProblems();
 		String typename = "Etest2";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null,
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -141,13 +128,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		String typename = "Etest3";
 		String innertype = "inner";
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -171,13 +152,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		String typename = "Etest4";
 		String innertype = "inner";
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -199,13 +174,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 	private void x5(boolean inc) {
 		expectingNoProblems();
 		String typename = "Etest5";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -228,13 +197,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		String typename = "Etest6";
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -258,13 +221,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		String typename = "Etest7";
 		String innertype = "inner2";
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -291,13 +248,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype3},
 				{TESTING_INTERNAL_INTERFACE_NAME, inner}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -324,13 +275,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},	
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype1},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -351,12 +296,6 @@ public class InterfaceExtendsLeak extends LeakTest {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		String typename = "Etest10";
 		setExpectedMessageArgs(new String[][] {{"Iouter", typename}});
-		deployLeakTest(new String[] {TESTING_PACKAGE}, 
-				new String[] {typename}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}	
 }

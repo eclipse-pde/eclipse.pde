@@ -30,6 +30,6 @@ public class test18 {
 	}
 }
 
-class outer extends internal {
+class outer18 extends internal {
 	
 }

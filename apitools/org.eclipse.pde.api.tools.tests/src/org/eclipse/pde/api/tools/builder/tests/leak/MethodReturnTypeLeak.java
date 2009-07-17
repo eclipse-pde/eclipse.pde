@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.leak;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -88,13 +87,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL},
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD),
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -116,13 +109,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x2(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL2";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -149,13 +136,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL},
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -177,13 +158,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x4(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL4";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -210,13 +185,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -238,13 +207,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	public void x6(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL6";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -272,13 +235,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -305,13 +262,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -336,13 +287,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {
 				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -364,13 +309,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x10(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL10";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL},
-				null,
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -401,13 +340,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	/**
 	 * Tests that methods leaking return types are properly reported even with an @noreference tag present
@@ -437,13 +370,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"},
 				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -465,13 +392,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x13(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL13";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL},
-				null,
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -493,13 +414,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x14(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL14";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -521,13 +436,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x15(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL15";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -549,13 +458,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x16(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL16";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -576,13 +479,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
 		String typename = "testMRL17";
 		setExpectedMessageArgs(new String[][] {{"outer", typename, "m1()"}});
-		deployLeakTest(new String[] {TESTING_PACKAGE}, 
-				new String[] {typename}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename},
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	public void testMethodReturnType18F() {
@@ -601,13 +498,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x18(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL18";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	public void testMethodReturnType19F() {
@@ -626,13 +517,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	private void x19(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL19";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 		
  }

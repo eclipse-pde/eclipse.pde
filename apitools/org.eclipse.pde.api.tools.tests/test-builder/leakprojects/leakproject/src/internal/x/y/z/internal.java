@@ -14,5 +14,8 @@ package internal.x.y.z;
  * 
  */
 public class internal {
-
+	//empty
+	public void internalMethod() {
+		
+	}
 }

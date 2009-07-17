@@ -97,7 +97,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				new LineMapping(52, pids[7], args[7]),
 				new LineMapping(53, pids[8], args[8])
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 
 	public void testMethodUsageTests2F() {
@@ -139,7 +139,7 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				new LineMapping(51, pids[4], args[4]),
 				new LineMapping(53, pids[5], args[5])
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 
 	public void testMethodUsageTests3F() {
@@ -173,6 +173,6 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				new LineMapping(34, pids[1], args[1]),
 				new LineMapping(44, pids[2], args[2])
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 }

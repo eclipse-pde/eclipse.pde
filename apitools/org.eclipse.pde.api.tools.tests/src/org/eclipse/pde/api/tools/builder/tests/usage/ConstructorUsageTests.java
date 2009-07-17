@@ -97,6 +97,6 @@ public class ConstructorUsageTests extends UsageTest {
 				{CONST_CLASS_NAME+"(int, Object, char[])", OUTER_NAME},
 				{"inner()", OUTER_NAME},
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 }

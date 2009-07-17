@@ -287,7 +287,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
 		if (this.fPathToOutputContainers == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		IApiTypeContainer container = (IApiTypeContainer) fPathToOutputContainers.get(path);
 		if (container == null) {
@@ -327,7 +327,7 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	private IApiTypeContainer getApiTypeContainer(String location, IApiComponent component) throws CoreException {
 		if (this.fOutputLocationToContainer == null) {
-			baselineDisposed();
+			baselineDisposed(getBaseline());
 		}
 		IResource res = fProject.getProject().findMember(new Path(location));
 		if (res != null) {

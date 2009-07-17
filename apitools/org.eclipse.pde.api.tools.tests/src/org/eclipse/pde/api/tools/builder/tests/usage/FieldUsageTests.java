@@ -94,7 +94,7 @@ public class FieldUsageTests extends UsageTest {
 				{FIELD_CLASS_NAME, OUTER_NAME, "f1"},
 				{FIELD_CLASS_NAME, OUTER_NAME, "f2"}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class FieldUsageTests extends UsageTest {
 				{INNER_NAME1, OUTER_NAME, "f1"},
 				{INNER_NAME1, OUTER_NAME, "f2"}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -148,7 +148,7 @@ public class FieldUsageTests extends UsageTest {
 	private void x3(boolean inc) {
 		expectingNoProblems();
 		String typename = "testF3";
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class FieldUsageTests extends UsageTest {
 	private void x4(boolean inc) {
 		expectingNoProblems();
 		String typename = "testF4";
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -192,6 +192,6 @@ public class FieldUsageTests extends UsageTest {
 	private void x5(boolean inc) {
 		expectingNoProblems();
 		String typename = "testF5";
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 }

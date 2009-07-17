@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -80,11 +79,7 @@ public class InvalidClassTagTests extends TagTest {
 				{"@noreference", BuilderMessages.TagValidator_a_class},
 				{"@noreference", BuilderMessages.TagValidator_a_class}
 		});
-		deployTagTest(TESTING_PACKAGE,
-				"test1", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test1.java", inc, false);
 	}
 
 	public void testInvalidClassTag2I() {
@@ -104,11 +99,7 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_a_class}
 		});
-		deployTagTest("",
-				"test2", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test2.java", inc, true);
 	}
 
 	public void testInvalidClassTag3I() {
@@ -131,11 +122,7 @@ public class InvalidClassTagTests extends TagTest {
 				{"@noimplement", BuilderMessages.TagValidator_a_class},
 				{"@noimplement", BuilderMessages.TagValidator_a_class}
 		});
-		deployTagTest(TESTING_PACKAGE,
-				"test3", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test3.java", inc, false);
 	}
 
 	public void testInvalidClassTag4I() {
@@ -155,11 +142,7 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_a_class}
 		});
-		deployTagTest("",
-				"test4", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test4.java", inc, true);
 	}
 	
 	public void testInvalidClassTag5I() {
@@ -182,11 +165,7 @@ public class InvalidClassTagTests extends TagTest {
 				{"@nooverride", BuilderMessages.TagValidator_a_class},
 				{"@nooverride", BuilderMessages.TagValidator_a_class}
 		});
-		deployTagTest(TESTING_PACKAGE,
-				"test5", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test5.java", inc, false);
 	}
 	
 	public void testInvalidClassTag6I() {
@@ -206,11 +185,7 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_a_class}
 		});
-		deployTagTest("",
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test6.java", inc, true);
 	}
 		
 	public void testInvalidClassTag7I() {
@@ -232,11 +207,7 @@ public class InvalidClassTagTests extends TagTest {
 				{"@noextend", BuilderMessages.TagValidator_a_final_class},
 				{"@noextend", BuilderMessages.TagValidator_a_final_class}
 		});
-		deployTagTest(TESTING_PACKAGE,
-				"test7", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test7.java", inc, false);
 	}
 	public void testInvalidClassTag8I() {
 		x8(true);
@@ -254,10 +225,6 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_abstract_class},
 		});
-		deployTagTest(TESTING_PACKAGE,
-				"test8", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test8.java", inc, false);
 	}
 }

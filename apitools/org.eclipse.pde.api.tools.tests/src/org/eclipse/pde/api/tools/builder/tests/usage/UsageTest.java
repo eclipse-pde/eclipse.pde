@@ -20,11 +20,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
@@ -33,9 +33,6 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
  */
 public abstract class UsageTest extends ApiBuilderTest {
 
-	/**
-	 * 
-	 */
 	private static final String USAGE = "usage";
 	protected static final String TESTING_PACKAGE = "x.y.z";
 	protected static final String REPLACEMENT_PACKAGE = "x.y.z.replace";
@@ -45,6 +42,8 @@ public abstract class UsageTest extends ApiBuilderTest {
 	protected static final String OUTER_NAME = "outer";
 	protected static final String INNER_NAME2 = "inner2";
 	protected static final String OUTER_INAME = "Iouter";
+	
+	protected static IPath SOURCE_PATH = new Path("src/x/y/z");
 	
 	/**
 	 * Constructor
@@ -64,23 +63,6 @@ public abstract class UsageTest extends ApiBuilderTest {
 		enableSinceTagOptions(false);
 		enableUsageOptions(true);
 		enableVersionNumberOptions(false);
-	}
-
-	/**
-	 * Performs actions in the {@link #setUp()} method
-	 * @throws Exception
-	 */
-	protected void doSetup() throws Exception {
-		IProject[] pjs = getEnv().getWorkspace().getRoot().getProjects();
-		getEnv().setAutoBuilding(false);
-		if(pjs.length == 0) {
-			createExistingProjects("usageprojects", true, true, false);
-			ensureCompliance(new String[] {"usagetests"});
-		}
-		else {
-			ensureCompliance(new String[] {"usagetests"});
-			incrementalBuild();
-		}
 	}
 	
 	/**
@@ -121,32 +103,33 @@ public abstract class UsageTest extends ApiBuilderTest {
 		collectTests(suite);
 		return suite;
 	}
-	
+
 	/**
-	 * Returns the path into the {@link ApiBuilderTest#TEST_SOURCE_ROOT} location 
-	 * with the given path ending
-	 * @param path
-	 * @return the {@link IPath} to {@link ApiBuilderTest#TEST_SOURCE_ROOT} with the given path appended
+	 * Deploys a standard API usage test with the test project being created and the given source is imported in the testing project
+	 * into the given project.
+	 * 
+	 * This method assumes that the reference and testing project have been imported into the workspace already.
+	 * 
+	 * @param sourcename
+	 * @param inc if an incremental build should be done
 	 */
-	protected IPath getTestSourcePath(String path) {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojects").append(path);
-	}
-	
-	protected IPath getReplacementSourcePath(String path) {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(path).addFileExtension("java");
-	}
-	
-	/**
-	 * Deploys a usage test
-	 * @param typename
-	 * @param inc
-	 */
-	protected void deployTest(String typename, boolean inc) {
-		deployUsageTest(TESTING_PACKAGE, 
-				typename, 
-				true, 
-				inc, 
-				true);
+	protected void deployUsageTest(String typename, boolean inc) {
+		try {
+			IPath typepath = new Path(getTestingProjectName()).append(SOURCE_PATH).append(typename).addFileExtension("java");
+			createWorkspaceFile(typepath, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(typename).addFileExtension("java"));
+			if(inc) {
+				incrementalBuild();
+			}
+			else {
+				fullBuild();
+			}
+			expectingNoJDTProblemsFor(typepath);
+			ApiProblem[] problems = getEnv().getProblemsFor(typepath, null);
+			assertProblems(problems);
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	/**
@@ -154,9 +137,18 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		ApiTestingEnvironment env = getEnv();
+		if (env != null) {
+			env.setRevert(true);
+			env.setRevertSourcePath(null);
+		}
 		super.setUp();
-		doSetup();
-		getEnv().setRevert(false);
+		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
+		if (!project.exists()) {
+			// populate the workspace with initial plug-ins/projects
+			createExistingProjects("usageprojects", true, true, false);
+		}
+		ensureCompliance(new String[] {getTestingProjectName()});
 	}
 	
 	/* (non-Javadoc)
@@ -164,12 +156,11 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		//do not call super.tearDown() we can reuse the projects once they are created
-		//and changes are reverted
-		resetBuilderOptions();
-		setExpectedProblemIds(null);
-		setExpectedMessageArgs(null);
-		JavaCore.setOptions(JavaCore.getDefaultOptions());
+		super.tearDown();
+		ApiTestingEnvironment env = getEnv();
+		if (env != null) {
+			env.setRevert(false);
+		}
 	}
 	
 	/**
@@ -210,47 +201,6 @@ public abstract class UsageTest extends ApiBuilderTest {
 			}
 			suite.addTest((Test) test);
 		}
-	}
-	
-	/**
-	 * Deploys a standard API usage test with the test project being created and the given source is imported in the testing project
-	 * into the given project.
-	 * 
-	 * This method assumes that the reference and testing project have been imported into the workspace already.
-	 * 
-	 * @param packagename
-	 * @param sourcename
-	 * @param expectingproblems
-	 * @param buildtype the type of build to perform. One of:
-	 * <ol>
-	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
-	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
-	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
-	 * </ol>
-	 * @param buildworkspace
-	 */
-	protected void deployUsageTest(String packagename, String sourcename, boolean expectingproblems, boolean incremental, boolean buildworkspace) {
-		try {
-			IPath typepath = getProjectRelativePath(packagename, sourcename);
-			createWorkspaceFile(typepath, getReplacementSourcePath(sourcename));
-			if(incremental) {
-				incrementalBuild();
-			}
-			else {
-				fullBuild();
-			}
-			expectingNoJDTProblems();
-			ApiProblem[] problems = getEnv().getProblemsFor(typepath, null);
-			assertProblems(problems);
-			deleteWorkspaceFile(typepath);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
-	}
-	
-	protected IPath getProjectRelativePath(String packagename, String sourcename) {
-		return new Path(getTestingProjectName()).append(SRC_ROOT).append(packagename.replace('.', '/')).append(sourcename).addFileExtension("java");
 	}
 	
 	/**

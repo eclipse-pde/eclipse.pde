@@ -42,7 +42,7 @@ public class testM2 extends MethodUsageClass {
 	}
 }
 
-class outer extends MethodUsageClass {
+class outermu2 extends MethodUsageClass {
 	/**
 	 * @see x.y.z.MethodUsageClass#m2()
 	 */

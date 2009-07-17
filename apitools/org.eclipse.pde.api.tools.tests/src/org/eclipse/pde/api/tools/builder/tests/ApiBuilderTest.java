@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.builder.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -34,17 +33,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
@@ -58,9 +52,8 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
-import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -149,23 +142,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	public ApiBuilderTest(String name) {
 		super(name);
 	}
-	
-	/**
-	 * Returns the contents of the source file in the given category with the given name
-	 * @param srcpath the path to the folder containing the test source
-	 * @param srcname the name of the test (which is the name of the file)
-	 * @return the contents of the source file as a string, or <code>null</code>
-	 */
-	protected String getSourceContents(IPath srcpath, String srcname) {
-		String contents = null;
-		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(srcpath).append(srcname+JAVA_EXTENSION);
-		File file = path.toFile();
-		if(file.exists()) {
-			contents = Util.getFileContentAsString(file);
-		}
-		return contents;
-	}
-	
+
 	/**
 	 * @return the testing environment cast the the one we want
 	 */
@@ -290,163 +267,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 	
 	/**
-	 * Sets up the project for a given test using the specified source.
-	 * 
-	 * @param sourcename the name of the source file to create in the project
-	 * @param packagename the name of the package to create in the project in the default 'src' package
-	 * fragment root
-	 * 
-	 * @return the path to the new project
-	 */
-	protected IPath assertProject(String sourcename, String packagename) throws JavaModelException {
-		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
-		IPath ppath = null;
-		IPath frpath = null;
-		if (project.exists()) { 
-			ppath = project.getFullPath();
-			frpath = ppath.append(SRC_ROOT);
-			assertProjectCompliance(project);
-		} else {
-			ppath = getEnv().addProject(getTestingProjectName(), getTestCompliance());
-			assertTrue("The path for '"+getTestingProjectName()+"' must exist", !ppath.isEmpty());
-			frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
-			assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
-		}
-		IPath packpath = getEnv().addPackage(frpath, packagename);
-		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
-		String contents = getSourceContents(getTestSourcePath(), sourcename);
-		assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
-		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
-		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
-		return ppath;
-	}
-	
-	/**
-	 * Ensures that the .settings folder is available
-	 * @param project
-	 * @throws CoreException
-	 */
-	protected IPath assertSettingsFolder(IProject project) throws CoreException {
-		IFolder folder = project.getFolder(".settings");
-		assertNotNull("the settings folder must exist", folder);
-		if(!folder.isAccessible()) {
-			folder.create(true, true, null); 
-		}
-		assertTrue("the .settings folder must be accessible", folder.isAccessible());
-		return folder.getFullPath();
-	}
-	
-	/**
-	 * Ensures the {@link JavaCore#COMPILER_COMPLIANCE}, {@link JavaCore#COMPILER_CODEGEN_TARGET_PLATFORM} and 
-	 * {@link JavaCore#COMPILER_SOURCE} settings are what the current test says it should be.
-	 * This method is only consulted when we assert an existing project.
-	 * @param project the project test check the compliance one
-	 */
-	protected void assertProjectCompliance(IProject project) {
-		IJavaProject jproject = JavaCore.create(project); 
-		String compliance = getTestCompliance();
-		if(!compliance.equals(jproject.getOption(JavaCore.COMPILER_COMPLIANCE, false))) {
-			jproject.setOption(JavaCore.COMPILER_COMPLIANCE, compliance);
-			jproject.setOption(JavaCore.COMPILER_SOURCE, compliance);
-			jproject.setOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compliance);
-		}
-	}
-	
-	/**
-	 * Adds the given source to the given package with the specified project and returns the 
-	 * path the {@link IPackageFragment} the source was added to.
-	 * @param project the project to add to
-	 * @param packagename the package name to add the source to (will be created if it does not exist)
-	 * @param sourcename the name of the new source to add
-	 * @return the path to the {@link IPackageFragment} the source was added to
-	 * @throws JavaModelException
-	 */
-	protected IPath assertSource(IProject project, String packagename, String sourcename) throws JavaModelException {
-		IPath ppath = project.getFullPath();
-		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = ppath.append(SRC_ROOT);
-		if(!packageFragmentRootExists(ppath, SRC_ROOT)) {
-			frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
-		}
-		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
-		IPath packpath = getEnv().addPackage(frpath, packagename);
-		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
-		String contents = getSourceContents(getTestSourcePath(), sourcename);
-		assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
-		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
-		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
-		return packpath;
-	}
-	
-	/**
-	 * Adds the given source to the given package with the specified project and returns the 
-	 * path the {@link IPackageFragment} the source was added to.
-	 * @param sourcepath
-	 * @param project the project to add to
-	 * @param packagename the package name to add the source to (will be created if it does not exist)
-	 * @param sourcename the name of the new source to add
-	 * @return the path to the {@link IPackageFragment} the source was added to
-	 * @throws JavaModelException
-	 */
-	protected IPath assertSource(IPath sourcepath, IProject project, String packagename, String sourcename) throws JavaModelException {
-		IPath ppath = project.getFullPath();
-		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = ppath.append(SRC_ROOT);
-		if(!packageFragmentRootExists(ppath, SRC_ROOT)) {
-			frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
-		}
-		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
-		IPath packpath = getEnv().addPackage(frpath, packagename);
-		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
-		String contents = getSourceContents(sourcepath, sourcename);
-		assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
-		IPath cpath = getEnv().addClass(packpath, sourcename, contents);
-		assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
-		return packpath;
-	}
-	
-	protected boolean packageFragmentRootExists(IPath projectpath, String rootname) {
-		IFolder folder = (IFolder) getEnv().getWorkspace().getRoot().findMember(projectpath.append(rootname));
-		return folder.exists();
-	}
-	
-	/**
-	 * Sets up the project for a given test using the specified source.
-	 * The listing of source names and package names must be equal in size, as each source name will be
-	 * placed in the the corresponding package listed in packagenames
-	 * 
-	 * @param sourcenames listing of source names to deploy in the test project
-	 * @param packagenames listing of package name to deploy in the 'src' root of the project
-	 * @param internalpackages listing of the name of packages to make internal in the testing project (set x-internal to true)
-	 * 
-	 * @return the path to the new project
-	 */
-	protected IPath assertProject(String[] sourcenames, String[] packagenames, String[] internalpackages) throws JavaModelException, CoreException {
-		assertTrue("source and package name lists must be the same size", sourcenames.length == packagenames.length);
-		IPath ppath = getEnv().addProject(getTestingProjectName(), getTestCompliance());
-		assertTrue("The path for '"+getTestingProjectName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = getEnv().addPackageFragmentRoot(ppath, SRC_ROOT);
-		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
-		IProject project = getEnv().getProject(ppath);
-		for(int i = 0; i < sourcenames.length; i++) {
-			IPath packpath = getEnv().addPackage(frpath, packagenames[i]);
-			assertTrue("The path for '"+packagenames[i]+"' must exist", !packpath.isEmpty());
-			String contents = getSourceContents(getTestSourcePath(), sourcenames[i]);
-			assertNotNull("the source contents for '"+sourcenames[i]+"' must exist", contents);
-			IPath cpath = getEnv().addClass(packpath, sourcenames[i], contents);
-			assertTrue("The path for '"+sourcenames[i]+"' must exist", !cpath.isEmpty());
-			ProjectUtils.addExportedPackage(project, packagenames[i], false, null);
-		}
-		for(int i = 0; i < internalpackages.length; i++) {
-			IPackageFragment pack = getEnv().getJavaProject(ppath).findPackageFragment(getEnv().getPackagePath(frpath, internalpackages[i]));
-			if(pack != null) {
-				ProjectUtils.addExportedPackage(project, internalpackages[i], true, null);
-			}
-		}
-		return ppath;
-	}
-	
-	/**
 	 * Creates the workspace by importing projects from the 'projectsdir' directory. All projects in the given directory 
 	 * will try to be imported into the workspace. The given 'projectsdir' is assumed to be a child path
 	 * of the test source path (the test-builder folder in the test workspace).
@@ -491,18 +311,18 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		for (int i = 0; i < members.length; i++) {
 			IResource res = members[i];
 			if (res.getType() == IResource.FILE) {
-				copyFile(componentDir, (IFile)res);
+				FileUtils.copyFile(componentDir, (IFile)res);
 			} else if (res.getType() == IResource.FOLDER) {
 				if (res.getName().equals("META-INF")) {
 					File manDir = new File(componentDir, "META-INF");
 					manDir.mkdirs();
-					copyFile(manDir, ((IFolder)res).getFile("MANIFEST.MF"));
+					FileUtils.copyFile(manDir, ((IFolder)res).getFile("MANIFEST.MF"));
 				}
 			}
 		}
 		// copy over .class files
 		IFolder output = project.getFolder("bin");
-		copyFolder(output, componentDir);
+		FileUtils.copyFolder(output, componentDir);
 		// API Description
 		ApiDescriptionXmlCreator visitor = new ApiDescriptionXmlCreator(apiComponent);
 		apiComponent.getApiDescription().accept(visitor);
@@ -513,74 +333,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		stream.write(xml.getBytes("UTF-8"));
 		stream.close();
 	}
-	
-	/**
-	 * Copy the folder contents to the local file system.
-	 * 
-	 * @param folder workspace folder
-	 * @param dir local directory
-	 */
-	protected void copyFolder(IFolder folder, File dir) throws Exception {
-		IResource[] members = folder.members();
-		for (int i = 0; i < members.length; i++) {
-			IResource res = members[i];
-			if (res.getType() == IResource.FILE) {
-				IFile file = (IFile) res;
-				copyFile(dir, file);
-			} else {
-				IFolder nested = (IFolder) res;
-				File next = new File(dir, nested.getName());
-				next.mkdirs();
-				copyFolder(nested, next);
-			}
-		}
-	}
-	
-	/**
-	 * Replace the given source path in the given project
-	 * @param sourcepath
-	 * @param project
-	 * @param packagename
-	 * @param sourcename
-	 */
-	protected void replaceSource(IPath sourcepath, IProject project, String packagename, String sourcename) {
-		IPath ppath = project.getFullPath();
-		assertTrue("The path for '"+project.getName()+"' must exist", !ppath.isEmpty());
-		IPath frpath = ppath.append(SRC_ROOT);
-		if(!packageFragmentRootExists(ppath, SRC_ROOT)) {
-			frpath = getEnv().getPackageFragmentRootPath(ppath, SRC_ROOT);
-		}
-		assertTrue("The path for '"+SRC_ROOT+"' must exist", !frpath.isEmpty());
-		IPath packpath = getEnv().getPackagePath(frpath, packagename);
-		assertTrue("The path for '"+packagename+"' must exist", !packpath.isEmpty());
-		if(sourcepath == null) {
-			//delete source requested
-			getEnv().removeClass(packpath, sourcename);
-		}
-		else {
-			String contents = getSourceContents(sourcepath, sourcename);
-			assertNotNull("the source contents for '"+sourcename+"' must exist", contents);
-			IPath cpath = getEnv().addClass(packpath, sourcename, contents);
-			assertTrue("The path for '"+sourcename+"' must exist", !cpath.isEmpty());
-		}
-	}
-	
-	/**
-	 * Copies the given file to the given directory.
-	 * 
-	 * @param dir
-	 * @param file
-	 */
-	protected void copyFile(File dir, IFile file) throws Exception {
-		File local = new File(dir, file.getName());
-		local.createNewFile();
-		FileOutputStream stream = new FileOutputStream(local);
-		InputStream contents = file.getContents();
-		byte[] bytes = Util.getInputStreamAsByteArray(contents, -1);
-		stream.write(bytes);
-		contents.close();
-		stream.close();
-	}	
 	
 	/**
 	 * Create the project described in record. If it is successful return true.
@@ -638,43 +390,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		//force the use of the test compliance
 		if(usetestcompliance) {
 			getEnv().setProjectCompliance(getEnv().getJavaProject(ppath), getTestCompliance());
-		}
-	}
-	
-	/**
-	 * Performs the specified type of build on the given path, or the workspace if the path is <code>null</code>
-	 * @param type the type of build. One of:
-	 * <ol>
-	 * <li>IncrementalProjectBuilder#FULL_BUILD</li>
-	 * <li>IncrementalProjectBuilder#INCREMENTAL_BUILD</li>
-	 * <li>IncrementalProjectBuilder#CLEAN_BUILD</li>
-	 * </ol>
-	 * @param path the path of the project to build or <code>null</code> if the workspace should be built
-	 */
-	protected void doBuild(int type, IPath path) {
-		switch(type) {
-			case IncrementalProjectBuilder.FULL_BUILD: {
-				if(path == null) {
-					fullBuild();
-				}
-				else {
-					fullBuild(path);
-				}
-				break;
-			}
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD: {
-				if(path == null) {
-					incrementalBuild();
-				}
-				else {
-					incrementalBuild(path);
-				}
-				break;
-			}
-			case IncrementalProjectBuilder.CLEAN_BUILD: {
-				cleanBuild();
-				break;
-			}
 		}
 	}
 	
@@ -1091,11 +806,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * 
 	 * @param workspaceLocation
 	 */
-	protected void deleteWorkspaceFile(IPath workspaceLocation) throws Exception {
+	protected void deleteWorkspaceFile(IPath workspaceLocation, boolean recorddeletion) throws Exception {
 		IFile file = getEnv().getWorkspace().getRoot().getFile(workspaceLocation);
 		assertTrue("Workspace file does not exist: " + workspaceLocation.toString(), file.exists());
 		file.delete(true, null);
-		getEnv().removed(workspaceLocation);
+		if(recorddeletion) {
+			getEnv().removed(workspaceLocation);
+		}
 	}
 	
 	/**
@@ -1252,6 +969,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		if (env == null) {
 			env = new ApiTestingEnvironment();
 			env.openEmptyWorkspace();
+			env.setAutoBuilding(false);
 		}
 		setBuilderOptions();
 		super.setUp();

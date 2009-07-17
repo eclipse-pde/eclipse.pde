@@ -72,18 +72,6 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		assertStubBaseline(BASELINE);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#doSetup()
-	 */
-	@Override
-	protected void doSetup() throws Exception {
-		createExistingProjects(
-				"usageprojects", 
-				true, 
-				true, 
-				false);
-	}
-	
 	/**
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
 	 */
@@ -158,53 +146,43 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	}
 	
 	protected void deployTest(IPath beforepath, IPath afterpath, IPath filterpath, IPath updatepath, boolean inc) throws Exception {
-		try {
-			getEnv().setAutoBuilding(false);
-			
-			//add the source
-			createWorkspaceFile(updatepath, beforepath);
-			
-			//touch the filter store to ensure it is listening...
-			IApiBaselineManager mgr = ApiPlugin.getDefault().getApiBaselineManager();
-			IApiBaseline baseline = mgr.getWorkspaceBaseline();
-			assertNotNull("The workspace baseline should not be null", baseline);
-			IProject project = getEnv().getProject("usagetests");
-			assertNotNull("the testing project 'usagetests' must exist in the testing workspace", project);
-			IApiComponent component = baseline.getApiComponent(project);
-			assertNotNull("The API component for project 'usagetests' must exist", component);
-			IApiFilterStore store = component.getFilterStore();
-			assertNotNull("The filterstore for 'usagetests' must not be null", store);
-			//wait for the event
-			ResourceEventWaiter waiter = new ResourceEventWaiter(fFiltersPath, IResourceChangeEvent.POST_CHANGE, IResourceDelta.CHANGED, 0);
-			createWorkspaceFile(fFiltersPath, filterpath);
-			Object event = waiter.waitForEvent();
-			assertNotNull("the resource changed event for the filter file was not recieved", event);
-			
-			fullBuild();
-			expectingNoJDTProblems();
-			//update the source
-			if(afterpath == null) {
-				deleteWorkspaceFile(updatepath);
-			}
-			else {
-				updateWorkspaceFile(updatepath, afterpath);
-			}
-			if(inc) {
-				incrementalBuild();
-			}
-			else {
-				fullBuild();
-			}
-			expectingNoJDTProblems();
-			if(getExpectedProblemIds().length > 0) {
-				assertProblems(getEnv().getProblems());
-			}
-			else {
-				expectingNoProblems();
-			}
+		//add the source
+		createWorkspaceFile(updatepath, beforepath);
+		
+		//touch the filter store to ensure it is listening...
+		IApiBaselineManager mgr = ApiPlugin.getDefault().getApiBaselineManager();
+		IApiBaseline baseline = mgr.getWorkspaceBaseline();
+		assertNotNull("The workspace baseline should not be null", baseline);
+		IProject project = getEnv().getProject("usagetests");
+		assertNotNull("the testing project 'usagetests' must exist in the testing workspace", project);
+		IApiComponent component = baseline.getApiComponent(project);
+		assertNotNull("The API component for project 'usagetests' must exist", component);
+		IApiFilterStore store = component.getFilterStore();
+		assertNotNull("The filterstore for 'usagetests' must not be null", store);
+		//wait for the event
+		ResourceEventWaiter waiter = new ResourceEventWaiter(fFiltersPath, IResourceChangeEvent.POST_CHANGE, IResourceDelta.CHANGED, 0);
+		createWorkspaceFile(fFiltersPath, filterpath);
+		Object event = waiter.waitForEvent();
+		assertNotNull("the resource changed event for the filter file was not recieved", event);
+		
+		expectingNoJDTProblems();
+		//update the source
+		deleteWorkspaceFile(updatepath, false);
+		if(afterpath != null) {
+			createWorkspaceFile(updatepath, afterpath);
 		}
-		finally {
-			getEnv().setAutoBuilding(true);
+		if(inc) {
+			incrementalBuild();
+		}
+		else {
+			fullBuild();
+		}
+		expectingNoJDTProblems();
+		if(getExpectedProblemIds().length > 0) {
+			assertProblems(getEnv().getProblems());
+		}
+		else {
+			expectingNoProblems();
 		}
 	}
 	

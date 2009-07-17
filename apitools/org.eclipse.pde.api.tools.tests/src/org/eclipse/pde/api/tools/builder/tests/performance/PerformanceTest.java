@@ -364,7 +364,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	protected void performDeletionCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
-			deleteWorkspaceFile(workspaceFile);
+			deleteWorkspaceFile(workspaceFile, true);
 			if (incremental) {
 				incrementalBuild();
 			} else {

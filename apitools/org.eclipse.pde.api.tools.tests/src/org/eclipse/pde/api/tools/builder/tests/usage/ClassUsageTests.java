@@ -99,7 +99,7 @@ public class ClassUsageTests extends UsageTest {
 				{CLASS_NAME, INNER_NAME2},
 				{CLASS_NAME, OUTER_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class ClassUsageTests extends UsageTest {
 				{CLASS_NAME, INNER_NAME2},
 				{CLASS_NAME, OUTER_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -161,7 +161,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"IExtInterface1", "INoImpl1", typename},
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -186,7 +186,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x4(boolean inc) {
 		expectingNoProblems();
-		deployTest("testC4", inc);
+		deployUsageTest("testC4", inc);
 	}
 	
 	/**
@@ -223,7 +223,7 @@ public class ClassUsageTests extends UsageTest {
 				{"IExtInterface3", "INoImpl1", typename},
 				{"IExtInterface4", "INoImpl4", typename}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -248,7 +248,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x6(boolean inc) {
 		expectingNoProblems();
-		deployTest("testC6", inc);
+		deployUsageTest("testC6", inc);
 	}
 	
 	/**
@@ -273,7 +273,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x7(boolean inc) {
 		expectingNoProblems();
-		deployTest("testC7", inc);
+		deployUsageTest("testC7", inc);
 	}
 	
 	/**
@@ -292,7 +292,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x8(boolean inc) {
 		expectingNoProblems();
-		deployTest("testC8", inc);
+		deployUsageTest("testC8", inc);
 	}
 	
 	/**
@@ -317,7 +317,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"INoImpl1", typename}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -348,7 +348,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA2.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -379,7 +379,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA3.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -410,7 +410,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA4", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -441,7 +441,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA6.testA6()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -472,7 +472,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA11", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 
 	public void testLocalClassExtends1F() {
@@ -506,7 +506,7 @@ public class ClassUsageTests extends UsageTest {
 				new LineMapping(35, getExpectedProblemIds()[2], getExpectedMessageArgs()[2])
 		});
 		String typename = "testA7";
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -537,7 +537,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -568,7 +568,7 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA8.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -599,6 +599,6 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA1.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 }

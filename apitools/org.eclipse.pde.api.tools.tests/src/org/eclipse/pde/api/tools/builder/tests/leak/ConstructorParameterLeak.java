@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.leak;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -85,13 +84,7 @@ public class ConstructorParameterLeak extends LeakTest {
 		String typename = "testCPL1";
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename},
 				{TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -113,13 +106,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x2(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL2";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -143,13 +130,7 @@ public class ConstructorParameterLeak extends LeakTest {
 		String typename = "testCPL3";
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -171,13 +152,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x4(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL4";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -202,13 +177,7 @@ public class ConstructorParameterLeak extends LeakTest {
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename},
 				{TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -230,13 +199,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x6(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL6";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -263,13 +226,7 @@ public class ConstructorParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype}, {TESTING_INTERNAL_INTERFACE_NAME, innertype}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype}, {TESTING_INTERNAL_CLASS_NAME, innertype}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype}, {TESTING_INTERNAL_CLASS_NAME, innertype}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -291,13 +248,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x8(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL8";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -325,13 +276,7 @@ public class ConstructorParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, {TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype1}, {TESTING_INTERNAL_CLASS_NAME, innertype1}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}, {TESTING_INTERNAL_CLASS_NAME, innertype2}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -353,13 +298,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x10(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL10";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -390,13 +329,7 @@ public class ConstructorParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -425,13 +358,7 @@ public class ConstructorParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_CLASS_NAME, innertype1},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}});
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_INTERFACE_NAME, TESTING_INTERNAL_CLASS_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	/**
@@ -453,13 +380,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x13(boolean inc) {
 		expectingNoProblems();
 		String typename = "testCPL13";
-		deployLeakTest(new String[] {TESTING_PACKAGE, TESTING_PACKAGE_INTERNAL, TESTING_PACKAGE_INTERNAL}, 
-				new String[] {typename, TESTING_INTERNAL_CLASS_NAME, TESTING_INTERNAL_INTERFACE_NAME}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				null, 
-				false, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		deployLeakTest(typename+".java", inc);
 	}
 	
 	
@@ -480,13 +401,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	private void x14(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
 		String typename = "testCPL14";
-		setExpectedMessageArgs(new String[][] {{"outer", typename}});
-		deployLeakTest(new String[] {TESTING_PACKAGE}, 
-				new String[] {typename}, 
-				new String[] {TESTING_PACKAGE_INTERNAL}, 
-				new String[] {TESTING_PACKAGE+"."+typename}, 
-				true, 
-				(inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD), 
-				true);
+		setExpectedMessageArgs(new String[][] {{"outercpl14", typename}});
+		deployLeakTest(typename+".java", inc);
 	}	
 }

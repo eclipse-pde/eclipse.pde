@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
@@ -78,11 +77,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 4);
-		deployTagTest(TESTING_PACKAGE, 
-				"test1", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test1.java"; 
+		deployTagTest(typename, inc, false);
 	}
 	
 	
@@ -100,11 +96,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 1);
-		deployTagTest("", 
-				"test2", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test2.java"; 
+		deployTagTest(typename, inc, true);
 	}
 	
 	public void testInvalidAnnotationTag3I() {
@@ -121,11 +114,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@noextend", BuilderMessages.TagValidator_an_annotation, 4);
-		deployTagTest(TESTING_PACKAGE, 
-				"test3", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test3.java"; 
+		deployTagTest(typename, inc, false);
 	}
 	
 	public void testInvalidAnnotationTag4I() {
@@ -142,11 +132,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@noextend", BuilderMessages.TagValidator_an_annotation, 1);
-		deployTagTest("", 
-				"test4", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test4.java"; 
+		deployTagTest(typename, inc, true);
 	}
 	
 	public void testInvalidAnnotationTag5I() {
@@ -163,11 +150,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@nooverride", BuilderMessages.TagValidator_an_annotation, 4);
-		deployTagTest(TESTING_PACKAGE, 
-				"test5", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test5.java"; 
+		deployTagTest(typename, inc, false);
 	}
 
 	public void testInvalidAnnotationTag6I() {
@@ -184,11 +168,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@nooverride", BuilderMessages.TagValidator_an_annotation, 1);
-		deployTagTest("", 
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test6.java"; 
+		deployTagTest(typename, inc, true);
 	}
 
 	public void testInvalidAnnotationTag7I() {
@@ -222,11 +203,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 				{"@noextend", BuilderMessages.TagValidator_an_annotation},
 				{"@nooverride", BuilderMessages.TagValidator_an_annotation},
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test7", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test7.java"; 
+		deployTagTest(typename, inc, false);
 	}
 	
 	public void testInvalidAnnotationTag8I() {
@@ -248,11 +226,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 				{"@noextend", BuilderMessages.TagValidator_an_annotation},
 				{"@nooverride", BuilderMessages.TagValidator_an_annotation},
 		});
-		deployTagTest("", 
-				"test8", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test8.java"; 
+		deployTagTest(typename, inc, true);
 	}
 	
 	public void testInvalidAnnotationTag9I() {
@@ -269,11 +244,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@noinstantiate", BuilderMessages.TagValidator_an_annotation, 4);
-		deployTagTest(TESTING_PACKAGE, 
-				"test9", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test9.java"; 
+		deployTagTest(typename, inc, false);
 	}
 	
 	public void testInvalidAnnotationTag10I() {
@@ -290,11 +262,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@noinstantiate", BuilderMessages.TagValidator_an_annotation, 1);
-		deployTagTest("", 
-				"test10", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test10.java"; 
+		deployTagTest(typename, inc, true);
 	}
 	
 	public void testInvalidAnnotationTag11I() {
@@ -311,11 +280,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_an_annotation, 4);
-		deployTagTest(TESTING_PACKAGE, 
-				"test11", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test11.java"; 
+		deployTagTest(typename, inc, false);
 	}
 
 	public void testInvalidAnnotationTag12I() {
@@ -332,10 +298,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	private void x12(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_an_annotation, 1);
-		deployTagTest("", 
-				"test12", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		String typename = "test12.java"; 
+		deployTagTest(typename, inc, true);
 	}
 }

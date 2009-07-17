@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import java.io.File;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-
 import junit.framework.Test;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 
 /**
  * Tests that usage from fragment -&gt; host is not reported as a problem
@@ -40,6 +38,14 @@ public class FragmentUsageTests extends UsageTest {
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
+	 */
+	@Override
+	protected String getTestCompliance() {
+		return CompilerOptions.VERSION_1_5;
+	}
+	
 	/**
 	 * @return the test suite for this class
 	 */
@@ -63,22 +69,6 @@ public class FragmentUsageTests extends UsageTest {
 		return "fragmenttests";
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#doSetup()
-	 */
-	@Override
-	protected void doSetup() throws Exception {
-		IProject[] pjs = getEnv().getWorkspace().getRoot().getProjects();
-		File file = null;
-		if(pjs.length == 0) {
-			file = getTestSourcePath("refproject").toFile();
-			createExistingProject(file, true, false);
-		}
-		file = getTestSourcePath("fragmenttests").toFile();
-		createExistingProject(file, true, false);
-		fullBuild();
-	}
-	
 	public void testClassExtendsI() {
 		x1(true);
 	}
@@ -93,7 +83,7 @@ public class FragmentUsageTests extends UsageTest {
 	 */
 	private void x1(boolean inc) {
 		expectingNoProblems();
-		deployTest("test1", inc);
+		deployUsageTest("test1", inc);
 	}
 	
 	public void testImplementsI() {
@@ -110,7 +100,7 @@ public class FragmentUsageTests extends UsageTest {
 	 */
 	private void x2(boolean inc) {
 		expectingNoProblems();
-		deployTest("test2", inc);
+		deployUsageTest("test2", inc);
 	}
 	
 	public void testInstantiateI() {
@@ -127,7 +117,7 @@ public class FragmentUsageTests extends UsageTest {
 	 */
 	private void x3(boolean inc) {
 		expectingNoProblems();
-		deployTest("test3", inc);
+		deployUsageTest("test3", inc);
 	}
 	
 	public void testConstNoRefI() {
@@ -144,7 +134,7 @@ public class FragmentUsageTests extends UsageTest {
 	 */
 	private void x4(boolean inc) {
 		expectingNoProblems();
-		deployTest("test4", inc);
+		deployUsageTest("test4", inc);
 	}
 	
 	public void testFieldNoRefI() {
@@ -161,7 +151,7 @@ public class FragmentUsageTests extends UsageTest {
 	 */
 	private void x5(boolean inc) {
 		expectingNoProblems();
-		deployTest("test5", inc);
+		deployUsageTest("test5", inc);
 	}
 	
 	public void testOverrideI() {
@@ -178,7 +168,7 @@ public class FragmentUsageTests extends UsageTest {
 	 */
 	private void x6(boolean inc) {
 		expectingNoProblems();
-		deployTest("test6", inc);
+		deployUsageTest("test6", inc);
 	}
 	
 	public void testIExtendsI() {
@@ -195,6 +185,6 @@ public class FragmentUsageTests extends UsageTest {
 	 */
 	private void x7(boolean inc) {
 		expectingNoProblems();
-		deployTest("test7", inc);
+		deployUsageTest("test7", inc);
 	}
 }

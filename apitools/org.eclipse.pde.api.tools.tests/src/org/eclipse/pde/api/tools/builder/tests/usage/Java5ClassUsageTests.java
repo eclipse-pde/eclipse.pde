@@ -61,7 +61,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testGA1.m1(Object[], List<String>)", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testAnonymousTypeGenericMethod1F() {
@@ -86,7 +86,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testGA2.m1(Object[], List<String>)", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testAnonymousTypeGenericMethod2F() {
@@ -111,7 +111,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testGA3.testGA3(Object[], List<String>)", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testAnonymousTypeGenericMethod3F() {
@@ -135,7 +135,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testGA4<T>", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testAnonymousTypeGenericField1F() {
@@ -159,7 +159,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testGA5.testGA5(Object[], List<String>)", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testLocalTypeGeneicMethod1F() {
@@ -183,7 +183,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testGA6.m1(Object[], List<String>)", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testLocalTypeGeneicMethod2F() {
@@ -221,7 +221,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 				{GENERIC_CLASS_NAME+"<T>", typename},
 				{GENERIC_CLASS_NAME+"<T>", INNER_NAME1}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testLocalClassExtends1F() {
@@ -255,7 +255,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 				new LineMapping(35, getExpectedProblemIds()[2], getExpectedMessageArgs()[2])
 		});
 		String typename = "testA7";
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -286,7 +286,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA2.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -317,7 +317,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA3.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -348,7 +348,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -379,7 +379,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA6.testA6()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -410,7 +410,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testGA7<T>", CLASS_NAME}
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	public void testAnonymousClassExtendsGenericReturnF() {
 		x16(false);
@@ -433,7 +433,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testA10.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -464,7 +464,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -495,7 +495,7 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA8.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	public void testLocalClassExtendsGenericReturnF() {
@@ -519,6 +519,6 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA9.m1()", CLASS_NAME}	
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 }

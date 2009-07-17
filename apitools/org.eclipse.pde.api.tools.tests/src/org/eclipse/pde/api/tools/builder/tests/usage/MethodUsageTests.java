@@ -111,7 +111,7 @@ public class MethodUsageTests extends UsageTest {
 				new LineMapping(49, pids[4], args[4]),
 				new LineMapping(50, pids[5], args[5])
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class MethodUsageTests extends UsageTest {
 				{METHOD_CLASS_NAME, typename, "m2()"},
 				{METHOD_CLASS_NAME, INNER_NAME1, "m2()"},
 				{METHOD_CLASS_NAME, INNER_NAME2, "m2()"},
-				{METHOD_CLASS_NAME, OUTER_NAME, "m2()"}
+				{METHOD_CLASS_NAME, "outermu2", "m2()"}
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -152,7 +152,7 @@ public class MethodUsageTests extends UsageTest {
 				new LineMapping(39, pids[2], args[2]),
 				new LineMapping(49, pids[3], args[3])
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -205,7 +205,7 @@ public class MethodUsageTests extends UsageTest {
 				new LineMapping(56, pids[6], args[6]),
 				new LineMapping(58, pids[7], args[7])
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 	
 	/**
@@ -252,6 +252,6 @@ public class MethodUsageTests extends UsageTest {
 				new LineMapping(50, pids[4], args[4]),
 				new LineMapping(51, pids[5], args[5])
 		});
-		deployTest(typename, inc);
+		deployUsageTest(typename, inc);
 	}
 }

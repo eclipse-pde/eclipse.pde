@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
@@ -86,11 +85,7 @@ public class InvalidEnumTagTests extends TagTest {
 				{"@noreference", BuilderMessages.TagValidator_an_enum},
 				{"@noreference", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test1", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test1.java", inc, false);
 	}
 	
 	public void testInvalidEnumTag2I() {
@@ -109,11 +104,7 @@ public class InvalidEnumTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest("", 
-				"test2", 
-				true, 
-				inc ? IncrementalProjectBuilder.FULL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test2.java", inc, true);
 	}
 	
 	public void testInvalidEnumTag3I() {
@@ -135,11 +126,7 @@ public class InvalidEnumTagTests extends TagTest {
 				{"@noextend", BuilderMessages.TagValidator_an_enum},
 				{"@noextend", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test3", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test3.java", inc, false);
 	}
 
 	public void testInvalidEnumTag4I() {
@@ -158,11 +145,7 @@ public class InvalidEnumTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest("", 
-				"test4", 
-				true, 
-				inc ? IncrementalProjectBuilder.FULL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test4.java", inc, true);
 	}
 
 	public void testInvalidEnumTag5I() {
@@ -184,11 +167,7 @@ public class InvalidEnumTagTests extends TagTest {
 				{"@nooverride", BuilderMessages.TagValidator_an_enum},
 				{"@nooverride", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test5", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test5.java", inc, false);
 	}
 
 	public void testInvalidEnumTag6I() {
@@ -207,11 +186,7 @@ public class InvalidEnumTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest("", 
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.FULL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test6.java", inc, true);
 	}
 	
 	public void testInvalidEnumTag7I() {
@@ -233,11 +208,7 @@ public class InvalidEnumTagTests extends TagTest {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_enum},
 				{"@noinstantiate", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test7", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test7.java", inc, false);
 	}
 	
 	public void testInvalidEnumTag8I() {
@@ -256,11 +227,7 @@ public class InvalidEnumTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest("", 
-				"test8", 
-				true, 
-				inc ? IncrementalProjectBuilder.FULL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test8.java", inc, true);
 	}
 
 	public void testInvalidEnumTag9I() {
@@ -282,11 +249,7 @@ public class InvalidEnumTagTests extends TagTest {
 				{"@noimplement", BuilderMessages.TagValidator_an_enum},
 				{"@noimplement", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test9", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test9.java", inc, false);
 	}
 	
 	public void testInvalidEnumTag10I() {
@@ -305,10 +268,6 @@ public class InvalidEnumTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_an_enum}
 		});
-		deployTagTest("", 
-				"test10", 
-				true, 
-				inc ? IncrementalProjectBuilder.FULL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test10.java", inc, true);
 	}
 }

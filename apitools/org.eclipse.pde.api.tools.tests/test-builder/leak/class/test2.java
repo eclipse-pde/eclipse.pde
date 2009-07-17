@@ -19,6 +19,6 @@ public class test2 {
 	
 }
 
-class outer extends internal {
+class outer2 extends internal {
 	
 }

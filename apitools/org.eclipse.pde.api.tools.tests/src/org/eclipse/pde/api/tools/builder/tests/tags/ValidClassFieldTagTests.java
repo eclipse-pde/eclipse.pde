@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -49,7 +48,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag1I() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
 	}
 	
 	/**
@@ -57,7 +56,11 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag1F() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x1(false);
+	}
+	
+	private void x1(boolean inc) {
+		deployTagTest("test1.java", inc, false);
 	}
 	
 	/**
@@ -65,7 +68,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag2I() {
-		deployTagTest(TESTING_PACKAGE, "test2", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x2(true);
 	}
 	
 	/**
@@ -73,16 +76,19 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag2F() {
-		deployTagTest(TESTING_PACKAGE, "test2", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x2(false);
 	}
 	
+	private void x2(boolean inc) {
+		deployTagTest("test2.java", inc, false);
+	}
 	
 	/**
 	 * Tests a valid @noreference tag on three fields in an outer class
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag3I() {
-		deployTagTest(TESTING_PACKAGE, "test3", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(true);
 	}
 	
 	/**
@@ -90,7 +96,11 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag3F() {
-		deployTagTest(TESTING_PACKAGE, "test3", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x3(false);
+	}
+	
+	private void x3(boolean inc) {
+		deployTagTest("test3.java", inc, false);
 	}
 	
 	/**
@@ -98,7 +108,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag4I() {
-		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x4(true);
 	}
 	
 	/**
@@ -106,7 +116,11 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag4F() {
-		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x4(false);
+	}
+	
+	private void x4(boolean inc) {
+		deployTagTest("test4.java", inc, false);
 	}
 	
 	/**
@@ -114,7 +128,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag5I() {
-		deployTagTest(TESTING_PACKAGE, "test5", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x5(true);
 	}
 	
 	/**
@@ -122,7 +136,11 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag5F() {
-		deployTagTest(TESTING_PACKAGE, "test5", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x5(false);
+	}
+	
+	private void x5(boolean inc) {
+		deployTagTest("test5.java", inc, false);
 	}
 	
 	/**
@@ -130,7 +148,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag6I() {
-		deployTagTest(TESTING_PACKAGE, "test6", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x6(true);
 	}
 	
 	/**
@@ -138,7 +156,11 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag6F() {
-		deployTagTest(TESTING_PACKAGE, "test6", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x6(false);
+	}
+	
+	private void x6(boolean inc) {
+		deployTagTest("test6.java", inc, false);
 	}
 	
 	/**
@@ -146,7 +168,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag7I() {
-		deployTagTest(TESTING_PACKAGE, "test7", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x7(true);
 	}
 	
 	/**
@@ -154,7 +176,11 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag7F() {
-		deployTagTest(TESTING_PACKAGE, "test7", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x7(false);
+	}
+	
+	private void x7(boolean inc) {
+		deployTagTest("test7.java", inc, false);
 	}
 	
 	/**
@@ -162,7 +188,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using an incremental build
 	 */
 	public void testValidClassFieldTag8I() {
-		deployTagTest("", "test8", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x8(true);
 	}
 	
 	/**
@@ -170,6 +196,10 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	 * using a full build
 	 */
 	public void testValidClassFieldTag8F() {
-		deployTagTest("", "test8", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x8(false);
+	}
+	
+	private void x8(boolean inc) {
+		deployTagTest("test8.java", inc, true);
 	}
 }

@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -44,115 +43,113 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 		return super.getTestSourcePath().append("valid");
 	}
 	
-	/**
-	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using an incremental build
-	 */
 	public void testValidInterfaceTag1I() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x1(true);
 	}
 
-	/**
-	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using a full build
-	 */
 	public void testValidInterfaceTag1F() {
-		deployTagTest(TESTING_PACKAGE, "test1", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x1(false);
 	}
 	
 	/**
 	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using an incremental build
+	 * the testing package a.b.c
 	 */
+	private void x1(boolean inc) {
+		deployTagTest("test1.java", inc, false);
+	}
+	
 	public void testValidInterfaceTag2I() {
-		deployTagTest(TESTING_PACKAGE, "test2", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x2(true);
 	}
 
-	/**
-	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using a full build
-	 */
 	public void testValidInterfaceTag2F() {
-		deployTagTest(TESTING_PACKAGE, "test2", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x2(false);
 	}
 	
 	/**
 	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using an incremental build
+	 * the testing package a.b.c 
 	 */
+	private void x2(boolean inc) {
+		deployTagTest("test2.java", inc, false);
+	}
+	
 	public void testValidInterfaceTag3I() {
-		deployTagTest(TESTING_PACKAGE, "test3", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x3(true);
 	}
-
-	/**
-	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using a full build
-	 */
+	
 	public void testValidInterfaceTag3F() {
-		deployTagTest(TESTING_PACKAGE, "test3", false, IncrementalProjectBuilder.FULL_BUILD, true);
+		x3(false);
 	}
 	
 	/**
-	 * Tests that @noimplement is a valid tag on a variety of inner / outer / top-level interfaces in the 
-	 * the testing package a.b.c using an incremental build
+	 * Tests that @noimplement is a valid tag on an interface in the 
+	 * the testing package a.b.c 
 	 */
+	private void x3(boolean inc) {
+		deployTagTest("test3.java", inc, false);
+	}
+
 	public void testValidInterfaceTag4I() {
-		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x4(true);
 	}
 
+	public void testValidInterfaceTag4F() {
+		x4(false);
+	}
+	
 	/**
 	 * Tests that @noimplement is a valid tag on a variety of inner / outer / top-level interfaces in the 
-	 * the testing package a.b.c using a full build
+	 * the testing package a.b.c
 	 */
-	public void testValidInterfaceTag4F() {
-		deployTagTest(TESTING_PACKAGE, "test4", false, IncrementalProjectBuilder.FULL_BUILD, true);
+	private void x4(boolean inc) {
+		deployTagTest("test4.java", inc, false);
 	}
-	
-	/**
-	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using an incremental build
-	 */
+
 	public void testValidInterfaceTag5I() {
-		deployTagTest(TESTING_PACKAGE, "test5", false, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x5(true);
 	}
 
+	public void testValidInterfaceTag5F() {
+		x5(false);
+	}
+	
 	/**
 	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c using a full build
+	 * the testing package a.b.c
 	 */
-	public void testValidInterfaceTag5F() {
-		deployTagTest(TESTING_PACKAGE, "test5", false, IncrementalProjectBuilder.FULL_BUILD, true);
+	private void x5(boolean inc) {
+		deployTagTest("test5.java", inc, false);
 	}
 	
-	/**
-	 * Tests having an @noextend tag on an interface in package a.b.c
-	 * using an incremental build
-	 */
 	public void testInvalidInterfaceTag6I() {
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x6(true);
 	}
 	
-	/**
-	 * Tests having an @noextend tag on an interface in package a.b.c
-	 * using a full build
-	 */
 	public void testInvalidInterfaceTag6F() {
-		deployTagTest(TESTING_PACKAGE, "test6", true, IncrementalProjectBuilder.FULL_BUILD, true);
+		x6(false);
 	}
 
 	/**
-	 * Tests having an @noextend tag on an outer interface in package a.b.c
-	 * using an incremental build
+	 * Tests having an @noextend tag on an interface in package a.b.c
 	 */
+	private void x6(boolean inc) {
+		deployTagTest("test6.java", inc, false);
+	}
+
 	public void testInvalidInterfaceTag7I() {
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+		x7(true);
+	}
+	
+	public void testInvalidInterfaceTag7F() {
+		x7(false);
 	}
 	
 	/**
 	 * Tests having an @noextend tag on an outer interface in package a.b.c
-	 * using a full build
 	 */
-	public void testInvalidInterfaceTag7F() {
-		deployTagTest(TESTING_PACKAGE, "test7", true, IncrementalProjectBuilder.FULL_BUILD, true);
+	private void x7(boolean inc) {
+		deployTagTest("test7.java", inc, false);
 	}
 }

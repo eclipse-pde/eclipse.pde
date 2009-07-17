@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
@@ -63,11 +62,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 				{"@noextend", BuilderMessages.TagValidator_a_field},
 				{"@noextend", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test1", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test1.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceFieldTag2I() {
@@ -86,11 +81,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest("", 
-				"test2", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test2.java", inc, true);
 	}
 	
 	public void testInvalidInterfaceFieldTag3I() {
@@ -111,11 +102,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test3", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test3.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceFieldTag4I() {
@@ -134,11 +121,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest("", 
-				"test4", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test4.java", inc, true);
 	}
 
 	public void testInvalidInterfaceFieldTag5I() {
@@ -159,11 +142,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 				{"@noimplement", BuilderMessages.TagValidator_a_field},
 				{"@noimplement", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test5", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test5.java", inc, false);
 	}
 
 	public void testInvalidInterfaceFieldTag6I() {
@@ -182,11 +161,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest("", 
-				"test6", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test6.java", inc, true);
 	}
 
 	public void testInvalidInterfaceFieldTag7I() {
@@ -207,11 +182,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_a_field},
 				{"@nooverride", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test7", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test7.java", inc, false);
 	}
 	
 	public void testInvalidInterfaceFieldTag8I() {
@@ -230,11 +201,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_a_field}
 		});
-		deployTagTest("", 
-				"test8", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test8.java", inc, true);
 	}
 
 	public void testInvalidInterfaceFieldTag9I() {
@@ -255,11 +222,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 				{"@noreference", BuilderMessages.TagValidator_a_final_field},
 				{"@noreference", BuilderMessages.TagValidator_a_final_field}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test9", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test9.java", inc, false);
 	}
 
 	public void testInvalidInterfaceFieldTag10I() {
@@ -278,11 +241,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_a_final_field}
 		});
-		deployTagTest("", 
-				"test10", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test10.java", inc, true);
 	}
 
 	public void testInvalidInterfaceFieldTag11I() {
@@ -303,11 +262,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 				{"@noreference", BuilderMessages.TagValidator_a_final_field},
 				{"@noreference", BuilderMessages.TagValidator_a_final_field}
 		});
-		deployTagTest(TESTING_PACKAGE, 
-				"test11", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test11.java", inc, false);
 	}
 
 	public void testInvalidInterfaceFieldTag12I() {
@@ -326,10 +281,6 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_a_final_field}
 		});
-		deployTagTest("", 
-				"test12", 
-				true, 
-				inc ? IncrementalProjectBuilder.INCREMENTAL_BUILD : IncrementalProjectBuilder.FULL_BUILD, 
-				true);
+		deployTagTest("test12.java", inc, true);
 	}
 }

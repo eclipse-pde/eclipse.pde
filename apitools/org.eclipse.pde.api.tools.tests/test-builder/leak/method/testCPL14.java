@@ -15,11 +15,11 @@ package x.y.z;
  */
 public class testCPL14 {
 
-	public testCPL14(outer x) {
+	public testCPL14(outercpl14 x) {
 		
 	}
 }
 
-class outer {
+class outercpl14 {
 	
 }

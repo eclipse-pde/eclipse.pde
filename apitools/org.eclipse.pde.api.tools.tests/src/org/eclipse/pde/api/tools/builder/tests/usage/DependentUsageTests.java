@@ -56,24 +56,8 @@ public class DependentUsageTests extends UsageTest {
 		return 0;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath(java.lang.String)
-	 */
-	@Override
 	protected IPath getTestSourcePath(String path) {
 		return super.getTestSourcePath().append("dependent").append(path);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#doSetup()
-	 */
-	@Override
-	protected void doSetup() throws Exception {
-		createExistingProjects(
-				"usageprojects", 
-				false, 
-				true, 
-				false);
 	}
 	
 	/**
@@ -93,7 +77,7 @@ public class DependentUsageTests extends UsageTest {
 	 * @return the path to the test source given the test name
 	 */
 	protected IPath getTestSource(String test) {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath(test)).append(test+".java");
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath(test)).append(test).addFileExtension("java");
 	}
 	
 	/**
