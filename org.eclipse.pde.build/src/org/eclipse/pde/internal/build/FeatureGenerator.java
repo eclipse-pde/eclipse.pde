@@ -81,6 +81,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	private String featureId = null;
 	private String version = null;
+	private String nestedInclusions = null;
 	private String productFile = null;
 	private String[] pluginList = null;
 	private String[] fragmentList = null;
@@ -125,9 +126,20 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		AbstractScriptGenerator.setStaticAntProperties(antProperties);
 		try {
 			initialize();
-			Set plugins = createSet(pluginList);
-			Set features = createSet(featureList);
-			Set fragments = createSet(fragmentList);
+
+			Set plugins = null;
+			Set features = null;
+			Set fragments = null;
+			if (shouldNestInclusions()) {
+				features = createSet(new String[] {generateNestedRequirements()});
+				fragments = new LinkedHashSet();
+				plugins = new LinkedHashSet();
+			} else {
+				plugins = createSet(pluginList);
+				features = createSet(featureList);
+				fragments = createSet(fragmentList);
+			}
+
 			if (product != null) {
 				List entries = product.getProductEntries();
 				for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
@@ -152,6 +164,62 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		} finally {
 			AbstractScriptGenerator.setStaticAntProperties(null);
 		}
+	}
+
+	private boolean shouldNestInclusions() {
+		if (nestedInclusions == null || nestedInclusions.equalsIgnoreCase(FALSE))
+			return false;
+
+		//make sure there's actually something to nest
+		if ((pluginList == null || pluginList.length == 0) && (fragmentList == null || fragmentList.length == 0) && (featureList == null || featureList.length == 0) && (buildProperties != null || buildProperties.size() == 0))
+			return false;
+
+		// use the product-id to generate a name if nestedRequirements==true
+		if (nestedInclusions.equalsIgnoreCase(TRUE))
+			return product != null;
+
+		//else nestedRequirements specifies the name to use for the nested feature
+		return true;
+	}
+
+	private String generateNestedRequirements() throws CoreException {
+		String nestedId = null;
+		String nestedVersion = null;
+		String productKey = null;
+		if (product != null) {
+			nestedId = product.getProductId() + ".root.feature"; //$NON-NLS-1$
+			nestedVersion = product.getVersion();
+			productKey = PRODUCT_PREFIX + product.getProductId();
+		} else {
+			nestedId = nestedInclusions;
+			nestedVersion = version != null ? version : "1.0.0.qualifier"; //$NON-NLS-1$
+		}
+
+		String extraRequires = null;
+		if (buildProperties != null && productKey != null)
+			extraRequires = (String) buildProperties.remove(productKey);
+
+		FeatureGenerator generator = new FeatureGenerator();
+		generator.setVerify(verify);
+		generator.setPluginList(pluginList);
+		generator.setFeatureList(featureList);
+		generator.setBuildProperties(buildProperties);
+		generator.setIncludeLaunchers(false);
+		generator.setBuildSiteFactory(siteFactory);
+		generator.setFeatureId(nestedId);
+		generator.setVersion(nestedVersion);
+		generator.generate();
+
+		if (productKey != null) {
+			buildProperties = new Properties();
+			extraRequires = (extraRequires == null) ? "" : extraRequires + ","; //$NON-NLS-1$ //$NON-NLS-2$
+			extraRequires += "feature@" + nestedId + ";version=" + nestedVersion; //$NON-NLS-1$ //$NON-NLS-2$
+			buildProperties.put(productKey, extraRequires);
+		} else {
+			buildProperties = null;
+		}
+
+		return nestedId + ";version=" + nestedVersion; //$NON-NLS-1$
 	}
 
 	public void setProductFile(String productFile) {
@@ -451,5 +519,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	public void setImmutableAntProperties(Properties properties) {
 		antProperties = properties;
+	}
+
+	public void setNestedInclusions(String nested) {
+		this.nestedInclusions = nested;
 	}
 }

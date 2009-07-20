@@ -39,6 +39,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final byte CONFIG_INCLUDES_DS = 16;
 
 	private String product = null;
+	private String featureId = null;
 	private ProductFile productFile = null;
 	private String root = null;
 	private Properties buildProperties;
@@ -191,6 +192,12 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 		}
 
+		try {
+			index = generateExtraRequirements(buffer, index);
+		} catch (CoreException e) {
+			//ignore
+		}
+
 		BundleDescription launcher = assembly.getPlugin(BUNDLE_EQUINOX_LAUNCHER, null);
 		if (launcher != null && launchers) {
 			VersionRange launcherRange = new VersionRange(launcher.getVersion(), true, launcher.getVersion(), true);
@@ -255,6 +262,36 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				}
 			}
 		}
+	}
+
+	private int generateExtraRequirements(StringBuffer buffer, int index) throws CoreException {
+		BuildTimeFeature rootFeature = getSite(false).findFeature(featureId, null, false);
+		if (rootFeature == null)
+			return index;
+
+		Properties properties = AbstractScriptGenerator.readProperties(new Path(rootFeature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
+		String[] extraEntries = Utils.getArrayFromString(properties.getProperty(PRODUCT_PREFIX + productFile.getId()));
+		for (int i = 0; i < extraEntries.length; i++) {
+			Map entry = Utils.parseExtraBundlesString(extraEntries[i], true);
+			String id = (String) entry.get(Utils.EXTRA_ID);
+			Version version = (Version) entry.get(Utils.EXTRA_VERSION);
+
+			boolean feature = extraEntries[i].startsWith("feature@");//$NON-NLS-1$
+			VersionRange range = null;
+			String versionString = version.toString();
+			if (feature) {
+				BuildTimeFeature requiredFeature = getSite(false).findFeature(id, version.toString(), false);
+				if (requiredFeature != null)
+					versionString = requiredFeature.getVersion();
+			} else {
+				BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(id, version.toString());
+				if (bundle != null)
+					versionString = bundle.getVersion().toString();
+			}
+			range = Utils.createVersionRange(versionString);
+			P2InfUtils.printRequires(buffer, null, index++, P2InfUtils.NAMESPACE_IU, id + (feature ? ".feature.group" : ""), range, null, true); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return index;
 	}
 
 	private String getLauncherName(BuildTimeFeature executableProvider) {
@@ -661,6 +698,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	public void setAssemblyInfo(AssemblyInformation info) {
 		this.assembly = info;
+	}
+
+	public void setFeatureId(String featureId) {
+		this.featureId = featureId;
 	}
 
 }

@@ -94,6 +94,43 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
+	public void testBug277824() throws Exception {
+		IFolder buildFolder = newTest("277824");
+		
+		StringBuffer buffer = new StringBuffer("I am a file");
+		Utils.writeBuffer(buildFolder.getFile("file.txt"), buffer);
+		
+		Properties rootProperties = new Properties();
+		rootProperties.put("root", "absolute:file:" + buildFolder.getFile("file.txt").getLocation().toOSString());
+		IFile rootFile = buildFolder.getFile("root.properties");
+		Utils.storeProperties(rootFile, rootProperties);
+		
+		IFile productFile = buildFolder.getFile("foo.product");
+		Utils.generateProduct(productFile, "foo", "1.0.0.qualifier", null, new String[] {"org.eclipse.osgi"}, false);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("p2.gathering", "true");
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("pluginList", "org.eclipse.equinox.common");
+		properties.put("generatedBuildProperties", rootFile.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("configs", "win32,win32,x86");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		properties.put("forceContextQualifier", "v1234");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runProductBuild(buildFolder);
+
+		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
+		IMetadataRepository metadata = loadMetadataRepository(repo.getLocationURI());
+		IInstallableUnit iu = getIU(metadata, "foo.root.feature.feature.group");
+		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
+
+		getIU(metadata, "org.eclipse.equinox.common");
+		iu = getIU(metadata, "foo");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", "foo.root.feature.feature.group");
+		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
+	}
+	
 	public void testPublishFeature_rootFiles() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_rootFiles");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");

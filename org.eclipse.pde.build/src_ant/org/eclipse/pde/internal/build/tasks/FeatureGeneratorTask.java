@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.build.site.ProfileManager;
  * @since 3.2
  */
 public class FeatureGeneratorTask extends Task {
+	private static final String ANT_PREFIX = "${"; //$NON-NLS-1$
 	private final FeatureGenerator generator = new FeatureGenerator();
 	private final Properties antProperties = new Properties();
 
@@ -92,7 +93,7 @@ public class FeatureGeneratorTask extends Task {
 	 * @param pluginList a comma separated list of plugin ids
 	 */
 	public void setPluginList(String pluginList) {
-		if (pluginList != null && !pluginList.startsWith("${")) //$NON-NLS-1$
+		if (pluginList != null && !pluginList.startsWith(ANT_PREFIX))
 			generator.setPluginList(Utils.getArrayFromString(pluginList));
 	}
 
@@ -101,7 +102,7 @@ public class FeatureGeneratorTask extends Task {
 	 * @param fragmentList a comma separated list of plugin ids
 	 */
 	public void setFragmentList(String fragmentList) {
-		if (fragmentList != null && !fragmentList.startsWith("${")) //$NON-NLS-1$
+		if (fragmentList != null && !fragmentList.startsWith(ANT_PREFIX))
 			generator.setFragmentList(Utils.getArrayFromString(fragmentList));
 	}
 
@@ -110,7 +111,7 @@ public class FeatureGeneratorTask extends Task {
 	 * @param featureList a comma separated list of feature ids
 	 */
 	public void setFeatureList(String featureList) {
-		if (featureList != null && !featureList.startsWith("${")) //$NON-NLS-1$
+		if (featureList != null && !featureList.startsWith(ANT_PREFIX))
 			generator.setFeatureList(Utils.getArrayFromString(featureList));
 	}
 
@@ -154,5 +155,10 @@ public class FeatureGeneratorTask extends Task {
 	 */
 	public void setBuildPropertiesFile(String buildPropertiesFile) {
 		generator.setBuildProperties(buildPropertiesFile);
+	}
+
+	public void setNestedInclusions(String nested) {
+		if (nested != null && !nested.startsWith(ANT_PREFIX))
+			generator.setNestedInclusions(nested);
 	}
 }

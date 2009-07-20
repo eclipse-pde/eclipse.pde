@@ -21,6 +21,9 @@
 <property name="featureList" value=""/>
 <property name="includeLaunchers" value="true"/>
 <property name="generatedBuildProperties" value=""/>
+<condition property="nestedInclusions" value="true">
+	<istrue value="${p2.gathering}" />
+</condition>
 
 <!-- ===================================================================== -->
 <!-- main entry point to setup, fetch, generate, build etc. Use -->
@@ -61,6 +64,7 @@
 		featureList="${featureList}"
 		includeLaunchers="${includeLaunchers}"
 		buildPropertiesFile="${generatedBuildProperties}"
+		nestedInclusions="${nestedInclusions}"
 	/>
 </target>
 

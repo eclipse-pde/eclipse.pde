@@ -349,6 +349,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		generator.setRoot(root);
 		generator.setWorkingDirectory(getWorkingDirectory());
 		generator.setAssemblyInfo(assemblyInformation);
+		generator.setFeatureId(featureId);
 		try {
 			return generator.generateP2Info();
 		} catch (CoreException e) {

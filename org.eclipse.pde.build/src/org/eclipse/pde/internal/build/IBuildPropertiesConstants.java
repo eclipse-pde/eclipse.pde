@@ -44,6 +44,7 @@ public interface IBuildPropertiesConstants {
 	public final static String GENERATION_SOURCE_FEATURE_PREFIX = GENERATION_SOURCE_PREFIX + "feature@"; //$NON-NLS-1$
 	public final static String GENERATION_SOURCE_PLUGIN_PREFIX = GENERATION_SOURCE_PREFIX + "plugin@"; //$NON-NLS-1$
 	public final static String PROPERTY_SOURCE_FEATURE_NAME = "sourceFeature.name"; //$NON-NLS-1$
+	public final static String PRODUCT_PREFIX = "product@"; //$NON-NLS-1$
 
 	public static final String PROPERTY_CUSTOM = "custom"; //$NON-NLS-1$
 	public static final String PROPERTY_GENERATE_SOURCE_BUNDLE = "generateSourceBundle"; //$NON-NLS-1$
