@@ -11,14 +11,15 @@
 
 package org.eclipse.pde.internal.build.publisher;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import org.eclipse.equinox.internal.p2.core.helpers.FileUtils.IPathComputer;
 import org.eclipse.equinox.internal.p2.publisher.FileSetDescriptor;
 import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.p2.publisher.AbstractAdvice;
+import org.eclipse.equinox.p2.publisher.actions.IFeatureRootAdvice;
 import org.eclipse.pde.internal.build.Config;
 
-public class FeatureRootAdvice extends AbstractAdvice {
+public class FeatureRootAdvice extends AbstractAdvice implements IFeatureRootAdvice {
 	private static final int IDX_COMPUTER = 0;
 	private static final int IDX_DESCRIPTOR = 1;
 
@@ -28,17 +29,15 @@ public class FeatureRootAdvice extends AbstractAdvice {
 	private Version featureVersion;
 
 	public boolean isApplicable(String configSpec, boolean includeDefault, String id, Version version) {
-		if (configSpec == null)
-			return true;
-		if (advice.containsKey(configSpec)) {
-			if (featureId != null) {
-				if (!featureId.equals(id))
-					return false;
-				return (featureVersion != null) ? featureVersion.equals(version) : true;
-			}
-			return true;
-		}
-		return false;
+		if (featureId != null && !featureId.equals(id))
+			return false;
+		if (featureVersion != null && !featureVersion.equals(version))
+			return false;
+
+		if (configSpec != null && !advice.containsKey(configSpec))
+			return false;
+
+		return true;
 	}
 
 	/**
@@ -55,7 +54,7 @@ public class FeatureRootAdvice extends AbstractAdvice {
 	 * @param config
 	 * @return GatheringComputer
 	 */
-	public GatheringComputer getRootFileComputer(String config) {
+	public IPathComputer getRootFileComputer(String config) {
 		if (advice.containsKey(config))
 			return (GatheringComputer) ((Object[]) advice.get(config))[IDX_COMPUTER];
 		return null;
@@ -70,6 +69,8 @@ public class FeatureRootAdvice extends AbstractAdvice {
 			GatheringComputer existing = (GatheringComputer) configAdvice[IDX_COMPUTER];
 			existing.addAll(computer);
 		}
+		FileSetDescriptor descriptor = getDescriptor(config);
+		descriptor.addFiles(computer.getFiles());
 	}
 
 	public void addPermissions(String config, String permissions, String[] files) {
@@ -104,7 +105,6 @@ public class FeatureRootAdvice extends AbstractAdvice {
 			if (!config.equals(Config.ANY) && config.length() > 0)
 				key += "." + config; //$NON-NLS-1$
 			descriptor = new FileSetDescriptor(key, config.equals(Config.ANY) ? null : config);
-			descriptor.setFiles(""); //$NON-NLS-1$
 			configAdvice[IDX_DESCRIPTOR] = descriptor;
 		}
 		return descriptor;
@@ -117,4 +117,10 @@ public class FeatureRootAdvice extends AbstractAdvice {
 	public void setFeatureVersion(Version featureVersion) {
 		this.featureVersion = featureVersion;
 	}
+
+	public String[] getConfigurations() {
+		Set keys = advice.keySet();
+		return (String[]) keys.toArray(new String[keys.size()]);
+	}
+
 }

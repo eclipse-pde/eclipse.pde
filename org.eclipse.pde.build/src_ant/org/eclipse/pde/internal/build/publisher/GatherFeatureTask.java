@@ -36,8 +36,10 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		action.setComputer(computer);
 		setGroupId(action);
 
+		FeatureRootAdvice advice = createRootAdvice();
+		action.setRootAdvice(advice);
 		PublisherInfo info = getPublisherInfo();
-		info.addAdvice(createRootAdvice());
+		info.addAdvice(advice);
 		BuildPublisherApplication application = createPublisherApplication();
 		application.addAction(action);
 		try {

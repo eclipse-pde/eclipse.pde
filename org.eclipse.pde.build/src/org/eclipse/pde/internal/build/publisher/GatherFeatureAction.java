@@ -9,16 +9,13 @@
 package org.eclipse.pde.internal.build.publisher;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import org.eclipse.equinox.internal.p2.publisher.FileSetDescriptor;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.FeatureParser;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.ArtifactDescriptor;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactDescriptor;
+import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.publisher.IPublisherInfo;
-import org.eclipse.equinox.p2.publisher.IPublisherResult;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
@@ -26,6 +23,7 @@ import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 public class GatherFeatureAction extends FeaturesAction {
 	private GatheringComputer computer;
 	private String groupId = null;
+	private FeatureRootAdvice rootAdvice;
 	private final File featureRoot;
 
 	public GatherFeatureAction(File location, File featureRoot) {
@@ -45,40 +43,42 @@ public class GatherFeatureAction extends FeaturesAction {
 		Feature feature = new FeatureParser().parse(featureRoot);
 		if (feature != null) {
 			feature.setLocation(locations[0].getAbsolutePath());
+			rootAdvice.setFeatureId(feature.getId());
+			rootAdvice.setFeatureVersion(Version.parseVersion(feature.getVersion()));
 			return new Feature[] {feature};
 		}
 		return new Feature[0];
 	}
 
-	protected ArrayList generateRootFileIUs(Feature feature, IPublisherResult result, IPublisherInfo publisherInfo) {
-		ArrayList ius = new ArrayList();
-
-		Collection collection = publisherInfo.getAdvice(null, false, null, null, FeatureRootAdvice.class);
-		if (collection.size() == 0)
-			return ius;
-
-		FeatureRootAdvice advice = (FeatureRootAdvice) collection.iterator().next();
-		String[] configs = advice.getConfigs();
-		for (int i = 0; i < configs.length; i++) {
-			String config = configs[i];
-
-			GatheringComputer rootComputer = advice.getRootFileComputer(config);
-
-			if (rootComputer != null) {
-				FileSetDescriptor descriptor = advice.getDescriptor(config);
-				IInstallableUnit iu = (IInstallableUnit) createFeatureRootFileIU(feature.getId(), feature.getVersion(), null, descriptor)[0];
-
-				File[] files = rootComputer.getFiles();
-				IArtifactKey artifactKey = iu.getArtifacts()[0];
-				ArtifactDescriptor artifactDescriptor = new ArtifactDescriptor(artifactKey);
-				publishArtifact(artifactDescriptor, files, null, publisherInfo, rootComputer);
-
-				result.addIU(iu, IPublisherResult.NON_ROOT);
-				ius.add(iu);
-			}
-		}
-		return ius;
-	}
+	//	protected ArrayList generateRootFileIUs(Feature feature, IPublisherResult result, IPublisherInfo publisherInfo) {
+	//		ArrayList ius = new ArrayList();
+	//
+	//		Collection collection = publisherInfo.getAdvice(null, false, null, null, FeatureRootAdvice.class);
+	//		if (collection.size() == 0)
+	//			return ius;
+	//
+	//		FeatureRootAdvice advice = (FeatureRootAdvice) collection.iterator().next();
+	//		String[] configs = advice.getConfigs();
+	//		for (int i = 0; i < configs.length; i++) {
+	//			String config = configs[i];
+	//
+	//			GatheringComputer rootComputer = advice.getRootFileComputer(config);
+	//
+	//			if (rootComputer != null) {
+	//				FileSetDescriptor descriptor = advice.getDescriptor(config);
+	//				IInstallableUnit iu = (IInstallableUnit) createFeatureRootFileIU(feature.getId(), feature.getVersion(), null, descriptor)[0];
+	//
+	//				File[] files = rootComputer.getFiles();
+	//				IArtifactKey artifactKey = iu.getArtifacts()[0];
+	//				ArtifactDescriptor artifactDescriptor = new ArtifactDescriptor(artifactKey);
+	//				publishArtifact(artifactDescriptor, files, null, publisherInfo, rootComputer);
+	//
+	//				result.addIU(iu, IPublisherResult.NON_ROOT);
+	//				ius.add(iu);
+	//			}
+	//		}
+	//		return ius;
+	//	}
 
 	protected String getGroupId(String featureId) {
 		if (groupId != null)
@@ -107,5 +107,9 @@ public class GatherFeatureAction extends FeaturesAction {
 		ad.setProperty(IArtifactDescriptor.DOWNLOAD_CONTENTTYPE, IArtifactDescriptor.TYPE_ZIP);
 
 		publishArtifact(ad, computer.getFiles(), null, publisherInfo, computer);
+	}
+
+	public void setRootAdvice(FeatureRootAdvice rootAdvice) {
+		this.rootAdvice = rootAdvice;
 	}
 }
