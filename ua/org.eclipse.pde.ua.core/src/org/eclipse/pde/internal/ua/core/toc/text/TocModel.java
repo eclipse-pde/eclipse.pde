@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ua.core.toc.text;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
@@ -26,6 +30,10 @@ public class TocModel extends XMLEditingModel {
 
 	private Toc fToc;
 
+	private List fErrors;
+
+	private boolean fMarkerRefreshNeeded;
+
 	/**
 	 * @param document
 	 * @param isReconciling
@@ -36,6 +44,7 @@ public class TocModel extends XMLEditingModel {
 		fHandler = null;
 		fFactory = new TocDocumentFactory(this);
 		fToc = null;
+		fErrors = new ArrayList(1);
 	}
 
 	/*
@@ -45,8 +54,7 @@ public class TocModel extends XMLEditingModel {
 	 * org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler
 	 * (org.eclipse.pde.core.IModel, boolean)
 	 */
-	protected DefaultHandler createDocumentHandler(IModel model,
-			boolean reconciling) {
+	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
 
 		if (fHandler == null) {
 			fHandler = new TocDocumentHandler(this, reconciling);
@@ -91,4 +99,29 @@ public class TocModel extends XMLEditingModel {
 		return getToc();
 	}
 
+	public TocDocumentHandler getDocumentHandler() {
+		return fHandler;
+	}
+
+	public void addError(Exception e) {
+		if (!fErrors.contains(e)) {
+			fErrors.add(e);
+		}
+	}
+
+	public Collection getErrors() {
+		return fErrors;
+	}
+
+	public void purgeErrors() {
+		fErrors.clear();
+	}
+
+	public void setMarkerRefreshNeeded(boolean refresh) {
+		this.fMarkerRefreshNeeded = refresh;
+	}
+
+	public boolean isMarkerRefreshNeeded() {
+		return fMarkerRefreshNeeded;
+	}
 }

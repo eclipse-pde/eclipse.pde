@@ -19,6 +19,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.ControlContribution;
@@ -29,6 +30,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.ua.core.toc.text.TocMarkerManager;
 import org.eclipse.pde.internal.ua.core.toc.text.TocModel;
 import org.eclipse.pde.internal.ua.core.toc.text.TocObject;
 import org.eclipse.pde.internal.ua.ui.IConstants;
@@ -399,5 +401,45 @@ public class TocEditor extends MultiSourceEditor {
 		if (dialog.open() == Window.OK) {
 			// NO-OP
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#doSave(org.eclipse.core
+	 * .runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		TocModel model = (TocModel) getAggregateModel();
+		model.setMarkerRefreshNeeded(true);
+		model.reconciled(model.getDocument()); //model recon occurs async so we can proceed to save
+
+		super.doSave(monitor);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#dispose()
+	 */
+	public void dispose() {
+		//editor is closing, delete the markers
+		TocMarkerManager.deleteMarkers((TocModel) getAggregateModel());
+		super.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContexts(
+	 * org.eclipse.pde.internal.ui.editor.context.InputContextManager)
+	 */
+	protected void createInputContexts(InputContextManager contextManager) {
+		super.createInputContexts(contextManager);
+
+		// model is loaded, create markers if there were errors found
+		TocMarkerManager.createMarkers((TocModel) getAggregateModel());
 	}
 }

@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ua.ui.editor.toc;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -75,7 +76,6 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		// Ensure the model was loaded properly
 		if ((model == null) || (model.isLoaded() == false)) {
 			createErrorContent(managedForm, model);
-			return;
 		}
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
@@ -97,11 +97,10 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 	private void createErrorContent(IManagedForm managedForm, TocModel model) {
 		Exception e = null;
-		// e = ((AbstractModel)model).getException();
-
-		// Create a formatted error page
-		createFormErrorContent(managedForm, TocMessages.TocPage_errorMessage,
-				TocMessages.TocPage_errorMessage2, e);
+		// Add error meesage to the form
+		
+		ScrolledForm form = managedForm.getForm();
+		form.setMessage(TocMessages.TocPage_errorMessage2, IMessageProvider.ERROR);
 	}
 
 	private void setFormTitle(ScrolledForm form, TocModel model) {
@@ -190,11 +189,16 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 	public void setActive(boolean active) {
 		super.setActive(active);
 		if (active) {
-			IFormPage page = getPDEEditor()
-					.findPage(TocInputContext.CONTEXT_ID);
-			if (page instanceof TocSourcePage
-					&& ((TocSourcePage) page).getInputContext()
-							.isInSourceMode()) {
+			TocModel model = (TocModel) getModel();
+			if ((model == null) || (model.isLoaded() == false)) {
+				createErrorContent(getManagedForm(), model);
+			} else {
+				// Clear the error message
+				getManagedForm().getForm().setMessage("", IMessageProvider.NONE);
+			}
+
+			IFormPage page = getPDEEditor().findPage(TocInputContext.CONTEXT_ID);
+			if (page instanceof TocSourcePage && ((TocSourcePage) page).getInputContext().isInSourceMode()) {
 				ISourceViewer viewer = ((TocSourcePage) page).getViewer();
 				if (viewer == null) {
 					return;
