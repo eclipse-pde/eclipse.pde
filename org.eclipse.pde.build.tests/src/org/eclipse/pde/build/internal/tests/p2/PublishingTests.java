@@ -96,15 +96,15 @@ public class PublishingTests extends P2TestCase {
 
 	public void testBug277824() throws Exception {
 		IFolder buildFolder = newTest("277824");
-		
+
 		StringBuffer buffer = new StringBuffer("I am a file");
 		Utils.writeBuffer(buildFolder.getFile("file.txt"), buffer);
-		
+
 		Properties rootProperties = new Properties();
 		rootProperties.put("root", "absolute:file:" + buildFolder.getFile("file.txt").getLocation().toOSString());
 		IFile rootFile = buildFolder.getFile("root.properties");
 		Utils.storeProperties(rootFile, rootProperties);
-		
+
 		IFile productFile = buildFolder.getFile("foo.product");
 		Utils.generateProduct(productFile, "foo", "1.0.0.qualifier", null, new String[] {"org.eclipse.osgi"}, false);
 
@@ -130,7 +130,38 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "foo.root.feature.feature.group");
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
 	}
-	
+
+	public void testBug277824_2() throws Exception {
+		IFolder buildFolder = newTest("277824_2");
+		IFolder f = Utils.createFolder(buildFolder, "features/f");
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.equinox.common"});
+		Utils.writeBuffer(f.getFile("file.txt"), new StringBuffer("I'm a file!"));
+		Properties properties = new Properties();
+		properties.put("root", "file:file.txt");
+		Utils.storeBuildProperties(f, properties);
+
+		IFile productFile = buildFolder.getFile("foo.product");
+		Utils.generateProduct(productFile, "foo", "1.0.0.qualifier", null, new String[] {"org.eclipse.osgi"}, false);
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("p2.gathering", "true");
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("featureList", "f");
+		properties.put("includeLaunchers", "false");
+		properties.put("configs", "win32,win32,x86");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		properties.put("filteredDependencyCheck", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runProductBuild(buildFolder);
+		
+		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
+		
+		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		getIU(meta, "org.eclipse.equinox.common");
+		getIU(meta, "f.feature.group");
+	}
+
 	public void testPublishFeature_rootFiles() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_rootFiles");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
@@ -1663,15 +1694,15 @@ public class PublishingTests extends P2TestCase {
 		line = "org.eclipse.equinox.app_" + iu.getVersion() + ".jar@4\\:start";
 		assertLogContainsLine(config, line);
 	}
-	
+
 	public void testBug283060() throws Exception {
 		IFolder buildFolder = newTest("283060");
 		IFolder F = Utils.createFolder(buildFolder, "features/F");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<feature id=\"F\" version=\"1.0.0\">		\n");
-		buffer.append("  <requires>											\n");	
+		buffer.append("  <requires>											\n");
 		buffer.append("     <import plugin=\"org.eclipse.equinox.simpleconfigurator\" version=\"1.0.100\" match=\"equivalent\" />	\n");
 		buffer.append("     <import plugin=\"org.eclipse.core.jobs\" version=\"3.4.100\" match=\"equivalent\" />	\n");
 		buffer.append("     <import plugin=\"org.eclipse.equinox.common\" version=\"3.5.0\" match=\"equivalent\" />	\n");
@@ -1682,7 +1713,7 @@ public class PublishingTests extends P2TestCase {
 		Properties properties = new Properties();
 		properties.put("bin.includes", "feature.xml");
 		Utils.writeBuffer(F.getFile("feature.xml"), buffer);
-		
+
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer extra = new StringBuffer();
 		extra.append(" <configurations>																					\n");
@@ -1705,9 +1736,33 @@ public class PublishingTests extends P2TestCase {
 		IFile bundlesInfo = buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info");
 		assertResourceFile(bundlesInfo);
 		assertLogContainsLine(bundlesInfo, ",2,true");
-			
+
 		//bug 283091
 		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		assertNull(getIU(meta, "org.eclipse.equinox.app", false));
+	}
+
+	public void testBug284499() throws Exception {
+		IFolder buildFolder = newTest("284499");
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"});
+
+		IFile product = buildFolder.getFile("foo.product");
+		Utils.generateProduct(product, "foo", "1.0.0", null, new String[] {"f"}, true);
+		
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("configs", "win32,win32,x86");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		IInstallableUnit iu = getIU(meta, "foo");
+		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "f.feature.group");
+		getIU(meta, "f.feature.group");
 	}
 }

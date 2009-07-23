@@ -562,8 +562,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			return;
 		}
 
-		// don't collect if bin.includes is empty, or we are generating source;
-		if (getBuildProperties(featureToCollect).get(PROPERTY_BIN_INCLUDES) == null)
+		// don't collect if bin.includes is empty, except if we are publishing p2 metadata
+		if (!BuildDirector.p2Gathering && getBuildProperties(featureToCollect).get(PROPERTY_BIN_INCLUDES) == null)
 			return;
 
 		basicCollectElementToAssemble(featureToCollect);
