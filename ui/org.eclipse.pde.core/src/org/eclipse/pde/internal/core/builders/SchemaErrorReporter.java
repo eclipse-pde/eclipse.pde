@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,23 +7,20 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Muschel <smuschel@gmx.de> - bug 215743
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.StringTokenizer;
-
+import java.net.MalformedURLException;
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.schema.IncludedSchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.w3c.dom.*;
 
 public class SchemaErrorReporter extends XMLErrorReporter {
 
@@ -67,17 +64,23 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 			"thead", //$NON-NLS-1$
 			"tr"}; //$NON-NLS-1$
 
+	private ISchema fSchema;
 	private static final String ELEMENT = "element"; //$NON-NLS-1$
 	private static final String DOCUMENTATION = "documentation"; //$NON-NLS-1$
 	private static final String ANNOTATION = "annotation"; //$NON-NLS-1$
 	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
+	private static final String INCLUDE = "include"; //$NON-NLS-1$
 
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 	private static final String ATTR_USE = "use"; //$NON-NLS-1$
+	private static final String ATTR_REF = "ref"; //$NON-NLS-1$
+	private static final String ATTR_LOCATION = "schemaLocation"; //$NON-NLS-1$
 
 	public SchemaErrorReporter(IFile file) {
 		super(file);
+		SchemaDescriptor desc = new SchemaDescriptor(fFile, true);
+		fSchema = desc.getSchema(false);
 	}
 
 	public void validateContent(IProgressMonitor monitor) {
@@ -99,6 +102,8 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 								elements.add(value);
 							}
 						}
+					} else if (name != null && name.equals(INCLUDE)) {
+						validateInclude(childElement);
 					}
 					validate((Element) child);
 				}
@@ -116,6 +121,8 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 			if (child instanceof Element) {
 				if (child.getNodeName().equals(ANNOTATION)) {
 					validateAnnotation((Element) child);
+				} else if (child.getNodeName().equals(ELEMENT)) {
+					validateElementReference((Element) child);
 				} else {
 					validate((Element) child);
 				}
@@ -259,4 +266,34 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		}
 	}
 
+	private void validateInclude(Element element) {
+		if (fSchema != null) {
+			ISchemaInclude[] includes = fSchema.getIncludes();
+			String schemaLocation = element.getAttribute(ATTR_LOCATION);
+			for (int i = 0; i < includes.length; i++) {
+				ISchemaInclude include = includes[i];
+				ISchema includedSchema = include.getIncludedSchema();
+				try {
+					String includedSchemaUrl = includedSchema.getURL().toString();
+					String computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation).toString();
+					if (includedSchemaUrl != null && includedSchemaUrl.equals(computedUrl)) {
+						if (!includedSchema.isValid())
+							report(NLS.bind(PDECoreMessages.Builders_Schema_includeNotValid, schemaLocation), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_OTHER);
+					}
+				} catch (MalformedURLException e) {
+					// this should not happen since fSchema's URL is valid 
+				}
+			}
+		}
+	}
+
+	private void validateElementReference(Element element) {
+		String value = element.getAttribute(ATTR_REF);
+		if (value != null && value.length() > 0) {
+			ISchemaElement referencedElement = fSchema.findElement(value);
+			if (referencedElement == null) {
+				report(NLS.bind(PDECoreMessages.Builders_Schema_referencedElementNotFound, value), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_OTHER);
+			}
+		}
+	}
 }

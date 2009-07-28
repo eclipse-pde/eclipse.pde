@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
+ *     Simon Muschel <smuschel@gmx.de> - bug 215743
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -123,6 +124,8 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Schema_valueRequired;
 	public static String Builders_Schema_valueNotRequired;
 	public static String Builders_Schema_duplicateElement;
+	public static String Builders_Schema_includeNotValid;
+	public static String Builders_Schema_referencedElementNotFound;
 
 	public static String Builders_Manifest_missingRequired;
 	public static String Builders_Manifest_dependency;
