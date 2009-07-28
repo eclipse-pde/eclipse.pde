@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
+import org.eclipse.pde.api.tools.internal.util.Signatures;
+
 
 /**
  * A key for a method - name & signature based.
@@ -17,8 +19,8 @@ package org.eclipse.pde.api.tools.internal.model;
  * @since 1.1
  */
 public class MethodKey {
-	private String fSelector;
-	private String fSig;
+	protected String fSelector;
+	protected String fSig;
 	/**
 	 * Constructs a new method key
 	 * @param name method name
@@ -35,8 +37,9 @@ public class MethodKey {
 		if (obj instanceof MethodKey) {
 			MethodKey key = (MethodKey) obj;
 			return fSelector.equals(key.fSelector) &&
-			 fSig.equals(key.fSig);
+			Signatures.matchesSignatures(fSig, key.fSig);
 		}
+		
 		return false;
 	}
 	/* (non-Javadoc)
