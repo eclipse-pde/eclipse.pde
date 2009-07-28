@@ -23,7 +23,6 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -454,14 +453,10 @@ public class ReferenceExtractor extends ClassAdapter {
 				ldesc = ldesc.substring(1);
 			}
 			Type type = null;
-			if (ldesc.length() == 1 && Signature.getTypeSignatureKind(ldesc) == Signature.BASE_TYPE_SIGNATURE) {
+			if (ldesc.endsWith(";")) { //$NON-NLS-1$
 				type = Type.getType(ldesc);
 			} else {
-				if (ldesc.endsWith(";")) { //$NON-NLS-1$
-					type = Type.getType(ldesc);
-				} else {
-					type = Type.getObjectType(ldesc);
-				}
+				type = Type.getObjectType(ldesc);
 			}
 			return type;
 		}
@@ -470,35 +465,33 @@ public class ReferenceExtractor extends ClassAdapter {
 		 */
 		public void visitTypeInsn(int opcode, String desc) {
 			Type type = this.getTypeFromDescription(desc);
-			if(type.getSort() == Type.OBJECT) {
-				int kind = -1;
-				//we can omit the NEW case as it is caught by the constructor call
-				switch(opcode) {
-					case Opcodes.ANEWARRAY: {
-						kind = IReference.REF_ARRAYALLOC;
-						break;
-					}
-					case Opcodes.CHECKCAST: {
-						kind = IReference.REF_CHECKCAST;
-						break;
-					}
-					case Opcodes.INSTANCEOF: {
-						kind = IReference.REF_INSTANCEOF;
-						break;
-					}
-					case Opcodes.NEW: {
-						//handle it only for anonymous / local types
-						Reference ref = (Reference) fAnonymousTypes.get(processName(type.getInternalName()));
-						if(ref != null) {
-							this.linePositionTracker.addLocation(ref);
-						}
+			int kind = -1;
+			switch(opcode) {
+				case Opcodes.ANEWARRAY: {
+					kind = IReference.REF_ARRAYALLOC;
+					break;
+				}
+				case Opcodes.CHECKCAST: {
+					kind = IReference.REF_CHECKCAST;
+					break;
+				}
+				case Opcodes.INSTANCEOF: {
+					kind = IReference.REF_INSTANCEOF;
+					break;
+				}
+				case Opcodes.NEW: {
+					//we can omit the NEW case as it is caught by the constructor call
+					//handle it only for anonymous / local types
+					Reference ref = (Reference) fAnonymousTypes.get(processName(type.getInternalName()));
+					if(ref != null) {
+						this.linePositionTracker.addLocation(ref);
 					}
 				}
-				if(kind != -1) {
-					Reference reference = ReferenceExtractor.this.addTypeReference(type, kind);
-					if (reference != null) {
-						this.linePositionTracker.addLocation(reference);
-					}
+			}
+			if(kind != -1) {
+				Reference reference = ReferenceExtractor.this.addTypeReference(type, kind);
+				if (reference != null) {
+					this.linePositionTracker.addLocation(reference);
 				}
 			}
 		}
