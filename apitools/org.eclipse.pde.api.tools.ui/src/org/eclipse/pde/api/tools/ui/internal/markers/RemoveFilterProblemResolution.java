@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -88,39 +91,60 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 	 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse.core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
-		SubMonitor localmonitor = SubMonitor.convert(monitor, getLabel(), markers.length);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, getLabel(), markers.length*2);
 		try {
-			HashSet pjs = new HashSet(markers.length);
 			IApiProblemFilter filter = fFilter;
 			IApiComponent component = null;
+			HashMap map = new HashMap();
+			HashSet filters = null;
+			HashSet resources = new HashSet(markers.length);
+			IResource resource = null;
+			//collate the filters by IApiComponent
 			for (int i = 0; i < markers.length; i++) {
-				if(!fMarker.equals(markers[i])) {
-					filter = ApiMarkerResolutionGenerator.resolveFilter(markers[i]);
-				}
+				Util.updateMonitor(localmonitor, 1);
+				filter = ApiMarkerResolutionGenerator.resolveFilter(markers[i]);
 				if(filter == null) {
-					localmonitor.worked(1);
 					continue;
 				}
-				IResource resource = markers[i].getResource();
-				IProject project = resource.getProject();
-				component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project);
+				resource = markers[i].getResource();
+				component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(resource.getProject());
 				if(component instanceof PluginProjectApiComponent) {
-					try {
-						IApiFilterStore store = component.getFilterStore();
-						store.removeFilters(new IApiProblemFilter[] {filter});
-						Util.touchCorrespondingResource(project, resource, Util.getTypeNameFromMarker(markers[i]));
-						pjs.add(project);
+					filters = (HashSet) map.get(component);
+					if(filters == null) {
+						filters = new HashSet();
+						map.put(component, filters);
 					}
-					catch(CoreException ce) {
-						ApiPlugin.log(ce);
-					}
+					filters.add(filter);
+					resources.add(resource);
 				}
-				localmonitor.worked(1);
+			}
+			//batch remove the filters
+			localmonitor.setWorkRemaining(map.size());
+			Entry entry = null;
+			for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+				try {
+					entry = (Entry) iter.next();
+					component = (IApiComponent) entry.getKey();
+					filters = (HashSet) entry.getValue();
+					IApiFilterStore store = component.getFilterStore();
+					store.removeFilters((IApiProblemFilter[]) filters.toArray(new IApiProblemFilter[filters.size()]));
+				}
+				catch(CoreException ce) {
+					ApiPlugin.log(ce);
+				}
+				Util.updateMonitor(localmonitor, 1);
 			}
 			//build affected projects
-			if(pjs.size() > 0) {
+			if(map.size() > 0) {
+				//touch resources to mark them as needing build
+				for (Iterator iter = resources.iterator(); iter.hasNext();) {
+					try {
+						((IResource) iter.next()).touch(null);
+					}
+					catch(CoreException ce) {}
+				}
 				if(!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-					IProject[] projects = (IProject[]) pjs.toArray(new IProject[pjs.size()]);
+					IProject[] projects = (IProject[]) map.keySet().toArray(new IProject[map.size()]);
 					Util.getBuildJob(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 				}
 			}
@@ -144,7 +168,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 		HashSet mset = new HashSet(markers.length);
 		for (int i = 0; i < markers.length; i++) {
 			try {
-				if(markers[i].getType() == IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER &&
+				if(markers[i].getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER) &&
 						!fMarker.equals(markers[i])) {
 					mset.add(markers[i]);
 				}
