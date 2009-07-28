@@ -396,6 +396,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OSGiFrameworkPreferencePage_installed;
 
+	public static String OSGiFrameworkPreferencePage_installed_nolink;
+
 	public static String PDEFormEditor_errorMessageSaveNotCompleted;
 
 	public static String PDEFormEditor_errorTitleProblemSaveAs;

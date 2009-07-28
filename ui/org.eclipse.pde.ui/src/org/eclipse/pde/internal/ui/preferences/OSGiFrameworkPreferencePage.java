@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
+ *     Anyware Technologies - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -19,6 +20,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
@@ -115,18 +117,14 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 
 		Link text = new Link(comp, SWT.WRAP);
-		text.setText(PDEUIMessages.OSGiFrameworkPreferencePage_installed);
+		final IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(OSGiFrameworkManager.POINT_ID);
+		text.setText((SchemaRegistry.getSchemaURL(point) != null) ? PDEUIMessages.OSGiFrameworkPreferencePage_installed : PDEUIMessages.OSGiFrameworkPreferencePage_installed_nolink);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
 		text.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(OSGiFrameworkManager.POINT_ID);
-				if (point != null) {
-					new ShowDescriptionAction(point, true).run();
-				} else {
-					Display.getDefault().beep();
-				}
+				new ShowDescriptionAction(point, true).run();
 			}
 		});
 
