@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -56,9 +57,27 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param target target definition or <code>null</code> if none
 	 */
 	public static void load(ITargetDefinition target) {
+		load(target, null);
+	}
+
+	/**
+	 * Constructs a new operation to load the specified target definition
+	 * as the current target platform. When <code>null</code> is specified
+	 * the target platform is empty and all other settings are default.  This
+	 * method will cancel all existing LoadTargetDefinitionJob instances then
+	 * schedules the operation as a user job.  Adds the given listener to the
+	 * job that is started.
+	 * 
+	 * @param target target definition or <code>null</code> if none
+	 * @param listener job change listener that will be added to the created job
+	 */
+	public static void load(ITargetDefinition target, IJobChangeListener listener) {
 		Job.getJobManager().cancel(JOB_FAMILY_ID);
 		Job job = new LoadTargetDefinitionJob(target);
 		job.setUser(true);
+		if (listener != null) {
+			job.addJobChangeListener(listener);
+		}
 		job.schedule();
 	}
 

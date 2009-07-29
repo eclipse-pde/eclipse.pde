@@ -16,7 +16,8 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -40,11 +41,14 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.osgi.framework.Version;
 
 /**
  * Preference page for managing all known target definitions and setting one as the active target platform.
  */
 public class TargetPlatformPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
+	private static final String ORG_ECLIPSE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 
 	private class TargetLabelProvider extends StyledCellLabelProvider {
 
@@ -759,7 +763,34 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		// set workspace target if required
 		if (load) {
-			LoadTargetDefinitionJob.load(toLoad);
+
+			// Warn about forward compatibility
+			IJobChangeListener listener = new JobChangeAdapter() {
+				public void done(IJobChangeEvent event) {
+					if (event.getResult().getSeverity() == IStatus.OK) {
+						Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
+						IResolvedBundle[] bundles;
+						bundles = fActiveTarget.getAllBundles();
+						for (int index = 0; index < bundles.length; index++) {
+							BundleInfo bundleInfo = bundles[index].getBundleInfo();
+							if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(bundleInfo.getSymbolicName())) {
+								Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());
+								// TODO Change to < after testing
+								if (platformOsgiVersion.compareTo(bundleVersion) > 0) {
+									Display.getDefault().syncExec(new Runnable() {
+										public void run() {
+											MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);
+										}
+									});
+								}
+								break;
+							}
+						}
+					}
+				}
+			};
+
+			LoadTargetDefinitionJob.load(toLoad, listener);
 			fPrevious = toLoad == null ? null : toLoad.getHandle();
 		}
 
