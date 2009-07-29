@@ -44,7 +44,6 @@ public class TocModel extends XMLEditingModel {
 		fHandler = null;
 		fFactory = new TocDocumentFactory(this);
 		fToc = null;
-		fErrors = new ArrayList(1);
 	}
 
 	/*
@@ -104,6 +103,10 @@ public class TocModel extends XMLEditingModel {
 	}
 
 	public void addError(Exception e) {
+		if (fErrors == null) {
+			fErrors = new ArrayList(1);
+		}
+
 		if (!fErrors.contains(e)) {
 			fErrors.add(e);
 		}
@@ -114,7 +117,9 @@ public class TocModel extends XMLEditingModel {
 	}
 
 	public void purgeErrors() {
-		fErrors.clear();
+		if (fErrors != null) {
+			fErrors.clear();
+		}
 	}
 
 	public void setMarkerRefreshNeeded(boolean refresh) {

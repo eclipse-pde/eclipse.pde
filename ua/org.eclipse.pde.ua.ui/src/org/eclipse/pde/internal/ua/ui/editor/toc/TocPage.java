@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,16 +75,14 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 		// Ensure the model was loaded properly
 		if ((model == null) || (model.isLoaded() == false)) {
-			createErrorContent(managedForm, model);
+			createErrorContent(managedForm);
 		}
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
-				IHelpContextIds.TOC_EDITOR);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TOC_EDITOR);
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
 		// Form image
-		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
-				.get(PDEUserAssistanceUIPluginImages.DESC_TOC_OBJ));
+		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().get(PDEUserAssistanceUIPluginImages.DESC_TOC_OBJ));
 		setFormTitle(form, model);
 		// Create the master details block
 		fBlock.createContent(managedForm);
@@ -95,18 +93,15 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		model.addModelChangedListener(this);
 	}
 
-	private void createErrorContent(IManagedForm managedForm, TocModel model) {
-		Exception e = null;
+	private void createErrorContent(IManagedForm managedForm) {
 		// Add error meesage to the form
-		
 		ScrolledForm form = managedForm.getForm();
 		form.setMessage(TocMessages.TocPage_errorMessage2, IMessageProvider.ERROR);
 	}
 
 	private void setFormTitle(ScrolledForm form, TocModel model) {
 		// Form title
-		String title = PDETextHelper.translateReadText(model.getToc()
-				.getFieldLabel());
+		String title = PDETextHelper.translateReadText(model.getToc().getFieldLabel());
 		if (title.length() > 0) {
 			form.setText(title);
 		} else {
@@ -144,13 +139,10 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 				// Ignore
 			} else if (object.getType() == ITocConstants.TYPE_TOC) {
 				String changeProperty = event.getChangedProperty();
-				if ((changeProperty != null)
-						&& changeProperty.equals(ITocConstants.ATTRIBUTE_LABEL)) {
+				if ((changeProperty != null) && changeProperty.equals(ITocConstants.ATTRIBUTE_LABEL)) {
 					// Has to be a String if the property is a title
 					// Update the form page title
-					getManagedForm().getForm().setText(
-							PDETextHelper.translateReadText((String) event
-									.getNewValue()));
+					getManagedForm().getForm().setText(PDETextHelper.translateReadText((String) event.getNewValue()));
 				}
 			}
 		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -180,8 +172,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 				String newValue = ((Toc) object).getFieldLabel();
 
 				// Update page title
-				getManagedForm().getForm().setText(
-						PDETextHelper.translateReadText(newValue));
+				getManagedForm().getForm().setText(PDETextHelper.translateReadText(newValue));
 			}
 		}
 	}
@@ -191,7 +182,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 		if (active) {
 			TocModel model = (TocModel) getModel();
 			if ((model == null) || (model.isLoaded() == false)) {
-				createErrorContent(getManagedForm(), model);
+				createErrorContent(getManagedForm());
 			} else {
 				// Clear the error message
 				getManagedForm().getForm().setMessage("", IMessageProvider.NONE);
@@ -214,18 +205,15 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 					return;
 				}
 
-				IDocumentRange range = ((TocSourcePage) page).getRangeElement(
-						offset, true);
+				IDocumentRange range = ((TocSourcePage) page).getRangeElement(offset, true);
 				if (range instanceof IDocumentAttributeNode) {
-					range = ((IDocumentAttributeNode) range)
-							.getEnclosingElement();
+					range = ((IDocumentAttributeNode) range).getEnclosingElement();
 				} else if (range instanceof IDocumentTextNode) {
 					range = ((IDocumentTextNode) range).getEnclosingElement();
 				}
 
 				if (range instanceof TocObject) {
-					fBlock.getMasterSection().setSelection(
-							new StructuredSelection(range));
+					fBlock.getMasterSection().setSelection(new StructuredSelection(range));
 				}
 			}
 		}
