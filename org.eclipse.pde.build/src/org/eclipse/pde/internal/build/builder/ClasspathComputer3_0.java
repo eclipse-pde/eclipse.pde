@@ -604,8 +604,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		else
 			properties.put(OSGI_ARCH, CatchAllValue.singleton);
 
-		if (arch != null)
-			properties.put(OSGI_NL, arch);
+		if (nl != null)
+			properties.put(OSGI_NL, nl);
 		else
 			properties.put(OSGI_NL, CatchAllValue.singleton);
 
