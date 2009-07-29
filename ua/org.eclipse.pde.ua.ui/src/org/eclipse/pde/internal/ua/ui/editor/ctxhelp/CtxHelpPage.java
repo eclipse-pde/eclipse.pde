@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.ui.editor.ctxhelp;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -71,20 +72,15 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 
 		// Ensure the model was loaded properly
 		if ((model == null) || (model.isLoaded() == false)) {
-			createFormErrorContent(managedForm,
-					CtxHelpMessages.CtxHelpPage_errTitle,
-					CtxHelpMessages.CtxHelpPage_errMsg, null);
-			return;
+			createErrorContent(managedForm);
 		}
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
-				IHelpContextIds.CTX_HELP_EDITOR);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CTX_HELP_EDITOR);
 
 		// Create the rest of the actions in the form title area
 		super.createFormContent(managedForm);
 		// Form image
-		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
-				.get(PDEUserAssistanceUIPluginImages.DESC_CTXHELP_CONTEXT_OBJ));
+		form.setImage(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().get(PDEUserAssistanceUIPluginImages.DESC_CTXHELP_CONTEXT_OBJ));
 		form.setText(CtxHelpMessages.CtxHelpPage_formText);
 		// Create the master details block
 		fBlock.createContent(managedForm);
@@ -93,6 +89,12 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 		fBlock.getMasterSection().fireSelection();
 		// Register this page to be informed of model change events
 		model.addModelChangedListener(this);
+	}
+
+	private void createErrorContent(IManagedForm managedForm) {
+		// Add error meesage to the form
+		ScrolledForm form = managedForm.getForm();
+		form.setMessage(CtxHelpMessages.CtxHelpPage_errMsg, IMessageProvider.ERROR);
 	}
 
 	/*
@@ -134,11 +136,16 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 	public void setActive(boolean active) {
 		super.setActive(active);
 		if (active) {
-			IFormPage page = getPDEEditor().findPage(
-					CtxHelpInputContext.CONTEXT_ID);
-			if (page instanceof CtxHelpSourcePage
-					&& ((CtxHelpSourcePage) page).getInputContext()
-							.isInSourceMode()) {
+			CtxHelpModel model = (CtxHelpModel) getModel();
+			if ((model == null) || (model.isLoaded() == false)) {
+				createErrorContent(getManagedForm());
+			} else {
+				// Clear the error message
+				getManagedForm().getForm().setMessage("", IMessageProvider.NONE);
+			}
+
+			IFormPage page = getPDEEditor().findPage(CtxHelpInputContext.CONTEXT_ID);
+			if (page instanceof CtxHelpSourcePage && ((CtxHelpSourcePage) page).getInputContext().isInSourceMode()) {
 				ISourceViewer viewer = ((CtxHelpSourcePage) page).getViewer();
 				if (viewer == null) {
 					return;
@@ -154,18 +161,15 @@ public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 					return;
 				}
 
-				IDocumentRange range = ((CtxHelpSourcePage) page)
-						.getRangeElement(offset, true);
+				IDocumentRange range = ((CtxHelpSourcePage) page).getRangeElement(offset, true);
 				if (range instanceof IDocumentAttributeNode) {
-					range = ((IDocumentAttributeNode) range)
-							.getEnclosingElement();
+					range = ((IDocumentAttributeNode) range).getEnclosingElement();
 				} else if (range instanceof IDocumentTextNode) {
 					range = ((IDocumentTextNode) range).getEnclosingElement();
 				}
 
 				if (range instanceof CtxHelpObject) {
-					fBlock.getMasterSection().setSelection(
-							new StructuredSelection(range));
+					fBlock.getMasterSection().setSelection(new StructuredSelection(range));
 				}
 			}
 		}

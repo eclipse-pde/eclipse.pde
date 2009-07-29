@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.core.ctxhelp.text;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModel;
@@ -30,6 +34,8 @@ public class CtxHelpModel extends XMLEditingModel {
 	private CtxHelpDocumentHandler fHandler;
 	private CtxHelpDocumentFactory fFactory;
 	private CtxHelpRoot fRoot;
+	private List fErrors;
+	private boolean fMarkerRefreshNeeded;
 
 	public CtxHelpModel(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);
@@ -42,8 +48,7 @@ public class CtxHelpModel extends XMLEditingModel {
 	 * org.eclipse.pde.internal.core.text.XMLEditingModel#createDocumentHandler
 	 * (org.eclipse.pde.core.IModel, boolean)
 	 */
-	protected DefaultHandler createDocumentHandler(IModel model,
-			boolean reconciling) {
+	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
 		if (fHandler == null) {
 			fHandler = new CtxHelpDocumentHandler(this, reconciling);
 		}
@@ -95,4 +100,30 @@ public class CtxHelpModel extends XMLEditingModel {
 		return getCtxHelpRoot();
 	}
 
+	public void addError(Exception e) {
+		if (fErrors == null) {
+			fErrors = new ArrayList(1);
+		}
+		if (!fErrors.contains(e)) {
+			fErrors.add(e);
+		}
+	}
+
+	public Collection getErrors() {
+		return fErrors;
+	}
+
+	public void purgeErrors() {
+		if (fErrors != null) {
+			fErrors.clear();
+		}
+	}
+
+	public void setMarkerRefreshNeeded(boolean refresh) {
+		this.fMarkerRefreshNeeded = refresh;
+	}
+
+	public boolean isMarkerRefreshNeeded() {
+		return fMarkerRefreshNeeded;
+	}
 }

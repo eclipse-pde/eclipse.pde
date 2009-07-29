@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.IToolBarManager;
@@ -29,6 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpMarkerManager;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpModel;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpTopic;
@@ -350,6 +352,36 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		dialog.create();
 		dialog.getShell().setSize(400, 250);
 		dialog.open();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		CtxHelpModel model = (CtxHelpModel) getAggregateModel();
+		model.setMarkerRefreshNeeded(true);
+		model.reconciled(model.getDocument()); //model recon occurs async so we can proceed to save
+
+		super.doSave(monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#dispose()
+	 */
+	public void dispose() {
+		//editor is closing, delete the markers
+		CtxHelpMarkerManager.deleteMarkers((CtxHelpModel) getAggregateModel());
+		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager)
+	 */
+	protected void createInputContexts(InputContextManager contextManager) {
+		super.createInputContexts(contextManager);
+
+		// model is loaded, create markers if there were errors found
+		CtxHelpMarkerManager.createMarkers((CtxHelpModel) getAggregateModel());
 	}
 
 }
