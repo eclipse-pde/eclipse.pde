@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Peter Friese <peter.friese@itemis.de> - bug 241074
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -89,7 +90,7 @@ public class PluginClassCodeGenerator {
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
 		writer.println("\t// The plug-in ID"); //$NON-NLS-1$
-		writer.println("\tpublic static final String PLUGIN_ID = \"" + fPluginData.getId() + "\";"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("\tpublic static final String PLUGIN_ID = \"" + fPluginData.getId() + "\"; //$NON-NLS-1$"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
 		writer.println("\t// The shared instance"); //$NON-NLS-1$
 		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$

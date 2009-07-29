@@ -22,7 +22,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         configurer.setShowCoolBar(false);
         configurer.setShowStatusLine(false);
 %if productBranding == false
-        configurer.setTitle("$windowTitle$");
+        configurer.setTitle("$windowTitle$"); //$$NON-NLS-1$$
 %endif
     }
 }
