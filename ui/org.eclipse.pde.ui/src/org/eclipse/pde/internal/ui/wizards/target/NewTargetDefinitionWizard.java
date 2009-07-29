@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.*;
@@ -45,6 +44,15 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 			ITargetDefinition targetDef = ftargetCreationPage.createTarget(option);
 			fFilePath = fPage.getContainerFullPath().append(fPage.getFileName());
 			IFile targetFile = PDECore.getWorkspace().getRoot().getFile(fFilePath);
+			if (option == TargetDefinitionWizardPage.USE_EMPTY) {
+				//extract the file name
+				String name = targetFile.getName();
+				int index = name.lastIndexOf(targetFile.getFileExtension()) - 1;
+				if (index > 0) {
+					name = name.substring(0, index);
+					targetDef.setName(name);
+				}
+			}
 			WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);
 			wrkspcTargetHandle.save(targetDef);
 
