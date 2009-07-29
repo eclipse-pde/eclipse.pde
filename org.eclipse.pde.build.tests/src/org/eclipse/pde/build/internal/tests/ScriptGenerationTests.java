@@ -1360,6 +1360,89 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	public void testBug284721() throws Exception {
+		IFolder buildFolder = newTest("284721");
+
+		IFolder host = Utils.createFolder(buildFolder, "plugins/host");
+		IFolder fA = Utils.createFolder(buildFolder, "plugins/fA");
+		IFolder fB = Utils.createFolder(buildFolder, "plugins/fB");
+		IFolder C = Utils.createFolder(buildFolder, "plugins/C");
+		IFolder D = Utils.createFolder(buildFolder, "plugins/D");
+
+		Attributes additional = new Attributes();
+		additional.put(new Attributes.Name("Eclipse-ExtensibleAPI"), "true");
+		Utils.generateBundleManifest(host, "host", "1.0.0", additional);
+
+		additional = new Attributes();
+		additional.put(new Attributes.Name("Eclipse-PlatformFilter"), "(osgi.ws=win32)");
+		additional.put(new Attributes.Name("Export-Package"), "api");
+		additional.put(new Attributes.Name("Fragment-Host"), "host;bundle-version=\"[1.0.0,1.0.0]\"");
+		Utils.generateBundleManifest(fA, "fA", "1.0.0", additional);
+		Utils.generatePluginBuildProperties(fA, null);
+
+		StringBuffer code = new StringBuffer();
+		code.append("package api;                \n");
+		code.append("public class A{             \n");
+		code.append("   public static int a = 1; \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(fA.getFile("src/api/A.java"), code);
+
+		additional = new Attributes();
+		additional.put(new Attributes.Name("Eclipse-PlatformFilter"), "(osgi.ws=cocoa)");
+		additional.put(new Attributes.Name("Export-Package"), "api");
+		additional.put(new Attributes.Name("Fragment-Host"), "host;bundle-version=\"[1.0.0,1.0.0]\"");
+		Utils.generateBundleManifest(fB, "fB", "1.0.0", additional);
+		Utils.generatePluginBuildProperties(fB, null);
+
+		code = new StringBuffer();
+		code.append("package api;                \n");
+		code.append("public class A{             \n");
+		code.append("   public static int b = 1; \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(fB.getFile("src/api/A.java"), code);
+
+		additional = new Attributes();
+		additional.put(new Attributes.Name("Require-Bundle"), "host");
+		additional.put(new Attributes.Name("Eclipse-PlatformFilter"), "(osgi.ws=win32)");
+		Utils.generateBundleManifest(C, "C", "1.0.0", additional);
+		Utils.generatePluginBuildProperties(C, null);
+
+		code = new StringBuffer();
+		code.append("package c;                  \n");
+		code.append("import api.A;               \n");
+		code.append("public class C{             \n");
+		code.append("   public void f() {        \n");
+		code.append("      A.a = 2;              \n");
+		code.append("   }                        \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(C.getFile("src/c/C.java"), code);
+		
+		additional = new Attributes();
+		additional.put(new Attributes.Name("Require-Bundle"), "host");
+		additional.put(new Attributes.Name("Eclipse-PlatformFilter"), "(osgi.ws=cocoa)");
+		Utils.generateBundleManifest(D, "D", "1.0.0", additional);
+		Utils.generatePluginBuildProperties(D, null);
+
+		code = new StringBuffer();
+		code.append("package d;                  \n");
+		code.append("import api.A;               \n");
+		code.append("public class D{             \n");
+		code.append("   public void f() {        \n");
+		code.append("      A.b = 2;              \n");
+		code.append("   }                        \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(D.getFile("src/d/D.java"), code);
+		
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"host", "fA;ws=win32", "fB;ws=cocoa", "C;ws=win32", "D;ws=cocoa"});
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("configs", "win32,win32,x86 & macosx,cocoa,x86");
+		properties.put("logExtension", ".xml");
+		properties.put("baseLocation", "");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+	}
+
 	public void testBug252711() throws Exception {
 		IFolder buildFolder = newTest("252711");
 
