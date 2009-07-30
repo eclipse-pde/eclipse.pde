@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philipp Kursawe <phil.kursawe@gmail.com> - bug 272654
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
@@ -196,6 +197,7 @@ public class FormEntry {
 		});
 		fText.addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
+				fText.selectAll();
 				if (fListener != null)
 					fListener.focusGained(FormEntry.this);
 			}
