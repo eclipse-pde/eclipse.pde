@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.build;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Dictionary;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
 
@@ -99,6 +99,45 @@ public class BundleHelper {
 			//Ignore, this has been caught when resolving the state.
 			return null;
 		}
+	}
+
+	public Filter getFilter(BundleDescription bundleDescription) {
+		if (bundleDescription == null)
+			return null;
+
+		String platformFilter = bundleDescription.getPlatformFilter();
+		String nativeFilter = null;
+
+		NativeCodeSpecification nativeCodeSpec = bundleDescription.getNativeCodeSpecification();
+		if (nativeCodeSpec != null) {
+			NativeCodeDescription[] possibleSuppliers = nativeCodeSpec.getPossibleSuppliers();
+			ArrayList supplierFilters = new ArrayList(possibleSuppliers.length);
+			for (int i = 0; i < possibleSuppliers.length; i++) {
+				if (possibleSuppliers[i].getFilter() != null)
+					supplierFilters.add(possibleSuppliers[i].getFilter());
+			}
+			if (supplierFilters.size() == 1)
+				nativeFilter = supplierFilters.get(0).toString();
+			else if (supplierFilters.size() > 1) {
+				StringBuffer buffer = new StringBuffer("(|"); //$NON-NLS-1$
+				for (Iterator iterator = supplierFilters.iterator(); iterator.hasNext();) {
+					Filter filter = (Filter) iterator.next();
+					buffer.append(filter.toString());
+				}
+				buffer.append(")"); //$NON-NLS-1$
+				nativeFilter = buffer.toString();
+			}
+		}
+
+		String filterString = null;
+		if (platformFilter != null && nativeFilter != null)
+			filterString = "(&" + platformFilter + nativeFilter + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		else
+			filterString = platformFilter != null ? platformFilter : nativeFilter;
+
+		if (filterString != null)
+			return createFilter(filterString);
+		return null;
 	}
 
 	public void setLog(Object antLog) {

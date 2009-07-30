@@ -1416,7 +1416,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("   }                        \n");
 		code.append("}                           \n");
 		Utils.writeBuffer(C.getFile("src/c/C.java"), code);
-		
+
 		additional = new Attributes();
 		additional.put(new Attributes.Name("Require-Bundle"), "host");
 		additional.put(new Attributes.Name("Eclipse-PlatformFilter"), "(osgi.ws=cocoa)");
@@ -1432,7 +1432,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("   }                        \n");
 		code.append("}                           \n");
 		Utils.writeBuffer(D.getFile("src/d/D.java"), code);
-		
+
 		Utils.generateFeature(buildFolder, "f", null, new String[] {"host", "fA;ws=win32", "fB;ws=cocoa", "C;ws=win32", "D;ws=cocoa"});
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
@@ -1467,5 +1467,41 @@ public class ScriptGenerationTests extends PDETestCase {
 			failedMessage = e.getMessage();
 		}
 		assertTrue(failedMessage != null && failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
+	}
+
+	public void testBug284806() throws Exception {
+		IFolder buildFolder = newTest("284806");
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+
+		Attributes attributes = new Attributes();
+		attributes.put(new Attributes.Name("Bundle-NativeCode"), "lib.so;selection-filter=\"(osgi.os=foobar)\"");
+		Utils.generateBundleManifest(A, "foo", "1.0.0", attributes);
+		Utils.writeBuffer(A.getFile("lib.so"), new StringBuffer("I'm a library!"));
+		Properties properties = new Properties();
+		properties.put("bin.includes", "lib.so, META-INF/, .");
+		Utils.generatePluginBuildProperties(A, properties);
+
+		Utils.generateFeature(buildFolder, "f", null, new String [] { "foo"} );
+		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
+		buildProperties.put("baseLocation", " ");
+		buildProperties.put("configs", "win32,win32,x86");
+		
+		String failedMessage = null;
+		try {
+			generateScripts(buildFolder, buildProperties);
+		} catch (Throwable e) {
+			failedMessage = e.getMessage();
+		}
+		assertTrue(failedMessage != null && failedMessage.indexOf("Unsatisfied native code filter: lib.so; selection-filter=\"(osgi.os=foobar)\"") > -1);
+		
+		properties = new Properties();
+		properties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		properties.put("baseLocation", " ");
+		properties.put("pluginList", "foo");
+		properties.put("configs", "win32,win32,x86");
+		properties.put("verify", "true");
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"generateFeature"}, buildFolder.getLocation().toOSString(), properties);
 	}
 }

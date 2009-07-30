@@ -19,6 +19,7 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.compatibility.*;
+import org.osgi.framework.Filter;
 import org.osgi.framework.Version;
 
 /**
@@ -177,11 +178,15 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		if (bundle.isResolved())
 			return null;
 
-		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		ResolverError[] resolutionErrors = state.getState().getResolverErrors(bundle);
+		return missingPlugin(bundle, resolutionErrors, throwException);
+	}
+
+	public static IStatus missingPlugin(BundleDescription bundle, ResolverError[] resolutionErrors, boolean throwException) throws CoreException {
+		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(bundle);
 
-		String message = NLS.bind(Messages.exception_unresolvedPlugin, id + '_' + version);
+		String message = NLS.bind(Messages.exception_unresolvedPlugin, bundle.getSymbolicName() + '_' + bundle.getVersion().toString());
 		message += ":\n" + BuildTimeSite.getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$
 		for (int j = 0; j < versionErrors.length; j++) {
 			message += '\t' + BuildTimeSite.getResolutionFailureMessage(versionErrors[j]) + '\n';
@@ -194,16 +199,16 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	}
 
 	//Return whether the resolution error is caused because we are not building for the proper configurations.
-	private boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List configs) {
+	static public boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List configs) {
 		Dictionary environment = new Hashtable(3);
-		String filterSpec = bundle.getPlatformFilter();
+		Filter bundleFilter = BundleHelper.getDefault().getFilter(bundle);
 		if (hasPlatformFilterError(errors) != null) {
 			for (Iterator iter = configs.iterator(); iter.hasNext();) {
 				Config aConfig = (Config) iter.next();
 				environment.put("osgi.os", aConfig.getOs()); //$NON-NLS-1$
 				environment.put("osgi.ws", aConfig.getWs()); //$NON-NLS-1$
 				environment.put("osgi.arch", aConfig.getArch()); //$NON-NLS-1$
-				if (BundleHelper.getDefault().createFilter(filterSpec).match(environment)) {
+				if (bundleFilter.match(environment)) {
 					return false;
 				}
 			}
@@ -213,9 +218,11 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	}
 
 	//Check if the set of errors contain a platform filter
-	private ResolverError hasPlatformFilterError(ResolverError[] errors) {
+	static private ResolverError hasPlatformFilterError(ResolverError[] errors) {
 		for (int i = 0; i < errors.length; i++) {
 			if ((errors[i].getType() & ResolverError.PLATFORM_FILTER) != 0)
+				return errors[i];
+			if ((errors[i].getType() & ResolverError.NO_NATIVECODE_MATCH) != 0)
 				return errors[i];
 		}
 		return null;
@@ -235,6 +242,8 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			throw new IllegalArgumentException();
 		if (unsatisfied instanceof ImportPackageSpecification)
 			return NLS.bind(Messages.unsatisfied_import, displayVersionConstraint(unsatisfied));
+		if (unsatisfied instanceof NativeCodeSpecification)
+			return NLS.bind(Messages.unsatisfied_nativeSpec, unsatisfied.toString());
 		if (unsatisfied instanceof BundleSpecification) {
 			if (((BundleSpecification) unsatisfied).isOptional())
 				return NLS.bind(Messages.unsatisfied_optionalBundle, displayVersionConstraint(unsatisfied));

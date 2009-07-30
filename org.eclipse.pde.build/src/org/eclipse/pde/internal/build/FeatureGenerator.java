@@ -15,8 +15,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
-import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.pde.internal.build.site.PDEState;
+import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
@@ -386,19 +385,20 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							}
 						} else {
 							//Bundle did not resolve, only ok if it was because of the platform filter
-							BundleDescription[] bundles = state.getState().getBundles(name);
-							boolean error = true;
-							if (bundles != null && bundles.length > 0) {
-								ResolverError[] errors = state.getState().getResolverErrors(bundles[0]);
-								for (int i = 0; i < errors.length; i++) {
-									if ((errors[i].getType() & ResolverError.PLATFORM_FILTER) != 0) {
-										//didn't match config, this is ok
-										error = false;
-										break;
-									}
-								}
+							if (bundleVersion != null)
+								bundle = state.getBundle(name, bundleVersion, false);
+							else {
+								//There are no resolved bundles with this name, if there is more than one unresolved just use the first
+								BundleDescription[] bundles = state.getState().getBundles(name);
+								bundle = (bundles != null && bundles.length > 0) ? bundles[0] : null;
 							}
-							if (error) {
+							if (bundle != null) {
+								ResolverError[] errors = state.getState().getResolverErrors(bundle);
+								//ok if we didn't match the config
+								if (!BuildTimeSite.isConfigError(bundle, errors, configs)) {
+									BuildTimeSite.missingPlugin(bundle, errors, true); //throws CoreException
+								}
+							} else {
 								//throw error
 								String message = NLS.bind(Messages.exception_missingPlugin, bundleVersion != null ? name + "_" + bundleVersion : name); //$NON-NLS-1$
 								throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));

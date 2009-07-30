@@ -90,6 +90,7 @@ public class Messages extends NLS {
 	public static String unsatisfied_required;
 	public static String unsatisfied_optionalBundle;
 	public static String unsatisfied_host;
+	public static String unsatisfied_nativeSpec;
 
 	public static String feature_parse_invalidIdOrVersion;
 	public static String feature_parse_emptyRequires;
