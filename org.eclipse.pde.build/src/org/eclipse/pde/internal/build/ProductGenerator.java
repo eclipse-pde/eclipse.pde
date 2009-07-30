@@ -16,6 +16,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.osgi.framework.Filter;
 import org.osgi.framework.Version;
 
 public class ProductGenerator extends AbstractScriptGenerator {
@@ -440,8 +441,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			String id = bundle.getSymbolicName();
 			if (BUNDLE_OSGI.equals(id) || BUNDLE_EQUINOX_LAUNCHER.equals(id))
 				continue;
-			String filter = bundle.getPlatformFilter();
-			if (filter == null || helper.createFilter(filter).match(environment)) {
+			Filter filter = helper.getFilter(bundle);
+			if (filter == null || filter.match(environment)) {
 				if (first)
 					first = false;
 				else
@@ -602,8 +603,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (bundle != null) {
 			BundleDescription[] fragments = bundle.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
-				String filter = fragments[i].getPlatformFilter();
-				if (filter == null || helper.createFilter(filter).match(environment)) {
+				Filter filter = helper.getFilter(fragments[i]);
+				if (filter == null || filter.match(environment)) {
 					String fragmentId = fragments[i].getSymbolicName();
 					if (productFile.containsPlugin(fragmentId)) {
 						buffer.append(",platform:/base/plugins/"); //$NON-NLS-1$

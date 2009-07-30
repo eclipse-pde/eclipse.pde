@@ -568,7 +568,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	private boolean matchFilter(BundleDescription target) {
-		String filter = target.getPlatformFilter();
+		Filter filter = BundleHelper.getDefault().getFilter(target);
 		if (filter == null) //Target is platform independent, add it 
 			return true;
 
@@ -584,10 +584,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			return true;
 
 		//The plugin for which we are generating the classpath and target are not platform independent
-		Filter f = BundleHelper.getDefault().createFilter(filter);
-		if (f == null)
-			return true;
-
 		Dictionary properties = new Hashtable(3);
 		if (os != null) {
 			properties.put(OSGI_OS, os);
@@ -609,7 +605,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		else
 			properties.put(OSGI_NL, CatchAllValue.singleton);
 
-		return f.match(properties);
+		return filter.match(properties);
 	}
 
 	/**

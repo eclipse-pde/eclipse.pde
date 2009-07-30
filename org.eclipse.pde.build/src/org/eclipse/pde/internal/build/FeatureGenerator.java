@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.osgi.framework.Filter;
 import org.osgi.framework.Version;
 
 public class FeatureGenerator extends AbstractScriptGenerator {
@@ -375,8 +376,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 						BundleDescription bundle = state.getResolvedBundle(name, bundleVersion);
 						if (bundle != null) {
 							//Bundle resolved, write it out if it matches the current config
-							String filterSpec = bundle.getPlatformFilter();
-							if (filterSpec == null || helper.createFilter(filterSpec).match(environment)) {
+							Filter filter = helper.getFilter(bundle);
+							if (filter == null || filter.match(environment)) {
 								writeBundle = true;
 								guessedUnpack = Utils.guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
 								if (currentConfig.equals(Config.genericConfig())) {
