@@ -25,7 +25,6 @@ public interface IHelpContextIds {
 	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
 
 	// Property Pages
-	public static final String PLUGIN_DEVELOPMENT_PROPERTY_PAGE = PREFIX + "plugin_development_property_page"; //$NON-NLS-1$
 	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
 	public static final String COMPILERS_PROPERTY_PAGE = PREFIX + "compilers_property_page"; //$NON-NLS-1$
 
@@ -175,6 +174,9 @@ public interface IHelpContextIds {
 	public static final String RENAME_DIALOG = PREFIX + "rename_dialog"; //$NON-NLS-1$
 
 	public static final String NEW_CS_CATEGORY_NAME_DIALOG = PREFIX + "new_cs_category_name_dialog"; //$NON-NLS-1$
+
+	public static final String TARGET_ERROR_DIALOG = PREFIX + "target_error_dialog"; //$NON-NLS-1$
+	public static final String TARGET_LOCATION_DIALOG = PREFIX + "target_location_dialog"; //$NON-NLS-1$
 
 	public static final String PLUGIN_IMPORT_FINISH_DIALOG = PREFIX + "plugin_import_finish_dialog"; //$NON-NLS-1$
 

@@ -26,7 +26,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormColors;
@@ -131,12 +130,7 @@ public class ArgumentsSection extends SectionPart {
 		});
 
 		Composite buttons = new Composite(vmComp, SWT.NONE);
-		GridLayout layout = FormLayoutFactory.createSectionClientGridLayout(false, 2);
-		layout.marginTop = 0;
-		layout.marginBottom = 0;
-		layout.marginRight = 0;
-		layout.marginLeft = 0;
-		buttons.setLayout(layout);
+		buttons.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		buttons.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		Button vmArgs = toolkit.createButton(buttons, PDEUIMessages.ArgumentsSection_argumentsButtonTitle, SWT.NONE);
 		vmArgs.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));

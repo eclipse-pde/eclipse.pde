@@ -101,6 +101,6 @@ public class FeaturesPage extends PDEFormPage {
 	}
 
 	protected String getHelpResource() {
-		return IHelpContextIds.MANIFEST_SITE_FEATURES;
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/site_editor/site_map.htm"; //$NON-NLS-1$
 	}
 }

@@ -32,7 +32,7 @@ public class LaunchingPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IHelpContextIds.LAUNCHING_PAGE;
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/launching.htm"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

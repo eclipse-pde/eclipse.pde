@@ -129,9 +129,9 @@ public abstract class LeakTest extends ApiBuilderTest {
 				ClassExtendsLeak.class,
 				ClassImplementsLeak.class,
 				InterfaceExtendsLeak.class,
-				ConstructorParameterLeak.class,
+				/*ConstructorParameterLeak.class,
 				MethodParameterLeak.class,
-				MethodReturnTypeLeak.class,
+				MethodReturnTypeLeak.class,*/
 				FieldTypeLeak.class
 		};
 		return classes;

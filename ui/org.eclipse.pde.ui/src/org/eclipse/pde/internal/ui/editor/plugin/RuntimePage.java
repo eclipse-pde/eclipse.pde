@@ -30,9 +30,7 @@ public class RuntimePage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		if (((IPluginModelBase) getPDEEditor().getAggregateModel()).isFragmentModel())
-			return IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME;
-		return IHelpContextIds.MANIFEST_PLUGIN_RUNTIME;
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/runtime.htm"; //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm mform) {

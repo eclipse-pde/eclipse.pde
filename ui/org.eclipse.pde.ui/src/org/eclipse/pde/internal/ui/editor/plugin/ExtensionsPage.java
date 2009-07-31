@@ -116,7 +116,7 @@ public class ExtensionsPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IHelpContextIds.MANIFEST_PLUGIN_EXTENSIONS;
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/extensions.htm"; //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {

@@ -261,7 +261,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 					filterData.left = new FormAttachment(0, 2);
 					filterData.right = new FormAttachment(100, -2);
 					filterComposite.setLayoutData(filterData);
-					filterData.top = new FormAttachment(filterComposite, 2);
+					data.top = new FormAttachment(filterComposite, 2);
 				} else {
 					data.top = new FormAttachment(0, 0);
 				}

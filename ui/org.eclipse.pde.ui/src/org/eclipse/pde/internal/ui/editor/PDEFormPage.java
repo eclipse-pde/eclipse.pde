@@ -22,8 +22,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -80,11 +79,15 @@ public abstract class PDEFormPage extends FormPage {
 
 		getPDEEditor().contributeToToolbar(manager);
 
-		final String helpContextID = getHelpResource();
-		if (helpContextID != null) {
+		final String href = getHelpResource();
+		if (href != null) {
 			Action helpAction = new Action("help") { //$NON-NLS-1$
 				public void run() {
-					PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID);
+					BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
+						public void run() {
+							PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
+						}
+					});
 				}
 			};
 			helpAction.setToolTipText(PDEUIMessages.PDEFormPage_help);
@@ -111,12 +114,6 @@ public abstract class PDEFormPage extends FormPage {
 		return (PDEFormEditor) getEditor();
 	}
 
-	/**
-	 * Return a help context id to have the help button at the top right of the form page open
-	 * the dynamic help for the page.
-	 * 
-	 * @return a help context id or <code>null</code>
-	 */
 	protected String getHelpResource() {
 		return null;
 	}

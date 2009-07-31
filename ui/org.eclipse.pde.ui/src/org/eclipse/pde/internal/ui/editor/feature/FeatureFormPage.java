@@ -45,7 +45,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IHelpContextIds.MANIFEST_FEATURE_OVERVIEW;
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/overview.htm"; //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {

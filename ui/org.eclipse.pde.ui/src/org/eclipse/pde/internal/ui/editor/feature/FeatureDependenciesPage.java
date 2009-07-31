@@ -43,7 +43,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
 	protected String getHelpResource() {
-		return IHelpContextIds.MANIFEST_FEATURE_DEPENDENCIES;
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/dependencies.htm"; //$NON-NLS-1$
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {
