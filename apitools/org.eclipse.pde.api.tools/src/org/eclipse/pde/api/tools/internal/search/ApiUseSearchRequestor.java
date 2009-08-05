@@ -56,10 +56,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	public static final Comparator componentsorter = new Comparator(){
 		public int compare(Object o1, Object o2) {
 			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-				try {
-					return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
-				}
-				catch (CoreException ce) {}
+				return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
 			}
 			return -1;
 		}

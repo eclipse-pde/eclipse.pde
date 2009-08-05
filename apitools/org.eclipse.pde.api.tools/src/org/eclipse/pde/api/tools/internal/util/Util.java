@@ -2198,10 +2198,7 @@ public final class Util {
 	public static final Comparator componentsorter = new Comparator(){
 		public int compare(Object o1, Object o2) {
 			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-				try {
-					return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
-				}
-				catch (CoreException ce) {}
+				return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
 			}
 			if(o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
 				return ((SkippedComponent)o1).getComponentId().compareTo(((SkippedComponent)o2).getComponentId());
@@ -2298,7 +2295,6 @@ public final class Util {
 						UtilMessages.comparison_invalidRegularExpression,
 						componentname));
 			}
-			catch(CoreException ce) {}
 		}
 	}
 

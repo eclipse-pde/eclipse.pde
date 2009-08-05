@@ -107,14 +107,10 @@ public class CompareTask extends CommonUtilsTask {
 							pattern = Pattern.compile(componentName);
 							for (int j = 0, max2 = apiComponents.length; j < max2; j++) {
 								IApiComponent apiComponent = apiComponents[j];
-								try {
-									String componentId = apiComponent.getId();
-									Matcher matcher = pattern.matcher(componentId);
-									if (matcher.matches()) {
-										scope.add(apiComponent);
-									}
-								} catch (CoreException e) {
-									ApiPlugin.log(e);
+								String componentId = apiComponent.getId();
+								Matcher matcher = pattern.matcher(componentId);
+								if (matcher.matches()) {
+									scope.add(apiComponent);
 								}
 							}
 						} catch (PatternSyntaxException e) {

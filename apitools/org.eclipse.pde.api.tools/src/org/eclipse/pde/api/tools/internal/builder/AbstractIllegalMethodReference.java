@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal.builder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.model.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -70,14 +69,10 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 		if(!super.isProblem(reference)) {
 			return false;
 		}
-		try {
-			IApiMember method = reference.getResolvedReference();
-			String componentId = (String) fMethodComponents.get(method.getHandle());
-			// TODO: would it be faster to store component objects and use identity instead of equals?
-			return componentId != null && method.getApiComponent().getId().equals(componentId);
-		} catch (CoreException e) {
-			return false;
-		}
+		IApiMember method = reference.getResolvedReference();
+		String componentId = (String) fMethodComponents.get(method.getHandle());
+		// TODO: would it be faster to store component objects and use identity instead of equals?
+		return componentId != null && method.getApiComponent().getId().equals(componentId);
 	}
 	
 	/* (non-Javadoc)

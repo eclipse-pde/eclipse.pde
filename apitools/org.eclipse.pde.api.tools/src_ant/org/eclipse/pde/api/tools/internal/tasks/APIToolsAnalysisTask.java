@@ -31,7 +31,6 @@ import java.util.Set;
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
@@ -669,12 +668,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					allProblems.put(id, new IApiProblem[] { problem });
 				}
 			}
-		} catch(CoreException e) {
-			IStatus status = e.getStatus();
-			if (status == null || status.getCode() != ApiPlugin.REPORT_BASELINE_IS_DISPOSED) {
-				throw new BuildException(e);
-			}
-			ApiPlugin.log(e);
 		} finally {
 			if (this.debug) {
 				System.out.println("API tools verification check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$

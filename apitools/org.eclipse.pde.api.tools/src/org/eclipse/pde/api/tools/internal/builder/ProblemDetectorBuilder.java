@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -86,28 +85,24 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 				break;
 			default:
 				if (!RestrictionModifiers.isUnrestricted(mask)) {
-					try {
-						if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
-							fIllegalOverride.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
+					if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
+						fIllegalOverride.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
+					}
+					if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
+						fIllegalExtends.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
+					}
+					if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
+						fIllegalImplements.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
+					}
+					if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
+						fIllegalInstantiate.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
+					}
+					if (RestrictionModifiers.isReferenceRestriction(mask)) {
+						if (element.getElementType() == IElementDescriptor.METHOD && fIllegalMethodRef != null) {
+							fIllegalMethodRef.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
+						} else if (element.getElementType() == IElementDescriptor.FIELD && fIllegalFieldRef != null) {
+							fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getId());
 						}
-						if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
-							fIllegalExtends.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
-						}
-						if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
-							fIllegalImplements.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
-						}
-						if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
-							fIllegalInstantiate.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
-						}
-						if (RestrictionModifiers.isReferenceRestriction(mask)) {
-							if (element.getElementType() == IElementDescriptor.METHOD && fIllegalMethodRef != null) {
-								fIllegalMethodRef.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
-							} else if (element.getElementType() == IElementDescriptor.FIELD && fIllegalFieldRef != null) {
-								fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getId());
-							}
-						}
-					} catch (CoreException e) {
-						ApiPlugin.log(e);
 					}
 				}
 		}

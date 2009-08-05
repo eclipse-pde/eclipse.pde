@@ -160,11 +160,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 		if(!super.isProblem(reference)) {
 			return false;
 		}
-		try {
-			Object componentId = fFieldComponents.get(reference.getResolvedReference().getHandle());
-			return componentId != null && reference.getResolvedReference().getApiComponent().getId().equals(componentId);
-		} catch (CoreException e) {
-			return false;
-		}
+		Object componentId = fFieldComponents.get(reference.getResolvedReference().getHandle());
+		return componentId != null && reference.getResolvedReference().getApiComponent().getId().equals(componentId);
 	}
 }

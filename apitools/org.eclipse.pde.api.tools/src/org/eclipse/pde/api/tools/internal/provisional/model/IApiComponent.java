@@ -29,12 +29,12 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
 public interface IApiComponent extends IApiTypeContainer {
 	
 	/**
-	 * Returns this component's symbolic name.
+	 * Returns this component's symbolic name. This is a handle-only 
+	 * method - the component may not exist or ay be disposed.
 	 * 
 	 * @return component's symbolic name
-	 * @throws CoreException if its baseline is disposed
 	 */
-	public String getId() throws CoreException;
+	public String getId();
 	
 	/**
 	 * Returns this component's API description.

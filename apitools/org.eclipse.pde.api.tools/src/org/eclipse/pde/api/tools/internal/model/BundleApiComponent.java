@@ -121,6 +121,11 @@ public class BundleApiComponent extends AbstractApiComponent {
 	private BundleDescription fBundleDescription;
 	
 	/**
+	 * Symbolic name of this bundle
+	 */
+	private String fSymbolicName = null;
+	
+	/**
 	 * Cached value for the lowest EEs
 	 */
 	private String[] lowestEEs;
@@ -213,6 +218,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			}
 			StateObjectFactory factory = StateObjectFactory.defaultFactory;
 			fBundleDescription = factory.createBundleDescription(((ApiBaseline)getBaseline()).getState(), manifest, fLocation, bundleId);
+			fSymbolicName = fBundleDescription.getSymbolicName();
 			setName((String)getManifest().get(Constants.BUNDLE_NAME));
 		} catch (BundleException e) {
 			abort("Unable to create API component from specified location: " + fLocation, e); //$NON-NLS-1$
@@ -854,11 +860,8 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getId()
 	 */
-	public synchronized String getId() throws CoreException {
-		if (this.fBundleDescription == null) {
-			baselineDisposed(getBaseline());
-		}
-		return fBundleDescription.getSymbolicName();
+	public final String getId() {
+		return fSymbolicName;
 	}
 
 	/* (non-Javadoc)

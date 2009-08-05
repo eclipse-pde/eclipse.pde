@@ -311,17 +311,13 @@ public class BuildState {
 		if (components == null) {
 			return;
 		}
-		try {
-			if (this.reexportedComponents == null) {
-				final int length = components.length;
-				String[] result = new String[length];
-				for (int i = 0; i < length; i++) {
-					result[i] = components[i].getId();
-				}
-				this.reexportedComponents = result;
+		if (this.reexportedComponents == null) {
+			final int length = components.length;
+			String[] result = new String[length];
+			for (int i = 0; i < length; i++) {
+				result[i] = components[i].getId();
 			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
+			this.reexportedComponents = result;
 		}
 	}
 

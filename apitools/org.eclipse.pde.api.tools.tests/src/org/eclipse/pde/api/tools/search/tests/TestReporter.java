@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -86,51 +85,46 @@ public class TestReporter implements IApiSearchReporter {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement, org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
 	 */
 	public void reportResults(IApiElement element, IReference[] references) {
-		try {
-			String name = (element.getType() == IApiElement.COMPONENT ? ((IApiComponent)element).getId() : element.getName());
-			if(this.references == null) {
-				//expecting no references
-				if(references.length > 0) {
-					System.out.println("Unexpected References:");
-					for (int i = 0; i < references.length; i++) {
-						System.out.println("  - "+references[i]);
-					}
-					this.test.reportFailure("No references were expected for IApiElement ["+name+"] but ["+references.length+"] were found");
+		String name = (element.getType() == IApiElement.COMPONENT ? ((IApiComponent)element).getId() : element.getName());
+		if(this.references == null) {
+			//expecting no references
+			if(references.length > 0) {
+				System.out.println("Unexpected References:");
+				for (int i = 0; i < references.length; i++) {
+					System.out.println("  - "+references[i]);
 				}
+				this.test.reportFailure("No references were expected for IApiElement ["+name+"] but ["+references.length+"] were found");
+			}
+			return;
+		}
+		ArrayList<Integer> refs = this.references.get(name);
+		if(refs == null) {
+			if(references.length == 0) {
 				return;
 			}
-			ArrayList<Integer> refs = this.references.get(name);
-			if(refs == null) {
-				if(references.length == 0) {
-					return;
-				}
-				else {
-					this.test.reportFailure("Unexpected references found for IApiElement ["+name+"], was expecting none");
-				}
-			}
 			else {
-				if(refs.size() != references.length) {
-					this.test.reportFailure("Expecting ["+refs.size()+"] but reported ["+references.length+"] references");
-				}
-				for (int i = 0; i < references.length; i++) {
-					if(!refs.remove(new Integer(references[i].getReferenceKind()))) {
-						this.test.reportFailure("Reference ["+Reference.getReferenceText(references[i].getReferenceKind())+"] was not expected");
-					}
-				}
-				if(refs.size() != 0) {
-					System.out.println("Missing references not reported:");
-					for (Iterator iterator = refs.iterator(); iterator.hasNext();) {
-						System.out.println("  - "+Reference.getReferenceText(((Integer)iterator.next())));
-					}
-					this.test.reportFailure("["+refs.size()+"] references were not reported");
-				}
-				for(Iterator<Integer> iter = refs.iterator(); iter.hasNext();) {
-					System.out.println("Reference ["+Reference.getReferenceText(iter.next())+"] was not reported");
-				}
+				this.test.reportFailure("Unexpected references found for IApiElement ["+name+"], was expecting none");
 			}
 		}
-		catch(CoreException ce) {
-			this.test.reportFailure(ce.getMessage());
+		else {
+			if(refs.size() != references.length) {
+				this.test.reportFailure("Expecting ["+refs.size()+"] but reported ["+references.length+"] references");
+			}
+			for (int i = 0; i < references.length; i++) {
+				if(!refs.remove(new Integer(references[i].getReferenceKind()))) {
+					this.test.reportFailure("Reference ["+Reference.getReferenceText(references[i].getReferenceKind())+"] was not expected");
+				}
+			}
+			if(refs.size() != 0) {
+				System.out.println("Missing references not reported:");
+				for (Iterator iterator = refs.iterator(); iterator.hasNext();) {
+					System.out.println("  - "+Reference.getReferenceText(((Integer)iterator.next())));
+				}
+				this.test.reportFailure("["+refs.size()+"] references were not reported");
+			}
+			for(Iterator<Integer> iter = refs.iterator(); iter.hasNext();) {
+				System.out.println("Reference ["+Reference.getReferenceText(iter.next())+"] was not reported");
+			}
 		}
 	}
 
