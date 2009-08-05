@@ -667,11 +667,12 @@ public class ProjectApiDescription extends ApiDescription {
 	 * 
 	 * @param bundle bundle description
 	 */
-	public synchronized void connect(BundleDescription bundle) {
+	public synchronized void connect(BundleDescription bundle, PluginProjectApiComponent component) {
 		if (fBundle != null && fBundle != bundle) {
 			throw new IllegalStateException("Already connected to a bundle"); //$NON-NLS-1$
 		}
 		fBundle = bundle;
+		fComponent = component;
 	}
 	
 	/**
@@ -691,6 +692,19 @@ public class ProjectApiDescription extends ApiDescription {
 	public synchronized void disconnect(BundleDescription bundle) {
 		if (bundle.equals(fBundle)) {
 			fBundle = null;
+			fComponent = null;
+			if (fClassFileContainers != null) {
+				Iterator iter = fClassFileContainers.values().iterator();
+				while (iter.hasNext()) {
+					IApiTypeContainer container = (IApiTypeContainer) iter.next();
+					try {
+						container.close();
+					} catch (CoreException e) {
+						ApiPlugin.log(e.getStatus());
+					}
+				}
+				fClassFileContainers.clear();
+			}
 		} else if (fBundle != null) {
 			throw new IllegalStateException("Not connected to same bundle"); //$NON-NLS-1$
 		}

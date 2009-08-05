@@ -135,7 +135,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 			}
 			fDescriptions.put(project, description);
 		}
-		description.connect(bundle);
+		description.connect(bundle, component);
 		return description;
 	}
 	/**
