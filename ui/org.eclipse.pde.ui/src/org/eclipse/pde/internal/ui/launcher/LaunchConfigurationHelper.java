@@ -145,7 +145,7 @@ public class LaunchConfigurationHelper {
 			}
 		}
 
-		setBundleLocations(bundles, properties);
+		setBundleLocations(bundles, properties, autostart);
 
 		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
 		return properties;
@@ -335,7 +335,7 @@ public class LaunchConfigurationHelper {
 	 * @param map map of bundles being launched (id mapped to model)
 	 * @param properties properties for config.ini
 	 */
-	private static void setBundleLocations(Map map, Properties properties) {
+	private static void setBundleLocations(Map map, Properties properties, boolean defaultAuto) {
 		String framework = properties.getProperty(PROP_OSGI_FRAMEWORK);
 		if (framework != null) {
 			framework = TargetPlatformHelper.stripPathInformation(framework);
@@ -370,7 +370,7 @@ public class LaunchConfigurationHelper {
 					buffer.append("reference:" + url); //$NON-NLS-1$
 					if (i != -1) {
 						String slinfo = token.substring(i + 1);
-						buffer.append(getStartData(slinfo, false));
+						buffer.append(getStartData(slinfo, defaultAuto));
 					}
 				}
 			}
