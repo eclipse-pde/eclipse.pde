@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2009 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -81,10 +82,12 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 		createContent();
 		monitor.worked(1);
 		openFile();
+		if (PDE.hasPluginNature(fFile.getProject())) {
 		writeManifest(fFile.getProject(), new SubProgressMonitor(
 				monitor, 1));
 		writeBuildProperties(fFile.getProject(), new SubProgressMonitor(
 				monitor, 1));
+		}
 		monitor.done();
 	}
 
