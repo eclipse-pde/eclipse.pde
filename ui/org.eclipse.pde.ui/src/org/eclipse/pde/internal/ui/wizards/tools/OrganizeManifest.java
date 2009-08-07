@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     EclipseSource Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219513
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
@@ -169,7 +170,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	public static void removeUnneededLazyStart(IBundle bundle) {
 		if (!(bundle instanceof Bundle))
 			return;
-		if (bundle.getHeader(Constants.BUNDLE_ACTIVATOR) == null) {
+		if (bundle.getHeader(Constants.BUNDLE_ACTIVATOR) == null && bundle.getHeader(ICoreConstants.SERVICE_COMPONENT) == null) {
 			String[] remove = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
 			for (int i = 0; i < remove.length; i++) {
 				IManifestHeader lazy = ((Bundle) bundle).getManifestHeader(remove[i]);
@@ -177,7 +178,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					((SingleManifestHeader) lazy).setMainComponent(null);
 			}
 		}
-		
+
 	}
 
 	public static Change deleteUselessPluginFile(IProject project, IPluginModelBase modelBase) {
