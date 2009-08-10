@@ -1060,6 +1060,8 @@ public class PDEUIMessages extends NLS {
 	public static String BuildPluginAction_ErrorDialog_Title;
 	public static String BuildPluginAction_ErrorDialog_Message;
 
+	public static String BuildPluginAction_WarningCustomBuildExists;
+
 	public static String NewFeatureWizard_wtitle;
 	public static String NewFeatureWizard_MainPage_desc;
 	public static String NewFeatureWizard_SpecPage_title;

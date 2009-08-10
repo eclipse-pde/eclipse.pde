@@ -14,8 +14,8 @@ package org.eclipse.pde.internal.ui.build;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -23,18 +23,26 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.builders.BuildErrorReporter;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class BuildPluginAction extends BaseBuildAction {
 
 	protected void makeScripts(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 
+		IProject project = fManifestFile.getProject();
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		BuildErrorReporter buildErrorReporter = new BuildErrorReporter(fManifestFile);
+		IResource buildXML = project.findMember("build.xml"); //$NON-NLS-1$
+		if (buildXML != null && buildXML.exists() == true && buildErrorReporter.isCustomBuild() == true) {
+			IStatus warnFail = new Status(IStatus.WARNING, model.getPluginBase().getId(), PDEUIMessages.BuildPluginAction_WarningCustomBuildExists);
+			throw new CoreException(warnFail);
+		}
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 		AbstractScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
 		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 
-		IProject project = fManifestFile.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
 		String url = ClasspathHelper.getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
 		generator.setDevEntries(url);
@@ -46,7 +54,6 @@ public class BuildPluginAction extends BaseBuildAction {
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES, "true"); //$NON-NLS-1$
 		generator.setImmutableAntProperties(properties);
-		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (model != null && model.getPluginBase().getId() != null) {
 			generator.setBundles(new BundleDescription[] {model.getBundleDescription()});
 			generator.generate();
