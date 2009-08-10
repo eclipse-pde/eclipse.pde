@@ -123,4 +123,18 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		assertEquals(child2, result);
 	}
 	
+	//bug 285134
+	public void testSingleQuoteAttribute() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<extension point='org.eclipse.pde.ui.samples'><sample /></extension>");
+		setXMLContents(sb, LF);
+		load();
+
+		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+		assertEquals(extensions.length, 1);
+		assertEquals(extensions[0].getPoint(), "org.eclipse.pde.ui.samples");
+		assertEquals(extensions[0].getChildCount(), 1);
+		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
+	}
+	
 }

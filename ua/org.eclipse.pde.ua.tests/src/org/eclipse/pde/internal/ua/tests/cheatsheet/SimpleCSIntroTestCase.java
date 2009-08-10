@@ -218,4 +218,24 @@ public class SimpleCSIntroTestCase extends AbstractCheatSheetModelTestCase {
 		assertEquals(2, model.indexOfItem(item1));
 		assertEquals(0, model.indexOfItem(item2));
 	}
+	
+	//bug 285134
+	public void testSingleQuoteAttributes() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<intro></intro>");
+		buffer.append("<item ");
+		buffer.append(LF);
+		buffer.append("title='Item'>");
+		buffer.append("<description>");
+		buffer.append(DESCRIPTION);
+		buffer.append("</description>");
+		buffer.append(LF);
+		buffer.append("</item>");
+		setXMLContents(buffer, LF);
+		load();
+		
+		ISimpleCS model = fModel.getSimpleCS();
+		ISimpleCSItem item = model.getItems()[0];
+		assertEquals(item.getTitle(), "Item");
+	}
 }

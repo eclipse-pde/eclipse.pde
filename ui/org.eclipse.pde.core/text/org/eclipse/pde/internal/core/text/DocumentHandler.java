@@ -181,7 +181,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 
 	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException {
 		FindReplaceDocumentAdapter fFindReplaceAdapter = new FindReplaceDocumentAdapter(getDocument());
-		IRegion nameRegion = fFindReplaceAdapter.find(offset, name + "\\s*=\\s*\"", true, true, false, true); //$NON-NLS-1$
+		IRegion nameRegion = fFindReplaceAdapter.find(offset, name + "\\s*=\\s*[\"\']", true, true, false, true); //$NON-NLS-1$
 		if (nameRegion != null) {
 			if (getDocument().get(nameRegion.getOffset() + nameRegion.getLength(), value.length()).equals(value))
 				return new Region(nameRegion.getOffset(), nameRegion.getLength() + value.length() + 1);
