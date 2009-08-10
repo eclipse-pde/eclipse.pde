@@ -264,7 +264,12 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		Object[] checked = fTree.getCheckedElements();
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof String) {
-				arguments.add(checked[i]);
+				// If the argument contains a space, surround it in quotes so it is treated as a single argument
+				String arg = ((String) checked[i]).trim();
+				if (arg.indexOf(' ') > 0) {
+					arg = "\"" + arg + "\""; //$NON-NLS-1$//$NON-NLS-2$
+				}
+				arguments.add(arg);
 			}
 		}
 		fArguments = (String[]) arguments.toArray(new String[arguments.size()]);
