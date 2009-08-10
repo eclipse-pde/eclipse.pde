@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Muschel <smuschel@gmx.de> - bug 260549
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -15,8 +16,7 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -105,6 +105,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					validatePluginID(plugin, attr, isFragment);
 				} else if (name.equals("version")) { //$NON-NLS-1$
 					validateVersionAttribute(plugin, attr);
+					validateVersion(plugin, attr);
 				} else if (name.equals("fragment") || name.equals("unpack")) { //$NON-NLS-1$ //$NON-NLS-2$
 					validateBoolean(plugin, attr);
 				} else if (!name.equals("os") && !name.equals("ws") && !name.equals("nl") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -424,5 +425,30 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$			
 			report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 		}
+	}
+
+	/**
+	 * Validates that the version of the given plug-in is available in the registry.  Adds a
+	 * warning if the plug-in could not be found.
+	 * 
+	 * @param plugin xml element describing the plug-in to look for in the registry
+	 * @param attr set of element attributes 
+	 */
+	private void validateVersion(Element plugin, Attr attr) {
+		String id = plugin.getAttribute("id"); //$NON-NLS-1$
+		String version = plugin.getAttribute("version"); //$NON-NLS-1$
+		if (id.trim().length() == 0 || version.trim().length() == 0 || version.equals("0.0.0")) //$NON-NLS-1$
+			return;
+		ModelEntry entry = PluginRegistry.findEntry(id);
+		IPluginModelBase[] allModels = entry.getActiveModels();
+		for (int i = 0; i < allModels.length; i++) {
+			IPluginModelBase availablePlugin = allModels[i];
+			if (id.equals(availablePlugin.getPluginBase().getId())) {
+				if (version.equals(availablePlugin.getPluginBase().getVersion())) {
+					return;
+				}
+			}
+		}
+		report(NLS.bind(PDECoreMessages.Builders_Feature_mismatchPluginVersion, new String[] {version, id}), getLine(plugin, attr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
 	}
 }

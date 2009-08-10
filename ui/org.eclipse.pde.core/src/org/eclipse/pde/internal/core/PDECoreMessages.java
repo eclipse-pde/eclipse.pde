@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
- *     Simon Muschel <smuschel@gmx.de> - bug 215743
+ *     Simon Muschel <smuschel@gmx.de> - bugs 215743, 260549
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -114,6 +114,7 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Feature_patchedMatch;
 	public static String Builders_Feature_missingUnpackFalse;
 	public static String Builders_Feature_mismatchUnpackBundleShape;
+	public static String Builders_Feature_mismatchPluginVersion;
 	public static String Builders_Schema_compiling;
 	public static String Builders_Schema_compilingSchemas;
 	public static String Builders_Schema_removing;
