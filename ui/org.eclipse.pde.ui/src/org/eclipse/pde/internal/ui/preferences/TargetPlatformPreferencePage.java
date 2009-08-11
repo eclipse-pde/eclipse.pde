@@ -775,8 +775,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 							BundleInfo bundleInfo = bundles[index].getBundleInfo();
 							if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(bundleInfo.getSymbolicName())) {
 								Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());
-								// TODO Change to < after testing
-								if (platformOsgiVersion.compareTo(bundleVersion) > 0) {
+								if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
 									Display.getDefault().syncExec(new Runnable() {
 										public void run() {
 											MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);
