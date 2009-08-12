@@ -253,7 +253,7 @@ public class ProjectApiDescription extends ApiDescription {
 							fTimeStamp = resource.getModificationStamp();
 							try {
 								TagScanner.newScanner().scan(unit, ProjectApiDescription.this,
-									getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()));
+									getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
 							} catch (CoreException e) {
 								ApiPlugin.log(e.getStatus());
 							}

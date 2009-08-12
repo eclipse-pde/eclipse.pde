@@ -20,9 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
@@ -487,10 +488,12 @@ public class TagScanner {
 	 * @param container optional class file container containing the class file for the given source
 	 * 	that can be used to resolve method signatures if required (for tags on methods). If 
 	 * 	not provided (<code>null</code>), method signatures will be unresolved.
+	 * @param monitor
+	 * 
 	 * @throws CoreException
 	 */
-	public void scan(ICompilationUnit unit, IApiDescription description, IApiTypeContainer container) throws CoreException {
-		scan(new CompilationUnit(unit), description, container, unit.getJavaProject().getOptions(true));
+	public void scan(ICompilationUnit unit, IApiDescription description, IApiTypeContainer container, IProgressMonitor monitor) throws CoreException {
+		scan(new CompilationUnit(unit), description, container, unit.getJavaProject().getOptions(true), monitor);
 	}
 	
 	/**
@@ -504,10 +507,12 @@ public class TagScanner {
 	 * 	not provided (<code>null</code>), method signatures will be unresolved.
 	 * @param options a map of Java compiler options to use when creating the AST to scan
 	 *  or <code>null</code> if default options should be used 
+	 *  @param monitor
 	 * 
 	 * @throws CoreException 
 	 */
-	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map options) throws CoreException {
+	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map options, IProgressMonitor monitor) throws CoreException {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		InputStream inputStream = null;
 		try {
@@ -531,13 +536,14 @@ public class TagScanner {
 				}
 			}
 		}
+		Util.updateMonitor(localmonitor);
 		Map loptions = options;
 		if(loptions == null) {
 			loptions = JavaCore.getOptions();
 		}
 		loptions.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 		parser.setCompilerOptions(loptions);
-		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(new NullProgressMonitor());
+		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(localmonitor.newChild(1));
 		Visitor visitor = new Visitor(description, container);
 		cunit.accept(visitor);
 		if (visitor.getException() != null) {

@@ -363,7 +363,7 @@ public class ApiFileGenerationTask extends Task {
 					System.out.println("Unit name[" + i + "] : " + unit.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
-					tagScanner.scan(unit, apiDescription, classFileContainer, options);
+					tagScanner.scan(unit, apiDescription, classFileContainer, options, null);
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				} finally {
