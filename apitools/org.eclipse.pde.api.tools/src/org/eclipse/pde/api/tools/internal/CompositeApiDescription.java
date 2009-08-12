@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -42,9 +43,9 @@ public class CompositeApiDescription implements IApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
 	 */
-	public void accept(ApiDescriptionVisitor visitor) {
+	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
 		for (int i = 0; i < fDescriptions.length; i++) {
-			fDescriptions[i].accept(visitor);
+			fDescriptions[i].accept(visitor, monitor);
 		}
 	}
 

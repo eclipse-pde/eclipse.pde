@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
@@ -275,22 +276,24 @@ public class ApiDescription implements IApiDescription {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiManifest#visit(org.eclipse.pde.api.tools.ApiManifestVisitor)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void accept(ApiDescriptionVisitor visitor) {
-		visitChildren(visitor, fPackageMap);
+	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
+		visitChildren(visitor, fPackageMap, monitor);
 	}
 	/**
 	 * Visits all children nodes in the given children map.
 	 * 
 	 * @param visitor visitor to visit
 	 * @param childrenMap map of element name to manifest nodes
+	 * @param monitor
 	 */
-	protected void visitChildren(ApiDescriptionVisitor visitor, Map childrenMap) {
+	protected void visitChildren(ApiDescriptionVisitor visitor, Map childrenMap, IProgressMonitor monitor) {
 		List elements = new ArrayList(childrenMap.keySet());
 		Collections.sort(elements);
 		Iterator iterator = elements.iterator();
 		while (iterator.hasNext()) {
+			Util.updateMonitor(monitor);
 			IElementDescriptor element = (IElementDescriptor) iterator.next();
 			ManifestNode node = (ManifestNode) childrenMap.get(element);
 			visitNode(visitor, node);
@@ -356,7 +359,7 @@ public class ApiDescription implements IApiDescription {
 		IApiAnnotations desc = new ApiAnnotations(vis, node.restrictions);
 		boolean visitChildren = visitor.visitElement(node.element, desc);
 		if (visitChildren && !node.children.isEmpty()) {
-			visitChildren(visitor, node.children);
+			visitChildren(visitor, node.children, null);
 		}
 		visitor.endVisitElement(node.element, desc);
 	}

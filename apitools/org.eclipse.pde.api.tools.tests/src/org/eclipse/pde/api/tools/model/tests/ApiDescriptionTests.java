@@ -362,7 +362,7 @@ public class ApiDescriptionTests extends TestCase {
 			}
 		};
 		
-		component.getApiDescription().accept(visitor);
+		component.getApiDescription().accept(visitor, null);
 		
 		assertEquals("Visit incomplete", 0, visitOrder.size());
 		baseline.dispose();
@@ -377,7 +377,7 @@ public class ApiDescriptionTests extends TestCase {
 	 */
 	private String getApiDescriptionXML(IApiComponent apiComponent) throws CoreException {
 		ApiDescriptionXmlCreator xmlVisitor = new ApiDescriptionXmlCreator(apiComponent);
-		apiComponent.getApiDescription().accept(xmlVisitor);
+		apiComponent.getApiDescription().accept(xmlVisitor, null);
 		return xmlVisitor.getXML();
 	}
 	
@@ -439,7 +439,7 @@ public class ApiDescriptionTests extends TestCase {
 				super.endVisitElement(element, description);
 			}
 		};
-		settings.accept(visitor);
+		settings.accept(visitor, null);
 		
 		// now visit the restored version and compare order
 		visitor = new ApiDescriptionVisitor() {
@@ -467,7 +467,7 @@ public class ApiDescriptionTests extends TestCase {
 			}
 		};
 		
-		restored.accept(visitor);
+		restored.accept(visitor, null);
 		
 		assertEquals("Visit incomplete", 0, visitOrder.size());		
 	}
@@ -561,7 +561,7 @@ public class ApiDescriptionTests extends TestCase {
 			}
 		};
 		
-		manifest.accept(visitor);
+		manifest.accept(visitor, null);
 		
 		assertEquals("Visit incomplete", 0, visitOrder.size());
 	}
@@ -605,7 +605,7 @@ public class ApiDescriptionTests extends TestCase {
 		};
 		
 		IApiDescription manifest = buildManifest();
-		manifest.accept(visitor);
+		manifest.accept(visitor, null);
 		
 		assertEquals("Visit incomplete", 0, visitOrder.size());
 	}	

@@ -325,7 +325,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		FileUtils.copyFolder(output, componentDir);
 		// API Description
 		ApiDescriptionXmlCreator visitor = new ApiDescriptionXmlCreator(apiComponent);
-		apiComponent.getApiDescription().accept(visitor);
+		apiComponent.getApiDescription().accept(visitor, null);
 		String xml = visitor.getXML();
 		File desc = new File(componentDir, ".api_description");
 		desc.createNewFile();

@@ -502,7 +502,7 @@ public class ApiDescriptionProcessor {
 		annotateApiSettings(project, description, serializeComponentXml(componentxml));
 		//visit the types
 		DescriptionVisitor visitor = new DescriptionVisitor(project, description, collector);
-		description.accept(visitor);
+		description.accept(visitor, null);
 		IStatus status = visitor.getStatus();
 		if (!status.isOK()) {
 			throw new CoreException(status);

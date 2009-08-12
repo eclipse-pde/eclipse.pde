@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -332,10 +333,10 @@ public class ProjectApiDescription extends ApiDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
 	 */
-	public synchronized void accept(ApiDescriptionVisitor visitor) {
+	public synchronized void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
 		boolean completeVisit = true;
 		if (fInSynch) {
-			super.accept(visitor);
+			super.accept(visitor, monitor);
 		} else {
 			try {
 				IPackageFragment[] fragments = getLocalPackageFragments();
@@ -396,7 +397,7 @@ public class ProjectApiDescription extends ApiDescription {
 			if (visitor.visitElement(element, annotations)) {
 				// children
 				if (typeNode.children != null) {
-					visitChildren(visitor, typeNode.children);
+					visitChildren(visitor, typeNode.children, null);
 				}
 			}
 			visitor.endVisitElement(element, annotations);

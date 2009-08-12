@@ -283,7 +283,7 @@ public class ReferenceAnalyzer {
 	 */
 	public IApiProblem[] analyze(IApiComponent component, IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
 		// build problem detectors
-		IApiProblemDetector[] detectors = buildProblemDetectors(component);
+		IApiProblemDetector[] detectors = buildProblemDetectors(component, monitor);
 		// analyze
 		return analyze(scope, detectors, monitor);
 	}
@@ -292,19 +292,22 @@ public class ReferenceAnalyzer {
 	 * Builds problem detectors to use when analyzing the given component.
 	 * 
 	 * @param component component to be analyzed
+	 * @param monitor 
+	 * 
 	 * @return problem detectors
 	 */
-	private IApiProblemDetector[] buildProblemDetectors(IApiComponent component) {
+	private IApiProblemDetector[] buildProblemDetectors(IApiComponent component, IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[]{component});
 			final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component);
 			for (int i = 0; i < components.length; i++) {
+				Util.updateMonitor(monitor);
 				IApiComponent prereq = components[i];
 				if (!prereq.equals(component)) {
 					visitor.setOwningComponent(prereq);
 					try {
-						prereq.getApiDescription().accept(visitor);
+						prereq.getApiDescription().accept(visitor, monitor);
 					} catch (CoreException e) {
 						ApiPlugin.log(e.getStatus());
 					}
@@ -328,7 +331,7 @@ public class ReferenceAnalyzer {
 					return false;
 				}
 			};
-			component.getApiDescription().accept(nameVisitor);
+			component.getApiDescription().accept(nameVisitor, null);
 			List detectors = visitor.getProblemDetectors();
 			int size = detectors.size();
 			if (size == 0) return NO_PROBLEM_DETECTORS;

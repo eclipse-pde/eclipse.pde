@@ -66,7 +66,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 			proj.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
 			IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 			IApiComponent component = baseline.getApiComponent(proj.getName());
-			component.getApiDescription().accept(visitor);
+			component.getApiDescription().accept(visitor, null);
 		}
 		
 		// TEST
@@ -79,7 +79,7 @@ public class ApiDescriptionTests extends PerformanceTest {
 				
 			// ** Visit API description ***
 			startMeasuring();
-			component.getApiDescription().accept(visitor);
+			component.getApiDescription().accept(visitor, null);
 			stopMeasuring();
 		}
 		

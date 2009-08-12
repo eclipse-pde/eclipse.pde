@@ -378,7 +378,7 @@ public class ApiFileGenerationTask extends Task {
 		}
 		try {
 			ApiDescriptionXmlCreator xmlVisitor = new ApiDescriptionXmlCreator(this.projectName, this.projectName);
-			apiDescription.accept(xmlVisitor);
+			apiDescription.accept(xmlVisitor, null);
 			String xml = xmlVisitor.getXML();
 			Util.saveFile(apiDescriptionFile, xml);
 		} catch (CoreException e) {
