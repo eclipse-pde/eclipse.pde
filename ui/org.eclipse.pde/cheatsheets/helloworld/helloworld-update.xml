@@ -103,9 +103,9 @@
                skip="false"/>  
       <subitem label="Click the &quot;New Category&quot; button" 
                skip="false"/>  
-      <subitem label="Input &quot;Hello World!&quot; into the &quot;Name&quot; text box" 
+      <subitem label="Input &quot;Hello World!&quot; into the &quot;ID&quot; text box" 
                skip="false"/>
-      <subitem label="Input &quot;Hello World!&quot; into the &quot;Label&quot; text box" 
+      <subitem label="Input &quot;Hello World!&quot; into the &quot;Name&quot; text box" 
                skip="false"/>
       <subitem label="Click &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>  
