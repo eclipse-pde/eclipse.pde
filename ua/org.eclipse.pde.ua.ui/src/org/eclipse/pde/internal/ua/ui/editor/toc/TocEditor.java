@@ -57,8 +57,8 @@ import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 
 /**
- * Editor for table of contents xml files (for user assistance).  Provides a graphical way to
- * view and edit the xml files, as well as a source viewer.
+ * Editor for table of contents xml files (for user assistance). Provides a
+ * graphical way to view and edit the xml files, as well as a source viewer.
  */
 public class TocEditor extends MultiSourceEditor {
 
@@ -68,7 +68,9 @@ public class TocEditor extends MultiSourceEditor {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
 	protected String getEditorID() {
@@ -123,7 +125,8 @@ public class TocEditor extends MultiSourceEditor {
 
 	/**
 	 * Returns the <code>IShowInSource</code> for this section.
-	 * @return the <code>IShowInSource</code> 
+	 * 
+	 * @return the <code>IShowInSource</code>
 	 */
 	private IShowInSource getShowInSource() {
 		return new IShowInSource() {
@@ -168,7 +171,8 @@ public class TocEditor extends MultiSourceEditor {
 
 	/**
 	 * Returns the <code>IShowInTargetList</code> for this section.
-	 * @return the <code>IShowInTargetList</code> 
+	 * 
+	 * @return the <code>IShowInTargetList</code>
 	 */
 	private IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
@@ -178,21 +182,28 @@ public class TocEditor extends MultiSourceEditor {
 		};
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
 	 */
 	public String getContextIDForSaveAs() {
 		return TocInputContext.CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
 	 */
 	protected void addEditorPages() {
@@ -205,37 +216,59 @@ public class TocEditor extends MultiSourceEditor {
 		addSourcePage(TocInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
 	 */
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new TocFormOutlinePage(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager
+	 * ()
 	 */
 	protected InputContextManager createInputContextManager() {
 		return new TocInputContextManager(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts
+	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
+	 * org.eclipse.ui.IFileEditorInput)
 	 */
 	protected void createResourceContexts(InputContextManager contexts, IFileEditorInput input) {
 		contexts.putContext(input, new TocInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts
+	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
+	 * org.eclipse.ui.IStorageEditorInput)
 	 */
 	protected void createStorageContexts(InputContextManager contexts, IStorageEditorInput input) {
 		contexts.putContext(input, new TocInputContext(this, input, true));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts
+	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
+	 * org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
 	protected void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input) {
 		try {
@@ -247,43 +280,62 @@ public class TocEditor extends MultiSourceEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#editorContextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#editorContextAdded(org
+	 * .eclipse.pde.internal.ui.editor.context.InputContext)
 	 */
 	public void editorContextAdded(InputContext context) {
 		// Add the source page
 		addSourcePage(context.getId());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java
+	 * .lang.Object)
 	 */
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(TocInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.pde.internal.ui.editor.context.IInputContextListener#
+	 * contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
 	 */
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.pde.internal.ui.editor.context.IInputContextListener#
+	 * monitoredFileAdded(org.eclipse.core.resources.IFile)
 	 */
 	public void monitoredFileAdded(IFile monitoredFile) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.pde.internal.ui.editor.context.IInputContextListener#
+	 * monitoredFileRemoved(org.eclipse.core.resources.IFile)
 	 */
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getSelection()
 	 */
 	public ISelection getSelection() {
@@ -312,8 +364,13 @@ public class TocEditor extends MultiSourceEditor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.MultiSourceEditor#createSourcePage(org.eclipse.pde.internal.ui.editor.PDEFormEditor, java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.MultiSourceEditor#createSourcePage
+	 * (org.eclipse.pde.internal.ui.editor.PDEFormEditor, java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new TocSourcePage(editor, title, name);
@@ -411,11 +468,12 @@ public class TocEditor extends MultiSourceEditor {
 	 * .runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
+
 		TocModel model = (TocModel) getAggregateModel();
 		model.setMarkerRefreshNeeded(true);
-		model.reconciled(model.getDocument()); //model recon occurs async so we can proceed to save
-
 		super.doSave(monitor);
+		model.reconciled(model.getDocument()); // model recon occurs async so we can proceed to save
+
 	}
 
 	/*
@@ -424,7 +482,7 @@ public class TocEditor extends MultiSourceEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#dispose()
 	 */
 	public void dispose() {
-		//editor is closing, delete the markers
+		// editor is closing, delete the markers
 		TocMarkerManager.deleteMarkers((TocModel) getAggregateModel());
 		super.dispose();
 	}

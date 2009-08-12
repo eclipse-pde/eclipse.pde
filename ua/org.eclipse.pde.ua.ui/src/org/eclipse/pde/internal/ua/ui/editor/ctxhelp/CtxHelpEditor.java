@@ -360,9 +360,10 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	public void doSave(IProgressMonitor monitor) {
 		CtxHelpModel model = (CtxHelpModel) getAggregateModel();
 		model.setMarkerRefreshNeeded(true);
-		model.reconciled(model.getDocument()); //model recon occurs async so we can proceed to save
 
 		super.doSave(monitor);
+		model.reconciled(model.getDocument()); //model recon occurs async so we can proceed to save
+
 	}
 
 	/* (non-Javadoc)
