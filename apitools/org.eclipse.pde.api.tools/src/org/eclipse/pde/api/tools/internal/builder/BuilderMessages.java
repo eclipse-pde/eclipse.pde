@@ -26,8 +26,11 @@ public class BuilderMessages extends NLS {
 	public static String ApiProblemFactory_problem_message_not_found;
 	public static String CleaningAPIDescription;
 	public static String BaseApiAnalyzer_analyzing_api;
+	public static String BaseApiAnalyzer_checking_compat;
+	public static String BaseApiAnalyzer_checking_since_tags;
 	public static String BaseApiAnalyzer_comparing_api_profiles;
 	public static String BaseApiAnalyzer_more_version_problems;
+	public static String BaseApiAnalyzer_processing_deltas;
 	public static String BaseApiAnalyzer_scanning_0;
 	public static String BaseApiAnalyzer_validating_javadoc_tags;
 	public static String build_wrongFileFormat;

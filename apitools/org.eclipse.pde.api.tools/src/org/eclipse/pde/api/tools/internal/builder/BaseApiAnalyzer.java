@@ -31,7 +31,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
@@ -170,7 +169,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			final IBuildContext context,
 			IProgressMonitor monitor) {
 		try {
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6);
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 7);
 			fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
 			this.fPreferences = preferences;
@@ -233,41 +232,41 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							if(changedtypes[i] == null) {
 								continue;
 							}
-							checkCompatibility(changedtypes[i], reference, component);
-							updateMonitor(localMonitor);
+							checkCompatibility(changedtypes[i], reference, component, localMonitor.newChild(1));
+							Util.updateMonitor(localMonitor);
 						}
 					} else {
 						// store re-exported bundle into the build state
-						checkCompatibility(reference, component);
-						updateMonitor(localMonitor);
+						checkCompatibility(reference, component, localMonitor.newChild(1));
+						Util.updateMonitor(localMonitor);
 					}
 					this.fBuildState.setReexportedComponents(Util.getReexportedComponents(component));
 				} else {
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {component.getId(), baseline.getName()}));
-					checkCompatibility(null, component);
-					updateMonitor(localMonitor);
+					checkCompatibility(null, component, localMonitor.newChild(1));
+					Util.updateMonitor(localMonitor);
 				}
 				//version checks
 				checkApiComponentVersion(reference, component);
-				updateMonitor(localMonitor);
+				Util.updateMonitor(localMonitor);
 				checkfilters = true;
 			}
 			else {
 				//check default baseline
 				checkDefaultBaselineSet();
-				updateMonitor(localMonitor);
+				Util.updateMonitor(localMonitor);
 			}
 			//usage checks
 			checkApiUsage(bcontext, component, localMonitor.newChild(1));
-			updateMonitor(localMonitor);
+			Util.updateMonitor(localMonitor);
 			//tag validation
 			checkTagValidation(bcontext, component, localMonitor.newChild(1));
-			updateMonitor(localMonitor);
+			Util.updateMonitor(localMonitor);
 			if(checkfilters) {
 				//check for unused filters only if the scans have been done
 				checkUnusedProblemFilters(bcontext, component, localMonitor.newChild(1));
 			}
-			updateMonitor(localMonitor);
+			Util.updateMonitor(localMonitor);
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -289,7 +288,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if(DEBUG) {
 				System.out.println("Ignoring unused problem filter check"); //$NON-NLS-1$
 			}
-			updateMonitor(monitor, 1);
+			Util.updateMonitor(monitor, 1);
 			return;
 		}
 		try {
@@ -326,7 +325,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			//ignore, just don't create problems
 		}
 		finally {
-			updateMonitor(monitor, 1);
+			Util.updateMonitor(monitor, 1);
 		}
 	}
 
@@ -691,7 +690,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typenames[i]));
 					processType(typenames[i]);
-					updateMonitor(localMonitor);
+					Util.updateMonitor(localMonitor);
 				}
 			}
 			else {
@@ -701,7 +700,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						if(roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 							localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, roots[i].getPath().toOSString()));
 							scanSource(roots[i], localMonitor.newChild(1));
-							updateMonitor(localMonitor);
+							Util.updateMonitor(localMonitor);
 						}
 					}
 				}
@@ -709,7 +708,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					ApiPlugin.log(jme);
 				}
 			}
-			updateMonitor(localMonitor);
+			Util.updateMonitor(localMonitor);
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -735,21 +734,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IJavaElement[] children = parent.getChildren();
 					for (int i = 0; i < children.length; i++) {
 						scanSource(children[i], monitor);
-						updateMonitor(monitor, 0);
+						Util.updateMonitor(monitor, 0);
 					}
 					break;
 				}
 				case IJavaElement.COMPILATION_UNIT: {
 					ICompilationUnit unit = (ICompilationUnit) element;
 					processType(unit);
-					updateMonitor(monitor, 0);
+					Util.updateMonitor(monitor, 0);
 					break;
 				}
 			}
 		}
 		finally {
 			if(monitor != null) {
-				updateMonitor(monitor);
+				Util.updateMonitor(monitor);
 				monitor.done();
 			}
 		}
@@ -831,7 +830,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			long start = System.currentTimeMillis();
 			IApiProblem[] illegal = analyzer.analyze(component, scope, monitor);
-			updateMonitor(localMonitor);
+			Util.updateMonitor(localMonitor);
 			long end = System.currentTimeMillis();
 			if (DEBUG) {
 				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -839,7 +838,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			for (int i = 0; i < illegal.length; i++) {
 				addProblem(illegal[i]);
 			}
-			updateMonitor(localMonitor);
+			Util.updateMonitor(localMonitor);
 		} 
 		catch (CoreException ce) {
 			if(DEBUG) {
@@ -858,8 +857,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param typeName the type to check in each component
 	 * @param reference 
 	 * @param component
+	 * @param monitor
 	 */
-	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component) throws CoreException {
+	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component, final IProgressMonitor monitor) throws CoreException {
 		String id = component.getId();
 		if (DEBUG) {
 			System.out.println("comparing profiles ["+reference.getId()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -874,6 +874,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
+		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_checking_compat, 4);
 		IDelta delta = null;
 		IApiComponent provider = null;
 		if (classFile == null) {
@@ -899,6 +900,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} else {
 			provider = component;
 		}
+		Util.updateMonitor(localmonitor, 1);
 		if (classFile == null) {
 			// this indicates a removed type
 			// we should try to get the class file from the reference
@@ -945,11 +947,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					ApiPlugin.log(e);
 				}
 			}
+			Util.updateMonitor(localmonitor, 1);
 		} else {
 			fBuildState.cleanup(typeName);
 			long time = System.currentTimeMillis();
 			try {
-				delta = ApiComparator.compare(classFile, reference, provider, reference.getBaseline(), provider.getBaseline(), VisibilityModifiers.API);
+				delta = ApiComparator.compare(classFile, reference, provider, reference.getBaseline(), provider.getBaseline(), VisibilityModifiers.API, localmonitor.newChild(1));
 			} catch(Exception e) {
 				ApiPlugin.log(e);
 			} finally {
@@ -964,14 +967,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		if (delta != ApiComparator.NO_DELTA) {
 			List allDeltas = Util.collectAllDeltas(delta);
+			localmonitor.setTaskName(BuilderMessages.BaseApiAnalyzer_processing_deltas);
 			for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
 				processDelta((IDelta) iterator.next(), reference, component);
 			}
+			Util.updateMonitor(localmonitor, 1);
 			if (!fPendingDeltaInfos.isEmpty()) {
+				localmonitor.setTaskName(BuilderMessages.BaseApiAnalyzer_checking_since_tags);
 				for (Iterator iterator = fPendingDeltaInfos.iterator(); iterator.hasNext();) {
 					checkSinceTags((Delta) iterator.next(), component);
 				}
 			}
+			Util.updateMonitor(localmonitor, 1);
+		}
+		else {
+			Util.updateMonitor(localmonitor, 2);
 		}
 	}
 	/**
@@ -980,9 +990,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param jproject
 	 * @param reference
 	 * @param component
+	 * @param monitor
 	 */
-	private void checkCompatibility(final IApiComponent reference, final IApiComponent component) throws CoreException {
+	private void checkCompatibility(final IApiComponent reference, final IApiComponent component, final IProgressMonitor monitor) throws CoreException {
 		long time = System.currentTimeMillis();
+		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_checking_compat, 3);
 		IDelta delta = null;
 		if (reference == null) {
 			delta =
@@ -994,11 +1006,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					null,
 					component.getId(),
 					component.getId());
+			Util.updateMonitor(localmonitor, 5);
 		} else {
 			try {
-				delta = ApiComparator.compare(reference, component, VisibilityModifiers.API);
-			} catch(Exception e) {
-				ApiPlugin.log(e);
+				delta = ApiComparator.compare(reference, component, VisibilityModifiers.API, localmonitor.newChild(1));
 			} finally {
 				if (DEBUG) {
 					System.out.println("Time spent for " + component.getId() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1012,15 +1023,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (delta != ApiComparator.NO_DELTA) {
 			List allDeltas = Util.collectAllDeltas(delta);
 			if (allDeltas.size() != 0) {
+				localmonitor.setTaskName(BuilderMessages.BaseApiAnalyzer_processing_deltas);
 				for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
 					processDelta((IDelta) iterator.next(), reference, component);
 				}
+				Util.updateMonitor(localmonitor, 1);
+				localmonitor.setTaskName(BuilderMessages.BaseApiAnalyzer_checking_since_tags);
 				if (!fPendingDeltaInfos.isEmpty()) {
 					for (Iterator iterator = fPendingDeltaInfos.iterator(); iterator.hasNext();) {
 						checkSinceTags((Delta) iterator.next(), component);
 					}
 				}
+				Util.updateMonitor(localmonitor, 1);
 			}
+		}
+		else {
+			Util.updateMonitor(localmonitor, 2);
 		}
 	}
 	
@@ -1796,31 +1814,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				IElementDescriptor.RESOURCE,
 				IApiProblem.API_BASELINE_MISSING);
 		addProblem(problem);
-	}
-	
-	/**
-	 * Updates the work done on the monitor by 1 tick and polls to see if the monitor has been cancelled
-	 * @param monitor
-	 * @throws OperationCanceledException if the monitor has been cancelled
-	 */
-	private void updateMonitor(IProgressMonitor monitor) throws OperationCanceledException {
-		updateMonitor(monitor, 1);
-	}
-	
-	/**
-	 * Updates the work done on the monitor by 1 tick and polls to see if the monitor has been cancelled
-	 * @param monitor
-	 * @param work
-	 * @throws OperationCanceledException if the monitor has been cancelled
-	 */
-	private void updateMonitor(IProgressMonitor monitor, int work) throws OperationCanceledException {
-		if(monitor != null) {
-			monitor.worked(work);
-			monitor.setTaskName(""); //$NON-NLS-1$
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-		}
 	}
 	
 	/**

@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -297,7 +298,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}	
 			}
 			Util.updateMonitor(monitor, 0);
-		} catch(CoreException e) {
+		
+		}
+		catch (OperationCanceledException oce) {
+			//do nothing, just end and clean up
+		}
+		catch(CoreException e) {
 			IStatus status = e.getStatus();
 			if (status == null || status.getCode() != ApiPlugin.REPORT_BASELINE_IS_DISPOSED) {
 				throw e;

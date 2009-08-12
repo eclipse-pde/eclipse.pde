@@ -12,18 +12,17 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.util.Comparator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
 
 /**
  * Default implementation of an {@link IApiSearchRequestor} to use with the
@@ -48,7 +47,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * The search scope for this requestor
 	 */
-	private IApiSearchScope fScope = null;
+	private IApiScope fScope = null;
 	
 	/**
 	 * Default comparator that orders {@link IApiComponent} by their ID 
@@ -107,25 +106,23 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 				if(component.equals(reference.getMember().getApiComponent())) {
 					return false;
 				}
-				if(fSearchMask > 0) {
-					if(includesAPI() && includesInternal()) {
+				if(includesAPI() && includesInternal()) {
+					return true;
+				}
+				IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
+				if(annots != null) {
+					int vis = annots.getVisibility();
+					if(VisibilityModifiers.isAPI(vis) && includesAPI()) {
 						return true;
 					}
-					IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
-					if(annots != null) {
-						int vis = annots.getVisibility();
-						if(VisibilityModifiers.isAPI(vis) && includesAPI()) {
-							return true;
-						}
-						else if(VisibilityModifiers.isPrivate(vis) && includesInternal()) {
-							return true;
-						}
+					else if(VisibilityModifiers.isPrivate(vis) && includesInternal()) {
+						return true;
 					}
 				}
 			}
 		}
 		catch(CoreException ce) {
-			ApiPlugin.log(ce);
+			//ApiPlugin.log(ce);
 		}
 		return false;
 	}
@@ -144,18 +141,17 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 */
 	private void prepareScope(IApiElement[] elements) {
 		if(elements != null) {
-			TreeSet comps = new TreeSet(componentsorter);
+			fScope = new ApiScope();
 			for(int i = 0; i < elements.length; i++) {
-				comps.add(elements[i].getApiComponent());
+				fScope.addElement(elements[i].getApiComponent());
 			}
-			fScope = new ApiUseSearchScope((IApiComponent[]) comps.toArray(new IApiComponent[comps.size()]));
 		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getScope()
 	 */
-	public IApiSearchScope getScope() {
+	public IApiScope getScope() {
 		return fScope;
 	}
 	

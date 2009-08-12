@@ -47,7 +47,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test1() {
 		deployBundles("test1");
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -68,7 +68,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test2() {
 		deployBundles("test2");
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -89,7 +89,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test3() {
 		deployBundles("test3");
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -105,7 +105,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test4() {
 		deployBundles("test4");
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -131,7 +131,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test5() {
 		deployBundles("test5");
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -159,7 +159,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	public void test6() {
 		deployBundles("test6");
 		try {
-			ApiComparator.compare(getBeforeState(), null);
+			ApiComparator.compare(getBeforeState(), null, VisibilityModifiers.ALL_VISIBILITIES, false, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
@@ -167,12 +167,12 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	}
 	
 	/**
-	 * Test null profile
+	 * Test null baseline
 	 */
 	public void test7() {
 		deployBundles("test7");
 		try {
-			ApiComparator.compare(null, getAfterState());
+			ApiComparator.compare((IApiBaseline)null, getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
@@ -189,7 +189,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IApiComponent referenceComponent = beforeState.getApiComponent("deltatest1");
 		IApiComponent component = afterState.getApiComponent("deltatest1");
 
-		IDelta delta = ApiComparator.compare(null, component, beforeState, afterState);
+		IDelta delta = ApiComparator.compare(null, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -199,7 +199,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_PROFILE_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 
-		delta = ApiComparator.compare(referenceComponent, null, beforeState, afterState);
+		delta = ApiComparator.compare(referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -209,7 +209,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_PROFILE_ELEMENT_TYPE, child.getElementType());
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 
-		delta = ApiComparator.compare(null, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+		delta = ApiComparator.compare(null, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -219,7 +219,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.API_PROFILE_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Is compatible", DeltaProcessor.isCompatible(child));
 
-		delta = ApiComparator.compare(referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+		delta = ApiComparator.compare(referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -230,40 +230,40 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
 
 		try {
-			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
-			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		
 		try {
-			ApiComparator.compare(referenceComponent, component, beforeState, null);
+			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
-			ApiComparator.compare(referenceComponent, component, null, afterState);
+			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
-			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
-			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
@@ -292,124 +292,124 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertNotNull("No class file", referenceClassFile);
 
 		try {
-			ApiComparator.compare(null, classFile, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(null, classFile, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
-			ApiComparator.compare(classFile, null, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(classFile, null, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
-			ApiComparator.compare(null, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(null, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		
 		try {
-			ApiComparator.compare(referenceClassFile, null, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceClassFile, null, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
-		delta = ApiComparator.compare(classFile, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+		delta = ApiComparator.compare(classFile, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
 
 		try {
-			ApiComparator.compare(null, classFile, referenceComponent, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(null, classFile, referenceComponent, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
-			ApiComparator.compare(referenceClassFile, classFile, null, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceClassFile, classFile, null, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
-			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
-			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
-			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
-		delta = ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+		delta = ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
 
-		delta = ApiComparator.compare(beforeState, afterState, true);
+		delta = ApiComparator.compare(beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, true, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
 
-		delta = ApiComparator.compare(beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+		delta = ApiComparator.compare(beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, true, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
 
-		delta = ApiComparator.compare(referenceComponent, component, VisibilityModifiers.ALL_VISIBILITIES);
-		assertNotNull("No delta", delta);
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
-
-		try {
-			ApiComparator.compare((IApiComponent) null, beforeState,VisibilityModifiers.ALL_VISIBILITIES, true);
-			assertFalse("Should not be reached", true);
-		} catch (IllegalArgumentException e) {
-			// ignore
-		}
-
-		try {
-			ApiComparator.compare(component, null,VisibilityModifiers.ALL_VISIBILITIES, true);
-			assertFalse("Should not be reached", true);
-		} catch (IllegalArgumentException e) {
-			// ignore
-		}
-
-		delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.ALL_VISIBILITIES, true);
+		delta = ApiComparator.compare(referenceComponent, component, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
 
 		try {
-			ApiComparator.compare(null, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare((IApiComponent) null, beforeState,VisibilityModifiers.ALL_VISIBILITIES, true, null);
+			assertFalse("Should not be reached", true);
+		} catch (IllegalArgumentException e) {
+			// ignore
+		}
+
+		try {
+			ApiComparator.compare(component, null,VisibilityModifiers.ALL_VISIBILITIES, true, null);
+			assertFalse("Should not be reached", true);
+		} catch (IllegalArgumentException e) {
+			// ignore
+		}
+
+		delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.ALL_VISIBILITIES, true, null);
+		assertNotNull("No delta", delta);
+		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
+
+		try {
+			ApiComparator.compare(null, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
-			ApiComparator.compare(classFile, component, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(classFile, component, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
-			ApiComparator.compare(classFile, component, referenceComponent, null, afterState, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(classFile, component, referenceComponent, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
-			ApiComparator.compare(classFile, component, referenceComponent, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES);
+			ApiComparator.compare(classFile, component, referenceComponent, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
 			assertFalse("Should not be reached", true);
 		} catch (IllegalArgumentException e) {
 			// ignore
@@ -421,7 +421,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test9() {
 		deployBundles("test9");
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState());
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 3, allLeavesDeltas.length);
@@ -446,7 +446,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	 */
 	public void test10() {
 		deployBundles("test10");
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false);
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -479,7 +479,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 			// ignore
 		}
 		assertNotNull("No p.X2", classFile);
-		IDelta delta = ApiComparator.compare(classFile, refApiComponent, apiComponent, beforeState, afterState, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(classFile, refApiComponent, apiComponent, beforeState, afterState, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA);
 	}
@@ -494,7 +494,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
 		assertNotNull("No api component", refApiComponent);
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false);
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -515,7 +515,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
 		assertNotNull("No api component", refApiComponent);
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false);
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -536,7 +536,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertNotNull("No api component", apiComponent);
 		IApiComponent refApiComponent = beforeState.getApiComponent("deltatest1");
 		assertNotNull("No api component", refApiComponent);
-		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false);
+		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -556,7 +556,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IApiBaseline afterState = getAfterState();
 		IApiComponent component = afterState.getApiComponent("deltatest");
 
-		IDelta delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.API, false);
+		IDelta delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta);
 		assertFalse("Equals to NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
@@ -570,7 +570,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		IApiBaseline afterState = getAfterState();
 		IApiComponent component = afterState.getApiComponent("deltatest");
 
-		IDelta delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.API, true);
+		IDelta delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.API, true, null);
 		assertNotNull("No delta", delta);
 		assertFalse("Equals to NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}

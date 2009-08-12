@@ -88,7 +88,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			time = System.currentTimeMillis();
 		}
 		try {
-			delta = ApiComparator.compare(referenceBaseline, currentBaseline, VisibilityModifiers.API, true);
+			delta = ApiComparator.compare(referenceBaseline, currentBaseline, VisibilityModifiers.API, true, null);
 		} finally {
 			if (this.debug) {
 				System.out.println("API freeze check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$

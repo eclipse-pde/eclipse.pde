@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
@@ -48,8 +48,19 @@ public class ApiComparator {
 	 */
 	static boolean DEBUG = Util.DEBUG;
 
+	/**
+	 * Default empty delta
+	 */
 	public static final IDelta NO_DELTA = new Delta();
 	
+	/**
+	 * Reports a delta for a API component version change
+	 * @param apiComponent2
+	 * @param id
+	 * @param apiComponentVersion
+	 * @param apiComponentVersion2
+	 * @param globalDelta
+	 */
 	private static void checkBundleVersionChanges(IApiComponent apiComponent2, String id, String apiComponentVersion, String apiComponentVersion2, Delta globalDelta) {
 		Version version = null;
 		try {
@@ -104,65 +115,13 @@ public class ApiComparator {
 	}
 
 	/**
-	 * Returns a delta that corresponds to the comparison of the two given API baselines.
-	 * Nested API components with the same versions are not compared.
-	 * <p>Equivalent to: compare(baseline, baseline2, false);</p>
-	 * 
-	 * @param referenceBaseline the given API baseline which is the reference
-	 * @param baseline the given API baseline to compare with
-	 *
-	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
-	 * @throws IllegalArgumentException if one of the two baselines is null
-	 */
-	public static IDelta compare(
-			final IApiBaseline referenceBaseline,
-			final IApiBaseline baseline) {
-		return compare(referenceBaseline, baseline, VisibilityModifiers.ALL_VISIBILITIES, false);
-	}
-
-	/**
-	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
-	 * 
-	 * @param referenceBaseline the given API baseline which is the reference
-	 * @param baseline the given API baseline to compare with
-	 * @param force a flag to force the comparison of nested API components with the same versions 
-	 *
-	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
-	 * @throws IllegalArgumentException if one of the two baselines is null
-	 */
-	public static IDelta compare(
-			final IApiBaseline referenceBaseline,
-			final IApiBaseline baseline,
-			final boolean force) {
-		return compare(referenceBaseline, baseline, VisibilityModifiers.ALL_VISIBILITIES, force);
-	}
-
-	/**
-	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
-	 * Nested API components with the same versions are not compared.
-	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, false);</p>
-	 * 
-	 * @param referenceBaseline the given API baseline which is the reference
-	 * @param baseline the given API baseline to compare with
-	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 *
-	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
-	 * @throws IllegalArgumentException if one of the two baselines is null
-	 */
-	public static IDelta compare(
-			final IApiBaseline referenceBaseline,
-			final IApiBaseline baseline,
-			final int visibilityModifiers) {
-		return compare(referenceBaseline, baseline, visibilityModifiers, false);
-	}
-
-	/**
 	 * Returns a delta that corresponds to the difference between the given baseline and the reference.
 	 * 
 	 * @param referenceBaseline the given API baseline which is used as the reference
 	 * @param baseline the given API baseline to compare with
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 * @param force a flag to force the comparison of nested API components with the same versions 
+	 * @param monitor
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @throws IllegalArgumentException if one of the two baselines is null
@@ -171,7 +130,9 @@ public class ApiComparator {
 			final IApiBaseline referenceBaseline,
 			final IApiBaseline baseline,
 			final int visibilityModifiers,
-			final boolean force) {
+			final boolean force, 
+			final IProgressMonitor monitor) {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
 		try {
 			if (referenceBaseline == null || baseline == null) {
 				throw new IllegalArgumentException("None of the baselines must be null"); //$NON-NLS-1$
@@ -181,6 +142,7 @@ public class ApiComparator {
 			Set apiComponentsIds = new HashSet();
 			final Delta globalDelta = new Delta();
 			for (int i = 0, max = apiComponents.length; i < max; i++) {
+				Util.updateMonitor(localmonitor);
 				IApiComponent apiComponent = apiComponents[i];
 				if (!apiComponent.isSystemComponent()) {
 					String id = apiComponent.getId();
@@ -206,7 +168,7 @@ public class ApiComparator {
 								|| force) {
 							long time = System.currentTimeMillis();
 							try {
-								delta = compare(apiComponent, apiComponent2, referenceBaseline, baseline, visibilityModifiers);
+								delta = compare(apiComponent, apiComponent2, referenceBaseline, baseline, visibilityModifiers, localmonitor.newChild(1));
 							} finally {
 								if (DEBUG) {
 									System.out.println("Time spent for " + id+ " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -219,7 +181,9 @@ public class ApiComparator {
 					}
 				}
 			}
+			Util.updateMonitor(localmonitor, 1);
 			for (int i = 0, max = apiComponents2.length; i < max; i++) {
+				Util.updateMonitor(localmonitor);
 				IApiComponent apiComponent = apiComponents2[i];
 				if (!apiComponent.isSystemComponent()) {
 					String id = apiComponent.getId();
@@ -241,6 +205,9 @@ public class ApiComparator {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
+		finally {
+			localmonitor.done();
+		}
 		return null;
 	}
 
@@ -251,6 +218,7 @@ public class ApiComparator {
 	 * @param referenceBaseline the given API baseline which is used as the reference
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
 	 * @param force a flag to force the comparison of nested API components with the same versions 
+	 * @param monitor
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @exception IllegalArgumentException if:<ul>
@@ -262,8 +230,9 @@ public class ApiComparator {
 			final IApiComponent component,
 			final IApiBaseline referenceBaseline,
 			final int visibilityModifiers,
-			final boolean force) {
-		
+			final boolean force, 
+			final IProgressMonitor monitor) {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
 		try {
 			if (component == null) {
 				throw new IllegalArgumentException("The composent cannot be null"); //$NON-NLS-1$
@@ -271,6 +240,7 @@ public class ApiComparator {
 			if (referenceBaseline == null) {
 				throw new IllegalArgumentException("The reference baseline cannot be null"); //$NON-NLS-1$
 			}
+			Util.updateMonitor(localmonitor, 1);
 			IDelta delta = null;
 			if (!component.isSystemComponent()) {
 				String id = component.getId();
@@ -291,7 +261,7 @@ public class ApiComparator {
 							|| force) {
 						long time = System.currentTimeMillis();
 						try {
-							delta = compare(apiComponent2, component, visibilityModifiers);
+							delta = compare(apiComponent2, component, visibilityModifiers, localmonitor.newChild(1));
 						} finally {
 							if (DEBUG) {
 								System.out.println("Time spent for " + id+ " " + component.getVersion() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -307,32 +277,12 @@ public class ApiComparator {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
+		finally {
+			localmonitor.done();
+		}
 		return null;
 	}
 
-	/**
-	 * Returns a delta that corresponds to the comparison of the two given API components.
-	 * The two components are compared even if their versions are identical.
-	 * 
-	 * @param referenceComponent the given API component from which the given class file is coming from
-	 * @param component2 the given API component to compare with
-	 * @param referenceBaseline the given API baseline from which the given component <code>component</code> is coming from
-	 * @param baseline the given API baseline from which the given component <code>component2</code> is coming from
-	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 *
-	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
-	 * @exception IllegalArgumentException if:<ul>
-	 * <li>both given components are null</li>
-	 * <li>one of the baselines is null</li>
-	 * </ul>
-	 */
-	public static IDelta compare(
-			final IApiComponent referenceComponent,
-			final IApiComponent component2,
-			final IApiBaseline referenceBaseline,
-			final IApiBaseline baseline) {
-		return compare(referenceComponent, component2, referenceBaseline, baseline, VisibilityModifiers.ALL_VISIBILITIES);
-	}
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API components.
 	 * The two components are compared even if their versions are identical.
@@ -342,6 +292,7 @@ public class ApiComparator {
 	 * @param referenceBaseline the given API baseline from which the given component <code>component</code> is coming from
 	 * @param baseline the given API baseline from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
+	 * @param monitor
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @exception IllegalArgumentException if:<ul>
@@ -354,9 +305,10 @@ public class ApiComparator {
 			final IApiComponent component2,
 			final IApiBaseline referenceBaseline,
 			final IApiBaseline baseline,
-			final int visibilityModifiers) {
+			final int visibilityModifiers, 
+			final IProgressMonitor monitor) {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, 3);
 		try {
-		
 			if (referenceComponent == null) {
 				if (component2 == null) {
 					throw new IllegalArgumentException("Both components cannot be null"); //$NON-NLS-1$
@@ -380,6 +332,7 @@ public class ApiComparator {
 						referenceComponentId,
 						Util.getComponentVersionsId(referenceComponent));
 			}
+			Util.updateMonitor(localmonitor, 1);
 			if (referenceBaseline == null || baseline == null) {
 				throw new IllegalArgumentException("The baselines cannot be null"); //$NON-NLS-1$
 			}
@@ -389,8 +342,9 @@ public class ApiComparator {
 			// check the EE first
 			Set referenceEEs = Util.convertAsSet(referenceComponent.getExecutionEnvironments());
 			Set componentsEEs = Util.convertAsSet(component2.getExecutionEnvironments());
-			
+			Util.updateMonitor(localmonitor, 1);
 			for (Iterator iterator = referenceEEs.iterator(); iterator.hasNext(); ) {
+				Util.updateMonitor(localmonitor);
 				String currentEE = (String) iterator.next();
 				if (!componentsEEs.remove(currentEE)) {
 					globalDelta.add(
@@ -408,6 +362,7 @@ public class ApiComparator {
 				}
 			}
 			for (Iterator iterator = componentsEEs.iterator(); iterator.hasNext(); ) {
+				Util.updateMonitor(localmonitor);
 				String currentEE = (String) iterator.next();
 				globalDelta.add(
 						new Delta(
@@ -422,12 +377,16 @@ public class ApiComparator {
 								referenceComponentId,
 								new String[] { currentEE, Util.getComponentVersionsId(referenceComponent)}));
 			}
-			return internalCompare(referenceComponent, component2, referenceBaseline, baseline, visibilityModifiers, globalDelta);
+			return internalCompare(referenceComponent, component2, referenceBaseline, baseline, visibilityModifiers, globalDelta, localmonitor.newChild(1));
 		} catch(CoreException e) {
 			// null means an error case
 			return null;
 		}
+		finally {
+			localmonitor.done();
+		}
 	}
+
 	/**
 	 * Returns a delta that corresponds to the difference between the given component and the given reference component.
 	 * The given component cannot be null.
@@ -435,22 +394,24 @@ public class ApiComparator {
 	 * @param referenceComponent the given API component that is used as the reference
 	 * @param component the given component to compare with
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 * @param force a flag to force the comparison of nested API components with the same versions 
+	 * @param force a flag to force the comparison of nested API components with the same versions
+	 * @param monitor 
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 */
 	public static IDelta compare(
 			final IApiComponent referenceComponent,
 			final IApiComponent component,
-			final int visibilityModifiers) {
-
+			final int visibilityModifiers, 
+			final IProgressMonitor monitor) {
 		try {
-			return compare(referenceComponent, component, referenceComponent == null ? null : referenceComponent.getBaseline(), component.getBaseline(), visibilityModifiers);
+			return compare(referenceComponent, component, referenceComponent == null ? null : referenceComponent.getBaseline(), component.getBaseline(), visibilityModifiers, monitor);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
 		return null;
 	}
+
 	/**
 	 * Returns a delta that corresponds to the comparison of the given class file with the reference. 
 	 * 
@@ -460,6 +421,7 @@ public class ApiComparator {
 	 * @param referenceBaseline the given API baseline from which the given component <code>component</code> is coming from
 	 * @param baseline the given API baseline from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
+	 * @param monitor
 	 *
 	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
 	 * @exception IllegalArgumentException if:<ul>
@@ -474,7 +436,8 @@ public class ApiComparator {
 			final IApiComponent component2,
 			final IApiBaseline referenceBaseline,
 			final IApiBaseline baseline,
-			final int visibilityModifiers) {
+			final int visibilityModifiers, 
+			final IProgressMonitor monitor) {
 		
 		if (typeRoot2 == null) {
 			throw new IllegalArgumentException("The given class file is null"); //$NON-NLS-1$
@@ -485,7 +448,7 @@ public class ApiComparator {
 		if (referenceBaseline == null || baseline == null) {
 			throw new IllegalArgumentException("One of the given baselines is null"); //$NON-NLS-1$
 		}
-
+		SubMonitor localmonitor = SubMonitor.convert(monitor, 6);
 		try {
 			IApiType typeDescriptor2 = typeRoot2.getStructure();
 			if (typeDescriptor2.isMemberType() || typeDescriptor2.isAnonymous() || typeDescriptor2.isLocal()) {
@@ -506,15 +469,17 @@ public class ApiComparator {
 			if (elementDescription2 != null) {
 				visibility = elementDescription2.getVisibility();
 			}
+			Util.updateMonitor(localmonitor, 1);
 			final IApiDescription referenceApiDescription = component.getApiDescription();
 			IApiAnnotations refElementDescription = referenceApiDescription.resolveAnnotations(typeDescriptor2.getHandle());
 			int refVisibility = 0;
 			if (refElementDescription != null) {
 				refVisibility = refElementDescription.getVisibility();
 			}
+			Util.updateMonitor(localmonitor, 1);
 			String deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 			if (typeRoot == null) {
-				if (isAPI(visibility, typeDescriptor2)) {
+				if (Util.isAPI(visibility, typeDescriptor2)) {
 					return new Delta(
 							deltaComponentID,
 							IDelta.API_COMPONENT_ELEMENT_TYPE,
@@ -529,13 +494,14 @@ public class ApiComparator {
 				}
 				return NO_DELTA;
 			}
+			Util.updateMonitor(localmonitor, 1);
 			IApiType typeDescriptor = typeRoot.getStructure();
 			if ((visibility & visibilityModifiers) == 0) {
 				if ((refVisibility & visibilityModifiers) == 0) {
 					// no delta
 					return NO_DELTA;
 				}
-				if (isAPI(refVisibility, typeDescriptor)) {
+				if (Util.isAPI(refVisibility, typeDescriptor)) {
 					return new Delta(
 							deltaComponentID,
 							IDelta.API_COMPONENT_ELEMENT_TYPE,
@@ -548,8 +514,8 @@ public class ApiComparator {
 							typeName,
 							new String[] { typeName, Util.getComponentVersionsId(component2)});
 				}
-			} else if (!isAPI(refVisibility, typeDescriptor)
-					&& isAPI(visibility, typeDescriptor2)) {
+			} else if (!Util.isAPI(refVisibility, typeDescriptor)
+					&& Util.isAPI(visibility, typeDescriptor2)) {
 				return new Delta(
 						deltaComponentID,
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
@@ -562,6 +528,7 @@ public class ApiComparator {
 						typeName,
 						new String[] { typeName, Util.getComponentVersionsId(component2)});
 			}
+			Util.updateMonitor(localmonitor, 1);
 			if (visibilityModifiers == VisibilityModifiers.API) {
 				// if the visibility is API, we only consider public and protected types
 				if (Util.isDefault(typeDescriptor2.getModifiers())
@@ -585,8 +552,9 @@ public class ApiComparator {
 					}
 				}
 			}
+			Util.updateMonitor(localmonitor, 1);
 			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, component2, referenceBaseline, baseline, visibilityModifiers);
-			IDelta delta = comparator.getDelta();
+			IDelta delta = comparator.getDelta(localmonitor.newChild(1));
 			if (DEBUG) {
 				IStatus status = comparator.getStatus();
 				if(status != null) {
@@ -596,6 +564,9 @@ public class ApiComparator {
 			return delta;
 		} catch (CoreException e) {
 			return null;
+		}
+		finally {
+			localmonitor.done();
 		}
 	}
 
@@ -609,6 +580,7 @@ public class ApiComparator {
 	 * @param referenceBaseline the given API baseline from which the given component <code>component</code> is coming from
 	 * @param baseline the given API baseline from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
+	 * @param monitor
 	 *
 	 * @return a delta, an empty delta if no difference is found or <code>null</code> if the delta detection failed
 	 * @exception IllegalArgumentException if:<ul>
@@ -623,8 +595,8 @@ public class ApiComparator {
 			final IApiComponent component2,
 			final IApiBaseline referenceBaseline,
 			final IApiBaseline baseline,
-			final int visibilityModifiers) {
-		
+			final int visibilityModifiers, 
+			final IProgressMonitor monitor) {
 		if (typeRoot == null || typeRoot2 == null) {
 			throw new IllegalArgumentException("One of the given class files is null"); //$NON-NLS-1$
 		}
@@ -645,7 +617,7 @@ public class ApiComparator {
 						referenceBaseline,
 						baseline,
 						visibilityModifiers);
-			delta = comparator.getDelta();
+			delta = comparator.getDelta(SubMonitor.convert(monitor));
 			if (DEBUG) {
 				IStatus status = comparator.getStatus();
 				if(status != null) {
@@ -658,6 +630,7 @@ public class ApiComparator {
 		}
 		return delta;
 	}
+	
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
 	 * Nested API components with the same versions are not compared.
@@ -682,89 +655,53 @@ public class ApiComparator {
 		if (scope == null || baseline == null) {
 			throw new IllegalArgumentException("None of the scope or the baseline must be null"); //$NON-NLS-1$
 		}
-		IProgressMonitor localMonitor = null;
-		if (monitor == null) {
-			localMonitor = new NullProgressMonitor();
-		} else {
-			localMonitor = monitor;
-		}
-		final Set deltas = new HashSet();
-		final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, localMonitor);
-		scope.accept(visitor);
-		if (visitor.containsError()) {
-			return null;
-		}
-		if (deltas.isEmpty()) {
-			return NO_DELTA;
-		}
-		final Delta globalDelta = new Delta();
-		for (Iterator iterator = deltas.iterator(); iterator.hasNext(); ) {
-			IDelta delta = (IDelta) iterator.next();
-			delta.accept(new DeltaVisitor() {
-				public void endVisit(IDelta localDelta) {
-					if (localDelta.getChildren().length == 0) {
-						switch(localDelta.getElementType()) {
-							case IDelta.ANNOTATION_ELEMENT_TYPE :
-							case IDelta.ENUM_ELEMENT_TYPE :
-							case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
-							case IDelta.METHOD_ELEMENT_TYPE :
-							case IDelta.INTERFACE_ELEMENT_TYPE :
-							case IDelta.CLASS_ELEMENT_TYPE :
-							case IDelta.FIELD_ELEMENT_TYPE :
-							case IDelta.API_COMPONENT_ELEMENT_TYPE :
-							case IDelta.API_PROFILE_ELEMENT_TYPE : 
-								globalDelta.add(localDelta);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
+		try {
+			final Set deltas = new HashSet();
+			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, localmonitor.newChild(1));
+			scope.accept(visitor);
+			if (visitor.containsError()) {
+				return null;
+			}
+			if (deltas.isEmpty()) {
+				return NO_DELTA;
+			}
+			final Delta globalDelta = new Delta();
+			for (Iterator iterator = deltas.iterator(); iterator.hasNext(); ) {
+				IDelta delta = (IDelta) iterator.next();
+				delta.accept(new DeltaVisitor() {
+					public void endVisit(IDelta localDelta) {
+						if (localDelta.getChildren().length == 0) {
+							switch(localDelta.getElementType()) {
+								case IDelta.ANNOTATION_ELEMENT_TYPE :
+								case IDelta.ENUM_ELEMENT_TYPE :
+								case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+								case IDelta.METHOD_ELEMENT_TYPE :
+								case IDelta.INTERFACE_ELEMENT_TYPE :
+								case IDelta.CLASS_ELEMENT_TYPE :
+								case IDelta.FIELD_ELEMENT_TYPE :
+								case IDelta.API_COMPONENT_ELEMENT_TYPE :
+								case IDelta.API_PROFILE_ELEMENT_TYPE : 
+									globalDelta.add(localDelta);
+							}
 						}
 					}
-				}
-			});
+				});
+			}
+			Util.updateMonitor(localmonitor, 1);
+			return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
 		}
-		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
+		finally {
+			localmonitor.done();
+		}
 	}
 
 	/**
-	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
-	 * Nested API components with the same versions are not compared.
-	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, force, null);</p>
-	 * 
-	 * @param scope the given scope for the comparison
-	 * @param baseline the given API baseline to compare with
-	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 * @param force a flag to force the comparison of nested API components with the same versions 
-	 *
-	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
-	 * @throws IllegalArgumentException if one of the two baselines is null
-	 *         CoreException if one of the element in the scope cannot be visited
-	 */
-	public static IDelta compare(
-			final IApiScope scope,
-			final IApiBaseline baseline,
-			final int visibilityModifiers,
-			final boolean force) throws CoreException {
-		return compare(scope, baseline, visibilityModifiers, force, null);
-	}
-	/**
-	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
-	 * Nested API components with the same versions are not compared.
-	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, false);</p>
-	 * 
-	 * @param scope the given scope for the comparison
-	 * @param baseline the given API baseline to compare with
-	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
-	 *
-	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed
-	 * @throws IllegalArgumentException if one of the two baselines is null
-	 *         CoreException if one of the element in the scope cannot be visited
-	 */
-	public static IDelta compare(
-			final IApiScope scope,
-			final IApiBaseline baseline,
-			final int visibilityModifiers) throws CoreException {
-		return compare(scope, baseline, visibilityModifiers, false);
-	}
-
-	/* (no javadoc)
 	 * Returns true, if the given type descriptor should be skipped, false otherwise.
+	 * @param visibilityModifiers
+	 * @param elementDescription
+	 * @param typeDescriptor
+	 * @return
 	 */
 	static boolean filterType(final int visibilityModifiers,
 			IApiAnnotations elementDescription,
@@ -785,19 +722,31 @@ public class ApiComparator {
 		return false;
 	}
 
-	private static IDelta internalCompare(
-			final IApiComponent component,
-			final IApiComponent component2,
+	/**
+	 * Performs the internal compare of the given {@link IApiComponent}s using their type containers
+	 * @param component
+	 * @param component2
+	 * @param referenceBaseline
+	 * @param baseline
+	 * @param visibilityModifiers
+	 * @param globalDelta
+	 * @param monitor
+	 * 
+	 * @return a delta of changed API elements
+	 * @throws CoreException
+	 */
+	private static IDelta internalCompare(final IApiComponent component, 
+			final IApiComponent component2, 
 			final IApiBaseline referenceBaseline,
-			final IApiBaseline baseline,
-			final int visibilityModifiers,
-			final Delta globalDelta) throws CoreException {
-
+			final IApiBaseline baseline, 
+			final int visibilityModifiers,	
+			final Delta globalDelta, 
+			final IProgressMonitor monitor) throws CoreException {
 		final Set typeRootBaseLineNames = new HashSet();
 		final String id = component.getId();
 		IApiTypeContainer[] typeRootContainers = null;
 		IApiTypeContainer[] typeRootContainers2 = null;
-		
+		final SubMonitor localmonitor = SubMonitor.convert(monitor, 4);
 		final boolean isSWT = Util.ORG_ECLIPSE_SWT.equals(id);
 		if (isSWT) {
 			typeRootContainers = component.getApiTypeContainers();
@@ -808,13 +757,15 @@ public class ApiComparator {
 		}
 		final IApiDescription apiDescription = component.getApiDescription();
 		final IApiDescription apiDescription2 = component2.getApiDescription();
-
+		Util.updateMonitor(localmonitor, 1);
 		if (typeRootContainers != null) {
 			for (int i = 0, max = typeRootContainers.length; i < max; i++) {
+				Util.updateMonitor(localmonitor);
 				IApiTypeContainer container = typeRootContainers[i];
 				try {
 					container.accept(new ApiTypeContainerVisitor() {
 						public void visit(String packageName, IApiTypeRoot typeRoot) {
+							Util.updateMonitor(localmonitor);
 							String typeName = typeRoot.getTypeName();
 							try {
 								IApiType typeDescriptor = typeRoot.getStructure();
@@ -842,6 +793,7 @@ public class ApiComparator {
 									IApiComponent[] providers = component2.getBaseline().resolvePackage(component2, packageName);
 									int index = 0;
 									while (typeRoot2 == null && index < providers.length) {
+										Util.updateMonitor(localmonitor);
 										IApiComponent p = providers[index];
 										if (!p.equals(component2)) {
 											String id2 = p.getId();
@@ -869,6 +821,7 @@ public class ApiComparator {
 									provider = component2;
 									providerApiDesc = apiDescription2;
 								}
+								Util.updateMonitor(localmonitor);
 								deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 								if(typeRoot2 == null) {
 									if ((visibility & visibilityModifiers) == 0) {
@@ -912,8 +865,8 @@ public class ApiComparator {
 											return;
 										}
 									}
-									if (isAPI(visibility, typeDescriptor)) {
-										if (!isAPI(visibility2, typeDescriptor2)) {
+									if (Util.isAPI(visibility, typeDescriptor)) {
+										if (!Util.isAPI(visibility2, typeDescriptor2)) {
 											globalDelta.add(
 												new Delta(
 													deltaComponentID,
@@ -946,7 +899,7 @@ public class ApiComparator {
 									}
 									typeRootBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, provider, referenceBaseline, baseline, visibilityModifiers);
-									IDelta delta = comparator.getDelta();
+									IDelta delta = comparator.getDelta(localmonitor.newChild(1));
 									if (DEBUG) {
 										IStatus status = comparator.getStatus();
 										if(status != null) {
@@ -957,6 +910,7 @@ public class ApiComparator {
 										globalDelta.add(delta);
 									}
 								}
+								Util.updateMonitor(localmonitor);
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
 							}
@@ -967,10 +921,12 @@ public class ApiComparator {
 				}
 			}
 		}
+		Util.updateMonitor(localmonitor, 1);
 		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
 		int length = requiredComponents.length;
 		if (length != 0) {
 			for (int j = 0; j < length; j++) {
+				Util.updateMonitor(localmonitor);
 				IRequiredComponentDescription description = requiredComponents[j];
 				if (description.isExported()) {
 					final String currentComponentID = Util.getDeltaComponentVersionsId(component);
@@ -983,10 +939,12 @@ public class ApiComparator {
 					IApiTypeContainer[] apiTypeContainers = currentRequiredApiComponent.getApiTypeContainers();
 					if (apiTypeContainers != null) {
 						for (int i = 0, max = apiTypeContainers.length; i < max; i++) {
+							Util.updateMonitor(localmonitor);
 							IApiTypeContainer container = apiTypeContainers[i];
 							try {
 								container.accept(new ApiTypeContainerVisitor() {
 									public void visit(String packageName, IApiTypeRoot typeRoot) {
+										Util.updateMonitor(localmonitor);
 										String typeName = typeRoot.getTypeName();
 										try {
 											IApiType typeDescriptor = typeRoot.getStructure();
@@ -1065,8 +1023,8 @@ public class ApiComparator {
 														|| Flags.isPrivate(typeDescriptor.getModifiers())) {
 													return;
 												}
-												if (isAPI(visibility, typeDescriptor)) {
-													if (!isAPI(visibility2, typeDescriptor2)) {
+												if (Util.isAPI(visibility, typeDescriptor)) {
+													if (!Util.isAPI(visibility2, typeDescriptor2)) {
 														globalDelta.add(
 															new Delta(
 																currentComponentID,
@@ -1096,12 +1054,15 @@ public class ApiComparator {
 				}
 			}
 		}
+		Util.updateMonitor(localmonitor, 1);
 		if (typeRootContainers2 != null) {
 			for (int i = 0, max = typeRootContainers2.length; i < max; i++) {
+				Util.updateMonitor(localmonitor);
 				IApiTypeContainer container = typeRootContainers2[i];
 				try {
 					container.accept(new ApiTypeContainerVisitor() {
 						public void visit(String packageName, IApiTypeRoot typeRoot) {
+							Util.updateMonitor(localmonitor);
 							String typeName = typeRoot.getTypeName();
 							try {
 								IApiType type = typeRoot.getStructure();
@@ -1141,10 +1102,12 @@ public class ApiComparator {
 				}
 			}
 		}
+		Util.updateMonitor(localmonitor, 1);
 		requiredComponents = component2.getRequiredComponents();
 		length = requiredComponents.length;
 		if (length != 0) {
 			for (int j = 0; j < length; j++) {
+				Util.updateMonitor(localmonitor);
 				IRequiredComponentDescription description = requiredComponents[j];
 				if (description.isExported()) {
 					final String currentComponentID = Util.getDeltaComponentVersionsId(component);
@@ -1157,10 +1120,12 @@ public class ApiComparator {
 					final IApiDescription reexportedApiDescription = currentRequiredApiComponent.getApiDescription();
 					if (apiTypeContainers != null) {
 						for (int i = 0, max = apiTypeContainers.length; i < max; i++) {
+							Util.updateMonitor(localmonitor);
 							IApiTypeContainer container = apiTypeContainers[i];
 							try {
 								container.accept(new ApiTypeContainerVisitor() {
 									public void visit(String packageName, IApiTypeRoot typeRoot) {
+										Util.updateMonitor(localmonitor);
 										String typeName = typeRoot.getTypeName();
 										try {
 											IApiType typeDescriptor = typeRoot.getStructure();
@@ -1205,13 +1170,6 @@ public class ApiComparator {
 		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
 	}
 
-	static boolean isAPI(int visibility,
-			IApiType typeDescriptor) {
-		int access = typeDescriptor.getModifiers();
-		return VisibilityModifiers.isAPI(visibility)
-			&& (Flags.isPublic(access) || Flags.isProtected(access));
-	}
-	
 	/**
 	 * Method used for initializing tracing in the API comparator
 	 */

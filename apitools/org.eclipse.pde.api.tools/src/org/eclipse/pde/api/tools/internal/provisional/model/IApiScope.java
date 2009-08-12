@@ -14,17 +14,18 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Describes a set of {@link IApiElement}.
- * <p>The api elements can be of the following types:</p>
- * <ul>
- * <li>{@link IApiElement#BASELINE}</li>
- * <li>{@link IApiElement#COMPONENT}</li>
- * <li>{@link IApiElement#API_TYPE_CONTAINER}</li>
- * <li>{@link IApiElement#API_TYPE_ROOT}</li>
- * </ul>
  * 
  * @since 1.1.0
  */
 public interface IApiScope {
+	
+	/**
+	 * Adds the given {@link IApiElement} to the scope
+	 * 
+	 * @param newelements
+	 */
+	public void addElement(IApiElement newelement);
+	
 	/**
 	 * Returns all API elements contained within this scope
 	 * 
@@ -39,4 +40,12 @@ public interface IApiScope {
 	 * @exception CoreException if unable to visit this scope
 	 */
 	void accept(ApiScopeVisitor visitor) throws CoreException;
+	
+	/**
+	 * Returns if this scope encloses the given element
+	 * 
+	 * @param element
+	 * @return true if this scope encloses the given element, false otherwise
+	 */
+	public boolean encloses(IApiElement element) throws CoreException;
 }

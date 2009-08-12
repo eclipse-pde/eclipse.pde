@@ -50,8 +50,8 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	
 	public boolean visit(IApiBaseline baseline) throws CoreException {
 		try {
-			Util.checkCanceled(this.monitor);
-			IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers, this.force);
+			Util.updateMonitor(this.monitor);
+			IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers, this.force, null);
 			if (delta != null) {
 				delta.accept(new DeltaVisitor() {
 					public void endVisit(IDelta localDelta) {
@@ -71,11 +71,11 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 
 	public boolean visit(IApiTypeContainer container) throws CoreException {
 		try {
-			Util.checkCanceled(this.monitor);
+			Util.updateMonitor(this.monitor);
 			container.accept(new ApiTypeContainerVisitor() {
 				public void visit(String packageName, IApiTypeRoot typeroot) {
 					try {
-						Util.checkCanceled(CompareApiScopeVisitor.this.monitor);
+						Util.updateMonitor(CompareApiScopeVisitor.this.monitor);
 						compareApiTypeRoot(typeroot);
 					} catch (CoreException e) {
 						ApiPlugin.log(e);
@@ -90,7 +90,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 
 	public boolean visit(IApiComponent component) throws CoreException {
 		try {
-			Util.checkCanceled(this.monitor);
+			Util.updateMonitor(this.monitor);
 			if (component.getErrors() != null) {
 				this.containsErrors = true;
 				return false;
@@ -103,8 +103,8 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			if (component.isSourceComponent() || component.isSystemComponent()) {
 				return false;
 			}
-			Util.checkCanceled(this.monitor);
-			IDelta delta = ApiComparator.compare(referenceComponent, component, this.visibilityModifiers);
+			Util.updateMonitor(this.monitor);
+			IDelta delta = ApiComparator.compare(referenceComponent, component, this.visibilityModifiers, null);
 			if (delta != null) {
 				delta.accept(new DeltaVisitor() {
 					public void endVisit(IDelta localDelta) {
@@ -124,7 +124,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	
 	public void visit(IApiTypeRoot root) throws CoreException {
 		try {
-			Util.checkCanceled(this.monitor);
+			Util.updateMonitor(this.monitor);
 			compareApiTypeRoot(root);
 		} finally {
 			this.monitor.worked(1);
@@ -153,7 +153,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 				apiComponent,
 				this.referenceBaseline,
 				baseline,
-				this.visibilityModifiers);
+				this.visibilityModifiers, null);
 		if (delta != null) {
 			delta.accept(new DeltaVisitor() {
 				public void endVisit(IDelta localDelta) {

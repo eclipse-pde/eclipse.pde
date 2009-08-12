@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.SearchMessages;
@@ -274,7 +275,7 @@ public final class ApiSearchEngine {
 		if(baseline == null || reporter == null || requestor == null) {
 			return;
 		}
-		IApiSearchScope scope = requestor.getScope();
+		IApiScope scope = requestor.getScope();
 		if(scope == null) {
 			return;
 		}
@@ -285,7 +286,7 @@ public final class ApiSearchEngine {
 		if(requestor.includesInternal() && !requestor.includesAPI()) {
 			fRequestorContext = SearchMessages.ApiSearchEngine_internal;
 		}
-		IApiElement[] scopeelements = scope.getScope();
+		IApiElement[] scopeelements = scope.getApiElements();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 
 				MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, new String[] {fRequestorContext}), scopeelements.length*2+1);
 		try {

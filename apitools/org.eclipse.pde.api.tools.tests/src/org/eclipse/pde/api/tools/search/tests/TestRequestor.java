@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -18,13 +17,13 @@ import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
-import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchScope;
-import org.eclipse.pde.api.tools.internal.search.ApiUseSearchScope;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -38,7 +37,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	private int searchmask = 0;
 	private HashSet<String> excluded = new HashSet<String>();
 	private SearchTest test = null;
-	private IApiSearchScope scope = null;
+	private IApiScope scope = null;
 	
 	/**
 	 * Constructor
@@ -121,24 +120,23 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getScope()
 	 */
-	public IApiSearchScope getScope() {
+	public IApiScope getScope() {
 		if(this.scopebaseline == null) {
 			return null;
 		}
 		if(this.scope == null) {
 			try {
 				IApiComponent[] comps = this.scopebaseline.getApiComponents();
-				ArrayList<IApiComponent> clist = new ArrayList<IApiComponent>(comps.length);
+				this.scope = new ApiScope();
 				for (int i = 0; i < comps.length; i++) {
 					if(comps[i].isSystemComponent()) {
 						//never include system libraries in the tests
 						continue;
 					}
 					if(acceptComponent0(comps[i])) {
-						clist.add(comps[i]);
+						this.scope.addElement(comps[i]);
 					}
 				}
-				this.scope = new ApiUseSearchScope(clist.toArray(new IApiComponent[clist.size()]));
 			}
 			catch(Exception e) {
 				this.test.reportFailure(e.getMessage());
@@ -198,7 +196,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	public boolean includesNonApiProjects() {
 		return (this.searchmask & INCLUDE_NON_API_ENABLED_PROJECTS) > 0;
 	}
-	
+
 	/**
 	 * Sets the {@link IApiBaseline} to derive the scope from
 	 * @param baseline

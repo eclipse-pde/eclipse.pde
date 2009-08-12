@@ -93,7 +93,7 @@ public class ExportSessionAction extends Action {
 					File reportFile = new File(reportFileName);
 					try {
 						progress.worked(25);
-						Util.checkCanceled(progress);
+						Util.updateMonitor(progress);
 						BufferedWriter writer = null;
 						try {
 							if (isHtmlFile) {
@@ -115,7 +115,7 @@ public class ExportSessionAction extends Action {
 							if (data instanceof IDelta) {
 								IDelta delta = (IDelta) data;
 								progress.worked(25);
-								Util.checkCanceled(progress);
+								Util.updateMonitor(progress);
 								delta.accept(visitor);
 								writer.write(visitor.getXML());
 								writer.flush();
@@ -136,7 +136,7 @@ public class ExportSessionAction extends Action {
 						}
 						if(isHtmlFile) {
 							// remaining part is to convert the xml file to html using XSLT
-							Util.checkCanceled(progress);
+							Util.updateMonitor(progress);
 							Source xmlSource = new StreamSource(xmlOutputFile);
 							InputStream stream = ApiPlugin.class.getResourceAsStream(DELTAS_XSLT_TRANSFORM_PATH);
 							Source xsltSource = new StreamSource(stream);

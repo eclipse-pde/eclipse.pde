@@ -52,7 +52,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -74,7 +74,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -101,7 +101,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -130,7 +130,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 2, allLeavesDeltas.length);
@@ -159,7 +159,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -181,7 +181,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Not empty", delta.isEmpty());
 		assertTrue("Different from NO_DELTA", delta == ApiComparator.NO_DELTA);
@@ -198,7 +198,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -221,7 +221,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -243,7 +243,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -265,7 +265,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA);
 	}
@@ -280,7 +280,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -302,7 +302,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -324,7 +324,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -346,7 +346,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -367,7 +367,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", beforeApiComponent);
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
-		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);

@@ -94,7 +94,7 @@ public class CompareTask extends CommonUtilsTask {
 			IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 			String[] componentsNames = this.componentsList.split(","); //$NON-NLS-1$
 			if (componentsNames.length == 0) {
-				scope.add(currentBaseline);
+				scope.addElement(currentBaseline);
 			} else {
 				for (int i = 0, max = componentsNames.length; i < max; i++) {
 					String componentName = componentsNames[i];
@@ -110,7 +110,7 @@ public class CompareTask extends CommonUtilsTask {
 								String componentId = apiComponent.getId();
 								Matcher matcher = pattern.matcher(componentId);
 								if (matcher.matches()) {
-									scope.add(apiComponent);
+									scope.addElement(apiComponent);
 								}
 							}
 						} catch (PatternSyntaxException e) {
@@ -121,16 +121,16 @@ public class CompareTask extends CommonUtilsTask {
 					} else {
 						IApiComponent apiComponent = currentBaseline.getApiComponent(componentName);
 						if (apiComponent != null) {
-							scope.add(apiComponent);
+							scope.addElement(apiComponent);
 						}
 					}
 				}
 			}
 		} else {
-			scope.add(currentBaseline);
+			scope.addElement(currentBaseline);
 		}
 		try {
-			delta = ApiComparator.compare(scope, referenceBaseline, this.visibilityModifiers);
+			delta = ApiComparator.compare(scope, referenceBaseline, this.visibilityModifiers, false, null);
 		} catch(CoreException e) {
 			// an error occurred during the comparison
 			throw new BuildException(NLS.bind(Messages.illegalElementInScope, e.getMessage()));

@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.provisional.search;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 
 /**
  * A default search requestor to use for API tools
@@ -44,12 +45,13 @@ public interface IApiSearchRequestor {
 	 */
 	public static final int INCLUDE_NON_API_ENABLED_PROJECTS = 0x0004;
 	
+	
 	/**
-	 * Returns the {@link IApiSearchScope} to be searched
+	 * Returns the {@link IApiScope} to be searched
 	 * 
-	 * @return the {@link IApiSearchScope} to be searched
+	 * @return the {@link IApiScope} to be searched
 	 */
-	public IApiSearchScope getScope();
+	public IApiScope getScope();
 	
 	/**
 	 * Returns whether this requestor cares about the given {@link IApiComponent} or not.

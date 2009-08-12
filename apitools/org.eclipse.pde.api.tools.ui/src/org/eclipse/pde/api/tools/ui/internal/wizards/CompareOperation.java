@@ -169,7 +169,7 @@ public class CompareOperation extends Job {
 						case IJavaElement.JAVA_PROJECT:
 							IApiComponent apiComponent = workspaceBaseline.getApiComponent(javaProject.getElementName());
 							if (apiComponent != null) {
-								scope.add(apiComponent);
+								scope.addElement(apiComponent);
 							}
 							break;
 					}
@@ -225,7 +225,7 @@ public class CompareOperation extends Job {
 		try {
 			IApiTypeRoot typeRoot = apiComponent.findTypeRoot(classFile.getType().getFullyQualifiedName());
 			if (typeRoot != null) {
-				scope.add(typeRoot);
+				scope.addElement(typeRoot);
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -238,7 +238,7 @@ public class CompareOperation extends Job {
 			try {
 				IApiTypeRoot typeRoot = component.findTypeRoot(types[i].getFullyQualifiedName());
 				if (typeRoot != null) {
-					scope.add(typeRoot);
+					scope.addElement(typeRoot);
 				}
 			} catch (CoreException e) {
 				ApiPlugin.log(e);

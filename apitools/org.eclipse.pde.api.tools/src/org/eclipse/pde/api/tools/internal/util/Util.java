@@ -108,6 +108,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
@@ -1071,6 +1072,17 @@ public final class Util {
 			throw new OperationCanceledException();
 		}
 		monitor.worked(work);
+	}
+	
+	/**
+	 * Updates the given monitor 0 work ticks. This method is used to poll for cancellation
+	 * without advancing the work done.
+	 * 
+	 * @param monitor
+	 * @throws OperationCanceledException
+	 */
+	public static void updateMonitor(IProgressMonitor monitor) throws OperationCanceledException {
+		updateMonitor(monitor, 0);
 	}
 	
 	private static IMember getMethod(IType type, String key) {
@@ -2310,8 +2322,17 @@ public final class Util {
 		}
 	};
 
-	public static void checkCanceled(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
-			throw new OperationCanceledException();
+	/**
+	 * Returns true if the given {@link IApiType} is API or not, where API is defined
+	 * as having API visibility in an API description and having either the public of protected 
+	 * Java flag set
+	 * 
+	 * @param visibility
+	 * @param typeDescriptor
+	 * @return true if the given type is API, false otherwise
+	 */
+	public static boolean isAPI(int visibility, IApiType typeDescriptor) {
+		int access = typeDescriptor.getModifiers();
+		return VisibilityModifiers.isAPI(visibility) && (Flags.isPublic(access) || Flags.isProtected(access));
 	}
 }

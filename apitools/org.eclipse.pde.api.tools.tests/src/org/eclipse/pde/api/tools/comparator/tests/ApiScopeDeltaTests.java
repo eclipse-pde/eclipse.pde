@@ -60,10 +60,10 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
 		ApiScope scope = new ApiScope();
-		scope.add(after);
+		scope.addElement(after);
 		IApiElement[] apiElement = scope.getApiElements();
 		assertEquals("Empty", 1, apiElement.length);
-		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API);
+		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -87,9 +87,9 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		ApiScope scope = new ApiScope();
 		IApiComponent[] apiComponents = after.getApiComponents();
 		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			scope.add(apiComponents[i]);
+			scope.addElement(apiComponents[i]);
 		}
-		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true);
+		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -116,10 +116,10 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 			IApiTypeContainer[] apiTypeContainers = apiComponents[i].getApiTypeContainers();
 			for (int j = 0; j < apiTypeContainers.length; j++) {
 				IApiTypeContainer iApiTypeContainer = apiTypeContainers[j];
-				scope.add(iApiTypeContainer);
+				scope.addElement(iApiTypeContainer);
 			}
 		}
-		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true);
+		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -151,9 +151,9 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 			}
 		}
 		if (root != null) {
-			scope.add(root);
+			scope.addElement(root);
 		}
-		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true);
+		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
 		assertNotNull("No delta", delta);
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
 		assertEquals("Wrong size", 1, allLeavesDeltas.length);
@@ -190,11 +190,11 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 			IApiType structure = root.getStructure();
 			IApiMethod[] methods = structure.getMethods();
 			for (int i = 0, max = methods.length; i < max; i++) {
-				scope.add(methods[i]);
+				scope.addElement(methods[i]);
 			}
 		}
 		try {
-			ApiComparator.compare(scope, before, VisibilityModifiers.API, true);
+			ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
 			assertFalse("Should not be there", true);
 		} catch (CoreException e) {
 			// should fail to visit a method
@@ -212,8 +212,8 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
 		ApiScope scope = new ApiScope();
-		scope.add(after);
-		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API);
+		scope.addElement(after);
+		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
 	}
@@ -229,15 +229,15 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent);
 		ApiScope scope = new ApiScope();
-		scope.add(after);
+		scope.addElement(after);
 		try {
-			ApiComparator.compare((IApiScope) null, before, VisibilityModifiers.API);
+			ApiComparator.compare((IApiScope) null, before, VisibilityModifiers.API, false, null);
 			assertFalse("Should not be there", true);
 		} catch (IllegalArgumentException e) {
 			// expected as scope is null
 		}
 		try {
-			ApiComparator.compare(scope, null, VisibilityModifiers.API);
+			ApiComparator.compare(scope, null, VisibilityModifiers.API, false, null);
 			assertFalse("Should not be there", true);
 		} catch (IllegalArgumentException e) {
 			// expected as scope is null

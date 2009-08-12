@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,7 +38,7 @@ public class ApiScope implements IApiScope {
 	/**
 	 * Contains all API elements of this scope
 	 */
-	Set apiElements;
+	Set elements;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#accept(org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor)
@@ -84,18 +85,40 @@ public class ApiScope implements IApiScope {
 		}
 	}
 
-	public void add(IApiElement apiElement) {
-		if (this.apiElements == null) {
-			this.apiElements = new HashSet();
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#addElement(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
+	 */
+	public void addElement(IApiElement newelement) {
+		if (this.elements == null) {
+			this.elements = new HashSet();
 		}
-		this.apiElements.add(apiElement);
+		this.elements.add(newelement);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#encloses(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
+	 */
+	public boolean encloses(IApiElement element) {
+		if(element != null) {
+			IApiComponent component = element.getApiComponent();
+			IApiComponent enclosing = null;
+			for(Iterator iter = this.elements.iterator(); iter.hasNext();) {
+				enclosing = ((IApiElement)iter.next()).getApiComponent();
+				if(component.equals(enclosing)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#getApiElement()
 	 */
 	public IApiElement[] getApiElements() {
-		if (this.apiElements == null || this.apiElements.size() == 0) return NO_ELEMENTS;
-		return (IApiElement[]) this.apiElements.toArray(new IApiElement[this.apiElements.size()]);
+		if (this.elements == null || this.elements.size() == 0) {
+			return NO_ELEMENTS;
+		}
+		return (IApiElement[]) this.elements.toArray(new IApiElement[this.elements.size()]);
 	}
 }
