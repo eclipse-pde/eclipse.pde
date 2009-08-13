@@ -1706,7 +1706,7 @@ public class PublishingTests extends P2TestCase {
 		buffer.append("     <import plugin=\"org.eclipse.equinox.simpleconfigurator\" version=\"1.0.100\" match=\"equivalent\" />	\n");
 		buffer.append("     <import plugin=\"org.eclipse.core.jobs\" version=\"3.4.100\" match=\"equivalent\" />	\n");
 		buffer.append("     <import plugin=\"org.eclipse.equinox.common\" version=\"3.5.0\" match=\"equivalent\" />	\n");
-		buffer.append("     <import plugin=\"org.eclipse.osgi\" version=\"3.5.0\" match=\"equivalent\" />	\n");
+		buffer.append("     <import plugin=\"org.eclipse.osgi\" version=\"3.6.0\" match=\"equivalent\" />	\n");
 		buffer.append("  </requires>											\n");
 		buffer.append("</feature>											\n");
 		Utils.writeBuffer(F.getFile("feature.xml"), buffer);
