@@ -61,6 +61,11 @@ public class PluginBlock extends AbstractPluginBlock {
 			initWorkspacePluginsState(config);
 			initExternalPluginsState(config);
 			handleFilterButton(); // Once the page is initialized, apply any filtering
+
+			// If the workspace plug-in state has changed (project closed, etc.) the launch config needs to be updated without making the tab dirty
+			if (fLaunchConfig.isWorkingCopy()) {
+				savePluginState((ILaunchConfigurationWorkingCopy) fLaunchConfig);
+			}
 		}
 
 		enableViewer(enableTable);
