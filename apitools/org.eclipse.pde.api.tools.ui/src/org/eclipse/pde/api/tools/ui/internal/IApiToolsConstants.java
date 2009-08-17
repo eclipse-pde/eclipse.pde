@@ -61,7 +61,10 @@ public interface IApiToolsConstants {
 	 * Key for filter resolution image
 	 */
 	public static final String IMG_ELCL_FILTER = "IMG_ELCL_FILTER"; //$NON-NLS-1$
-	
+	/**
+	 * Key for the PDE Tools menu item for setting up API Tools
+	 */
+	public static final String IMG_ELCL_SETUP_APITOOLS = "IMG_ELCL_SETUP_APITOOLS"; //$NON-NLS-1$
 	/**
 	 * Key for the open page image
 	 */

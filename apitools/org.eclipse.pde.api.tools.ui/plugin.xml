@@ -459,4 +459,33 @@
          </enablement>
       </deleteParticipant>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            category="org.eclipse.ui.externaltools"
+            delegate="org.eclipse.pde.api.tools.ui.internal.use.ApiUseLaunchDelegate"
+            delegateName="%LaunchConfigurationType.name"
+            id="org.eclipse.pde.api.tools.usescan"
+            modes="run"
+            name="%LaunchConfigurationType.name"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.pde.api.tools.ui.internal.use.ApiUseTabGroup"
+            description="%LaunchConfigurationTabGroup.name"
+            id="org.eclipse.pde.api.tools.usescan.tabgroup"
+            type="org.eclipse.pde.api.tools.usescan">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.pde.api.tools.usescan"
+            icon="$nl$/icons/full/obj16/category_menu.gif"
+            id="org.eclipse.pde.api.tools.usescan.image">
+      </launchConfigurationTypeImage>
+   </extension>
 </plugin>

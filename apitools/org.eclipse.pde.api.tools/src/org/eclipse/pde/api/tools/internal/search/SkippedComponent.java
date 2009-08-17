@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
@@ -31,18 +32,24 @@ public class SkippedComponent implements IApiElement{
 	 * the id of of the skipped component
 	 */
 	private String componentid;
+	/**
+	 * the set of resolution errors barring the component from being scanned
+	 */
+	private ResolverError[] errors = null;
 
 	/**
 	 * Constructor
 	 * @param noapidescription
 	 * @param inexcludelist
 	 * @param componentid
+	 * @param errors the {@link ResolverError}s, if any, that prevented this component from being scanned
 	 */
-	public SkippedComponent(String componentid, boolean noapidescription, boolean inexcludelist, boolean resolveerrors) {
+	public SkippedComponent(String componentid, boolean noapidescription, boolean inexcludelist, boolean resolveerrors, ResolverError[] errors) {
 		this.noapidescription = noapidescription;
 		this.inexcludelist = inexcludelist;
 		this.resolveerrors = resolveerrors;
 		this.componentid = componentid;
+		this.errors = errors;
 	}
 	
 	/* (non-Javadoc)
@@ -123,5 +130,12 @@ public class SkippedComponent implements IApiElement{
 	 */
 	public int getType() {
 		return IApiElement.COMPONENT;
+	}
+	
+	/**
+	 * @return the errors
+	 */
+	public ResolverError[] getErrors() {
+		return this.errors;
 	}
 }

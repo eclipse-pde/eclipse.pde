@@ -121,13 +121,13 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 */
 	public static Image getImage(ImageDescriptor descriptor) {
 		ImageDescriptor ldesc = descriptor;
-		if (ldesc == null)
+		if (ldesc == null) {
 			ldesc = ImageDescriptor.getMissingImageDescriptor();
-			
+		}
 		Image result = (Image)fCompositeImages.get(ldesc);
-		if (result != null)
+		if (result != null) {
 			return result;
-	 
+		}
 		result = ldesc.createImage();
 		if (result != null) {
 			fCompositeImages.put(ldesc, result);
@@ -296,7 +296,8 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_FRAGMENT, OBJECT + "frgmt_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE, OBJECT + "eclipse_profile.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION, OBJECT + "bundleversion.gif"); //$NON-NLS-1$
-
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS, OBJECT + "category_menu.gif"); //$NON-NLS-1$
+		
 		// overlays
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_ERROR, OVR + "error_ovr.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OVR_WARNING, OVR + "warning_ovr.gif"); //$NON-NLS-1$
@@ -314,6 +315,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_NEXT_NAV, ELCL + "next_nav.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_PREV_NAV, ELCL + "prev_nav.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPANDALL, ELCL + "expandall.gif"); //$NON-NLS-1$
+		
 		// disabled images
 		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_EXPORT, DLCL + "export.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_DLCL_NEXT_NAV, DLCL + "next_nav.gif"); //$NON-NLS-1$

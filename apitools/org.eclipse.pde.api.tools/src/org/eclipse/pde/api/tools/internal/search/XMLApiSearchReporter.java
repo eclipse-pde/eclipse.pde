@@ -136,14 +136,14 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 		IApiComponent mcomponent = null;
 		for (int i = 0; i < references.length; i++) {
 			rcomponent = references[i].getResolvedReference().getApiComponent(); 
-			id = rcomponent.getId();
+			id = getId(rcomponent);
 			rmap = (HashMap) fReferenceMap.get(id);
 			if(rmap == null) {
 				rmap = new HashMap();
 				fReferenceMap.put(id, rmap);
 			}
 			mcomponent = references[i].getMember().getApiComponent(); 
-			id = mcomponent.getId();
+			id = getId(mcomponent);
 			mmap = (HashMap) rmap.get(id);
 			if(mmap == null) {
 				mmap = new HashMap();
@@ -191,6 +191,18 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 			}
 			reflist.add(references[i]);
 		}
+	}
+	
+	/**
+	 * Resolves the id to use for the component in the mapping
+	 * @param component
+	 * @return the id to use for the component in the mapping, includes the version information as well
+	 * @throws CoreException
+	 */
+	String getId(IApiComponent component) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(component.getId()).append(" ").append('(').append(component.getVersion()).append(')'); //$NON-NLS-1$
+		return buffer.toString();
 	}
 	
 	/**
