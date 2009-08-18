@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * Dialog that opens when plug-in validation fails during launching.  Displays
+ * a list of problems discovered.  Allows the user to continue the launch or 
+ * cancel if @link {@link #showCancelButton(boolean)} is set to true.
+ */
 public class PluginStatusDialog extends TrayDialog {
 
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
@@ -72,9 +77,10 @@ public class PluginStatusDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
+		if (fShowCancelButton) {
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		}
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		if (fShowCancelButton)
-			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
 	}
 
 	/*
