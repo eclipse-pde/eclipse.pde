@@ -90,6 +90,10 @@ public class ReferenceAnalyzer {
 						return;
 					}
 					IApiType type = classFile.getStructure();
+					if(type == null) {
+						//do nothing for bad class files
+						return;
+					}
 					List references = type.extractReferences(fAllReferenceKinds, null);
 					// keep potential matches
 					Iterator iterator = references.iterator();

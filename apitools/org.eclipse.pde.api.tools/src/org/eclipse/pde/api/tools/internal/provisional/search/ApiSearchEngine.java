@@ -86,7 +86,7 @@ public final class ApiSearchEngine {
 			}
 			try {
 				IApiType type = typeroot.getStructure();
-				if(!requestor.acceptMember(type)) {
+				if(type == null || !requestor.acceptMember(type)) {
 					return;
 				}				
 				collector.addAll(acceptReferences(requestor, 

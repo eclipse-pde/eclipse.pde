@@ -471,7 +471,9 @@ public class DeltaSession implements ISession {
 						}
 						if (typeRoot != null) {
 							IApiType structure = typeRoot.getStructure();
-							modifiers = structure.getModifiers();
+							if(structure != null) {
+								modifiers = structure.getModifiers();
+							}
 						}
 					}
 				}

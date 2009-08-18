@@ -20,6 +20,7 @@ import org.eclipse.pde.api.tools.model.tests.ApiBaselineTests;
 import org.eclipse.pde.api.tools.model.tests.ApiDescriptionTests;
 import org.eclipse.pde.api.tools.model.tests.ApiModelCacheTests;
 import org.eclipse.pde.api.tools.model.tests.ApiTypeContainerTests;
+import org.eclipse.pde.api.tools.model.tests.BadClassfileTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.ComponentManifestTests;
 import org.eclipse.pde.api.tools.model.tests.ElementDescriptorTests;
@@ -79,6 +80,7 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(TarExceptionTests.class));
 		addTest(new TestSuite(OSGiLessAnalysisTests.class));
 		addTest(new TestSuite(ApiModelCacheTests.class));
+		addTest(new TestSuite(BadClassfileTests.class));
 		addTest(new AllDeltaTests());
 	}	
 }

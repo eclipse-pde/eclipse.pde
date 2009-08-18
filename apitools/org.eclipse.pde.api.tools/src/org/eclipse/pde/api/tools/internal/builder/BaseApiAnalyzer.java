@@ -913,6 +913,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (referenceClassFile != null) {
 				try {
 					IApiType type = referenceClassFile.getStructure();
+					if(type == null) {
+						return;
+					}
 					final IApiDescription referenceApiDescription = reference.getApiDescription();
 					IApiAnnotations elementDescription = referenceApiDescription.resolveAnnotations(type.getHandle());
 					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;

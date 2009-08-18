@@ -224,6 +224,10 @@ public class Reference implements IReference {
 						getReferencedTypeName());
 				if(result != null) {
 					IApiType type = result.getStructure();
+					if(type == null) {
+						//cannot resolve a type that is in a bad classfile
+						return;
+					}
 					switch (getReferenceType()) {
 					case IReference.T_TYPE_REFERENCE:
 						fResolved = type;
@@ -251,6 +255,9 @@ public class Reference implements IReference {
 				getReferencedTypeName());
 		if(result != null) {
 			IApiType type = result.getStructure();
+			if(type == null) {
+				return false;
+			}
 			switch (getReferenceType()) {
 			case IReference.T_TYPE_REFERENCE:
 				return true;
@@ -336,7 +343,7 @@ public class Reference implements IReference {
 								new IApiComponent[] { sourceComponent },
 								interfacesNames[i]);
 						IApiType superinterface = classFile.getStructure();
-						if (resolveVirtualMethod0(sourceComponent, superinterface, methodName, methodSignature)) {
+						if (superinterface != null && resolveVirtualMethod0(sourceComponent, superinterface, methodName, methodSignature)) {
 							return true;
 						}
 					}

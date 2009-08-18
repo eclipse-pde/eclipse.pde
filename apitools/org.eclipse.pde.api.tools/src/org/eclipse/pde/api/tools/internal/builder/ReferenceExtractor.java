@@ -1113,6 +1113,10 @@ public class ReferenceExtractor extends ClassAdapter {
 			AbstractApiTypeRoot root = (AbstractApiTypeRoot) comp.findTypeRoot(pname);
 			if(root != null) {
 				IApiType type = root.getStructure();
+				if(type == null) {
+					//do nothing for a bad classfile
+					return;
+				}
 				Set refs = null;
 				if(type.isAnonymous() || type.isLocal()) {
 					//visit the class files for the dependent anonymous and local inner types

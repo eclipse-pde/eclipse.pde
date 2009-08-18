@@ -31,7 +31,7 @@ public interface IApiTypeRoot extends IApiElement {
 	 * Returns the structure contained in this type storage. I.e. access
 	 * to the methods, fields, and member types in the associated type.
 	 * 
-	 * @return structure of associated type
+	 * @return structure of associated type or <code>null</code> if a problem occurs creating the new type
 	 * @exception CoreException if unable to retrieve the structure
 	 */
 	public IApiType getStructure() throws CoreException;

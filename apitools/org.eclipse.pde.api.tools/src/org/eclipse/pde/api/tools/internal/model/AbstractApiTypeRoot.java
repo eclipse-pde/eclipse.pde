@@ -78,6 +78,9 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 		}
 		if(type == null) {
 			type = TypeStructureBuilder.buildTypeStructure(getContents(), getApiComponent(), this);
+			if(type == null) {
+				return null;
+			}
 			cache.cacheElementInfo(type);
 		}
 		return type;

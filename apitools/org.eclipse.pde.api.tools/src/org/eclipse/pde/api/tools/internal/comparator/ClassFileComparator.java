@@ -80,6 +80,9 @@ public class ClassFileComparator {
 			if (result != null) {
 				// TODO should this be reported as a checked exception
 				IApiType exception = result.getStructure();
+				if(exception == null) {
+					return false;
+				}
 				while (!Util.isJavaLangObject(exception.getName())) {
 					String superName = exception.getSuperclassName();
 					packageName = Signatures.getPackageName(superName);
@@ -402,6 +405,9 @@ public class ClassFileComparator {
 							IApiTypeRoot interfaceClassFile = getType(interfaceName, this.component2, this.apiBaseline2);
 							if (interfaceClassFile == null) continue;
 							IApiType type = interfaceClassFile.getStructure();
+							if(type == null) {
+								continue;
+							}
 							IApiMethod[] methods = type.getMethods();
 							int length = methods.length;
 							if (length > 0) {

@@ -432,19 +432,21 @@ public class TagScanner {
 				IApiTypeRoot classFile = fContainer.findTypeRoot(type.getQualifiedName());
 				if(classFile != null) {
 					IApiType structure = classFile.getStructure();
-					IApiMethod[] methods = structure.getMethods();
-					for (int i = 0; i < methods.length; i++) {
-						IApiMethod method = methods[i];
-						if (descriptor.getName().equals(method.getName())) {
-							String signature = method.getSignature();
-							String descriptorSignature = descriptor.getSignature().replace('/', '.');
-							if (Signatures.matchesSignatures(descriptorSignature, signature.replace('/', '.'))) {
-								return descriptor.getEnclosingType().getMethod(method.getName(), signature);
-							}
-							String genericSignature = method.getGenericSignature();
-							if (genericSignature != null) {
-								if (Signatures.matchesSignatures(descriptorSignature, genericSignature.replace('/', '.'))) {
+					if(structure != null) {
+						IApiMethod[] methods = structure.getMethods();
+						for (int i = 0; i < methods.length; i++) {
+							IApiMethod method = methods[i];
+							if (descriptor.getName().equals(method.getName())) {
+								String signature = method.getSignature();
+								String descriptorSignature = descriptor.getSignature().replace('/', '.');
+								if (Signatures.matchesSignatures(descriptorSignature, signature.replace('/', '.'))) {
 									return descriptor.getEnclosingType().getMethod(method.getName(), signature);
+								}
+								String genericSignature = method.getGenericSignature();
+								if (genericSignature != null) {
+									if (Signatures.matchesSignatures(descriptorSignature, genericSignature.replace('/', '.'))) {
+										return descriptor.getEnclosingType().getMethod(method.getName(), signature);
+									}
 								}
 							}
 						}
