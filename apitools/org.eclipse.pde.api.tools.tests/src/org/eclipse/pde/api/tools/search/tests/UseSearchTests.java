@@ -150,8 +150,8 @@ public class UseSearchTests extends SearchTest {
 			TEST_REPORTER.setExpectedNotSearched(null);			
 			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(XML_PATH.toOSString(), false), null);
 			setProjectsUsedBy(
-					new String[] {P1_NAME, P2_NAME}, 
-					new String[][] {{P2_NAME, P3_NAME}, {P3_NAME}});
+					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)}, 
+					new String[][] {{getProjectId(P2_NAME, DEFAULT_VERSION), getProjectId(P3_NAME, DEFAULT_VERSION)}, {getProjectId(P3_NAME, DEFAULT_VERSION)}});
 			assertXMLReport(XML_PATH);
 		}
 		catch(Exception e) {
@@ -174,12 +174,18 @@ public class UseSearchTests extends SearchTest {
 			TEST_REPORTER.setExpectedNotSearched(null);
 			engine.search(getTestBaseline(), TEST_REQUESTOR, getCompositeReporter(XML_PATH.toOSString(), true), null);
 			setProjectsUsedBy(
-					new String[] {P1_NAME, P2_NAME}, 
-					new String[][] {{P2_NAME, P3_NAME}, {P3_NAME}});
+					new String[] {getProjectId(P1_NAME, DEFAULT_VERSION), getProjectId(P2_NAME, DEFAULT_VERSION)}, 
+					new String[][] {{getProjectId(P2_NAME, DEFAULT_VERSION), getProjectId(P3_NAME, DEFAULT_VERSION)}, {getProjectId(P3_NAME, DEFAULT_VERSION)}});
 			assertXMLReport(XML_PATH);
 		}
 		catch(Exception e) {
 			fail("The search engine should not throw an exception: "+e.toString());
 		}
+	}
+	
+	String getProjectId(String project, String version) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(project).append(" ").append('(').append(version).append(')');
+		return buffer.toString();
 	}
 }

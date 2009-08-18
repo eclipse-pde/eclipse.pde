@@ -40,6 +40,7 @@ public abstract class SearchTest extends TestCase {
 	static final String P1_NAME = "a.b.c.P1";
 	static final String P2_NAME = "x.y.z.P2";
 	static final String P3_NAME = "l.m.n.P3";
+	static final String DEFAULT_VERSION = "1.0.0";
 	
 	static {
 		DEFAULT_SCOPE_PROJECTS.add(P1_NAME);
