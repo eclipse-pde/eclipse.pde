@@ -524,7 +524,9 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 		catch(CoreException ce) {}
 		finally {
 			try {
-				writer.close();
+				if(writer != null) {
+					writer.close();
+				}
 			} 
 			catch (IOException e) {}
 		}
