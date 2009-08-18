@@ -692,16 +692,15 @@ public final class ApiUseReportConverter {
 		Element root = Util.parseDocument(Util.getFileContentAsString(xml));
 		NodeList components = root.getElementsByTagName(IApiXmlConstants.ELEMENT_COMPONENT);
 		Element component = null;
-		String id = null, nodesc = null, excluded = null, resolveerrors = null;
+		String id = null, excluded = null, resolveerrors = null;
 		for (int i = 0; i < components.getLength(); i++) {
 			component = (Element) components.item(i);
 			id = component.getAttribute(IApiXmlConstants.ATTR_ID);
-			nodesc = component.getAttribute(IApiXmlConstants.NO_API_DESCRIPTION);
 			excluded = component.getAttribute(IApiXmlConstants.EXCLUDED);
 			resolveerrors = component.getAttribute(IApiXmlConstants.RESOLUTION_ERRORS);
 			if(!"".equals(id)) { //$NON-NLS-1$
 				writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_not_searched_component_list, 
-								new String[] {id, nodesc, excluded, resolveerrors}));
+								new String[] {id, excluded, resolveerrors}));
 			}
 		}
 	}

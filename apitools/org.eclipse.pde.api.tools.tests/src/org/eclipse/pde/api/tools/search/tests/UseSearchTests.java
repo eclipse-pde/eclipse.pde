@@ -77,7 +77,7 @@ public class UseSearchTests extends SearchTest {
 					reportFailure("Unexpected folder entry in the report location: ["+projects[j].getName()+"]");
 				}
 			}
-			assertTrue("Al of the using projects should have been detected", names.size() == 0);
+			assertTrue("All of the using projects should have been detected", names.size() == 0);
 		}
 	}
 	

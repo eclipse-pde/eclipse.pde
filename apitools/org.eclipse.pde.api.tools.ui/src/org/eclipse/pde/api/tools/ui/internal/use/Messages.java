@@ -21,6 +21,7 @@ public class Messages extends NLS {
 	public static String ApiUseScanJob_api_use_report;
 	public static String ApiUseScanJob_baseline_does_not_exist;
 	public static String ApiUseScanJob_baseline_name_missing;
+	public static String ApiUseScanJob_creating_html_reports;
 	public static String ApiUseScanJob_creating_search_scope;
 	public static String ApiUseScanJob_deleteing_file;
 	public static String ApiUseScanJob_deleting_old_reports;

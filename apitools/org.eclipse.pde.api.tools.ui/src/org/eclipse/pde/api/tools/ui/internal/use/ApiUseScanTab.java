@@ -36,6 +36,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -98,6 +99,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
+		GridLayout layout = (GridLayout) comp.getLayout();
+		layout.makeColumnsEqualWidth = true;
 		
 		Group group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_analuze, 3, 3, GridData.FILL_HORIZONTAL);
 		this.radioBaseline = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_api_baseline);
@@ -214,6 +217,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.searchScope.addModifyListener(modifyadapter);
 		this.includesystemlibs = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_system_libs, null, false, 2);
 		this.includesystemlibs.addSelectionListener(selectionadapter);
+		SWTFactory.createVerticalSpacer(group, 15);
 		
 		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(group, Messages.ApiUseScanTab_report_location, 2);

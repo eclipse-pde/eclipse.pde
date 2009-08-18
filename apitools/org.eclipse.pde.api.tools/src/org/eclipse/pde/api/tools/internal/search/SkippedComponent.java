@@ -17,10 +17,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
 public class SkippedComponent implements IApiElement{
 	/**
-	 * If the skipped component has no .api_description
-	 */
-	private boolean noapidescription = false;
-	/**
 	 * If the skipped component was skipped because it was found in an exclude list
 	 */
 	private boolean inexcludelist = false;
@@ -39,13 +35,11 @@ public class SkippedComponent implements IApiElement{
 
 	/**
 	 * Constructor
-	 * @param noapidescription
 	 * @param inexcludelist
 	 * @param componentid
 	 * @param errors the {@link ResolverError}s, if any, that prevented this component from being scanned
 	 */
-	public SkippedComponent(String componentid, boolean noapidescription, boolean inexcludelist, boolean resolveerrors, ResolverError[] errors) {
-		this.noapidescription = noapidescription;
+	public SkippedComponent(String componentid, boolean inexcludelist, boolean resolveerrors, ResolverError[] errors) {
 		this.inexcludelist = inexcludelist;
 		this.resolveerrors = resolveerrors;
 		this.componentid = componentid;
@@ -74,13 +68,6 @@ public class SkippedComponent implements IApiElement{
 	 */
 	public String getComponentId() {
 		return this.componentid;
-	}
-	
-	/**
-	 * @return true if the the skipped component has no .api_description file
-	 */
-	public boolean hasNoApiDescription() {
-		return this.noapidescription;
 	}
 	
 	/**

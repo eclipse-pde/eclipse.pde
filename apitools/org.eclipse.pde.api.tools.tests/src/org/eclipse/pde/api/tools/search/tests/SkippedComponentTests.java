@@ -44,8 +44,8 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
-			SkippedComponent scomp2 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
+			SkippedComponent scomp2 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertEquals("The components should be equal", scomp1, scomp2);
 			assertTrue("The components should not be equal", !scomp1.equals(tcomp));
 			assertTrue("The components should not be equal", !scomp2.equals(tcomp));
@@ -62,8 +62,8 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
-			SkippedComponent scomp2 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
+			SkippedComponent scomp2 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertEquals("The component hashcodes should be equal", scomp1.hashCode(), scomp2.hashCode());
 		}
 		catch(Exception e) {
@@ -78,8 +78,8 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
-			SkippedComponent scomp2 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
+			SkippedComponent scomp2 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertEquals("The component ids should be equal", scomp1.getComponentId(), scomp2.getComponentId());
 			assertEquals("The component ids should be equal", scomp1.getComponentId(), tcomp.getId());
 			assertEquals("The component ids should be equal", scomp2.getComponentId(), tcomp.getId());
@@ -96,27 +96,10 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertFalse("The testing component was not excluded", scomp1.wasExcluded());
-			scomp1 = new SkippedComponent(tcomp.getId(), false, true, false, null);
+			scomp1 = new SkippedComponent(tcomp.getId(), true, false, null);
 			assertTrue("The testing component was excluded", scomp1.wasExcluded());
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
-	}
-	
-	/**
-	 * Tests the {@link SkippedComponent#hasNoApiDescription()} method
-	 */
-	public void tesHasNoApiDescription() {
-		try {
-			IApiComponent tcomp = getTestingComponent();
-			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
-			assertFalse("The testing component was missing the api description", scomp1.hasNoApiDescription());
-			scomp1 = new SkippedComponent(tcomp.getId(), true, true, false, null);
-			assertTrue("The testing component was not missing the api description", scomp1.hasNoApiDescription());
 		}
 		catch(Exception e) {
 			fail(e.getMessage());
@@ -130,9 +113,9 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertFalse("The testing component did have resolution errors", scomp1.hasResolutionErrors());
-			scomp1 = new SkippedComponent(tcomp.getId(), true, true, true, null);
+			scomp1 = new SkippedComponent(tcomp.getId(), true, true, null);
 			assertTrue("The testing component did not have resolution errors", scomp1.hasResolutionErrors());
 		}
 		catch(Exception e) {
@@ -147,7 +130,7 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertNull("there should be no ancestors for SkippedComponents", scomp1.getAncestor(IApiElement.COMPONENT));
 		}
 		catch(Exception e) {
@@ -162,7 +145,7 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertNull("there should be no IApiComponent object for SkippedComponents", scomp1.getApiComponent());
 		}
 		catch(Exception e) {
@@ -177,7 +160,7 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertEquals("The names should be equal", tcomp.getId(), scomp1.getName());
 		}
 		catch(Exception e) {
@@ -192,7 +175,7 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertNull("there should be no parentt object for SkippedComponents", scomp1.getParent());
 		}
 		catch(Exception e) {
@@ -207,7 +190,7 @@ public class SkippedComponentTests extends SearchTest {
 		try {
 			IApiComponent tcomp = getTestingComponent();
 			assertNotNull("The testing component should not be null", tcomp);
-			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, false, null);
+			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), false, false, null);
 			assertEquals("The type should be IApiElement.COMPONENT", IApiElement.COMPONENT, scomp1.getType());
 		}
 		catch(Exception e) {

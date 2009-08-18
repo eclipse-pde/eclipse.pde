@@ -89,9 +89,10 @@ public class ApiUseScanJob extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		// Build API baseline
+		SubMonitor localmonitor = SubMonitor.convert(monitor);
 		try {
-			SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_preparing_for_scan, (isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 10 : 9));
-			
+			localmonitor.setTaskName(Messages.ApiUseScanJob_preparing_for_scan);
+			localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 12 : 11));
 			// create baseline
 			IApiBaseline baseline = createApiBaseline(localmonitor.newChild(1));
 			Set targetIds = getTargetComponentIds(baseline, localmonitor.newChild(1));
@@ -108,6 +109,9 @@ public class ApiUseScanJob extends Job {
 			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.XML_PATH, (String)null);
 			if (xmlPath == null) {
 				abort(Messages.ApiUseScanJob_missing_xml_loc);
+			}
+			if(isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
+				scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
 			}
 			IApiSearchReporter reporter = new XMLApiSearchReporter(
 					xmlPath, 
@@ -126,7 +130,7 @@ public class ApiUseScanJob extends Job {
 						htmlPath,
 						xmlPath,
 						isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT),
-						localmonitor.newChild(1));
+						localmonitor.newChild(10));
 			}
 			
 			// Dispose the baseline if it's not managed (it's temporary)
@@ -148,6 +152,9 @@ public class ApiUseScanJob extends Job {
 			}
 		} catch (CoreException e) {
 			return e.getStatus();
+		}
+		finally {
+			localmonitor.done();
 		}
 		return Status.OK_STATUS;
 	}
@@ -293,12 +300,12 @@ public class ApiUseScanJob extends Job {
 	 */
 	boolean acceptComponent(IApiComponent component, Pattern pattern) throws CoreException {
 		if(component.isSystemComponent() && !isSpecified(ApiUseLaunchDelegate.MOD_SYSTEM_LIBS)) {
-			this.notsearched.add(new SkippedComponent(component.getId(), false, true, false, null));
+			this.notsearched.add(new SkippedComponent(component.getId(), true, false, null));
 			return false;
 		}
 		ResolverError[] errors = component.getErrors();
 		if(errors != null) {
-			this.notsearched.add(new SkippedComponent(component.getId(), false, false, true, errors));
+			this.notsearched.add(new SkippedComponent(component.getId(), false, true, errors));
 			return false;
 		}
 		if(pattern != null) {
@@ -324,25 +331,26 @@ public class ApiUseScanJob extends Job {
 	 * @param hlocation
 	 * @param rlocation
 	 * @param openhtml
-	 * @param localmonitor
+	 * @param monitor
 	 * @throws OperationCanceledException
 	 */
 	void performReportCreation(boolean cleanh, 
 			String hlocation, 
 			String rlocation, 
 			boolean openhtml, 
-			SubMonitor localmonitor) throws OperationCanceledException {
+			IProgressMonitor monitor) {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_creating_html_reports, 10);
 		if(cleanh) {
-			cleanReportLocation(hlocation, localmonitor.newChild(1));
+			cleanReportLocation(hlocation, localmonitor.newChild(5));
 		}
 		try {
 			ApiUseReportConverter converter = new ApiUseReportConverter(hlocation, rlocation);
-			converter.convert(null, localmonitor.newChild(1));
+			converter.convert(null, localmonitor.newChild(5));
 			if(openhtml) {
 				final File index = converter.getReportIndex();
 				if(index != null) {
 					UIJob ujob = new UIJob(Util.EMPTY_STRING){
-						public IStatus runInUIThread(IProgressMonitor jmonitor) {
+						public IStatus runInUIThread(IProgressMonitor monitor) {
 							IEditorDescriptor edesc = null;
 							try {
 								edesc = IDE.getEditorDescriptor(index.getName());
