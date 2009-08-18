@@ -321,24 +321,39 @@ public class PluginImportOperation extends WorkspaceJob {
 		try {
 			monitor.beginTask("", 4); //$NON-NLS-1$
 
-			// Extract the source
-			WorkspaceBuildModel buildModel = extractSourceFolders(project, model, new SubProgressMonitor(monitor, 1));
+			// Extract the source, track build entries and package locations
+			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
+			Map packageLocations = new HashMap(); // maps package path to a src folder 
+			extractSourceFolders(project, model, buildModel, packageLocations, new SubProgressMonitor(monitor, 1));
 
 			// Extract additional non-java files from the source bundles
 			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
 
 			// Extract the binary plug-in (for non-class files)
+			// Use the package locations map to put files that belong in the package directory structure into the proper source directory
 			if (isJARd(model)) {
-				ArrayList collected = new ArrayList();
+				Map collected = new HashMap();
 				ZipFileStructureProvider provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
-				PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
-				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, new SubProgressMonitor(monitor, 1));
+				PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
+				for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
+					IPath currentDestination = (IPath) iterator.next();
+					IPath destination = project.getFullPath();
+					destination = destination.append(currentDestination);
+					PluginImportHelper.importContent(provider.getRoot(), destination, provider, (List) collected.get(currentDestination), new NullProgressMonitor());
+				}
+				monitor.worked(1);
 			} else {
-				ArrayList collected = new ArrayList();
+				Map collected = new HashMap();
 				File srcFile = new File(model.getInstallLocation());
-				PluginImportHelper.collectResourcesFromFolder(FileSystemStructureProvider.INSTANCE, srcFile, project.getFullPath(), collected);
-				PluginImportHelper.collectRequiredBundleFiles(FileSystemStructureProvider.INSTANCE, srcFile, collected);
-				PluginImportHelper.importContent(srcFile, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, new SubProgressMonitor(monitor, 1));
+				PluginImportHelper.collectBinaryFiles(FileSystemStructureProvider.INSTANCE, srcFile, packageLocations, collected);
+				for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
+					IPath currentDestination = (IPath) iterator.next();
+					IPath destination = project.getFullPath();
+					destination = destination.append(currentDestination);
+					PluginImportHelper.importContent(srcFile, destination, FileSystemStructureProvider.INSTANCE, (List) collected.get(currentDestination), new NullProgressMonitor());
+				}
+				monitor.worked(1);
+
 			}
 
 			// Create the build.properties file
@@ -588,16 +603,16 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * 
 	 * @param project destination project
 	 * @param model plug-in being imported
+	 * @param buildModel a workspace build model that entries for each created source folder will be added to
+	 * @param packageLocations map that will be updated with package locations (package path to a source foldeR) 
 	 * @param monitor progress monitor
-	 * @return a workspace build model containing entries for each created source folder
 	 * @throws CoreException if there is a problem extracting the source or creating a build entry
 	 */
-	private WorkspaceBuildModel extractSourceFolders(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+	private void extractSourceFolders(IProject project, IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations, IProgressMonitor monitor) throws CoreException {
 		try {
 			String[] libraries = getLibraryNames(model);
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
-			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
 			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 
 			// Need to do different things based on whether we have a individual source bundle or the old style separated zips
@@ -616,14 +631,19 @@ public class PluginImportOperation extends WorkspaceJob {
 									excludeFolders.add(new Path(root));
 								}
 							}
-							PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders, destination.getFullPath(), new SubProgressMonitor(monitor, 1));
+							Set collectedPackages = new HashSet();
+							PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders, destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
 							addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+							addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
+
 						}
 					} else if (sourceRoots.contains(getSourceDirName(libraries[i]))) {
 						IPath sourceDir = new Path(getSourceDirName(libraries[i]));
 						if (!project.getFolder(sourceDir).exists()) {
-							PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(), new SubProgressMonitor(monitor, 1));
+							Set collectedPackages = new HashSet();
+							PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
 							addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
+							addPackageEntries(collectedPackages, sourceDir, packageLocations);
 						}
 					}
 				}
@@ -636,15 +656,42 @@ public class PluginImportOperation extends WorkspaceJob {
 						IPath dstPath = new Path(getSourceDirName(libraries[i]));
 						IResource destination = project.getFolder(dstPath);
 						if (!destination.exists()) {
-							PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), new SubProgressMonitor(monitor, 1));
+							Set collectedPackages = new HashSet();
+							PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
 							addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
+							addPackageEntries(collectedPackages, dstPath, packageLocations);
 						}
 					}
 				}
 			}
-			return buildModel;
 		} finally {
 			monitor.done();
+		}
+	}
+
+	/**
+	 * Adds a set of packages to the package location map.  For each package in the given set
+	 * an entry will be added to the map pointing to the destination.  In additional, any parent 
+	 * package fragments that do not have entries in the map will be added (also pointing to the
+	 * destination path).
+	 *  
+	 * @param packages set of packages to add to the map
+	 * @param destination the destination directory that the packages belong to
+	 * @param packageLocations the map to add the entries to
+	 */
+	private void addPackageEntries(Set packages, IPath destination, Map packageLocations) {
+		for (Iterator iterator = packages.iterator(); iterator.hasNext();) {
+			IPath currentPackage = (IPath) iterator.next();
+			packageLocations.put(currentPackage, destination);
+
+			// Add package fragment locations
+			while (currentPackage.segmentCount() > 1) {
+				currentPackage = currentPackage.removeLastSegments(1);
+				if (packageLocations.containsKey(currentPackage)) {
+					break; // Don't overwrite existing entries, we assume that if one parent has an entry, all further parents already have an entry
+				}
+				packageLocations.put(currentPackage, destination);
+			}
 		}
 	}
 

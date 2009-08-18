@@ -61,14 +61,23 @@ public class PluginImportHelper {
 	 * Extracts the contents of the specified zip file to the specified destination
 	 * @param file
 	 * @param dstPath
+	 * @param collectedPackages will be updated with the set of packages the extracted source belongs to, if <code>null</code> this step will be skipped
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public static void extractArchive(File file, IPath dstPath, IProgressMonitor monitor) throws CoreException {
+	public static void extractArchive(File file, IPath dstPath, Set collectedPackages, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
+
+			// If the caller wants to have package names collected, scan the zip file for package structures
+			if (collectedPackages != null) {
+				ArrayList collected = new ArrayList();
+				collectResources(provider, provider.getRoot(), collected);
+				collectJavaPackages(provider, collected, null, collectedPackages);
+			}
+
 			importContent(provider.getRoot(), dstPath, provider, null, monitor);
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
@@ -88,17 +97,21 @@ public class PluginImportHelper {
 	 * @param file archive file to search for files
 	 * @param folderPath path to the folder to extract from
 	 * @param dstPath destination to import content to
+	 * @param collectedPackages will be updated with the set of packages the extracted source belongs to, if <code>null</code> this step will be skipped
 	 * @param monitor progress monitor
 	 * @throws CoreException if a problem occurs while extracting
 	 * @since 3.4
 	 */
-	public static void extractFolderFromArchive(File file, IPath folderPath, IPath dstPath, IProgressMonitor monitor) throws CoreException {
+	public static void extractFolderFromArchive(File file, IPath folderPath, IPath dstPath, Set collectedPackages, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			ArrayList collected = new ArrayList();
 			collectResourcesFromFolder(provider, provider.getRoot(), folderPath, collected);
+			if (collectedPackages != null) {
+				collectJavaPackages(provider, collected, folderPath, collectedPackages);
+			}
 			importContent(provider.getRoot(), dstPath, provider, collected, monitor);
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
@@ -120,16 +133,20 @@ public class PluginImportHelper {
 	 * @param file archive file to search for source in
 	 * @param excludeFolders list of IPaths describing folders to ignore while searching
 	 * @param dstPath full path to destination to put the extracted source
+	 * @param collectedPackages will be updated with the set of packages the extracted source belongs to, if <code>null</code> this step will be skipped 
 	 * @param monitor progress monitor
 	 * @throws CoreException if there is a problem extracting source from the zip
 	 */
-	public static void extractJavaSourceFromArchive(File file, List excludeFolders, IPath dstPath, IProgressMonitor monitor) throws CoreException {
+	public static void extractJavaSourceFromArchive(File file, List excludeFolders, IPath dstPath, Set collectedPackages, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			ArrayList collected = new ArrayList();
 			collectJavaSourceFromRoot(provider, excludeFolders, collected);
+			if (collectedPackages != null) {
+				collectJavaPackages(provider, collected, null, collectedPackages);
+			}
 			importContent(provider.getRoot(), dstPath, provider, collected, monitor);
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
@@ -141,6 +158,40 @@ public class PluginImportHelper {
 				} catch (IOException e) {
 				}
 			}
+		}
+	}
+
+	/**
+	 * Scans the given list of files and grabs their package path (ex: org/eclipse/foo) and adds it
+	 * to the set of packages.  If a prefix is provided, the prefix will be removed from the start of
+	 * the package path.
+	 * <p>
+	 * This method uses only the directory structure to determine package structure.
+	 * </p> 
+	 * @param provider file structure provider for the files (either folder or a zip)
+	 * @param javaFiles list of files in the file structure to search through
+	 * @param prefixPath a path that one or more of the files may have at the start of their path, the prefix is removed before adding to the package list, can be <code>null</code>
+	 * @param packageList a set that will be updated with the discovered packages
+	 */
+	private static void collectJavaPackages(IImportStructureProvider provider, List javaFiles, IPath prefixPath, Set packageList) {
+		for (Iterator iterator = javaFiles.iterator(); iterator.hasNext();) {
+			String stringPath = provider.getFullPath(iterator.next());
+			IPath path = new Path(stringPath);
+			path = path.removeLastSegments(1);
+
+			// If the current path starts with the given prefix, remove the prefix
+			if (prefixPath != null) {
+				boolean prefixMatches = true;
+				for (int i = 0; i < prefixPath.segmentCount(); i++) {
+					if (!prefixPath.segment(i).equals(path.segment(i))) {
+						prefixMatches = false;
+					}
+				}
+				if (prefixMatches) {
+					path = path.removeFirstSegments(prefixPath.segmentCount());
+				}
+			}
+			packageList.add(path);
 		}
 	}
 
@@ -218,6 +269,59 @@ public class PluginImportHelper {
 		}
 	}
 
+	/**
+	 * Collects all items that are not .class files or signing files, uses the provided map to split
+	 * up entries into multiple destinations
+	 * 
+	 * @param provider import provider
+	 * @param element element to start search at
+	 * @param packageLocations pre-populated map of package names to a destination folder 
+	 * @param collected map to collect a file list (maps destination folder to a list of files
+	 */
+	public static void collectBinaryFiles(IImportStructureProvider provider, Object element, Map packageLocations, Map collected) {
+		List children = provider.getChildren(element);
+		if (children != null && !children.isEmpty()) {
+			for (int i = 0; i < children.size(); i++) {
+				Object curr = children.get(i);
+				String name = provider.getLabel(curr);
+				if (provider.isFolder(curr)) {
+					collectBinaryFiles(provider, curr, packageLocations, collected);
+
+				} else if (!name.endsWith(".class") && !name.endsWith(".RSA") && !name.endsWith(".DSA") && !name.endsWith(".SF")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					// Collect everything except class files and signing files
+
+					// Note: any unjarred class files should be at the root of the binary jar/folder (i.e. we shouldn't see lib/org/eclipse/foo/myclass.class)
+					String fullPath = provider.getFullPath(curr);
+					IPath packagePath = new Path(fullPath);
+					IPath destination = null;
+
+					// The last segment currently is the filename
+					packagePath = packagePath.removeLastSegments(1);
+
+					// Repeatedly remove the last segment and see if the path matches one of the known package locations
+					while (packagePath.segmentCount() > 0 && destination == null) {
+						destination = (IPath) packageLocations.get(packagePath);
+						packagePath = packagePath.removeLastSegments(1);
+					}
+
+					// If the file doesn't belong to a package, put it in the project root
+					if (destination == null) {
+						destination = new Path(""); //$NON-NLS-1$
+					}
+
+					// Add the file to the appropriate list in the map
+					Object fileList = collected.get(destination);
+					if (!(fileList instanceof List)) {
+						fileList = new ArrayList();
+						collected.put(destination, fileList);
+					}
+					((List) fileList).add(curr);
+				}
+
+			}
+		}
+	}
+
 	public static void collectNonJavaNonBuildFiles(IImportStructureProvider provider, Object element, ArrayList collected) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
@@ -238,7 +342,14 @@ public class PluginImportHelper {
 		}
 	}
 
-	private static void collectResources(IImportStructureProvider provider, Object element, ArrayList collected) {
+	/**
+	 * Recursively searches the given folder/zip structure for all non-class files.
+	 * 
+	 * @param provider zip/folder structure provider
+	 * @param element element within the structure to search
+	 * @param collected collection for gathering file list
+	 */
+	public static void collectResources(IImportStructureProvider provider, Object element, ArrayList collected) {
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
