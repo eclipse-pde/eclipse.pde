@@ -80,8 +80,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	Text targetScope = null;
 	Text reportlocation = null;
 	Text htmllocation = null;
-	Button includesystemlibs = null,
-		   considerapi = null,
+	Button considerapi = null,
 		   considerinternal = null,
 		   createhtml = null,
 		   browsehtmllocation = null,
@@ -202,7 +201,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		gd = (GridData) this.radioWorkspace.getLayoutData();
 		gd.horizontalSpan = 3;
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_HORIZONTAL);
+		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(group, Messages.ApiUseScanTab_references_to, 1);
 		this.targetScope = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.targetScope.addModifyListener(modifyadapter);		
@@ -211,15 +210,12 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.considerinternal = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_internal_references, null, true, 2);
 		this.considerinternal.addSelectionListener(selectionadapter);		
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_in, 2, 1, GridData.FILL_HORIZONTAL);
+		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_in, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(group, Messages.ApiUseScanTab_bundles_matching, 1);
 		this.searchScope = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.searchScope.addModifyListener(modifyadapter);
-		this.includesystemlibs = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_system_libs, null, false, 2);
-		this.includesystemlibs.addSelectionListener(selectionadapter);
-		SWTFactory.createVerticalSpacer(group, 15);
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
+		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_BOTH);
 		SWTFactory.createLabel(group, Messages.ApiUseScanTab_report_location, 2);
 		this.reportlocation = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.reportlocation.addModifyListener(modifyadapter);
@@ -440,7 +436,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.installLocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, "")); //$NON-NLS-1$
 			this.considerapi.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES, configuration));
 			this.considerinternal.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, configuration));
-			this.includesystemlibs.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_SYSTEM_LIBS, configuration));
 			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.XML_PATH, "")); //$NON-NLS-1$
 			this.cleanreportlocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_XML, configuration));
 			boolean enabled = isSpecified(ApiUseLaunchDelegate.CREATE_HTML, configuration);
@@ -543,7 +538,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		modifiers = consider(this.considerapi, ApiUseLaunchDelegate.MOD_API_REFERENCES, modifiers);
 		modifiers = consider(this.considerinternal, ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, modifiers);
 		modifiers = consider(this.createhtml, ApiUseLaunchDelegate.CREATE_HTML, modifiers);
-		modifiers = consider(this.includesystemlibs, ApiUseLaunchDelegate.MOD_SYSTEM_LIBS, modifiers);
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
 		configuration.setAttribute(ApiUseLaunchDelegate.HTML_PATH, this.htmllocation.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.XML_PATH, this.reportlocation.getText().trim());

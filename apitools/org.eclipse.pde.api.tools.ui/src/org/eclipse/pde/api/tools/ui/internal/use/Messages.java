@@ -18,9 +18,12 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.use.messages"; //$NON-NLS-1$
 	public static String ApiProfileWizardPage_0;
+	public static String ApiUseScanJob_adding_component;
 	public static String ApiUseScanJob_api_use_report;
 	public static String ApiUseScanJob_baseline_does_not_exist;
 	public static String ApiUseScanJob_baseline_name_missing;
+	public static String ApiUseScanJob_cleaning_xml_loc;
+	public static String ApiUseScanJob_collecting_target_components;
 	public static String ApiUseScanJob_creating_html_reports;
 	public static String ApiUseScanJob_creating_search_scope;
 	public static String ApiUseScanJob_deleteing_file;
@@ -56,7 +59,6 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_search_for;
 	public static String ApiUseScanTab_search_in;
 	public static String ApiUseScanTab_select_install_location;
-	public static String ApiUseScanTab_system_libs;
 	public static String ApiUseScanTab_target_definitions;
 	public static String ApiUseScanTab_targets;
 	public static String ApiUseScanTab_workspace_projects;

@@ -66,11 +66,10 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	 */
 	public static final int MOD_API_REFERENCES			= 1;
 	public static final int MOD_INTERNAL_REFERENCES		= 1 << 1;
-	public static final int MOD_SYSTEM_LIBS				= 1 << 2;
-	public static final int CLEAN_XML					= 1 << 3;
-	public static final int CLEAN_HTML					= 1 << 4;
-	public static final int CREATE_HTML					= 1 << 5;
-	public static final int DISPLAY_REPORT				= 1 << 6;
+	public static final int CLEAN_XML					= 1 << 2;
+	public static final int CLEAN_HTML					= 1 << 3;
+	public static final int CREATE_HTML					= 1 << 4;
+	public static final int DISPLAY_REPORT				= 1 << 5;
 	
 	/**
 	 * Path to root directory of XML reports

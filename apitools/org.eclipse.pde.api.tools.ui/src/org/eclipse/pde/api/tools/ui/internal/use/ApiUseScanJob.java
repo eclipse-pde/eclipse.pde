@@ -111,6 +111,7 @@ public class ApiUseScanJob extends Job {
 				abort(Messages.ApiUseScanJob_missing_xml_loc);
 			}
 			if(isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
+				localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
 				scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
 			}
 			IApiSearchReporter reporter = new XMLApiSearchReporter(
@@ -232,31 +233,22 @@ public class ApiUseScanJob extends Job {
 	 * @throws CoreException
 	 */
 	private Set getTargetComponentIds(IApiBaseline baseline, IProgressMonitor monitor) throws CoreException {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_collecting_target_components, 10);
 		Set set = new HashSet();
-		boolean systemLibs = isSpecified(ApiUseLaunchDelegate.MOD_SYSTEM_LIBS);
 		String regex = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null);
-		if (regex == null) {
-			// add all
-			IApiComponent[] components = baseline.getApiComponents();
-			for (int i = 0; i < components.length; i++) {
-				IApiComponent component = components[i];
-				if (component.isSystemComponent()) {
-					if (systemLibs) {
-						set.add(component.getId());
-					}
-				} else {
-					set.add(component.getId());
-				}
-			}
-		} else {
-			// add matching components
-			Pattern pattern = Pattern.compile(regex);
-			IApiComponent[] components = baseline.getApiComponents();
-			for (int i = 0; i < components.length; i++) {
-				IApiComponent component = components[i];
-				if (pattern.matcher(component.getId()).matches()) {
-					set.add(component.getId());
-				}
+		// add all
+		Pattern pattern = null;
+		if(regex != null) {
+			pattern = Pattern.compile(regex);
+		}
+		IApiComponent[] components = baseline.getApiComponents();
+		localmonitor.setWorkRemaining(components.length);
+		for (int i = 0; i < components.length; i++) {
+			Util.updateMonitor(localmonitor, 1);
+			IApiComponent component = components[i];
+			if (acceptComponent(component, pattern, true)) {
+				localmonitor.setTaskName(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
+				set.add(component.getId());
 			}
 		}
 		return set;
@@ -284,7 +276,7 @@ public class ApiUseScanJob extends Job {
 		for (int i = 0; i < components.length; i++) {
 			Util.updateMonitor(localmonitor, 1);
 			IApiComponent component = components[i];
-			if (acceptComponent(component, pattern)) {
+			if (acceptComponent(component, pattern, false)) {
 				list.add(component);
 			}
 		}
@@ -295,17 +287,19 @@ public class ApiUseScanJob extends Job {
 	 * Returns if we should add the given component to our search scope
 	 * @param component
 	 * @param pattern
+	 * @param allowresolve TODO
 	 * @return
 	 * @throws CoreException
 	 */
-	boolean acceptComponent(IApiComponent component, Pattern pattern) throws CoreException {
-		if(component.isSystemComponent() && !isSpecified(ApiUseLaunchDelegate.MOD_SYSTEM_LIBS)) {
-			this.notsearched.add(new SkippedComponent(component.getId(), true, false, null));
-			return false;
+	boolean acceptComponent(IApiComponent component, Pattern pattern, boolean allowresolve) throws CoreException {
+		if(!allowresolve) {
+			ResolverError[] errors = component.getErrors();
+			if(errors != null) {
+				this.notsearched.add(new SkippedComponent(component.getId(), false, true, errors));
+				return false;
+			}
 		}
-		ResolverError[] errors = component.getErrors();
-		if(errors != null) {
-			this.notsearched.add(new SkippedComponent(component.getId(), false, true, errors));
+		if(component.isSystemComponent()) {
 			return false;
 		}
 		if(pattern != null) {
@@ -435,13 +429,12 @@ public class ApiUseScanJob extends Job {
 			if (!bundles[i].isSourceBundle()) {
 				IApiComponent component = ApiModelFactory.newApiComponent(profile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 				if (component != null) {
+					localmonitor.setTaskName(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
 					components.add(component);
 				}
 			}
 		}
 		profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
-		monitor.worked(1);
-		monitor.done();
 		return profile;
 	}	
 	
@@ -463,6 +456,7 @@ public class ApiUseScanJob extends Job {
 		IResolvedBundle[] bundles = container.getBundles();
 		List components = new ArrayList();
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(this.configuration.getName());
+		Util.updateMonitor(localmonitor, 1);
 		if (bundles.length > 0) {
 			// an installation
 			localmonitor.setWorkRemaining(bundles.length);
