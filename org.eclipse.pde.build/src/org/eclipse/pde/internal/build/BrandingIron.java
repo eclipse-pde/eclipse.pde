@@ -92,8 +92,19 @@ public class BrandingIron implements IXMLConstants {
 
 	private void brandLinux() throws Exception {
 		renameLauncher();
-		if (brandIcons)
-			Utils.copy(new File(icons[0]), new File(root, "icon.xpm")); //$NON-NLS-1$
+		if (brandIcons) {
+			File icon = null;
+			if (icons.length > 0)
+				for (int i = 0; i < icons.length; i++) {
+					if (icons[i].toLowerCase().endsWith(".xpm")) { //$NON-NLS-1$
+						icon = new File(icons[i]);
+						break;
+					}
+				}
+			else
+				icon = new File(icons[0]);
+			Utils.copy(icon, new File(root, "icon.xpm")); //$NON-NLS-1$
+		}
 	}
 
 	private void brandSolaris() throws Exception {
@@ -130,7 +141,17 @@ public class BrandingIron implements IXMLConstants {
 		String iconName = ""; //$NON-NLS-1$
 		File splashApp = new File(initialRoot, "Resources/Splash.app"); //$NON-NLS-1$
 		if (brandIcons) {
-			File icon = new File(icons[0]);
+			File icon = null;
+			if (icons.length > 1)
+				for (int i = 0; i < icons.length; i++) {
+					if (icons[i].toLowerCase().endsWith(".icns")) { //$NON-NLS-1$
+						icon = new File(icons[i]);
+						break;
+					}
+				}
+			else
+				icon = new File(icons[0]);
+
 			iconName = icon.getName();
 			Utils.copy(icon, new File(target + "/Resources/" + icon.getName())); //$NON-NLS-1$
 			new File(initialRoot + "/Resources/Eclipse.icns").delete(); //$NON-NLS-1$
