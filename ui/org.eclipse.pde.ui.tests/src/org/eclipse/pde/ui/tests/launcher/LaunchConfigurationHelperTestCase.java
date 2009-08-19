@@ -25,15 +25,20 @@ public class LaunchConfigurationHelperTestCase extends TestCase {
 	}
 
 	public void testgetStartData() {
-		assertEquals(LaunchConfigurationHelper.getStartData("", true), "@start");
 		assertEquals(LaunchConfigurationHelper.getStartData("", false), "");
+		assertEquals(LaunchConfigurationHelper.getStartData("", true), "@start");
 		assertEquals(LaunchConfigurationHelper.getStartData("1:true", false), "@1:start");
-		assertEquals(LaunchConfigurationHelper.getStartData("1:start", false), "@1:start");
 		assertEquals(LaunchConfigurationHelper.getStartData("1:true", true), "@1:start");
+		assertEquals(LaunchConfigurationHelper.getStartData("1:start", false), "@1:start");
 		assertEquals(LaunchConfigurationHelper.getStartData("1:start", true), "@1:start");
-		assertEquals(LaunchConfigurationHelper.getStartData("1:start", true), "@1:start");
+		assertEquals(LaunchConfigurationHelper.getStartData("1:default", false), "@1");
+		assertEquals(LaunchConfigurationHelper.getStartData("1:default", true), "@1:start");
 		assertEquals(LaunchConfigurationHelper.getStartData("start", false), "@start");
 		assertEquals(LaunchConfigurationHelper.getStartData("start", true), "@start");
+		assertEquals(LaunchConfigurationHelper.getStartData(":start", false), "@start");
+		assertEquals(LaunchConfigurationHelper.getStartData(":start", true), "@start");
+		assertEquals(LaunchConfigurationHelper.getStartData("default", false), "");
+		assertEquals(LaunchConfigurationHelper.getStartData("default", true), "@start");
 	}
 
 }
