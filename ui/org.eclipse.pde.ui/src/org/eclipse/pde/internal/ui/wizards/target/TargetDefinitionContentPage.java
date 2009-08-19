@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -526,9 +524,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 
-		Button programVars = new Button(programGroup, SWT.NONE);
-		programVars.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		programVars.setText(PDEUIMessages.JavaArgumentsTab_programVariables);
+		Composite programButtons = SWTFactory.createComposite(programGroup, 1, 1, GridData.HORIZONTAL_ALIGN_END, 0, 0);
+
+		Button programVars = SWTFactory.createPushButton(programButtons, PDEUIMessages.JavaArgumentsTab_programVariables, null, GridData.HORIZONTAL_ALIGN_END);
 		programVars.addSelectionListener(getVariablesListener(fProgramArgs));
 
 		Group vmGroup = new Group(container, SWT.NONE);
