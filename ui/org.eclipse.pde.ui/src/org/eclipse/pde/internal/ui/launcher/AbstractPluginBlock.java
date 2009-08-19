@@ -295,7 +295,9 @@ public abstract class AbstractPluginBlock {
 
 	protected void createPluginViewer(Composite composite, int span, int indent) {
 
-		fPluginFilteredTree = new FilteredCheckboxTree(composite, getTreeViewerStyle(), new PatternFilter());
+		PatternFilter patternFilter = new PatternFilter();
+		patternFilter.setIncludeLeadingWildcard(true);
+		fPluginFilteredTree = new FilteredCheckboxTree(composite, getTreeViewerStyle(), patternFilter);
 		fPluginTreeViewer = (CheckboxTreeViewer) fPluginFilteredTree.getViewer();
 		((FilterableCheckboxTreeViewer) fPluginTreeViewer).addPreRefreshNotifier(new PreRefreshNotifier() {
 
