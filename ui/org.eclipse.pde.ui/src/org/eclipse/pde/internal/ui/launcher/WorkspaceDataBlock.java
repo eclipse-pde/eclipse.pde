@@ -131,14 +131,10 @@ public class WorkspaceDataBlock extends BaseBlock {
 
 	protected void handleBrowseWorkspace() {
 		super.handleBrowseWorkspace();
-		if (fClearWorkspaceCheck.getSelection())
-			fClearWorkspaceCheck.setSelection(false);
 	}
 
 	protected void handleBrowseFileSystem() {
 		super.handleBrowseFileSystem();
-		if (fClearWorkspaceCheck.getSelection())
-			fClearWorkspaceCheck.setSelection(false);
 	}
 
 	public String validate() {
