@@ -10,7 +10,7 @@
 <xsl:template match="/">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<title>Reference Details</title>
+	<title>List of bundles that were not searched</title>
 		<style type="text/css">
 			.main{		font-family:Arial, Helvetica, sans-serif;}
 			.main h3 {	font-family:Arial, Helvetica, sans-serif;
@@ -23,9 +23,6 @@
 					   	text-decoration:none;
 					   	margin-left:0.25em;}
 			a.typeslnk:hover{text-decoration:underline;}
-			a.kindslnk{	font-family:Arial, Helvetica, sans-serif;
-					  	text-decoration:none;
-					   	margin-left:0.25em;}
 			.types{	display:none;
 					margin-bottom:0.25em;
 					margin-top:0.25em;
@@ -35,7 +32,7 @@
 		<script type="text/javascript">
 			function expand(location){
 			   if(document.getElementById){
-				 var childhtml = location.firstChild;
+				  var childhtml = location.firstChild;
 				  if(!childhtml.innerHTML) {
 				  	childhtml = childhtml.nextSibling;
 				  }
@@ -54,58 +51,53 @@
 		</noscript>
 	</head>
 	<body>
-		<xsl:variable name="originbundle" select="references/@origin"/>
 		<h3>
-			<xsl:value-of select="references/@name"/> from <xsl:value-of select="references/@referee"/> used by <xsl:value-of  select="$originbundle"/>
+			Bundles that were not searched
 		</h3>
-		<p>
-			Click an entry in the table below to reveal the details of the references made to that element.
-		</p>
-		<div align="left" class="main">
-			<table border="1" width="90%">
-				<tr bgcolor="#CC9933">
-					<td><b>Reference Details</b></td>
-				</tr>
-				<xsl:for-each select="references/type_name">
-				<xsl:sort select="@name"/>
-					<tr>
-						<td>
-							<h3>
-								<b>
-									<a href="javascript:void(0)" class="typeslnk" onclick="expand(this)">
-										<span>[+] </span><xsl:value-of disable-output-escaping="yes" select="@name"/>
-									</a>
-								</b>
-							</h3>
-							<div class="types">
-								<table border="0" width="100%">
-									<xsl:for-each select="reference_kind">
-										<xsl:sort select="@reference_kind_name"/>
-										<tr>
-											<td colspan="2" bgcolor="#CCCCCC"><b><xsl:value-of select="@reference_kind_name"/></b></td>
-										</tr>	
-										<tr bgcolor="#CC9933">
-											<td align="left" width="92%"><b>Reference Location</b></td>
-											<td align="center" width="8%"><b>Line Number</b></td>
-										</tr>
-										<xsl:for-each select="reference">
-											<xsl:sort select="@origin"/>
+			<xsl:choose>
+				<xsl:when test="count(components/component) &gt; 0">
+				<p>
+					Click an entry in the table below to reveal the details of why it was not searched.
+				</p>
+				<div align="left" class="main">
+					<table border="1" width="60%">
+						<tr bgcolor="#CC9933">
+							<td><b>Skipped Bundles</b></td>
+						</tr>
+						<xsl:for-each select="components/component">
+							<xsl:sort select="@id"/>
+							<tr>
+								<td>
+									<h3>
+										<b>
+											<a href="javascript:void(0)" class="typeslnk" onclick="expand(this)">
+												<span>[+] </span><xsl:value-of disable-output-escaping="yes" select="@id"/> (<xsl:value-of disable-output-escaping="yes" select="@version"/>)
+											</a>
+										</b>
+									</h3>
+									<div class="types">
+										<table border="0" width="100%">
+											<tr>
+												<td bgcolor="#CCCCCC"><b>Details</b></td>
+											</tr>	
 											<tr align="left">
-												<td><xsl:value-of disable-output-escaping="yes" select="@origin"/></td>
-												<td align="center"><xsl:value-of select="@linenumber"/></td>
+												<td><xsl:value-of disable-output-escaping="yes" select="@details"/></td>
 											</tr>
-										</xsl:for-each>
-									</xsl:for-each>
-								</table>
-							</div>
-						</td>
-					</tr>
-				</xsl:for-each>
-			</table>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</xsl:for-each>
+					</table>
+					</div>
+				</xsl:when>
+				<xsl:otherwise>
+					<p>No bundles were skipped during the search df</p>
+				</xsl:otherwise>
+			</xsl:choose>
 			<p>
-				Back to reference summary for <a href="../{$originbundle}.html"><xsl:value-of select="$originbundle"/></a>
+				<a href="index.html">Back to bundle summary</a>
 			</p>
-		</div>
 		<p>
 			<a href="http://validator.w3.org/check?uri=referer">
 				<img src="http://www.w3.org/Icons/valid-html401-blue" alt="Valid HTML 4.01 Transitional" height="31" width="88" />

@@ -113,7 +113,7 @@ public class UseTask extends CommonUtilsTask {
 					scope.add(components[i]);
 				}
 				else {
-					notsearched.add(new SkippedComponent(components[i].getId(), excluded, resolveerrors, null));
+					notsearched.add(new SkippedComponent(components[i].getId(), components[i].getVersion(), components[i].getErrors()));
 				}
 			}
 		}
@@ -255,7 +255,7 @@ public class UseTask extends CommonUtilsTask {
 		this.notsearched = new TreeSet(Util.componentsorter);
 		if(this.excludeset != null) {
 			for(Iterator iter = this.excludeset.iterator(); iter.hasNext();) {
-				this.notsearched.add(new SkippedComponent((String) iter.next(), true, false, null));
+				this.notsearched.add(new SkippedComponent((String) iter.next(), null, null));
 			}
 		}
 		if(this.debug) {

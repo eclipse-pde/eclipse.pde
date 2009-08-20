@@ -49,8 +49,6 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -344,10 +342,7 @@ public final class ApiUseReportConverter {
 				throw new Exception(SearchMessages.could_not_create_sax_parser);
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_html_root);
-			if(localmonitor.isCanceled()) {
-				return;
-			}
-			localmonitor.worked(1);
+			Util.updateMonitor(localmonitor, 1);
 			this.htmlRoot = new File(this.htmlLocation);
 			if (!this.htmlRoot.exists()) {
 				if (!this.htmlRoot.mkdirs()) {
@@ -358,10 +353,7 @@ public final class ApiUseReportConverter {
 				this.htmlRoot.mkdirs();
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_xml_root);
-			if(localmonitor.isCanceled()) {
-				return;
-			}
-			localmonitor.worked(1);
+			Util.updateMonitor(localmonitor, 1);
 			if (this.xmlLocation == null) {
 				throw new Exception(SearchMessages.missing_xml_files_location);
 			}
@@ -370,10 +362,7 @@ public final class ApiUseReportConverter {
 				throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, this.xmlLocation));
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_xslt_file);
-			if(localmonitor.isCanceled()) {
-				return;
-			}
-			localmonitor.worked(1);
+			Util.updateMonitor(localmonitor, 1);
 			File xsltFile = null;
 			if(xslt != null) {
 				// we will use the default XSLT transform from the ant jar when this is null
@@ -388,10 +377,7 @@ public final class ApiUseReportConverter {
 				start = System.currentTimeMillis();
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_collecting_dir_info);
-			if(localmonitor.isCanceled()) {
-				return;
-			}
-			localmonitor.worked(1);
+			Util.updateMonitor(localmonitor, 1);
 			File[] referees = getDirectories(this.reportsRoot);
 			this.reports = new HashSet(referees.length+1);
 			Report report = null;
@@ -430,10 +416,7 @@ public final class ApiUseReportConverter {
 						}
 					}
 					this.reports.add(report);
-					if(smonitor.isCanceled()) {
-						return;
-					}
-					smonitor.worked(1);
+					Util.updateMonitor(smonitor, 1);
 				}
 			}
 			finally {
@@ -457,10 +440,7 @@ public final class ApiUseReportConverter {
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_writing_not_searched);
 			writeNotSearched(htmlRoot);
-			if(localmonitor.isCanceled()) {
-				return;
-			}
-			localmonitor.worked(1);
+			Util.updateMonitor(localmonitor, 1);
 			if(DEBUG) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				System.out.println("Writing root index.html..."); //$NON-NLS-1$
@@ -468,10 +448,7 @@ public final class ApiUseReportConverter {
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_writing_root_index);
 			writeIndexFile(sortedreports, htmlRoot);
-			if(localmonitor.isCanceled()) {
-				return;
-			}
-			localmonitor.worked(1);
+			Util.updateMonitor(localmonitor, 1);
 			if(DEBUG) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -479,41 +456,35 @@ public final class ApiUseReportConverter {
 			TreeMap originstorefs = null;
 			smonitor = localmonitor.newChild(1);
 			smonitor.setWorkRemaining(sortedreports.size());
-			try {
-				for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
-					report = (Report) iter.next();
-					localmonitor.setTaskName(NLS.bind(SearchMessages.ApiUseReportConverter_writing_group_reports_for, new String[] {report.referee.getName()}));
-					if(DEBUG) {
-						start = System.currentTimeMillis();
-						System.out.println("Writing report for "+report.referee.getName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					writeRefereeIndex(report);
-					originstorefs = report.origintorefslist;
-					for(Iterator iter2 = originstorefs.entrySet().iterator(); iter2.hasNext();) {
-						Map.Entry entry = (Map.Entry) iter2.next();
-						File origin = (File) entry.getKey();
-						writeOriginEntry(report, xmlfiles, origin, (CountGroup) report.origintocountgroup.get(origin));
-						xmlfiles = (File[]) entry.getValue();
-						tranformXml(xmlfiles, xsltFile);
-					}
-					if(DEBUG) {
-						System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					if(smonitor.isCanceled()) {
-						return;
-					}
-					smonitor.worked(1);
+			for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
+				report = (Report) iter.next();
+				localmonitor.setTaskName(NLS.bind(SearchMessages.ApiUseReportConverter_writing_group_reports_for, new String[] {report.referee.getName()}));
+				if(DEBUG) {
+					start = System.currentTimeMillis();
+					System.out.println("Writing report for "+report.referee.getName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-			}
-			finally {
-				if(!smonitor.isCanceled()) {
-					smonitor.done();
+				writeRefereeIndex(report);
+				originstorefs = report.origintorefslist;
+				for(Iterator iter2 = originstorefs.entrySet().iterator(); iter2.hasNext();) {
+					Map.Entry entry = (Map.Entry) iter2.next();
+					File origin = (File) entry.getKey();
+					writeOriginEntry(report, xmlfiles, origin, (CountGroup) report.origintocountgroup.get(origin));
+					xmlfiles = (File[]) entry.getValue();
+					tranformXml(xmlfiles, xsltFile);
 				}
+				if(DEBUG) {
+					System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				Util.updateMonitor(smonitor, 1);
 			}
 		}
 		finally {
 			if(localmonitor != null) {
 				localmonitor.done();
+			}
+			if(this.reports != null) {
+				this.reports.clear();
+				this.reports = null;
 			}
 		}
 	}
@@ -534,7 +505,6 @@ public final class ApiUseReportConverter {
 	 * @throws TransformerException
 	 */
 	private void applyXSLT(File xsltFile, File xmlfile, File htmloutput) throws TransformerException, Exception {
-		Source xml = new StreamSource(xmlfile);
 		Source xslt = null;
 		if (xsltFile != null) {
 			xslt = new StreamSource(xsltFile);
@@ -547,7 +517,19 @@ public final class ApiUseReportConverter {
 		if(xslt == null) {
 			throw new Exception(SearchMessages.ApiUseReportConverter_no_xstl_specified);
 		}
-		Result html = new StreamResult(htmloutput);
+		applyXSLT(xslt, xmlfile, htmloutput);
+	}
+	
+	/**
+	 * Applies the given XSLT source to the given XML file outputting to the given HTML file
+	 * @param xslt
+	 * @param xmlfile
+	 * @param htmlfile
+	 * @throws TransformerException
+	 */
+	private void applyXSLT(Source xslt, File xmlfile, File htmlfile) throws TransformerException {
+		Source xml = new StreamSource(xmlfile);
+		Result html = new StreamResult(htmlfile);
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer former = factory.newTransformer(xslt);
 		former.transform(xml, html);
@@ -620,7 +602,6 @@ public final class ApiUseReportConverter {
 	 * @param htmlroot
 	 */
 	private void writeNotSearched(File htmlroot) throws Exception {
-		PrintWriter writer = null;
 		File originhtml = null;
 		try {
 			String filename = "not_searched"; //$NON-NLS-1$
@@ -628,32 +609,25 @@ public final class ApiUseReportConverter {
 			if(!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
-			
-			FileWriter fileWriter = new FileWriter(originhtml);
-			writer = new PrintWriter(new BufferedWriter(fileWriter));
 			File xml = new File(this.reportsRoot, filename+".xml"); //$NON-NLS-1$
-			writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_bundle_list_header, new String[] {SearchMessages.ApiUseReportConverter_that_were_not_searched}));
-			if(!xml.exists()) {
-				writer.println(SearchMessages.ApiUseReportConverter_no_bundles);
+			InputStream defaultXsltInputStream = ApiUseReportConverter.class.getResourceAsStream("/notsearched.xsl"); //$NON-NLS-1$
+			Source xslt = null;
+			if (defaultXsltInputStream != null) {
+				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
 			}
-			else {
-				writer.println(SearchMessages.ApiUseReportConverter_bundle_list_table_header);
-				writeComponentList(writer, xml);
-				writeTableEnd(writer);
+			if(xslt == null) {
+				throw new Exception(SearchMessages.ApiUseReportConverter_no_xstl_specified);
 			}
-			writeBackToBundleIndex(writer, "./index"); //$NON-NLS-1$
-			writeW3Footer(writer);
+			applyXSLT(xslt, xml, originhtml);
 		}
 		catch(IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
+		catch (TransformerException te) {
+			te.printStackTrace();
+		}
 		catch (CoreException e) {
 			throw new Exception(NLS.bind(SearchMessages.ApiUseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
-		}
-		finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 	
@@ -681,28 +655,6 @@ public final class ApiUseReportConverter {
 	 */
 	private void writeTableEnd(PrintWriter writer) {
 		writer.println(SearchMessages.ApiUseReportConverter_table_end);
-	}
-	
-	/**
-	 * Writes out a raw list of {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent}
-	 * @param writer
-	 * @param filename
-	 */
-	private void writeComponentList(PrintWriter writer, File xml) throws CoreException {
-		Element root = Util.parseDocument(Util.getFileContentAsString(xml));
-		NodeList components = root.getElementsByTagName(IApiXmlConstants.ELEMENT_COMPONENT);
-		Element component = null;
-		String id = null, excluded = null, resolveerrors = null;
-		for (int i = 0; i < components.getLength(); i++) {
-			component = (Element) components.item(i);
-			id = component.getAttribute(IApiXmlConstants.ATTR_ID);
-			excluded = component.getAttribute(IApiXmlConstants.EXCLUDED);
-			resolveerrors = component.getAttribute(IApiXmlConstants.RESOLUTION_ERRORS);
-			if(!"".equals(id)) { //$NON-NLS-1$
-				writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_not_searched_component_list, 
-								new String[] {id, excluded, resolveerrors}));
-			}
-		}
 	}
 	
 	/**

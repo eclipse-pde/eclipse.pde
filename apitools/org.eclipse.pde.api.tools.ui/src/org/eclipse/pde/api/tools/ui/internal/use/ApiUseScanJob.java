@@ -29,7 +29,10 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.osgi.service.resolver.BaseDescription;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -279,6 +282,9 @@ public class ApiUseScanJob extends Job {
 			if (acceptComponent(component, pattern, false)) {
 				list.add(component);
 			}
+			else {
+				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), null));
+			}
 		}
 		return (IApiComponent[]) list.toArray(new IApiComponent[list.size()]);
 	}
@@ -295,7 +301,9 @@ public class ApiUseScanJob extends Job {
 		if(!allowresolve) {
 			ResolverError[] errors = component.getErrors();
 			if(errors != null) {
-				this.notsearched.add(new SkippedComponent(component.getId(), false, true, errors));
+				HashSet collector = new HashSet();
+				resolveRootErrors(errors, collector);
+				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), (ResolverError[]) collector.toArray(new ResolverError[collector.size()]))); 
 				return false;
 			}
 		}
@@ -306,6 +314,42 @@ public class ApiUseScanJob extends Job {
 			return pattern.matcher(component.getId()).matches();
 		}
 		return true;
+	}
+	
+	/**
+	 * Resolves the root {@link ResolverError}s for the given set of errors
+	 * @param errors
+	 * @param collector
+	 * @return the resolved set of {@link ResolverError}s
+	 */
+	void resolveRootErrors(ResolverError[] errors, HashSet collector) {
+		ResolverError error = null;
+		VersionConstraint version = null;
+		BaseDescription supplier = null;
+		BundleDescription bundle = null;
+		for (int i = 0; i < errors.length; i++) {
+			error = errors[i];
+			version = error.getUnsatisfiedConstraint();
+			if(version != null) {
+				supplier = version.getSupplier();
+				if(supplier != null) {
+					bundle = supplier.getSupplier();
+					resolveRootErrors(bundle.getContainingState().getResolverErrors(bundle), collector);
+				}
+				else {
+					bundle = version.getBundle().getContainingState().getBundle(version.getName(), null);
+					if(bundle != null) {
+						resolveRootErrors(bundle.getContainingState().getResolverErrors(bundle), collector);
+					}
+					else {
+						collector.add(error);
+					}
+				}
+			}
+			else {
+				collector.add(error);
+			}
+		}
 	}
 	
 	/**

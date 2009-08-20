@@ -511,8 +511,8 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 				component = (SkippedComponent)elements[i];
 				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
-				comp.setAttribute(IApiXmlConstants.EXCLUDED, Boolean.toString(component.wasExcluded()));
-				comp.setAttribute(IApiXmlConstants.RESOLUTION_ERRORS, Boolean.toString(component.hasResolutionErrors()));
+				comp.setAttribute(IApiXmlConstants.ATTR_VERSION, component.getVersion());
+				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, component.getErrorDetails());
 				root.appendChild(comp);
 			}
 			writer = new BufferedWriter(new FileWriter(file));

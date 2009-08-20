@@ -26,13 +26,9 @@ public class SearchMessages extends NLS {
 	public static String ApiSearchEngine_searching_project;
 	public static String ApiSearchEngine_searching_projects;
 	public static String ApiUseReportConverter_back_to_bundle_index;
-	public static String ApiUseReportConverter_bundle_list_header;
 	public static String ApiUseReportConverter_collecting_dir_info;
 	public static String ApiUseReportConverter_coreexception_writing_html_file;
-	public static String ApiUseReportConverter_no_bundles;
-	public static String ApiUseReportConverter_not_searched_component_list;
 	public static String ApiUseReportConverter_table_end;
-	public static String ApiUseReportConverter_that_were_not_searched;
 	public static String ApiUseReportConverter_no_xstl_specified;
 	public static String ioexception_writing_html_file;
 	public static String W3C_page_footer;
@@ -66,7 +62,8 @@ public class SearchMessages extends NLS {
 	public static String ApiUseReportConverter_xslt_file_not_valid;
 	public static String ApiUseReportConverter_referee_index_entry;
 	public static String ApiUseReportConverter_origin_summary_header;
-	public static String ApiUseReportConverter_bundle_list_table_header;
+	public static String SkippedComponent_component_was_excluded;
+	public static String SkippedComponent_missing_required_bundle;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);

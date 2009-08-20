@@ -11,23 +11,21 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
 
 public class SkippedComponent implements IApiElement{
 	/**
-	 * If the skipped component was skipped because it was found in an exclude list
-	 */
-	private boolean inexcludelist = false;
-	/**
-	 * If the skipped component has resolution errors
-	 */
-	private boolean resolveerrors = false;
-	/**
 	 * the id of of the skipped component
 	 */
 	private String componentid;
+	/**
+	 * The version of the component 
+	 */
+	private String version;
 	/**
 	 * the set of resolution errors barring the component from being scanned
 	 */
@@ -35,14 +33,13 @@ public class SkippedComponent implements IApiElement{
 
 	/**
 	 * Constructor
-	 * @param inexcludelist
 	 * @param componentid
+	 * @param version
 	 * @param errors the {@link ResolverError}s, if any, that prevented this component from being scanned
 	 */
-	public SkippedComponent(String componentid, boolean inexcludelist, boolean resolveerrors, ResolverError[] errors) {
-		this.inexcludelist = inexcludelist;
-		this.resolveerrors = resolveerrors;
+	public SkippedComponent(String componentid, String version, ResolverError[] errors) {
 		this.componentid = componentid;
+		this.version = version;
 		this.errors = errors;
 	}
 	
@@ -74,14 +71,14 @@ public class SkippedComponent implements IApiElement{
 	 * @return true if the component was skipped because it appeared in an exclude list
 	 */
 	public boolean wasExcluded() {
-		return this.inexcludelist;
+		return this.errors == null;
 	}
 	
 	/**
 	 * @return true if the the component had resolution errors
 	 */
 	public boolean hasResolutionErrors() {
-		return this.resolveerrors;
+		return this.errors != null;
 	}
 
 	/**
@@ -91,6 +88,13 @@ public class SkippedComponent implements IApiElement{
 		return null;
 	}
 
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return this.version;
+	}
+	
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getApiComponent()
 	 */
@@ -124,5 +128,28 @@ public class SkippedComponent implements IApiElement{
 	 */
 	public ResolverError[] getErrors() {
 		return this.errors;
+	}
+	
+	/**
+	 * @return the formatted details of why the component was skipped
+	 */
+	public String getErrorDetails() {
+		if(this.errors != null) {
+			StringBuffer buffer = new StringBuffer();
+			VersionConstraint constraint = null;
+			VersionRange version = null;
+			String min = null, max = null;
+			for (int i = 0; i < this.errors.length; i++) {
+				constraint = this.errors[i].getUnsatisfiedConstraint();
+				if(constraint != null) {				
+					buffer.append(constraint.toString()).append("\n"); //$NON-NLS-1$
+				}
+				else {
+					buffer.append(this.errors[i].toString()).append("\n"); //$NON-NLS-1$
+				}
+			}
+			return buffer.toString();
+		}
+		return SearchMessages.SkippedComponent_component_was_excluded;
 	}
 }

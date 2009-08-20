@@ -393,6 +393,6 @@ public interface IApiXmlConstants {
 	public static final String ATTR_REFEREE = "referee"; //$NON-NLS-1$
 	public static final String ATTR_REFERENCE_COUNT = "reference_count"; //$NON-NLS-1$
 	public static final String ATTR_REFERENCE_VISIBILITY = "reference_visibility"; //$NON-NLS-1$
-	public static final String RESOLUTION_ERRORS = "resolution_errors"; //$NON-NLS-1$
+	public static final String SKIPPED_DETAILS = "details"; //$NON-NLS-1$
 	public static final String EXCLUDED = "excluded"; //$NON-NLS-1$
 }
