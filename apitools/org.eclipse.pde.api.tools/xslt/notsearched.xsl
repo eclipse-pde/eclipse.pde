@@ -81,7 +81,9 @@
 												<td bgcolor="#CCCCCC"><b>Details</b></td>
 											</tr>	
 											<tr align="left">
-												<td><xsl:value-of disable-output-escaping="yes" select="@details"/></td>
+												<pre>
+													<td><xsl:value-of disable-output-escaping="yes" select="@details"/></td>
+												</pre>
 											</tr>
 										</table>
 									</div>

@@ -29,10 +29,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
-import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -108,11 +105,13 @@ public class ApiUseScanJob extends Job {
 				kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
 			}
 			IApiSearchRequestor requestor = new ApiUseSearchRequestor(targetIds, components, kinds);
-			
-			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.XML_PATH, (String)null);
+			IPath rootpath = null;
+			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String)null);
 			if (xmlPath == null) {
 				abort(Messages.ApiUseScanJob_missing_xml_loc);
 			}
+			rootpath = new Path(xmlPath); 
+			xmlPath = rootpath.append("xml").toOSString(); //$NON-NLS-1$
 			if(isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
 				scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
@@ -125,10 +124,7 @@ public class ApiUseScanJob extends Job {
 			engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
 			reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
 			if(isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
-				String htmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.HTML_PATH, (String)null);
-				if (htmlPath == null) {
-					abort(Messages.ApiUseScanJob_missing_html_loc);
-				}
+				String htmlPath = rootpath.append("html").toOSString(); //$NON-NLS-1$
 				performReportCreation(
 						isSpecified(ApiUseLaunchDelegate.CLEAN_HTML),
 						htmlPath,
@@ -293,7 +289,7 @@ public class ApiUseScanJob extends Job {
 	 * Returns if we should add the given component to our search scope
 	 * @param component
 	 * @param pattern
-	 * @param allowresolve TODO
+	 * @param allowresolve
 	 * @return
 	 * @throws CoreException
 	 */
@@ -301,9 +297,7 @@ public class ApiUseScanJob extends Job {
 		if(!allowresolve) {
 			ResolverError[] errors = component.getErrors();
 			if(errors != null) {
-				HashSet collector = new HashSet();
-				resolveRootErrors(errors, collector);
-				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), (ResolverError[]) collector.toArray(new ResolverError[collector.size()]))); 
+				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), errors)); 
 				return false;
 			}
 		}
@@ -316,41 +310,7 @@ public class ApiUseScanJob extends Job {
 		return true;
 	}
 	
-	/**
-	 * Resolves the root {@link ResolverError}s for the given set of errors
-	 * @param errors
-	 * @param collector
-	 * @return the resolved set of {@link ResolverError}s
-	 */
-	void resolveRootErrors(ResolverError[] errors, HashSet collector) {
-		ResolverError error = null;
-		VersionConstraint version = null;
-		BaseDescription supplier = null;
-		BundleDescription bundle = null;
-		for (int i = 0; i < errors.length; i++) {
-			error = errors[i];
-			version = error.getUnsatisfiedConstraint();
-			if(version != null) {
-				supplier = version.getSupplier();
-				if(supplier != null) {
-					bundle = supplier.getSupplier();
-					resolveRootErrors(bundle.getContainingState().getResolverErrors(bundle), collector);
-				}
-				else {
-					bundle = version.getBundle().getContainingState().getBundle(version.getName(), null);
-					if(bundle != null) {
-						resolveRootErrors(bundle.getContainingState().getResolverErrors(bundle), collector);
-					}
-					else {
-						collector.add(error);
-					}
-				}
-			}
-			else {
-				collector.add(error);
-			}
-		}
-	}
+	
 	
 	/**
 	 * Returns if the given search modifier is set in the backing {@link ILaunchConfiguration}

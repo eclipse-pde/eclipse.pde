@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
+import java.util.Comparator;
+import java.util.TreeSet;
+
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
@@ -131,22 +134,43 @@ public class SkippedComponent implements IApiElement{
 	}
 	
 	/**
+	 * Resolves the root errors for the given set of errors
+	 * @param errors
+	 * @param collector
+	 * @return the resolved leaf set of problem messages
+	 */
+	private String[] resolveRootErrors(ResolverError[] errors) {
+		TreeSet collector = new TreeSet(new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((String)o1).compareTo(o2);
+			}
+		});
+		ResolverError error = null;
+		VersionConstraint[] constraints = null;
+		BundleDescription[] bundle = new BundleDescription[1];
+		for (int i = 0; i < errors.length; i++) {
+			error = errors[i];
+			if(error.getType() != ResolverError.MISSING_REQUIRE_BUNDLE) {
+				collector.add(error.toString());
+			}
+			bundle[0] = error.getBundle();
+			constraints = bundle[0].getContainingState().getStateHelper().getUnsatisfiedLeaves(bundle);
+			for (int j = 0; j < constraints.length; j++) {
+				collector.add(constraints[j].toString());
+			}
+		}
+		return (String[]) collector.toArray(new String[collector.size()]);
+	}
+	
+	/**
 	 * @return the formatted details of why the component was skipped
 	 */
 	public String getErrorDetails() {
 		if(this.errors != null) {
 			StringBuffer buffer = new StringBuffer();
-			VersionConstraint constraint = null;
-			VersionRange version = null;
-			String min = null, max = null;
-			for (int i = 0; i < this.errors.length; i++) {
-				constraint = this.errors[i].getUnsatisfiedConstraint();
-				if(constraint != null) {				
-					buffer.append(constraint.toString()).append("\n"); //$NON-NLS-1$
-				}
-				else {
-					buffer.append(this.errors[i].toString()).append("\n"); //$NON-NLS-1$
-				}
+			String[] problems = resolveRootErrors(this.errors);
+			for (int i = 0; i < problems.length; i++) {
+				buffer.append(problems[i]).append("<br/>"); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		}

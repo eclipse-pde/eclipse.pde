@@ -30,14 +30,12 @@ public class Messages extends NLS {
 	public static String ApiUseScanJob_deleting_old_reports;
 	public static String ApiUseScanJob_deleting_root_folder;
 	public static String ApiUseScanJob_intall_dir_does_no_exist;
-	public static String ApiUseScanJob_missing_html_loc;
 	public static String ApiUseScanJob_missing_xml_loc;
 	public static String ApiUseScanJob_preparing_for_scan;
 	public static String ApiUseScanJob_reading_target;
 	public static String ApiUseScanJob_target_api_unspecified;
 	public static String ApiUseScanJob_target_unspecified;
 	public static String ApiUseScanJob_unspecified_install_path;
-	public static String ApiUseScanTab__b_rowse;
 	public static String ApiUseScanTab_analuze;
 	public static String ApiUseScanTab_api_baseline;
 	public static String ApiUseScanTab_api_references;
@@ -52,8 +50,11 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_enter_report_location;
 	public static String ApiUseScanTab_install_location;
 	public static String ApiUseScanTab_internal_references;
+	public static String ApiUseScanTab_must_search_something;
 	public static String ApiUseScanTab_open_report;
 	public static String ApiUseScanTab_references_to;
+	public static String ApiUseScanTab_regex_problem_search_for;
+	public static String ApiUseScanTab_regex_problem_search_in;
 	public static String ApiUseScanTab_report_location;
 	public static String ApiUseScanTab_reporting;
 	public static String ApiUseScanTab_search_for;

@@ -15,11 +15,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -79,11 +84,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	Text searchScope = null;
 	Text targetScope = null;
 	Text reportlocation = null;
-	Text htmllocation = null;
 	Button considerapi = null,
 		   considerinternal = null,
 		   createhtml = null,
-		   browsehtmllocation = null,
 		   openreport = null,
 		   cleanreportlocation = null,
 		   cleanhtmllocation = null;
@@ -236,26 +239,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.createhtml.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = ((Button)e.widget).getSelection();
-				ApiUseScanTab.this.htmllocation.setEnabled(enabled);
-				ApiUseScanTab.this.browsehtmllocation.setEnabled(enabled);
 				ApiUseScanTab.this.cleanhtmllocation.setEnabled(enabled);
 				ApiUseScanTab.this.openreport.setEnabled(enabled);
 				updateLaunchConfigurationDialog();
 			}
 		});
-		this.htmllocation = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
-		this.htmllocation.addModifyListener(modifyadapter);
-		this.htmllocation.setEnabled(false);
-		gd = (GridData) this.htmllocation.getLayoutData();
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalIndent = 10;
-		this.browsehtmllocation = SWTFactory.createPushButton(group, Messages.ApiUseScanTab__b_rowse, null);
-		this.browsehtmllocation.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				handleFolderBrowse(ApiUseScanTab.this.htmllocation, "Select the location to write the HTML report to"); //$NON-NLS-1$
-			}
-		});
-		this.browsehtmllocation.setEnabled(false);
 		this.cleanhtmllocation = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_clean_html_report_dir, null, false, 2);
 		gd = (GridData) this.cleanhtmllocation.getLayoutData();
 		gd.horizontalIndent = 10;
@@ -425,26 +413,25 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				if (service != null) {
 					ITargetHandle handle = service.getTarget(memento);
 					for (int i = 0; i < this.targetHandles.length; i++) {
-						ITargetHandle th = this.targetHandles[i];
-						if (handle.equals(th)) {
+						if (handle.equals(this.targetHandles[i])) {
 							this.targetCombo.select(i);
 							break;
 						}
 					}
 				}
 			}
+			if(this.targetCombo.getSelectionIndex() < 0) {
+				this.targetCombo.select(0);
+			}
 			this.installLocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, "")); //$NON-NLS-1$
 			this.considerapi.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES, configuration));
 			this.considerinternal.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, configuration));
-			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.XML_PATH, "")); //$NON-NLS-1$
+			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, "")); //$NON-NLS-1$
 			this.cleanreportlocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_XML, configuration));
 			boolean enabled = isSpecified(ApiUseLaunchDelegate.CREATE_HTML, configuration);
 			this.createhtml.setSelection(enabled);
 			this.openreport.setEnabled(enabled);
 			this.cleanhtmllocation.setEnabled(enabled);
-			this.htmllocation.setEnabled(enabled);
-			this.browsehtmllocation.setEnabled(enabled);
-			this.htmllocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.HTML_PATH, "")); //$NON-NLS-1$
 			this.openreport.setSelection(isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT, configuration));
 			this.cleanhtmllocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_HTML, configuration));
 			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, "")); //$NON-NLS-1$
@@ -539,8 +526,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		modifiers = consider(this.considerinternal, ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, modifiers);
 		modifiers = consider(this.createhtml, ApiUseLaunchDelegate.CREATE_HTML, modifiers);
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
-		configuration.setAttribute(ApiUseLaunchDelegate.HTML_PATH, this.htmllocation.getText().trim());
-		configuration.setAttribute(ApiUseLaunchDelegate.XML_PATH, this.reportlocation.getText().trim());
+		IPath path = new Path(this.reportlocation.getText().trim());
+		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATH, path.toPortableString());
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, this.searchScope.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, this.targetScope.getText().trim());
 	}
@@ -603,6 +590,26 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		String text = this.reportlocation.getText().trim();
 		if(IApiToolsConstants.EMPTY_STRING.equals(text)) {
 			setErrorMessage(Messages.ApiUseScanTab_enter_report_location);
+			return false;
+		}
+		if(!this.considerapi.getSelection() && !this.considerinternal.getSelection()) {
+			setErrorMessage(Messages.ApiUseScanTab_must_search_something);
+			return false;
+		}
+		text = this.searchScope.getText().trim();
+		try {
+			Pattern.compile(text);
+		}
+		catch(PatternSyntaxException pse) {
+			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem_search_in, pse.getDescription()));
+			return false;
+		}
+		text = this.targetScope.getText().trim();
+		try {
+			Pattern.compile(text);
+		}
+		catch(PatternSyntaxException pse) {
+			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem_search_for, pse.getDescription()));
 			return false;
 		}
 		return true;

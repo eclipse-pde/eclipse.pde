@@ -40,9 +40,7 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	 * Target definition handle
 	 */
 	public static final String TARGET_HANDLE = ApiUIPlugin.PLUGIN_ID + ".TARGET_HANDLE"; //$NON-NLS-1$
-	
 	public static final String BASELINE_NAME = ApiUIPlugin.PLUGIN_ID + ".BASELINE_NAME"; //$NON-NLS-1$
-	
 	public static final String INSTALL_PATH = ApiUIPlugin.PLUGIN_ID + ".INSTALL_PATH"; //$NON-NLS-1$
 	
 	/**
@@ -74,12 +72,7 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	/**
 	 * Path to root directory of XML reports
 	 */
-	public static final String XML_PATH = ApiUIPlugin.PLUGIN_ID + ".XML_PATH"; //$NON-NLS-1$
-	
-	/**
-	 * Path to root directory of HTML reports
-	 */
-	public static final String HTML_PATH = ApiUIPlugin.PLUGIN_ID + ".HTML_PATH"; //$NON-NLS-1$
+	public static final String REPORT_PATH = ApiUIPlugin.PLUGIN_ID + ".XML_PATH"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
