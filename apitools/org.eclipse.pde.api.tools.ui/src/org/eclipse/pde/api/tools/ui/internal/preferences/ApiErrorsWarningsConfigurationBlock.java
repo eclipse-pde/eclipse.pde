@@ -1251,11 +1251,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 		
 		Group bcomp = SWTFactory.createGroup(page, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_setAllto, 3, 2, GridData.FILL_HORIZONTAL);
 		Button button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error_button, null, SWT.RIGHT);
-		button.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error));
+		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_ERROR));
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning_button, null, SWT.RIGHT);
-		button.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning));
+		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_WARNING));
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore_button, null, SWT.RIGHT);
-		button.addSelectionListener(new SetAllSelectionAdapter(kind, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore));
+		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_IGNORE));
 		return page;
 	}
 	
