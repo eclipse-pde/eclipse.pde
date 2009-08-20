@@ -173,7 +173,7 @@ public class PluginImportHelper {
 	 * @param prefixPath a path that one or more of the files may have at the start of their path, the prefix is removed before adding to the package list, can be <code>null</code>
 	 * @param packageList a set that will be updated with the discovered packages
 	 */
-	private static void collectJavaPackages(IImportStructureProvider provider, List javaFiles, IPath prefixPath, Set packageList) {
+	public static void collectJavaPackages(IImportStructureProvider provider, List javaFiles, IPath prefixPath, Set packageList) {
 		for (Iterator iterator = javaFiles.iterator(); iterator.hasNext();) {
 			String stringPath = provider.getFullPath(iterator.next());
 			IPath path = new Path(stringPath);
@@ -404,7 +404,7 @@ public class PluginImportHelper {
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
-				if (provider.isFolder(curr)) {
+				if (provider.isFolder(curr) && provider.getLabel(curr).equals(folderPath.segment(0))) {
 					if (folderPath.segmentCount() > 1) {
 						collectResourcesFromFolder(provider, curr, folderPath.removeFirstSegments(1), collected);
 					} else {
