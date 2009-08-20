@@ -508,6 +508,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				combo.select(0);
 			}
 		}
+		else {
+			combo.select(0);
+		}
 	}	
 
 	/* (non-Javadoc)
