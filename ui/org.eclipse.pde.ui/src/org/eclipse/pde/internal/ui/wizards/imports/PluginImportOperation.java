@@ -41,8 +41,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.*;
 import org.osgi.framework.BundleException;
 
 /**
@@ -324,7 +323,11 @@ public class PluginImportOperation extends WorkspaceJob {
 			// Extract the source, track build entries and package locations
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
 			Map packageLocations = new HashMap(); // maps package path to a src folder 
-			extractSourceFolders(project, model, buildModel, packageLocations, new SubProgressMonitor(monitor, 1));
+			boolean sourceFound = extractSourceFolders(project, model, buildModel, packageLocations, new SubProgressMonitor(monitor, 1));
+			// If no source was found previously, check if there was a source folder (src) inside the binary plug-in
+			if (!sourceFound) {
+				sourceFound = handleInternalSource(model, buildModel, packageLocations);
+			}
 
 			// Extract additional non-java files from the source bundles
 			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
@@ -353,7 +356,6 @@ public class PluginImportOperation extends WorkspaceJob {
 					PluginImportHelper.importContent(srcFile, destination, FileSystemStructureProvider.INSTANCE, (List) collected.get(currentDestination), new NullProgressMonitor());
 				}
 				monitor.worked(1);
-
 			}
 
 			// Create the build.properties file
@@ -463,9 +465,13 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private boolean canFindSource(IPluginModelBase model) {
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+
+		// Check for a source bundle
 		if (manager.hasBundleManifestLocation(model.getPluginBase())) {
 			return true;
 		}
+
+		// Check for an old style source plug-in
 		String[] libraries = getLibraryNames(model);
 		for (int i = 0; i < libraries.length; i++) {
 			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
@@ -474,6 +480,29 @@ public class PluginImportOperation extends WorkspaceJob {
 				return true;
 			}
 		}
+
+		// Check for source inside the binary plug-in
+		try {
+			IImportStructureProvider provider;
+			Object root;
+			if (isJARd(model)) {
+				provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
+				root = ((ZipFileStructureProvider) provider).getRoot();
+			} else {
+				provider = FileSystemStructureProvider.INSTANCE;
+				root = new File(model.getInstallLocation());
+			}
+			List children = provider.getChildren(root);
+			for (Iterator iterator = children.iterator(); iterator.hasNext();) {
+				String label = provider.getLabel(iterator.next());
+				if (label.equals(DEFAULT_SOURCE_DIR)) {
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			// Do nothing, any other problems will be caught during binary import
+		}
+
 		return false;
 	}
 
@@ -606,16 +635,17 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @param buildModel a workspace build model that entries for each created source folder will be added to
 	 * @param packageLocations map that will be updated with package locations (package path to a source foldeR) 
 	 * @param monitor progress monitor
+	 * @return whether a source location was found
 	 * @throws CoreException if there is a problem extracting the source or creating a build entry
 	 */
-	private void extractSourceFolders(IProject project, IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations, IProgressMonitor monitor) throws CoreException {
+	private boolean extractSourceFolders(IProject project, IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations, IProgressMonitor monitor) throws CoreException {
 		try {
 			String[] libraries = getLibraryNames(model);
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
 			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 
-			// Need to do different things based on whether we have a individual source bundle or the old style separated zips
+			// Check if we have new style individual source bundles
 			if (manager.hasBundleManifestLocation(model.getPluginBase())) {
 				File srcFile = manager.findSourcePlugin(model.getPluginBase());
 				Set sourceRoots = manager.findSourceRoots(model.getPluginBase());
@@ -647,26 +677,67 @@ public class PluginImportOperation extends WorkspaceJob {
 						}
 					}
 				}
-			} else {
-				// Old style, zips in folders, determine the source zip name/location and extract it to the project
-				for (int i = 0; i < libraries.length; i++) {
-					String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-					IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
-					if (srcPath != null) {
-						IPath dstPath = new Path(getSourceDirName(libraries[i]));
-						IResource destination = project.getFolder(dstPath);
-						if (!destination.exists()) {
-							Set collectedPackages = new HashSet();
-							PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
-							addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
-							addPackageEntries(collectedPackages, dstPath, packageLocations);
-						}
+				return true;
+			}
+
+			// Old style, zips in folders, determine the source zip name/location and extract it to the project
+			boolean sourceFound = false;
+			for (int i = 0; i < libraries.length; i++) {
+				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+				IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+				if (srcPath != null) {
+					sourceFound = true;
+					IPath dstPath = new Path(getSourceDirName(libraries[i]));
+					IResource destination = project.getFolder(dstPath);
+					if (!destination.exists()) {
+						Set collectedPackages = new HashSet();
+						PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
+						addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
+						addPackageEntries(collectedPackages, dstPath, packageLocations);
 					}
 				}
 			}
+			return sourceFound;
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Looks inside the binary plug-in to see if source was packaged inside of a 'src' directory.  If found, the build model and
+	 * package locations are updated with the appropriate information.  This method does not actually import the source as
+	 * that is handled when the binary plug-in is extracted. 
+	 * 
+	 * @param model plug-in model being imported
+	 * @param buildModel build model to update if source is found
+	 * @param packageLocations package location map (package path to destination) to update if source is found
+	 * @return true if source was found inside the binary plug-in, false otherwise
+	 * 
+	 * @throws CoreException
+	 * @throws ZipException
+	 * @throws IOException
+	 */
+	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations) throws CoreException, ZipException, IOException {
+		IImportStructureProvider provider;
+		Object root;
+		if (isJARd(model)) {
+			provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
+			root = ((ZipFileStructureProvider) provider).getRoot();
+		} else {
+			provider = FileSystemStructureProvider.INSTANCE;
+			root = new File(model.getInstallLocation());
+		}
+		IPath defaultSourcePath = new Path(DEFAULT_SOURCE_DIR);
+		ArrayList collected = new ArrayList();
+		PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
+		if (collected.size() > 0) {
+			Set packages = new HashSet();
+			PluginImportHelper.collectJavaPackages(provider, collected, defaultSourcePath, packages);
+			addPackageEntries(packages, defaultSourcePath, packageLocations);
+			addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -854,9 +925,11 @@ public class PluginImportOperation extends WorkspaceJob {
 	}
 
 	private boolean needsJavaNature(IProject project, IPluginModelBase model) {
+		// If there are class libraries we need a java nature
 		if (model.getPluginBase().getLibraries().length > 0)
 			return true;
 
+		// If the plug-in exports packages or requires an execution environment it has java code
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
 			if (desc.getExecutionEnvironments().length > 0)
@@ -864,15 +937,32 @@ public class PluginImportOperation extends WorkspaceJob {
 			if (desc.getExportPackages().length > 0)
 				return true;
 		}
+
+		// If the build.properties file has a default source folder we need a java nature
+		IFile buildProperties = project.getFile("build.properties"); //$NON-NLS-1$
+		if (buildProperties.exists()) {
+			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProperties);
+			buildModel.load();
+			IBuild build = buildModel.getBuild();
+			if (build != null) {
+				IBuildEntry buildEntry = build == null ? null : build.getEntry("source.."); //$NON-NLS-1$
+				if (buildEntry != null) {
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 
 	private void setProjectNatures(IProject project, IPluginModelBase model) throws CoreException {
 		IProjectDescription desc = project.getDescription();
-		if (!desc.hasNature(PDE.PLUGIN_NATURE))
+		if (!desc.hasNature(PDE.PLUGIN_NATURE)) {
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
-		if (needsJavaNature(project, model) && !desc.hasNature(JavaCore.NATURE_ID))
+		}
+		if (!desc.hasNature(JavaCore.NATURE_ID) && needsJavaNature(project, model)) {
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
+		}
 	}
 
 	/**
