@@ -246,7 +246,7 @@ public class ApiUseScanJob extends Job {
 			Util.updateMonitor(localmonitor, 1);
 			IApiComponent component = components[i];
 			if (acceptComponent(component, pattern, true)) {
-				localmonitor.setTaskName(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
+				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
 				set.add(component.getId());
 			}
 		}
@@ -276,6 +276,7 @@ public class ApiUseScanJob extends Job {
 			Util.updateMonitor(localmonitor, 1);
 			IApiComponent component = components[i];
 			if (acceptComponent(component, pattern, false)) {
+				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
 				list.add(component);
 			}
 			else {
