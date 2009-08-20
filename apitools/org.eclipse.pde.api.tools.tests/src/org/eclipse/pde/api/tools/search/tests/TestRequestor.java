@@ -164,9 +164,6 @@ public class TestRequestor implements IApiSearchRequestor {
 	 * @return true if the project represented by the given component is API tools enabled false otherwise
 	 */
 	private boolean isApiComponent(IApiComponent component) {
-		if(includesNonApiProjects()) {
-			return true;
-		}
 		if(component instanceof PluginProjectApiComponent) {
 			PluginProjectApiComponent comp = (PluginProjectApiComponent) component;
 			return comp.hasApiDescription();
@@ -190,13 +187,6 @@ public class TestRequestor implements IApiSearchRequestor {
 		return (this.searchmask & INCLUDE_INTERNAL) > 0;
 	}
 	
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesNonApiProjects()
-	 */
-	public boolean includesNonApiProjects() {
-		return (this.searchmask & INCLUDE_NON_API_ENABLED_PROJECTS) > 0;
-	}
-
 	/**
 	 * Sets the {@link IApiBaseline} to derive the scope from
 	 * @param baseline

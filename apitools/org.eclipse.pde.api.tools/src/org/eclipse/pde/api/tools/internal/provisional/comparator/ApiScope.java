@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -38,7 +37,7 @@ public class ApiScope implements IApiScope {
 	/**
 	 * Contains all API elements of this scope
 	 */
-	Set elements;
+	ArrayList elements;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#accept(org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor)
@@ -90,7 +89,7 @@ public class ApiScope implements IApiScope {
 	 */
 	public void addElement(IApiElement newelement) {
 		if (this.elements == null) {
-			this.elements = new HashSet();
+			this.elements = new ArrayList();
 		}
 		this.elements.add(newelement);
 	}

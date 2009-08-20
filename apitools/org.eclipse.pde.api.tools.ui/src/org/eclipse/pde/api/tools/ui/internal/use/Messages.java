@@ -18,7 +18,6 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.use.messages"; //$NON-NLS-1$
 	public static String ApiProfileWizardPage_0;
-	public static String ApiUseScanJob_adding_component;
 	public static String ApiUseScanJob_api_use_report;
 	public static String ApiUseScanJob_baseline_does_not_exist;
 	public static String ApiUseScanJob_baseline_name_missing;

@@ -112,7 +112,6 @@ public class BadClassfileTests extends TestCase {
 			}
 		};
 		IApiSearchRequestor requestor = new IApiSearchRequestor() {
-			public boolean includesNonApiProjects() {return true;}
 			public boolean includesInternal() {return true;}
 			public boolean includesAPI() {return true;}
 			public IApiScope getScope() {

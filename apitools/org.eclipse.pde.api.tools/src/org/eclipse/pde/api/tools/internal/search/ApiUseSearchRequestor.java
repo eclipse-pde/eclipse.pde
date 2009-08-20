@@ -168,11 +168,4 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	public boolean includesInternal() {
 		return (fSearchMask & INCLUDE_INTERNAL) > 0;
 	}
-	
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesNonApiProjects()
-	 */
-	public boolean includesNonApiProjects() {
-		return (fSearchMask & INCLUDE_NON_API_ENABLED_PROJECTS) > 0;
-	}
 }

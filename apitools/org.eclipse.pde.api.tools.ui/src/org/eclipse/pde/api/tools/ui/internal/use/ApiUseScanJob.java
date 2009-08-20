@@ -119,10 +119,10 @@ public class ApiUseScanJob extends Job {
 			IApiSearchReporter reporter = new XMLApiSearchReporter(
 					xmlPath, 
 					false);
-			
+			//do it now, we know what will not be searched a priori
+			reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
 			ApiSearchEngine engine = new ApiSearchEngine();
 			engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
-			reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
 			if(isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
 				String htmlPath = rootpath.append("html").toOSString(); //$NON-NLS-1$
 				performReportCreation(
@@ -246,7 +246,7 @@ public class ApiUseScanJob extends Job {
 			Util.updateMonitor(localmonitor, 1);
 			IApiComponent component = components[i];
 			if (acceptComponent(component, pattern, true)) {
-				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
+				localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
 				set.add(component.getId());
 			}
 		}
@@ -276,10 +276,11 @@ public class ApiUseScanJob extends Job {
 			Util.updateMonitor(localmonitor, 1);
 			IApiComponent component = components[i];
 			if (acceptComponent(component, pattern, false)) {
-				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
+				localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
 				list.add(component);
 			}
 			else {
+				localmonitor.subTask(NLS.bind("skipping component: {0}", component.getId()));
 				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), null));
 			}
 		}
@@ -434,7 +435,6 @@ public class ApiUseScanJob extends Job {
 			if (!bundles[i].isSourceBundle()) {
 				IApiComponent component = ApiModelFactory.newApiComponent(profile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 				if (component != null) {
-					localmonitor.setTaskName(NLS.bind(Messages.ApiUseScanJob_adding_component, component.getId()));
 					components.add(component);
 				}
 			}
@@ -470,6 +470,7 @@ public class ApiUseScanJob extends Job {
 				if (!bundles[i].isSourceBundle()) {
 					IApiComponent component = ApiModelFactory.newApiComponent(profile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 					if (component != null) {
+						localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
 						components.add(component);
 					}
 				}
@@ -486,6 +487,7 @@ public class ApiUseScanJob extends Job {
 				Util.updateMonitor(localmonitor, 1);
 				IApiComponent component = ApiModelFactory.newApiComponent(profile, files[i].getPath());
 				if (component != null) {
+					localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
 					components.add(component);
 				}
 			}

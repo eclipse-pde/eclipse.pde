@@ -155,6 +155,9 @@ public class SkippedComponent implements IApiElement{
 			}
 			bundle[0] = error.getBundle();
 			constraints = bundle[0].getContainingState().getStateHelper().getUnsatisfiedLeaves(bundle);
+			if(constraints.length == 0) {
+				collector.add(error.toString());
+			}
 			for (int j = 0; j < constraints.length; j++) {
 				collector.add(constraints[j].toString());
 			}
