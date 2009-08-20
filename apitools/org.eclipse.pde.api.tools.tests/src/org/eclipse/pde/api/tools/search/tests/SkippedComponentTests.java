@@ -240,7 +240,7 @@ public class SkippedComponentTests extends SearchTest {
 			SkippedComponent scomp1 = new SkippedComponent(tcomp.getId(), tcomp.getVersion(), tcomp.getErrors());
 			assertNotNull("There should be resolution errors for the testing component", scomp1.getErrors());
 			String reason = scomp1.getErrorDetails();
-			assertTrue("The reason should be because of a unresolved constraint", reason.startsWith("Missing the required bundle:"));
+			assertTrue("The reason should be because of a unresolved constraint", reason.startsWith("Require-Bundle:"));
 			scomp1 = new SkippedComponent(tcomp.getId(), tcomp.getVersion(), null);
 			assertNull("There should be no errors for the testing component", scomp1.getErrors());
 			reason = scomp1.getErrorDetails();
