@@ -274,6 +274,8 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				ISchemaInclude include = includes[i];
 				ISchema includedSchema = include.getIncludedSchema();
 				try {
+					if (includedSchema == null)
+						continue;
 					String includedSchemaUrl = includedSchema.getURL().toString();
 					String computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation).toString();
 					if (includedSchemaUrl != null && includedSchemaUrl.equals(computedUrl)) {
