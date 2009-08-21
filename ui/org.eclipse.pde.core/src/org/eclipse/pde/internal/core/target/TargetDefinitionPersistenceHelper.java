@@ -694,11 +694,13 @@ public class TargetDefinitionPersistenceHelper {
 			Iterator iterator = containers.iterator();
 			while (iterator.hasNext()) {
 				IBundleContainer container = (IBundleContainer) iterator.next();
-				if (included.size() > 0) {
-					container.setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
-				}
-				if (optional.size() > 0) {
-					container.setOptionalBundles((BundleInfo[]) optional.toArray(new BundleInfo[optional.size()]));
+				if (!(container instanceof FeatureBundleContainer)) {
+					if (included.size() > 0) {
+						container.setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
+					}
+					if (optional.size() > 0) {
+						container.setOptionalBundles((BundleInfo[]) optional.toArray(new BundleInfo[optional.size()]));
+					}
 				}
 			}
 		}

@@ -532,9 +532,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				for (int i = 0; i < bundles.length; i++) {
 					IResolvedBundle bundle = bundles[i];
 					try {
-						all[i] = new File(bundle.getBundleInfo().getLocation()).toURL();
-						if (bundle.isSourceBundle()) {
-							sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
+						if (bundle.getStatus().isOK()) {
+							all[i] = new File(bundle.getBundleInfo().getLocation()).toURL();
+							if (bundle.isSourceBundle()) {
+								sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
+							}
 						}
 					} catch (MalformedURLException e) {
 						setErrorMessage(e.getMessage());
