@@ -92,11 +92,12 @@ public class ApiUseScanJob extends Job {
 		SubMonitor localmonitor = SubMonitor.convert(monitor);
 		try {
 			localmonitor.setTaskName(Messages.ApiUseScanJob_preparing_for_scan);
-			localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 12 : 11));
+			localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 14 : 13));
 			// create baseline
 			IApiBaseline baseline = createApiBaseline(localmonitor.newChild(1));
-			Set targetIds = getTargetComponentIds(baseline, localmonitor.newChild(1));
-			IApiComponent[] components = getSearchScope(baseline, localmonitor.newChild(1));			
+			Set ids = new HashSet();
+			TreeSet scope = new TreeSet(Util.componentsorter);	
+			getContext(baseline, ids, scope, localmonitor.newChild(2));
 			int kinds = 0;
 			if (isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES)) {
 				kinds |= IApiSearchRequestor.INCLUDE_API;
@@ -104,7 +105,7 @@ public class ApiUseScanJob extends Job {
 			if (isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES)) {
 				kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
 			}
-			IApiSearchRequestor requestor = new ApiUseSearchRequestor(targetIds, components, kinds);
+			IApiSearchRequestor requestor = new ApiUseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
 			IPath rootpath = null;
 			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String)null);
 			if (xmlPath == null) {
@@ -225,66 +226,43 @@ public class ApiUseScanJob extends Job {
 	}
 	
 	/**
-	 * Returns the set of components to extract references to
-	 * @param baseline
+	 * Collects the context of reference ids and scope elements in one pass
+	 * @param baseline the baseline to check components from
+	 * @param ids the reference ids to consider
+	 * @param scope the scope of elements to search
 	 * @param monitor
-	 * @return
 	 * @throws CoreException
 	 */
-	private Set getTargetComponentIds(IApiBaseline baseline, IProgressMonitor monitor) throws CoreException {
+	private void getContext(IApiBaseline baseline, Set ids, Set scope, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_collecting_target_components, 10);
-		Set set = new HashSet();
+		this.notsearched = new TreeSet(Util.componentsorter);
 		String regex = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null);
 		// add all
-		Pattern pattern = null;
+		Pattern pattern = null, pattern2 = null;
 		if(regex != null) {
 			pattern = Pattern.compile(regex);
+		}
+		regex = this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null);
+		if(regex != null) {
+			pattern2 = Pattern.compile(regex);
 		}
 		IApiComponent[] components = baseline.getApiComponents();
 		localmonitor.setWorkRemaining(components.length);
 		for (int i = 0; i < components.length; i++) {
-			Util.updateMonitor(localmonitor, 1);
 			IApiComponent component = components[i];
+			localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_checking_component, component.getId()));
+			Util.updateMonitor(localmonitor, 1);
 			if (acceptComponent(component, pattern, true)) {
-				localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
-				set.add(component.getId());
+				ids.add(component.getId());
 			}
-		}
-		return set;
-	}
-	
-	/**
-	 * Returns the scope to extract references from
-	 * @param baseline
-	 * @param monitor
-	 * @return
-	 * @throws CoreException
-	 */
-	private IApiComponent[] getSearchScope(IApiBaseline baseline, IProgressMonitor monitor) throws CoreException {
-		String regex = this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null);
-		this.notsearched = new TreeSet(Util.componentsorter);
-		List list = new ArrayList();
-		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_creating_search_scope, 2);
-		Pattern pattern = null;
-		if(regex != null) {
-			pattern = Pattern.compile(regex);
-		}
-		// search all (but remove system libs, they can never reference bundle code)
-		IApiComponent[] components = baseline.getApiComponents();
-		localmonitor.setWorkRemaining(components.length);
-		for (int i = 0; i < components.length; i++) {
-			Util.updateMonitor(localmonitor, 1);
-			IApiComponent component = components[i];
-			if (acceptComponent(component, pattern, false)) {
-				localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
-				list.add(component);
+			if (acceptComponent(component, pattern2, false)) {
+				scope.add(component);
 			}
 			else {
-				localmonitor.subTask(NLS.bind("skipping component: {0}", component.getId()));
+				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_skipping_component, component.getId()));
 				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), null));
 			}
 		}
-		return (IApiComponent[]) list.toArray(new IApiComponent[list.size()]);
 	}
 	
 	/**
@@ -470,7 +448,6 @@ public class ApiUseScanJob extends Job {
 				if (!bundles[i].isSourceBundle()) {
 					IApiComponent component = ApiModelFactory.newApiComponent(profile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 					if (component != null) {
-						localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
 						components.add(component);
 					}
 				}
@@ -487,7 +464,6 @@ public class ApiUseScanJob extends Job {
 				Util.updateMonitor(localmonitor, 1);
 				IApiComponent component = ApiModelFactory.newApiComponent(profile, files[i].getPath());
 				if (component != null) {
-					localmonitor.subTask(NLS.bind("adding component: {0}", component.getId()));
 					components.add(component);
 				}
 			}

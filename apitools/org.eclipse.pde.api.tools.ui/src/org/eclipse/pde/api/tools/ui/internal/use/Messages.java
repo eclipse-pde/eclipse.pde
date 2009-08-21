@@ -21,6 +21,7 @@ public class Messages extends NLS {
 	public static String ApiUseScanJob_api_use_report;
 	public static String ApiUseScanJob_baseline_does_not_exist;
 	public static String ApiUseScanJob_baseline_name_missing;
+	public static String ApiUseScanJob_checking_component;
 	public static String ApiUseScanJob_cleaning_xml_loc;
 	public static String ApiUseScanJob_collecting_target_components;
 	public static String ApiUseScanJob_creating_html_reports;
@@ -32,6 +33,7 @@ public class Messages extends NLS {
 	public static String ApiUseScanJob_missing_xml_loc;
 	public static String ApiUseScanJob_preparing_for_scan;
 	public static String ApiUseScanJob_reading_target;
+	public static String ApiUseScanJob_skipping_component;
 	public static String ApiUseScanJob_target_api_unspecified;
 	public static String ApiUseScanJob_target_unspecified;
 	public static String ApiUseScanJob_unspecified_install_path;
