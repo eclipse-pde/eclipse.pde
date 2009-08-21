@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -19,12 +18,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -34,9 +33,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.model.BundleApiComponent;
-import org.eclipse.pde.api.tools.internal.model.FolderApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -47,6 +44,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -59,17 +57,11 @@ import org.w3c.dom.Element;
  * @since 1.0
  */
 public class ProjectApiDescription extends ApiDescription {
-		
-	/**
-	 * Associated API component.
-	 */
-	private PluginProjectApiComponent fComponent;
 	
 	/**
-	 * Only valid when connected to a bundle. Used to initialize
-	 * package exports.
+	 * Associated Java project
 	 */
-	private BundleDescription fBundle;
+	private IJavaProject fProject;
 	
 	/**
 	 * Time stamp at which package information was created
@@ -85,14 +77,6 @@ public class ProjectApiDescription extends ApiDescription {
 	 * Associated manifest file
 	 */
 	public IFile fManifestFile;
-	
-	/**
-	 * Class file container cache used for tag scanning.
-	 * Maps output locations to containers.
-	 * 
-	 * TODO: these could become out of date with class path changes.
-	 */
-	private Map fClassFileContainers;
 	
 	/**
 	 * Whether this API description is in synch with its project. Becomes
@@ -325,9 +309,9 @@ public class ProjectApiDescription extends ApiDescription {
 	 * 
 	 * @param component
 	 */
-	public ProjectApiDescription(PluginProjectApiComponent component) {
-		super(component.getJavaProject().getElementName());
-		fComponent = component;
+	public ProjectApiDescription(IJavaProject project) {
+		super(project.getElementName());
+		fProject = project;
 	}
 
 	/* (non-Javadoc)
@@ -579,7 +563,8 @@ public class ProjectApiDescription extends ApiDescription {
 						for (int i = 0; i < fragments.length; i++) {
 							names.add(fragments[i].getElementName());
 						}
-						BundleApiComponent.initializeApiDescription(this, fBundle, names);
+						PluginProjectApiComponent component = getApiComponent();
+						BundleApiComponent.initializeApiDescription(this, component.getBundleDescription(), names);
 						fPackageTimeStamp = fManifestFile.getModificationStamp();
 					} catch (CoreException e) {
 						ApiPlugin.log(e.getStatus());
@@ -608,31 +593,20 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @return associated Java project
 	 */
 	private IJavaProject getJavaProject() {
-		return fComponent.getJavaProject();
+		return fProject;
 	}
 
 	/**
-	 * Returns a class file container for the given package fragment root, or <code>null</code>
-	 * if none.
+	 * Returns a class file container for the given package fragment root.
 	 * 
 	 * @param root package fragment root
-	 * @return class file container or <code>null</code> if none
+	 * @return class file container
+	 * @exception CoreException if container cannot be located
 	 */
 	synchronized IApiTypeContainer getApiTypeContainer(IPackageFragmentRoot root) throws CoreException {
-		if (fClassFileContainers == null) {
-			fClassFileContainers = new HashMap(8);
-		}
-		IPath location = root.getRawClasspathEntry().getOutputLocation();
-		if (location == null) {
-			location = root.getJavaProject().getOutputLocation();
-		}
-		IApiTypeContainer container = (IApiTypeContainer) fClassFileContainers.get(location);
+		IApiTypeContainer container  = getApiComponent().getTypeContainer(root);
 		if (container == null) {
-			IContainer folder = root.getJavaProject().getProject().getWorkspace().getRoot().getFolder(location);
-			if (folder.exists()) {
-				container = new FolderApiTypeContainer(fComponent, folder);
-				fClassFileContainers.put(location, container);
-			}
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve type conatiner for package fragment root"));  //$NON-NLS-1$
 		}
 		return container;
 	}
@@ -661,54 +635,6 @@ public class ProjectApiDescription extends ApiDescription {
 			// ignore
 		}
 		return (IPackageFragment[]) local.toArray(new IPackageFragment[local.size()]);
-	}
-	
-	/**
-	 * Connects this API description to the given bundle.
-	 * 
-	 * @param bundle bundle description
-	 */
-	public synchronized void connect(BundleDescription bundle, PluginProjectApiComponent component) {
-		if (fBundle != null && fBundle != bundle) {
-			throw new IllegalStateException("Already connected to a bundle"); //$NON-NLS-1$
-		}
-		fBundle = bundle;
-		fComponent = component;
-	}
-	
-	/**
-	 * Returns the bundle this description is connected to or <code>null</code>
-	 * 
-	 * @return connected bundle or <code>null</code>
-	 */
-	BundleDescription getConnection() {
-		return fBundle;
-	}
-	
-	/**
-	 * Disconnects this API description from the given bundle.
-	 * 
-	 * @param bundle bundle description
-	 */
-	public synchronized void disconnect(BundleDescription bundle) {
-		if (bundle.equals(fBundle)) {
-			fBundle = null;
-			fComponent = null;
-			if (fClassFileContainers != null) {
-				Iterator iter = fClassFileContainers.values().iterator();
-				while (iter.hasNext()) {
-					IApiTypeContainer container = (IApiTypeContainer) iter.next();
-					try {
-						container.close();
-					} catch (CoreException e) {
-						ApiPlugin.log(e.getStatus());
-					}
-				}
-				fClassFileContainers.clear();
-			}
-		} else if (fBundle != null) {
-			throw new IllegalStateException("Not connected to same bundle"); //$NON-NLS-1$
-		}
 	}
 	
 	/**
@@ -778,5 +704,20 @@ public class ProjectApiDescription extends ApiDescription {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Project API description for: ").append(getJavaProject().getElementName()); //$NON-NLS-1$
 		return buffer.toString();
+	}
+	
+	/**
+	 * Returns the API component associated with this API description
+	 * 
+	 * @return API component
+	 * @exception CoreException if the API component cannot be located
+	 */
+	private PluginProjectApiComponent getApiComponent() throws CoreException {
+		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
+		PluginProjectApiComponent component = (PluginProjectApiComponent) baseline.getApiComponent(getJavaProject().getProject());
+		if (component == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve project API component for API description"));  //$NON-NLS-1$
+		}
+		return component;
 	}
 }

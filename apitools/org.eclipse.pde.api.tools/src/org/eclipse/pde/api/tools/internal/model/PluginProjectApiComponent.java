@@ -31,8 +31,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
-import org.eclipse.pde.api.tools.internal.CompositeApiDescription;
-import org.eclipse.pde.api.tools.internal.ProjectApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
@@ -123,18 +121,6 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	public void dispose() {
 		try {
-			if (isApiDescriptionInitialized()) {
-				try {
-					IApiDescription description = getApiDescription();
-					if (description instanceof ProjectApiDescription) {
-						((ProjectApiDescription) description).disconnect(getBundleDescription());
-					} else if (description instanceof CompositeApiDescription) {
-						((CompositeApiDescription) description).disconnect(getBundleDescription());
-					}
-				} catch (CoreException e) {
-					ApiPlugin.log(e.getStatus());
-				}
-			}
 			if(hasApiFilterStore()) {
 				getFilterStore().dispose();
 			}
@@ -379,6 +365,28 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	 */
 	public IJavaProject getJavaProject() {
 		return fProject;
+	}
+	
+	/**
+	 * Returns the cached API type container for the given package fragment root, or <code>null</code>
+	 * if none. The given package fragment has to be a SOURCE package fragment - this method is only
+	 * used by the project API description to obtain a class file corresponding to a compilation unit
+	 * when tag scanning (to resolve signatures).
+	 *  
+	 * @param root source package fragment root
+	 * @return API type container associated with the package fragment root, or <code>null</code> 
+	 * 	if none
+	 */
+	public IApiTypeContainer getTypeContainer(IPackageFragmentRoot root) throws CoreException {
+		if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+			getApiTypeContainers(); // ensure initialized
+			IResource resource = root.getResource();
+			if (resource != null) {
+				String location = resource.getProjectRelativePath().toString();
+				return getApiTypeContainer(location, this);
+			}
+		}
+		return null;
 	}
 	
 }

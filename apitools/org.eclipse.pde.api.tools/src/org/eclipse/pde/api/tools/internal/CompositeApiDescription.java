@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -104,24 +103,6 @@ public class CompositeApiDescription implements IApiDescription {
 		}
 		return Status.CANCEL_STATUS;
 	}	
-
-	/**
-	 * Disconnects an underlying API description from the given bundle.
-	 * 
-	 * @param bundle
-	 */
-	public void disconnect(BundleDescription bundle) {
-		for (int i = 0; i < fDescriptions.length; i++) {
-			IApiDescription description = fDescriptions[i];
-			if (description instanceof ProjectApiDescription) {
-				ProjectApiDescription pad = (ProjectApiDescription) description;
-				if (bundle.equals(pad.getConnection())) {
-					pad.disconnect(bundle);
-					return;
-				}
-			}
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#setAccessLevel(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor, int)

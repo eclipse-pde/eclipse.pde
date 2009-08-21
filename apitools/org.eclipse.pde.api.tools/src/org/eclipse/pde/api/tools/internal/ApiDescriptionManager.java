@@ -123,19 +123,18 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 		ProjectApiDescription description = (ProjectApiDescription) fDescriptions.get(project);
 		if (description == null) {
 			if (Util.isApiProject(project)) {
-				description = new ProjectApiDescription(component);
+				description = new ProjectApiDescription(project);
 			} else {
-				description = new NonApiProjectDescription(component);
+				description = new NonApiProjectDescription(project);
 			}
 			try {
 				restoreDescription(project, description);
 			} catch (CoreException e) {
 				ApiPlugin.log(e.getStatus());
-				description = new ProjectApiDescription(component);
+				description = new ProjectApiDescription(project);
 			}
 			fDescriptions.put(project, description);
 		}
-		description.connect(bundle, component);
 		return description;
 	}
 	/**

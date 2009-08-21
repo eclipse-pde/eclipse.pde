@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
@@ -24,10 +24,10 @@ public class NonApiProjectDescription extends ProjectApiDescription {
 	/**
 	 * Constructs API description for the given project.
 	 * 
-	 * @param component
+	 * @param project
 	 */
-	public NonApiProjectDescription(PluginProjectApiComponent component) {
-		super(component);
+	public NonApiProjectDescription(IJavaProject project) {
+		super(project);
 	}
 
 	/*
