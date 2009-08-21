@@ -410,7 +410,7 @@ public class ApiUseScanJob extends Job {
 		localmonitor.setWorkRemaining(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			Util.updateMonitor(localmonitor, 1);
-			if (!bundles[i].isSourceBundle()) {
+			if (bundles[i].getStatus().isOK() && !bundles[i].isSourceBundle()) {
 				IApiComponent component = ApiModelFactory.newApiComponent(profile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 				if (component != null) {
 					components.add(component);
