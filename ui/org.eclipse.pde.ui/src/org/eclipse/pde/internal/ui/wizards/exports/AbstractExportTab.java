@@ -53,13 +53,13 @@ public abstract class AbstractExportTab {
 		}
 	}
 
-	protected void chooseFile(Combo combo, String filter) {
+	protected void chooseFile(Combo combo, String[] filters) {
 		FileDialog dialog = new FileDialog(fPage.getShell(), SWT.SAVE);
 		String path = combo.getText();
 		if (path.trim().length() == 0)
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
 		dialog.setFileName(path);
-		dialog.setFilterExtensions(new String[] {filter});
+		dialog.setFilterExtensions(filters);
 		String res = dialog.open();
 		if (res != null) {
 			if (combo.indexOf(res) == -1)

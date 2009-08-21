@@ -123,7 +123,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		});
 		fBrowseFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fArchiveCombo, "*" + ZIP_EXTENSION); //$NON-NLS-1$
+				chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION}); //$NON-NLS-1$
 			}
 		});
 		fArchiveCombo.addModifyListener(new ModifyListener() {

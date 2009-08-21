@@ -230,7 +230,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 		fBrowseAnt.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fAntCombo, "*.xml"); //$NON-NLS-1$
+				chooseFile(fAntCombo, new String[] {"*.xml"}); //$NON-NLS-1$
 			}
 		});
 

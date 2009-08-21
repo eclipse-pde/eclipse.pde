@@ -30,6 +30,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 	protected static final String S_ZIP_FILENAME = "zipFileName"; //$NON-NLS-1$
 
 	protected static String ZIP_EXTENSION = ".zip"; //$NON-NLS-1$
+	protected static String WAR_EXTENSION = ".war"; //$NON-NLS-1$
 
 	protected Button fArchiveFileButton;
 	protected Combo fArchiveCombo;
@@ -142,7 +143,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 
 		fBrowseFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseFile(fArchiveCombo, "*" + ZIP_EXTENSION); //$NON-NLS-1$
+				chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION, "*" + WAR_EXTENSION}); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 
@@ -223,7 +224,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 			String path = fArchiveCombo.getText();
 			if (path != null && path.length() > 0) {
 				String fileName = new Path(path).lastSegment();
-				if (!fileName.endsWith(ZIP_EXTENSION)) {
+				if (!fileName.endsWith(ZIP_EXTENSION) && !fileName.endsWith(WAR_EXTENSION)) {
 					fileName += ZIP_EXTENSION;
 				}
 				return fileName;
