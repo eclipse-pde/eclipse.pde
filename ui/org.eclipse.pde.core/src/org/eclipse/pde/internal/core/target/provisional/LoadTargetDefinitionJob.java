@@ -365,18 +365,20 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			List pooled = new ArrayList();
 			boolean considerPool = false;
 			for (int i = 0; i < resolved.length; i++) {
-				BundleInfo bundleInfo = resolved[i].getBundleInfo();
-				NameVersionDescriptor desc = new NameVersionDescriptor(bundleInfo.getSymbolicName(), bundleInfo.getVersion());
-				File file = new File(bundleInfo.getLocation());
-				boolean inPool = AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(file.getAbsolutePath()));
-				considerPool = considerPool || inPool;
-				if (!duplicates.contains(desc) && resolved[i].getStatus().isOK()) {
-					if (inPool) {
-						pooled.add(desc);
+				if (resolved[i].getStatus().isOK()) {
+					BundleInfo bundleInfo = resolved[i].getBundleInfo();
+					NameVersionDescriptor desc = new NameVersionDescriptor(bundleInfo.getSymbolicName(), bundleInfo.getVersion());
+					File file = new File(bundleInfo.getLocation());
+					boolean inPool = AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(file.getAbsolutePath()));
+					considerPool = considerPool || inPool;
+					if (!duplicates.contains(desc)) {
+						if (inPool) {
+							pooled.add(desc);
+						}
+						infos.add(bundleInfo);
+						included.add(bundleInfo);
+						duplicates.add(desc);
 					}
-					infos.add(bundleInfo);
-					included.add(bundleInfo);
-					duplicates.add(desc);
 				}
 			}
 
