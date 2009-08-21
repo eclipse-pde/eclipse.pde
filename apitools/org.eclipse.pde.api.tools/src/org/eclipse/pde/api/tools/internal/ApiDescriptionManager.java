@@ -222,10 +222,11 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 									| IJavaElementDelta.F_CLASSPATH_CHANGED)) != 0) {
 								if (jproj != null) {
 									projectClasspathChanged(jproj);
+									flushElementCache(delta);
 								}
 							} else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
 								if (jproj != null) {
-									projectChanged(jproj);
+									processJavaElementDeltas(delta.getAffectedChildren(), jproj);
 								}
 							} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
 								processJavaElementDeltas(delta.getAffectedChildren(), jproj);
@@ -233,6 +234,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 							break;
 						case IJavaElementDelta.REMOVED:
 							clean(jproj, true, true);
+							flushElementCache(delta);
 							break;
 					}
 					break;
