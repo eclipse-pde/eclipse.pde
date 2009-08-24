@@ -18,6 +18,7 @@ public class AllPDERuntimeTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite to test the pde.runtime plug-in."); //$NON-NLS-1$
 		suite.addTest(LocalModelTest.suite());
+		suite.addTest(PDEPreferencesTestCase.suite());
 		return suite;
 	}
 
