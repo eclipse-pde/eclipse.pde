@@ -491,10 +491,14 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		for (int i = 0; i < containers.length; i++) {
 			IBundleContainer container = containers[i];
 			BundleInfo[] actual = container.getIncludedBundles();
-			assertNotNull(actual);
-			assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
-			for (int j = 0; j < actual.length; j++) {
-				assertEquals("Wrong restriction", restrictions[j], actual[j]);
+			if (container instanceof FeatureBundleContainer) {
+				assertNull(actual);
+			} else {
+				assertNotNull(actual);
+				assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
+				for (int j = 0; j < actual.length; j++) {
+					assertEquals("Wrong restriction", restrictions[j], actual[j]);
+				}
 			}
 		}
 	}		
@@ -540,10 +544,14 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		for (int i = 0; i < containers.length; i++) {
 			IBundleContainer container = containers[i];
 			BundleInfo[] actual = container.getIncludedBundles();
-			assertNotNull(actual);
-			assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
-			for (int j = 0; j < actual.length; j++) {
-				assertEquals("Wrong restriction", restrictions[j], actual[j]);
+			if (container instanceof FeatureBundleContainer) {
+				assertNull(actual);
+			} else {
+				assertNotNull(actual);
+				assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
+				for (int j = 0; j < actual.length; j++) {
+					assertEquals("Wrong restriction", restrictions[j], actual[j]);
+				}
 			}
 		}
 	}			
@@ -590,17 +598,21 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		for (int i = 0; i < containers.length; i++) {
 			IBundleContainer container = containers[i];
 			BundleInfo[] actual = container.getIncludedBundles();
-			assertNotNull(actual);
-			assertEquals("Wrong number of inclusions", included.length, actual.length);
-			for (int j = 0; j < actual.length; j++) {
-				assertEquals("Wrong restriction", included[j], actual[j]);
+			if (container instanceof FeatureBundleContainer) {
+				assertNull(actual);
+			} else {
+				assertNotNull(actual);
+				assertEquals("Wrong number of inclusions", included.length, actual.length);
+				for (int j = 0; j < actual.length; j++) {
+					assertEquals("Wrong restriction", included[j], actual[j]);
+				}
+				actual = container.getOptionalBundles();
+				assertNotNull(actual);
+				assertEquals("Wrong number of optionals", optional.length, actual.length);
+				for (int j = 0; j < actual.length; j++) {
+					assertEquals("Wrong restriction", optional[j], actual[j]);
+				}
 			}
-			actual = container.getOptionalBundles();
-			assertNotNull(actual);
-			assertEquals("Wrong number of optionals", optional.length, actual.length);
-			for (int j = 0; j < actual.length; j++) {
-				assertEquals("Wrong restriction", optional[j], actual[j]);
-			} 
 		}
 	}
 	
