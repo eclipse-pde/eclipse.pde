@@ -169,8 +169,8 @@ public class IncrementalApiBuilder {
 	 * @param monitor
 	 */
 	void build(final IProject project, final IApiBaseline baseline, final IApiBaseline wbaseline, final State state, BuildState buildstate, IProgressMonitor monitor) throws CoreException {
+		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
 		try {
-			SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 6);
 			collectAffectedSourceFiles(project, state);
 			Util.updateMonitor(localmonitor, 1);
 			localmonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_finding_affected_source_files, project.getName()));
@@ -199,8 +199,8 @@ public class IncrementalApiBuilder {
 			}
 		}
 		finally {
-			if(monitor != null) {
-				monitor.done();
+			if(localmonitor != null) {
+				localmonitor.done();
 			}
 		}
 	}

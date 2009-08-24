@@ -214,7 +214,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (DEBUG) {
 			System.out.println("\nApiAnalysis builder - Starting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Util.updateMonitor(monitor, 0);
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);
 		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		if (wbaseline == null) {
@@ -297,7 +296,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 				}	
 			}
-			Util.updateMonitor(monitor, 0);
+			Util.updateMonitor(localMonitor, 0);
 		
 		}
 		catch (OperationCanceledException oce) {
@@ -310,7 +309,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			ApiPlugin.log(e);
 		} finally {
-			Util.updateMonitor(monitor, 0);
+			Util.updateMonitor(localMonitor, 0);
 			if(this.analyzer != null) {
 				this.analyzer.dispose();
 				this.analyzer = null;
@@ -322,7 +321,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					baseline.close();
 				}
 			}
-			Util.updateMonitor(monitor, 0);
+			Util.updateMonitor(localMonitor, 0);
 			if (this.buildstate != null) {
 				for(int i = 0, max = projects.length; i < max; i++) {
 					IProject project = projects[i];
@@ -334,8 +333,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				this.buildstate = null;
 				Util.updateMonitor(monitor, 0);
 			}
-			if(monitor != null) {
-				monitor.done();
+			if(localMonitor != null) {
+				localMonitor.done();
 			}
 		}
 		if (DEBUG) {
@@ -372,10 +371,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	void buildAll(IApiBaseline baseline, IApiBaseline wbaseline, IProgressMonitor monitor) throws CoreException {
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 		try {
 			BuildState.setLastBuiltState(this.currentproject, null);
 			this.buildstate = new BuildState();
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, currentproject.getName()));
 			cleanupMarkers(this.currentproject);
 			IPluginModelBase currentModel = getCurrentModel();
@@ -394,8 +393,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		finally {
-			if(monitor != null) {
-				monitor.done();
+			if(localMonitor != null) {
+				localMonitor.done();
 			}
 		}
 	}
