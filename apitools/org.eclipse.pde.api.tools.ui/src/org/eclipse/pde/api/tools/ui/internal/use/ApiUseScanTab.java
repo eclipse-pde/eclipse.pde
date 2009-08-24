@@ -77,7 +77,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	
 	boolean initializing = false;
 	Combo baseline, targetCombo;
-	Button radioBaseline, radioTarget, radioInstall, radioWorkspace;
+	Button radioBaseline, radioTarget, radioInstall;
 	Button baselinesButton, targetsButton, installButton;
 	ITargetHandle[] targetHandles = new ITargetHandle[0];
 	Text installLocation;
@@ -195,16 +195,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		this.radioWorkspace = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_workspace_projects);
-		this.radioWorkspace.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateTarget();
-			}
-		});
-		gd = (GridData) this.radioWorkspace.getLayoutData();
-		gd.horizontalSpan = 3;
-		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_BOTH);
+		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(group, Messages.ApiUseScanTab_references_to, 1);
 		this.targetScope = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.targetScope.addModifyListener(modifyadapter);		
@@ -213,12 +204,14 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.considerinternal = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_internal_references, null, true, 2);
 		this.considerinternal.addSelectionListener(selectionadapter);		
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_in, 2, 1, GridData.FILL_BOTH);
+		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_in, 2, 1, GridData.FILL_HORIZONTAL);
+		gd = (GridData)group.getLayoutData();
+		gd.verticalAlignment = SWT.FILL;
 		SWTFactory.createLabel(group, Messages.ApiUseScanTab_bundles_matching, 1);
 		this.searchScope = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.searchScope.addModifyListener(modifyadapter);
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_BOTH);
+		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(group, Messages.ApiUseScanTab_report_location, 2);
 		this.reportlocation = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.reportlocation.addModifyListener(modifyadapter);
@@ -288,15 +281,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				installButton.setEnabled(true);
 				break;
 			}
-			case ApiUseLaunchDelegate.KIND_WORKSPACE: {
-				baseline.setEnabled(false);
-				baselinesButton.setEnabled(false);
-				targetCombo.setEnabled(false);
-				targetsButton.setEnabled(false);
-				installLocation.setEnabled(false);
-				installButton.setEnabled(false);
-				break;
-			}
 		}
 		updateLaunchConfigurationDialog();
 	}
@@ -312,7 +296,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		} else if (this.radioInstall.getSelection()) {
 			return ApiUseLaunchDelegate.KIND_INSTALL_PATH;
 		} else {
-			return ApiUseLaunchDelegate.KIND_WORKSPACE;
+			return -1;
 		}
 	}
 
@@ -453,34 +437,24 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	void updateRadioButtons(ILaunchConfiguration configuration) throws CoreException {
 		int kind = configuration.getAttribute(ApiUseLaunchDelegate.TARGET_KIND, 0);
 		switch (kind) {
-		case ApiUseLaunchDelegate.KIND_API_BASELINE: {
-			radioBaseline.setSelection(true);
-			radioTarget.setSelection(false);
-			radioInstall.setSelection(false);
-			radioWorkspace.setSelection(false);
-			break;
-		}
-		case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION: {
-			radioBaseline.setSelection(false);
-			radioTarget.setSelection(true);
-			radioInstall.setSelection(false);
-			radioWorkspace.setSelection(false);
-			break;
-		}
-		case ApiUseLaunchDelegate.KIND_INSTALL_PATH: {
-			radioBaseline.setSelection(false);
-			radioTarget.setSelection(false);
-			radioInstall.setSelection(true);
-			radioWorkspace.setSelection(false);
-			break;
-		}
-		case ApiUseLaunchDelegate.KIND_WORKSPACE: {
-			radioBaseline.setSelection(false);
-			radioTarget.setSelection(false);
-			radioInstall.setSelection(false);
-			radioWorkspace.setSelection(true);
-			break;
-		}
+			case ApiUseLaunchDelegate.KIND_API_BASELINE: {
+				radioBaseline.setSelection(true);
+				radioTarget.setSelection(false);
+				radioInstall.setSelection(false);
+				break;
+			}
+			case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION: {
+				radioBaseline.setSelection(false);
+				radioTarget.setSelection(true);
+				radioInstall.setSelection(false);
+				break;
+			}
+			case ApiUseLaunchDelegate.KIND_INSTALL_PATH: {
+				radioBaseline.setSelection(false);
+				radioTarget.setSelection(false);
+				radioInstall.setSelection(true);
+				break;
+			}
 		}
 	}
 	

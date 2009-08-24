@@ -135,21 +135,17 @@ public class ApiUseScanJob extends Job {
 			}
 			
 			// Dispose the baseline if it's not managed (it's temporary)
-			int kind = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_KIND, 0);
-			if (kind != ApiUseLaunchDelegate.KIND_WORKSPACE) {
-				// never dispose the workspace baseline
-				ApiBaselineManager apiManager = ApiBaselineManager.getManager();
-				IApiBaseline[] baselines = apiManager.getApiBaselines();
-				boolean dispose = true;
-				for (int i = 0; i < baselines.length; i++) {
-					if (baseline.equals(baselines[i])) {
-						dispose = false;
-						break;
-					}
+			ApiBaselineManager apiManager = ApiBaselineManager.getManager();
+			IApiBaseline[] baselines = apiManager.getApiBaselines();
+			boolean dispose = true;
+			for (int i = 0; i < baselines.length; i++) {
+				if (baseline.equals(baselines[i])) {
+					dispose = false;
+					break;
 				}
-				if (dispose) {
-					baseline.dispose();
-				}
+			}
+			if (dispose) {
+				baseline.dispose();
 			}
 		} catch (CoreException e) {
 			return e.getStatus();
@@ -208,8 +204,6 @@ public class ApiUseScanJob extends Job {
 				ITargetHandle handle = service.getTarget(memento);
 				ITargetDefinition definition = handle.getTargetDefinition();
 				return createBaseline(definition, monitor);
-			case ApiUseLaunchDelegate.KIND_WORKSPACE:
-				return bmanager.getWorkspaceBaseline();
 			default:
 				abort(Messages.ApiUseScanJob_target_api_unspecified);
 		}
@@ -422,16 +416,15 @@ public class ApiUseScanJob extends Job {
 	}	
 	
 	/**
-	 * Creates a baseline at an install location.
+	 * Creates a baseline at an install location, as a plain directory (does not treat as an install).
 	 * 
 	 * @param path
 	 * @param monitor
 	 */
 	private IApiBaseline createBaseline(IPath path, IProgressMonitor monitor) throws CoreException {
-		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiProfileWizardPage_0, 10);
-		File plugins = path.append("plugins").toFile(); //$NON-NLS-1$
+		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_scanning, 10);
 		ITargetPlatformService service = (ITargetPlatformService) ApiUIPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
-		IBundleContainer container = service.newProfileContainer(path.toOSString(), null);
+		IBundleContainer container = service.newDirectoryContainer(path.toOSString());
 		// treat as an installation, if that fails, try plug-ins directory
 		ITargetDefinition definition = service.newTarget();
 		container.resolve(definition, localmonitor.newChild(1));
@@ -441,7 +434,6 @@ public class ApiUseScanJob extends Job {
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(this.configuration.getName());
 		Util.updateMonitor(localmonitor, 1);
 		if (bundles.length > 0) {
-			// an installation
 			localmonitor.setWorkRemaining(bundles.length);
 			for (int i = 0; i < bundles.length; i++) {
 				Util.updateMonitor(localmonitor, 1);
@@ -453,41 +445,10 @@ public class ApiUseScanJob extends Job {
 				}
 			}
 		} else {
-			// scan directory
-			if (!plugins.exists() || !plugins.isDirectory()) {
-				plugins = path.toFile();
-			}
-			File[] files = scanLocation(plugins);
-			Util.updateMonitor(localmonitor, 1);
-			localmonitor.setWorkRemaining(files.length);
-			for (int i = 0; i < files.length; i++) {
-				Util.updateMonitor(localmonitor, 1);
-				IApiComponent component = ApiModelFactory.newApiComponent(profile, files[i].getPath());
-				if (component != null) {
-					components.add(component);
-				}
-			}
+			abort(MessageFormat.format(Messages.ApiUseScanJob_no_bundles, new String[]{path.toOSString()}));
 		}
 		profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
 		return profile;
 	}	
 	
-	/**
-	 * Scan given directory for plug-ins
-	 * @param directory
-	 * @return Files of plug-ins/features
-	 */
-	private File[] scanLocation(File directory) {
-		if(!directory.exists() && !directory.isDirectory()) {
-			return new File[0];
-		}
-		HashSet result = new HashSet();
-		File[] children = directory.listFiles();
-		if (children != null) {
-			for (int j = 0; j < children.length; j++) {
-				result.add(children[j]);
-			}
-		}
-		return (File[]) result.toArray(new File[result.size()]);
-	}	
 }

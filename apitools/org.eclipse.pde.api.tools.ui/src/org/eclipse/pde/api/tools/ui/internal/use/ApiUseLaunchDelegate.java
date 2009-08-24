@@ -34,7 +34,6 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final int KIND_TARGET_DEFINITION = 1;
 	public static final int KIND_API_BASELINE = 2;
 	public static final int KIND_INSTALL_PATH = 3;
-	public static final int KIND_WORKSPACE = 4;
 	
 	/**
 	 * Target definition handle
