@@ -944,6 +944,10 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;unpack=true", "b;unpack=false"});
 
 		Utils.generateBundle(a, "a");
+		//bug 287537
+		Properties props = new Properties();
+		props.put("customBuildCallbacks", "true");
+		Utils.generatePluginBuildProperties(a, props);
 		Utils.writeBuffer(a.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
 
 		Properties includes = new Properties();

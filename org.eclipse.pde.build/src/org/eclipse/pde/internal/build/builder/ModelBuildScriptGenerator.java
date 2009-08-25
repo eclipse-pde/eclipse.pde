@@ -630,17 +630,17 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println("   artifactRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   buildResultFolder=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
+		//if the feature specifies the bundle shape, or the bundle itself doesn't have a preferred shape, then use the feature shape value (true by default)
+		if (associatedEntry != null && (associatedEntry.unpackSet() || !Utils.hasBundleShapeHeader(model)))
+			script.println("   unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+
 		if (customBuildCallbacks != null) {
 			script.println("   targetFolder=\"" + root + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 		} else {
 			script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
-			//if the feature specifies the bundle shape, or the bundle itself doesn't have a preferred shape, then use the feature shape value (true by default)
-			if (associatedEntry != null && (associatedEntry.unpackSet() || !Utils.hasBundleShapeHeader(model)))
-				script.println("   unpack=\"" + String.valueOf(associatedEntry.isUnpack()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			if (Utils.isSourceBundle(model)) {
+			if (Utils.isSourceBundle(model))
 				script.println("   gatheredSource=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources\""); //$NON-NLS-1$//$NON-NLS-2$
-			}
 
 			if (workspaceOutputFolders == null || workspaceOutputFolders.size() == 0 || customBuildCallbacks != null) {
 				script.println("/>"); //$NON-NLS-1$
