@@ -41,9 +41,9 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiUseReportConverter;
-import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
+import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-import org.eclipse.pde.api.tools.internal.search.XMLApiSearchReporter;
+import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.internal.core.PDECore;
@@ -105,7 +105,7 @@ public class ApiUseScanJob extends Job {
 			if (isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES)) {
 				kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
 			}
-			IApiSearchRequestor requestor = new ApiUseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
+			IApiSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
 			IPath rootpath = null;
 			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String)null);
 			if (xmlPath == null) {
@@ -117,7 +117,7 @@ public class ApiUseScanJob extends Job {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
 				scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
 			}
-			IApiSearchReporter reporter = new XMLApiSearchReporter(
+			IApiSearchReporter reporter = new XmlSearchReporter(
 					xmlPath, 
 					false);
 			//do it now, we know what will not be searched a priori

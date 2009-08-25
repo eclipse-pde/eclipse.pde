@@ -29,9 +29,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
-import org.eclipse.pde.api.tools.internal.search.ApiUseSearchRequestor;
+import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-import org.eclipse.pde.api.tools.internal.search.XMLApiSearchReporter;
+import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -197,13 +197,13 @@ public final class ApiUseTask extends CommonUtilsTask {
 		cleanReportLocation();
 		
 		IApiBaseline baseline = getBaseline(CURRENT_BASELINE_NAME, this.currentBaselineLocation);
-		IApiSearchReporter reporter = new XMLApiSearchReporter(this.reportLocation, this.debug);
+		IApiSearchReporter reporter = new XmlSearchReporter(this.reportLocation, this.debug);
 		try {
 			Set ids = new HashSet();
 			TreeSet scope = new TreeSet(Util.componentsorter);
 			getContext(baseline, ids, scope);
 			ApiSearchEngine engine = new ApiSearchEngine();
-			IApiSearchRequestor requestor = new ApiUseSearchRequestor(
+			IApiSearchRequestor requestor = new UseSearchRequestor(
 					ids,
 					(IApiElement[]) scope.toArray(new IApiElement[scope.size()]), 
 					getSearchFlags());

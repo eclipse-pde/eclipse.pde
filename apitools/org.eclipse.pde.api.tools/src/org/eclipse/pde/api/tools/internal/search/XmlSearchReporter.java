@@ -57,7 +57,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 1.0.1
  */
-public class XMLApiSearchReporter implements IApiSearchReporter {
+public class XmlSearchReporter implements IApiSearchReporter {
 
 	/**
 	 * file names for the output reference files
@@ -78,15 +78,19 @@ public class XMLApiSearchReporter implements IApiSearchReporter {
 	 * @param location the absolute path in the local file system to the folder to write the reports to 
 	 * @param debug if debugging infos should be written out to the console
 	 */
-	public XMLApiSearchReporter(String location, boolean debug) {
+	public XmlSearchReporter(String location, boolean debug) {
 		fLocation = location;
 		this.debug = debug;
 		try {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 		}
-		catch(FactoryConfigurationError fce) {} 
-		catch (ParserConfigurationException e) {}
+		catch(FactoryConfigurationError fce) {
+			ApiPlugin.log(fce);
+		} 
+		catch (ParserConfigurationException pce) {
+			ApiPlugin.log(pce);
+		}
 	}
 	
 	/* (non-Javadoc)

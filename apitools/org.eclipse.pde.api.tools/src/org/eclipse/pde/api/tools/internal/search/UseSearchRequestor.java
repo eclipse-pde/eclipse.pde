@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
-import java.util.Comparator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -32,7 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
  * 
  * @since 1.0.0
  */
-public class ApiUseSearchRequestor implements IApiSearchRequestor {
+public class UseSearchRequestor implements IApiSearchRequestor {
 
 	/**
 	 * The backing elements to search with
@@ -50,18 +49,6 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	private IApiScope fScope = null;
 	
 	/**
-	 * Default comparator that orders {@link IApiComponent} by their ID 
-	 */
-	public static final Comparator componentsorter = new Comparator(){
-		public int compare(Object o1, Object o2) {
-			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-				return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
-			}
-			return -1;
-		}
-	};
-	
-	/**
 	 * Constructor
 	 * @param elements an array of {@link IApiElement}s for the search engine to use
 	 * @param scope the raw list of {@link IApiElement}s to extract references from
@@ -72,7 +59,7 @@ public class ApiUseSearchRequestor implements IApiSearchRequestor {
 	 * <li>{@link #INCLUDE_INTERNAL}</li>
 	 * </ol>
 	 */
-	public ApiUseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds) {
+	public UseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds) {
 		fSearchMask = searchkinds;
 		fComponentIds = elementnames;
 		prepareScope(scope);

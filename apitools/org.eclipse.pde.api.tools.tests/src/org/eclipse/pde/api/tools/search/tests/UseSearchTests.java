@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
-import org.eclipse.pde.api.tools.internal.search.XMLApiSearchReporter;
+import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
@@ -131,7 +131,7 @@ public class UseSearchTests extends SearchTest {
 	IApiSearchReporter getCompositeReporter(String path, boolean debug) {
 		IApiSearchReporter[] reporters = new IApiSearchReporter[2];
 		reporters[0] = TEST_REPORTER;
-		reporters[1] = new XMLApiSearchReporter(XML_PATH.toOSString(), debug);
+		reporters[1] = new XmlSearchReporter(XML_PATH.toOSString(), debug);
 		return new TestCompositeSearchReporter(this, reporters);
 	}
 	

@@ -57,6 +57,9 @@
 			<xsl:choose>
 				<xsl:when test="count(components/component) &gt; 0">
 				<p>
+					A summary of the missing required bundles is <a href="missing.html">available here</a>.
+				</p>
+				<p>
 					Click an entry in the table below to reveal the details of why it was not searched.
 				</p>
 				<div align="left" class="main">
@@ -94,7 +97,7 @@
 					</div>
 				</xsl:when>
 				<xsl:otherwise>
-					<p>No bundles were skipped during the search df</p>
+					<p>No bundles were skipped during the search.</p>
 				</xsl:otherwise>
 			</xsl:choose>
 			<p>

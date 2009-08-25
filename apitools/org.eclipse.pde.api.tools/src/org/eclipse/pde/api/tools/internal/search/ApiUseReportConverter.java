@@ -25,7 +25,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -276,6 +278,29 @@ public final class ApiUseReportConverter {
 	}
 	
 	/**
+	 * Handler for parsing the not_searched.xml file to output a summary or 
+	 * missing required bundles
+	 */
+	static final class MissingHandler extends DefaultHandler {
+		TreeSet missing = new TreeSet(Util.componentsorter);
+		static String pattern = "Require-Bundle:"; //$NON-NLS-1$
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			if(IApiXmlConstants.ELEMENT_COMPONENT.equals(qName)) {
+				String value = attributes.getValue("details"); //$NON-NLS-1$
+				StringTokenizer tokenizer = new StringTokenizer(value, "<>"); //$NON-NLS-1$
+				int index = -1;
+				while(tokenizer.hasMoreTokens()) {
+					value = tokenizer.nextToken();
+					index = value.indexOf(pattern);
+					if(index > -1) {
+						missing.add(value.replaceAll(pattern, Util.EMPTY_STRING));
+					}
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Method used for initializing tracing in the report converter
 	 */
 	public static void setDebug(boolean debugValue) {
@@ -301,6 +326,7 @@ public final class ApiUseReportConverter {
 	private String xmlLocation = null;
 	private String htmlLocation = null;
 	private File htmlIndex = null;
+	SAXParser parser = null;
 
 	/**
 	 * Visibility constant indicating an element has host-fragment level of visibility.
@@ -321,6 +347,28 @@ public final class ApiUseReportConverter {
 	}
 	
 	/**
+	 * Returns the handle to the default parser, caches the handle once it has been created
+	 * @return the handle to the default parser
+	 * @throws Exception forwarded general exception that can be trapped in Ant builds
+	 */
+	SAXParser getParser() throws Exception {
+		if(this.parser == null) {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			try {
+				this.parser = factory.newSAXParser();
+			} catch (ParserConfigurationException pce) {
+				throw new Exception(SearchMessages.ApiUseReportConverter_pce_error_getting_parser, pce);
+			} catch (SAXException se) {
+				throw new Exception(SearchMessages.ApiUseReportConverter_se_error_parser_handle, se);
+			}
+			if (this.parser == null) {
+				throw new Exception(SearchMessages.could_not_create_sax_parser);
+			}
+		}
+		return this.parser;
+	}
+	
+	/**
 	 * Runs the converter on the given locations
 	 */
 	public void convert(String xslt, IProgressMonitor monitor) throws Exception {
@@ -329,18 +377,6 @@ public final class ApiUseReportConverter {
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.ApiUseReportConverter_preparing_report_metadata, 8);
 		try {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			SAXParser parser = null;
-			try {
-				parser = factory.newSAXParser();
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
-			} catch (SAXException e) {
-				e.printStackTrace();
-			}
-			if (parser == null) {
-				throw new Exception(SearchMessages.could_not_create_sax_parser);
-			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_html_root);
 			Util.updateMonitor(localmonitor, 1);
 			this.htmlRoot = new File(this.htmlLocation);
@@ -408,7 +444,7 @@ public final class ApiUseReportConverter {
 							for (int k = 0; k < xmlfiles.length; k++) {
 								try {
 									handler = new UseDefaultHandler(report, getTypeFromFileName(xmlfiles[k]), counts);
-									parser.parse(xmlfiles[k], handler);
+									getParser().parse(xmlfiles[k], handler);
 								} 
 								catch (SAXException e) {}
 								catch (IOException e) {}
@@ -439,7 +475,8 @@ public final class ApiUseReportConverter {
 				start = System.currentTimeMillis();
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_writing_not_searched);
-			writeNotSearched(htmlRoot);
+			writeMissingSummary(this.htmlRoot);
+			writeNotSearched(this.htmlRoot);
 			Util.updateMonitor(localmonitor, 1);
 			if(DEBUG) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -447,7 +484,7 @@ public final class ApiUseReportConverter {
 				start = System.currentTimeMillis();
 			}
 			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_writing_root_index);
-			writeIndexFile(sortedreports, htmlRoot);
+			writeIndexFile(sortedreports, this.htmlRoot);
 			Util.updateMonitor(localmonitor, 1);
 			if(DEBUG) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -596,6 +633,52 @@ public final class ApiUseReportConverter {
 	}
 	
 	/**
+	 * Writes out a summary of the missing required bundles
+	 * @param htmlroot
+	 */
+	private void writeMissingSummary(File htmlroot) throws Exception {
+		File missing = null;
+		PrintWriter writer = null;
+		try {
+			String filename = "missing"; //$NON-NLS-1$
+			missing = new File(htmlroot, filename+".html"); //$NON-NLS-1$
+			if(!missing.exists()) {
+				missing.createNewFile();
+			}
+			FileWriter fileWriter = new FileWriter(missing);
+			writer = new PrintWriter(new BufferedWriter(fileWriter));
+			writer.println(SearchMessages.ApiUseReportConverter_missing_header);
+			writeMissingBundles(writer);
+			writeTableEnd(writer);
+			writer.println(SearchMessages.ApiUseReportConverter_back_to_not_searched);
+			writeW3Footer(writer);
+		}
+		catch(IOException ioe) {
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, missing.getAbsolutePath()));
+		}
+		finally {
+			if(writer != null) {
+				writer.close();
+			}
+		}
+	}
+	
+	/**
+	 * Writes the sorted collection of missing required bundle information
+	 * @param writer the writer to output to
+	 * @throws Exception
+	 */
+	void writeMissingBundles(PrintWriter writer) throws Exception {
+		MissingHandler handler = new MissingHandler();
+		getParser().parse(new File(this.reportsRoot, "not_searched.xml"), handler); //$NON-NLS-1$
+		String value = null;
+		for (Iterator iter = handler.missing.iterator(); iter.hasNext();) {
+			value = (String) iter.next();
+			writer.println(NLS.bind(SearchMessages.ApiUseReportConverter_missing_bundle_entry, value));
+		}
+	}
+	
+	/**
 	 * Writes out the file of components that were not searched: either because they appeared in an exclude list
 	 * or they have no .api_description file
 	 * 
@@ -624,7 +707,7 @@ public final class ApiUseReportConverter {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
 		catch (TransformerException te) {
-			te.printStackTrace();
+			throw new Exception(SearchMessages.ApiUseReportConverter_te_applying_xslt_skipped, te);
 		}
 		catch (CoreException e) {
 			throw new Exception(NLS.bind(SearchMessages.ApiUseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
@@ -795,15 +878,21 @@ public final class ApiUseReportConverter {
 			}
 			FileWriter fileWriter = new FileWriter(htmlIndex);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(SearchMessages.ApiUseReportConverter_search_html_index_file_header);
-			Report report = null;
-			for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
-				report = (Report) iter.next();
-				if(report != null) {
-					writeIndexEntry(writer, report);
-				}
+			if(sortedreports.size() < 1) {
+				writer.println(SearchMessages.ApiUseReportConverter_no_usage_header);
+				writer.println(SearchMessages.ApiUseReportConverter_no_bundle_have_usage);
 			}
-			writeTableEnd(writer);
+			else {
+				writer.println(SearchMessages.ApiUseReportConverter_search_html_index_file_header);
+				Report report = null;
+				for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
+					report = (Report) iter.next();
+					if(report != null) {
+						writeIndexEntry(writer, report);
+					}
+				}
+				writeTableEnd(writer);
+			}
 			writeW3Footer(writer);
 			writer.flush();
 		} catch (IOException e) {
@@ -937,10 +1026,10 @@ public final class ApiUseReportConverter {
 	 * @return the type from the file name
 	 */
 	private int getTypeFromFileName(File xmlfile) {
-		if(xmlfile.getName().indexOf(XMLApiSearchReporter.TYPE_REFERENCES) > -1) {
+		if(xmlfile.getName().indexOf(XmlSearchReporter.TYPE_REFERENCES) > -1) {
 			return IReference.T_TYPE_REFERENCE;
 		}
-		if(xmlfile.getName().indexOf(XMLApiSearchReporter.METHOD_REFERENCES) > -1) {
+		if(xmlfile.getName().indexOf(XmlSearchReporter.METHOD_REFERENCES) > -1) {
 			return IReference.T_METHOD_REFERENCE;
 		}
 		return IReference.T_FIELD_REFERENCE;
