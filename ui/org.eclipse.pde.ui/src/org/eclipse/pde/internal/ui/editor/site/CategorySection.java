@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
-
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
@@ -25,6 +23,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -277,7 +276,12 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private void copyFeature(SiteFeatureAdapter adapter, Object target) {
 		ISiteFeature feature = findRealFeature(adapter);
 		if (feature == null) {
-			return;
+			try {
+				feature = copySiteFeature(fModel, adapter.feature);
+				fModel.getSite().addFeatures(new ISiteFeature[] {feature});
+			} catch (CoreException ce) {
+				return;
+			}
 		}
 		/*
 		 * if (adapter.category == null) { moveFeature(adapter, target); } else
@@ -788,5 +792,26 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	public void modelsChanged(IFeatureModelDelta delta) {
 		markStale();
+	}
+
+	/**
+	 * Creates a new site feature instance with the same settings as the given source feature.
+	 * 
+	 * @param model site model to create the feature from
+	 * @param sourceFeature the feature to copy settings out of
+	 * @return a new site feature instance
+	 * @throws CoreException
+	 */
+	private ISiteFeature copySiteFeature(ISiteModel model, ISiteFeature sourceFeature) throws CoreException {
+		ISiteFeature sfeature = model.getFactory().createFeature();
+		sfeature.setId(sourceFeature.getId());
+		sfeature.setVersion(sourceFeature.getVersion());
+		sfeature.setURL(sourceFeature.getURL());
+		sfeature.setOS(sourceFeature.getOS());
+		sfeature.setWS(sourceFeature.getWS());
+		sfeature.setArch(sourceFeature.getArch());
+		sfeature.setNL(sourceFeature.getNL());
+		sfeature.setIsPatch(sourceFeature.isPatch());
+		return sfeature;
 	}
 }
