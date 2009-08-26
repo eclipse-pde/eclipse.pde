@@ -455,6 +455,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				radioInstall.setSelection(true);
 				break;
 			}
+			default: {
+				radioBaseline.setSelection(true);
+				radioTarget.setSelection(false);
+				radioInstall.setSelection(false);
+			}
 		}
 	}
 	
