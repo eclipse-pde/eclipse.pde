@@ -16,7 +16,6 @@
 	- 'apianalysis from org.eclipse.pde.api.tools.internal.tasks.APIToolsAnalysisTask
 	- 'apianalysis_reportconversion' from org.eclipse.pde.api.tools.internal.tasks.AnalysisReportConversionTask
 	- 'apifile_generation' from org.eclipse.pde.api.tools.internal.tasks.ApiFileGenerationTask
-	- 'pluggable_usetask' from org.eclipse.pde.api.tools.internal.tasks.PluggableApiUseTask
 	- 'comparetask' from org.eclipse.pde.api.tools.internal.tasks.CompareTask
 -->
 <project name="apitask" basedir="." default="run">
