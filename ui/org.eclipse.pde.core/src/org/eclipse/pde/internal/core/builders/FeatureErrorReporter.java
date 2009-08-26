@@ -440,12 +440,14 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		if (id.trim().length() == 0 || version.trim().length() == 0 || version.equals("0.0.0")) //$NON-NLS-1$
 			return;
 		ModelEntry entry = PluginRegistry.findEntry(id);
-		IPluginModelBase[] allModels = entry.getActiveModels();
-		for (int i = 0; i < allModels.length; i++) {
-			IPluginModelBase availablePlugin = allModels[i];
-			if (id.equals(availablePlugin.getPluginBase().getId())) {
-				if (version.equals(availablePlugin.getPluginBase().getVersion())) {
-					return;
+		if (entry != null) {
+			IPluginModelBase[] allModels = entry.getActiveModels();
+			for (int i = 0; i < allModels.length; i++) {
+				IPluginModelBase availablePlugin = allModels[i];
+				if (id.equals(availablePlugin.getPluginBase().getId())) {
+					if (version.equals(availablePlugin.getPluginBase().getVersion())) {
+						return;
+					}
 				}
 			}
 		}
