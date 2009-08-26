@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-import org.eclipse.pde.api.tools.internal.search.ApiUseReportConverter;
+import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -114,7 +114,7 @@ public final class VisibilityModifiers {
 			case PRIVATE_PERMISSIBLE: {
 				return "PRIVATE_PERMISSIBLE"; //$NON-NLS-1$
 			}
-			case ApiUseReportConverter.FRAGMENT_PERMISSIBLE: {
+			case UseReportConverter.FRAGMENT_PERMISSIBLE: {
 				return "FRAGMENT_PERMISSIBLE"; //$NON-NLS-1$
 			}
 			case SPI: {

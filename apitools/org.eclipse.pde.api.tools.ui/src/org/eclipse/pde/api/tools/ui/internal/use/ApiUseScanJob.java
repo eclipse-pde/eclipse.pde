@@ -40,7 +40,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
-import org.eclipse.pde.api.tools.internal.search.ApiUseReportConverter;
+import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
@@ -316,7 +316,7 @@ public class ApiUseScanJob extends Job {
 			cleanReportLocation(hlocation, localmonitor.newChild(5));
 		}
 		try {
-			ApiUseReportConverter converter = new ApiUseReportConverter(hlocation, rlocation);
+			UseReportConverter converter = new UseReportConverter(hlocation, rlocation);
 			converter.convert(null, localmonitor.newChild(5));
 			if(openhtml) {
 				final File index = converter.getReportIndex();

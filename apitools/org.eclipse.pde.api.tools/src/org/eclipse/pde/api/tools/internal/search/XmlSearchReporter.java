@@ -160,7 +160,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 				if(annot.getVisibility() == VisibilityModifiers.PRIVATE) {
 					IApiComponent host = mcomponent.getHost();
 					if(host != null && host.getId().equals(rcomponent.getId())) {
-						visibility = new Integer(ApiUseReportConverter.FRAGMENT_PERMISSIBLE);
+						visibility = new Integer(UseReportConverter.FRAGMENT_PERMISSIBLE);
 					}
 					else {
 						IApiAccess access = fDescription.resolveAccessLevel(
@@ -461,7 +461,6 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		relement.setAttribute(IApiXmlConstants.ATTR_ORIGIN, getText(member));
 		member = reference.getResolvedReference();
 		if(member != null) {
-			relement.setAttribute(IApiXmlConstants.ATTR_REFEREE, getText(member));
 			relement.setAttribute(IApiXmlConstants.ATTR_LINE_NUMBER, Integer.toString(reference.getLineNumber()));
 			String sig = reference.getReferencedSignature();
 			if(sig != null) {

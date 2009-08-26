@@ -14,7 +14,7 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.api.tools.internal.search.ApiUseReportConverter;
+import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -92,8 +92,8 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		}
 		try {
 			Util.delete(new File(this.htmlReportsLocation));
-			ApiUseReportConverter converter = new ApiUseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation);
-			ApiUseReportConverter.setDebug(this.debug);
+			UseReportConverter converter = new UseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation);
+			UseReportConverter.setDebug(this.debug);
 			converter.convert(this.xsltFileLocation, null);
 			File index = converter.getReportIndex();
 			System.out.println(NLS.bind(

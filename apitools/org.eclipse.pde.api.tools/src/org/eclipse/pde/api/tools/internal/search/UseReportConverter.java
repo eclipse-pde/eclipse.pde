@@ -64,7 +64,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.1
  */
-public final class ApiUseReportConverter {
+public final class UseReportConverter {
 
 	/**
 	 * Colour white for normal / permissible references
@@ -183,7 +183,7 @@ public final class ApiUseReportConverter {
 						}
 						break;
 					}
-					case ApiUseReportConverter.FRAGMENT_PERMISSIBLE: {
+					case UseReportConverter.FRAGMENT_PERMISSIBLE: {
 						switch(type) {
 						case IReference.T_TYPE_REFERENCE: {
 							counts.total_fragment_permissible_type_count = count;
@@ -341,7 +341,7 @@ public final class ApiUseReportConverter {
 	 * @param htmlroot the folder root where the HTML reports should be written
 	 * @param xmlroot the folder root where the current API use scan output is located
 	 */
-	public ApiUseReportConverter(String htmlroot, String xmlroot) {
+	public UseReportConverter(String htmlroot, String xmlroot) {
 		this.xmlLocation = xmlroot;
 		this.htmlLocation = htmlroot;
 	}
@@ -546,7 +546,7 @@ public final class ApiUseReportConverter {
 		if (xsltFile != null) {
 			xslt = new StreamSource(xsltFile);
 		} else {
-			InputStream defaultXsltInputStream = ApiUseReportConverter.class.getResourceAsStream(DEFAULT_XSLT);
+			InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(DEFAULT_XSLT);
 			if (defaultXsltInputStream != null) {
 				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
 			}
@@ -647,8 +647,16 @@ public final class ApiUseReportConverter {
 			}
 			FileWriter fileWriter = new FileWriter(missing);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(SearchMessages.ApiUseReportConverter_missing_header);
-			writeMissingBundles(writer);
+			MissingHandler handler = new MissingHandler();
+			getParser().parse(new File(this.reportsRoot, "not_searched.xml"), handler); //$NON-NLS-1$
+			writer.println(NLS.bind(SearchMessages.UseReportConverter_html_header, SearchMessages.UseReportConverter_missing_required));
+			if(handler.missing.isEmpty()) {
+				writer.println(SearchMessages.UseReportConverter_no_required_missing);
+			}
+			else {
+				writer.println(SearchMessages.ApiUseReportConverter_missing_header);
+			}
+			writeMissingBundles(writer, handler);
 			writeTableEnd(writer);
 			writer.println(SearchMessages.ApiUseReportConverter_back_to_not_searched);
 			writeW3Footer(writer);
@@ -666,11 +674,10 @@ public final class ApiUseReportConverter {
 	/**
 	 * Writes the sorted collection of missing required bundle information
 	 * @param writer the writer to output to
+	 * @param handler
 	 * @throws Exception
 	 */
-	void writeMissingBundles(PrintWriter writer) throws Exception {
-		MissingHandler handler = new MissingHandler();
-		getParser().parse(new File(this.reportsRoot, "not_searched.xml"), handler); //$NON-NLS-1$
+	void writeMissingBundles(PrintWriter writer, MissingHandler handler) throws Exception {
 		String value = null;
 		for (Iterator iter = handler.missing.iterator(); iter.hasNext();) {
 			value = (String) iter.next();
@@ -693,7 +700,7 @@ public final class ApiUseReportConverter {
 				originhtml.createNewFile();
 			}
 			File xml = new File(this.reportsRoot, filename+".xml"); //$NON-NLS-1$
-			InputStream defaultXsltInputStream = ApiUseReportConverter.class.getResourceAsStream("/notsearched.xsl"); //$NON-NLS-1$
+			InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream("/notsearched.xsl"); //$NON-NLS-1$
 			Source xslt = null;
 			if (defaultXsltInputStream != null) {
 				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
@@ -1006,7 +1013,7 @@ public final class ApiUseReportConverter {
 		writeOriginSummaryEntry(writer, 
 				origin, 
 				SearchMessages.ApiUseReportConverter_fragment_permissible, 
-				ApiUseReportConverter.FRAGMENT_PERMISSIBLE,
+				UseReportConverter.FRAGMENT_PERMISSIBLE,
 				counts.total_fragment_permissible_type_count, 
 				counts.total_fragment_permissible_method_count, 
 				counts.total_fragment_permissible_field_count);

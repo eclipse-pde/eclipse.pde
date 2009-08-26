@@ -72,6 +72,9 @@ public class SearchMessages extends NLS {
 	public static String ApiUseReportConverter_origin_summary_header;
 	public static String SkippedComponent_component_was_excluded;
 	public static String SkippedComponent_missing_required_bundle;
+	public static String UseReportConverter_html_header;
+	public static String UseReportConverter_missing_required;
+	public static String UseReportConverter_no_required_missing;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
