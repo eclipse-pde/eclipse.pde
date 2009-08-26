@@ -42,10 +42,12 @@ public class GETFetchFactory implements IFetchFactory {
 	private static final String UNPACK = "unpack"; //$NON-NLS-1$
 	private static final String SEPARATOR = ","; //$NON-NLS-1$
 	private static final String TASK_GET = "get"; //$NON-NLS-1$
+	private static final String TASK_MKDIR = "mkdir"; //$NON-NLS-1$
 	private static final String TASK_DELETE = "delete"; //$NON-NLS-1$
 	private static final String TASK_UNZIP = "unzip"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_SRC = "src"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_DEST = "dest"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_DIR = "dir"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FILE = "file"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VERBOSE = "verbose"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_IGNORE_ERRORS = "ignoreerrors"; //$NON-NLS-1$
@@ -115,15 +117,23 @@ public class GETFetchFactory implements IFetchFactory {
 		int index = src.lastIndexOf('/');
 		String filename = index == -1 ? src : src.substring(index);
 
+		String dest = (String) entryInfos.get(ATTRIBUTE_DEST);
+		if (dest != null) {
+			//if a dest was specified, make sure the parent directory exists
+			script.printTabs();
+			script.print(TAG_OPEN + TASK_MKDIR);
+			script.printAttribute(ATTRIBUTE_DIR, new Path(dest).removeLastSegments(1).toOSString(), true);
+			script.print(TAG_CLOSE);
+			script.println();
+		} else {
+			// "dest" attribute is mandatory
+			dest = destination.removeLastSegments(1).append(filename).toOSString();
+		}
+
 		// "src" attribute is mandatory
 		script.printTabs();
 		script.print(TAG_OPEN + TASK_GET);
 		script.printAttribute(ATTRIBUTE_SRC, src, true);
-
-		// "dest" attribute is mandatory
-		String dest = (String) entryInfos.get(ATTRIBUTE_DEST);
-		if (dest == null)
-			dest = destination.removeLastSegments(1).append(filename).toOSString();
 		script.printAttribute(ATTRIBUTE_DEST, dest, true);
 
 		// the rest of the attributes are optional so check if they exist before writing in the file
@@ -151,10 +161,19 @@ public class GETFetchFactory implements IFetchFactory {
 		// if we have a feature or un-packed plug-in then we need to unzip it
 		boolean unpack = Boolean.valueOf((String) entryInfos.get(UNPACK)).booleanValue();
 		if (unpack || ELEMENT_TYPE_FEATURE.equals(entryInfos.get(KEY_ELEMENT_TYPE))) {
+			Path destPath = new Path(dest);
+			String unzipped = destPath.removeLastSegments(1).toOSString();
+			if (destPath.getFileExtension().equalsIgnoreCase("jar")) { //$NON-NLS-1$
+				unzipped = destPath.removeFileExtension().toOSString();
+				script.printTabs();
+				script.print(TAG_OPEN + TASK_MKDIR);
+				script.printAttribute(ATTRIBUTE_DIR, unzipped, true);
+				script.print(TAG_CLOSE);
+			}
 			script.printTabs();
 			script.print(TAG_OPEN + TASK_UNZIP);
 			script.printAttribute(ATTRIBUTE_SRC, dest, true);
-			script.printAttribute(ATTRIBUTE_DEST, new Path(dest).removeLastSegments(1).toOSString(), true);
+			script.printAttribute(ATTRIBUTE_DEST, unzipped, true);
 			script.print(TAG_CLOSE);
 
 			script.printTabs();

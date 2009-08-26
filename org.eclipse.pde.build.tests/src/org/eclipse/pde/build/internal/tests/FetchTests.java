@@ -39,6 +39,31 @@ public class FetchTests extends PDETestCase {
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Could not retrieve feature.xml or build.properties for feature org.eclipse.rcp");
 	}
 
+	public void testGetUnpack() throws Exception {
+		IFolder buildFolder = newTest("testGetUnpack");
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("plugin@javax.xml.rpc,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/bundles/javax.xml.rpc_1.1.0.v200905122109.zip,unpack=true\n");
+		buffer.append("plugin@com.ibm.icu.base,3.6.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite/plugins/com.ibm.icu.base_3.6.0.v20080530.jar,unpack=true,dest=${buildDirectory}/plugins/com.ibm.icu.base_3.6.0/.zip\n");
+		buffer.append("plugin@com.ibm.icu.base,3.6.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite/plugins/com.ibm.icu.base_3.6.1.v20080530.jar,unpack=true\n");
+		Utils.writeBuffer(buildFolder.getFile("directory.txt"), buffer);
+		
+		Utils.generateFeature(buildFolder, "org.eclipse.pde.build.container.feature", null, new String[] {"javax.xml.rpc", "com.ibm.icu.base;version=3.6.0.qualifier", "com.ibm.icu.base;version=3.6.1.qualifier"});
+		
+		Properties fetchProperties = new Properties();
+		fetchProperties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		fetchProperties.put("type", "feature");
+		fetchProperties.put("id", "org.eclipse.pde.build.container.feature");
+		
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
+		
+		assertResourceFile(buildFolder.getFile("plugins/javax.xml.rpc_1.1.0.v200905122109/META-INF/MANIFEST.MF"));
+		assertResourceFile(buildFolder.getFile("plugins/com.ibm.icu.base_3.6.0/META-INF/MANIFEST.MF"));
+		assertResourceFile(buildFolder.getFile("plugins/com.ibm.icu.base_3.6.1.v20080530/META-INF/MANIFEST.MF"));
+	}
+	
 	public void testFetchFeature() throws Exception {
 		IFolder buildFolder = newTest("fetchFeature");
 		
