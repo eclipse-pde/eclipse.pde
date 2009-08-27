@@ -78,7 +78,7 @@
 	<!-- Steps to do after the compilation target <name>                       -->
 	<!-- Substitute "name" with the name of the compilation target, eg @dot    -->
 	<!-- Available parameters :                                                -->
-	<!--   jar.location - the location of the compilation results              -->
+	<!--   jar.Location - the location of the compilation results              -->
 	<!--   <name>.classpath : name = name of the compilation target. A         -->
 	<!--                      reference to the classpath structure.            -->
 	<!-- ===================================================================== -->
