@@ -768,21 +768,25 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IJobChangeListener listener = new JobChangeAdapter() {
 				public void done(IJobChangeEvent event) {
 					if (event.getResult().getSeverity() == IStatus.OK) {
-						Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
-						IResolvedBundle[] bundles;
-						bundles = fActiveTarget.getAllBundles();
-						for (int index = 0; index < bundles.length; index++) {
-							BundleInfo bundleInfo = bundles[index].getBundleInfo();
-							if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(bundleInfo.getSymbolicName())) {
-								Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());
-								if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
-									Display.getDefault().syncExec(new Runnable() {
-										public void run() {
-											MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);
+						if (fActiveTarget != null) {
+							Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
+							IResolvedBundle[] bundles;
+							bundles = fActiveTarget.getAllBundles();
+							if (bundles != null) {
+								for (int index = 0; index < bundles.length; index++) {
+									BundleInfo bundleInfo = bundles[index].getBundleInfo();
+									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(bundleInfo.getSymbolicName())) {
+										Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());
+										if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
+											Display.getDefault().syncExec(new Runnable() {
+												public void run() {
+													MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);
+												}
+											});
 										}
-									});
+										break;
+									}
 								}
-								break;
 							}
 						}
 					}
