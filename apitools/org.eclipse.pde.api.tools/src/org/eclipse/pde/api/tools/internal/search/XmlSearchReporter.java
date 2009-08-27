@@ -382,7 +382,15 @@ public class XmlSearchReporter implements IApiSearchReporter {
 					if(refs != null) {
 						for(Iterator iter2 = refs.iterator(); iter2.hasNext();) {
 							count++;
-							writeReference(doc, telement, (IReference) iter2.next());
+							IReference ref = (IReference) iter2.next();
+							writeReference(doc, telement, ref);
+							if (!iter2.hasNext()) {
+								// set signature on parent element if present
+								String signature = ref.getReferencedSignature();
+								if (signature != null) {
+									telement.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, signature);
+								}
+							}
 						}
 					}
 				}
@@ -462,10 +470,6 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		member = reference.getResolvedReference();
 		if(member != null) {
 			relement.setAttribute(IApiXmlConstants.ATTR_LINE_NUMBER, Integer.toString(reference.getLineNumber()));
-			String sig = reference.getReferencedSignature();
-			if(sig != null) {
-				relement.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, sig);
-			}
 			kelement.appendChild(relement);
 		}
 	}
