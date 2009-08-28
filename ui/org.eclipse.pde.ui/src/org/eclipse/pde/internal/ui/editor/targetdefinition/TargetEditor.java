@@ -380,7 +380,16 @@ public class TargetEditor extends FormEditor {
 		public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
 			if (!forceResolve && (!resolve || definition.isResolved())) {
 				if (fContentTree != null && source != fContentTree) {
-					fContentTree.setInput(getTarget());
+					ITargetDefinition target = getTarget();
+					// Check to see if we are resolved, resolving, or cancelled
+					if (target != null && target.isResolved()) {
+						fContentTree.setInput(getTarget());
+					} else if (Job.getJobManager().find(getJobFamily()).length > 0) {
+						fContentTree.setInput(null);
+					} else {
+						fContentTree.setCancelled();
+					}
+
 				}
 				if (fLocationTree != null && source != fLocationTree) {
 					fLocationTree.setInput(getTarget());
@@ -415,10 +424,15 @@ public class TargetEditor extends FormEditor {
 				};
 				resolveJob.addJobChangeListener(new JobChangeAdapter() {
 					public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
+						final IStatus status = event.getResult();
 						UIJob job = new UIJob(PDEUIMessages.TargetEditor_2) {
 							public IStatus runInUIThread(IProgressMonitor monitor) {
 								if (fContentTree != null) {
-									fContentTree.setInput(getTarget());
+									if (status.getSeverity() == IStatus.CANCEL) {
+										fContentTree.setCancelled();
+									} else {
+										fContentTree.setInput(getTarget());
+									}
 								}
 								if (fLocationTree != null) {
 									fLocationTree.setInput(getTarget());

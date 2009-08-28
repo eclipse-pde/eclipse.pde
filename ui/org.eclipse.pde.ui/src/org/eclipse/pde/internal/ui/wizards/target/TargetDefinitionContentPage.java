@@ -91,7 +91,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	/**
 	 * Wrappers the default progress monitor to avoid opening a dialog if the
-	 * operation is blocked.  Instead the blocked message is set as a sbutask. 
+	 * operation is blocked.  Instead the blocked message is set as a subtask. 
 	 * See bug 276904 [Progress] WizardDialog opens second dialog when blocked
 	 */
 	class ResolutionProgressMonitor extends ProgressMonitorWrapper {
@@ -198,6 +198,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void initializeListeners() {
 		ITargetChangedListener listener = new ITargetChangedListener() {
 			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
+				boolean setCancelled = false;
 				if (forceResolve || (resolve && !definition.isResolved())) {
 					try {
 						getContainer().run(true, true, new IRunnableWithProgress() {
@@ -211,11 +212,15 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					} catch (InvocationTargetException e) {
 						PDECore.log(e);
 					} catch (InterruptedException e) {
-						// Do nothing, op cancelled
+						setCancelled = true;
 					}
 				}
 				if (fContentTree != source) {
-					fContentTree.setInput(definition);
+					if (setCancelled) {
+						fContentTree.setCancelled(); // If the user cancelled the resolve, change the text to say it was cancelled
+					} else {
+						fContentTree.setInput(definition);
+					}
 				}
 				if (fLocationTree != source) {
 					fLocationTree.setInput(definition);
@@ -254,6 +259,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 						} catch (InvocationTargetException e) {
 							PDECore.log(e);
 						} catch (InterruptedException e) {
+							fContentTree.setCancelled();
 							return Status.CANCEL_STATUS;
 						}
 					}

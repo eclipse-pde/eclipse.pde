@@ -878,6 +878,17 @@ public class TargetContentsGroup extends FilteredTree {
 		initJob.schedule();
 	}
 
+	/**
+	 * This method clears any current target information and puts "Resolve Cancelled" into the
+	 * tree.  Setting the input to null results in "Resolving..." to be put into the table which 
+	 * may not be accurate.
+	 */
+	public void setCancelled() {
+		fTargetDefinition = null;
+		fTree.setInput("Resolve Cancelled");
+		setEnabled(false);
+	}
+
 	private class InitalizeJob extends Job {
 
 		public InitalizeJob() {

@@ -80,7 +80,8 @@ public class ContentSection extends SectionPart {
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
 	public void refresh() {
-		fContentGroup.setInput(getTarget());
+		// Use the change listener as it can check if we are resolved, resolving, or cancelled bug 264908
+		fEditor.getTargetChangedListener().contentsChanged(getTarget(), this, false, false);
 		super.refresh();
 	}
 
