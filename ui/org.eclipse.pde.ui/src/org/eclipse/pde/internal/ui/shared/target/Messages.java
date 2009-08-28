@@ -118,6 +118,8 @@ public class Messages extends NLS {
 	public static String TargetContentsGroup_5;
 	public static String TargetContentsGroup_8;
 	public static String TargetContentsGroup_9;
+	public static String TargetContentsGroup_collapseAll;
+	public static String TargetContentsGroup_resolveCancelled;
 	public static String TargetLocationsGroup_1;
 	static {
 		// initialize resource bundle

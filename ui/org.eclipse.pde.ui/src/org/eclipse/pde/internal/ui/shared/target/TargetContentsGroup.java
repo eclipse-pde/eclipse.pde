@@ -22,6 +22,8 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -41,6 +43,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -61,6 +65,7 @@ import org.osgi.framework.BundleException;
 public class TargetContentsGroup extends FilteredTree {
 
 	private CheckboxTreeViewer fTree;
+	private MenuManager fMenuManager;
 	private Button fSelectButton;
 	private Button fDeselectButton;
 	private Button fSelectAllButton;
@@ -241,7 +246,25 @@ public class TargetContentsGroup extends FilteredTree {
 			}
 
 		});
+
+		fMenuManager = new MenuManager();
+		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
+			public void run() {
+				fTree.collapseAll();
+			}
+		});
+		Menu contextMenu = fMenuManager.createContextMenu(tree);
+		tree.setMenu(contextMenu);
+
 		return fTree;
+	}
+
+	public void dispose() {
+		super.dispose();
+		if (fMenuManager != null) {
+			fMenuManager.dispose();
+		}
+
 	}
 
 	/* (non-Javadoc)
@@ -885,7 +908,7 @@ public class TargetContentsGroup extends FilteredTree {
 	 */
 	public void setCancelled() {
 		fTargetDefinition = null;
-		fTree.setInput("Resolve Cancelled");
+		fTree.setInput(Messages.TargetContentsGroup_resolveCancelled);
 		setEnabled(false);
 	}
 
