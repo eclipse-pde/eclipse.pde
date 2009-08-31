@@ -395,4 +395,5 @@ public interface IApiXmlConstants {
 	public static final String ATTR_REFERENCE_VISIBILITY = "reference_visibility"; //$NON-NLS-1$
 	public static final String SKIPPED_DETAILS = "details"; //$NON-NLS-1$
 	public static final String EXCLUDED = "excluded"; //$NON-NLS-1$
+	public static final String ATTR_MEMBER_NAME = "member"; //$NON-NLS-1$
 }

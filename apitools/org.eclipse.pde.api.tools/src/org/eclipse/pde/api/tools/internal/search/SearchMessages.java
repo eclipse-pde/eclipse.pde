@@ -75,6 +75,8 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_html_header;
 	public static String UseReportConverter_missing_required;
 	public static String UseReportConverter_no_required_missing;
+	public static String UseScanParser_analyzing_references;
+	public static String UseScanParser_parsing;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);

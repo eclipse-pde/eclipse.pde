@@ -385,10 +385,25 @@ public class XmlSearchReporter implements IApiSearchReporter {
 							IReference ref = (IReference) iter2.next();
 							writeReference(doc, telement, ref);
 							if (!iter2.hasNext()) {
-								// set signature on parent element if present
-								String signature = ref.getReferencedSignature();
-								if (signature != null) {
-									telement.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, signature);
+								// set qualified referenced attributes
+								IApiMember resolved  = ref.getResolvedReference();
+								if (resolved != null) {
+									switch (resolved.getType()) {
+									case IApiElement.TYPE:
+										telement.setAttribute(IApiXmlConstants.ATTR_TYPE, ((IApiType)resolved).getName());
+										break;
+									case IApiElement.FIELD:
+										IApiType encl = resolved.getEnclosingType();
+										telement.setAttribute(IApiXmlConstants.ATTR_TYPE, encl.getName());
+										telement.setAttribute(IApiXmlConstants.ATTR_MEMBER_NAME, resolved.getName());
+										break;
+									case IApiElement.METHOD:
+										encl = resolved.getEnclosingType();
+										telement.setAttribute(IApiXmlConstants.ATTR_TYPE, encl.getName());
+										telement.setAttribute(IApiXmlConstants.ATTR_MEMBER_NAME, resolved.getName());
+										telement.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, resolved.getSignature());
+										break;
+									}									
 								}
 							}
 						}
