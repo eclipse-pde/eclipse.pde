@@ -193,7 +193,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * if none.
 	 * 
 	 * @return configuration area URL or <code>null</code>
-	 * @throws CoreException if unable to generate a URL
+	 * @throws CoreException if unable to generate a URL or the user specified location does not exist
 	 */
 	private URL getConfigurationArea() throws CoreException {
 		IPath home = resolveHomeLocation();
@@ -210,6 +210,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			} catch (MalformedURLException e) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_1, home.toOSString()), e));
 			}
+		} else if (fConfiguration != null) {
+			// If the user specified config area does not exist throw an error
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, configuration.toOSString())));
 		}
 		return null;
 	}
