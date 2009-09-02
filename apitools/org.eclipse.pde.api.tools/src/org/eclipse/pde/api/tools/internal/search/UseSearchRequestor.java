@@ -21,6 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 
 /**
@@ -76,6 +77,11 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
 	 */
 	public boolean acceptMember(IApiMember member) {
+		// don't consider inner types, as they are considered with the root type
+		if (member.getType() == IApiElement.TYPE) {
+			IApiType type = (IApiType) member;
+			return !(type.isMemberType() || type.isLocal());
+		}
 		return true;
 	}
 	
