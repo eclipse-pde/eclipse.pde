@@ -1195,6 +1195,7 @@ public class PDEUIMessages extends NLS {
 	public static String NewExtensionWizard_PointSelectionPage_contributedTemplates_label;
 	public static String NewExtensionWizard_PointSelectionPage_templateDescription;
 	public static String NewExtensionWizard_PointSelectionPage_pluginDescription;
+	public static String NewExtensionWizard_PointSelectionPage_pluginDescription_deprecated;
 	public static String NewExtensionWizard_PointSelectionPage_extPointDescription;
 
 	public static String ExtensionEditorWizard_wtitle;

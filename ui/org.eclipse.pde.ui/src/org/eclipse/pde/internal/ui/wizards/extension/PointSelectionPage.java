@@ -16,14 +16,15 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionNode;
@@ -36,6 +37,7 @@ import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.wizards.templates.NewExtensionTemplateWizard;
@@ -178,7 +180,16 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_NEWEXP_WIZ_TOOL, 0);
 			}
 
-			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXT_POINT_OBJ, 0);
+			// If the schema is deprecated add a warning flag
+			int flags = 0;
+			SchemaRegistry reg = PDECore.getDefault().getSchemaRegistry();
+			ISchema schema = reg.getSchema(exp.getFullId());
+			if (schema != null && schema.isDeperecated()) {
+				PDEPlugin.getDefault().getLabelProvider();
+				flags = SharedLabelProvider.F_WARNING;
+			}
+
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXT_POINT_OBJ, flags);
 		}
 	}
 
@@ -522,7 +533,15 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		if (name == null) {
 			name = fullPointID;
 		}
-		setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, name));
+		// Check if the extension point is deprecated and display a warning
+		SchemaRegistry reg = PDECore.getDefault().getSchemaRegistry();
+		ISchema schema = reg.getSchema(fCurrentPoint.getFullId());
+		if (schema != null && schema.isDeperecated()) {
+			setMessage(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription_deprecated, name), IMessageProvider.WARNING);
+		} else {
+			setMessage(null);
+			setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, name));
+		}
 		setDescriptionText(""); //$NON-NLS-1$
 		fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, name.toLowerCase(Locale.ENGLISH)));
 		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, name));
