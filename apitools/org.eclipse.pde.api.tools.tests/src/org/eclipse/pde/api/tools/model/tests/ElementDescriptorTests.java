@@ -300,4 +300,21 @@ public class ElementDescriptorTests extends TestCase {
 		assertEquals("Wrong element type", IElementDescriptor.COMPONENT, descriptor.getElementType());
 	}
 	
+	public void testComponentVersion() {
+		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent", "1.2.3");
+		assertEquals("Wrong version", "1.2.3", descriptor.getVersion());
+	}	
+	
+	public void testComponentsEqual() {
+		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent", "1.2.3");
+		IComponentDescriptor descriptor2 = Factory.componentDescriptor("com.mycomponent", "1.2.3");
+		assertEquals(descriptor, descriptor2);
+	}
+	
+	public void testComponentsNotEqual() {
+		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent", "1.2.3");
+		IComponentDescriptor descriptor2 = Factory.componentDescriptor("com.mycomponent", "2.2.3");
+		assertFalse(descriptor.equals(descriptor2));
+	}	
+	
 }

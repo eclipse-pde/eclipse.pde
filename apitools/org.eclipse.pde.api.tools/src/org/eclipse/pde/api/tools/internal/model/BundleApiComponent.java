@@ -76,6 +76,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -124,6 +125,11 @@ public class BundleApiComponent extends AbstractApiComponent {
 	 * Symbolic name of this bundle
 	 */
 	private String fSymbolicName = null;
+	
+	/**
+	 * Bundle version
+	 */
+	private Version fVersion = null;
 	
 	/**
 	 * Cached value for the lowest EEs
@@ -219,6 +225,7 @@ public class BundleApiComponent extends AbstractApiComponent {
 			StateObjectFactory factory = StateObjectFactory.defaultFactory;
 			fBundleDescription = factory.createBundleDescription(((ApiBaseline)getBaseline()).getState(), manifest, fLocation, bundleId);
 			fSymbolicName = fBundleDescription.getSymbolicName();
+			fVersion = fBundleDescription.getVersion();
 			setName((String)getManifest().get(Constants.BUNDLE_NAME));
 		} catch (BundleException e) {
 			abort("Unable to create API component from specified location: " + fLocation, e); //$NON-NLS-1$
@@ -886,11 +893,8 @@ public class BundleApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getVersion()
 	 */
-	public synchronized String getVersion() throws CoreException {
-		if (this.fBundleDescription == null) {
-			baselineDisposed(getBaseline());
-		}
-		return fBundleDescription.getVersion().toString();
+	public synchronized String getVersion() {
+		return fVersion.toString();
 	}
 	
 	/**

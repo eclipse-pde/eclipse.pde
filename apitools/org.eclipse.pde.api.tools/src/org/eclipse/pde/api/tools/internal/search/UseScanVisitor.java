@@ -36,10 +36,9 @@ public class UseScanVisitor {
 	 * this component.
 	 * 
 	 * @param target API component to which references exist
-	 * @param version the version of the component
 	 * @return whether to visit components that reference this component
 	 */
-	public boolean visitComponent(IComponentDescriptor target, String version) {
+	public boolean visitComponent(IComponentDescriptor target) {
 		return true;
 	}
 	
@@ -47,9 +46,8 @@ public class UseScanVisitor {
 	 * End visiting a component that was referenced by others
 	 * 
 	 * @param target the component that was visited
-	 * @param version the version of the component
 	 */
-	public void endVisit(IComponentDescriptor target, String version) {
+	public void endVisit(IComponentDescriptor target) {
 	}
 	
 	/**
@@ -57,10 +55,9 @@ public class UseScanVisitor {
 	 * and returns whether to visit individual references.
 	 * 
 	 * @param component the component that references the current target component
-	 * @param version the version of the component
 	 * @return whether to visit reference members within the component
 	 */
-	public boolean visitReferencingComponent(IComponentDescriptor component, String version) {
+	public boolean visitReferencingComponent(IComponentDescriptor component) {
 		return true;
 	}
 	
@@ -68,9 +65,8 @@ public class UseScanVisitor {
 	 * Ends visiting a component that made references to the current target component.
 	 * 
 	 * @param component that component that was visited
-	 * @param version the version of the component
 	 */
-	public void endVisitReferencingComponent(IComponentDescriptor component, String version) {	
+	public void endVisitReferencingComponent(IComponentDescriptor component) {	
 	}
 	
 	/**
@@ -98,8 +94,9 @@ public class UseScanVisitor {
 	 * @param refKind the kind of {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference} 
 	 * @param fromMember describes the member the reference was made from 
 	 * @param lineNumber the line number the reference was on or -1 if unknown
+	 * @param visibility see {@link org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers}
 	 */
-	public void visitReference(int refKind, String fromMember, int lineNumber) {
+	public void visitReference(int refKind, IMemberDescriptor fromMember, int lineNumber, int visibility) {
 		
 	}
 	

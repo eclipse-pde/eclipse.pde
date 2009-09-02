@@ -86,7 +86,7 @@ public class BadClassfileTests extends TestCase {
 			public boolean isFragment() throws CoreException {return false;}
 			public boolean hasFragments() throws CoreException {return false;}
 			public boolean hasApiDescription() {return false;}
-			public String getVersion() throws CoreException {return "1.0.0";}
+			public String getVersion() {return "1.0.0";}
 			public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {return null;}
 			public String[] getLowestEEs() throws CoreException {return null;}
 			public String getLocation() {return null;}

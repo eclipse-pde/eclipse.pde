@@ -58,9 +58,8 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * Returns this component's version identifier.
 	 * 
 	 * @return component version
-	 * @throws CoreException if its baseline is disposed
 	 */
-	public String getVersion() throws CoreException;
+	public String getVersion();
 	
 	/**
 	 * Returns the execution environments required by this component for building
@@ -224,7 +223,6 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * Returns the associated element descriptor for this member.
 	 * 
 	 * @return element descriptor
-	 * @throws CoreException if an error occurs fetching the component id to make a handle object
 	 */
-	public IElementDescriptor getHandle() throws CoreException;
+	public IElementDescriptor getHandle();
 }

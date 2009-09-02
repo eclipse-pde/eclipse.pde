@@ -167,8 +167,8 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHandle()
 	 */
-	public IElementDescriptor getHandle() throws CoreException {
-		return Factory.componentDescriptor(this.getId());
+	public IElementDescriptor getHandle() {
+		return Factory.componentDescriptor(this.getId(), this.getVersion());
 	}
 	
 	/**

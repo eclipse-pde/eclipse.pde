@@ -80,6 +80,11 @@ public class Messages extends NLS {
 	public static String api_generation_targetFolderNotADirectory;
 	public static String api_generation_invalidBinaryLocation;
 
+	public static String ApiMigrationTask_missing_scan_location;
+	public static String ApiMigrationTask_scan_location_not_dir;
+	public static String ApiMigrationTask_scan_location_not_exist;
+	public static String ApiMigrationTask_scan_locatoin_same_as_report_location;
+
 	public static String ApiUseDBTask_access_denied_to_class;
 	public static String ApiUseDBTask_class_could_not_be_instantaited;
 	public static String ApiUseDBTask_class_could_not_be_loaded;

@@ -33,6 +33,9 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -121,6 +124,24 @@ public final class Signatures {
 	}
 	
 	/**
+	 * Returns the signature of the method qualified with the given type
+	 * @param method
+	 * @return the given type qualified signature of the given method
+	 * @throws CoreException if a lookup to the parent type of the given method fails
+	 */
+	public static String getQualifiedMethodSignature(IMethodDescriptor method) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		IReferenceTypeDescriptor type = method.getEnclosingType();
+		if(type != null) {
+			buffer.append(getQualifiedTypeSignature(type)).append('.');
+		}
+		String methodsig = method.getSignature();
+		String methodname = getMethodName(method);
+		buffer.append(Signature.toString(dequalifySignature(methodsig), methodname, null, false, false));
+		return buffer.toString();
+	}	
+	
+	/**
 	 * Returns the name to use for the method. If the method is a constructor,
 	 * the enclosing type is loaded to get its simple name
 	 * @param method
@@ -138,6 +159,25 @@ public final class Signatures {
 		}
 		return mname;
 	}
+	
+	/**
+	 * Returns the name to use for the method. If the method is a constructor,
+	 * the enclosing type is loaded to get its simple name
+	 * @param method
+	 * @return the name for the method. If the method is a constructor the simple name
+	 * of the enclosing type is substituted.
+	 * @throws CoreException
+	 */
+	public static String getMethodName(IMethodDescriptor method) throws CoreException {
+		String mname = method.getName();
+		if("<init>".equals(method.getName())) { //$NON-NLS-1$
+			IReferenceTypeDescriptor type = method.getEnclosingType();
+			if(type != null) {
+				return type.getName();
+			}
+		}
+		return mname;
+	}	
 	
 	/**
 	 * Returns the unqualified signature of the given {@link IApiField}
@@ -165,6 +205,21 @@ public final class Signatures {
 	}
 	
 	/**
+	 * Returns the type-qualified field signature
+	 * @param field
+	 * @return the type-qualified field signature
+	 */
+	public static String getQualifiedFieldSignature(IFieldDescriptor field) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		IReferenceTypeDescriptor type = field.getEnclosingType();
+		if(type != null) {
+			buffer.append(getQualifiedTypeSignature(type)).append('.');
+		}
+		buffer.append(field.getName());
+		return buffer.toString();
+	}	
+	
+	/**
 	 * Returns the type signature to use for displaying the given {@link IApiType}
 	 * @param type
 	 * @return the display signature to use for the given {@link IApiType}
@@ -172,6 +227,15 @@ public final class Signatures {
 	public static String getQualifiedTypeSignature(IApiType type) {
 		return getTypeSignature(type.getSignature(), type.getGenericSignature(), true);
 	}
+	
+	/**
+	 * Returns the type signature to use for displaying the given {@link IReferenceTypeDescriptor}
+	 * @param type
+	 * @return the display signature to use for the given {@link IReferenceTypeDescriptor}
+	 */
+	public static String getQualifiedTypeSignature(IReferenceTypeDescriptor type) {
+		return getTypeSignature(type.getSignature(), type.getGenericSignature(), true);
+	}	
 
 	/**
 	 * Returns the de-qualified signature for the given {@link IApiType} 

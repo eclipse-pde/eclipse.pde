@@ -108,6 +108,13 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			abort("Class file not found: " + getTypeName() + " in archive: " + archive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			return getTypeName();
+		}
 	}
 	
 	/**

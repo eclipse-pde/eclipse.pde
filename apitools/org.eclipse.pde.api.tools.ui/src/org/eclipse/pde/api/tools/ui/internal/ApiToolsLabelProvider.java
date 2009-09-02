@@ -179,46 +179,42 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		try {
-			if (element instanceof IApiComponent) {
-				IApiComponent comp = (IApiComponent) element;
-				return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getId(), comp.getVersion()});
+		if (element instanceof IApiComponent) {
+			IApiComponent comp = (IApiComponent) element;
+			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getId(), comp.getVersion()});
+		}
+		if (element instanceof File) {
+			try {
+				return ((File)element).getCanonicalPath();
+			} catch (IOException e) {
+				return ((File)element).getName();
 			}
-			if (element instanceof File) {
-				try {
-					return ((File)element).getCanonicalPath();
-				} catch (IOException e) {
-					return ((File)element).getName();
-				}
+		}
+		if(element instanceof IApiBaseline) {
+			IApiBaseline baseline  = (IApiBaseline) element;
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(baseline.getName());
+			if(isDefaultBaseline(baseline)) {
+				buffer.append(NLS.bind(Messages.ApiToolsLabelProvider_default_baseline_place_holder, Messages.ApiToolsLabelProvider_default_baseline));
 			}
-			if(element instanceof IApiBaseline) {
-				IApiBaseline baseline  = (IApiBaseline) element;
-				StringBuffer buffer = new StringBuffer();
-				buffer.append(baseline.getName());
-				if(isDefaultBaseline(baseline)) {
-					buffer.append(NLS.bind(Messages.ApiToolsLabelProvider_default_baseline_place_holder, Messages.ApiToolsLabelProvider_default_baseline));
-				}
-				return buffer.toString();
-			}
-			if(element instanceof EEEntry) {
-				return ((EEEntry)element).toString();
-			}
-			if(element instanceof IApiProblemFilter) {
-				IApiProblemFilter filter = (IApiProblemFilter) element;
-				return filter.getUnderlyingProblem().getMessage();
-			}
-			if(element instanceof IResource) {
-				IResource resource = (IResource) element;
-				IPath path = resource.getProjectRelativePath();
-				StringBuffer buffer = new StringBuffer();
-				buffer.append(path.removeFileExtension().lastSegment());
-				buffer.append(" ("); //$NON-NLS-1$
-				buffer.append(path.removeLastSegments(1));
-				buffer.append(")"); //$NON-NLS-1$
-				return buffer.toString();
-			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
+			return buffer.toString();
+		}
+		if(element instanceof EEEntry) {
+			return ((EEEntry)element).toString();
+		}
+		if(element instanceof IApiProblemFilter) {
+			IApiProblemFilter filter = (IApiProblemFilter) element;
+			return filter.getUnderlyingProblem().getMessage();
+		}
+		if(element instanceof IResource) {
+			IResource resource = (IResource) element;
+			IPath path = resource.getProjectRelativePath();
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(path.removeFileExtension().lastSegment());
+			buffer.append(" ("); //$NON-NLS-1$
+			buffer.append(path.removeLastSegments(1));
+			buffer.append(")"); //$NON-NLS-1$
+			return buffer.toString();
 		}
 		return "<unknown>"; //$NON-NLS-1$
 	}

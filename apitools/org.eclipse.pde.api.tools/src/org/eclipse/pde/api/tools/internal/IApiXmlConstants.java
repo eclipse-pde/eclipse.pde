@@ -311,6 +311,13 @@ public interface IApiXmlConstants {
 	 * Value is: <code>type</code>
 	 */
 	public static final String ELEMENT_TYPE = "type"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing a target element node in xml.
+	 * Value is: <code>target</code> 
+	 */
+	public static final String ELEMENT_TARGET = "target";  //$NON-NLS-1$
+	
 	/**
 	 * Constant representing an api problems element node in xml.
 	 * Value is: <code>api_problems</code>
@@ -396,4 +403,10 @@ public interface IApiXmlConstants {
 	public static final String SKIPPED_DETAILS = "details"; //$NON-NLS-1$
 	public static final String EXCLUDED = "excluded"; //$NON-NLS-1$
 	public static final String ATTR_MEMBER_NAME = "member"; //$NON-NLS-1$
+	
+	/**
+	 * Constant representing an alternate API component in which references were
+	 * resolved. Value is: <code>alternate</code>
+	 */
+	public static final String ATTR_ALTERNATE = "alternate"; //$NON-NLS-1$
 }

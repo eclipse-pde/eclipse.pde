@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.search;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
@@ -26,8 +30,12 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Resolves references from an API use scan in an alternate baseline to see if the
@@ -44,97 +52,39 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	private IReferenceTypeDescriptor targetType; // the enclosing type the reference has been made to
 	private IApiType currType; // corresponding type for current member
 	
+	private List missingComponents = new ArrayList(); // list of missing component descriptors
 	
-	// used to collate resolution errors - maps element descriptors to resolution errors (list)
-	private Map errors = null;
+	private String location; // path in file system to create report in
+	
+	private List unresolved = null; // list of reference descriptors (errors)
 	
 	/**
 	 * Creates a visitor to resolve references in the given baseline
+	 * 
+	 * @param base baseline
+	 * @param location to create XML report
 	 */
-	public ReferenceLookupVisitor(IApiBaseline base) {
+	public ReferenceLookupVisitor(IApiBaseline base, String xmlLocation) {
 		baseline = base;
-	}
-	
-	/**
-	 * Describes a resolution error
-	 */
-	class ResolutionError {
-		IElementDescriptor referencedElement;
-		String referencedComponent;
-		String originComponent;
-		String originMember = null;
-		int originLine = -1;
-		int refKind = -1;
-		
-		ResolutionError(String oComponent, String tComponent, IElementDescriptor tMember) {
-			referencedElement = tMember;
-			referencedComponent = tComponent;
-			originComponent = oComponent;
-		}
-		
-		ResolutionError(String oComponent, String tComponent, IElementDescriptor tMember, String fromMember, int line, int kind) {
-			this(oComponent, tComponent, tMember);
-			originMember = fromMember;
-			originLine = line;
-			refKind = kind;
-		}		
-		
-		public String toString() {
-			StringBuffer buffer = new StringBuffer();
-			switch (referencedElement.getElementType()) {
-			case IElementDescriptor.COMPONENT:
-				buffer.append(NLS.bind("Missing component: {0}", ((IComponentDescriptor)referencedElement).getId())); //$NON-NLS-1$
-				break;
-			case IElementDescriptor.TYPE:
-				buffer.append(NLS.bind("Missing type: {0}", ((IReferenceTypeDescriptor)referencedElement).getQualifiedName())); //$NON-NLS-1$
-				break;
-			case IElementDescriptor.METHOD:
-				buffer.append(NLS.bind("Missing method: {0}", referencedElement.toString())); //$NON-NLS-1$
-				break;
-			case IElementDescriptor.FIELD:
-				buffer.append(NLS.bind("Missing field: {0}", referencedElement.toString())); //$NON-NLS-1$
-				break;
-			}
-			if (originComponent != null) {
-				buffer.append("\n\t"); //$NON-NLS-1$
-				buffer.append(originComponent);
-			}
-			if (originMember != null) {
-				buffer.append(": "); //$NON-NLS-1$
-				buffer.append(originMember);
-			}
-			if (refKind > -1) {
-				buffer.append(" ("); //$NON-NLS-1$
-				buffer.append(Reference.getReferenceText(refKind));
-				buffer.append(")"); //$NON-NLS-1$
-			}
-			if (originLine > -1) {
-				buffer.append(" (line "); //$NON-NLS-1$
-				buffer.append(originLine);
-				buffer.append(")"); //$NON-NLS-1$
-			}
-			return buffer.toString();
-		}
+		location = xmlLocation;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 	 */
-	public boolean visitComponent(IComponentDescriptor target, String version) {
-		errors = new HashMap();
+	public boolean visitComponent(IComponentDescriptor target) {
+		unresolved = new ArrayList();
 		targetComponent = target;
 		currComponent = baseline.getApiComponent(targetComponent.getId());
 		return true;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 	 */
-	public boolean visitReferencingComponent(IComponentDescriptor component, String version) {
+	public boolean visitReferencingComponent(IComponentDescriptor component) {
 		referencingComponent = component;
 		if (currComponent == null) {
-			// error - missing component in baseline
-			addError(targetComponent, new ResolutionError(referencingComponent.getId(), targetComponent.getId(), targetComponent));
 			return false;
 		}
 		return true;
@@ -168,14 +118,12 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, java.lang.String, int)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, java.lang.String, int, int)
 	 */
-	public void visitReference(int refKind, String fromMember, int lineNumber) {
-		if (currType == null) {
-			// ERROR: missing type (collate at type level instead of member)
-			addError(targetType, new ResolutionError(referencingComponent.getId(), currComponent.getId(), targetMember, fromMember, lineNumber, refKind));
-		} else {
-			Reference ref = null;
+	public void visitReference(int refKind, IMemberDescriptor origin, int lineNumber, int visibility) {
+		Reference ref = null;
+		IApiMember resolved = null;
+		if (currType != null) {
 			switch (targetMember.getElementType()) {
 			case IElementDescriptor.TYPE:
 				ref = Reference.typeReference(currType, targetType.getQualifiedName(), refKind);
@@ -187,58 +135,84 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 				ref = Reference.fieldReference(currType, targetType.getQualifiedName(), targetMember.getName(), refKind);
 				break;
 			}
+		}
+		if (ref != null) {
 			try {
 				ref.resolve();
-				if (ref.getResolvedReference() == null) {
-					// ERROR - failed to resolve
-					addError(targetType, new ResolutionError(referencingComponent.getId(), currComponent.getId(), targetMember, fromMember, lineNumber, refKind));
-				}
+				resolved = ref.getResolvedReference();
 			} catch (CoreException e) {
 				ApiPlugin.log(e.getStatus());
 			}
 		}
+		if (resolved == null) {
+			// ERROR - failed to resolve
+			addError(new ReferenceDescriptor(referencingComponent, origin, lineNumber, targetComponent, targetMember, refKind, visibility));
+		}
 	}
 	
-	private void addError(IElementDescriptor element, ResolutionError error) {
-		List list = (List) errors.get(element);
-		if (list == null) {
-			list = new ArrayList();
-			errors.put(element, list);
-		}
-		list.add(error);
+	private void addError(IReferenceDescriptor error) {
+		unresolved.add(error);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisit(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisit(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 	 */
-	public void endVisit(IComponentDescriptor target, String version) {
-		// TODO: write report
-//		if (currComponent == null) {
-//			// missing component, rather than errors within a component
-//			System.out.println("Missing component: " + targetComponent.getId() + ", referenced by:");
-//			List list = (List) errors.get(targetComponent);
-//			Iterator iterator2 = list.iterator();
-//			while (iterator2.hasNext()) {
-//				ResolutionError error = (ResolutionError) iterator2.next();
-//				System.out.println("\t" + error.originComponent);
-//			}
-//		} else {
-//			Iterator iterator = errors.entrySet().iterator();
-//			boolean headerWritten = false;
-//			while (iterator.hasNext()) {
-//				Entry entry = (Entry) iterator.next();
-//				List errors = (List) entry.getValue();
-//				if (!headerWritten) {
-//					System.out.println("Problems in: " + target.getId());
-//				}
-//				headerWritten = true;
-//				Iterator iterator2 = errors.iterator();
-//				while (iterator2.hasNext()) {
-//					ResolutionError error = (ResolutionError) iterator2.next();
-//					System.out.println("\t" + error.toString());
-//				}
-//			}
-//		}
+	public void endVisit(IComponentDescriptor target) {
+		if (currComponent == null) {
+			missingComponents.add(target);
+		} else {
+			if (!unresolved.isEmpty()) {
+				XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(location);
+				writer.setAlternate((IComponentDescriptor) currComponent.getHandle());
+				writer.writeReferences((IReferenceDescriptor[]) unresolved.toArray(new IReferenceDescriptor[unresolved.size()]));
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitScan()
+	 */
+	public void endVisitScan() {
+		BufferedWriter writer = null;
+		try {
+			// generate missing bundles information
+			File rootfile = new File(location);
+			if(!rootfile.exists()) {
+				rootfile.mkdirs();
+			}
+			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			Document doc = Util.newDocument();
+			Element root = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENTS);
+			doc.appendChild(root);
+			Element comp = null;
+			IComponentDescriptor component = null;
+			Iterator iter = missingComponents.iterator();
+			while (iter.hasNext()) {
+				component = (IComponentDescriptor)iter.next();
+				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
+				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getId());
+				comp.setAttribute(IApiXmlConstants.ATTR_VERSION, component.getVersion());
+				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, SearchMessages.ReferenceLookupVisitor_0);
+				root.appendChild(comp);
+			}
+			writer = new BufferedWriter(new FileWriter(file));
+			writer.write(Util.serializeDocument(doc));
+			writer.flush();
+		}
+		catch(FileNotFoundException fnfe) {}
+		catch(IOException ioe) {}
+		catch(CoreException ce) {}
+		finally {
+			try {
+				if(writer != null) {
+					writer.close();
+				}
+			} 
+			catch (IOException e) {}
+		}
 	}
 
 }

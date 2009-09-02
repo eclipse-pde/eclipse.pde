@@ -24,14 +24,17 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implements IComponentDescriptor {
 
 	private String componentid = null;
+	private String version = null;
 	
 	/**
 	 * Constructor
 	 * @param componentid
 	 */
-	public ComponentDescriptorImpl(String componentid) {
+	public ComponentDescriptorImpl(String componentid, String version) {
 		super(componentid);
 		this.componentid = componentid;
+		this.version = version;
+		
 	}
 	
 	/* (non-Javadoc)
@@ -45,7 +48,11 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return this.componentid.hashCode();
+		int hc = 0;
+		if (version != null) {
+			hc = version.hashCode();
+		}
+		return this.componentid.hashCode() + hc;
 	}
 	
 	/* (non-Javadoc)
@@ -53,7 +60,13 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 	 */
 	public boolean equals(Object obj) {
 		if(obj instanceof IComponentDescriptor) {
-			return this.componentid.equals(((IComponentDescriptor)obj).getId());
+			if (this.componentid.equals(((IComponentDescriptor)obj).getId())) {
+				if (this.version == null) {
+					return ((IComponentDescriptor)obj).getVersion() == null;
+				} else {
+					return this.version.equals(((IComponentDescriptor)obj).getVersion());
+				}
+			}
 		}
 		return false;
 	}
@@ -77,6 +90,13 @@ public class ComponentDescriptorImpl extends NamedElementDescriptorImpl implemen
 	 */
 	public String toString() {
 		return this.componentid;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor#getVersion()
+	 */
+	public String getVersion() {
+		return version;
 	}
 	
 }

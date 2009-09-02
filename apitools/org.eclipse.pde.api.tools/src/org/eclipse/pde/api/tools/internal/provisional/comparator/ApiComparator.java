@@ -202,13 +202,10 @@ public class ApiComparator {
 				}
 			}
 			return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
 		}
 		finally {
 			localmonitor.done();
 		}
-		return null;
 	}
 
 	/**
@@ -274,13 +271,10 @@ public class ApiComparator {
 				}
 			}
 			return NO_DELTA;
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
 		}
 		finally {
 			localmonitor.done();
 		}
-		return null;
 	}
 
 	/**

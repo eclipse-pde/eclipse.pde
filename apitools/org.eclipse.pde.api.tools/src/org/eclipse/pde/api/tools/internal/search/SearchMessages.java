@@ -67,9 +67,14 @@ public class SearchMessages extends NLS {
 	public static String could_not_create_file;
 	public static String missing_xml_files_location;
 	public static String invalid_directory_name;
+	public static String MigrationReportConverter_search_html_index_file_header;
+	public static String MigrationReportConverter_referee_index_header;
+	public static String MigrationReportConverter_origin_html_header;
+	public static String MigrationReportConverter_origin_summary_header;
 	public static String ApiUseReportConverter_xslt_file_not_valid;
 	public static String ApiUseReportConverter_referee_index_entry;
 	public static String ApiUseReportConverter_origin_summary_header;
+	public static String ReferenceLookupVisitor_0;
 	public static String SkippedComponent_component_was_excluded;
 	public static String SkippedComponent_missing_required_bundle;
 	public static String UseReportConverter_html_header;

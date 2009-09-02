@@ -12,12 +12,21 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
+import org.eclipse.pde.api.tools.internal.search.ReferenceDescriptor;
+import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -594,5 +603,51 @@ public class Reference implements IReference {
 			buffer.append(Util.UNKNOWN_KIND);
 		}
 		return buffer.toString();
+	}
+	
+	/**
+	 * Builds a reference descriptor from this reference or <code>null</code>.
+	 * 
+	 * @return corresponding reference descriptor or <code>null</code> if unresolved
+	 * @throws CoreException if unable to resolve visibility
+	 */
+	public IReferenceDescriptor getReferenceDescriptor() throws CoreException {
+		IApiMember res = getResolvedReference();
+		if (res == null) {
+			return null;
+		}
+		IApiComponent rcomponent = res.getApiComponent();
+		IApiDescription description = rcomponent.getApiDescription();
+		IApiAnnotations annot = description.resolveAnnotations(getResolvedReference().getHandle());
+		int visibility = -1;
+		IApiComponent mcomponent = getMember().getApiComponent();
+		if(annot != null) {
+			visibility = annot.getVisibility();
+			if(annot.getVisibility() == VisibilityModifiers.PRIVATE) {
+				IApiComponent host = mcomponent.getHost();
+				if(host != null && host.getId().equals(rcomponent.getId())) {
+					visibility = UseReportConverter.FRAGMENT_PERMISSIBLE;
+				}
+				else {
+					IApiAccess access = description.resolveAccessLevel(
+							Factory.componentDescriptor(mcomponent.getId()),  // component descriptors in API description are not version qualified
+							getResolvedReference().getHandle().getPackage());
+					if(access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
+						visibility = VisibilityModifiers.PRIVATE_PERMISSIBLE;
+					}
+				}
+			}
+		}
+		else {
+			//overflow for those references that cannot be resolved
+			visibility = VisibilityModifiers.ALL_VISIBILITIES;
+		}
+		return new ReferenceDescriptor(
+				(IComponentDescriptor)mcomponent.getHandle(),
+				getMember().getHandle(),
+				getLineNumber(),
+				(IComponentDescriptor)rcomponent.getHandle(),
+				res.getHandle(),
+				getReferenceKind(), visibility);
 	}
 }

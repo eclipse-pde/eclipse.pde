@@ -29,4 +29,12 @@ public interface IComponentDescriptor extends IElementDescriptor {
 	 */
 	public String getId();
 	
+	/**
+	 * Returns the version id for this component or <code>null</code> if
+	 * unspecified.
+	 * 
+	 * @return
+	 */
+	public String getVersion();
+	
 }

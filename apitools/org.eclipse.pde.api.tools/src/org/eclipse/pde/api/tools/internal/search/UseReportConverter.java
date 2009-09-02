@@ -64,7 +64,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.1
  */
-public final class UseReportConverter {
+public class UseReportConverter {
 
 	/**
 	 * Colour white for normal / permissible references
@@ -101,6 +101,7 @@ public final class UseReportConverter {
 			if(IApiXmlConstants.REFERENCES.equals(name)) {
 				String vis = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
 				String value = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_COUNT);
+				lreport.alternate = attributes.getValue(IApiXmlConstants.ATTR_ALTERNATE);
 				int count = Integer.parseInt(value);
 				switch(Integer.parseInt(vis)) {
 					case VisibilityModifiers.API: {
@@ -275,6 +276,8 @@ public final class UseReportConverter {
 		TreeMap origintorefslist = new TreeMap(Util.filesorter);
 		TreeMap origintocountgroup = new TreeMap(Util.filesorter);
 		CountGroup counts = new CountGroup();
+		// alternate component that reference were resolved in or null if none
+		String alternate = null;
 	}
 	
 	/**
@@ -648,7 +651,10 @@ public final class UseReportConverter {
 			FileWriter fileWriter = new FileWriter(missing);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
 			MissingHandler handler = new MissingHandler();
-			getParser().parse(new File(this.reportsRoot, "not_searched.xml"), handler); //$NON-NLS-1$
+			File file = new File(this.reportsRoot, "not_searched.xml"); //$NON-NLS-1$
+			if (file.exists()) {
+				getParser().parse(file, handler);
+			}
 			writer.println(NLS.bind(SearchMessages.UseReportConverter_html_header, SearchMessages.UseReportConverter_missing_required));
 			if(handler.missing.isEmpty()) {
 				writer.println(SearchMessages.UseReportConverter_no_required_missing);
@@ -700,7 +706,7 @@ public final class UseReportConverter {
 				originhtml.createNewFile();
 			}
 			File xml = new File(this.reportsRoot, filename+".xml"); //$NON-NLS-1$
-			InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream("/notsearched.xsl"); //$NON-NLS-1$
+			InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(getNotSearchedXSLPath()); 
 			Source xslt = null;
 			if (defaultXsltInputStream != null) {
 				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
@@ -708,7 +714,9 @@ public final class UseReportConverter {
 			if(xslt == null) {
 				throw new Exception(SearchMessages.ApiUseReportConverter_no_xstl_specified);
 			}
-			applyXSLT(xslt, xml, originhtml);
+			if (xml.exists()) {
+				applyXSLT(xslt, xml, originhtml);
+			}
 		}
 		catch(IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
@@ -719,6 +727,15 @@ public final class UseReportConverter {
 		catch (CoreException e) {
 			throw new Exception(NLS.bind(SearchMessages.ApiUseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
+	}
+	
+	/**
+	 * Returns path of xsl file to use when generating "not searched" information.
+	 * 
+	 * @return path relative to /xslt directory of this bundle
+	 */
+	protected String getNotSearchedXSLPath() {
+		return "/notsearched.xsl"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -770,7 +787,7 @@ public final class UseReportConverter {
 			}
 			FileWriter fileWriter = new FileWriter(originhtml);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_referee_index_header, new String[] {report.referee.getName()}));
+			writer.println(getRefereeReportHeader(report));
 			writeRefereeIndexEntries(writer, report);
 			writeTableEnd(writer);
 			writeBackToBundleIndex(writer, "../index"); //$NON-NLS-1$
@@ -784,6 +801,17 @@ public final class UseReportConverter {
 				writer.close();
 			}
 		}
+	}
+	
+	/**
+	 * Returns HTML header for the report page summarizing references to a component from other
+	 * components.
+	 * 
+	 * @param report report for the component
+	 * @return HTML header
+	 */
+	protected String getRefereeReportHeader(Report report) {
+		return MessageFormat.format(SearchMessages.ApiUseReportConverter_referee_index_header, new String[] {report.referee.getName()});		
 	}
 	
 	/**
@@ -885,12 +913,8 @@ public final class UseReportConverter {
 			}
 			FileWriter fileWriter = new FileWriter(htmlIndex);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			if(sortedreports.size() < 1) {
-				writer.println(SearchMessages.ApiUseReportConverter_no_usage_header);
-				writer.println(SearchMessages.ApiUseReportConverter_no_bundle_have_usage);
-			}
-			else {
-				writer.println(SearchMessages.ApiUseReportConverter_search_html_index_file_header);
+			writer.println(getIndexPageHeader(sortedreports.size() > 0));
+			if(sortedreports.size() > 0) {
 				Report report = null;
 				for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
 					report = (Report) iter.next();
@@ -909,6 +933,24 @@ public final class UseReportConverter {
 				writer.close();
 			}
 		}
+	}
+
+	/**
+	 * Returns an HTML string to use as a header for the index page base on whether
+	 * there were any results from an API use scan.
+	 * 
+	 * @param results whether there were any API use scan results.
+	 * @return HTML text
+	 */
+	protected String getIndexPageHeader(boolean results) {
+		if(results) {
+			return SearchMessages.ApiUseReportConverter_search_html_index_file_header;
+		} else {
+			StringBuffer buf = new StringBuffer(SearchMessages.ApiUseReportConverter_no_usage_header);
+			buf.append('\n');
+			buf.append(SearchMessages.ApiUseReportConverter_no_bundle_have_usage);
+			return buf.toString();
+		}		
 	}
 	
 	/**
@@ -959,7 +1001,7 @@ public final class UseReportConverter {
 			}
 			FileWriter fileWriter = new FileWriter(originhtml);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_html_header, new String[] {origin.getName(), report.referee.getName()}));
+			writer.println(getOriginEntryHeader(report, origin));
 			writeOriginSummary(writer, report, origin, counts);
 			writeBackToBundleIndex(writer, "../"+report.referee.getName()); //$NON-NLS-1$
 			writeW3Footer(writer);
@@ -976,14 +1018,37 @@ public final class UseReportConverter {
 	}	
 	
 	/**
+	 * Returns HTML header for references made from a specific component.
+	 * 
+	 * @param report
+	 * @param origin
+	 * @return
+	 */
+	protected String getOriginEntryHeader(Report report, File origin) {
+		return MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_html_header, new String[] {origin.getName(), report.referee.getName()});
+	}
+	
+	/**
+	 * Returns HTML summary for references from a specific component.
+	 * 
+	 * @param report
+	 * @param origin
+	 * @param counts
+	 * @return
+	 */
+	protected String getOriginSummary(Report report, File origin, CountGroup counts) {
+		return MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_summary_header,  
+				new String[] {origin.getName(), Integer.toString(counts.getTotalRefCount()), report.referee.getName()});
+	}
+	
+	/**
 	 * Writes out one individual origin index entry
 	 * @param writer
 	 * @param origin
 	 * @param counts
 	 */
 	private void writeOriginSummary(PrintWriter writer, Report report, File origin, CountGroup counts) {
-		writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_summary_header,  
-				new String[] {origin.getName(), Integer.toString(counts.getTotalRefCount()), report.referee.getName()}));
+		writer.println(getOriginSummary(report, origin, counts));
 		writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_summary_table_entry_bold, 
 				new String[]{SearchMessages.ApiUseReportConverter_visibility, 
 					SearchMessages.ApiUseReportConverter_type, 
@@ -1033,10 +1098,10 @@ public final class UseReportConverter {
 	 * @return the type from the file name
 	 */
 	private int getTypeFromFileName(File xmlfile) {
-		if(xmlfile.getName().indexOf(XmlSearchReporter.TYPE_REFERENCES) > -1) {
+		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.TYPE_REFERENCES) > -1) {
 			return IReference.T_TYPE_REFERENCE;
 		}
-		if(xmlfile.getName().indexOf(XmlSearchReporter.METHOD_REFERENCES) > -1) {
+		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.METHOD_REFERENCES) > -1) {
 			return IReference.T_METHOD_REFERENCE;
 		}
 		return IReference.T_FIELD_REFERENCE;

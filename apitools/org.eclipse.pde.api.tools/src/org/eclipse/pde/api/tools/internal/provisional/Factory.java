@@ -36,7 +36,8 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 public class Factory {
 
 	/**
-	 * Returns a component descriptor for the {@link IApiComponent} with the given id.
+	 * Returns a component descriptor for the {@link IApiComponent} with the given id
+	 * and an undefined version.
 	 * The given id does not have to be the id of a component that actually exists: no
 	 * resolution or lookup of any kind is done with the descriptor.
 	 * 
@@ -44,8 +45,21 @@ public class Factory {
 	 * @return a new component descriptor
 	 */
 	public static IComponentDescriptor componentDescriptor(String componentid) {
-		return new ComponentDescriptorImpl(componentid);
+		return new ComponentDescriptorImpl(componentid, null);
 	}
+	
+	/**
+	 * Returns a component descriptor for the {@link IApiComponent} with the given id and version.
+	 * The given id does not have to be the id of a component that actually exists: no
+	 * resolution or lookup of any kind is done with the descriptor.
+	 * 
+	 * @param componentid
+	 * @param version version descriptor or <code>null</code> if none
+	 * @return a new component descriptor
+	 */
+	public static IComponentDescriptor componentDescriptor(String componentid, String version) {
+		return new ComponentDescriptorImpl(componentid, version);
+	}	
 	
 	/**
 	 * Returns a package descriptor for the package with the given name.

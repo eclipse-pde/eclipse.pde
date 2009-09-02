@@ -39,11 +39,10 @@ public class UseScanParser {
 	private UseScanVisitor visitor;
 	
 	private IComponentDescriptor targetComponent;
-	private String targetVersion;
 	private IComponentDescriptor referencingComponent;
-	private String referencingVersion;
 	private IMemberDescriptor targetMember;
 	private int referenceKind;
+	private int visibility;
 	
 	private boolean visitReferencingComponent = true;
 	private boolean visitMembers = true;
@@ -92,10 +91,19 @@ public class UseScanParser {
 				String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
 				String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
 				String[] idv = getIdVersion(target);
-				enterTargetComponent(Factory.componentDescriptor(idv[0]), idv[1]);
+				enterTargetComponent(Factory.componentDescriptor(idv[0], idv[1]));
 				idv = getIdVersion(source);
-				enterReferencingComponent(Factory.componentDescriptor(idv[0]), idv[1]);
-			} else if(IApiXmlConstants.ATTR_NAME_TYPE_NAME.equals(name)) {
+				enterReferencingComponent(Factory.componentDescriptor(idv[0], idv[1]));
+				String visString = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
+				try {
+					int vis = Integer.parseInt(visString);
+					enterVisibility(vis);
+				} catch (NumberFormatException e) {
+					// TODO:
+					enterVisibility(-1);
+					System.out.println("Internal error: invalid visibility: " + visString); //$NON-NLS-1$
+				}
+			} else if(IApiXmlConstants.ELEMENT_TARGET.equals(name)) {
 				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
 				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
 				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
@@ -123,11 +131,21 @@ public class UseScanParser {
 					}
 				}
 			} else if (IApiXmlConstants.ATTR_REFERENCE.equals(name)) {
-				String location = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
+				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
+				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
+				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
+				IMemberDescriptor origin = null;
+				if (signature != null) {
+					origin = Factory.methodDescriptor(qName, memberName, signature);
+				} else if (memberName != null) {
+					origin = Factory.fieldDescriptor(qName, memberName);
+				} else {
+					origin = Factory.typeDescriptor(qName);
+				}
 				String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
 				try {
 					int num = Integer.parseInt(line);
-					setReference(location, num);
+					setReference(origin, num);
 				} catch (NumberFormatException e) {
 					// TODO:
 					System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
@@ -234,25 +252,21 @@ public class UseScanParser {
 	 * @return the type from the file name
 	 */
 	private int getTypeFromFileName(File xmlfile) {
-		if(xmlfile.getName().indexOf(XmlSearchReporter.TYPE_REFERENCES) > -1) {
+		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.TYPE_REFERENCES) > -1) {
 			return IReference.T_TYPE_REFERENCE;
 		}
-		if(xmlfile.getName().indexOf(XmlSearchReporter.METHOD_REFERENCES) > -1) {
+		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.METHOD_REFERENCES) > -1) {
 			return IReference.T_METHOD_REFERENCE;
 		}
 		return IReference.T_FIELD_REFERENCE;
 	}
 	
-	public void enterTargetComponent(IComponentDescriptor component, String version) {
+	public void enterTargetComponent(IComponentDescriptor component) {
 		boolean different = false;
 		if (targetComponent == null) {
 			different = true;
 		} else {
-			if (targetComponent.equals(component)) {
-				if (!targetVersion.equals(version)) {
-					different = true;
-				}
-			} else {
+			if (!targetComponent.equals(component)) {
 				different = true;
 			}
 		}
@@ -264,21 +278,16 @@ public class UseScanParser {
 			
 			// start next
 			targetComponent = component;
-			targetVersion = version;
-			visitReferencingComponent = visitor.visitComponent(targetComponent, targetVersion);
+			visitReferencingComponent = visitor.visitComponent(targetComponent);
 		}
 	}
 	
-	public void enterReferencingComponent(IComponentDescriptor component, String version) {
+	public void enterReferencingComponent(IComponentDescriptor component) {
 		boolean different = false;
 		if (referencingComponent == null) {
 			different = true;
 		} else {
-			if (referencingComponent.equals(component)) {
-				if (!referencingVersion.equals(version)) {
-					different = true;
-				}
-			} else {
+			if (!referencingComponent.equals(component)) {
 				different = true;
 			}
 		}
@@ -289,11 +298,14 @@ public class UseScanParser {
 			
 			// start next
 			referencingComponent = component;
-			referencingVersion = version;
 			if (visitReferencingComponent) {
-				visitMembers = visitor.visitReferencingComponent(referencingComponent, referencingVersion);
+				visitMembers = visitor.visitReferencingComponent(referencingComponent);
 			}
 		}		
+	}
+	
+	public void enterVisibility(int vis) {
+		visibility = vis;
 	}
 	
 	public void enterTargetMember(IMemberDescriptor member) {
@@ -310,9 +322,9 @@ public class UseScanParser {
 		referenceKind = refKind;
 	}
 	
-	public void setReference(String location, int lineNumber) {
+	public void setReference(IMemberDescriptor from, int lineNumber) {
 		if (visitReferencingComponent&& visitMembers && visitReferences) {
-			visitor.visitReference(referenceKind, location, lineNumber);
+			visitor.visitReference(referenceKind, from, lineNumber, visibility);
 		}
 	}
 	
@@ -325,17 +337,15 @@ public class UseScanParser {
 	
 	private void endReferencingComponent() {
 		if (referencingComponent != null) {
-			visitor.endVisitReferencingComponent(referencingComponent, referencingVersion);
+			visitor.endVisitReferencingComponent(referencingComponent);
 			referencingComponent = null;
-			referencingVersion = null;
 		}
 	}
 	
 	private void endTargetComponent() {
 		if (targetComponent != null) {
-			visitor.endVisit(targetComponent, targetVersion);
+			visitor.endVisit(targetComponent);
 			targetComponent = null;
-			targetVersion = null;
 		}
 	}
 }
