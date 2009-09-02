@@ -398,6 +398,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 								missing.add(bi.getBundleInfo());
 							}
 						}
+						container.setIncludedBundles(restrictions);
 					}
 				}
 			}
