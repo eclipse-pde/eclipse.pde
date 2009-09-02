@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Carsten Reckord <eclipse@reckord.de> - bug 288343
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
@@ -108,13 +109,16 @@ public class UITestApplication implements IApplication, ITestHarness {
 	 * @see org.eclipse.ui.testing.ITestHarness#runTests()
 	 */
 	public void runTests() {
-		fTestableObject.testingStarting();
-		fTestableObject.runTest(new Runnable() {
-			public void run() {
-				RemotePluginTestRunner.main(Platform.getCommandLineArgs());
-			}
-		});
-		fTestableObject.testingFinished();
+		try {
+			fTestableObject.testingStarting();
+			fTestableObject.runTest(new Runnable() {
+				public void run() {
+					RemotePluginTestRunner.main(Platform.getCommandLineArgs());
+				}
+			});
+		} finally {
+			fTestableObject.testingFinished();
+		}
 	}
 
 }
