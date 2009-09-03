@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.core.search.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
+import org.osgi.framework.Version;
 
 public class FindReferencesAction extends BaseSearchAction {
 
@@ -44,14 +45,22 @@ public class FindReferencesAction extends BaseSearchAction {
 			input.setSearchString(((IPlugin) fSelectedObject).getId());
 		} else if (fSelectedObject instanceof IPluginExtensionPoint) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
+			String extensionID = ((IPluginExtensionPoint) fSelectedObject).getId();
 			IPluginModelBase model = ((IPluginExtensionPoint) fSelectedObject).getPluginModel();
-			String id = model.getPluginBase().getId();
-			if (id == null || id.trim().length() == 0)
-				id = fPluginID;
-			if (id == null || id.trim().length() == 0)
-				id = "*"; //$NON-NLS-1$
-			input.setSearchString(id + "." //$NON-NLS-1$
-					+ ((IPluginExtensionPoint) fSelectedObject).getId());
+
+			// Only plug-in xmls created with 3.2 or later support fully qualified names, assume no file version means a > 3.2 version
+			Version fileVersion = new Version(model.getPluginBase().getSchemaVersion());
+			if ((fileVersion == null || fileVersion.compareTo(new Version("3.2")) >= 0) && extensionID.indexOf('.') >= 0) { //$NON-NLS-1$
+				// Fully qualified extension point, don't prefix with plug-in id
+				input.setSearchString(extensionID);
+			} else {
+				String id = model.getPluginBase().getId();
+				if (id == null || id.trim().length() == 0)
+					id = fPluginID;
+				if (id == null || id.trim().length() == 0)
+					id = "*"; //$NON-NLS-1$
+				input.setSearchString(id + "." + extensionID); //$NON-NLS-1$
+			}
 			scope = new ExtensionPluginSearchScope(input);
 		} else if (fSelectedObject instanceof IPluginImport) {
 			input.setSearchElement(PluginSearchInput.ELEMENT_PLUGIN);
@@ -65,5 +74,4 @@ public class FindReferencesAction extends BaseSearchAction {
 		input.setSearchScope((scope == null) ? new PluginSearchScope() : scope);
 		return new PluginSearchQuery(input);
 	}
-
 }
