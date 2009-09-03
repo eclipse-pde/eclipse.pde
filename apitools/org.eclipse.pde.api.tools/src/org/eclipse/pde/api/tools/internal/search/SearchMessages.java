@@ -71,6 +71,8 @@ public class SearchMessages extends NLS {
 	public static String MigrationReportConverter_referee_index_header;
 	public static String MigrationReportConverter_origin_html_header;
 	public static String MigrationReportConverter_origin_summary_header;
+	public static String MigrationReportConverter_missing_header;
+	public static String MigrationReportConverter_missing_referenced_bundles;
 	public static String ApiUseReportConverter_xslt_file_not_valid;
 	public static String ApiUseReportConverter_referee_index_entry;
 	public static String ApiUseReportConverter_origin_summary_header;

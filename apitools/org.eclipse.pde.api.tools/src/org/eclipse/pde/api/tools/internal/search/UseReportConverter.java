@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -285,7 +286,7 @@ public class UseReportConverter {
 	 * missing required bundles
 	 */
 	static final class MissingHandler extends DefaultHandler {
-		TreeSet missing = new TreeSet(Util.componentsorter);
+		List missing = new ArrayList();
 		static String pattern = "Require-Bundle:"; //$NON-NLS-1$
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			if(IApiXmlConstants.ELEMENT_COMPONENT.equals(qName)) {
@@ -650,19 +651,16 @@ public class UseReportConverter {
 			}
 			FileWriter fileWriter = new FileWriter(missing);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			MissingHandler handler = new MissingHandler();
 			File file = new File(this.reportsRoot, "not_searched.xml"); //$NON-NLS-1$
+			TreeSet sorted = new TreeSet(Util.componentsorter);
 			if (file.exists()) {
-				getParser().parse(file, handler);
+				String[] missingBundles = getMissingBundles(file);
+				for (int i = 0; i < missingBundles.length; i++) {
+					sorted.add(missingBundles[i]);
+				}
 			}
-			writer.println(NLS.bind(SearchMessages.UseReportConverter_html_header, SearchMessages.UseReportConverter_missing_required));
-			if(handler.missing.isEmpty()) {
-				writer.println(SearchMessages.UseReportConverter_no_required_missing);
-			}
-			else {
-				writer.println(SearchMessages.ApiUseReportConverter_missing_header);
-			}
-			writeMissingBundles(writer, handler);
+			writeMissingBundlesHeader(writer, sorted);
+			writeMissingBundles(writer, sorted);
 			writeTableEnd(writer);
 			writer.println(SearchMessages.ApiUseReportConverter_back_to_not_searched);
 			writeW3Footer(writer);
@@ -678,14 +676,42 @@ public class UseReportConverter {
 	}
 	
 	/**
+	 * Writes the header of the 'missing bundles' page.
+	 * 
+	 * @param writer
+	 * @param missing
+	 */
+	protected void writeMissingBundlesHeader(PrintWriter writer, Collection missing) {
+		writer.println(NLS.bind(SearchMessages.UseReportConverter_html_header, SearchMessages.UseReportConverter_missing_required));
+		if(missing.isEmpty()) {
+			writer.println(SearchMessages.UseReportConverter_no_required_missing);
+		}
+		else {
+			writer.println(SearchMessages.ApiUseReportConverter_missing_header);
+		}
+	}
+	
+	/**
+	 * Returns a list of missing bundles (names/versions - whatever label you want to appear)
+	 * 
+	 * @param notSearched xml file of bundles that were not searched 
+	 * @return list of missing bundles
+	 */
+	protected String[] getMissingBundles(File notSearched) throws Exception {
+		MissingHandler handler = new MissingHandler();
+		getParser().parse(notSearched, handler);
+		return (String[]) handler.missing.toArray(new String[handler.missing.size()]); 
+	}
+	
+	/**
 	 * Writes the sorted collection of missing required bundle information
 	 * @param writer the writer to output to
 	 * @param handler
 	 * @throws Exception
 	 */
-	void writeMissingBundles(PrintWriter writer, MissingHandler handler) throws Exception {
+	void writeMissingBundles(PrintWriter writer, TreeSet sorted) throws Exception {
 		String value = null;
-		for (Iterator iter = handler.missing.iterator(); iter.hasNext();) {
+		for (Iterator iter = sorted.iterator(); iter.hasNext();) {
 			value = (String) iter.next();
 			writer.println(NLS.bind(SearchMessages.ApiUseReportConverter_missing_bundle_entry, value));
 		}

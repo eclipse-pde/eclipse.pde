@@ -229,6 +229,8 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 				file = nested;
 			}
 			ReferenceLookupVisitor lookup = new ReferenceLookupVisitor(baseline, this.reportLocation + "\\xml"); //$NON-NLS-1$
+			lookup.setAnalysisScope(scopepattern);
+			lookup.setTargetScope(referencepattern);
 			UseScanParser parser = new UseScanParser();
 			parser.parse(file.getAbsolutePath(), new NullProgressMonitor(), lookup);
 			MigrationReportConverter converter = new MigrationReportConverter(this.reportLocation + "\\html", this.reportLocation + "\\xml"); //$NON-NLS-1$ //$NON-NLS-2$

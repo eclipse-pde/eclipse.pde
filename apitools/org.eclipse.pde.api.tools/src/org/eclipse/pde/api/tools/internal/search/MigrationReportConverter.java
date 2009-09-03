@@ -11,6 +11,16 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -19,6 +29,22 @@ import com.ibm.icu.text.MessageFormat;
  * 
  */
 public class MigrationReportConverter extends UseReportConverter {
+	
+	/**
+	 * Handler for parsing the not_searched.xml file to output a summary or 
+	 * missing required bundles
+	 */
+	class MigrationMissingHandler extends DefaultHandler {
+		List missing = new ArrayList();
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			if(IApiXmlConstants.ELEMENT_COMPONENT.equals(qName)) {
+				String value = attributes.getValue("details"); //$NON-NLS-1$
+				if (SearchMessages.ReferenceLookupVisitor_0.equals(value)) {
+					missing.add(attributes.getValue(IApiXmlConstants.ATTR_ID));
+				}
+			}
+		}
+	}
 
 	/**
 	 * Constructs a new HTML report generator.
@@ -67,10 +93,24 @@ public class MigrationReportConverter extends UseReportConverter {
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getNotSearchedXSLPath()
+	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getMissingBundles(java.io.File)
 	 */
-	protected String getNotSearchedXSLPath() {
-		return "/notanalyzed.xsl"; //$NON-NLS-1$
+	protected String[] getMissingBundles(File notSearched) throws Exception {
+		MigrationMissingHandler handler = new MigrationMissingHandler();
+		getParser().parse(notSearched, handler);
+		return (String[]) handler.missing.toArray(new String[handler.missing.size()]); 
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#writeMissingBundlesHeader(java.io.PrintWriter, java.util.Collection)
+	 */
+	protected void writeMissingBundlesHeader(PrintWriter writer, Collection missing) {
+		writer.println(NLS.bind(SearchMessages.UseReportConverter_html_header, SearchMessages.MigrationReportConverter_missing_referenced_bundles));
+		if(missing.isEmpty()) {
+			writer.println(SearchMessages.UseReportConverter_no_required_missing);
+		}
+		else {
+			writer.println(SearchMessages.MigrationReportConverter_missing_header);
+		}
+	}
 }

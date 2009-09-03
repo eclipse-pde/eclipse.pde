@@ -48,15 +48,20 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	private IComponentDescriptor targetComponent; // references are made to this component
 	private IComponentDescriptor referencingComponent; // references are made from this component
 	private IApiComponent currComponent; // corresponding component in baseline
+	private boolean skipped = false; // whether the target component was skipped based on scope settings
 	private IMemberDescriptor targetMember; // member a reference has been made to
 	private IReferenceTypeDescriptor targetType; // the enclosing type the reference has been made to
 	private IApiType currType; // corresponding type for current member
 	
 	private List missingComponents = new ArrayList(); // list of missing component descriptors
+	private List skippedComponents = new ArrayList(); // list of skipped component descriptors
 	
 	private String location; // path in file system to create report in
 	
 	private List unresolved = null; // list of reference descriptors (errors)
+	
+	private String analysisScope = null; // the bundles to analyze references from (search scope)
+	private String targetScope = null; // the bundles to analyze references to (target scope)
 	
 	/**
 	 * Creates a visitor to resolve references in the given baseline
@@ -75,8 +80,14 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	public boolean visitComponent(IComponentDescriptor target) {
 		unresolved = new ArrayList();
 		targetComponent = target;
-		currComponent = baseline.getApiComponent(targetComponent.getId());
-		return true;
+		skipped = false;
+		if (targetScope == null || target.getId().matches(targetScope)) {
+			// only analyze if it matches our scope
+			currComponent = baseline.getApiComponent(targetComponent.getId());
+			return true;			
+		}
+		skipped = true;
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -87,7 +98,11 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		if (currComponent == null) {
 			return false;
 		}
-		return true;
+		if (analysisScope == null || component.getId().matches(analysisScope)) {
+			// only consider if in scope
+			return true;
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -158,13 +173,17 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisit(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 	 */
 	public void endVisit(IComponentDescriptor target) {
-		if (currComponent == null) {
-			missingComponents.add(target);
+		if (skipped) {
+			skippedComponents.add(target);
 		} else {
-			if (!unresolved.isEmpty()) {
-				XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(location);
-				writer.setAlternate((IComponentDescriptor) currComponent.getHandle());
-				writer.writeReferences((IReferenceDescriptor[]) unresolved.toArray(new IReferenceDescriptor[unresolved.size()]));
+			if (currComponent == null) {
+				missingComponents.add(target);
+			} else {
+				if (!unresolved.isEmpty()) {
+					XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(location);
+					writer.setAlternate((IComponentDescriptor) currComponent.getHandle());
+					writer.writeReferences((IReferenceDescriptor[]) unresolved.toArray(new IReferenceDescriptor[unresolved.size()]));
+				}
 			}
 		}
 	}
@@ -187,17 +206,8 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 			Document doc = Util.newDocument();
 			Element root = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENTS);
 			doc.appendChild(root);
-			Element comp = null;
-			IComponentDescriptor component = null;
-			Iterator iter = missingComponents.iterator();
-			while (iter.hasNext()) {
-				component = (IComponentDescriptor)iter.next();
-				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
-				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getId());
-				comp.setAttribute(IApiXmlConstants.ATTR_VERSION, component.getVersion());
-				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, SearchMessages.ReferenceLookupVisitor_0);
-				root.appendChild(comp);
-			}
+			addMissingComponents(missingComponents, SearchMessages.ReferenceLookupVisitor_0, doc, root);
+			addMissingComponents(skippedComponents, SearchMessages.SkippedComponent_component_was_excluded, doc, root);
 			writer = new BufferedWriter(new FileWriter(file));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
@@ -213,6 +223,36 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 			} 
 			catch (IOException e) {}
 		}
+	}
+	
+	private void addMissingComponents(List missing, String details, Document doc, Element root) {
+		Iterator iter = missing.iterator();
+		while (iter.hasNext()) {
+			IComponentDescriptor component = (IComponentDescriptor)iter.next();
+			Element comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
+			comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getId());
+			comp.setAttribute(IApiXmlConstants.ATTR_VERSION, component.getVersion());
+			comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, details);
+			root.appendChild(comp);
+		}
+	}
+	
+	/**
+	 * Limits the scope of bundles to consider references from, as a regular expression.
+	 * 
+	 * @param regex regular expression or <code>null</code> if all
+	 */
+	public void setAnalysisScope(String regex) {
+		analysisScope = regex;
+	}
+	
+	/**
+	 * Limits the set of bundles to consider analyzing references to, as a regular expression.
+	 *  
+	 * @param regex regular expression or <code>null</code> if all.
+	 */
+	public void setTargetScope(String regex) {
+		targetScope = regex;
 	}
 
 }
