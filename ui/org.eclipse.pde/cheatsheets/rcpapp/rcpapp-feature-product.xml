@@ -95,7 +95,7 @@
                skip="false"/>
       <subitem label="Input &quot;RCP Application Feature&quot; into the &quot;Feature Name&quot; text box and click &quot;Next &gt;&quot;" 
                skip="false"/>
-      <subitem label="Select the &quot;com.example.rcpapp&quot; checkbox on the &quot;Refererenced Plug-ins and Fragements&quot; page and click &quot;Finish&quot;" 
+      <subitem label="Select the &quot;com.example.rcpapp&quot; checkbox on the &quot;Refererenced Plug-ins and Fragments&quot; page and click &quot;Finish&quot;" 
                skip="false"/>  
    </item>
 
