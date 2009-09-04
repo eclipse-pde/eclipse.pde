@@ -553,6 +553,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.debug.ui");
 		expected.add("org.eclipse.jdt.debug");
 		expected.add("org.eclipse.jdt.junit");
+		expected.add("org.eclipse.jdt.junit.core");
 		expected.add("org.eclipse.jdt.junit.runtime");
 		expected.add("org.eclipse.jdt.junit4.runtime");
 		expected.add("org.eclipse.jdt.launching");
@@ -609,6 +610,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.debug.ui");
 		expected.add("org.eclipse.jdt.debug");
 		expected.add("org.eclipse.jdt.junit");
+		expected.add("org.eclipse.jdt.junit.core");
 		expected.add("org.eclipse.jdt.junit.runtime");
 		expected.add("org.eclipse.jdt.junit4.runtime");
 		expected.add("org.eclipse.jdt.launching");
@@ -699,6 +701,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.debug.ui.source");
 		expected.add("org.eclipse.jdt.debug.source");
 		expected.add("org.eclipse.jdt.junit.source");
+		expected.add("org.eclipse.jdt.junit.core.source");
 		expected.add("org.eclipse.jdt.junit.runtime.source");
 		expected.add("org.eclipse.jdt.junit4.runtime.source");
 		expected.add("org.eclipse.jdt.launching.source");
@@ -755,6 +758,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			expected.add("org.eclipse.jdt.debug.ui");
 			expected.add("org.eclipse.jdt.debug");
 			expected.add("org.eclipse.jdt.junit");
+			expected.add("org.eclipse.jdt.junit.core");
 			expected.add("org.eclipse.jdt.junit.runtime");
 			expected.add("org.eclipse.jdt.junit4.runtime");
 			expected.add("org.eclipse.jdt.launching");
