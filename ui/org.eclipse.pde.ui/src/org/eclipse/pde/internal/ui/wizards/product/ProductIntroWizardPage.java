@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.util.TreeSet;
 import org.eclipse.core.resources.IProject;
@@ -24,6 +22,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -64,7 +63,9 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		layout.verticalSpacing = 20;
 		comp.setLayout(layout);
 
-		createProductGroup(comp);
+		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		createProductGroup(toolkit, comp);
+		toolkit.dispose();
 
 		setControl(comp);
 		setPageComplete(getPluginId() != null);
@@ -72,13 +73,12 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
 
-	private void createProductGroup(Composite comp) {
+	private void createProductGroup(FormToolkit toolkit, Composite comp) {
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(PDEUIMessages.ProductIntroWizardPage_groupText);
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		FormToolkit toolkit = new FormToolkit(group.getDisplay());
 		FormText text = toolkit.createFormText(group, false);
 		text.setText(PDEUIMessages.ProductIntroWizardPage_formText, true, false);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
