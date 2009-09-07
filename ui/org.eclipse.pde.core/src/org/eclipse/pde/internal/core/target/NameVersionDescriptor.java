@@ -46,7 +46,7 @@ public class NameVersionDescriptor {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fId.hashCode() + fVersion != null ? fVersion.hashCode() : 0;
+		return fId.hashCode() + (fVersion != null ? fVersion.hashCode() : 0);
 	}
 
 	public String getId() {
