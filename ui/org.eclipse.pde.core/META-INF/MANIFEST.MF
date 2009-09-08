@@ -10,7 +10,7 @@ Export-Package:
  org.eclipse.pde.core,
  org.eclipse.pde.core.build,
  org.eclipse.pde.core.plugin,
- org.eclipse.pde.internal.core;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.runtime",
+ org.eclipse.pde.internal.core;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.runtime,org.eclipse.pde.launching",
  org.eclipse.pde.internal.core.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.builders;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.bundle;x-friends:="org.eclipse.pde.ui",
@@ -40,7 +40,7 @@ Export-Package:
  org.eclipse.pde.internal.core.text.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.text.bundle;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.text.plugin;x-friends:="org.eclipse.pde.ui",
- org.eclipse.pde.internal.core.util;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.ua.ui",
+ org.eclipse.pde.internal.core.util;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.ua.ui,org.eclipse.pde.launching",
  org.eclipse.pde.internal.core.variables;x-internal:=true
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
