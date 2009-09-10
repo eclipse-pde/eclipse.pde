@@ -34,6 +34,9 @@ public class UseScanVisitor {
 	/**
 	 * Visits the given component and returns whether to visit components referencing
 	 * this component.
+	 * <p>
+	 * Components in a scan are visited in alphabetical order.
+	 * </p>
 	 * 
 	 * @param target API component to which references exist
 	 * @return whether to visit components that reference this component
@@ -53,6 +56,10 @@ public class UseScanVisitor {
 	/**
 	 * Visits a component that makes references to the current target component being visited
 	 * and returns whether to visit individual references.
+	 * <p>
+	 * Referencing components in a scan are visited in alphabetical order within the
+	 * current target component.
+	 * </p>
 	 * 
 	 * @param component the component that references the current target component
 	 * @return whether to visit reference members within the component

@@ -13,6 +13,10 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -185,6 +189,7 @@ public class UseScanParser {
 			for (int i = 0; i < referees.length; i++) {
 				smonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {referees[i].getName()}));
 				origins = getDirectories(referees[i]);
+				origins = sort(origins); // sort to visit in determined order
 				for (int j = 0; j < origins.length; j++) {
 					xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
 						public boolean accept(File pathname) {
@@ -192,6 +197,7 @@ public class UseScanParser {
 						}
 					});
 					if (xmlfiles != null) {
+						xmlfiles = sort(xmlfiles); // sort to visit in determined order
 						for (int k = 0; k < xmlfiles.length; k++) {
 							try {
 								ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
@@ -347,5 +353,26 @@ public class UseScanParser {
 			visitor.endVisit(targetComponent);
 			targetComponent = null;
 		}
+	}
+	
+	/**
+	 * Sorts the given files by name (not path).
+	 * 
+	 * @param files
+	 * @return sorted files
+	 */
+	private File[] sort(File[] files) {
+		List sorted = new ArrayList(files.length + 2);
+		for (int i = 0; i < files.length; i++) {
+			sorted.add(files[i]);
+		}
+		Collections.sort(sorted, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				File f1 = (File) o1;
+				File f2 = (File) o2;
+				return f1.getName().compareTo(f2.getName());
+			}
+		});
+		return (File[]) sorted.toArray(new File[sorted.size()]);
 	}
 }
