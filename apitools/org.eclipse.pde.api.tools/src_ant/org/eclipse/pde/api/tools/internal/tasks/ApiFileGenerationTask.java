@@ -458,7 +458,7 @@ public class ApiFileGenerationTask extends Task {
 	 * @param manifestmap
 	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in the manifest map,
 	 * or {@link JavaCore#VERSION_1_3} if there is no BREE entry in the map or if the BREE entry does not directly map
-	 * to one of {"1.3", "1.4", "1.5", "1.6"}.
+	 * to one of {"1.3", "1.4", "1.5", "1.6", "1.7"}.
 	 */
 	private String resolveCompliance(Map manifestmap) {
 		if(manifestmap != null) {
@@ -472,6 +472,9 @@ public class ApiFileGenerationTask extends Task {
 				}
 				if("JavaSE-1.6".equals(eename)) { //$NON-NLS-1$
 					return JavaCore.VERSION_1_6;
+				}
+				if("JavaSE-1.7".equals(eename)) { //$NON-NLS-1$
+					return JavaCore.VERSION_1_7;
 				}
 			}
 		}
