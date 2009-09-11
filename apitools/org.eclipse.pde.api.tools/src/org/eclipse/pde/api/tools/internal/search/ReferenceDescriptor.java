@@ -40,6 +40,28 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 	}
 	
 	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof ReferenceDescriptor) {
+			ReferenceDescriptor rd = (ReferenceDescriptor) obj;
+			return origin.equals(rd.origin) &&
+			target.equals(rd.target) &&
+			from.equals(rd.from) &&
+			to.equals(rd.to) &&
+			line == rd.line && kind == rd.kind && visibility == rd.visibility;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return origin.hashCode() + target.hashCode() + from.hashCode() + to.hashCode() + line + kind + visibility;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getComponent()
 	 */
 	public IComponentDescriptor getComponent() {
