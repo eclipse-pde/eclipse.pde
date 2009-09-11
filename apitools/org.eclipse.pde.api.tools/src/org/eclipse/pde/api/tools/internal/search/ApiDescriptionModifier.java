@@ -45,11 +45,18 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 	 * 
 	 * @param internal regular expressions to match as internal packages or <code>null</code>
 	 * @param api regular expressions to match as API or <code>null</code>
-	 * @param description API description to modify
 	 */
-	public ApiDescriptionModifier(String[] internal, String[] api, IApiDescription description) {
+	public ApiDescriptionModifier(String[] internal, String[] api) {
 		setInternalPatterns(internal);
 		setApiPatterns(api);
+	}
+	
+	/**
+	 * Sets the description to be modified.
+	 * 
+	 * @param description API description to modify
+	 */
+	public void setApiDescription(IApiDescription description) {
 		fDescription = description;
 	}
 

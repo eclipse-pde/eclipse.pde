@@ -114,10 +114,11 @@ public class ApiUseScanJob extends Job {
 			if (sapi != null || sinternal != null) {
 				// modify API descriptions
 				IApiComponent[] components = baseline.getApiComponents();
+				ApiDescriptionModifier visitor = new ApiDescriptionModifier(sinternal, sapi);
 				for (int i = 0; i < components.length; i++) {
 					IApiComponent component = components[i];
 					if (!component.isSystemComponent() && !component.isSourceComponent()) {
-						ApiDescriptionModifier visitor = new ApiDescriptionModifier(sinternal, sapi, component.getApiDescription());
+						visitor.setApiDescription(component.getApiDescription());
 						component.getApiDescription().accept(visitor, null);
 					}
 				}

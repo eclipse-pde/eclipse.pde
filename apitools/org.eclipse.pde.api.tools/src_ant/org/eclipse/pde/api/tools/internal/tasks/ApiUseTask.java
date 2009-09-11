@@ -262,11 +262,12 @@ public final class ApiUseTask extends CommonUtilsTask {
 			// override API descriptions as required
 			if (apiPatterns != null || internalPatterns != null) {
 				// modify API descriptions
+				ApiDescriptionModifier visitor = new ApiDescriptionModifier(internalPatterns, apiPatterns);
 				IApiComponent[] components = baseline.getApiComponents();
 				for (int i = 0; i < components.length; i++) {
 					IApiComponent component = components[i];
 					if (!component.isSystemComponent() && !component.isSourceComponent()) {
-						ApiDescriptionModifier visitor = new ApiDescriptionModifier(internalPatterns, apiPatterns, component.getApiDescription());
+						visitor.setApiDescription(component.getApiDescription());
 						component.getApiDescription().accept(visitor, null);
 					}
 				}
