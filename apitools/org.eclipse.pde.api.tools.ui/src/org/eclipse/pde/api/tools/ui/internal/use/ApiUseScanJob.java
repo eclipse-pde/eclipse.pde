@@ -174,6 +174,9 @@ public class ApiUseScanJob extends Job {
 	}
 	
 	private String[] getStrings(List list) {
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
 		return (String[]) list.toArray(new String[list.size()]);
 	}
 	
