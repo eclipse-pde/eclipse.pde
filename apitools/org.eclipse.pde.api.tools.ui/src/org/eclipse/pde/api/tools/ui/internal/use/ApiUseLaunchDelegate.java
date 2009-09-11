@@ -43,6 +43,13 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final String INSTALL_PATH = ApiUIPlugin.PLUGIN_ID + ".INSTALL_PATH"; //$NON-NLS-1$
 	
 	/**
+	 * Addition/overrides to API descriptions. Lists of package patterns to indicate
+	 * internal or API references. 
+	 */
+	public static final String INTERNAL_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".INTERNAL_PATTERNS_LIST"; //$NON-NLS-1$
+	public static final String API_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".API_PATTERNS_LIST"; //$NON-NLS-1$
+	
+	/**
 	 * Scope of bundles to search - a regular expression to match against bundle symbolic names.
 	 * Unspecified indicates all bundles in the bundle source.
 	 */

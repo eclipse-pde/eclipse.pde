@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -45,10 +46,20 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	private int fSearchMask = 0;
 	
 	/**
-	 * The search scope for this requestor
+	 * The search scope for this requester
 	 */
 	private IApiScope fScope = null;
 	
+	/**
+	 * Internal package patterns or <code>null</code> if none.
+	 */
+	private Pattern[] fInternalPackages;
+		
+	/**
+	 * API package patterns of <code>null</code> if none.
+	 */
+	private Pattern[] fApiPackages;
+		
 	/**
 	 * Constructor
 	 * @param elements an array of {@link IApiElement}s for the search engine to use
@@ -102,6 +113,18 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				if(includesAPI() && includesInternal()) {
 					return true;
 				}
+				// check pattern overrides before API description
+				if (includesAPI() && fApiPackages != null) {
+					if (matchesPattern(member, fApiPackages)) {
+						return true;
+					}
+				}
+				if (includesInternal() && fInternalPackages != null) {
+					if (matchesPattern(member, fInternalPackages)) {
+						return true;
+					}
+				}
+				// check API description
 				IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
 				if(annots != null) {
 					int vis = annots.getVisibility();
@@ -116,6 +139,23 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		}
 		catch(CoreException ce) {
 			//ApiPlugin.log(ce);
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether the member's package matches any of the given patterns.
+	 * 
+	 * @param member member to match
+	 * @param patterns patterns to match against
+	 * @return whether there's a match
+	 */
+	private boolean matchesPattern(IApiMember member, Pattern[] patterns) {
+		String pkg = member.getPackageName();
+		for (int i = 0; i < patterns.length; i++) {
+			if (patterns[i].matcher(pkg).find()) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -160,5 +200,39 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	public boolean includesInternal() {
 		return (fSearchMask & INCLUDE_INTERNAL) > 0;
+	}
+	
+	/**
+	 * Sets regular expressions to consider as internal packages. Used to override visibility settings
+	 * in an API description.
+	 * 
+	 * @param patterns regular expressions, may be empty or <code>null</code>
+	 */
+	public void setInternalPatterns(String[] patterns) {
+		if (patterns == null || patterns.length == 0) {
+			fInternalPackages = null;
+		} else {
+			fInternalPackages = new Pattern[patterns.length];
+			for (int i = 0; i < patterns.length; i++) {
+				fInternalPackages[i] = Pattern.compile(patterns[i]);
+			}
+		}
+	}
+	
+	/**
+	 * Sets regular expressions to consider as API packages. Used to override visibility settings
+	 * in an API description.
+	 * 
+	 * @param patterns regular expressions, may be empty or <code>null</code>
+	 */
+	public void setApiPatterns(String[] patterns) {
+		if (patterns == null || patterns.length == 0) {
+			fApiPackages = null;
+		} else {
+			fApiPackages = new Pattern[patterns.length];
+			for (int i = 0; i < patterns.length; i++) {
+				fApiPackages[i] = Pattern.compile(patterns[i]);
+			}
+		}
 	}
 }

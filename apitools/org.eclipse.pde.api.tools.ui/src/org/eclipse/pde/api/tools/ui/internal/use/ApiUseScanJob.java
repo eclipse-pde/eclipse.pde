@@ -40,9 +40,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
+import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
-import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -105,7 +105,15 @@ public class ApiUseScanJob extends Job {
 			if (isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES)) {
 				kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
 			}
-			IApiSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
+			UseSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
+			List patterns = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
+			if (patterns != null) {
+				requestor.setApiPatterns((String[]) patterns.toArray(new String[patterns.size()]));
+			}
+			patterns = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
+			if (patterns != null) {
+				requestor.setInternalPatterns((String[]) patterns.toArray(new String[patterns.size()]));
+			}
 			IPath rootpath = null;
 			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String)null);
 			if (xmlPath == null) {
