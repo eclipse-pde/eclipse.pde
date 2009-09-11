@@ -105,8 +105,8 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			if (provider.getInitialState() != null) {
 				state = new PDEState(provider.getInitialState());
 				state.setEESources(eeSources);
-				state.resolveState();
 				state.setPlatformProperties(getUIPlatformProperties());
+				state.resolveState();
 				return state;
 			}
 

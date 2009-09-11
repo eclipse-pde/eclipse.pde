@@ -480,14 +480,32 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return description;
 
 		if (parsedVersion.getQualifier().indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER) > -1) {
-			BundleDescription[] bundles = getState().getBundles(bundleId);
+			BundleDescription[] bundles = sortByVersion(getState().getBundles(bundleId));
 			VersionRange qualifierRange = Utils.createVersionRange(version);
-			for (int i = 0; i < bundles.length; i++) {
+			//bundles are sorted, start at the high end
+			for (int i = bundles.length - 1; i >= 0; i--) {
 				if (qualifierRange.isIncluded(bundles[i].getVersion()) && (!resolved || bundles[i].isResolved()))
 					return bundles[i];
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Sort the BundleDescription[] by Version, lowest to highest.
+	 * (It is likely they are already close to this order)
+	 * @param bundles
+	 * @return sorted BundleDescription []
+	 */
+	private BundleDescription[] sortByVersion(BundleDescription[] bundles) {
+		if (bundles.length > 1) {
+			Arrays.sort(bundles, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return ((BundleDescription) o1).getVersion().compareTo(((BundleDescription) o2).getVersion());
+				}
+			});
+		}
+		return bundles;
 	}
 
 	public BundleDescription getResolvedBundle(String bundleId) {

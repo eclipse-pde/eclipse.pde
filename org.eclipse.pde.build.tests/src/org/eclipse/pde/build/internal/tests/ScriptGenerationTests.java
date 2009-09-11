@@ -231,6 +231,28 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(included[1].getId(), "bar");
 		assertEquals(included[2].getId(), "disco");
 	}
+	
+	public void testBug203270() throws Exception {
+		//test the highest version of a bundle is selected when both are resolved
+		IFolder buildFolder = newTest("203270");
+		
+		IFolder A1 = Utils.createFolder(buildFolder, "plugins/a_1");
+		IFolder A2 = Utils.createFolder(buildFolder, "plugins/a_3");
+		IFolder A3 = Utils.createFolder(buildFolder, "plugins/a_2");
+		
+		
+		Utils.generateBundle(A1, "a", "1.0.0.1");
+		Utils.generateBundle(A2, "a", "1.0.0.3");
+		Utils.generateBundle(A3, "a", "1.0.0.2");
+		
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "a;version=1.0.0.qualifier" });
+		
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
+		properties.put("baseLocation", " ");
+		generateScripts(buildFolder, properties);
+		
+		assertResourceFile(buildFolder, "plugins/a_3/build.xml");
+	}
 
 	// Test that & characters in classpath are escaped properly
 	public void testBug125577() throws Exception {

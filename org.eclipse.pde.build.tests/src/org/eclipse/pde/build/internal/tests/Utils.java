@@ -110,6 +110,7 @@ public class Utils {
 	static public void generateBundle(IFolder folder, String bundleId, String version) throws CoreException, IOException {
 		generateBundleManifest(folder, bundleId, version, null);
 		generatePluginBuildProperties(folder, null);
+		writeBuffer(folder.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
 	static public void storeBuildProperties(IFolder buildFolder, Properties buildProperties) throws FileNotFoundException, IOException {
