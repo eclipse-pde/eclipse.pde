@@ -40,6 +40,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
+import org.eclipse.pde.api.tools.internal.search.ApiDescriptionModifier;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
@@ -106,13 +107,20 @@ public class ApiUseScanJob extends Job {
 				kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
 			}
 			UseSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
-			List patterns = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
-			if (patterns != null) {
-				requestor.setApiPatterns((String[]) patterns.toArray(new String[patterns.size()]));
-			}
-			patterns = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
-			if (patterns != null) {
-				requestor.setInternalPatterns((String[]) patterns.toArray(new String[patterns.size()]));
+			List api = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
+			String[] sapi = getStrings(api);
+			List internal = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
+			String[] sinternal = getStrings(internal);
+			if (sapi != null || sinternal != null) {
+				// modify API descriptions
+				IApiComponent[] components = baseline.getApiComponents();
+				for (int i = 0; i < components.length; i++) {
+					IApiComponent component = components[i];
+					if (!component.isSystemComponent() && !component.isSourceComponent()) {
+						ApiDescriptionModifier visitor = new ApiDescriptionModifier(sinternal, sapi, component.getApiDescription());
+						component.getApiDescription().accept(visitor, null);
+					}
+				}
 			}
 			IPath rootpath = null;
 			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String)null);
@@ -162,6 +170,10 @@ public class ApiUseScanJob extends Job {
 			localmonitor.done();
 		}
 		return Status.OK_STATUS;
+	}
+	
+	private String[] getStrings(List list) {
+		return (String[]) list.toArray(new String[list.size()]);
 	}
 	
 	/**

@@ -14,7 +14,9 @@ package org.eclipse.pde.api.tools.internal.tasks;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -29,8 +31,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
-import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
+import org.eclipse.pde.api.tools.internal.search.ApiDescriptionModifier;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -66,6 +69,16 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * handle to the baseline install dir to delete after the scan completes
 	 */
 	private File baselinedir = null;
+	
+	/**
+	 * Package name patterns (regular expressions) to consider as API or <code>null</code> if none.
+	 */
+	private String[] apiPatterns = null;
+	
+	/**
+	 * Package name patterns (regular expressions) to consdier as internal or <code>null</code> if none.
+	 */
+	private String[] internalPatterns = null;
 	
 	/**
 	 * Set the location of the current product you want to search.
@@ -148,6 +161,15 @@ public final class ApiUseTask extends CommonUtilsTask {
 	}
 	
 	/**
+	 * Sets any package name patterns to consider as API packages.
+	 * 
+	 * @param patterns comma separated list of regular expressions or <code>null</code>
+	 */
+	public void setApiPatterns(String patterns) {
+		apiPatterns = parsePatterns(patterns);
+	}
+	
+	/**
 	 * Sets if references to internal types should be considered in the search.
 	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
 	 * <p>Default is <code>false</code>.</p>
@@ -156,6 +178,36 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 */
 	public void setConsiderInternal(String considerinternal) {
 		this.considerinternal = Boolean.toString(true).equals(considerinternal);
+	}
+	
+	/**
+	 * Sets any package name patterns to consider as internal packages.
+	 * 
+	 * @param patterns comma separated list of regular expressions or <code>null</code>
+	 */
+	public void setInternalPatterns(String patterns) {
+		internalPatterns = parsePatterns(patterns);	
+	}
+	
+	/**
+	 * Parses and returns patterns as an array of Strings or <code>null</code> if none.
+	 * 
+	 * @param patterns comma separated list or <code>null</code>
+	 * @return individual patterns or <code>null</code>
+	 */
+	private String[] parsePatterns(String patterns) {
+		if (patterns == null || patterns.trim().length() == 0) {
+			return null;
+		}
+		String[] strings = patterns.split(","); //$NON-NLS-1$
+		List list = new ArrayList();
+		for (int i = 0; i < strings.length; i++) {
+			String pattern = strings[i].trim();
+			if (pattern.length() > 0) {
+				list.add(pattern);
+			}
+		}
+		return (String[]) list.toArray(new String[list.size()]);
 	}
 	
 	/**
@@ -203,10 +255,23 @@ public final class ApiUseTask extends CommonUtilsTask {
 			TreeSet scope = new TreeSet(Util.componentsorter);
 			getContext(baseline, ids, scope);
 			ApiSearchEngine engine = new ApiSearchEngine();
-			IApiSearchRequestor requestor = new UseSearchRequestor(
+			UseSearchRequestor requestor = new UseSearchRequestor(
 					ids,
 					(IApiElement[]) scope.toArray(new IApiElement[scope.size()]), 
 					getSearchFlags());
+			// override API descriptions as required
+			if (apiPatterns != null || internalPatterns != null) {
+				// modify API descriptions
+				IApiComponent[] components = baseline.getApiComponents();
+				for (int i = 0; i < components.length; i++) {
+					IApiComponent component = components[i];
+					if (!component.isSystemComponent() && !component.isSourceComponent()) {
+						ApiDescriptionModifier visitor = new ApiDescriptionModifier(internalPatterns, apiPatterns, component.getApiDescription());
+						component.getApiDescription().accept(visitor, null);
+					}
+				}
+			}
+			
 			ApiSearchEngine.setDebug(this.debug);
 			engine.search(baseline, requestor, reporter, null);
 		}
