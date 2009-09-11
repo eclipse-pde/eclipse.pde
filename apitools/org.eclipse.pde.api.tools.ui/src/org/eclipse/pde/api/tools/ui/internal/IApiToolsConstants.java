@@ -76,6 +76,11 @@ public interface IApiToolsConstants {
 	public static final String IMG_ELCL_REMOVE = "IMG_ELCL_REMOVE"; //$NON-NLS-1$
 	
 	/**
+	 * key for text edit image
+	 */
+	public static final String IMG_ELCL_TEXT_EDIT = "IMG_ELCL_TEXT_EDIT"; //$NON-NLS-1$
+	
+	/**
 	 * Key for API component image.
 	 */
 	public static final String IMG_OBJ_API_COMPONENT = "IMG_OBJ_API_COMPONENT"; //$NON-NLS-1$

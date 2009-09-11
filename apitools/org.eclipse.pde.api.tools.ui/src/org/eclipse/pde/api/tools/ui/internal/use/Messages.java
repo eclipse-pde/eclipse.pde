@@ -18,6 +18,19 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.use.messages"; //$NON-NLS-1$
 	public static String ApiProfileWizardPage_0;
+	public static String ApiUsePatternTab_add;
+	public static String ApiUsePatternTab_add_pattern;
+	public static String ApiUsePatternTab_API;
+	public static String ApiUsePatternTab_API_pattern;
+	public static String ApiUsePatternTab_edit;
+	public static String ApiUsePatternTab_edit_pattern;
+	public static String ApiUsePatternTab_edit_regex;
+	public static String ApiUsePatternTab_enter_pattern;
+	public static String ApiUsePatternTab_internal;
+	public static String ApiUsePatternTab_patterns;
+	public static String ApiUsePatternTab_patterns_title;
+	public static String ApiUsePatternTab_provide_regex;
+	public static String ApiUsePatternTab_remove;
 	public static String ApiUseScanJob_api_use_report;
 	public static String ApiUseScanJob_baseline_does_not_exist;
 	public static String ApiUseScanJob_baseline_name_missing;

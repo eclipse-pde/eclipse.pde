@@ -68,4 +68,10 @@ public interface IApiToolsHelpContextIds {
 	 */
 	public static final String API_COMPARE_EXPORT_DIALOG = PREFIX + "api_compare_export_dialog"; //$NON-NLS-1$
 	
+	//LAUNCH CONFIGS
+	
+	public static final String API_USE_PATTERN_TAB = PREFIX + "api_use_pattern_tab"; //$NON-NLS-1$
+	public static final String API_USE_SCAN_TAB = PREFIX + "api_use_main_tab"; //$NON-NLS-1$
+	public static final String API_USE_PATTERN_DIALOG = PREFIX + "api_use_pattern_dialog"; //$NON-NLS-1$
+	
 }

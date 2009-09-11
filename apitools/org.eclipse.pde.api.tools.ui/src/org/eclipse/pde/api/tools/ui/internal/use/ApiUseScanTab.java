@@ -29,6 +29,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -49,6 +50,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Tab for an API use scan
@@ -90,11 +92,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		   openreport = null,
 		   cleanreportlocation = null,
 		   cleanhtmllocation = null;
-
-	/**
-	 * Image handle so it can be disposed
-	 */
-	private Image image = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -246,6 +243,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalIndent = 10;
 		this.openreport.setEnabled(false);
 		this.openreport.addSelectionListener(selectionadapter);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_USE_SCAN_TAB);
 		setControl(comp);
 	}
 	
@@ -311,21 +309,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		if(this.image == null) {
-			this.image = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS).createImage();
-		}
-		return this.image;
+		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
-	 */
-	public void dispose() {
-		if(this.image != null) {
-			this.image.dispose();
-		}
-		super.dispose();
-	}
 	/**
 	 * Updates available target definitions.
 	 */
@@ -389,7 +375,6 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			updateAvailableBaselines();
 			updateAvailableTargets();
 			updateRadioButtons(configuration);
-			updateTarget();
 			restoreComboSelection(this.baseline, configuration.getAttribute(ApiUseLaunchDelegate.BASELINE_NAME, (String)null));
 			String memento = configuration.getAttribute(ApiUseLaunchDelegate.TARGET_HANDLE, (String)null);
 			if (memento != null) {
@@ -420,6 +405,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.cleanhtmllocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_HTML, configuration));
 			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, "")); //$NON-NLS-1$
 			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, "")); //$NON-NLS-1$
+			updateTarget();
 		} catch (CoreException e) {
 			setErrorMessage(e.getStatus().getMessage());
 		}
