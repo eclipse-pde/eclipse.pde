@@ -15,7 +15,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -366,13 +365,8 @@ public class UseScanParser {
 		for (int i = 0; i < files.length; i++) {
 			sorted.add(files[i]);
 		}
-		Collections.sort(sorted, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				File f1 = (File) o1;
-				File f2 = (File) o2;
-				return f1.getName().compareTo(f2.getName());
-			}
-		});
+		
+		Collections.sort(sorted, Util.filesorter);
 		return (File[]) sorted.toArray(new File[sorted.size()]);
 	}
 }
