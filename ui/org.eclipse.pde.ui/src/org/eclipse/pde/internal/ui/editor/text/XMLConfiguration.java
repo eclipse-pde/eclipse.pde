@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,14 +14,24 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.pde.internal.core.text.plugin.PluginModel;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * Source viewer configuration for the XML Source editors
+ *
+ */
 public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private AnnotationHover fAnnotationHover;
 	private XMLDoubleClickStrategy fDoubleClickStrategy;
@@ -41,7 +51,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	}
 
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] {IDocument.DEFAULT_CONTENT_TYPE, XMLPartitionScanner.XML_COMMENT, XMLPartitionScanner.XML_TAG};
+		return new String[] {IDocument.DEFAULT_CONTENT_TYPE, XMLPartitionScanner.XML_COMMENT, XMLPartitionScanner.XML_TAG, XMLStringPartitionScanner.XML_STRING};
 	}
 
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
@@ -161,8 +171,37 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return SourceInformationProvider.F_XML_IMP;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
+	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return XMLDocumentSetupParticpant.XML_PARTITIONING;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		if (fSourcePage != null && fReconciler == null) {
+			IBaseModel model = fSourcePage.getInputContext().getModel();
+			if (model instanceof IReconcilingParticipant) {
+				ReconcilingStrategy strategy = new ReconcilingStrategy();
+				strategy.addParticipant((IReconcilingParticipant) model);
+				ISortableContentOutlinePage outline = fSourcePage.getContentOutline();
+				if (outline instanceof IReconcilingParticipant)
+					strategy.addParticipant((IReconcilingParticipant) outline);
+
+				Reconciler reconciler = new Reconciler();
+				reconciler.setReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
+				if (!(model instanceof PluginModel)) {
+					System.out.println(model);
+					reconciler.setReconcilingStrategy(new XMLReconcilingStrategy(sourceViewer), XMLStringPartitionScanner.XML_STRING);
+					reconciler.setDocumentPartitioning(XMLStringPartitionScanner.XML_STRING);
+				}
+				reconciler.setDelay(500);
+				fReconciler = reconciler;
+			}
+		}
+		return fReconciler;
+	}
 }

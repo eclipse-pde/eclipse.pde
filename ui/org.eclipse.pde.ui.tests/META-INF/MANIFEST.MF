@@ -26,6 +26,11 @@ Require-Bundle: org.junit,
  org.eclipse.equinox.p2.metadata.repository,
  org.eclipse.equinox.p2.core,
  org.eclipse.equinox.p2.repository,
- org.eclipse.equinox.p2.metadata
+ org.eclipse.equinox.p2.metadata,
+ org.eclipse.ui.forms,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.jface.text,
+ org.eclipse.search,
+ org.eclipse.ui.editors
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

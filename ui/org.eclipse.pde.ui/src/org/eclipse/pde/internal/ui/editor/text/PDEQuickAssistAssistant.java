@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
+import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 
 public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
@@ -151,8 +152,18 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			ArrayList list = new ArrayList();
 			while (it.hasNext()) {
 				Object key = it.next();
-				if (!(key instanceof SimpleMarkerAnnotation))
+				if (!(key instanceof SimpleMarkerAnnotation)) {
+					if (key instanceof SpellingAnnotation) {
+						SpellingAnnotation annotation = (SpellingAnnotation) key;
+						if (amodel.getPosition(annotation).overlapsWith(offset, 1)) {
+							ICompletionProposal[] proposals = annotation.getSpellingProblem().getProposals();
+							for (int index = 0; index < proposals.length; index++) {
+								list.add(proposals[index]);
+							}
+						}
+					}
 					continue;
+				}
 
 				SimpleMarkerAnnotation annotation = (SimpleMarkerAnnotation) key;
 				IMarker marker = annotation.getMarker();
