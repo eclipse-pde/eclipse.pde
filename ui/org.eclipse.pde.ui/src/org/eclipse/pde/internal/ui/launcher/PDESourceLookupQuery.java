@@ -43,47 +43,44 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	}
 
 	public void run() throws Exception {
-		IJavaObject classLoaderObject = null;
-		String declaringTypeName = null;
-		String sourcePath = null;
+		IJavaReferenceType declaringType = null;
 		if (fElement instanceof IJavaStackFrame) {
-			IJavaStackFrame stackFrame = (IJavaStackFrame) fElement;
-			classLoaderObject = stackFrame.getReferenceType().getClassLoaderObject();
-			declaringTypeName = stackFrame.getDeclaringTypeName();
-			sourcePath = generateSourceName(declaringTypeName);
+			declaringType = ((IJavaStackFrame) fElement).getReferenceType();
 		} else if (fElement instanceof IJavaObject) {
-			IJavaObject object = (IJavaObject) fElement;
-			IJavaReferenceType type = (IJavaReferenceType) object.getJavaType();
-			if (type != null) {
-				classLoaderObject = type.getClassLoaderObject();
-				if (object.getJavaType() != null) {
-					declaringTypeName = object.getJavaType().getName();
-				}
-				if (declaringTypeName != null) {
-					sourcePath = generateSourceName(declaringTypeName);
-				}
+			IJavaType javaType = ((IJavaObject) fElement).getJavaType();
+			if (javaType instanceof IJavaReferenceType) {
+				declaringType = (IJavaReferenceType) javaType;
 			}
 		} else if (fElement instanceof IJavaReferenceType) {
-			IJavaReferenceType type = (IJavaReferenceType) fElement;
-			classLoaderObject = type.getClassLoaderObject();
-			declaringTypeName = type.getName();
-			sourcePath = generateSourceName(declaringTypeName);
+			declaringType = (IJavaReferenceType) fElement;
 		}
+		if (declaringType != null) {
+			IJavaObject classLoaderObject = declaringType.getClassLoaderObject();
+			String declaringTypeName = declaringType.getName();
+			String[] sourcePaths = declaringType.getSourcePaths(null);
+			String sourcePath = null;
+			if (sourcePaths != null) {
+				sourcePath = sourcePaths[0];
+			}
+			if (sourcePath == null) {
+				sourcePath = generateSourceName(declaringTypeName);
+			}
 
-		if (classLoaderObject != null) {
-			IJavaClassType type = (IJavaClassType) classLoaderObject.getJavaType();
-			if (OSGI_CLASSLOADER.equals(type.getName())) {
-				if (fDirector.getOSGiRuntimeVersion() < 3.5) {
-					fResult = findSourceElement34(classLoaderObject, sourcePath);
-				} else {
-					fResult = findSourceElement(classLoaderObject, sourcePath);
+			if (classLoaderObject != null) {
+				IJavaClassType type = (IJavaClassType) classLoaderObject.getJavaType();
+				if (OSGI_CLASSLOADER.equals(type.getName())) {
+					if (fDirector.getOSGiRuntimeVersion() < 3.5) {
+						fResult = findSourceElement34(classLoaderObject, sourcePath);
+					} else {
+						fResult = findSourceElement(classLoaderObject, sourcePath);
+					}
+				} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
+					fResult = findSourceElement_legacy(classLoaderObject, sourcePath);
+				} else if (MAIN_CLASS.equals(declaringTypeName)) {
+					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
+					if (model != null)
+						fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, sourcePath);
 				}
-			} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
-				fResult = findSourceElement_legacy(classLoaderObject, sourcePath);
-			} else if (MAIN_CLASS.equals(declaringTypeName)) {
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
-				if (model != null)
-					fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, sourcePath);
 			}
 		}
 	}
