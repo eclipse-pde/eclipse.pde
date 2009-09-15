@@ -255,15 +255,9 @@ public class ApiUseScanJob extends Job {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_collecting_target_components, 10);
 		this.notsearched = new TreeSet(Util.componentsorter);
 		String regex = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null);
-		// add all
-		Pattern pattern = null, pattern2 = null;
-		if(regex != null) {
-			pattern = Pattern.compile(regex);
-		}
+		Pattern pattern = getPattern(regex);
 		regex = this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null);
-		if(regex != null) {
-			pattern2 = Pattern.compile(regex);
-		}
+		Pattern pattern2 = getPattern(regex);
 		IApiComponent[] components = baseline.getApiComponents();
 		localmonitor.setWorkRemaining(components.length);
 		for (int i = 0; i < components.length; i++) {
@@ -281,6 +275,22 @@ public class ApiUseScanJob extends Job {
 				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), null));
 			}
 		}
+	}
+	
+	/**
+	 * Returns a pattern for the given regular expression or <code>null</code> if none.
+	 * 
+	 * @param regex expression, <code>null</code> or empty
+	 * @return associated pattern or <code>null</code>
+	 */
+	private Pattern getPattern(String regex) {
+		if (regex == null) {
+			return null;
+		}
+		if (regex.trim().length() == 0) {
+			return null;
+		}
+		return Pattern.compile(regex);
 	}
 	
 	/**
