@@ -77,16 +77,13 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 
 		IAnnotationModel model = sourceViewer.getAnnotationModel();
 		Iterator iter = model.getAnnotationIterator();
-		int totalAnnotations = 0;
 		int spellingAnnotations = 0;
 		while (iter.hasNext()) {
-			totalAnnotations++;
 			Annotation annotation = (Annotation) iter.next();
 			if (annotation instanceof SpellingAnnotation) {
 				spellingAnnotations++;
 			}			
 		}		
-		assertEquals(1,totalAnnotations);
 		assertEquals(0, spellingAnnotations);
 		
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
