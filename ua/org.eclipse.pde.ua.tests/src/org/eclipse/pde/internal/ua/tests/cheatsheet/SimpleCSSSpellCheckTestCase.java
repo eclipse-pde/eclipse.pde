@@ -67,24 +67,24 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	 */
 	public void testSpellingErrorInDoubleQuotedStringTestCase() {
 		StringBuffer csText = new StringBuffer();
+		
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Bodi\"</b>"); //The spelling error shall appear here
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText,"<item");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
 
-		csText.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		csText.append("<cheatsheet");
-		csText.append("title=\"Title\">");
-		csText.append("<intro>");
-		csText.append("<description>");
-		csText.append("<b>\"Bodi\"</b>"); //The spelling error shall appear here
-		csText.append("</description>");
-		csText.append("</intro>");
-		csText.append("<item");
-		csText.append("title=\"Item\">");
-		csText.append("<description>");
-		csText.append("<b>Body</b>");
-		csText.append("</description>");
-		csText.append("</item>");
-		csText.append("</cheatsheet>");
-
-		validateAnnotations(csText.toString(), 87, 2, 1);
+		validateAnnotations(csText.toString(), 97, 2, 1);
 	}
 
 	/**
@@ -94,23 +94,23 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	public void testSpellingErrorInSingleQuotedStringTestCase() {
 		StringBuffer csText = new StringBuffer();
 
-		csText.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		csText.append("<cheatsheet");
-		csText.append("title=\"Title\">");
-		csText.append("<intro>");
-		csText.append("<description>");
-		csText.append("<b>'Bodi'</b>"); //The spelling error shall appear here
-		csText.append("</description>");
-		csText.append("</intro>");
-		csText.append("<item");
-		csText.append("title=\"Item\">");
-		csText.append("<description>");
-		csText.append("<b>Body</b>");
-		csText.append("</description>");
-		csText.append("</item>");
-		csText.append("</cheatsheet>");
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>'Bodi'</b>"); //The spelling error shall appear here
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText,"<item");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
 
-		validateAnnotations(csText.toString(), 87, 2, 1);
+		validateAnnotations(csText.toString(), 97, 2, 1);
 
 	}
 
@@ -121,23 +121,23 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	public void testSpellingErrorInDoubleQuotedStringWithSingleQuotesTestCase() {
 		StringBuffer csText = new StringBuffer();
 
-		csText.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		csText.append("<cheatsheet");
-		csText.append("title=\"Title\">");
-		csText.append("<intro>");
-		csText.append("<description>");
-		csText.append("<b>\"'single quoted string' Bodi\"</b>"); //The spelling error shall appear here
-		csText.append("</description>");
-		csText.append("</intro>");
-		csText.append("<item");
-		csText.append("title=\"Item\">");
-		csText.append("<description>");
-		csText.append("<b>Body</b>");
-		csText.append("</description>");
-		csText.append("</item>");
-		csText.append("</cheatsheet>");
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"'single quoted string' Bodi\"</b>"); //The spelling error shall appear here
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText,"<item");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
 
-		validateAnnotations(csText.toString(), 110, 2, 1);
+		validateAnnotations(csText.toString(), 120, 2, 1);
 
 	}
 	
@@ -148,23 +148,23 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	public void testSpellingErrorInDoubleQuotedStringWithDoubleQuotesTestCase() {
 		StringBuffer csText = new StringBuffer();
 
-		csText.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		csText.append("<cheatsheet");
-		csText.append("title=\"Title\">");
-		csText.append("<intro>");
-		csText.append("<description>");
-		csText.append("<b>'Bodi\" is not a correct spelling\"'</b>"); //The spelling error shall appear here
-		csText.append("</description>");
-		csText.append("</intro>");
-		csText.append("<item");
-		csText.append("title=\"Item\">");
-		csText.append("<description>");
-		csText.append("<b>Body</b>");
-		csText.append("</description>");
-		csText.append("</item>");
-		csText.append("</cheatsheet>");
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>'Bodi\" is not a correct spelling\"'</b>"); //The spelling error shall appear here
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText,"<item");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
 
-		validateAnnotations(csText.toString(), 87, 2, 1);
+		validateAnnotations(csText.toString(), 97, 2, 1);
 
 	}
 	private void validateAnnotations(String contents, int position, int totalAnnotationCount, int spellingAnnotationCount) {
@@ -210,21 +210,21 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	public void testNoSpellingAnnotationForXMLTag() {
 		StringBuffer csText = new StringBuffer();
 
-		csText.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		csText.append("<cheatsheet");
-		csText.append("title=\"Title\">");
-		csText.append("<intro>");
-		csText.append("<description>");
-		csText.append("<b>\"Body\"</b>");
-		csText.append("</description>");
-		csText.append("</intro>");
-		csText.append("<item");
-		csText.append("title=\"Item\">");
-		csText.append("<description>");
-		csText.append("<b>Body</b>");
-		csText.append("</description>");
-		csText.append("</item>");
-		csText.append("</cheatsheet>");
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Body\"</b>");
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText,"<item");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
@@ -235,21 +235,21 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	public void testMultipleSpellingErrorsTestCase() {
 		StringBuffer csText = new StringBuffer();
 
-		csText.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		csText.append("<cheatsheet");
-		csText.append("title=\"Tital\">");
-		csText.append("<intro>");
-		csText.append("<description>");
-		csText.append("<b>\"Bodi\"</b>");
-		csText.append("</description>");
-		csText.append("</intro>");
-		csText.append("<item");
-		csText.append("title=\"Itim\">");
-		csText.append("<description>");
-		csText.append("<b>Body</b>");
-		csText.append("</description>");
-		csText.append("</item>");
-		csText.append("</cheatsheet>");
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Tital\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Bodi\"</b>");
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText,"<item");
+		append(csText,"title=\"Itim\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
 
 		validateAnnotations(csText.toString(), 0, 4, 3);
 	}
@@ -260,24 +260,135 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 	public void testZeroSpellingErrorsTestCase() {
 		StringBuffer csText = new StringBuffer();
 
-		csText.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		csText.append("<cheatsheet");
-		csText.append("title=\"Title\">");
-		csText.append("<intro>");
-		csText.append("<description>");
-		csText.append("<b>\"Body\"</b>");
-		csText.append("</description>");
-		csText.append("</intro>");
-		csText.append("<item");
-		csText.append("title=\"Item\">");
-		csText.append("<description>");
-		csText.append("<b>Body</b>");
-		csText.append("</description>");
-		csText.append("</item>");
-		csText.append("</cheatsheet>");
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Body\"</b>");
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText,"<item");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
 
 		validateAnnotations(csText.toString(), 0, 1, 0);
 	}
+	
+	/**
+	 * The spelling errors in the XML comments should be ignored 
+	 */
+	public void testSpellingErrorsInXMLCommentTestCase() {
+		StringBuffer csText = new StringBuffer();
+
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Body\"</b>");
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText, "<!-- Itm One -->");
+		append(csText,"<item ");
+		append(csText,"href=\"/org.eclipse.pde/about.html\" ");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
+
+		validateAnnotations(csText.toString(), 0, 1, 0);
+	}
+	
+	/**
+	 * The spelling errors in the multiple line XML comments should be ignored 
+	 */
+	public void testSpellingErrorsInMultiLineXMLCommentTestCase() {
+		StringBuffer csText = new StringBuffer();
+
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Body\"</b>");
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText, "<!-- Itm One ");
+		append(csText, " commnt with spell error continues");
+		append(csText, " comment ends --->");
+		append(csText,"<item ");
+		append(csText,"href=\"/org.eclipse.pde/about.html\" ");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
+
+		validateAnnotations(csText.toString(), 0, 1, 0);
+	}
+	
+	/**
+	 * Testing for no unwanted spelling annotations due to single quote in XML comment
+	 */
+	public void testSingleQuoteInXMLCommentTestCase() {
+		StringBuffer csText = new StringBuffer();
+
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Body\"</b>");
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText, "<!-- Item's One -->"); // single quote in XML Comment
+		append(csText,"<item ");
+		append(csText,"href=\"/org.eclipse.pde/about.html\" ");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
+
+		validateAnnotations(csText.toString(), 0, 1, 0);
+	}
+	
+	/**
+	 * Testing for no unwanted spelling annotations due to double quote in XML comment
+	 */
+	public void testDoubleQuoteInXMLCommentTestCase() {
+		StringBuffer csText = new StringBuffer();
+
+		append(csText,"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		append(csText,"<cheatsheet");
+		append(csText,"title=\"Title\">");
+		append(csText,"<intro>");
+		append(csText,"<description>");
+		append(csText,"<b>\"Body\"</b>");
+		append(csText,"</description>");
+		append(csText,"</intro>");
+		append(csText, "<!-- Item\"s One -->"); // double quote in XML Comment
+		append(csText,"<item ");
+		append(csText,"href=\"/org.eclipse.pde/about.html\" ");
+		append(csText,"title=\"Item\">");
+		append(csText,"<description>");
+		append(csText,"<b>Body</b>");
+		append(csText,"</description>");
+		append(csText,"</item>");
+		append(csText,"</cheatsheet>");
+
+		validateAnnotations(csText.toString(), 0, 1, 0);
+	}
+	
 	private void createAndOpenFile(String fileName, String fileContents) throws CoreException, IOException {
 		IPath path = fProject.getLocation();
 		path = path.append(fileName);
@@ -309,5 +420,9 @@ public class SimpleCSSSpellCheckTestCase extends AbstractCheatSheetModelTestCase
 		PDESourcePage pdeSrcPage = (PDESourcePage) editor.setActivePage(SimpleCSInputContext.CONTEXT_ID);
 		IDocumentProvider dp = pdeSrcPage.getDocumentProvider();
 		fDocument = (Document) dp.getDocument(fEditor.getEditorInput());
+	}
+	
+	private void append(StringBuffer buffer, String text){
+		buffer.append(text + CRLF);
 	}
 }

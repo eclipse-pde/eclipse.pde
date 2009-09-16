@@ -22,9 +22,10 @@ public class XMLStringPartitionScanner extends RuleBasedPartitionScanner {
 	public static final String[] STRING_PARTITIONS = new String[] {XML_STRING};
 
 	public XMLStringPartitionScanner() {
-		IPredicateRule[] rules = new IPredicateRule[2];
+		IPredicateRule[] rules = new IPredicateRule[3];
 		rules[0] = new MultiLineRule("\"", "\"", new Token(XML_STRING), '\\', true); //$NON-NLS-1$ //$NON-NLS-2$
 		rules[1] = new MultiLineRule("\'", "\'", new Token(XML_STRING), '\\', true); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[2] = new MultiLineRule("<!--", "-->", new Token(XMLPartitionScanner.XML_COMMENT)); //$NON-NLS-1$//$NON-NLS-2$
 
 		setPredicateRules(rules);
 	}
