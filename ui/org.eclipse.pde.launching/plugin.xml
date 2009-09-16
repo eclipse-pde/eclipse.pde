@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.eclipse.pde.ui.osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
+
+    <extension point="org.eclipse.debug.core.sourceLocators">
+   		<sourceLocator
+   			id="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+   			class="org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupDirector"
+   			name="%pde.sourcelocator">
+   		</sourceLocator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"
+            delegateDescription="%PDELaunchDelegate.description"
+            delegateName="%PDELaunchDelegate.name"
+            id="org.eclipse.pde.ui.RuntimeWorkbench"
+            migrationDelegate="org.eclipse.pde.internal.launching.launcher.PDEMigrationDelegate"
+            modes="run, debug"
+            name="%launchConfigurationType.name"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"
+            delegateDescription="%JUnitPluginLaunchDelegate.description"
+            delegateName="%JUnitPluginLaunchDelegate.name"
+            id="org.eclipse.pde.ui.JunitLaunchConfig"
+            migrationDelegate="org.eclipse.pde.internal.launching.launcher.PDEMigrationDelegate"
+            modes="run, debug"
+            name="%launcher.junit.name"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"
+            delegateDescription="%OSGiLaunchDelegate.description"
+            delegateName="%OSGiLaunchDelegate.name"
+            id="org.eclipse.pde.ui.EquinoxLauncher"
+            migrationDelegate="org.eclipse.pde.internal.launching.launcher.OSGiMigrationDelegate"
+            modes="run, debug"
+            name="%launcher.framework.name"
+            public="true"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"/>
+   </extension>
+	<extension
+         point="org.eclipse.jdt.junit.junitLaunchConfigs">
+      <launchConfigType
+            configTypeID="org.eclipse.pde.ui.JunitLaunchConfig">
+      </launchConfigType>
+   </extension>
+    <extension
+         point="org.eclipse.pde.ui.osgiFrameworks">
+      <framework
+            launcherDelegate="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"
+            id="org.eclipse.pde.ui.EquinoxFramework"
+            name="%Equinox.shortcut.label" 
+            initializer="org.eclipse.pde.internal.launching.launcher.EquinoxInitializer"/>
+    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.pde.internal.launching.PreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.launching.classpathProviders">
+      <classpathProvider
+            class="org.eclipse.pde.ui.launcher.PDESourcePathProvider"
+            id="org.eclipse.pde.ui.workbenchClasspathProvider">
+      </classpathProvider>
+   </extension>
+    
+</plugin>
