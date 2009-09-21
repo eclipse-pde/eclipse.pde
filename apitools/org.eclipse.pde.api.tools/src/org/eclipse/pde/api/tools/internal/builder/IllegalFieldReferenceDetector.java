@@ -33,23 +33,6 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
  * @since 1.1
  */
 public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
-
-	class FieldKey extends MethodKey {
-		public FieldKey(String name, String sig) {
-			super(name, sig);
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.model.MethodKey#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if (obj instanceof FieldKey) {
-				FieldKey key = (FieldKey) obj;
-				return fSelector.equals(key.fSelector) &&
-				fSig.equals(key.fSig);
-			}
-			return false;
-		}
-	}
 	
 	/**
 	 * Map of {@link org.eclipse.pde.api.tools.internal.model.MethodKey} to
@@ -70,7 +53,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @param componentId the component the type is located in
 	 */
 	void addIllegalField(IFieldDescriptor field, String componentId) {
-		fIllegalFields.put(new FieldKey(field.getEnclosingType().getQualifiedName(), field.getName()), field);
+		fIllegalFields.put(new MethodKey(field.getEnclosingType().getQualifiedName(), field.getName()), field);
 		fFieldComponents.put(field, componentId);
 	}	
 	
@@ -78,7 +61,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (fIllegalFields.containsKey(new FieldKey(reference.getReferencedTypeName(), reference.getReferencedMemberName()))) {
+		if (fIllegalFields.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName()))) {
 			retainReference(reference);
 			return true;
 		}

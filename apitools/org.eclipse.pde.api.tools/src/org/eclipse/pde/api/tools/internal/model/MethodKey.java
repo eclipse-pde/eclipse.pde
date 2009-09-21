@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import org.eclipse.pde.api.tools.internal.util.Signatures;
-
 
 /**
  * A key for a method - name & signature based.
@@ -19,8 +17,8 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  * @since 1.1
  */
 public class MethodKey {
-	protected String fSelector;
-	protected String fSig;
+	private String fSelector;
+	private String fSig;
 	/**
 	 * Constructs a new method key
 	 * @param name method name
@@ -37,9 +35,8 @@ public class MethodKey {
 		if (obj instanceof MethodKey) {
 			MethodKey key = (MethodKey) obj;
 			return fSelector.equals(key.fSelector) &&
-			Signatures.matchesSignatures(fSig, key.fSig);
+			 fSig.equals(key.fSig);
 		}
-		
 		return false;
 	}
 	/* (non-Javadoc)
