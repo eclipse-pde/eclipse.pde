@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Herrmann - Bug 242461 - JSR045 support
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.sourcelookup;
 
@@ -44,8 +45,12 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 
 	public void run() throws Exception {
 		IJavaReferenceType declaringType = null;
+		String sourcePath = null;
 		if (fElement instanceof IJavaStackFrame) {
-			declaringType = ((IJavaStackFrame) fElement).getReferenceType();
+			IJavaStackFrame stackFrame = (IJavaStackFrame) fElement;
+			declaringType = stackFrame.getReferenceType();
+			// under JSR 45 source path from the stack frame is more precise than anything derived from the type: 
+			sourcePath = stackFrame.getSourcePath();
 		} else if (fElement instanceof IJavaObject) {
 			IJavaType javaType = ((IJavaObject) fElement).getJavaType();
 			if (javaType instanceof IJavaReferenceType) {
@@ -57,13 +62,14 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (declaringType != null) {
 			IJavaObject classLoaderObject = declaringType.getClassLoaderObject();
 			String declaringTypeName = declaringType.getName();
-			String[] sourcePaths = declaringType.getSourcePaths(null);
-			String sourcePath = null;
-			if (sourcePaths != null) {
-				sourcePath = sourcePaths[0];
-			}
 			if (sourcePath == null) {
-				sourcePath = generateSourceName(declaringTypeName);
+				String[] sourcePaths = declaringType.getSourcePaths(null);
+				if (sourcePaths != null) {
+					sourcePath = sourcePaths[0];
+				}
+				if (sourcePath == null) {
+					sourcePath = generateSourceName(declaringTypeName);
+				}
 			}
 
 			if (classLoaderObject != null) {
