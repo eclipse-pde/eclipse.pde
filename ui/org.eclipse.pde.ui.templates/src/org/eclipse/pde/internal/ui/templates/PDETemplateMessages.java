@@ -313,4 +313,11 @@ public class PDETemplateMessages extends NLS {
 	public static String HelloServiceComponentTemplate_command;
 	public static String HelloServiceComponentTemplate_commandTitle;
 
+	// Declarative Services Template
+	public static String OSGiEventAdminTemplate_message;
+	public static String OSGiEventAdminTemplate_eventTopicTitle;
+	public static String OSGiEventAdminTemplateWizard_title;
+	public static String OSGiEventAdminTemplate_pageTitle;
+	public static String OSGiEventAdminTemplate_pageDescription;
+
 }

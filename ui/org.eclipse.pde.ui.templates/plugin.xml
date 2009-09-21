@@ -498,6 +498,18 @@
             %pluginContent.helloDSOSGIService.description
          </description>
       </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.templates.osgi.OSGiEventAdminTemplateWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            id="org.eclipse.pde.ui.ds.OSGiEventAdminTemplateWizard"
+            name="%pluginContent.OSGiEventAdminService.name"
+            pureOSGi="true"
+            requiresActivator="false"
+            ui-content="false">
+         <description>
+            %pluginContent.OSGiEventAdminService.description
+         </description>
+      </wizard>
         
    </extension>
    
