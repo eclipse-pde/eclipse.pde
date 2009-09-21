@@ -8,7 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.launcher;
+package org.eclipse.pde.launching;
 
 import java.util.ArrayList;
 import java.util.List;

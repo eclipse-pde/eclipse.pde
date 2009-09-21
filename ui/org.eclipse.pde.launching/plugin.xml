@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"
+            delegate="org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration"
             delegateDescription="%PDELaunchDelegate.description"
             delegateName="%PDELaunchDelegate.name"
             id="org.eclipse.pde.ui.RuntimeWorkbench"
@@ -24,7 +24,7 @@
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"
+            delegate="org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate"
             delegateDescription="%JUnitPluginLaunchDelegate.description"
             delegateName="%JUnitPluginLaunchDelegate.name"
             id="org.eclipse.pde.ui.JunitLaunchConfig"
@@ -35,7 +35,7 @@
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"
+            delegate="org.eclipse.pde.launching.OSGiLaunchConfigurationDelegate"
             delegateDescription="%OSGiLaunchDelegate.description"
             delegateName="%OSGiLaunchDelegate.name"
             id="org.eclipse.pde.ui.EquinoxLauncher"
@@ -55,7 +55,7 @@
     <extension
          point="org.eclipse.pde.ui.osgiFrameworks">
       <framework
-            launcherDelegate="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"
+            launcherDelegate="org.eclipse.pde.launching.EquinoxLaunchConfiguration"
             id="org.eclipse.pde.ui.EquinoxFramework"
             name="%Equinox.shortcut.label" 
             initializer="org.eclipse.pde.internal.launching.launcher.EquinoxInitializer"/>
@@ -67,7 +67,7 @@
    <extension
          point="org.eclipse.jdt.launching.classpathProviders">
       <classpathProvider
-            class="org.eclipse.pde.ui.launcher.PDESourcePathProvider"
+            class="org.eclipse.pde.launching.PDESourcePathProvider"
             id="org.eclipse.pde.ui.workbenchClasspathProvider">
       </classpathProvider>
    </extension>

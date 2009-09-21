@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
+import org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer;
+
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 
-import org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer;
 
 
 

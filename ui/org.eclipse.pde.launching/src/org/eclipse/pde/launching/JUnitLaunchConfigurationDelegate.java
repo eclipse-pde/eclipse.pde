@@ -11,7 +11,7 @@
  *     David Saff <saff@mit.edu> - bug 102632
  *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 250340
  *******************************************************************************/
-package org.eclipse.pde.ui.launcher;
+package org.eclipse.pde.launching;
 
 
 import java.io.File;

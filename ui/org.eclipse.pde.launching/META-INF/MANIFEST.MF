@@ -19,6 +19,6 @@ Bundle-Activator: org.eclipse.pde.internal.launching.PDELaunchingPlugin
 Export-Package: org.eclipse.pde.internal.launching;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.launching.launcher;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.launching.sourcelookup;x-internal:=true,
- org.eclipse.pde.ui.launcher
+ org.eclipse.pde.launching
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

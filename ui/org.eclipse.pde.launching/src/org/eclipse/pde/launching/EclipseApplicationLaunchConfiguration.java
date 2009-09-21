@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
-package org.eclipse.pde.ui.launcher;
+package org.eclipse.pde.launching;
 
 import java.io.File;
 import java.util.*;

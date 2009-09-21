@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
