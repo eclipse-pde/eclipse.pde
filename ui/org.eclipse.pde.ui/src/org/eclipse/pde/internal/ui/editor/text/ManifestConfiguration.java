@@ -251,6 +251,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, ManifestPartitionScanner.MANIFEST_HEADER_VALUE);
 				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
+				fContentAssistant.enableAutoInsert(true);
 				fContentAssistant.setInformationControlCreator(new IInformationControlCreator() {
 					public IInformationControl createInformationControl(Shell parent) {
 						return new DefaultInformationControl(parent, false);

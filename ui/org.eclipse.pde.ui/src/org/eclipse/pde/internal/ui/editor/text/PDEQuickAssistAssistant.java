@@ -36,7 +36,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	private Image fRenameImage;
 	private Image fRemoveImage;
 
-	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3 {
+	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4 {
 
 		Position fPosition;
 		IMarkerResolution fResolution;
@@ -98,6 +98,13 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 		public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
+		 */
+		public boolean isAutoInsertable() {
+			return true;
 		}
 
 	}

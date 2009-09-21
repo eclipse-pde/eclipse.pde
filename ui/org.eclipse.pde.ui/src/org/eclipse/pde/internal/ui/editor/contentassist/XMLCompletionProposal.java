@@ -35,7 +35,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-public class XMLCompletionProposal implements ICompletionProposal, ICompletionProposalExtension5, ICompletionProposalExtension3 {
+public class XMLCompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4, ICompletionProposalExtension5 {
 
 	private static final String F_DEF_ATTR_INDENT = "      "; //$NON-NLS-1$
 
@@ -106,7 +106,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param delim
 	 * @param documentInsertBuffer
 	 * @param doInternalWork
-	 * @return
 	 */
 	private boolean applyVirtual(IDocument document, ITextSelection sel, String delim, StringBuffer documentInsertBuffer, boolean doInternalWork) {
 		int type = ((VirtualSchemaObject) fSchemaObject).getVType();
@@ -538,6 +537,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
+	 */
+	public boolean isAutoInsertable() {
+		return true;
 	}
 
 }

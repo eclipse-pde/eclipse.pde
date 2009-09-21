@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-public class TypeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension5 {
+public class TypeCompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4, ICompletionProposalExtension5 {
 
 	protected String fReplacementString;
 	protected Image fImage;
@@ -135,6 +135,13 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return fReplacementString;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
+	 */
+	public boolean isAutoInsertable() {
+		return true;
 	}
 
 }

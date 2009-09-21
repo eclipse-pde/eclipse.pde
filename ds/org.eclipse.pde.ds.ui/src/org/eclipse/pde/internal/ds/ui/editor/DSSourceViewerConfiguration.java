@@ -49,6 +49,7 @@ public class DSSourceViewerConfiguration extends XMLConfiguration {
 					.setInformationControlCreator(getInformationControlCreator(true));
 			fContentAssistant.setShowEmptyList(false);
 			fContentAssistant.addCompletionListener(fContentAssistProcessor);
+			fContentAssistant.enableAutoInsert(true);
 		}
 		return fContentAssistant;
 	}
