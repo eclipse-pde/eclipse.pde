@@ -194,7 +194,6 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 				Reconciler reconciler = new Reconciler();
 				reconciler.setReconcilingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
 				if (!(model instanceof PluginModel)) {
-					System.out.println(model);
 					reconciler.setReconcilingStrategy(new XMLReconcilingStrategy(sourceViewer), XMLStringPartitionScanner.XML_STRING);
 					reconciler.setDocumentPartitioning(XMLStringPartitionScanner.XML_STRING);
 				}
