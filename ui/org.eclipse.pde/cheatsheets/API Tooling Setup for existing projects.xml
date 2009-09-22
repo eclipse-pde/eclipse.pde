@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--/*******************************************************************************
+ * Copyright (c) 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Ankur Sharma - ankur_sharma@in.ibm.com
+ *******************************************************************************/-->
+ <!--Version 1.0.0.20092607-->
+<cheatsheet
+      title="Setting up API Tooling for existing projects">
+   <intro>
+      <description>
+         This cheat sheet will help in setting up API Tooling for existing plug-in projects.
+      </description>
+   </intro>
+   <item
+         skip="true"
+         title="Prerequisite">
+      <description>
+         The plug-in projects should be located in the workspace and be in open
+state. The API is public and the relevant packages are exported through the
+&quot;Exported Packages&quot; on the &quot;Runtime&quot; tab of the Manifest
+Editor.
+      </description>
+   </item>
+   <item
+         skip="true"
+         title="Prerequisite">
+      <description>
+         The plug-in projects should be located in the workspace and be in open state. The API is public and the relevant packages are exported through the &quot;Exported Packages&quot; on the &quot;Runtime&quot; tab of the Manifest Editor.
+Needless to say, have a safe baskup of projects before starting.
+      </description>
+   </item>
+   <item
+         skip="true"
+         title="Preparing for export">
+      <description>
+         This step will guide to create a simple product definition to help in exporting the plug-ins along with the dependent plug-ins to create API Baselines.
+This can be better achieved through ant tasks. Since not everyone is apt with ant tasks, this step provides a work-around through UI for achieving the same.
+      </description>
+   </item>
+   <item
+         title="Creating simple project">
+      <description>
+         Create a new plug-in project and name it &quot;org.simple.bundle&quot;.
+      </description>
+      <command
+            required="false"
+            serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)"/>
+   </item>
+   <item
+         title="Create a simple product definition file">
+      <description>
+         Select the project &quot;org.simple.bundle&quot; and provide the file name as &quot;simple.product&quot;. Let the option &quot;Create a configuration file with basic settings&quot; remain selected. Click &quot; Finish&quot;.
+      </description>
+      <command
+            required="false"
+            serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProductConfigurationWizard)"/>
+   </item>
+   <item
+         title="Configuring product">
+      <description>
+         Open the &quot;simple.product&quot; file if not already open.
+      </description>
+      <subitem
+            label="Provide the &quot;ID&quot; as &quot;org.simple.product&quot; on &quot;Overview&quot; page.">
+      </subitem>
+      <subitem
+            label="Select any &quot;Product&quot; and &quot;Application&quot; in the &quot;Product Definition&quot; section. Save the file.">
+      </subitem>
+      <subitem
+            label="On the &quot;Dependencies&quot; tab, click the &quot;Add&quot; button and select all the workspace plug-ins for which API Tooling has to be setup. Do NOT select &quot;org.simple.bundle&quot;.  Click &quot;OK&quot;. Click &quot;Add Required Plug-ins&quot;. Save the file.">
+      </subitem>
+      <subitem
+            label="Locate the &quot;simple.product&quot; file in the Package Explorer. Right-click over it and select &quot;Open with&quot;. Open the file with a &quot;Text Editor&quot; or an &quot;XML Editor&quot;.">
+      </subitem>
+      <subitem
+            label="Find the &quot;&lt;product&gt;&quot; XML tag and replace the value its attribute &quot;id&quot; with &quot;org.simple.bundle.product&quot;. Make the value of the attribute &quot;application&quot; blank, that is &quot;&quot;. Save the file.">
+      </subitem>
+      <subitem
+            label="Locate the &quot;simple.product&quot; file in the Package Explorer. Right-click over it and select &quot;Export...&quot; to invoke Export Wizard.">
+         <command
+               required="false"
+               serialization="org.eclipse.ui.file.export(exportWizardId=org.eclipse.pde.ui.productExportWizard)"/>
+      </subitem>
+      <subitem
+            label="In the &quot;Product Configuration&quot; section, click &quot;Browse&quot; and select &quot;simple.product&quot;.">
+      </subitem>
+      <subitem
+            label="In &quot;Destination&quot; step select the &quot;Directory&quot; option and provide the location as &quot;C:\APIBaseline\1.0&quot;. Uncheck the &quot;Generate metadata repository&quot; check box. Click &quot;Finish&quot;.">
+      </subitem>
+   </item>
+   <item
+         title="Setting up API Tooling">
+      <description>
+         
+      </description>
+      <subitem
+            label="Select any project in package explorer and invoke the &quot;API Tooling Setup&quot; wizard from &quot;PDE Tools&quot; in the right-click context menu.">
+
+      </subitem>
+      <subitem
+            label="Select all the projects for which API Tooling has to be enabled. Click &quot;Finish&quot;.">
+      </subitem>
+      <subitem
+            label="When prompted for setting up an API Baseline, select &quot;Yes&quot;.">
+      </subitem>
+      <subitem
+            label="This shall open the &quot;API Baseline&quot; preference page. Click &quot;Add Baseline&quot; to create a default baseline. Provide name as &quot;1.0&quot; and &quot;Location&quot; as &quot;C:\APIBaseline\1.0\eclipse&quot;. Click &quot;Reset&quot;. Click &quot;Finish&quot;. This will trigger a full build. OK it.">
+      </subitem>
+   </item>
+   <item
+         title="Testing API Tooling">
+      <description>
+         This is optional and is there just to make sure everything is in place properly.
+         
+      </description>
+      <subitem
+            label="Open any class in one of the exported packages. Add a public function to it and save it."
+            skip="false">
+      </subitem>
+      <subitem
+            label="There shall be 2 problems generated. Use Quick Fix to fix them. First, quick fix the version change in MANIFEST.MF and then the @since tag to the newly added function."
+            skip="false">
+      </subitem>
+      <subitem
+            label="Select the class or project in the package explorer and select &quot;API Baseline&quot; from the &quot;Compare with&quot; right-click context menu.">
+      </subitem>
+      <subitem
+            label="Let the default baseline &quot;1.0&quot; be selected and click &quot;Finish&quot;.">
+      </subitem>
+      <subitem
+            label="The &quot;API Tooling&quot; view shall open displaying the newly added function.">
+      </subitem>
+   </item>
+</cheatsheet>
