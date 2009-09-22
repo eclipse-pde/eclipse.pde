@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.PDESourcePathProvider;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
@@ -17,9 +20,9 @@ import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
-import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
+import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 
 /**
  * A launch shortcut capable of launching a Plug-in JUnit test.
@@ -43,13 +46,13 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
 		ILaunchConfigurationWorkingCopy configuration = super.createLaunchConfiguration(element);
 		if (TargetPlatformHelper.usesNewApplicationModel())
-			configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$ 
+			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$ 
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
-			configuration.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
+			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
 		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, true);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
-		configuration.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
+		configuration.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
 
 		// Program to launch
 		if (LauncherUtils.requiresUI(configuration)) {
@@ -59,7 +62,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 				configuration.setAttribute(IPDELauncherConstants.PRODUCT, product);
 			}
 		} else {
-			configuration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEUIConstants.CORE_TEST_APPLICATION);
+			configuration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEConstants.CORE_TEST_APPLICATION);
 		}
 
 		// Plug-ins to launch

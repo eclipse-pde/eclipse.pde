@@ -21,8 +21,8 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.launching.launcher.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.*;
 
 public class ProductValidateAction extends Action {
 

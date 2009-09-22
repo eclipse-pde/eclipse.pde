@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -46,7 +48,7 @@ public class OSGiFrameworkBlock {
 
 	public OSGiFrameworkBlock(AbstractLauncherTab tab) {
 		fTab = tab;
-		fConfigElements = PDEPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks();
+		fConfigElements = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks();
 		fListener = new Listener();
 	}
 
@@ -106,7 +108,7 @@ public class OSGiFrameworkBlock {
 	}
 
 	private void initializeFramework(ILaunchConfiguration config) throws CoreException {
-		OSGiFrameworkManager manager = PDEPlugin.getDefault().getOSGiFrameworkManager();
+		OSGiFrameworkManager manager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
 		String id = config.getAttribute(IPDELauncherConstants.OSGI_FRAMEWORK_ID, manager.getDefaultFramework());
 
 		for (int i = 0; i < fConfigElements.length; i++) {
@@ -125,7 +127,7 @@ public class OSGiFrameworkBlock {
 
 		int index = fLauncherCombo.getSelectionIndex();
 		String id = index > -1 ? fConfigElements[index].getAttribute(OSGiFrameworkManager.ATT_ID) : null;
-		OSGiFrameworkManager manager = PDEPlugin.getDefault().getOSGiFrameworkManager();
+		OSGiFrameworkManager manager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
 
 		// no need to persist the default OSGi framework
 		if (manager.getDefaultFramework().equals(id))

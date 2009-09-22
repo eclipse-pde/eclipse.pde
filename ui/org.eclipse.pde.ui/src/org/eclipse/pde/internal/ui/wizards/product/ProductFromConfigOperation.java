@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+
 import java.util.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -21,8 +25,6 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 /**
  * This operation generates a product configuration filling in fields based on information

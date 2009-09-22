@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor;
 import java.util.ArrayList;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusListener;
@@ -24,7 +25,7 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class PDEMultiPageContentOutline extends Page implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener, IPreferenceConstants {
+public class PDEMultiPageContentOutline extends Page implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener, ILaunchingPreferenceConstants {
 	private PageBook pagebook;
 	private ISelection selection;
 	private ArrayList listeners;

@@ -52,8 +52,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String DependencyPropertiesDialog_exportGroupText;
 
-	public static String EclipsePluginValidationOperation_pluginMissing;
-
 	public static String ExternalizeStringsOperation_editNames_addComment;
 
 	public static String ExternalizeStringsOperation_editNames_insertProperty;
@@ -178,8 +176,6 @@ public class PDEUIMessages extends NLS {
 	public static String JRESection_jrePreference;
 
 	public static String LauncherUtils_workspaceLocked;
-
-	public static String LauncherUtils_cannotLaunchApplication;
 
 	public static String LauncherUtils_clearLogFile;
 
@@ -895,13 +891,7 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationSection_selection;
 	public static String ConfigurationTab_fileDialogMessage;
 
-	public static String WorkbenchLauncherConfigurationDelegate_noJRE;
-	public static String WorkbenchLauncherConfigurationDelegate_jrePathNotFound;
-	public static String WorkbenchLauncherConfigurationDelegate_badFeatureSetup;
-	public static String WorkbenchLauncherConfigurationDelegate_noStartup;
 	public static String WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace;
-	public static String JUnitLaunchConfiguration_error_notaplugin;
-	public static String JUnitLaunchConfiguration_error_missingPlugin;
 
 	public static String Launcher_error_title;
 	public static String LauncherSection_desc;
@@ -910,7 +900,6 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_icon;
 	public static String LauncherSection_tiny;
 	public static String Launcher_error_code13;
-	public static String Launcher_error_code15;
 	public static String Launcher_error_displayInLogView;
 	public static String Launcher_error_displayInSystemEditor;
 	public static String LauncherSection_browse;
@@ -933,8 +922,6 @@ public class PDEUIMessages extends NLS {
 	public static String OpenLogDialog_cannotDisplay;
 
 	public static String OSGiBundlesTab_frameworkLabel;
-	public static String OSGiLaunchConfiguration_cannotFindLaunchConfiguration;
-	public static String OSGiLaunchConfiguration_selected;
 
 	// Preferences ####################################
 	public static String Preferences_MainPage_Description;
@@ -2103,8 +2090,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String EquinoxSettingsTab_name;
 
-	public static String EquinoxLaunchConfiguration_oldTarget;
-
 	public static String ModelChangeLabelProvider_instance;
 
 	public static String ModelChangeLabelProvider_instances;
@@ -2757,8 +2742,6 @@ public class PDEUIMessages extends NLS {
 	public static String HyperlinkActionOpenDescription;
 	public static String HyperlinkActionOpenBundle;
 	public static String HyperlinkActionOpenPackage;
-
-	public static String VMHelper_cannotFindExecEnv;
 
 	public static String HyperlinkActionOpenResource;
 	public static String HyperlinkActionOpenSchema;

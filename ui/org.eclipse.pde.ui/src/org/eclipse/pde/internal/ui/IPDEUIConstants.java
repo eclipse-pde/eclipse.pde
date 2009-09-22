@@ -12,8 +12,9 @@
 package org.eclipse.pde.internal.ui;
 
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.pde.internal.launching.IPDEConstants;
 
-public interface IPDEUIConstants {
+public interface IPDEUIConstants extends IPDEConstants {
 	String PLUGIN_ID = "org.eclipse.pde.ui"; //$NON-NLS-1$
 
 	String MANIFEST_EDITOR_ID = PLUGIN_ID + ".manifestEditor"; //$NON-NLS-1$
@@ -40,19 +41,6 @@ public interface IPDEUIConstants {
 
 	String PLUGIN_DOC_ROOT = "/org.eclipse.pde.doc.user/"; //$NON-NLS-1$
 
-	// JUnit application identifiers
-	String LEGACY_UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.legacytestapplication"; //$NON-NLS-1$
-	String NON_UI_THREAD_APPLICATION = "org.eclipse.pde.junit.runtime.nonuithreadtestapplication"; //$NON-NLS-1$
-	String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
-	String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
-
-	/**
-	 * Launch configuration attribute key.  The value is a boolean specifies
-	 * whether the launch configuration is being restarted.  This does not need to 
-	 * be promoted to IPDELauncherConstants since clients should not need to know 
-	 * about restarts.  
-	 */
-	String RESTART = "restart"; //$NON-NLS-1$
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether the workspace log for an Eclipse application should be cleared
@@ -60,9 +48,6 @@ public interface IPDEUIConstants {
 	 * 
 	 * TODO, move to IPDELauncherConstants in 3.4
 	 */
-	String DOCLEARLOG = "clearwslog"; //$NON-NLS-1$
-	String LAUNCHER_PDE_VERSION = "pde.version"; //$NON-NLS-1$
-	String APPEND_ARGS_EXPLICITLY = "append.args"; //$NON-NLS-1$
 	String GENERATED_CONFIG = "pde.generated.config"; //$NON-NLS-1$
 
 }

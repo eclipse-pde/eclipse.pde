@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -35,7 +40,6 @@ import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotif
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CCombo;

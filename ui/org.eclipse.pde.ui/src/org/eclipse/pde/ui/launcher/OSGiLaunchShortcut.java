@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -59,7 +61,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#initializeConfiguration(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy configuration) {
-		OSGiFrameworkManager manager = PDEPlugin.getDefault().getOSGiFrameworkManager();
+		OSGiFrameworkManager manager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
 		manager.getDefaultInitializer().initialize(configuration);
 	}
 

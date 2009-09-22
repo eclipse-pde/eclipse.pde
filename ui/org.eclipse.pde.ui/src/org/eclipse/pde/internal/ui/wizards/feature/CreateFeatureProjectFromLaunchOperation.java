@@ -12,6 +12,10 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -21,9 +25,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.ui.launcher.BundleLauncherHelper;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Shell;
 
 public class CreateFeatureProjectFromLaunchOperation extends CreateFeatureProjectOperation {

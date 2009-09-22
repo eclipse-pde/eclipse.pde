@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
-import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
-
 import junit.framework.*;
+import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
 
 /**
  * Tests LaunchConfigurationHelper convenience methods

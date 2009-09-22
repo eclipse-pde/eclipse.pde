@@ -13,16 +13,18 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.launching.*;
+import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,6 +33,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Provides the preference page for managing the default OSGi framework to use.
@@ -106,8 +109,8 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 	 * Restores the default framework setting from the PDE preferences
 	 */
 	private void setDefaultFramework() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		fDefaultFramework = store.getString(IPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK);
+		PDEPreferencesManager preferenceManager = PDELaunchingPlugin.getDefault().getPreferenceManager();
+		fDefaultFramework = preferenceManager.getString(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK);
 	}
 
 	/* (non-Javadoc)
@@ -132,7 +135,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		fTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.setLabelProvider(new FrameworkLabelProvider());
-		fTableViewer.setInput(PDEPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks());
+		fTableViewer.setInput(PDELaunchingPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks());
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IConfigurationElement element = (IConfigurationElement) event.getElement();
@@ -142,7 +145,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 			}
 		});
 		if (fDefaultFramework != null) {
-			IConfigurationElement element = PDEPlugin.getDefault().getOSGiFrameworkManager().getFramework(fDefaultFramework);
+			IConfigurationElement element = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager().getFramework(fDefaultFramework);
 			if (element != null) {
 				fTableViewer.setCheckedElements(new Object[] {element});
 			}
@@ -156,9 +159,19 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		store.setValue(IPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, fDefaultFramework);
-		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
+		IEclipsePreferences instancePrefs = new InstanceScope().getNode(IPDEConstants.PLUGIN_ID);
+		IEclipsePreferences defaultPrefs = new DefaultScope().getNode(IPDEConstants.PLUGIN_ID);
+		if (defaultPrefs.get(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, "").equals(fDefaultFramework)) { //$NON-NLS-1$
+			instancePrefs.remove(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK);
+		} else {
+			instancePrefs.put(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, fDefaultFramework);
+		}
+		try {
+			instancePrefs.flush();
+		} catch (BackingStoreException e) {
+			PDEPlugin.log(e);
+		}
+
 		return super.performOk();
 	}
 

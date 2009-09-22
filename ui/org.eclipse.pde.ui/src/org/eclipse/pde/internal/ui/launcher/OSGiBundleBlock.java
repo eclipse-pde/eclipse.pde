@@ -11,13 +11,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
+import org.eclipse.pde.internal.launching.launcher.*;
+
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.ui.launcher.BundlesTab;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class OSGiBundleBlock extends AbstractPluginBlock {
 

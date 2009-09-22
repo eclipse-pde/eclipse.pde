@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
+import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
 /**
@@ -51,8 +52,8 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 			// is present in the original copy.  We do this by querying the config twice, with different default values.  If the values == eachother, we 
 			// we know the value is present.  Since generated configs don't contain DOCLEARLOG, we know if DOCLEARLOG is present in the original copy the 
 			// perform apply so save the initialization values has already been run and this is a user modification.
-			boolean firstQuery = original.getAttribute(IPDEUIConstants.DOCLEARLOG, false);
-			boolean secondQuery = original.getAttribute(IPDEUIConstants.DOCLEARLOG, true);
+			boolean firstQuery = original.getAttribute(IPDEConstants.DOCLEARLOG, false);
+			boolean secondQuery = original.getAttribute(IPDEConstants.DOCLEARLOG, true);
 			if (original != null && firstQuery == secondQuery)
 				configuration.setAttribute(IPDEUIConstants.GENERATED_CONFIG, false);
 		} catch (CoreException e) {

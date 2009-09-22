@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.*;
  * Displays the error log in non-Win32 platforms - see bug 55314.
  */
 public final class OpenLogDialog extends TrayDialog {
+	// maximum log file size
+	public static final long MAX_FILE_LENGTH = 1024 * 1024;
 	// input log file
 	private File logFile;
 	// location/size configuration
@@ -90,7 +92,7 @@ public final class OpenLogDialog extends TrayDialog {
 	private String getLogSummary() {
 		StringWriter out = new StringWriter();
 		PrintWriter writer = new PrintWriter(out);
-		if (logFile.length() > LaunchListener.MAX_FILE_LENGTH) {
+		if (logFile.length() > MAX_FILE_LENGTH) {
 			readLargeFileWithMonitor(writer);
 		} else {
 			readFileWithMonitor(writer);
@@ -112,7 +114,7 @@ public final class OpenLogDialog extends TrayDialog {
 		boolean hasStarted = false;
 		try {
 			random = new RandomAccessFile(logFile, "r"); //$NON-NLS-1$
-			random.seek(logFile.length() - LaunchListener.MAX_FILE_LENGTH);
+			random.seek(logFile.length() - MAX_FILE_LENGTH);
 			for (;;) {
 				String line = random.readLine();
 				if (line == null)

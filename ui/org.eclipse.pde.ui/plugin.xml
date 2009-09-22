@@ -18,7 +18,6 @@
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
-   <extension-point id="osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
    <extension-point id="targetProvisioners" name="%extension-point.name.0" schema="schema/targetProvisioners.exsd"/>
    <extension-point id="launchShortcuts" name="%extension-point.name.1" schema="schema/launchShortcuts.exsd"/>
 
@@ -895,42 +894,6 @@
       </objectContribution>
    </extension>
    <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            delegate="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"
-            delegateDescription="%PDELaunchDelegate.description"
-            delegateName="%PDELaunchDelegate.name"
-            id="org.eclipse.pde.ui.RuntimeWorkbench"
-            migrationDelegate="org.eclipse.pde.internal.ui.launcher.PDEMigrationDelegate"
-            modes="run, debug"
-            name="%launchConfigurationType.name"
-            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
-      </launchConfigurationType>
-      <launchConfigurationType
-            delegate="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"
-            delegateDescription="%JUnitPluginLaunchDelegate.description"
-            delegateName="%JUnitPluginLaunchDelegate.name"
-            id="org.eclipse.pde.ui.JunitLaunchConfig"
-            migrationDelegate="org.eclipse.pde.internal.ui.launcher.PDEMigrationDelegate"
-            modes="run, debug"
-            name="%launcher.junit.name"
-            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
-      </launchConfigurationType>
-      <launchConfigurationType
-            delegate="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"
-            delegateDescription="%OSGiLaunchDelegate.description"
-            delegateName="%OSGiLaunchDelegate.name"
-            id="org.eclipse.pde.ui.EquinoxLauncher"
-            migrationDelegate="org.eclipse.pde.internal.ui.launcher.OSGiMigrationDelegate"
-            modes="run, debug"
-            name="%launcher.framework.name"
-            public="true"
-            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"/>
-   </extension>
-   <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="$nl$/icons/etool16/eclipse_launcher.gif"
@@ -992,12 +955,6 @@
                mode="run">
          </launchMode>
       </launchConfigurationTabGroup>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.junit.junitLaunchConfigs">
-      <launchConfigType
-            configTypeID="org.eclipse.pde.ui.JunitLaunchConfig">
-      </launchConfigType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
@@ -1219,13 +1176,6 @@
             class="org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentSearchResultPage"
             searchResultClass="org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentSearchResult"
             id="org.eclipse.pde.ui.dependencyExtentResultPage"/>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.launching.classpathProviders">
-      <classpathProvider
-            class="org.eclipse.pde.ui.launcher.PDESourcePathProvider"
-            id="org.eclipse.pde.ui.workbenchClasspathProvider">
-      </classpathProvider>
    </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">
@@ -1637,13 +1587,6 @@
          </description>
        </fontDefinition>
     </extension>
-    <extension point="org.eclipse.debug.core.sourceLocators">
-   		<sourceLocator
-   			id="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
-   			class="org.eclipse.pde.internal.ui.launcher.PDESourceLookupDirector"
-   			name="%pde.sourcelocator">
-   		</sourceLocator>
-   </extension>
    <extension
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
@@ -1718,14 +1661,6 @@
                 id="org.eclipse.ui.wizards.new.folder">
           </newWizardShortcut>
       </perspectiveExtension>
-    </extension>
-    <extension
-         point="org.eclipse.pde.ui.osgiFrameworks">
-      <framework
-            launcherDelegate="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"
-            id="org.eclipse.pde.ui.EquinoxFramework"
-            name="%Equinox.shortcut.label" 
-            initializer="org.eclipse.pde.internal.ui.launcher.EquinoxInitializer"/>
     </extension>
     <extension
           point="org.eclipse.ui.ide.markerSupport">
@@ -2026,5 +1961,68 @@
                    tooltip="%showErrorInStackTraceConsoleAction.label">
              </action>
           </viewContribution>
-	</extension>>
+	</extension>
+	<extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.LaunchTerminationStatusHandler"
+            code="13"
+            id="org.eclipse.pde.launching.ERR13"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.LaunchTerminationStatusHandler"
+            code="15"
+            id="org.eclipse.pde.launching.ERR15"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.GenericExceptionStatusHandler"
+            code="42"
+            id="org.eclipse.pde.launching.GENERIC_EXCEPTION"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.PluginValidationStatusHandler"
+            code="1000"
+            id="org.eclipse.pde.launching.CREATE_EXTENSION_ERROR"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.PluginValidationStatusHandler"
+            code="1001"
+            id="org.eclipse.pde.launching.DISPLAY_VALIDATION_ERROR"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.LauncherUtilsStatusHandler"
+            code="2000"
+            id="org.eclipse.pde.launching.WORKSPACE_LOCKED"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.LauncherUtilsStatusHandler"
+            code="2001"
+            id="org.eclipse.pde.launching.CLEAR_LOG"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.LauncherUtilsStatusHandler"
+            code="2002"
+            id="org.eclipse.pde.launching.DELETE_WORKSPACE"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.LauncherUtilsStatusHandler"
+            code="2003"
+            id="org.eclipse.pde.launching.CREATE_CONFIG_INI"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.pde.internal.ui.launcher.LauncherUtilsStatusHandler"
+            code="2004"
+            id="org.eclipse.pde.launching.ORGANIZE_MANIFESTS"
+            plugin="org.eclipse.pde.launching">
+      </statusHandler>
+   </extension>	
 </plugin>

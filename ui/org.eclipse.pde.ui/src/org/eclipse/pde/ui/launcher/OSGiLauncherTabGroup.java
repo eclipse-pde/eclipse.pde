@@ -13,8 +13,8 @@ package org.eclipse.pde.ui.launcher;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 
 /**
  * Creates and initializes the tabs on the OSGi Framework launch configuration.
@@ -49,7 +49,7 @@ public class OSGiLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
-		OSGiFrameworkManager manager = PDEPlugin.getDefault().getOSGiFrameworkManager();
+		OSGiFrameworkManager manager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
 		manager.getDefaultInitializer().initialize(configuration);
 	}
 

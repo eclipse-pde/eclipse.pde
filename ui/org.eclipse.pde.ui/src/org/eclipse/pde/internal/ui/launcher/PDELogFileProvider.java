@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
+import org.eclipse.pde.internal.launching.launcher.LaunchListener;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.ui.internal.views.log.ILogFileProvider;
 import org.eclipse.ui.statushandlers.StatusManager;

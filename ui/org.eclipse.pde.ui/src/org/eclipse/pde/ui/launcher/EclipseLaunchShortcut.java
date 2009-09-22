@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.PDESourcePathProvider;
+
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -25,9 +28,13 @@ import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.internal.ui.launcher.ApplicationSelectionDialog;
+import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -41,7 +48,7 @@ import org.eclipse.ui.IEditorPart;
  */
 public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 
-	public static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.RuntimeWorkbench"; //$NON-NLS-1$
+	public static final String CONFIGURATION_TYPE = IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE;
 
 	private IPluginModelBase fModel = null;
 
@@ -214,16 +221,16 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 */
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy wc) {
 		if (TargetPlatformHelper.usesNewApplicationModel())
-			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
+			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
-			wc.setAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
+			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
 		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(wc.getName()));
 		initializeProgramArguments(wc);
 		initializeVMArguments(wc);
 		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
-		wc.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
+		wc.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
 		wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, fApplicationName == null);
 		if (fApplicationName != null) {

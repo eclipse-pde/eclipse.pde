@@ -23,9 +23,9 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.eclipse.pde.internal.launching.PDEMessages;
+import org.eclipse.pde.internal.launching.launcher.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.*;
 import org.osgi.framework.Version;
 
 /**
@@ -34,6 +34,8 @@ import org.osgi.framework.Version;
  * Clients may subclass and instantiate this class.
  * </p>
  * @since 3.2
+ * @deprecated use {@link org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration}
+ * @see org.eclipse.pde.launching.AbstractPDELaunchConfiguration
  */
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
@@ -58,19 +60,19 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		ArrayList programArgs = new ArrayList();
 
 		// If a product is specified, then add it to the program args
-		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-			String product = configuration.getAttribute(IPDELauncherConstants.PRODUCT, ""); //$NON-NLS-1$
+		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.USE_PRODUCT, false)) {
+			String product = configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.PRODUCT, ""); //$NON-NLS-1$
 			if (product.length() > 0) {
 				programArgs.add("-product"); //$NON-NLS-1$
 				programArgs.add(product);
 			} else { // TODO product w/o an application and product... how to handle gracefully?
 				programArgs.add("-application"); //$NON-NLS-1$
-				programArgs.add(configuration.getAttribute(IPDELauncherConstants.APPLICATION, "")); //$NON-NLS-1$
+				programArgs.add(configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.APPLICATION, "")); //$NON-NLS-1$
 			}
 		} else {
 			// specify the application to launch
 			programArgs.add("-application"); //$NON-NLS-1$
-			programArgs.add(configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication()));
+			programArgs.add(configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication()));
 		}
 
 		// specify the workspace location for the runtime workbench
@@ -83,12 +85,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 
 		boolean showSplash = true;
-		if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
+		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
 			programArgs.add("-install"); //$NON-NLS-1$
 			programArgs.add("file:" + installPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$
-			if (!configuration.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
+			if (!configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
 				programArgs.add("-configuration"); //$NON-NLS-1$
 				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 			}
@@ -158,7 +160,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 					|| !featuresPath.toFile().exists();
 		}
 		if (badStructure) {
-			throw new CoreException(LauncherUtils.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
+			throw new CoreException(LauncherUtils.createErrorStatus(PDEMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
 		}
 		// Ensure important files are present
 		ensureProductFilesExist(getProductPath());
@@ -196,7 +198,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
 			try {
-				if (config.getAttribute(IPDELauncherConstants.USEFEATURES, false) && config.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
+				if (config.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.USEFEATURES, false) && config.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
 					String root = getProductPath().toString();
 					root += "/configuration"; //$NON-NLS-1$
 					fConfigDir = new File(root);
@@ -233,7 +235,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			throw new CoreException(Status.CANCEL_STATUS);
 
 		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
 			CoreUtility.deleteContent(getConfigDir(configuration));
 	}
 
@@ -255,8 +257,8 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	}
 
 	private void validateConfigIni(ILaunchConfiguration configuration) throws CoreException {
-		if (!configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
-			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, ""); //$NON-NLS-1$
+		if (!configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
+			String templateLoc = configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, ""); //$NON-NLS-1$
 			IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 			templateLoc = mgr.performStringSubstitution(templateLoc);
 

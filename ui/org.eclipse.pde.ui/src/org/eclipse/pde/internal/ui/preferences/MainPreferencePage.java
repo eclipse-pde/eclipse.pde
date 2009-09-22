@@ -11,10 +11,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
+import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class MainPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private Button fUseID;
@@ -39,6 +43,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 	protected Control createContents(Composite parent) {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -63,7 +68,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		fAutoManage = new Button(group, SWT.CHECK);
 		fAutoManage.setText(PDEUIMessages.MainPreferencePage_updateStale);
-		fAutoManage.setSelection(store.getBoolean(IPreferenceConstants.PROP_AUTO_MANAGE));
+		fAutoManage.setSelection(launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE));
 
 		group = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_exportingGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
@@ -107,10 +112,24 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		} else {
 			store.setValue(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_NAMES);
 		}
-		store.setValue(IPreferenceConstants.PROP_AUTO_MANAGE, fAutoManage.getSelection());
 		store.setValue(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT, fOverwriteBuildFiles.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
 		store.setValue(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES, fShowSourceBundles.getSelection());
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
+
+		// write AUTO_MANAGE setting to pde.launching instance scope 
+		IEclipsePreferences instancePrefs = new InstanceScope().getNode(IPDEConstants.PLUGIN_ID);
+		IEclipsePreferences defaultPrefs = new DefaultScope().getNode(IPDEConstants.PLUGIN_ID);
+		if (defaultPrefs.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE, false) == fAutoManage.getSelection()) {
+			instancePrefs.remove(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE);
+		} else {
+			instancePrefs.putBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE, fAutoManage.getSelection());
+		}
+		try {
+			instancePrefs.flush();
+		} catch (BackingStoreException e) {
+			PDEPlugin.log(e);
+		}
+
 		return super.performOk();
 	}
 

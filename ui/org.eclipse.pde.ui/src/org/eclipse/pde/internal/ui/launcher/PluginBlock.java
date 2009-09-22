@@ -12,14 +12,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.pde.launching.*;
+import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.ui.launcher.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.launcher.*;
 
 public class PluginBlock extends AbstractPluginBlock {
 
@@ -216,7 +220,7 @@ public class PluginBlock extends AbstractPluginBlock {
 				String configType = fLaunchConfig.getType().getIdentifier();
 				String attribute = configType.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE) ? IPDELauncherConstants.APPLICATION : IPDELauncherConstants.APP_TO_TEST;
 				String application = fLaunchConfig.getAttribute(attribute, TargetPlatform.getDefaultApplication());
-				if (!IPDEUIConstants.CORE_TEST_APPLICATION.equals(application))
+				if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application))
 					validateLaunchId(application);
 			}
 		} catch (CoreException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,9 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -23,7 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-public class OrganizeManifestsWizardPage extends UserInputWizardPage implements IPreferenceConstants, IOrganizeManifestsSettings {
+public class OrganizeManifestsWizardPage extends UserInputWizardPage implements ILaunchingPreferenceConstants, IOrganizeManifestsSettings {
 
 	private Button fRemoveUnresolved;
 	private Button fCalculateUses;

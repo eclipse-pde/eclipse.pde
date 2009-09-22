@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
+import org.eclipse.pde.internal.launching.launcher.VMHelper;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
@@ -25,7 +29,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;

@@ -10,52 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
-import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
-
 /**
  * A launch delegate for launching OSGi frameworks
  * <p>
  * Clients may subclass and instantiate this class.
  * </p>
  * @since 3.3
+ * @deprecated use {@link org.eclipse.pde.launching.OSGiLaunchConfigurationDelegate} instead.
+ * @see org.eclipse.pde.launching.OSGiLaunchConfigurationDelegat
  */
-public class OSGiLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
-
-	/**
-	 * Delegates to the launcher delegate associated with the OSGi framework
-	 * selected in the launch configuration.
-	 * 
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		OSGiFrameworkManager manager = PDEPlugin.getDefault().getOSGiFrameworkManager();
-		String id = configuration.getAttribute(IPDELauncherConstants.OSGI_FRAMEWORK_ID, manager.getDefaultFramework());
-		LaunchConfigurationDelegate launcher = manager.getFrameworkLauncher(id);
-		if (launcher != null) {
-			launcher.launch(configuration, mode, launch, monitor);
-		} else {
-			String name = manager.getFrameworkName(id);
-			if (name == null)
-				name = PDEUIMessages.OSGiLaunchConfiguration_selected;
-			String message = NLS.bind(PDEUIMessages.OSGiLaunchConfiguration_cannotFindLaunchConfiguration, name);
-			IStatus status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, message, null);
-			throw new CoreException(status);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
-	 */
-	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
-		return computeBuildOrder(LaunchPluginValidator.getAffectedProjects(configuration));
-	}
+public class OSGiLaunchConfigurationDelegate extends org.eclipse.pde.launching.OSGiLaunchConfigurationDelegate {
 
 }

@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.pde.launching.*;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IResource;
@@ -28,8 +31,11 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.ui.launcher.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class LaunchAction extends Action {
@@ -263,8 +269,8 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
-		wc.setAttribute(IPDEUIConstants.DOCLEARLOG, false);
-		wc.setAttribute(IPDEUIConstants.APPEND_ARGS_EXPLICITLY, true);
+		wc.setAttribute(IPDEConstants.DOCLEARLOG, false);
+		wc.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
 		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);

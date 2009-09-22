@@ -22,9 +22,9 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.PDEMessages;
+import org.eclipse.pde.internal.launching.launcher.*;
 
 /**
  * A launch delegate for launching the Equinox framework
@@ -32,6 +32,8 @@ import org.eclipse.pde.internal.ui.launcher.*;
  * Clients may subclass and instantiate this class.
  * </p>
  * @since 3.2
+ * @deprecated use {@link org.eclipse.pde.launching.EquinoxLaunchConfiguration} instead.
+ * @see org.eclipse.pde.launching.EquinoxLaunchConfiguration
  */
 public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
@@ -68,9 +70,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("osgi.framework", LaunchConfigurationHelper.getBundleURL(IPDEBuildConstants.BUNDLE_OSGI, fAllBundles, false)); //$NON-NLS-1$
-		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
+		int start = configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
-		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
+		boolean autostart = configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.DEFAULT_AUTO_START, true);
 
 		String bundles = null;
 		if (fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
@@ -93,7 +95,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		if (bundles.length() > 0)
 			properties.put("osgi.bundles", bundles); //$NON-NLS-1$
 
-		if (!"3.3".equals(configuration.getAttribute(IPDEUIConstants.LAUNCHER_PDE_VERSION, ""))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (!"3.3".equals(configuration.getAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, ""))) { //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("eclipse.ignoreApp", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put("osgi.noShutdown", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -169,7 +171,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				fModels.put(model, "default:default"); //$NON-NLS-1$
 				fAllBundles.put(IPDEBuildConstants.BUNDLE_OSGI, model);
 			} else {
-				String message = PDEUIMessages.EquinoxLaunchConfiguration_oldTarget;
+				String message = PDEMessages.EquinoxLaunchConfiguration_oldTarget;
 				throw new CoreException(LauncherUtils.createErrorStatus(message));
 			}
 		}
@@ -198,7 +200,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 */
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
 			CoreUtility.deleteContent(getConfigDir(configuration));
 	}
 

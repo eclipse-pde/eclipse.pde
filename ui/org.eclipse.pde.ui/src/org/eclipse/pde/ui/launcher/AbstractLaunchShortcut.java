@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.pde.launching.IPDELauncherConstants;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;

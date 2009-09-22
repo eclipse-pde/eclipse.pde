@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -33,6 +32,8 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -393,8 +394,8 @@ public class DependencyManagementSection extends TableSection implements IModelC
 					entry.addToken(pmodel.getPlugin().getId());
 				}
 				markDirty();
-				IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-				store.setDefault(IPreferenceConstants.PROP_AUTO_MANAGE, true);
+				PDEPreferencesManager store = PDELaunchingPlugin.getDefault().getPreferenceManager();
+				store.setDefault(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE, true);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
