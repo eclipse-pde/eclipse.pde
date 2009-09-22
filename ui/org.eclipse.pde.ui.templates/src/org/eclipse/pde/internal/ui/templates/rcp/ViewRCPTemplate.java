@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel - bug 265231
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.rcp;
 
@@ -14,14 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 
@@ -83,6 +78,8 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		createApplicationExtension();
 		createPerspectiveExtension();
 		createViewExtension();
+		createMenuExtension();
+
 		if (getBooleanOption(KEY_PRODUCT_BRANDING))
 			createProductExtension();
 	}
@@ -132,6 +129,29 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		view.setAttribute("name", "View"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("id", id + ".view"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
+
+		if (!extension.isInTheModel())
+			plugin.add(extension);
+	}
+
+	private void createMenuExtension() throws CoreException {
+		IPluginBase plugin = model.getPluginBase();
+		IPluginExtension extension = createExtension("org.eclipse.ui.menus", true); //$NON-NLS-1$
+		IPluginElement menuContribution = model.getPluginFactory().createElement(extension);
+		menuContribution.setName("menuContribution"); //$NON-NLS-1$
+		menuContribution.setAttribute("locationURI", "menu:org.eclipse.ui.main.menu"); //$NON-NLS-1$ //$NON-NLS-2$
+		extension.add(menuContribution);
+
+		IPluginElement menu = model.getPluginFactory().createElement(menuContribution);
+		menu.setName("menu"); //$NON-NLS-1$
+		menu.setAttribute("label", "File"); //$NON-NLS-1$ //$NON-NLS-2$
+		menuContribution.add(menu);
+
+		IPluginElement command = model.getPluginFactory().createElement(menu);
+		command.setName("command"); //$NON-NLS-1$
+		command.setAttribute("commandId", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$
+		command.setAttribute("label", "Exit"); //$NON-NLS-1$ //$NON-NLS-2$
+		menu.add(command);
 
 		if (!extension.isInTheModel())
 			plugin.add(extension);
