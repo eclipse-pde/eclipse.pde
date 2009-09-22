@@ -54,6 +54,16 @@
             %cheatsheet.rcpapp.desc
          </description>
       </cheatsheet>
+      <cheatsheet
+            category="org.eclipse.pde"
+            composite="false"
+            contentFile="cheatsheets/setup-apitools-existing-projects.xml"
+            id="org.eclipse.pde.cheatsheet.setup.apitools.existing"
+            name="%cheatsheet.apitools.setupexisting.name">
+         <description>
+            %cheatsheet.apitools.setupexisting.description
+         </description>
+      </cheatsheet>
    </extension>
    
 </plugin>
