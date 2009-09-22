@@ -59,7 +59,7 @@ public class IdUtil {
 	}
 
 	public static String getValidId(String projectName) {
-		return projectName.replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+		return projectName.replaceAll("[^a-zA-Z0-9\\._-]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*

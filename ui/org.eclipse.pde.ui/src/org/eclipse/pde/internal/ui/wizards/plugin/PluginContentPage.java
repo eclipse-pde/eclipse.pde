@@ -312,7 +312,7 @@ public class PluginContentPage extends ContentPage {
 			// plugin class group
 			if (((fChangedGroups & P_CLASS_GROUP) == 0)) {
 				int oldfChanged = fChangedGroups;
-				fClassText.setText(computeId().toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$
+				fClassText.setText(computeId().replaceAll("-", "_").toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				fChangedGroups = oldfChanged;
 			}
 
