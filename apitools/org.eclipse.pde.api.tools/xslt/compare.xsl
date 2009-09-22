@@ -19,80 +19,104 @@
 	<head>
 		<title>Compare Details</title>
 		<style type="text/css">
-			table {
-				width: 70%;
-				border-style: solid;
-				border-width: 1px;
-				border-color: #666666;
-				border-collapse: collapse;
-			}
-			tbody {
-				display:block
-			}
-			td {
-				border-style: solid;
-				border-width: 1px;
-				border-color: #666666;
-			}
-			a {
-				text-decoration: none;
-				font-weight: bold;
-			}
-			a.typeslnk {
-				color:black;
-				font-family:Arial, Helvetica, sans-serif;
-				text-decoration:none;
-				margin-left:0.25em;
-			}
-			a.typeslnk:hover{
-				text-decoration:underline;
-			}
-			.link {
-				color:black;
-			}
-			.vis {
-				display:block;
-			}
-			.vis tr {
-					border-style: solid;
-					border-width: 1px;
-					border-color: #666666;
-			}
-			.vis th {
-					border-style: solid;
-					border-width: 1px;
-					border-color: #666666;
-					background-color:#CC9933
-			}
+			.main{		font-family:Arial, Helvetica, sans-serif;}
+			.main h3 {	font-family:Arial, Helvetica, sans-serif;
+						background-color:#FFFFFF;
+						font-size:16px;
+						margin:0.1em;}
+			.main h4 { 	background-color:#CCCCCC;
+						margin:0.15em;}
+			a.typeslnk{	font-family:Arial, Helvetica, sans-serif;
+					   	text-decoration:none;}
+			a.typeslnk:hover{text-decoration:underline;}
+			.types{	display:none;
+					margin-bottom:0.25em;
+					margin-top:0.25em;
+					margin-right:0.25em;
+				   	margin-left:0.75em;} 
 		</style>
 		<script type="text/javascript">
-		<xsl:text disable-output-escaping="yes">&lt;</xsl:text>!-- Begin
-			var element=false;
-			function hideall() {
-				var tBodyElements = document.getElementsByTagName('tbody');
-				for (i=0;i <xsl:text disable-output-escaping="yes">&lt;</xsl:text> tBodyElements.length;i++) {
-					tBodyElements[i].style.display='none';
+			function expand(location){
+			   if(document.getElementById){
+				  var childhtml = location.firstChild;
+				  if(!childhtml.innerHTML) {
+				  	childhtml = childhtml.nextSibling;
+				  }
+				  childhtml.innerHTML = childhtml.innerHTML == '[+] ' ? '[-] ' : '[+] ';
+				  var parent = location.parentNode;
+				  childhtml = parent.nextSibling.style ? parent.nextSibling : parent.nextSibling.nextSibling;
+				  childhtml.style.display = childhtml.style.display == 'block' ? 'none' : 'block';
 				}
-			}
-
-			function showHide(tBodyID,link) {
-				element=document.getElementById(tBodyID);
-				if (element.style.display=='none') {
-					document.getElementById(link).innerHTML=' - ';
-					element.style.display='block';
-				} else {
-					document.getElementById(link).innerHTML=' + ';
-					element.style.display='none';
-				}
-			}
-			onload=hideall;
-		// End --<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
+			}  
 		</script>
+		<noscript>
+			<style type="text/css">
+				.types{display:block;}
+				.kinds{display:block;}
+			</style>
+		</noscript>
 	</head>
 	<body>
 		<h1>Compare Details</h1>
-		<div align="left">
-			<xsl:apply-templates select="deltas"/>
+		<div align="left" class="main">
+			<xsl:variable name="breaking" select="deltas/delta[@compatible='false']"/>
+			<xsl:choose>
+				<xsl:when test="count($breaking) &gt; 0">
+					<table border="0" width="60%">
+						<tr>
+							<td>
+								<h3>
+								<a href="javascript:void(0)" class="typeslnk" onclick="expand(this)">
+									<span>[+] </span> List of breaking changes
+								</a>
+								</h3>
+								<div class="types">
+									<table border="1" width="100%" style="line">
+										<thead bgcolor="#CC9933">
+											<tr><td><b>Changes</b></td></tr>
+										</thead>
+										<xsl:for-each select="$breaking">
+											<tr><td><xsl:value-of disable-output-escaping="yes" select="@message"/></td></tr>
+										</xsl:for-each>
+									</table>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</xsl:when>
+				<xsl:otherwise>
+					<p><h3>There are no breaking changes.</h3></p>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:variable name="compatible" select="deltas/delta[@compatible='true']"/>
+			<xsl:choose>
+				<xsl:when test="count($compatible) &gt; 0">
+				<table border="0" width="60%">
+					<tr>
+						<td>
+							<h3>
+							<a href="javascript:void(0)" class="typeslnk" onclick="expand(this)">
+								<span>[+] </span> List of compatible changes
+							</a>
+							</h3>
+							<div class="types">
+								<table border="1" width="100%" style="line">
+									<thead bgcolor="#CC9933">
+										<tr><td><b>Changes</b></td></tr>
+									</thead>
+									<xsl:for-each select="$compatible">
+										<tr><td><xsl:value-of disable-output-escaping="yes" select="@message"/></td></tr>
+									</xsl:for-each>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+				</xsl:when>
+				<xsl:otherwise>
+					<p><h3>There are no compatible changes.</h3></p>
+				</xsl:otherwise>
+			</xsl:choose>
 		</div>
 		<p>
 			<a href="http://validator.w3.org/check?uri=referer">
@@ -101,52 +125,5 @@
 		</p>
 	</body>
 </html>
-</xsl:template>
-<xsl:template match="deltas">
-	<table>
-		<thead>
-			<tr class="vis">
-				<th class="vis">
-					<a href="javascript:void(0)" class="typeslnk" onclick="showHide('breaking', 'breakingspan')">
-						<span id="breakingspan" class="link" > + </span> List of breaking changes
-					</a>
-				</th>
-			</tr>
-		</thead>
-		<tbody id="breaking">
-			<xsl:for-each select="delta">
-				<xsl:if test="(@compatible='false')">
-					<tr>
-						<td>
-							<xsl:value-of disable-output-escaping="yes" select="@message"/>
-						</td>
-					</tr>
-				</xsl:if>
-			</xsl:for-each>
-		</tbody>
-	</table>
-	<p></p>
-	<table>
-		<thead>
-			<tr class="vis">
-				<th class="vis">
-					<a href="javascript:void(0)" class="typeslnk" onclick="showHide('compatible', 'compatiblespan')">
-						<span id="compatiblespan" class="link"> + </span> List of compatible changes
-					</a>
-				</th>
-			</tr>
-		</thead>
-		<tbody id="compatible">
-			<xsl:for-each select="delta">
-				<xsl:if test="(@compatible='true')">
-					<tr>
-						<td>
-							<xsl:value-of disable-output-escaping="yes" select="@message"/>
-						</td>
-					</tr>
-				</xsl:if>
-			</xsl:for-each>
-		</tbody>
-	</table>
 </xsl:template>
 </xsl:stylesheet>

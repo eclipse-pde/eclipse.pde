@@ -48,7 +48,7 @@ import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
  * Drop-down action to select the active session.
  */
 public class ExportSessionAction extends Action {
-	private static final String DELTAS_XSLT_TRANSFORM_PATH = "/xslt/compare.xsl"; //$NON-NLS-1$
+	private static final String DELTAS_XSLT_TRANSFORM_PATH = "/compare.xsl"; //$NON-NLS-1$
 	private static final String XML_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
 	private static final String HTML_FILE_EXTENSION = ".html"; //$NON-NLS-1$
 	APIToolingView view;
