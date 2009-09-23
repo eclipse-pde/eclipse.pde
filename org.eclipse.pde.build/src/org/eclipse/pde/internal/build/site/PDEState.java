@@ -509,10 +509,11 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public BundleDescription getResolvedBundle(String bundleId) {
-		BundleDescription[] description = getState().getBundles(bundleId);
+		BundleDescription[] description = sortByVersion(getState().getBundles(bundleId));
 		if (description == null)
 			return null;
-		for (int i = 0; i < description.length; i++) {
+		//bundles are sorted, start at the high end
+		for (int i = description.length - 1; i >= 0; i--) {
 			if (description[i].isResolved())
 				return description[i];
 		}
