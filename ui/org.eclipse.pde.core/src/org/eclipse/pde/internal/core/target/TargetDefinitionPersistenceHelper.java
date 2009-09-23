@@ -631,8 +631,8 @@ public class TargetDefinitionPersistenceHelper {
 	private static List deserializeBundleContainersFromOldStyleElement(Element content, AbstractBundleContainer primaryContainer, boolean useAll) throws CoreException {
 		List containers = new ArrayList();
 		NodeList list = content.getChildNodes();
-		List included = null;
-		List optional = null;
+		List included = new ArrayList(list.getLength());
+		List optional = new ArrayList();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -648,26 +648,16 @@ public class TargetDefinitionPersistenceHelper {
 							if (id.length() > 0) {
 								BundleInfo info = new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false);
 								if (isOptional) {
-									if (optional == null) {
-										optional = new ArrayList();
-									}
 									optional.add(info);
 								} else {
-									if (included == null) {
-										included = new ArrayList();
-									}
 									included.add(info);
 								}
 							}
 						}
 					}
-
-					// If filtering on plug-ins, we need a container to filter
-					containers.add(primaryContainer);
-
-					// An empty plug-ins sections means no plug-ins included (empty array)
-					if (included == null && optional == null) {
-						included = new ArrayList();
+					// Primary container is only added by default if useAllPlugins='true'
+					if (included.size() > 0 || optional.size() > 0) {
+						containers.add(primaryContainer);
 					}
 				} else if (element.getNodeName().equalsIgnoreCase(EXTRA_LOCATIONS)) {
 					NodeList locations = element.getChildNodes();
@@ -700,15 +690,15 @@ public class TargetDefinitionPersistenceHelper {
 			}
 		}
 		// in the old world, the restrictions were global to all containers
-		if (!useAll && (included != null || optional != null)) {
+		if (!useAll && (included.size() > 0 || optional.size() > 0)) {
 			Iterator iterator = containers.iterator();
 			while (iterator.hasNext()) {
 				IBundleContainer container = (IBundleContainer) iterator.next();
 				if (!(container instanceof FeatureBundleContainer)) {
-					if (included != null) {
+					if (included.size() > 0) {
 						container.setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
 					}
-					if (optional != null) {
+					if (optional.size() > 0) {
 						container.setOptionalBundles((BundleInfo[]) optional.toArray(new BundleInfo[optional.size()]));
 					}
 				}
