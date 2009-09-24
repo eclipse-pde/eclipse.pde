@@ -62,6 +62,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			return false;
 		if (obj instanceof IPluginElement) {
 			IPluginElement target = (IPluginElement) obj;
+			// Equivalent models must return false to get proper source range selection, see bug 267954.
 			if (target.getModel().equals(getModel()))
 				return false;
 			if (target.getAttributeCount() != getAttributeCount())
