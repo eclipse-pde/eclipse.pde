@@ -33,7 +33,8 @@
 					margin-bottom:0.25em;
 					margin-top:0.25em;
 					margin-right:0.25em;
-				   	margin-left:0.75em;} 
+				   	margin-left:0.75em;}
+			thead.head{background-color:#CC9933}
 		</style>
 		<script type="text/javascript">
 			function expand(location){
@@ -72,7 +73,7 @@
 								</h3>
 								<div class="types">
 									<table border="1" width="100%" style="line">
-										<thead bgcolor="#CC9933">
+										<thead class="head">
 											<tr><td><b>Changes</b></td></tr>
 										</thead>
 										<xsl:for-each select="$breaking">
@@ -101,7 +102,7 @@
 							</h3>
 							<div class="types">
 								<table border="1" width="100%" style="line">
-									<thead bgcolor="#CC9933">
+									<thead class="head">
 										<tr><td><b>Changes</b></td></tr>
 									</thead>
 									<xsl:for-each select="$compatible">
