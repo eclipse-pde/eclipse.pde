@@ -447,13 +447,22 @@ public class P2Tests extends P2TestCase {
 
 		runBuild(buildFolder);
 
+		IMetadataRepository metadata = loadMetadataRepository(repoLocation);
+		IInstallableUnit iu = getIU(metadata, "org.eclipse.cvs");
+		assertNotNull(iu);
+
+		//bug 289866
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("pack.excludes=plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar\n");
+		Utils.writeBuffer(repo.getFile("pack.properties"), buffer);
+
 		assertResourceFile(buildFolder, "repo/artifacts.xml");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new Path("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
-		StringBuffer buffer = new StringBuffer();
+		buffer = new StringBuffer();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>               \n");
 		buffer.append("<project name=\"project\" default=\"default\">           \n");
 		buffer.append("    <target name=\"default\">                            \n");
@@ -480,7 +489,12 @@ public class P2Tests extends P2TestCase {
 		IArtifactKey[] keys = repository.getArtifactKeys();
 		for (int i = 0; i < keys.length; i++) {
 			IArtifactDescriptor[] descriptors = repository.getArtifactDescriptors(keys[i]);
-			assertEquals(descriptors.length, 2);
+
+			if (keys[i].getClassifier().equals("osgi.bundle") && keys[i].getId().equals("org.eclipse.cvs")) {
+				assertEquals(descriptors.length, 1);
+				continue;
+			} else
+				assertEquals(descriptors.length, 2);
 
 			if (PACKED_FORMAT.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[1]);
