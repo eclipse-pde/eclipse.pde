@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!--
-	Copyright (c) IBM Corporation and others 2009. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
-	
-	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
-	All contexts are grouped by their relation, with all relations grouped alphabetically.
--->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output
                xmlns="http://www.w3.org/1999/xhtml"
@@ -17,9 +11,15 @@
 <xsl:template match="/">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 	<head>
+		<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+		<meta name="copyright" content="Copyright (c) IBM Corporation and others 2009. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page."/>
+  		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+  		<meta http-equiv="Content-Style-Type" content="text/css"/>
 		<title>Compare Details</title>
 		<style type="text/css">
-			.main{		font-family:Arial, Helvetica, sans-serif;}
+			.main{		font-family:Arial;
+						Helvetica, sans-serif;
+						text-align: left;}
 			.main h3 {	font-family:Arial, Helvetica, sans-serif;
 						background-color:#FFFFFF;
 						font-size:16px;
@@ -50,16 +50,17 @@
 				}
 			}  
 		</script>
+		
+	</head>
+	<body>
 		<noscript>
 			<style type="text/css">
 				.types{display:block;}
 				.kinds{display:block;}
 			</style>
 		</noscript>
-	</head>
-	<body>
 		<h1>Compare Details</h1>
-		<div align="left" class="main">
+		<div class="main">
 			<xsl:variable name="breaking" select="deltas/delta[@compatible='false']"/>
 			<xsl:choose>
 				<xsl:when test="count($breaking) &gt; 0">
@@ -86,7 +87,7 @@
 					</table>
 				</xsl:when>
 				<xsl:otherwise>
-					<p><h3>There are no breaking changes.</h3></p>
+					<h3>There are no breaking changes.</h3>
 				</xsl:otherwise>
 			</xsl:choose>
 			<xsl:variable name="compatible" select="deltas/delta[@compatible='true']"/>
@@ -115,7 +116,7 @@
 				</table>
 				</xsl:when>
 				<xsl:otherwise>
-					<p><h3>There are no compatible changes.</h3></p>
+					<h3>There are no compatible changes.</h3>
 				</xsl:otherwise>
 			</xsl:choose>
 		</div>
