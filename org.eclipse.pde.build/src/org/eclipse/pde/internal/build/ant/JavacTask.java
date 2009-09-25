@@ -34,6 +34,7 @@ public class JavacTask implements ITask {
 	protected String encoding;
 	protected String logExtension;
 	protected String errorProperty;
+	protected String[] excludes;
 
 	/**
 	 * Default constructor for the class.
@@ -73,6 +74,13 @@ public class JavacTask implements ITask {
 			script.printTab();
 			script.print("<src path="); //$NON-NLS-1$
 			script.printQuotes(srcdir[i]);
+			script.println("/>"); //$NON-NLS-1$
+		}
+
+		for (int i = 0; excludes != null && i < excludes.length; i++) {
+			script.printTab();
+			script.print("<exclude "); //$NON-NLS-1$
+			script.printAttribute("name", excludes[i], true); //$NON-NLS-1$
 			script.println("/>"); //$NON-NLS-1$
 		}
 
@@ -139,6 +147,14 @@ public class JavacTask implements ITask {
 	 */
 	public void setSrcdir(String[] srcdir) {
 		this.srcdir = srcdir;
+	}
+
+	/**
+	 * Set patterns to exclude from compilation 
+	 * @param excludes
+	 */
+	public void setExcludes(String[] excludes) {
+		this.excludes = excludes;
 	}
 
 	/**

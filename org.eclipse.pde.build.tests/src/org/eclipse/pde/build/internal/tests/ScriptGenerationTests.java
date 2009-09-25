@@ -1423,11 +1423,22 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("}                           \n");
 		Utils.writeBuffer(fB.getFile("src/api/A.java"), code);
 
+		//bug 105631
+		code = new StringBuffer();
+		code.append("package c;                  \n");
+		code.append("public class CError{        \n");
+		code.append("  not going to compile      \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(C.getFile("src/c/CD.java"), code);
+		
+		Properties extraProperties = new Properties();
+		extraProperties.put("exclude..", "**/CD.java");
+
 		additional = new Attributes();
 		additional.put(new Attributes.Name("Require-Bundle"), "host");
 		additional.put(new Attributes.Name("Eclipse-PlatformFilter"), "(osgi.ws=win32)");
 		Utils.generateBundleManifest(C, "C", "1.0.0", additional);
-		Utils.generatePluginBuildProperties(C, null);
+		Utils.generatePluginBuildProperties(C, extraProperties);
 
 		code = new StringBuffer();
 		code.append("package c;                  \n");

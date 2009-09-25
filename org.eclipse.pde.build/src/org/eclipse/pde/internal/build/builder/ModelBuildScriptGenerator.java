@@ -1197,6 +1197,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			return;
 
 		String name = entry.getName(false);
+
+		String excludes = properties.getProperty(PROPERTY_EXCLUDE_PREFIX + name);
+		if (excludes != null) {
+			javac.setExcludes(Utils.getArrayFromString(excludes, ",")); //$NON-NLS-1$
+		}
 		if (name.equals(EXPANDED_DOT))
 			name = DOT;
 
