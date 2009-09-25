@@ -651,9 +651,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	public boolean isCustomBuild() {
 		WorkspaceBuildModel wbm = new WorkspaceBuildModel(fFile);
 		IBuild build = wbm.getBuild();
-		String[] tokens = build.getEntry(PROPERTY_CUSTOM).getTokens();
-		if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) { //$NON-NLS-1$
-			return true;
+		IBuildEntry entry = build.getEntry(PROPERTY_CUSTOM);
+		if (entry != null) {
+			String[] tokens = entry.getTokens();
+			if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) { //$NON-NLS-1$
+				return true;
+			}
 		}
 		return false;
 	}
