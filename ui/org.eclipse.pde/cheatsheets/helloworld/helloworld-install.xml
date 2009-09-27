@@ -54,6 +54,10 @@
       <description>
          To install the feature, perform the following steps:
       </description>
+      <subitem
+            label="Ensure that &apos;Install&apos; wizard is open. If not, launch it by selecting &quot;Help-&gt;Install New Software...&quot; from the main menu"
+            skip="true">
+      </subitem>
       <subitem label="Select the &quot;C:\helloworld.site&quot; site in the &quot;Work with&quot; combo" 
                skip="false"/>              
       <subitem label="If the &quot;Group items by category&quot; option is checked, the &quot;Hello World!&quot; feature category should be visible" 
