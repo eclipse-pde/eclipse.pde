@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.spelling.*;
 
@@ -119,6 +120,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 	private void deleteNonstringSpellingAnnotations(Iterator iter) {
 		AbstractDocument document = (AbstractDocument) getDocument();
 		IDocumentPartitioner docPartitioner = document.getDocumentPartitioner(XMLStringPartitionScanner.XML_STRING);
+		IDocumentPartitioner pdeXMLPartitioner = document.getDocumentPartitioner(XMLDocumentSetupParticpant.XML_PARTITIONING);
 		IAnnotationModel model = getAnnotationModel();
 
 		while (iter.hasNext()) {
@@ -126,8 +128,10 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 			if (annotation instanceof SpellingAnnotation) {
 				SpellingAnnotation spellingAnnotation = (SpellingAnnotation) annotation;
 				Position position = model.getPosition(spellingAnnotation);
-				String contentType = docPartitioner.getContentType(position.getOffset());
-				if (!XMLStringPartitionScanner.XML_STRING.equalsIgnoreCase(contentType)) {
+				String docContentType = docPartitioner.getContentType(position.getOffset());
+				String pdeXMLContentType = pdeXMLPartitioner.getContentType(position.getOffset());
+				if ((!XMLStringPartitionScanner.XML_STRING.equalsIgnoreCase(docContentType) && !XMLStringPartitionScanner.CUSTOM_TAG.equalsIgnoreCase(docContentType)) // delete the annotation if the marked position was not selected by XML_STRING document partitioner
+						|| (XMLStringPartitionScanner.CUSTOM_TAG.equalsIgnoreCase(docContentType)) && XMLPartitionScanner.XML_TAG.equalsIgnoreCase(pdeXMLContentType)) { // also delete the annotations that are positioned at special XML Tags 
 					model.removeAnnotation(spellingAnnotation);
 				}
 			}
