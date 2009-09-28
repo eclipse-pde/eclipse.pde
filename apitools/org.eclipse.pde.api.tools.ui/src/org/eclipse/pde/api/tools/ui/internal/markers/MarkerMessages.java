@@ -16,7 +16,6 @@ import org.eclipse.osgi.util.NLS;
  */
 public class MarkerMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.markers.markermessages"; //$NON-NLS-1$
-	public static String AddNoReferenceTagResolution_add_noreference_tag;
 	public static String ApiMarkerResolutionGenerator_api_problem_filters;
 	public static String CreateApiFilterOperation_0;
 	public static String DefaultApiProfileResolution_0;

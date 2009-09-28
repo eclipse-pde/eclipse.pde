@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -51,21 +50,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			return NO_RESOLUTIONS;
 		}
 		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
-			case IApiMarkerConstants.API_USAGE_MARKER_ID : {
-				int problemid = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, -1);
-				int flags  = ApiProblemFactory.getProblemFlags(problemid);
-				switch(ApiProblemFactory.getProblemKind(problemid)) {
-					case IApiProblem.API_LEAK: {
-						if(flags == IApiProblem.LEAK_METHOD_PARAMETER || 
-						 flags == IApiProblem.LEAK_CONSTRUCTOR_PARAMETER ||
-						 flags == IApiProblem.LEAK_RETURN_TYPE) {
-							return new IMarkerResolution[] {new FilterProblemResolution(marker), new AddNoReferenceTagResolution(marker)};
-						}
-						break;
-					}
-				}
-				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
-			}
+			case IApiMarkerConstants.API_USAGE_MARKER_ID : 
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
 			}
