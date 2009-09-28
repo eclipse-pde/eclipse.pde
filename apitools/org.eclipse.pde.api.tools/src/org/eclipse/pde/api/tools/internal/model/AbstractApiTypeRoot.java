@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Common implementation for {@link IApiTypeRoot}
@@ -41,29 +36,7 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getContents()
 	 */
-	public byte[] getContents() throws CoreException {
-		InputStream inputStream = getInputStream();
-		try {
-			return Util.getInputStreamAsByteArray(inputStream, -1);
-		} catch (IOException e) {
-			abort("Unable to read class file: " + getTypeName(), e); //$NON-NLS-1$
-			return null; // never gets here
-		} finally {
-			try {
-				inputStream.close();
-			} catch(IOException e) {
-				ApiPlugin.log(e);
-			}
-		}
-	}
-	
-	/**
-	 * Returns an input stream for reading this {@link IApiTypeRoot}. Clients are responsible
-	 * for closing the input stream.
-	 * 
-	 * @return input stream
-	 */
-	public abstract InputStream getInputStream() throws CoreException;	
+	public abstract byte[] getContents() throws CoreException;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getStructure()

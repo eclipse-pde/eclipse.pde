@@ -26,6 +26,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -98,18 +99,34 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 			return getName().hashCode();
 		}
 
-		/**
-		 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeRoot#getInputStream()
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot#getContents()
 		 */
-		public InputStream getInputStream() throws CoreException {
+		public byte[] getContents() throws CoreException {
 			StubArchiveApiTypeContainer archive = (StubArchiveApiTypeContainer) getParent();
 			ZipFile zipFile = archive.open();
 			ZipEntry entry = zipFile.getEntry(getName());
+			InputStream stream = null;
 			if (entry != null) {
 				try {
-					return zipFile.getInputStream(entry);
+					stream = zipFile.getInputStream(entry);
 				} catch (IOException e) {
 					abort("Failed to open class file: " + getTypeName() + " in archive: " + archive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
+					return null;
+				}
+				try {
+					return Util.getInputStreamAsByteArray(stream, -1);
+				}
+				catch(IOException ioe) {
+					abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
+					return null; // never gets here
+				}
+				finally {
+					try {
+						stream.close();
+					} catch (IOException e) {
+						ApiPlugin.log(e);
+					}
 				}
 			}
 			abort("Class file not found: " + getTypeName() + " in archive: " + archive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$

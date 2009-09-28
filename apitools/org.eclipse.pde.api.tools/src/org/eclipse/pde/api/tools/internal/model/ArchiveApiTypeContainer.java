@@ -25,12 +25,14 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * {@link IApiTypeContainer} container for an archive (jar or zip) file.
@@ -61,9 +63,9 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		 */
 		public String getTypeName() {
 			if (fTypeName == null) {
-				fTypeName = getName().replace('/', '.').substring(0, getName().length() - Util.DOT_CLASS_SUFFIX.length()); 
+				fTypeName = getName().replace('/', '.').substring(0, getName().length() - Util.DOT_CLASS_SUFFIX.length());
 			}
-			return fTypeName; 
+			return fTypeName;
 		}
 
 		/* (non-Javadoc)
@@ -91,18 +93,48 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			return getName().hashCode();
 		}
 
-		/**
-		 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeRoot#getInputStream()
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot#getContents()
 		 */
-		public InputStream getInputStream() throws CoreException {
+		public byte[] getContents() throws CoreException {
 			ArchiveApiTypeContainer archive = (ArchiveApiTypeContainer) getParent();
-			ZipFile zipFile = archive.open();
-			ZipEntry entry = zipFile.getEntry(getName());
-			if (entry != null) {
+			ZipFile zipFile;
+			try {
+				zipFile= new ZipFile(archive.fLocation);
+			} catch (IOException e) {
+				abort("Failed to open archive: " + archive.fLocation, e); //$NON-NLS-1$
+				return null;
+			}
+			try {
+				ZipEntry entry = zipFile.getEntry(getName());
+				InputStream stream = null;
+				if (entry != null) {
+					try {
+						stream = zipFile.getInputStream(entry);
+					} catch (IOException e) {
+						abort("Failed to open class file: " + getTypeName() + " in archive: " + archive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
+						return null;
+					}
+					try {
+						return Util.getInputStreamAsByteArray(stream, -1);
+					}
+					catch(IOException ioe) {
+						abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
+						return null;
+					}
+					finally {
+						try {
+							stream.close();
+						} catch (IOException e) {
+							ApiPlugin.log(e);
+						}
+					}
+				}
+			} finally {
 				try {
-					return zipFile.getInputStream(entry);
+					zipFile.close();
 				} catch (IOException e) {
-					abort("Failed to open class file: " + getTypeName() + " in archive: " + archive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
+					abort("Failed to close class file archive", e); //$NON-NLS-1$
 				}
 			}
 			abort("Class file not found: " + getTypeName() + " in archive: " + archive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -133,10 +165,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	private String[] fPackageNames;
 	
-	/**
-	 * Open zip file, or <code>null</code> if file is currently closed.
-	 */
-	private ZipFile fZipFile = null;
 
 	/**
 	 * Constructs an {@link IApiTypeContainer} container for the given jar or zip file
@@ -193,14 +221,6 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#close()
 	 */
 	public synchronized void close() throws CoreException {
-		if (fZipFile != null) {
-			try {
-				fZipFile.close();
-				fZipFile = null;
-			} catch (IOException e) {
-				abort("Failed to close class file archive", e); //$NON-NLS-1$
-			}
-		}
 	}
 
 	/**
@@ -246,46 +266,44 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 * @throws CoreException
 	 */
 	private synchronized void init() throws CoreException {
-		ZipFile zipFile = open();
 		if (fPackages == null) {
 			fPackages = new HashMap();
-			Enumeration entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) entries.nextElement();
-				String name = entry.getName();
-				if (name.endsWith(Util.DOT_CLASS_SUFFIX)) {
-					String pkg = Util.DEFAULT_PACKAGE_NAME;
-					int index = name.lastIndexOf('/');
-					if (index >= 0) {
-						pkg = name.substring(0, index).replace('/', '.');
+			ZipFile zipFile;
+			try {
+				zipFile= new ZipFile(fLocation);
+			} catch (IOException e) {
+				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$
+				return;
+			}
+			try {
+				Enumeration entries= zipFile.entries();
+				while (entries.hasMoreElements()) {
+					ZipEntry entry= (ZipEntry)entries.nextElement();
+					String name= entry.getName();
+					if (name.endsWith(Util.DOT_CLASS_SUFFIX)) {
+						String pkg= Util.DEFAULT_PACKAGE_NAME;
+						int index= name.lastIndexOf('/');
+						if (index >= 0) {
+							pkg= name.substring(0, index).replace('/', '.');
+						}
+						Set fileNames= (Set)fPackages.get(pkg);
+						if (fileNames == null) {
+							fileNames= new HashSet();
+							fPackages.put(pkg, fileNames);
+						}
+						fileNames.add(name);
 					}
-					Set fileNames = (Set) fPackages.get(pkg);
-					if (fileNames == null) {
-						fileNames = new HashSet();
-						fPackages.put(pkg, fileNames);
-					}
-					fileNames.add(name);
+				}
+			} finally {
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					abort("Failed to close class file archive", e); //$NON-NLS-1$
 				}
 			}
 		}
 	}
 	
-	/**
-	 * Returns an open zip file for this archive.
-	 * 
-	 * @return zip file
-	 * @throws IOException if unable to open the archive
-	 */
-	synchronized ZipFile open() throws CoreException {
-		if (fZipFile == null) {
-			try {
-				fZipFile = new ZipFile(fLocation);
-			} catch (IOException e) {
-				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$
-			}
-		}
-		return fZipFile;
-	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * A class file corresponding to a resource in the workspace.
@@ -40,14 +43,28 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 		super(parent, typeName);
 		fFile = file;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getInputStream()
-	 */
-	public InputStream getInputStream() throws CoreException {
-		return fFile.getContents();
-	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot#getContents()
+	 */
+	public byte[] getContents() throws CoreException {
+		InputStream stream = fFile.getContents();
+		try {
+			return Util.getInputStreamAsByteArray(stream, -1);
+		}
+		catch (IOException ioe) {
+			abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
+			return null;
+		}
+		finally {
+			try {
+				stream.close();
+			} catch (IOException e) {
+				ApiPlugin.log(e);
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getTypeName()
 	 */
