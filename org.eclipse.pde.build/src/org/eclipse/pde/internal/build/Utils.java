@@ -18,11 +18,13 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeSite;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
 /**
@@ -747,13 +749,13 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return (bundleProperties != null && bundleProperties.containsKey(ECLIPSE_BUNDLE_SHAPE));
 	}
 
-	public static String[] getSourceBundleHeader(BundleDescription bundle) {
+	public static String getSourceBundleHeader(BundleDescription bundle) {
 		Properties bundleProperties = (Properties) bundle.getUserObject();
 		if (bundleProperties == null || !bundleProperties.containsKey(ECLIPSE_SOURCE_BUNDLE))
-			return new String[0];
+			return ""; //$NON-NLS-1$
 
 		String header = bundleProperties.getProperty(ECLIPSE_SOURCE_BUNDLE);
-		return getArrayFromString(header);
+		return header;
 	}
 
 	/**
@@ -778,30 +780,31 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static Map parseSourceBundleEntry(BundleDescription bundle) {
-		String[] header = getSourceBundleHeader(bundle);
-		if (header.length > 0) {
-			HashMap map = new HashMap();
-			for (int i = 0; i < header.length; i++) {
-				String[] args = getArrayFromString(header[i], ";"); //$NON-NLS-1$
+		String header = getSourceBundleHeader(bundle);
+		if (header.length() == 0)
+			return Collections.EMPTY_MAP;
 
-				if (args.length == 1) {
-					map.put(args[0], Collections.EMPTY_MAP);
-				} else {
-					HashMap subMap = new HashMap(2);
-					map.put(args[0], subMap);
-					for (int j = 1; j < args.length; j++) {
-						int idx = args[j].indexOf('=');
-						if (idx != -1) {
-							subMap.put(args[j].substring(0, idx), args[j].substring(idx, args[j].length()));
-						} else {
-							subMap.put(args[j], ""); //$NON-NLS-1$
-						}
-					}
-				}
-			}
-			return map;
+		HashMap map = new HashMap();
+		ManifestElement[] elements;
+		try {
+			elements = ManifestElement.parseHeader(ECLIPSE_SOURCE_BUNDLE, header);
+		} catch (BundleException e1) {
+			return Collections.EMPTY_MAP;
 		}
-		return Collections.EMPTY_MAP;
+		for (int i = 0; i < elements.length; i++) {
+			String key = elements[i].getValue();
+			HashMap subMap = new HashMap(2);
+			map.put(key, subMap);
+			for (Enumeration e = elements[i].getDirectiveKeys(); e != null && e.hasMoreElements();) {
+				String directive = (String) e.nextElement();
+				subMap.put(directive, elements[i].getDirective(directive));
+			}
+			for (Enumeration e = elements[i].getKeys(); e != null && e.hasMoreElements();) {
+				String attribute = (String) e.nextElement();
+				subMap.put(attribute, elements[i].getAttribute(attribute));
+			}
+		}
+		return map;
 	}
 
 	public static final String EXTRA_ID = "id"; //$NON-NLS-1$

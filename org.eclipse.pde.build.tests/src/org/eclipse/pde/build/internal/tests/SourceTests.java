@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -244,26 +244,26 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/plugins/source_1.0.0/src/bundleA_1.0.0/src.zip");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
-	
+
 	// test use of feature@foo;optional="true"
 	public void testBug228537() throws Exception {
 		IFolder buildFolder = newTest("228537");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
-		
-		Utils.generateFeature(buildFolder, "sdk", new String[] { "source" }, null);
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"source"}, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@source", "sdk,feature@org.eclipse.rcp;optional=\"true\";os=\"win32\"");
 		Utils.storeBuildProperties(sdk, properties);
-		
+
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
 		generateScripts(buildFolder, buildProperties);
-		
+
 		assertResourceFile(buildFolder, "features/source/feature.xml");
 		IFile featureFile = buildFolder.getFile("features/source/feature.xml");
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature feature = factory.parseBuildFeature(featureFile.getLocationURI().toURL());
-		FeatureEntry [] entries = feature.getRawIncludedFeatureReferences();
+		FeatureEntry[] entries = feature.getRawIncludedFeatureReferences();
 		assertTrue(entries.length == 1);
 		assertEquals(entries[0].getId(), "org.eclipse.rcp");
 		assertTrue(entries[0].isOptional());
@@ -325,7 +325,7 @@ public class SourceTests extends PDETestCase {
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(jar.getLocation().toFile()));
 		org.eclipse.pde.internal.build.Utils.transferStreams(in, out);
 		zip.close();
-		
+
 		entries.clear();
 		entries.add("about.html");
 		assertZipContents(buildFolder, "bundleA.source_1.0.0.jar", entries);
@@ -341,15 +341,15 @@ public class SourceTests extends PDETestCase {
 		assertEquals(included[1].getId(), "bundleB.source");
 		assertFalse(included[1].isUnpack());
 	}
-	
+
 	public void testBug230870() throws Exception {
 		IFolder buildFolder = newTest("230870");
-		
+
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
 		IFolder bundleB = Utils.createFolder(buildFolder, "plugins/bundleB");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
-		
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, new String[] { "bundleB", "bundleB.source;unpack=false" });
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, new String[] {"bundleB", "bundleB.source;unpack=false"});
 		Properties properties = new Properties();
 		properties.put("generate.feature@rcp.source", "rcp");
 		properties.put("generate.plugin@bundleB.source", "bundleB");
@@ -357,7 +357,7 @@ public class SourceTests extends PDETestCase {
 		Utils.storeBuildProperties(sdk, properties);
 
 		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA"});
-		
+
 		Utils.generateBundleManifest(bundleA, "bundleA", "1.0.0", null);
 		Properties buildProperties = new Properties();
 		buildProperties.put("src.includes", "about.html");
@@ -371,27 +371,26 @@ public class SourceTests extends PDETestCase {
 		Utils.generatePluginBuildProperties(bundleB, buildProperties);
 		Utils.writeBuffer(bundleB.getFile("src/B.java"), new StringBuffer("class B {\n}\n"));
 		Utils.writeBuffer(bundleB.getFile("about.html"), new StringBuffer("about\n"));
-		
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "sdk");
 		properties.put("baseLocation", "");
 		properties.put("archivesFormat", "*,*,*-folder");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		Set entries = new HashSet();
 		entries.clear();
 		entries.add("A.java");
 		entries.add("about.html");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/bundleA.source_1.0.0.jar", entries);
-		
+
 		entries.clear();
 		entries.add("B.java");
 		entries.add("about.html");
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/bundleB.source_1.0.0.jar", entries);
 	}
-	
+
 	public void testIndividualSourceBundles_2() throws Exception {
 		IFolder buildFolder = newTest("individualSourceBundles2");
 
@@ -454,7 +453,7 @@ public class SourceTests extends PDETestCase {
 		stream = new FileOutputStream(about);
 		stream.write("about\n".getBytes());
 		stream.close();
-		
+
 		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"a.bundle"}, "1.0.0.qualifier");
 
 		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
@@ -468,17 +467,17 @@ public class SourceTests extends PDETestCase {
 		buildProperties.put("forceContextQualifier", "123");
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		runBuild(buildFolder);
-		
+
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/rcp.source_1.0.0.123/src/a.bundle_1.0.0/about.html");
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/rcp.source_1.0.0.123/src/a.bundle_1.0.0/src.zip");
-		
+
 		//build again using the binaries output from the first build
 		IFolder build2 = Utils.createFolder(buildFolder, "2");
-		
+
 		//top level feature must be in buildDirectory
 		Utils.createFolder(build2, "features");
 		sdkFolder.move(new Path("../2/features/sdk"), true, null);
-		
+
 		String oldBuild = buildFolder.getLocation().toOSString();
 		Utils.generateAllElements(build2, "sdk");
 		buildProperties = BuildConfiguration.getBuilderProperties(build2);
@@ -487,17 +486,16 @@ public class SourceTests extends PDETestCase {
 		buildProperties.put("forceContextQualifier", "124");
 		Utils.storeBuildProperties(build2, buildProperties);
 		runBuild(build2);
-		
+
 		assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124/src/a.bundle_1.0.0/about.html");
 		assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124/src/a.bundle_1.0.0/src.zip");
 	}
-	
-	
+
 	public void testBug247007_247027() throws Exception {
 		IFolder buildFolder = newTest("247007");
 		IFolder sdkFolder = Utils.createFolder(buildFolder, "features/sdk");
-		
-		Utils.generateFeature(buildFolder, "sdk", new String [] { "sdk.source" }, new String [] { "org.apache.ant" });
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"sdk.source"}, new String[] {"org.apache.ant"});
 		Properties properties = new Properties();
 		properties.put("generate.feature@sdk.source", "sdk,feature@org.eclipse.rcp");
 		Utils.storeBuildProperties(sdkFolder, properties);
@@ -505,82 +503,110 @@ public class SourceTests extends PDETestCase {
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
 		properties.put("filteredDependencyCheck", "true");
 		generateScripts(buildFolder, properties);
-		
+
 		//if we failed to account for the source features, then osgi would not have been in the state and 
 		//org.apache.ant would have failed to resolve and generateScripts would have thrown an exception
 	}
-	
+
 	public void testBug257761() throws Exception {
 		IFolder buildFolder = newTest("257761");
 		IFolder a1 = Utils.createFolder(buildFolder, "plugins/a1");
 		IFolder a2 = Utils.createFolder(buildFolder, "plugins/a2");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
-		
-		Utils.generateFeature(buildFolder, "sdk", new String [] { "sdk.source"}, new String [] { "a;version=1.0.0", "a;version=2.0.0"});
+
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"sdk.source"}, new String[] {"a;version=1.0.0", "a;version=2.0.0"});
 		Properties properties = new Properties();
 		properties.put("generate.feature@sdk.source", "sdk");
 		properties.put("individualSourceBundles", "true");
 		Utils.storeBuildProperties(sdk, properties);
-		
+
 		Utils.generateBundleManifest(a1, "a", "1.0.0", null);
 		Utils.generatePluginBuildProperties(a1, null);
 		Utils.writeBuffer(a1.getFile("src/a.java"), new StringBuffer("class a{}"));
-		
+
 		Utils.generateBundleManifest(a2, "a", "2.0.0", null);
 		Utils.generatePluginBuildProperties(a2, null);
 		Utils.writeBuffer(a2.getFile("src/a.java"), new StringBuffer("class a{}"));
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "sdk");
 		properties.put("baseLocation", "");
 		properties.put("archivesFormat", "*,*,*-folder");
 		Utils.storeBuildProperties(buildFolder, properties);
-		
+
 		runBuild(buildFolder);
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/a.source_1.0.0.jar");
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/a.source_2.0.0.jar");
 	}
-	
+
 	public void testBug272543() throws Exception {
 		IFolder root = newTest("272543");
 		IFolder buildFolder = Utils.createFolder(root, "build1");
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
-		
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "bundleA", "bundleA.source;unpack=false" });
+
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"bundleA", "bundleA.source;unpack=false"});
 		Properties properties = new Properties();
 		properties.put("generate.plugin@bundleA.source", "bundleA");
 		properties.put("individualSourceBundles", "true");
 		Utils.storeBuildProperties(sdk, properties);
-		
+
 		Utils.generateBundleManifest(bundleA, "bundleA", "1.0.0", null);
 		Properties buildProperties = new Properties();
 		buildProperties.put("src.includes", "about.html");
 		Utils.generatePluginBuildProperties(bundleA, buildProperties);
 		Utils.writeBuffer(bundleA.getFile("src/A.java"), new StringBuffer("class A {\n}\n"));
 		Utils.writeBuffer(bundleA.getFile("about.html"), new StringBuffer("about\n"));
-		
+
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "sdk");
 		properties.put("baseLocation", "");
 		properties.put("archivesFormat", "*,*,*-folder");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
+
 		IFolder build2 = Utils.createFolder(root, "build2");
 		IFolder sdk2 = Utils.createFolder(build2, "features/sdk2");
-		Utils.generateFeature(build2, "sdk2", null, new String[] { "bundleA", "bundleA.source;unpack=false" });
+		Utils.generateFeature(build2, "sdk2", null, new String[] {"bundleA", "bundleA.source;unpack=false"});
 		properties = new Properties();
 		properties.put("generate.plugin@bundleA.source", "bundleA");
 		properties.put("individualSourceBundles", "true");
 		Utils.storeBuildProperties(sdk2, properties);
-		
-		
+
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("topLevelElementId", "sdk2");
 		properties.put("baseLocation", buildFolder.getFolder("tmp/eclipse").getLocation().toOSString());
 		properties.put("archivesFormat", "*,*,*-folder");
 		Utils.storeBuildProperties(build2, properties);
-		runBuild(build2);	
+		runBuild(build2);
+	}
+
+	public void testBug290828() throws Exception {
+		IFolder buildFolder = newTest("290828");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.cvs"});
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"f", "f.source"}, null);
+
+		Properties properties = new Properties();
+		properties.put("generate.feature@f.source", "f");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(sdk, properties);
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "sdk");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		IFile feature = buildFolder.getFile("tmp/eclipse/features/f.source_1.0.0/feature.xml");
+		assertResourceFile(feature);
+		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
+		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
+		FeatureEntry[] included = model.getPluginEntries();
+		assertEquals(1, included.length);
+		for (int i = 0; i < included.length; i++) {
+			assertResourceFile(buildFolder, "tmp/eclipse/plugins/" + included[i].getId() + "_" + included[i].getVersion() + ".jar");
+		}
 	}
 }
