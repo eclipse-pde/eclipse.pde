@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,10 +11,9 @@
 package org.eclipse.pde.internal.launching.launcher;
 
 import java.io.File;
-
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class LaunchConfigurationListener implements ILaunchConfigurationListener {
@@ -35,7 +34,7 @@ public class LaunchConfigurationListener implements ILaunchConfigurationListener
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		File configDir = LaunchConfigurationHelper.getConfigurationLocation(configuration);
+		final File configDir = LaunchConfigurationHelper.getConfigurationLocation(configuration);
 		if (configDir.exists()) {
 			// rename the config area if it was auto-set by PDE when the launch configuration is renamed
 			ILaunchConfiguration destination = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);
@@ -43,8 +42,17 @@ public class LaunchConfigurationListener implements ILaunchConfigurationListener
 			if (destination != null) {
 				delete = !configDir.renameTo(LaunchConfigurationHelper.getConfigurationLocation(destination));
 			}
-			if (delete)
-				CoreUtility.deleteContent(configDir);
+			// delete asynchronously in a job to avoid blocking calling thread
+			if (delete) {
+				Job job = new Job("Clean Configuration Data") { //$NON-NLS-1$
+					protected IStatus run(IProgressMonitor monitor) {
+						CoreUtility.deleteContent(configDir);
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+			}
 		}
 	}
 
