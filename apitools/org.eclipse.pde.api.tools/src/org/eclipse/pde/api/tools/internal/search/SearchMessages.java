@@ -54,6 +54,7 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_bundle_usage_information;
 	public static String UseReportConverter_bundles_that_were_not_searched;
 	public static String UseReportConverter_click_an_entry_to_see_details;
+	public static String UseReportConverter_following_bundles_have_refs;
 	public static String UseReportConverter_fragment_permissible_references;
 	public static String UseReportConverter_fragment_ref_description;
 	public static String UseReportConverter_inlined_description;
@@ -61,6 +62,7 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_internal_ref_description;
 	public static String UseReportConverter_internal_references;
 	public static String UseReportConverter_line_number;
+	public static String UseReportConverter_list_of_all_refing_bundles;
 	public static String UseReportConverter_member;
 	public static String UseReportConverter_missing_bundles_prevented_scan;
 	public static String UseReportConverter_missing_required;
@@ -70,16 +72,19 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_other_references;
 	public static String UseReportConverter_parsing_use_scan;
 	public static String UseReportConverter_permissible_ref_description;
+	public static String UseReportConverter_reference_count;
 	public static String UseReportConverter_reference_details;
 	public static String UseReportConverter_reference_kind;
 	public static String UseReportConverter_reference_location;
 	public static String UseReportConverter_referenced_type;
+	public static String UseReportConverter_referencing_bundles;
 	public static String UseReportConverter_reported_missing_bundles;
 	public static String UseReportConverter_required_bundles;
 	public static String UseReportConverter_summary;
 	public static String UseReportConverter_terminology;
 	public static String UseReportConverter_types_used_in;
 	public static String UseReportConverter_usage_details;
+	public static String UseReportConverter_version;
 	public static String UseReportConvertor_additional_infos_section;
 	public static String UseScanParser_analyzing_references;
 	public static String UseScanParser_parsing;

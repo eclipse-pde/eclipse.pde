@@ -77,9 +77,10 @@ public class UseReportConverter extends HTMLConvertor {
 		
 		ArrayList reports = new ArrayList();
 		Report currentreport = null;
-		Type currenttype = null;
+		Type currenttype = null, currentreferee = null;
 		Member currentmember = null;
 		HashMap keys = new HashMap();
+		ArrayList referees = new ArrayList();
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
@@ -101,7 +102,7 @@ public class UseReportConverter extends HTMLConvertor {
 					System.out.println("Writing report for bundle: "+target.getId()); //$NON-NLS-1$
 					start = System.currentTimeMillis();
 				}
-				writeReferencedMemberPage(this.currentreport);
+				writeReferencedMemberPage(this.currentreport, this.referees);
 				if(DEBUG) {
 					System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
@@ -113,9 +114,23 @@ public class UseReportConverter extends HTMLConvertor {
 				//clear any children as we have written them out - keep the report object to write a sorted index page
 				this.currentreport.children.clear();
 				this.keys.clear();
+				this.referees.clear();
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+		 */
+		public boolean visitReferencingComponent(IComponentDescriptor component) {
+			this.currentreferee = new Type(component);
+			return true;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+		 */
+		public void endVisitReferencingComponent(IComponentDescriptor component) {
+			this.referees.add(this.currentreferee);
+		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
 		 */
@@ -170,30 +185,35 @@ public class UseReportConverter extends HTMLConvertor {
 						case VisibilityModifiers.API: {
 							this.currentmember.counts.total_api_type_count++;
 							this.currenttype.counts.total_api_type_count++;
+							this.currentreferee.counts.total_api_type_count++;
 							this.currentreport.counts.total_api_type_count++;
 							break;
 						}
 						case VisibilityModifiers.PRIVATE: {
 							this.currentmember.counts.total_private_type_count++;
 							this.currenttype.counts.total_private_type_count++;
+							this.currentreferee.counts.total_private_type_count++;
 							this.currentreport.counts.total_private_type_count++;
 							break;
 						}
 						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
 							this.currentmember.counts.total_permissable_type_count++;
 							this.currenttype.counts.total_permissable_type_count++;
+							this.currentreferee.counts.total_permissable_type_count++;
 							this.currentreport.counts.total_permissable_type_count++;
 							break;
 						}
 						case FRAGMENT_PERMISSIBLE: {
 							this.currentmember.counts.total_fragment_permissible_type_count++;
 							this.currenttype.counts.total_fragment_permissible_type_count++;
+							this.currentreferee.counts.total_fragment_permissible_type_count++;
 							this.currentreport.counts.total_fragment_permissible_type_count++;
 							break;
 						}
 						default: {
 							this.currentmember.counts.total_other_type_count++;
 							this.currenttype.counts.total_other_type_count++;
+							this.currentreferee.counts.total_other_type_count++;
 							this.currentreport.counts.total_other_type_count++;
 							break;
 						}
@@ -205,30 +225,35 @@ public class UseReportConverter extends HTMLConvertor {
 						case VisibilityModifiers.API: {
 							this.currentmember.counts.total_api_method_count++;
 							this.currenttype.counts.total_api_method_count++;
+							this.currentreferee.counts.total_api_method_count++;
 							this.currentreport.counts.total_api_method_count++;
 							break;
 						}
 						case VisibilityModifiers.PRIVATE: {
 							this.currentmember.counts.total_private_method_count++;
 							this.currenttype.counts.total_private_method_count++;
+							this.currentreferee.counts.total_private_method_count++;
 							this.currentreport.counts.total_private_method_count++;
 							break;
 						}
 						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
 							this.currentmember.counts.total_permissable_method_count++;
 							this.currenttype.counts.total_permissable_method_count++;
+							this.currentreferee.counts.total_permissable_method_count++;
 							this.currentreport.counts.total_permissable_method_count++;
 							break;
 						}
 						case FRAGMENT_PERMISSIBLE: {
 							this.currentmember.counts.total_fragment_permissible_method_count++;
 							this.currenttype.counts.total_fragment_permissible_method_count++;
+							this.currentreferee.counts.total_fragment_permissible_method_count++;
 							this.currentreport.counts.total_fragment_permissible_method_count++;
 							break;
 						}
 						default: {
 							this.currentmember.counts.total_other_method_count++;
 							this.currenttype.counts.total_other_method_count++;
+							this.currentreferee.counts.total_other_method_count++;
 							this.currentreport.counts.total_other_method_count++;
 							break;
 						}
@@ -240,30 +265,35 @@ public class UseReportConverter extends HTMLConvertor {
 						case VisibilityModifiers.API: {
 							this.currentmember.counts.total_api_field_count++;
 							this.currenttype.counts.total_api_field_count++;
+							this.currentreferee.counts.total_api_field_count++;
 							this.currentreport.counts.total_api_field_count++;
 							break;
 						}
 						case VisibilityModifiers.PRIVATE: {
 							this.currentmember.counts.total_private_field_count++;
 							this.currenttype.counts.total_private_field_count++;
+							this.currentreferee.counts.total_private_field_count++;
 							this.currentreport.counts.total_private_field_count++;
 							break;
 						}
 						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
 							this.currentmember.counts.total_permissable_field_count++;
 							this.currenttype.counts.total_permissable_field_count++;
+							this.currentreferee.counts.total_permissable_field_count++;
 							this.currentreport.counts.total_permissable_field_count++;
 							break;
 						}
 						case FRAGMENT_PERMISSIBLE: {
 							this.currentmember.counts.total_fragment_permissible_field_count++;
 							this.currenttype.counts.total_fragment_permissible_field_count++;
+							this.currentreferee.counts.total_fragment_permissible_field_count++;
 							this.currentreport.counts.total_fragment_permissible_field_count++;
 							break;
 						}
 						default: {
 							this.currentmember.counts.total_other_field_count++;
 							this.currenttype.counts.total_other_field_count++;
+							this.currentreferee.counts.total_other_field_count++;
 							this.currentreport.counts.total_other_field_count++;
 							break;
 						}
@@ -303,6 +333,9 @@ public class UseReportConverter extends HTMLConvertor {
 				catch(CoreException ce) {
 					return -1;
 				}
+			}
+			if(o1 instanceof IComponentDescriptor && o2 instanceof IComponentDescriptor) {
+				return ((IComponentDescriptor)o1).getId().compareTo(((IComponentDescriptor)o2).getId());
 			}
 			return -1;
 		};
@@ -758,7 +791,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Writes out a summary of the missing required bundles
 	 * @param htmlroot
 	 */
-	protected void writeMissingBundlesPage(File htmlroot) throws Exception {
+	protected void writeMissingBundlesPage(final File htmlroot) throws Exception {
 		File missing = null;
 		PrintWriter writer = null;
 		try {
@@ -824,7 +857,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * 
 	 * @param htmlroot
 	 */
-	void writeNotSearchedPage(File htmlroot) throws Exception {
+	void writeNotSearchedPage(final File htmlroot) throws Exception {
 		File originhtml = null;
 		try {
 			String filename = "not_searched"; //$NON-NLS-1$
@@ -868,8 +901,9 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Writes the referenced member index page
 	 * @param report
+	 * @param referees the listing of referencing bundles
 	 */
-	void writeReferencedMemberPage(Report report) throws Exception {
+	void writeReferencedMemberPage(final Report report, final List referees) throws Exception {
 		PrintWriter writer = null;
 		File originhtml = null;
 		try {
@@ -889,7 +923,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_TITLE).append(NLS.bind(SearchMessages.UseReportConverter_types_used_in, report.name)).append(CLOSE_TITLE); 
 			buffer.append(CLOSE_HEAD); 
 			buffer.append(OPEN_BODY); 
-			buffer.append(OPEN_H3).append(NLS.bind(SearchMessages.UseReportConverter_types_used_in, report.name)).append(CLOSE_H3); 
+			buffer.append(OPEN_H3).append(NLS.bind(SearchMessages.UseReportConverter_types_used_in, report.name)).append(CLOSE_H3);
+			buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter_list_of_all_refing_bundles, new String[] {"<a href=\"#bundles\">", "</a>"})).append(CLOSE_P); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append(getTerminologySection());
 			buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_referenced_type));
 			CountGroup counts = null;
@@ -914,6 +949,28 @@ public class UseReportConverter extends HTMLConvertor {
 				writeTypePage(map, type, typefile, fqname);
 			}
 			buffer.append(CLOSE_TABLE); 
+			buffer.append(BR);
+			buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_referencing_bundles).append(CLOSE_H4);
+			buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter_following_bundles_have_refs, report.name)).append(CLOSE_P);
+			buffer.append("<a name=\"bundles\">").append(CLOSE_A); //$NON-NLS-1$
+			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
+			buffer.append(OPEN_TR); 
+			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"70%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_bundle).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"20%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_version).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"10%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_count).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append(CLOSE_TR);
+			Collections.sort(referees, compare);
+			IComponentDescriptor comp = null;
+			for (int i = 0; i < referees.size(); i++) {
+				type = (Type) referees.get(i);
+				comp = (IComponentDescriptor) type.desc;
+				buffer.append("<tr bgcolor=\"").append((type.counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
+				buffer.append("\t").append(OPEN_TD).append(comp.getId()).append(CLOSE_TD); //$NON-NLS-1$
+				buffer.append("\t").append(OPEN_TD).append(comp.getVersion()).append(CLOSE_TD); //$NON-NLS-1$
+				buffer.append("\t<td align=\"center\">").append(type.counts.getTotalRefCount()).append(CLOSE_TD); //$NON-NLS-1$
+				buffer.append(CLOSE_TR);
+			}
+			buffer.append(CLOSE_TABLE);
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
 			buffer.append(W3C_FOOTER);
 			
@@ -959,7 +1016,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
 			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_TR); 
-			buffer.append("<td bgcolor=\"#CC9933\"><b>").append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			buffer.append("<td bgcolor=\"#CC9933\">").append(OPEN_B).append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
 			buffer.append(CLOSE_TR); 
 			Entry entry = null;
 			IElementDescriptor desc = null;
@@ -1176,7 +1233,7 @@ public class UseReportConverter extends HTMLConvertor {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
 		buffer.append(OPEN_TR); 
-		buffer.append("\t<td bgcolor=\"#CC9933\" width=\"38%\"><b>").append(columnname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" width=\"38%\">").append(OPEN_B).append(columnname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_api_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
 		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_internal_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
 		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_internal_permissible_references).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
