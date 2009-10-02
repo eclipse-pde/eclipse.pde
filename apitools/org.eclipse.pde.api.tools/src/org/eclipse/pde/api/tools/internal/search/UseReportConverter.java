@@ -13,22 +13,20 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -46,17 +44,22 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
-import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class converts a collection of API use report XML files
@@ -65,148 +68,288 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.1
  */
-public class UseReportConverter {
+public class UseReportConverter extends HTMLConvertor {
 
 	/**
-	 * Colour white for normal / permissible references
+	 * Use visitor to write the reports
 	 */
-	private static final String NORMAL_REFS_COLOUR = "#FFFFFF"; //$NON-NLS-1$
-
-	/**
-	 * Colour red for internal references
-	 */
-	private static final String INTERNAL_REFS_COLOUR = "#F6CECE"; //$NON-NLS-1$
-
-	/**
-	 * Default handler to collect a total reference count
-	 */
-	static final class UseDefaultHandler extends DefaultHandler {
-
-		private Report lreport = null;
-		private int type = 0;
-		private CountGroup counts = null;
+	class Visitor extends UseScanVisitor {
 		
-		/**
-		 * Constructor
+		ArrayList reports = new ArrayList();
+		Report currentreport = null;
+		Type currenttype = null;
+		Member currentmember = null;
+		HashMap keys = new HashMap();
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 		 */
-		public UseDefaultHandler(Report report, int type, CountGroup counts) {
-			this.lreport = report;
-			this.type = type;
-			this.counts = counts;
+		public boolean visitComponent(IComponentDescriptor target) {
+			this.currentreport = new Report();
+			this.currentreport.name = composeName(target.getId(), target.getVersion());
+			this.reports.add(this.currentreport);
+			return true;
 		}
 		
 		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisit(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 		 */
-		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
-			if(IApiXmlConstants.REFERENCES.equals(name)) {
-				String vis = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
-				String value = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_COUNT);
-				lreport.alternate = attributes.getValue(IApiXmlConstants.ATTR_ALTERNATE);
-				int count = Integer.parseInt(value);
-				switch(Integer.parseInt(vis)) {
-					case VisibilityModifiers.API: {
-						switch(type) {
-							case IReference.T_TYPE_REFERENCE: {
-								counts.total_api_type_count = count;
-								lreport.counts.total_api_type_count += count;
-								break;
-							}
-							case IReference.T_METHOD_REFERENCE: {
-								counts.total_api_method_count = count;
-								lreport.counts.total_api_method_count += count;
-								break;
-							}
-							case IReference.T_FIELD_REFERENCE: {
-								counts.total_api_field_count = count;
-								lreport.counts.total_api_field_count += count;
-								break;
-							}
-						}
-						break;
-					}
-					case VisibilityModifiers.PRIVATE: {
-						switch(type) {
-							case IReference.T_TYPE_REFERENCE: {
-								counts.total_private_type_count = count;
-								lreport.counts.total_private_type_count += count;
-								break;
-							}
-							case IReference.T_METHOD_REFERENCE: {
-								counts.total_private_method_count = count;
-								lreport.counts.total_private_method_count += count;
-								break;
-							}
-							case IReference.T_FIELD_REFERENCE: {
-								counts.total_private_field_count = count;
-								lreport.counts.total_private_field_count += count;
-								break;
-							}
-						}
-						break;
-					}
-					case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
-						switch(type) {
-							case IReference.T_TYPE_REFERENCE: {
-								counts.total_permissable_type_count = count;
-								lreport.counts.total_permissable_type_count += count;
-								break;
-							}
-							case IReference.T_METHOD_REFERENCE: {
-								counts.total_permissable_method_count = count;
-								lreport.counts.total_permissable_method_count += count;
-								break;
-							}
-							case IReference.T_FIELD_REFERENCE: {
-								counts.total_permissable_field_count = count;
-								lreport.counts.total_permissable_field_count += count;
-								break;
-							}
-						}
-						break;
-					}
-					case VisibilityModifiers.ALL_VISIBILITIES: {
-						switch(type) {
-							case IReference.T_TYPE_REFERENCE: {
-								counts.total_other_type_count = count;
-								lreport.counts.total_other_type_count += count;
-								break;
-							}
-							case IReference.T_METHOD_REFERENCE: {
-								counts.total_other_method_count = count;
-								lreport.counts.total_other_method_count += count;
-								break;
-							}
-							case IReference.T_FIELD_REFERENCE: {
-								counts.total_other_field_count = count;
-								lreport.counts.total_other_field_count += count;
-								break;
-							}
-						}
-						break;
-					}
-					case UseReportConverter.FRAGMENT_PERMISSIBLE: {
-						switch(type) {
-						case IReference.T_TYPE_REFERENCE: {
-							counts.total_fragment_permissible_type_count = count;
-							lreport.counts.total_fragment_permissible_type_count += count;
-							break;
-						}
-						case IReference.T_METHOD_REFERENCE: {
-							counts.total_fragment_permissible_method_count = count;
-							lreport.counts.total_fragment_permissible_method_count += count;
-							break;
-						}
-						case IReference.T_FIELD_REFERENCE: {
-							counts.total_fragment_permissible_field_count = count;
-							lreport.counts.total_fragment_permissible_field_count += count;
-							break;
-						}
-					}
-						break;
-					}
+		public void endVisit(IComponentDescriptor target) {
+			try {
+				long start = 0;
+				if(DEBUG) {
+					System.out.println("Writing report for bundle: "+target.getId()); //$NON-NLS-1$
+					start = System.currentTimeMillis();
+				}
+				writeReferencedMemberPage(this.currentreport);
+				if(DEBUG) {
+					System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
+			catch(Exception e) {
+				ApiPlugin.log(e);
+			}
+			finally {
+				//clear any children as we have written them out - keep the report object to write a sorted index page
+				this.currentreport.children.clear();
+				this.keys.clear();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
+		 */
+		public boolean visitMember(IMemberDescriptor referencedMember) {
+			IReferenceTypeDescriptor desc = null;
+			switch(referencedMember.getElementType()) {
+				case IElementDescriptor.TYPE: {
+					desc = (IReferenceTypeDescriptor) referencedMember;
+					break;
+				}
+				case IElementDescriptor.METHOD:
+				case IElementDescriptor.FIELD: {
+					desc = referencedMember.getEnclosingType();
+					break;
+				}
+			}
+			if(desc == null) {
+				return false;
+			}
+			this.currenttype = (Type) this.keys.get(desc);
+			if(this.currenttype == null) {
+				this.currenttype = new Type(desc);
+				this.keys.put(desc, this.currenttype);
+			}
+			TreeMap map = (TreeMap) this.currentreport.children.get(this.currenttype);
+			if(map == null) {
+				map = new TreeMap(compare);
+				this.currentreport.children.put(this.currenttype, map);
+			}
+			this.currentmember = (Member) map.get(referencedMember);
+			if(this.currentmember == null) {
+				this.currentmember = new Member(referencedMember);
+				map.put(referencedMember, this.currentmember);
+			}
+			return true;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor, int, int)
+		 */
+		public void visitReference(int refKind, IMemberDescriptor fromMember, int lineNumber, int visibility) {
+			String refname = org.eclipse.pde.api.tools.internal.builder.Reference.getReferenceText(refKind);
+			ArrayList refs = (ArrayList) this.currentmember.children.get(refname);
+			if(refs == null) {
+				refs = new ArrayList();
+				this.currentmember.children.put(refname, refs);
+			}
+			refs.add(new Reference(fromMember, lineNumber, visibility));
+			switch(fromMember.getElementType()) {
+				case IElementDescriptor.TYPE: {
+					switch(visibility) {
+						case VisibilityModifiers.API: {
+							this.currentmember.counts.total_api_type_count++;
+							this.currenttype.counts.total_api_type_count++;
+							this.currentreport.counts.total_api_type_count++;
+							break;
+						}
+						case VisibilityModifiers.PRIVATE: {
+							this.currentmember.counts.total_private_type_count++;
+							this.currenttype.counts.total_private_type_count++;
+							this.currentreport.counts.total_private_type_count++;
+							break;
+						}
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+							this.currentmember.counts.total_permissable_type_count++;
+							this.currenttype.counts.total_permissable_type_count++;
+							this.currentreport.counts.total_permissable_type_count++;
+							break;
+						}
+						case FRAGMENT_PERMISSIBLE: {
+							this.currentmember.counts.total_fragment_permissible_type_count++;
+							this.currenttype.counts.total_fragment_permissible_type_count++;
+							this.currentreport.counts.total_fragment_permissible_type_count++;
+							break;
+						}
+						default: {
+							this.currentmember.counts.total_other_type_count++;
+							this.currenttype.counts.total_other_type_count++;
+							this.currentreport.counts.total_other_type_count++;
+							break;
+						}
+					}
+					break;
+				}
+				case IElementDescriptor.METHOD: {
+					switch(visibility) {
+						case VisibilityModifiers.API: {
+							this.currentmember.counts.total_api_method_count++;
+							this.currenttype.counts.total_api_method_count++;
+							this.currentreport.counts.total_api_method_count++;
+							break;
+						}
+						case VisibilityModifiers.PRIVATE: {
+							this.currentmember.counts.total_private_method_count++;
+							this.currenttype.counts.total_private_method_count++;
+							this.currentreport.counts.total_private_method_count++;
+							break;
+						}
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+							this.currentmember.counts.total_permissable_method_count++;
+							this.currenttype.counts.total_permissable_method_count++;
+							this.currentreport.counts.total_permissable_method_count++;
+							break;
+						}
+						case FRAGMENT_PERMISSIBLE: {
+							this.currentmember.counts.total_fragment_permissible_method_count++;
+							this.currenttype.counts.total_fragment_permissible_method_count++;
+							this.currentreport.counts.total_fragment_permissible_method_count++;
+							break;
+						}
+						default: {
+							this.currentmember.counts.total_other_method_count++;
+							this.currenttype.counts.total_other_method_count++;
+							this.currentreport.counts.total_other_method_count++;
+							break;
+						}
+					}
+					break;
+				}
+				case IElementDescriptor.FIELD: {
+					switch(visibility) {
+						case VisibilityModifiers.API: {
+							this.currentmember.counts.total_api_field_count++;
+							this.currenttype.counts.total_api_field_count++;
+							this.currentreport.counts.total_api_field_count++;
+							break;
+						}
+						case VisibilityModifiers.PRIVATE: {
+							this.currentmember.counts.total_private_field_count++;
+							this.currenttype.counts.total_private_field_count++;
+							this.currentreport.counts.total_private_field_count++;
+							break;
+						}
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+							this.currentmember.counts.total_permissable_field_count++;
+							this.currenttype.counts.total_permissable_field_count++;
+							this.currentreport.counts.total_permissable_field_count++;
+							break;
+						}
+						case FRAGMENT_PERMISSIBLE: {
+							this.currentmember.counts.total_fragment_permissible_field_count++;
+							this.currenttype.counts.total_fragment_permissible_field_count++;
+							this.currentreport.counts.total_fragment_permissible_field_count++;
+							break;
+						}
+						default: {
+							this.currentmember.counts.total_other_field_count++;
+							this.currenttype.counts.total_other_field_count++;
+							this.currentreport.counts.total_other_field_count++;
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Comparator for use report items
+	 */
+	static Comparator compare = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			if(o1 instanceof String && o2 instanceof String) {
+				return ((String)o1).compareTo((String)o2);
+			}
+			if(o1 instanceof Type && o2 instanceof Type) {
+				return compare(((Type)o1).desc, ((Type)o2).desc);
+			}
+			if(o1 instanceof IReferenceTypeDescriptor && o2 instanceof IReferenceTypeDescriptor) {
+				return ((IReferenceTypeDescriptor)o1).getQualifiedName().compareTo(((IReferenceTypeDescriptor)o2).getQualifiedName());
+			}
+			if(o1 instanceof IMethodDescriptor && o2 instanceof IMethodDescriptor) {
+				try {
+					return Signatures.getQualifiedMethodSignature((IMethodDescriptor)o1).compareTo(Signatures.getQualifiedMethodSignature((IMethodDescriptor)o2));
+				}
+				catch(CoreException ce) {
+					return  -1;
+				}
+			}
+			if(o1 instanceof IFieldDescriptor && o2 instanceof IFieldDescriptor) {
+				try {
+					return Signatures.getQualifiedFieldSignature((IFieldDescriptor)o1).compareTo(Signatures.getQualifiedFieldSignature((IFieldDescriptor)o2));
+				}
+				catch(CoreException ce) {
+					return -1;
+				}
+			}
+			return -1;
+		};
+	};
+	
+	/**
+	 * Root item describing the use of one component
+	 */
+	static class Report {
+		String name = null;
+		TreeMap children = new TreeMap(compare);
+		CountGroup counts = new CountGroup();
+	}
+	
+	/**
+	 * Describes a type, used to key a collection of {@link Member}s
+	 */
+	static class Type {
+		IElementDescriptor desc = null;
+		CountGroup counts = new CountGroup();
+		public Type(IElementDescriptor desc) {
+			this.desc = desc;
+		}
+	}
+	
+	/**
+	 * Describes a member that is being used
+	 */
+	static class Member {
+		IElementDescriptor descriptor = null;
+		TreeMap children = new TreeMap(compare);
+		CountGroup counts = new CountGroup();
+		public Member(IElementDescriptor desc) {
+			this.descriptor = desc;
+		}
+	}
+	
+	/**
+	 * Describes a reference from a given descriptor
+	 */
+	static class Reference {
+		IElementDescriptor desc = null;
+		int line = -1, vis = -1;
+		public Reference(IElementDescriptor desc, int line, int vis) {
+			this.desc = desc;
+			this.line = line;
+			this.vis = vis;
 		}
 	}
 	
@@ -270,18 +413,6 @@ public class UseReportConverter {
 	}
 	
 	/**
-	 * Describes one project with references
-	 */
-	final static class Report {
-		File referee = null;
-		TreeMap origintorefslist = new TreeMap(Util.filesorter);
-		TreeMap origintocountgroup = new TreeMap(Util.filesorter);
-		CountGroup counts = new CountGroup();
-		// alternate component that reference were resolved in or null if none
-		String alternate = null;
-	}
-	
-	/**
 	 * Handler for parsing the not_searched.xml file to output a summary or 
 	 * missing required bundles
 	 */
@@ -305,6 +436,53 @@ public class UseReportConverter {
 	}
 	
 	/**
+	 * Visibility constant indicating an element has host-fragment level of visibility.
+	 *  i.e. fragments have {@link #PRIVATE_PERMISSIBLE}-like access to the internals of their host.
+	 *  
+	 *  @since 1.0.1
+	 */
+	public static final int FRAGMENT_PERMISSIBLE = 0x0000005;
+	/**
+	 * Default XSLT file name
+	 */
+	private static final String DEFAULT_XSLT = "/references.xsl"; //$NON-NLS-1$
+	/**
+	 * Colour white for normal / permissible references
+	 */
+	static final String NORMAL_REFS_COLOUR = "#FFFFFF"; //$NON-NLS-1$
+	/**
+	 * Colour red for internal references
+	 */
+	 static final String INTERNAL_REFS_COLOUR = "#F6CECE"; //$NON-NLS-1$
+	/**
+	 * Style HTML bits for a page that shows references
+	 */
+	static final String REF_STYLE;
+	/**
+	 * The script block used to show an expanding table of references
+	 */
+	static final String REF_SCRIPT;
+	
+	static {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<style type=\"text/css\">\n"); //$NON-NLS-1$
+		buffer.append("\t.main {\t\tfont-family:Arial, Helvetica, sans-serif;\n\t}\n"); //$NON-NLS-1$
+		buffer.append("\t.main h3 {\n\t\tfont-family:Arial, Helvetica, sans-serif;\n\t\t\background-color:#FFFFFF;\n\t\tfont-size:14px;\n\t\tmargin:0.1em;\n\t}\n"); //$NON-NLS-1$
+		buffer.append("\t.main h4 {\n\t\tbackground-color:#CCCCCC;\n\t\tmargin:0.15em;\n\t}\n"); //$NON-NLS-1$
+		buffer.append("\ta.typeslnk {\n\t\tfont-family:Arial, Helvetica, sans-serif;\n\t\ttext-decoration:none;\n\t\tmargin-left:0.25em;\n\t}\n"); //$NON-NLS-1$
+		buffer.append("\ta.typeslnk:hover {\n\t\ttext-decoration:underline;\n\t}\n"); //$NON-NLS-1$
+		buffer.append("\ta.kindslnk {\n\t\tfont-family:Arial, Helvetica, sans-serif;\n\t\ttext-decoration:none;\n\t\tmargin-left:0.25em;\n\t}\n"); //$NON-NLS-1$
+		buffer.append("\t.types {\n\t\tdisplay:none;\n\t\tmargin-bottom:0.25em;\n\t\tmargin-top:0.25em;\n\t\tmargin-right:0.25em;\n\t\tmargin-left:0.75em;\n\t}\n"); //$NON-NLS-1$
+		buffer.append("</style>\n"); //$NON-NLS-1$
+		REF_STYLE = buffer.toString();
+		
+		buffer = new StringBuffer();
+		buffer.append("<script type=\"text/javascript\">\n\tfunction expand(location) {\n\t\tif(document.getElementById) {\n\t\t\tvar childhtml = location.firstChild;\n\t\t\tif(!childhtml.innerHTML) {\n\t\t\t\tchildhtml = childhtml.nextSibling;\n\t\t\t}\n\t\t\tchildhtml.innerHTML = childhtml.innerHTML == '[+] ' ? '[-] ' : '[+] ';\n\t\t\tvar parent = location.parentNode;\n\t\t\tchildhtml = parent.nextSibling.style ? parent.nextSibling : parent.nextSibling.nextSibling;\n\t\t\tchildhtml.style.display = childhtml.style.display == 'block' ? 'none' : 'block';\n\t\t}\n\t}\n</script>\n"); //$NON-NLS-1$
+		buffer.append("<noscript>\n\t<style type=\"text/css\">\n\t\t.types {display:block;}\n\t\t.kinds{display:block;}\n\t</style>\n</noscript>\n"); //$NON-NLS-1$
+		REF_SCRIPT = buffer.toString();
+	}
+	
+	/**
 	 * Method used for initializing tracing in the report converter
 	 */
 	public static void setDebug(boolean debugValue) {
@@ -314,31 +492,15 @@ public class UseReportConverter {
 	/**
 	 * Constant used for controlling tracing in the report converter
 	 */
-	private static boolean DEBUG = Util.DEBUG;
+	protected static boolean DEBUG = Util.DEBUG;
 	
-	/**
-	 * Default XSLT file name
-	 */
-	private static final String DEFAULT_XSLT = "/references.xsl"; //$NON-NLS-1$
-	
-	/**
-	 * Collection of {@link Report}s
-	 */
-	HashSet/*<Report>*/ reports = null;
 	private File htmlRoot = null;
 	private File reportsRoot = null;
 	private String xmlLocation = null;
 	private String htmlLocation = null;
 	private File htmlIndex = null;
 	SAXParser parser = null;
-
-	/**
-	 * Visibility constant indicating an element has host-fragment level of visibility.
-	 *  i.e. fragments have {@link #PRIVATE_PERMISSIBLE}-like access to the internals of their host.
-	 *  
-	 *  @since 1.0.1
-	 */
-	public static final int FRAGMENT_PERMISSIBLE = 0x0000005;
+	private boolean hasmissing = false;
 	
 	/**
 	 * Constructor
@@ -348,6 +510,88 @@ public class UseReportConverter {
 	public UseReportConverter(String htmlroot, String xmlroot) {
 		this.xmlLocation = xmlroot;
 		this.htmlLocation = htmlroot;
+	}
+	
+	/**
+	 * Runs the converter on the given locations
+	 */
+	public void convert(String xslt, IProgressMonitor monitor) throws Exception {
+		if (this.htmlLocation == null) {
+			return;
+		}
+		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseReportConverter_preparing_report_metadata, 8);
+		try {
+			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_html_root);
+			Util.updateMonitor(localmonitor, 1);
+			this.htmlRoot = new File(this.htmlLocation);
+			if (!this.htmlRoot.exists()) {
+				if (!this.htmlRoot.mkdirs()) {
+					throw new Exception(NLS.bind(SearchMessages.could_not_create_file, this.htmlLocation));
+				}
+			}
+			else {
+				this.htmlRoot.mkdirs();
+			}
+			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xml_root);
+			Util.updateMonitor(localmonitor, 1);
+			if (this.xmlLocation == null) {
+				throw new Exception(SearchMessages.missing_xml_files_location);
+			}
+			this.reportsRoot = new File(this.xmlLocation);
+			if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
+				throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, this.xmlLocation));
+			}
+			
+			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xslt_file);
+			Util.updateMonitor(localmonitor, 1);
+			File xsltFile = null;
+			if(xslt != null) {
+				// we will use the default XSLT transform from the ant jar when this is null
+				xsltFile = new File(xslt);
+				if(!xsltFile.exists() || !xsltFile.isFile()) {
+					throw new Exception(SearchMessages.UseReportConverter_xslt_file_not_valid);
+				}
+			}
+			long start = 0;
+			if(DEBUG) {
+				start = System.currentTimeMillis();
+			}
+			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_not_searched);
+			writeMissingBundlesPage(this.htmlRoot);
+			writeNotSearchedPage(this.htmlRoot);
+			Util.updateMonitor(localmonitor, 1);
+			if(DEBUG) {
+				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Parsing use scan..."); //$NON-NLS-1$
+				start = System.currentTimeMillis();
+			}
+			localmonitor.setTaskName(SearchMessages.UseReportConverter_parsing_use_scan);
+			UseScanParser parser = new UseScanParser();
+			Visitor convertor = new Visitor();
+			parser.parse(xmlLocation, localmonitor.newChild(5), convertor);
+			Util.updateMonitor(localmonitor, 1);
+			if(DEBUG) {
+				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
+				start = System.currentTimeMillis();
+			}
+			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_root_index);
+			Collections.sort(convertor.reports, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return ((Report)o1).name.compareTo(((Report)o2).name);
+				}
+			});
+			writeIndexPage(convertor.reports, this.htmlRoot);
+			Util.updateMonitor(localmonitor, 1);
+			if(DEBUG) {
+				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		finally {
+			if(localmonitor != null) {
+				localmonitor.done();
+			}
+		}
 	}
 	
 	/**
@@ -361,9 +605,9 @@ public class UseReportConverter {
 			try {
 				this.parser = factory.newSAXParser();
 			} catch (ParserConfigurationException pce) {
-				throw new Exception(SearchMessages.ApiUseReportConverter_pce_error_getting_parser, pce);
+				throw new Exception(SearchMessages.UseReportConverter_pce_error_getting_parser, pce);
 			} catch (SAXException se) {
-				throw new Exception(SearchMessages.ApiUseReportConverter_se_error_parser_handle, se);
+				throw new Exception(SearchMessages.UseReportConverter_se_error_parser_handle, se);
 			}
 			if (this.parser == null) {
 				throw new Exception(SearchMessages.could_not_create_sax_parser);
@@ -373,161 +617,15 @@ public class UseReportConverter {
 	}
 	
 	/**
-	 * Runs the converter on the given locations
+	 * Builds the name for the component
+	 * @param id
+	 * @param version
+	 * @return
 	 */
-	public void convert(String xslt, IProgressMonitor monitor) throws Exception {
-		if (this.htmlLocation == null) {
-			return;
-		}
-		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.ApiUseReportConverter_preparing_report_metadata, 8);
-		try {
-			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_html_root);
-			Util.updateMonitor(localmonitor, 1);
-			this.htmlRoot = new File(this.htmlLocation);
-			if (!this.htmlRoot.exists()) {
-				if (!this.htmlRoot.mkdirs()) {
-					throw new Exception(NLS.bind(SearchMessages.could_not_create_file, this.htmlLocation));
-				}
-			}
-			else {
-				this.htmlRoot.mkdirs();
-			}
-			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_xml_root);
-			Util.updateMonitor(localmonitor, 1);
-			if (this.xmlLocation == null) {
-				throw new Exception(SearchMessages.missing_xml_files_location);
-			}
-			this.reportsRoot = new File(this.xmlLocation);
-			if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
-				throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, this.xmlLocation));
-			}
-			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_preparing_xslt_file);
-			Util.updateMonitor(localmonitor, 1);
-			File xsltFile = null;
-			if(xslt != null) {
-				// we will use the default XSLT transform from the ant jar when this is null
-				xsltFile = new File(xslt);
-				if(!xsltFile.exists() || !xsltFile.isFile()) {
-					throw new Exception(SearchMessages.ApiUseReportConverter_xslt_file_not_valid);
-				}
-			}
-			long start = 0;
-			if(DEBUG) {
-				System.out.println("Preparing to write indexes..."); //$NON-NLS-1$
-				start = System.currentTimeMillis();
-			}
-			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_collecting_dir_info);
-			Util.updateMonitor(localmonitor, 1);
-			File[] referees = getDirectories(this.reportsRoot);
-			this.reports = new HashSet(referees.length+1);
-			Report report = null;
-			File[] origins = null;
-			File[] xmlfiles = null;
-			UseDefaultHandler handler = null;
-			CountGroup counts = null;
-			SubMonitor smonitor = localmonitor.newChild(1);
-			smonitor.setWorkRemaining(referees.length);
-			try {
-				for (int i = 0; i < referees.length; i++) {
-					report = new Report();
-					report.referee = referees[i];
-					smonitor.setTaskName(NLS.bind(SearchMessages.ApiUseReportConverter_preparing_report_info_for, new String[] {referees[i].getName()}));
-					origins = getDirectories(referees[i]);
-					for (int j = 0; j < origins.length; j++) {
-						xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
-							public boolean accept(File pathname) {
-								return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
-							}
-						});
-						if(xmlfiles != null) {
-							report.origintorefslist.put(origins[j], xmlfiles);
-						}
-						counts = new CountGroup();
-						report.origintocountgroup.put(origins[j], counts);
-						if (xmlfiles != null) {
-							for (int k = 0; k < xmlfiles.length; k++) {
-								try {
-									handler = new UseDefaultHandler(report, getTypeFromFileName(xmlfiles[k]), counts);
-									getParser().parse(xmlfiles[k], handler);
-								} 
-								catch (SAXException e) {}
-								catch (IOException e) {}
-							}
-						}
-					}
-					this.reports.add(report);
-					Util.updateMonitor(smonitor, 1);
-				}
-			}
-			finally {
-				if(!smonitor.isCanceled()) {
-					smonitor.done();
-				}
-			}
-			ArrayList sortedreports = new ArrayList(this.reports); 
-			Collections.sort(sortedreports, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					if(o1 instanceof Report && o2 instanceof Report) {
-						return ((Report)o1).referee.getName().compareTo(((Report)o2).referee.getName());
-					}
-					return 0;
-				}
-			});
-			if(DEBUG) {
-				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				System.out.println("Writing not searched index..."); //$NON-NLS-1$
-				start = System.currentTimeMillis();
-			}
-			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_writing_not_searched);
-			writeMissingSummary(this.htmlRoot);
-			writeNotSearched(this.htmlRoot);
-			Util.updateMonitor(localmonitor, 1);
-			if(DEBUG) {
-				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				System.out.println("Writing root index.html..."); //$NON-NLS-1$
-				start = System.currentTimeMillis();
-			}
-			localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_writing_root_index);
-			writeIndexFile(sortedreports, this.htmlRoot);
-			Util.updateMonitor(localmonitor, 1);
-			if(DEBUG) {
-				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			//dump the reports
-			TreeMap originstorefs = null;
-			smonitor = localmonitor.newChild(1);
-			smonitor.setWorkRemaining(sortedreports.size());
-			for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
-				report = (Report) iter.next();
-				localmonitor.setTaskName(NLS.bind(SearchMessages.ApiUseReportConverter_writing_group_reports_for, new String[] {report.referee.getName()}));
-				if(DEBUG) {
-					start = System.currentTimeMillis();
-					System.out.println("Writing report for "+report.referee.getName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				writeRefereeIndex(report);
-				originstorefs = report.origintorefslist;
-				for(Iterator iter2 = originstorefs.entrySet().iterator(); iter2.hasNext();) {
-					Map.Entry entry = (Map.Entry) iter2.next();
-					File origin = (File) entry.getKey();
-					writeOriginEntry(report, xmlfiles, origin, (CountGroup) report.origintocountgroup.get(origin));
-					xmlfiles = (File[]) entry.getValue();
-					tranformXml(xmlfiles, xsltFile);
-				}
-				if(DEBUG) {
-					System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				Util.updateMonitor(smonitor, 1);
-			}
-		}
-		finally {
-			if(localmonitor != null) {
-				localmonitor.done();
-			}
-			if(this.reports != null) {
-				this.reports.clear();
-				this.reports = null;
-			}
-		}
+	protected String composeName(String id, String version) {
+		StringBuffer buffer = new StringBuffer(3+id.length()+version.length());
+		buffer.append(id).append(" (").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+		return buffer.toString();
 	}
 	
 	/**
@@ -545,7 +643,7 @@ public class UseReportConverter {
 	 * @param htmloutput
 	 * @throws TransformerException
 	 */
-	private void applyXSLT(File xsltFile, File xmlfile, File htmloutput) throws TransformerException, Exception {
+	protected void applyXSLT(File xsltFile, File xmlfile, File htmloutput) throws TransformerException, Exception {
 		Source xslt = null;
 		if (xsltFile != null) {
 			xslt = new StreamSource(xsltFile);
@@ -556,7 +654,7 @@ public class UseReportConverter {
 			}
 		}
 		if(xslt == null) {
-			throw new Exception(SearchMessages.ApiUseReportConverter_no_xstl_specified);
+			throw new Exception(SearchMessages.UseReportConverter_no_xstl_specified);
 		}
 		applyXSLT(xslt, xmlfile, htmloutput);
 	}
@@ -568,7 +666,7 @@ public class UseReportConverter {
 	 * @param htmlfile
 	 * @throws TransformerException
 	 */
-	private void applyXSLT(Source xslt, File xmlfile, File htmlfile) throws TransformerException {
+	protected void applyXSLT(Source xslt, File xmlfile, File htmlfile) throws TransformerException {
 		Source xml = new StreamSource(xmlfile);
 		Result html = new StreamResult(htmlfile);
 		TransformerFactory factory = TransformerFactory.newInstance();
@@ -583,7 +681,7 @@ public class UseReportConverter {
 	 * @param xsltFile
 	 * @param html
 	 */
-	private void tranformXml(File[] xmlfiles, File xsltFile) {
+	protected void tranformXml(File[] xmlfiles, File xsltFile) {
 		File html = null;
 		for (int i = 0; i < xmlfiles.length; i++) {
 			try {
@@ -607,7 +705,7 @@ public class UseReportConverter {
 	 * @param xmlfile
 	 * @return
 	 */
-	private String getHTMLFileLocation(File reportroot, File xmlfile) {
+	protected String getHTMLFileLocation(File reportroot, File xmlfile) {
 		IPath xml = new Path(xmlfile.getPath());
 		IPath report = new Path(reportroot.getPath());
 		int segments = xml.matchingFirstSegments(report);
@@ -627,43 +725,88 @@ public class UseReportConverter {
 	 * @param xmlFile
 	 * @return the HTML name to use
 	 */
-	private String getNameFromXMLFilename(File xmlFile) {
+	protected String getNameFromXMLFilename(File xmlFile) {
 		String fileName = xmlFile.getAbsolutePath();
 		int index = fileName.lastIndexOf('.');
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(fileName.substring(this.reportsRoot.getAbsolutePath().length(), index)).append(".html"); //$NON-NLS-1$
+		buffer.append(fileName.substring(this.reportsRoot.getAbsolutePath().length(), index)).append(HTML_EXTENSION); 
 		File htmlFile = new File(this.htmlLocation, String.valueOf(buffer));
 		return htmlFile.getAbsolutePath();
+	}
+	
+	/**
+	 * Returns the collection of missing bundle names
+	 * @param missingfile
+	 * @return the collection of missing bundle names
+	 * @throws Exception
+	 */
+	protected String[] getMissingBundles(File missingfile) throws Exception {
+		MissingHandler handler = new MissingHandler();
+		getParser().parse(missingfile, handler);
+		return (String[]) handler.missing.toArray(new String[handler.missing.size()]); 
+	}
+	
+	/**
+	 * Returns the sentence describing the purpose / reason of the missing bundles
+	 * @return a blurb describing the table of missing bundles
+	 */
+	protected String getMissingBundlesHeader() {
+		return SearchMessages.UseReportConverter_reported_missing_bundles;
 	}
 	
 	/**
 	 * Writes out a summary of the missing required bundles
 	 * @param htmlroot
 	 */
-	private void writeMissingSummary(File htmlroot) throws Exception {
+	protected void writeMissingBundlesPage(File htmlroot) throws Exception {
 		File missing = null;
 		PrintWriter writer = null;
 		try {
 			String filename = "missing"; //$NON-NLS-1$
-			missing = new File(htmlroot, filename+".html"); //$NON-NLS-1$
+			missing = new File(htmlroot, filename+HTML_EXTENSION); 
 			if(!missing.exists()) {
 				missing.createNewFile();
 			}
-			FileWriter fileWriter = new FileWriter(missing);
-			writer = new PrintWriter(new BufferedWriter(fileWriter));
+			
 			File file = new File(this.reportsRoot, "not_searched.xml"); //$NON-NLS-1$
 			TreeSet sorted = new TreeSet(Util.componentsorter);
 			if (file.exists()) {
-				String[] missingBundles = getMissingBundles(file);
+				String[] missingBundles = getMissingBundles(file); 
+				this.hasmissing = missingBundles.length > 0;
 				for (int i = 0; i < missingBundles.length; i++) {
 					sorted.add(missingBundles[i]);
 				}
 			}
-			writeMissingBundlesHeader(writer, sorted);
-			writeMissingBundles(writer, sorted);
-			writeTableEnd(writer);
-			writer.println(SearchMessages.ApiUseReportConverter_back_to_not_searched);
-			writeW3Footer(writer);
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(HTML_HEADER);
+			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_missing_required).append(CLOSE_TITLE); 
+			buffer.append(CLOSE_HEAD); 
+			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_H3).append(SearchMessages.UseReportConverter_missing_required).append(CLOSE_H3);
+			
+			if(sorted.isEmpty()) {
+				buffer.append(SearchMessages.UseReportConverter_no_required_missing).append(BR);
+			}
+			else {
+				buffer.append(OPEN_P).append(getMissingBundlesHeader()).append(CLOSE_P); 
+				buffer.append("<table border=\"1\" width=\"50%\">\n"); //$NON-NLS-1$
+				buffer.append(OPEN_TR).append("<td bgcolor=\"#CC9933\" width=\"38%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_required_bundles).append(CLOSE_B).append(CLOSE_TD).append(CLOSE_TR); //$NON-NLS-1$ 
+			}
+			String value = null;
+			for (Iterator iter = sorted.iterator(); iter.hasNext();) {
+				value = (String) iter.next();
+				buffer.append(OPEN_TR).append(OPEN_TD).append(value).append(CLOSE_TD).append(CLOSE_TR);  
+			}
+			buffer.append(CLOSE_TABLE); 
+			buffer.append(BR).append("<a href=\"not_searched.html\">").append(SearchMessages.UseReportConverter_back_to_not_searched).append(CLOSE_A); //$NON-NLS-1$ 
+			buffer.append(W3C_FOOTER);
+			
+			//write file
+			FileWriter fileWriter = new FileWriter(missing);
+			writer = new PrintWriter(new BufferedWriter(fileWriter));
+			writer.println(buffer.toString());
+			writer.flush();
 		}
 		catch(IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, missing.getAbsolutePath()));
@@ -676,69 +819,27 @@ public class UseReportConverter {
 	}
 	
 	/**
-	 * Writes the header of the 'missing bundles' page.
-	 * 
-	 * @param writer
-	 * @param missing
-	 */
-	protected void writeMissingBundlesHeader(PrintWriter writer, Collection missing) {
-		writer.println(NLS.bind(SearchMessages.UseReportConverter_html_header, SearchMessages.UseReportConverter_missing_required));
-		if(missing.isEmpty()) {
-			writer.println(SearchMessages.UseReportConverter_no_required_missing);
-		}
-		else {
-			writer.println(SearchMessages.ApiUseReportConverter_missing_header);
-		}
-	}
-	
-	/**
-	 * Returns a list of missing bundles (names/versions - whatever label you want to appear)
-	 * 
-	 * @param notSearched xml file of bundles that were not searched 
-	 * @return list of missing bundles
-	 */
-	protected String[] getMissingBundles(File notSearched) throws Exception {
-		MissingHandler handler = new MissingHandler();
-		getParser().parse(notSearched, handler);
-		return (String[]) handler.missing.toArray(new String[handler.missing.size()]); 
-	}
-	
-	/**
-	 * Writes the sorted collection of missing required bundle information
-	 * @param writer the writer to output to
-	 * @param handler
-	 * @throws Exception
-	 */
-	void writeMissingBundles(PrintWriter writer, TreeSet sorted) throws Exception {
-		String value = null;
-		for (Iterator iter = sorted.iterator(); iter.hasNext();) {
-			value = (String) iter.next();
-			writer.println(NLS.bind(SearchMessages.ApiUseReportConverter_missing_bundle_entry, value));
-		}
-	}
-	
-	/**
 	 * Writes out the file of components that were not searched: either because they appeared in an exclude list
 	 * or they have no .api_description file
 	 * 
 	 * @param htmlroot
 	 */
-	private void writeNotSearched(File htmlroot) throws Exception {
+	void writeNotSearchedPage(File htmlroot) throws Exception {
 		File originhtml = null;
 		try {
 			String filename = "not_searched"; //$NON-NLS-1$
-			originhtml = new File(htmlroot, filename+".html"); //$NON-NLS-1$
+			originhtml = new File(htmlroot, filename+HTML_EXTENSION); 
 			if(!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
-			File xml = new File(this.reportsRoot, filename+".xml"); //$NON-NLS-1$
+			File xml = new File(this.reportsRoot, filename+XML_EXTENSION); 
 			InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(getNotSearchedXSLPath()); 
 			Source xslt = null;
 			if (defaultXsltInputStream != null) {
 				xslt = new StreamSource(new BufferedInputStream(defaultXsltInputStream));
 			}
 			if(xslt == null) {
-				throw new Exception(SearchMessages.ApiUseReportConverter_no_xstl_specified);
+				throw new Exception(SearchMessages.UseReportConverter_no_xstl_specified);
 			}
 			if (xml.exists()) {
 				applyXSLT(xslt, xml, originhtml);
@@ -748,76 +849,78 @@ public class UseReportConverter {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
 		catch (TransformerException te) {
-			throw new Exception(SearchMessages.ApiUseReportConverter_te_applying_xslt_skipped, te);
+			throw new Exception(SearchMessages.UseReportConverter_te_applying_xslt_skipped, te);
 		}
 		catch (CoreException e) {
-			throw new Exception(NLS.bind(SearchMessages.ApiUseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
+			throw new Exception(NLS.bind(SearchMessages.UseReportConverter_coreexception_writing_html_file, originhtml.getAbsolutePath()));
 		}
 	}
 	
 	/**
-	 * Returns path of xsl file to use when generating "not searched" information.
+	 * Returns path of XSL file to use when generating "not searched" information.
 	 * 
-	 * @return path relative to /xslt directory of this bundle
+	 * @return path to the XSL file
 	 */
-	protected String getNotSearchedXSLPath() {
+	String getNotSearchedXSLPath() {
 		return "/notsearched.xsl"; //$NON-NLS-1$
 	}
 	
 	/**
-	 * Writes a convenience 'Back' link on the summary page
-	 * @param writer
-	 * @param indexname
-	 */
-	private void writeBackToBundleIndex(PrintWriter writer, String indexname) {
-		writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_back_to_bundle_index, 
-				new String[] {indexname+".html"})); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Writes the standard W3 footer for each page
-	 * @param writer
-	 */
-	private void writeW3Footer(PrintWriter writer) {
-		writer.println(SearchMessages.W3C_page_footer);
-	}
-	
-	/**
-	 * Writes table end HTML 
-	 * @param writer
-	 */
-	private void writeTableEnd(PrintWriter writer) {
-		writer.println(SearchMessages.ApiUseReportConverter_table_end);
-	}
-	
-	/**
-	 * Writes the referee index
+	 * Writes the referenced member index page
 	 * @param report
 	 */
-	private void writeRefereeIndex(Report report) throws Exception {
+	void writeReferencedMemberPage(Report report) throws Exception {
 		PrintWriter writer = null;
 		File originhtml = null;
 		try {
-			File htmlroot = new File(this.htmlLocation, getHTMLFileLocation(this.reportsRoot, report.referee));
+			File htmlroot = new File(this.htmlLocation, report.name);
 			if(!htmlroot.exists()) {
 				htmlroot.mkdirs();
 			}
-			String refereetext = report.referee.getName();
-			File root = new File(htmlroot, report.referee.getName());
-			if(!root.exists()) {
-				root.mkdir();
-			}
-			originhtml = new File(root, refereetext+".html"); //$NON-NLS-1$
+			originhtml = new File(htmlroot, "index.html"); //$NON-NLS-1$
 			if(!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(HTML_HEADER);
+			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+			buffer.append(REF_STYLE);
+			buffer.append(REF_SCRIPT);
+			buffer.append(OPEN_TITLE).append(NLS.bind(SearchMessages.UseReportConverter_types_used_in, report.name)).append(CLOSE_TITLE); 
+			buffer.append(CLOSE_HEAD); 
+			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_H3).append(NLS.bind(SearchMessages.UseReportConverter_types_used_in, report.name)).append(CLOSE_H3); 
+			buffer.append(getTerminologySection());
+			buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_referenced_type));
+			CountGroup counts = null;
+			String link = null;
+			Entry entry = null;
+			File typefile = null;
+			TreeMap map = null;
+			Type type = null;
+			for (Iterator iter = report.children.entrySet().iterator(); iter.hasNext();) {
+				entry = (Entry) iter.next();
+				map = (TreeMap) entry.getValue();
+				type = (Type) entry.getKey();
+				counts = type.counts;
+				
+				String fqname = Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) type.desc);
+				typefile = new File(htmlroot, fqname+HTML_EXTENSION); 
+				if(!typefile.exists()) {
+					typefile.createNewFile();
+				}
+				link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
+				buffer.append(getReferenceTableEntry(counts, link, fqname));
+				writeTypePage(map, type, typefile, fqname);
+			}
+			buffer.append(CLOSE_TABLE); 
+			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
+			buffer.append(W3C_FOOTER);
+			
 			FileWriter fileWriter = new FileWriter(originhtml);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(getRefereeReportHeader(report));
-			writeRefereeIndexEntries(writer, report);
-			writeTableEnd(writer);
-			writeBackToBundleIndex(writer, "../index"); //$NON-NLS-1$
-			writeW3Footer(writer);
+			writer.println(buffer.toString());
+			writer.flush();
 		}
 		catch(IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
@@ -828,47 +931,153 @@ public class UseReportConverter {
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns HTML header for the report page summarizing references to a component from other
-	 * components.
-	 * 
-	 * @param report report for the component
-	 * @return HTML header
+	 * Writes the page that displays all of the members used in a type
+	 * @param map
+	 * @param type
+	 * @param typefile
+	 * @param typename
+	 * @throws Exception
 	 */
-	protected String getRefereeReportHeader(Report report) {
-		return MessageFormat.format(SearchMessages.ApiUseReportConverter_referee_index_header, new String[] {report.referee.getName()});		
+	void writeTypePage(TreeMap map, Type type, File typefile, String typename) throws Exception {
+		PrintWriter writer = null;
+		try {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(HTML_HEADER);
+			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+			buffer.append(REF_STYLE);
+			buffer.append(REF_SCRIPT);
+			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_bundle_usage_information).append(CLOSE_TITLE); 
+			buffer.append(CLOSE_HEAD); 
+			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_H3).append(NLS.bind(SearchMessages.UseReportConverter_usage_details, Signature.getSimpleName(typename))).append(CLOSE_H3); 
+			buffer.append(getTypeCountSummary(typename, type.counts, map.size()));
+			buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_reference_details).append(CLOSE_H4); 
+			buffer.append("<table width=\"50%\" border=\"1\">\n"); //$NON-NLS-1$
+			buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_click_an_entry_to_see_details).append(CLOSE_P); 
+			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
+			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
+			buffer.append(OPEN_TR); 
+			buffer.append("<td bgcolor=\"#CC9933\"><b>").append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			buffer.append(CLOSE_TR); 
+			Entry entry = null;
+			IElementDescriptor desc = null;
+			Member mem = null;
+			for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+				entry = (Entry) iter.next();
+				desc = (IElementDescriptor)entry.getKey();
+				mem = (Member) entry.getValue();
+				buffer.append(OPEN_TR); 
+				buffer.append("<td align=\"left\">\n"); //$NON-NLS-1$
+				buffer.append(OPEN_B); 
+				buffer.append("<a href=\"javascript:void(0)\" class=\"typeslnk\" onclick=\"expand(this)\">\n"); //$NON-NLS-1$
+				buffer.append("<span>[+] </span>").append(getDisplayName(desc, false)).append("\n");  //$NON-NLS-1$//$NON-NLS-2$
+				buffer.append(CLOSE_A).append(CLOSE_B);
+				buffer.append(getReferencesTable(mem)).append("\n"); //$NON-NLS-1$
+				buffer.append(CLOSE_TR); 
+			}
+			buffer.append(CLOSE_TABLE);
+			buffer.append(CLOSE_DIV); 
+			buffer.append(OPEN_P).append("<a href=\"index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
+			buffer.append(W3C_FOOTER);
+			
+			//write the file
+			FileWriter fileWriter = new FileWriter(typefile);
+			writer = new PrintWriter(new BufferedWriter(fileWriter));
+			writer.print(buffer.toString());
+			writer.flush();
+		}
+		catch(IOException ioe) {
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, typefile.getAbsolutePath()));
+		}
+		finally {
+			if(writer != null) {
+				writer.close();
+			}
+		}
 	}
 	
 	/**
-	 * Writes out all the index entries for the referee of the given report
-	 * @param writer
-	 * @param report
+	 * Returns the nested table of references
+	 * @return the nested table of references as a string
 	 */
-	private void writeRefereeIndexEntries(PrintWriter writer, Report report) {
-		TreeMap map = report.origintocountgroup;
-		File origin = null;
-		CountGroup counts = null;
-		String link = null;
-		File summary = null;
-		String colour = null;
-		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry)  iter.next();
-			origin = (File) entry.getKey();
-			counts = (CountGroup) entry.getValue();
-			summary = new File(origin, origin.getName()+".html"); //$NON-NLS-1$
-			link = extractLinkFrom(report.referee, summary.getAbsolutePath());
-			colour = (counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR);
-			writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_referee_index_entry, 
-					new String[] {link, 
-						origin.getName(),
-						Integer.toString(counts.getTotalApiRefCount()),
-						Integer.toString(counts.getTotalInternalRefCount()),
-						Integer.toString(counts.getTotalPermissableRefCount()),
-						Integer.toString(counts.getTotalFragmentPermissibleRefCount()),
-						Integer.toString(counts.getTotalOtherRefCount()),
-						colour}));
+	String getReferencesTable(Member member) {
+		StringBuffer buffer = new StringBuffer();
+		Entry entry = null;
+		buffer.append("<div colspan=\"6\" class=\"types\">\n"); //$NON-NLS-1$
+		buffer.append("<table width=\"100%\" border=\"0\">\n"); //$NON-NLS-1$
+		ArrayList refs = null;
+		Reference ref = null;
+		for (Iterator iter = member.children.entrySet().iterator(); iter.hasNext();) {
+			entry = (Entry) iter.next();
+			buffer.append("<tr align=\"left\"> \n"); //$NON-NLS-1$
+			buffer.append("<td colspan=\"3\" bgcolor=\"#CCCCCC\">").append(OPEN_B).append(entry.getKey()).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append(CLOSE_TR);
+			buffer.append("<tr bgcolor=\"#CC9933\">"); //$NON-NLS-1$
+			buffer.append("<td align=\"left\" width=\"92%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_location).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_line_number).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_kind).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+			buffer.append(CLOSE_TR); 
+			refs = (ArrayList) entry.getValue();
+			Collections.sort(refs, compare);
+			for (Iterator iter2 = refs.iterator(); iter2.hasNext();) {
+				ref = (Reference) iter2.next();
+				try {
+					String name = getDisplayName(ref.desc, true);
+					buffer.append(OPEN_TR);
+					buffer.append(OPEN_TD).append(name).append(CLOSE_TD); 
+					buffer.append("<td align=\"center\">").append(ref.line).append(CLOSE_TD); //$NON-NLS-1$ 
+					buffer.append("<td align=\"center\">").append(VisibilityModifiers.getVisibilityName(ref.vis)).append(CLOSE_TD); //$NON-NLS-1$ 
+					buffer.append(CLOSE_TR); 
+				}
+				catch(CoreException ce) {
+					ApiPlugin.log(ce);
+				}
+			}
 		}
+		buffer.append(CLOSE_TABLE); 
+		buffer.append(CLOSE_DIV); 
+		return buffer.toString();
+	}
+	
+	/**
+	 * Returns the name to display for the given {@link IElementDescriptor} which can be qualified or not
+	 * @param desc
+	 * @param qualified
+	 * @return the (un)-qualified name to display for the given {@link IElementDescriptor}
+	 * @throws CoreException
+	 */
+	String getDisplayName(IElementDescriptor desc, boolean qualified) throws CoreException {
+		String displayname = null;
+		switch(desc.getElementType()) {
+			case IElementDescriptor.TYPE: {
+				IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) desc;
+				displayname = Signatures.getTypeSignature(rtype.getSignature(), rtype.getGenericSignature(), qualified);
+				break;
+			}
+			case IElementDescriptor.METHOD: {
+				IMethodDescriptor method = (IMethodDescriptor)desc;
+				if(qualified) {
+					displayname = Signatures.getQualifiedMethodSignature(method);
+				}
+				else {
+					displayname = Signatures.getMethodSignature(method);
+				}
+				break;
+			}
+			case IElementDescriptor.FIELD: {
+				IFieldDescriptor field = (IFieldDescriptor) desc;
+				if(qualified) {
+					displayname = Signatures.getQualifiedFieldSignature(field);
+				}
+				else {
+					displayname = field.getName();
+				}
+				break;
+			}
+		}
+		return displayname;
 	}
 	
 	/**
@@ -877,7 +1086,7 @@ public class UseReportConverter {
 	 * @param fileName
 	 * @return link text pruned via the given root file
 	 */
-	private String extractLinkFrom(File root, String fileName) {
+	String extractLinkFrom(File root, String fileName) {
 		StringBuffer buffer = new StringBuffer();
 		String substring = fileName.substring(root.getAbsolutePath().length()).replace('\\', '/');
 		buffer.append('.');
@@ -889,68 +1098,63 @@ public class UseReportConverter {
 	}
 	
 	/**
-	 * Writes one entry for an origin summary
-	 * @param writer
-	 * @param origin
-	 * @param vis
-	 * @param vismodifier
-	 * @param typecount
-	 * @param methodcount
-	 * @param fieldcount
-	 */
-	private void writeOriginSummaryEntry(PrintWriter writer, File origin, String vis, int vismodifier, int typecount, int methodcount, int fieldcount) {
-		writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_summary_table_entry,  
-				new String[]{
-					vis, 
-					getOriginSummaryCountLink(vismodifier, "type", origin, typecount),  //$NON-NLS-1$
-					getOriginSummaryCountLink(vismodifier, "method", origin, methodcount),  //$NON-NLS-1$
-					getOriginSummaryCountLink(vismodifier, "field", origin, fieldcount)})); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Dumps out a link on the number of references, or just the number if the reference count is zero
-	 * @param vis
-	 * @param type
-	 * @param origin
-	 * @param count
-	 * @return a link or not
-	 */
-	private String getOriginSummaryCountLink(int vis, String type, File origin, int count) {
-		if(count == 0) {
-			return Integer.toString(count);
-		}
-		String vname = VisibilityModifiers.getVisibilityName(vis);
-		File linked = new File(origin, vname+File.separator+type+"_references.html"); //$NON-NLS-1$
-		String link = extractLinkFrom(origin, linked.getAbsolutePath());
-		return MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_summary_count_link, 
-				new String[] {link, Integer.toString(count)}); 
-	}
-	
-	/**
 	 * Writes the main index file for the reports
 	 * @param reportsRoot
 	 */
-	private void writeIndexFile(List sortedreports, File reportsRoot) throws Exception {
+	void writeIndexPage(List sortedreports, File reportsRoot) throws Exception {
 		PrintWriter writer = null;
 		try {
 			htmlIndex = new File(this.htmlLocation, "index.html"); //$NON-NLS-1$
 			if(!htmlIndex.exists()) {
 				htmlIndex.createNewFile();
 			}
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(HTML_HEADER);
+			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_bundle_usage_information).append(CLOSE_TITLE); 
+			buffer.append(CLOSE_HEAD); 
+			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_H3).append(SearchMessages.UseReportConverter_bundle_usage_information).append(CLOSE_H3); 
+			buffer.append(OPEN_H4).append(SearchMessages.UseReportConvertor_additional_infos_section).append(CLOSE_H4); 
+			if(this.hasmissing) {
+				buffer.append(OPEN_P); 
+				buffer.append(NLS.bind(SearchMessages.UseReportConverter_missing_bundles_prevented_scan, 
+						new String[] {" <a href=\"./missing.html\">", "</a>"})); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(CLOSE_P); 
+			}
+			buffer.append(OPEN_P); 
+			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {"<a href=\"./not_searched.html\">", "</a></p>\n"}));  //$NON-NLS-1$//$NON-NLS-2$ 
+			if(getAdditionalIndexInfo() != null) {
+				buffer.append(getAdditionalIndexInfo());
+			}
+			if(sortedreports.size() > 0) {
+				buffer.append(getTerminologySection());
+				buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_bundle));
+				if(sortedreports.size() > 0) {
+					Report report = null;
+					File refereehtml = null;
+					String link = null;
+					for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
+						report = (Report) iter.next();
+						if(report != null) {
+							refereehtml = new File(this.reportsRoot, report.name+File.separator+"index.html"); //$NON-NLS-1$
+							link = extractLinkFrom(this.reportsRoot, refereehtml.getAbsolutePath());
+							buffer.append(getReferenceTableEntry(report.counts, link, report.name));
+						}
+					}
+					buffer.append(CLOSE_TABLE); 
+				}
+			}
+			else {
+				buffer.append(OPEN_P).append(BR).append(SearchMessages.UseReportConverter_no_reported_usage).append(CLOSE_P); 
+			}
+			buffer.append(W3C_FOOTER);
+			buffer.append(CLOSE_BODY).append(CLOSE_HTML);  
+			
+			//write the file
 			FileWriter fileWriter = new FileWriter(htmlIndex);
 			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(getIndexPageHeader(sortedreports.size() > 0));
-			if(sortedreports.size() > 0) {
-				Report report = null;
-				for(Iterator iter = sortedreports.iterator(); iter.hasNext();) {
-					report = (Report) iter.next();
-					if(report != null) {
-						writeIndexEntry(writer, report);
-					}
-				}
-				writeTableEnd(writer);
-			}
-			writeW3Footer(writer);
+			writer.print(buffer.toString());
 			writer.flush();
 		} catch (IOException e) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, htmlIndex.getAbsolutePath()));
@@ -960,190 +1164,87 @@ public class UseReportConverter {
 			}
 		}
 	}
-
+	
 	/**
-	 * Returns an HTML string to use as a header for the index page base on whether
-	 * there were any results from an API use scan.
-	 * 
-	 * @param results whether there were any API use scan results.
-	 * @return HTML text
+	 * Returns the HTML markup for the default references table header.
+	 * Where the first column contains the linked item and the following five columns are 
+	 * API, Internal, Permissible, Fragment-Permissible and Other reference counts respectively
+	 * @param columnname
+	 * @return the default references table header
 	 */
-	protected String getIndexPageHeader(boolean results) {
-		if(results) {
-			return SearchMessages.ApiUseReportConverter_search_html_index_file_header;
-		} else {
-			StringBuffer buf = new StringBuffer(SearchMessages.ApiUseReportConverter_no_usage_header);
-			buf.append('\n');
-			buf.append(SearchMessages.ApiUseReportConverter_no_bundle_have_usage);
-			return buf.toString();
-		}		
+	String getReferencesTableHeader(String columnname) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
+		buffer.append(OPEN_TR); 
+		buffer.append("\t<td bgcolor=\"#CC9933\" width=\"38%\"><b>").append(columnname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_api_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_internal_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_internal_permissible_references).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_fragment_permissible_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_other_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
+		buffer.append(CLOSE_TR); 
+		return buffer.toString();
 	}
 	
 	/**
-	 * Writes a single index file entry
-	 * @param writer
-	 * @param report
-	 * @throws IOException
-	 */
-	private void writeIndexEntry(PrintWriter writer, Report report) throws IOException {
-		File refereehtml = new File(report.referee, report.referee.getName()+".html"); //$NON-NLS-1$
-		String link = extractLinkFrom(this.reportsRoot, refereehtml.getAbsolutePath());
-		String colour = (report.counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR);
-		writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_referee_index_entry,  
-				new String[] {
-					link,
-					report.referee.getName(),
-					Integer.toString(report.counts.getTotalApiRefCount()),
-					Integer.toString(report.counts.getTotalInternalRefCount()),
-					Integer.toString(report.counts.getTotalPermissableRefCount()),
-					Integer.toString(report.counts.getTotalFragmentPermissibleRefCount()),
-					Integer.toString(report.counts.getTotalOtherRefCount()),
-					colour}));
-	}
-	
-	/**
-	 * Writes an origin index file in the corresponding origin directory
-	 * @param report
-	 * @param xmlfiles
-	 * @param origin
+	 * Returns the HTML markup for one entry in the default references table.
+	 * Where the first column contains the linked item and the following five columns are 
+	 * API, Internal, Permissible, Fragment-Permissible and Other reference counts respectively
 	 * @param counts
+	 * @param link
+	 * @param linktext
+	 * @return a single reference table entry
 	 */
-	private void writeOriginEntry(Report report, File[] xmlfiles, File origin, CountGroup counts) throws Exception {
-		PrintWriter writer = null;
-		File originhtml = null;
-		try {
-			File htmlroot = new File(this.htmlLocation, getHTMLFileLocation(this.reportsRoot, origin));
-			if(!htmlroot.exists()) {
-				htmlroot.mkdirs();
-			}
-			String origintext = origin.getName();
-			File root = new File(htmlroot, origin.getName());
-			if(!root.exists()) {
-				root.mkdir();
-			}
-			originhtml = new File(root, origintext+".html"); //$NON-NLS-1$
-			if(!originhtml.exists()) {
-				originhtml.createNewFile();
-			}
-			FileWriter fileWriter = new FileWriter(originhtml);
-			writer = new PrintWriter(new BufferedWriter(fileWriter));
-			writer.println(getOriginEntryHeader(report, origin));
-			writeOriginSummary(writer, report, origin, counts);
-			writeBackToBundleIndex(writer, "../"+report.referee.getName()); //$NON-NLS-1$
-			writeW3Footer(writer);
-			writer.flush();
-		}
-		catch(IOException ioe) {
-			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
-		}
-		finally {
-			if (writer != null) {
-				writer.close();
-			}
-		}
-	}	
+	String getReferenceTableEntry(CountGroup counts, String link, String linktext) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<tr bgcolor=\"").append((counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("\t<td><a href=\"").append(link).append("\">").append(linktext).append("</a>").append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalApiRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalInternalRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalPermissableRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalFragmentPermissibleRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalOtherRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append(CLOSE_TR); 
+		return buffer.toString();
+	}
 	
 	/**
-	 * Returns HTML header for references made from a specific component.
-	 * 
-	 * @param report
-	 * @param origin
+	 * Returns the terminology section
+	 * @return the terminology section
+	 */
+	protected String getTerminologySection() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_terminology).append(CLOSE_H4); 
+		buffer.append(OPEN_OL); 
+		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_api_ref_description).append(CLOSE_LI);  
+		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_internal_ref_description).append(CLOSE_LI);  
+		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_permissible_ref_description).append(CLOSE_LI);  
+		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_fragment_ref_description).append(CLOSE_LI);  
+		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_other_ref_description).append(CLOSE_LI);  
+		buffer.append(CLOSE_OL); 
+		buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P); 
+		return buffer.toString();
+	}
+	
+	/**
+	 * Allows additional infos to be added to the HTML at the top of the report page
 	 * @return
 	 */
-	protected String getOriginEntryHeader(Report report, File origin) {
-		return MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_html_header, new String[] {origin.getName(), report.referee.getName()});
+	protected String getAdditionalIndexInfo() {
+		return null;
 	}
 	
 	/**
 	 * Returns HTML summary for references from a specific component.
 	 * 
-	 * @param report
-	 * @param origin
+	 * @param typename
 	 * @param counts
-	 * @return
+	 * @return HTML as a string
 	 */
-	protected String getOriginSummary(Report report, File origin, CountGroup counts) {
-		return MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_summary_header,  
-				new String[] {origin.getName(), Integer.toString(counts.getTotalRefCount()), report.referee.getName()});
+	protected String getTypeCountSummary(String typename, CountGroup counts, int membercount) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_summary).append(CLOSE_H4); 
+		buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter___has_total_refs, new String[] {typename, Integer.toString(counts.getTotalRefCount()), Integer.toString(membercount)})).append(CLOSE_P);  
+		return buffer.toString();
 	}
-	
-	/**
-	 * Writes out one individual origin index entry
-	 * @param writer
-	 * @param origin
-	 * @param counts
-	 */
-	private void writeOriginSummary(PrintWriter writer, Report report, File origin, CountGroup counts) {
-		writer.println(getOriginSummary(report, origin, counts));
-		writer.println(MessageFormat.format(SearchMessages.ApiUseReportConverter_origin_summary_table_entry_bold, 
-				new String[]{SearchMessages.ApiUseReportConverter_visibility, 
-					SearchMessages.ApiUseReportConverter_type, 
-					SearchMessages.ApiUseReportConverter_method, 
-					SearchMessages.ApiUseReportConverter_field}));
-		writeOriginSummaryEntry(writer, 
-				origin, 
-				SearchMessages.ApiUseReportConverter_api, 
-				VisibilityModifiers.API,
-				counts.total_api_type_count, 
-				counts.total_api_method_count, 
-				counts.total_api_field_count);
-		writeOriginSummaryEntry(writer, 
-				origin, 
-				SearchMessages.ApiUseReportConverter_internal, 
-				VisibilityModifiers.PRIVATE,
-				counts.total_private_type_count, 
-				counts.total_private_method_count, 
-				counts.total_private_field_count);
-		writeOriginSummaryEntry(writer, 
-				origin, 
-				SearchMessages.ApiUseReportConverter_internal_permissable, 
-				VisibilityModifiers.PRIVATE_PERMISSIBLE,
-				counts.total_permissable_type_count, 
-				counts.total_permissable_method_count, 
-				counts.total_permissable_field_count);
-		writeOriginSummaryEntry(writer, 
-				origin, 
-				SearchMessages.ApiUseReportConverter_fragment_permissible, 
-				UseReportConverter.FRAGMENT_PERMISSIBLE,
-				counts.total_fragment_permissible_type_count, 
-				counts.total_fragment_permissible_method_count, 
-				counts.total_fragment_permissible_field_count);
-		writeOriginSummaryEntry(writer, 
-				origin, 
-				SearchMessages.ApiUseReportConverter_other, 
-				VisibilityModifiers.ALL_VISIBILITIES,
-				counts.total_other_type_count, 
-				counts.total_other_method_count, 
-				counts.total_other_field_count);
-		writeTableEnd(writer);
-	}
-	
-	/**
-	 * Returns the {@link IReference} type from the file name
-	 * @param xmlfile
-	 * @return the type from the file name
-	 */
-	private int getTypeFromFileName(File xmlfile) {
-		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.TYPE_REFERENCES) > -1) {
-			return IReference.T_TYPE_REFERENCE;
-		}
-		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.METHOD_REFERENCES) > -1) {
-			return IReference.T_METHOD_REFERENCE;
-		}
-		return IReference.T_FIELD_REFERENCE;
-	}
-	
-	/**
-	 * Returns all the child directories form the given directory
-	 * @param file
-	 * @return
-	 */
-	private File[] getDirectories(File file) {
-		File[] directories = file.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
-				return pathname.isDirectory() && !pathname.isHidden();
-			}
-		});
-		return directories;
-	}	
 }

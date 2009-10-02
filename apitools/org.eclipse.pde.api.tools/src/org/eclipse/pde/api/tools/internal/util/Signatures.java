@@ -142,6 +142,20 @@ public final class Signatures {
 	}	
 	
 	/**
+	 * Returns the de-qualified method signature
+	 * @param method
+	 * @return the de-qualified method signature
+	 * @throws CoreException
+	 */
+	public static String getMethodSignature(IMethodDescriptor method) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		String methodsig = method.getSignature();
+		String methodname = getMethodName(method);
+		buffer.append(Signature.toString(dequalifySignature(methodsig), methodname, null, false, false));
+		return buffer.toString();
+	}
+	
+	/**
 	 * Returns the name to use for the method. If the method is a constructor,
 	 * the enclosing type is loaded to get its simple name
 	 * @param method

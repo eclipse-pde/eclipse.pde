@@ -24,7 +24,6 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.search.MigrationReportConverter;
 import org.eclipse.pde.api.tools.internal.search.ReferenceLookupVisitor;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.UseScanParser;
@@ -233,8 +232,6 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 			lookup.setTargetScope(referencepattern);
 			UseScanParser parser = new UseScanParser();
 			parser.parse(file.getAbsolutePath(), new NullProgressMonitor(), lookup);
-			MigrationReportConverter converter = new MigrationReportConverter(this.reportLocation + "\\html", this.reportLocation + "\\xml"); //$NON-NLS-1$ //$NON-NLS-2$
-			converter.convert(null, new NullProgressMonitor());
 		}
 		catch(CoreException ce) {
 			throw new BuildException(ce.getStatus().getMessage(), ce);

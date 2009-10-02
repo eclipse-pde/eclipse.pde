@@ -175,7 +175,7 @@ public class UseScanParser {
 			throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, xmlLocation));
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseScanParser_parsing, 8);
-		localmonitor.setTaskName(SearchMessages.ApiUseReportConverter_collecting_dir_info);
+		localmonitor.setTaskName(SearchMessages.UseReportConverter_collecting_dir_info);
 		File[] referees = getDirectories(reportsRoot);
 		Util.updateMonitor(localmonitor, 1);
 		File[] origins = null;
@@ -231,9 +231,9 @@ public class UseScanParser {
 		try {
 			return factory.newSAXParser();
 		} catch (ParserConfigurationException pce) {
-			throw new Exception(SearchMessages.ApiUseReportConverter_pce_error_getting_parser, pce);
+			throw new Exception(SearchMessages.UseReportConverter_pce_error_getting_parser, pce);
 		} catch (SAXException se) {
-			throw new Exception(SearchMessages.ApiUseReportConverter_se_error_parser_handle, se);
+			throw new Exception(SearchMessages.UseReportConverter_se_error_parser_handle, se);
 		}
 	}	
 	
