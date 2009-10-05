@@ -363,6 +363,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String LibrarySection_addDialogButton;
 
+	public static String MainPreferencePage_addToJavaSearch;
 	public static String MainPreferencePage_exportingGroup;
 	public static String MainPreferencePage_sourceGroup;
 	public static String MainPreferencePage_group2;
@@ -2391,6 +2392,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String JavaArgumentsTab_description;
 
+	public static String JavaSearchActionGroup_RemoveJavaSearchMessage;
+
+	public static String JavaSearchActionGroup_RemoveJavaSearchTitle;
+
 	public static String TargetProfileWizardPage_title;
 
 	public static String ProductInfoSection_productname;
@@ -2774,6 +2779,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddExportPackageResolution_Label;
 	public static String AddBundleClassPathResolution_add;
+
+	public static String AddToJavaSearchJob_0;
 
 	public static String AntGeneratingExportWizard_0;
 	public static String AntGeneratingExportWizard_1;

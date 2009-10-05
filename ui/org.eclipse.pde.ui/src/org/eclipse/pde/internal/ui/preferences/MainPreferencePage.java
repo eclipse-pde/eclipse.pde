@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
@@ -35,6 +37,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fOverwriteBuildFiles;
 	private Button fShowSourceBundles;
 	private Button fPromptOnRemove;
+	private Button fAddToJavaSearch;
 
 	public MainPreferencePage() {
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
@@ -96,6 +99,9 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		});
 
+		fAddToJavaSearch = new Button(group, SWT.CHECK);
+		fAddToJavaSearch.setText(PDEUIMessages.MainPreferencePage_addToJavaSearch);
+		fAddToJavaSearch.setSelection(store.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 		return composite;
 	}
 
@@ -114,6 +120,19 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 		store.setValue(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT, fOverwriteBuildFiles.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
 		store.setValue(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES, fShowSourceBundles.getSelection());
+
+		boolean synchJavaSearch = fAddToJavaSearch.getSelection();
+		if (store.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH) != synchJavaSearch) {
+			store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, synchJavaSearch);
+			if (synchJavaSearch) {
+				try {
+					AddToJavaSearchJob.synchWithTarget(TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition());
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
+			}
+		}
+
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 
 		// write AUTO_MANAGE setting to pde.launching instance scope 

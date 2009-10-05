@@ -764,11 +764,15 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		// set workspace target if required
 		if (load) {
 
-			// Warn about forward compatibility
+			// Warn about forward compatibility, synchronize java search
 			IJobChangeListener listener = new JobChangeAdapter() {
 				public void done(IJobChangeEvent event) {
 					if (event.getResult().getSeverity() == IStatus.OK) {
 						if (fActiveTarget != null) {
+							PDEPreferencesManager pref = new PDEPreferencesManager(PDEPlugin.getPluginId());
+							if (pref.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH)) {
+								AddToJavaSearchJob.synchWithTarget(fActiveTarget);
+							}
 							Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
 							IResolvedBundle[] bundles;
 							bundles = fActiveTarget.getAllBundles();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,19 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
@@ -42,7 +46,20 @@ public class JavaSearchActionGroup extends ActionGroup {
 		}
 
 		public void run() {
-			handleJavaSearch(add);
+			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+			if (!add && store.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH)) {
+				MessageDialog dialog = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.JavaSearchActionGroup_RemoveJavaSearchTitle, null, PDEUIMessages.JavaSearchActionGroup_RemoveJavaSearchMessage, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
+				int result = dialog.open();
+				if (result == 0) {
+					store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, false);
+					handleJavaSearch(add);
+				}
+				if (result == 1) {
+					handleJavaSearch(add);
+				}
+			} else {
+				handleJavaSearch(add);
+			}
 		}
 	}
 
