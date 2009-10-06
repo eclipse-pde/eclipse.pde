@@ -10,15 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.internal.core.target.*;
-
-import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
-
-import org.eclipse.core.runtime.IStatus;
-
-
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
-
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -27,16 +18,15 @@ import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.*;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 
 /**

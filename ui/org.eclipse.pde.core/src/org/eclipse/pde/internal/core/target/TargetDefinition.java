@@ -20,7 +20,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;
