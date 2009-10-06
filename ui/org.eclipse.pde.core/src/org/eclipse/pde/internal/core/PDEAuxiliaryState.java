@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
@@ -240,7 +241,9 @@ public class PDEAuxiliaryState {
 		if (file.exists() && file.isFile()) {
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				Document doc = factory.newDocumentBuilder().parse(file);
+				DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+				documentBuilder.setErrorHandler(new DefaultHandler());
+				Document doc = documentBuilder.parse(file);
 				Element root = doc.getDocumentElement();
 				if (root != null) {
 					NodeList list = root.getChildNodes();
