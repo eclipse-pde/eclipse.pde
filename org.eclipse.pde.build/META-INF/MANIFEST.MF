@@ -38,7 +38,6 @@ Import-Package: com.ibm.icu.util,
  org.eclipse.equinox.internal.provisional.p2.metadata,
  org.eclipse.equinox.internal.provisional.p2.metadata.query,
  org.eclipse.equinox.internal.provisional.p2.metadata.repository,
- org.eclipse.equinox.internal.provisional.p2.query,
  org.eclipse.equinox.internal.provisional.p2.repository,
  org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator
 Bundle-Localization: plugin
