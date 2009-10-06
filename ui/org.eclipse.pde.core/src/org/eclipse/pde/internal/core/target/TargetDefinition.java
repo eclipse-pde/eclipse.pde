@@ -659,7 +659,9 @@ public class TargetDefinition implements ITargetDefinition {
 			if (!recreate) {
 				// check top level IU's. If any have been removed from the containers that are
 				// still in the profile, we need to recreate (rather than uninstall)
-				Collector collector = profile.query(new IUProfilePropertyQuery(profile, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true)), new Collector(), null);
+				IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
+				propertyQuery.setProfile(profile);
+				Collector collector = profile.query(propertyQuery, new Collector(), null);
 				Iterator iterator = collector.iterator();
 				if (iterator.hasNext()) {
 					Set installedIUs = new HashSet();
