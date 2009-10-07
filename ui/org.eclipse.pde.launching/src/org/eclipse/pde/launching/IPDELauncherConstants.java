@@ -318,7 +318,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the bundles tab
 	 * 
 	 * @since 3.5
-	 * @see BundlesTab
 	 */
 	String TAB_BUNDLES_ID = "org.eclipse.pde.ui.launch.tab.osgi.bundles"; //$NON-NLS-1$
 
@@ -326,7 +325,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the configuration tab
 	 * 
 	 * @since 3.5
-	 * @see ConfigurationTab
 	 */
 	String TAB_CONFIGURATION_ID = "org.eclipse.pde.ui.launch.tab.configuration"; //$NON-NLS-1$
 
@@ -334,7 +332,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the main tab
 	 * 
 	 * @since 3.5
-	 * @see MainTab
 	 */
 	String TAB_MAIN_ID = "org.eclipse.pde.ui.launch.tab.main"; //$NON-NLS-1$
 
@@ -342,7 +339,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the osgi settings tab
 	 * 
 	 * @since 3.5
-	 * @see OSGiSettingsTab
 	 */
 	String TAB_OSGI_SETTINGS_ID = "org.eclipse.pde.ui.launch.tab.osgi.settings"; //$NON-NLS-1$
 
@@ -350,7 +346,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the plug-in junit tab
 	 * 
 	 * @since 3.5
-	 * @see PluginJUnitMainTab
 	 */
 	String TAB_PLUGIN_JUNIT_MAIN_ID = "org.eclipse.pde.ui.launch.tab.junit.main"; //$NON-NLS-1$
 
@@ -358,7 +353,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the plug-ins tab
 	 * 
 	 * @since 3.5
-	 * @see PluginsTab
 	 */
 	String TAB_PLUGINS_ID = "org.eclipse.pde.ui.launch.tab.plugins"; //$NON-NLS-1$
 
@@ -366,7 +360,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the tracing tab
 	 * 
 	 * @since 3.5
-	 * @see TracingTab
 	 */
 	String TAB_TRACING_ID = "org.eclipse.pde.ui.launch.tab.tracing"; //$NON-NLS-1$
 
@@ -374,7 +367,6 @@ public interface IPDELauncherConstants {
 	 * The unique tab identifier for the tracing tab
 	 * 
 	 * @since 3.5
-	 * @see TestTab
 	 */
 	String TAB_TEST_ID = "org.eclipse.pde.ui.launch.tab.test"; //$NON-NLS-1$
 
@@ -382,7 +374,6 @@ public interface IPDELauncherConstants {
 	 * The launch configuration type id for OSGi launches.
 	 * 
 	 * @since 3.5
-	 * @see OSGiLaunchShortcut
 	 */
 	String OSGI_CONFIGURATION_TYPE = "org.eclipse.pde.ui.EquinoxLauncher"; //$NON-NLS-1$
 
@@ -400,7 +391,6 @@ public interface IPDELauncherConstants {
 	 * The launch configuration type for Eclipse application launches.
 	 * 
 	 * @since 3.6
-	 * @see EclipseLaunchShortcut
 	 */
 	String ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.pde.ui.RuntimeWorkbench"; //$NON-NLS-1$
 }
