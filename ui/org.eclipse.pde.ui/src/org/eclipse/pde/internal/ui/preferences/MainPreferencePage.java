@@ -165,6 +165,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fOverwriteBuildFiles.setSelection(true);
 		fShowSourceBundles.setSelection(false);
 		fPromptOnRemove.setSelection(true);
+
+		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 	}
 
 	/* (non-Javadoc)
