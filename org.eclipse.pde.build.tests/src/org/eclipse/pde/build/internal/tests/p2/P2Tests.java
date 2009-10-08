@@ -567,6 +567,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.publish.artifacts", "true");
 		properties.put("forceContextQualifier", "v1");
 		properties.put("baseLocation", "");
+		properties.put("pluginPath", "${buildDirectory}"); //178449
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runBuild(buildFolder);

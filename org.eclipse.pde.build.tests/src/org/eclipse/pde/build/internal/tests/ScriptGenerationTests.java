@@ -1326,6 +1326,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("topLevelElementId", "f");
 		properties.put("logExtension", ".xml");
 		properties.put("baseLocation", "");
+		properties.put("pluginPath", "${buildDirectory}"); //178449
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 	}
@@ -1472,6 +1473,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("configs", "win32,win32,x86 & macosx,cocoa,x86");
 		properties.put("logExtension", ".xml");
 		properties.put("baseLocation", "");
+		properties.put("pluginPath", "${buildDirectory}"); //178449
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 	}

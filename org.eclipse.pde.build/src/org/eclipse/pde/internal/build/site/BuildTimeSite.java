@@ -96,6 +96,22 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		return result;
 	}
 
+	private Collection removeDuplicates(Collection bundles) {
+		Set result = new LinkedHashSet(bundles.size() / 2);
+		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
+			File bundle = (File) iterator.next();
+			try {
+				bundle = bundle.getCanonicalFile();
+			} catch (IOException e) {
+				// ignore
+			}
+			if (result.contains(bundle))
+				continue;
+			result.add(bundle);
+		}
+		return result;
+	}
+
 	public PDEState getRegistry() throws CoreException {
 		if (state == null) {
 			// create the registry according to the site where the code to
@@ -122,7 +138,9 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			} else {
 				state = createConverter();
 			}
-			state.addBundles(provider.getPluginPaths());
+
+			Collection bundles = removeDuplicates(provider.getPluginPaths());
+			state.addBundles(bundles);
 			state.setEESources(eeSources);
 
 			//Once all the elements have been added to the state, the filter is removed to allow for the generated plug-ins to be added
