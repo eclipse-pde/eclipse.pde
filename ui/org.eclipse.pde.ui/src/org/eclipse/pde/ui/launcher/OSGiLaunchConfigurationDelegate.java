@@ -17,7 +17,7 @@ package org.eclipse.pde.ui.launcher;
  * </p>
  * @since 3.3
  * @deprecated use {@link org.eclipse.pde.launching.OSGiLaunchConfigurationDelegate} instead.
- * @see org.eclipse.pde.launching.OSGiLaunchConfigurationDelegat
+ * @see org.eclipse.pde.launching.OSGiLaunchConfigurationDelegate
  */
 public class OSGiLaunchConfigurationDelegate extends org.eclipse.pde.launching.OSGiLaunchConfigurationDelegate {
 
