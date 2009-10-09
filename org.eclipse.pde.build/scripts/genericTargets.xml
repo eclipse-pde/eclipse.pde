@@ -225,6 +225,17 @@ set here?
 		<isset property="osgi.dev" />
 	</condition>
 	
+	<!-- on windows we need to quote os,ws,arch so that '*' does not get expanded -->
+	<condition property="p2.quoted.os" value="&quot;${os}&quot;" else="${os}">
+		<and><equals arg1="*" arg2="${os}"/><os family="windows" /></and>
+	</condition>
+	<condition property="p2.quoted.ws" value="&quot;${ws}&quot;" else="${ws}">
+		<and><equals arg1="*" arg2="${ws}"/><os family="windows" /></and>
+	</condition>
+	<condition property="p2.quoted.arch" value="&quot;${arch}&quot;" else="${arch}">
+		<and><equals arg1="*" arg2="${arch}"/><os family="windows" /></and>
+	</condition>
+	
 	<java jar="${equinoxLauncherJar}" fork="true" failonerror="false" resultproperty="p2.director.return.code" outputproperty="p2.director.java.output">
 		<arg line="-application org.eclipse.equinox.p2.director.app.application" />
 		<arg line="-nosplash" />
@@ -233,13 +244,12 @@ set here?
 		<arg line="-flavor ${p2.flavor}" />
 		<arg line="-installIU ${p2.director.iu}" />
 		<arg line="-version ${p2.director.version}" />
-		<!-- need to quote os,ws,arch so that '*' does not get expanded -->
 		<arg value="-p2.os" />
-		<arg value="${os}" />
+		<arg value="${p2.quoted.os}" />
 		<arg value="-p2.ws" />
-		<arg value="${ws}" />
+		<arg value="${p2.quoted.ws}" />
 		<arg value="-p2.arch" />
-		<arg value="${arch}" />
+		<arg value="${p2.quoted.arch}" />
 		<arg line="-roaming" />
 		<arg value="-profile" />
 		<arg value="${p2.director.profile}" />
