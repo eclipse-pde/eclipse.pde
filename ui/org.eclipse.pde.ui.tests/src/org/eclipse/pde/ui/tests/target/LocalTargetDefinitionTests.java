@@ -541,6 +541,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		Set expected = new HashSet();
 		expected.add("org.eclipse.jdt");
+		expected.add("org.eclipse.ant.launching");
 		expected.add("org.eclipse.ant.ui");
 		expected.add("org.eclipse.jdt.apt.core");
 		expected.add("org.eclipse.jdt.apt.ui");
@@ -598,6 +599,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		Set expected = new HashSet();
 		expected.add("org.eclipse.jdt");
+		expected.add("org.eclipse.ant.launching");
 		expected.add("org.eclipse.ant.ui");
 		expected.add("org.eclipse.jdt.apt.core");
 		expected.add("org.eclipse.jdt.apt.ui");
@@ -689,6 +691,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		Set expected = new HashSet();
 		expected.add("org.eclipse.jdt.source");
+		expected.add("org.eclipse.ant.launching.source");
 		expected.add("org.eclipse.ant.ui.source");
 		expected.add("org.eclipse.jdt.apt.core.source");
 		expected.add("org.eclipse.jdt.apt.ui.source");
@@ -746,6 +749,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			
 			Set expected = new HashSet();
 			expected.add("org.eclipse.jdt");
+			expected.add("org.eclipse.ant.launching");
 			expected.add("org.eclipse.ant.ui");
 			expected.add("org.eclipse.jdt.apt.core");
 			expected.add("org.eclipse.jdt.apt.ui");
