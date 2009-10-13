@@ -1560,19 +1560,23 @@ public class PublishingTests extends P2TestCase {
 		IFile ini = buildFolder.getFile("eclipse.ini");
 		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
 
+		boolean duplicate = false;
 		try {
 			assertLogContainsLines(ini, new String[] {"-XstartOnFirstThread", "-XstartOnFirstThread"});
-			fail("Duplicate");
+			duplicate = true;
 		} catch (Error e) {
-			assertNull(e.getMessage());
+			//expected
 		}
+		assertFalse(duplicate);
+		
 		try {
 			assertLogContainsLines(ini, new String[] {"-showSplash", "org.eclipse.platform", "-showSplash", "org.eclipse.platform"});
-			fail("Duplicate");
+			duplicate= true;
 		} catch (Error e) {
-			assertNull(e.getMessage());
+			//expected
 		}
-
+		assertFalse(duplicate);
+		
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
 		assertEquals(iu.getVersion().toString(), "1.0.0");

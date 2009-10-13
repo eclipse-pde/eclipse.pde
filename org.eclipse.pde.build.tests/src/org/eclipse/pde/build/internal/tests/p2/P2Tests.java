@@ -631,12 +631,14 @@ public class P2Tests extends P2TestCase {
 		assertEquals(artifact.getName(), "testRepoName"); //bug 274094
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
 		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: osgi.bundle,b,1.0.0", "Difference found for B.class"});
+		boolean failed = true; 
 		try {
 			assertLogContainsLine(buildFolder.getFile("compare.log"), "build.properties");
-			fail("we expected no errors/warnings");
+			failed = false;
 		} catch (AssertionFailedError e) {
-			assertNull(e.getMessage());
+			//expected
 		}
+		assertTrue(failed);
 	}
 
 	public void testBug263272_2() throws Exception {
@@ -724,12 +726,14 @@ public class P2Tests extends P2TestCase {
 		properties.put("newLocation", finalLocation);
 		runAntScript(testXML.getLocation().toOSString(), new String[] {"mirror"}, buildFolder.getLocation().toOSString(), properties);
 
+		boolean warnings = false;
 		try {
 			assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
-			fail("we expected no errors/warnings");
+			warnings = true;
 		} catch (AssertionFailedError e) {
-			assertNull(e.getMessage());
+			//expected
 		}
+		assertFalse(warnings);
 	}
 
 	public void testBug267461() throws Exception {
