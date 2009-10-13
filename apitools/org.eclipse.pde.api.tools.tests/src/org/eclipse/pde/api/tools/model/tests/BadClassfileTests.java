@@ -64,11 +64,21 @@ public class BadClassfileTests extends TestCase {
 	}
 	
 	/**
+	 * Writes any expected error pre-amble prior to the test running
+	 * @param test
+	 */
+	void writePreamble(String test) {
+		System.err.println("Expected 'java.lang.ArrayIndexOutOfBoundsException: 34' in "+test+" from ASM ClassReader");
+		System.err.flush();
+	}
+	
+	/**
 	 * Tests trying to get the structure for a bad classfile
 	 * 
 	 * @throws Exception if something bad happens
 	 */
 	public void testClassfileScanner() throws Exception {
+		writePreamble("testClassfileScanner()");
 		IApiTypeRoot root = container.findTypeRoot(CLASSFILE);
 		IApiType type = root.getStructure();
 		assertNull("The type must be null", type);
@@ -80,6 +90,7 @@ public class BadClassfileTests extends TestCase {
 	 * @throws Exception
 	 */
 	public void testSearchEngine() throws Exception {
+		writePreamble("testSearchEngine()");
 		final AbstractApiComponent component = new AbstractApiComponent(null) {
 			public boolean isSystemComponent() {return false;}
 			public boolean isSourceComponent() throws CoreException {return false;}
@@ -137,6 +148,7 @@ public class BadClassfileTests extends TestCase {
 	 * handles ad class files
 	 */
 	public void testTagScanner() throws Exception {
+		writePreamble("testTagScanner()");
 		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad").append("nobytecodes.java").toOSString());
 		TagScanner scanner = TagScanner.newScanner();
 		try {
