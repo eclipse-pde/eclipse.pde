@@ -379,7 +379,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		initialize();
 		setControl(tabFolder);
 		Dialog.applyDialogFont(outerContainer);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(outerContainer, IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(outerContainer.getParent(), IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
 	}
 
 	private Control createWizardsPage(Composite parent) {
