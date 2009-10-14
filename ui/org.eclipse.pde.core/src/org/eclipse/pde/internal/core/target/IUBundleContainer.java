@@ -18,7 +18,6 @@ import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IFileArtifactRepository;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.director.*;
 import org.eclipse.equinox.internal.provisional.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
@@ -381,7 +380,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-		Collector collector = slice.query(new InstallableUnitQuery(null), new Collector(), new SubProgressMonitor(subMonitor, 10));
+		Collector collector = slice.query(InstallableUnitQuery.ANY, new Collector(), new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled() || collector.isEmpty()) {
 			return new IResolvedBundle[0];
