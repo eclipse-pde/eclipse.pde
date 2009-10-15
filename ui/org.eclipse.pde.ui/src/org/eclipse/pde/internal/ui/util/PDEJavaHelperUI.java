@@ -71,7 +71,7 @@ public class PDEJavaHelperUI {
 				IJavaProject javaProject = JavaCore.create(project);
 				IType superType = javaProject.findType(superTypeName);
 				if (superType != null)
-					searchScope = SearchEngine.createHierarchyScope(superType);
+					searchScope = SearchEngine.createHierarchyScope(javaProject, superType, true, true, null);
 			}
 			if (searchScope == null)
 				searchScope = PDEJavaHelper.getSearchScope(project);
