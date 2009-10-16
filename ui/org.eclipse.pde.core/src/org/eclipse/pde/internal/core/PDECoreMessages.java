@@ -225,6 +225,10 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_emptyEntry;
 	public static String BuildErrorReporter_binIncludesMissing;
 	public static String BuildErrorReporter_sourceMissing;
+
+	public static String BuildErrorReporter_srcIncludesSourceFolder;
+
+	public static String BuildErrorReporter_srcIncludesSourceFolder1;
 	public static String BuildErrorReporter_classpathEntryMissing;
 	public static String BuildErrorReporter_missingFile;
 	public static String BuildErrorReporter_entiresMustRefDirs;

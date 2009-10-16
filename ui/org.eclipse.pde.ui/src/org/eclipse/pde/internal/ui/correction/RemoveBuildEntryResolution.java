@@ -36,8 +36,12 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 				return;
 			if (fToken == null)
 				build.remove(buildEntry);
-			else
+			else {
 				buildEntry.removeToken(fToken);
+				if (buildEntry.getTokens().length == 0) {
+					build.remove(buildEntry);
+				}
+			}
 		} catch (CoreException e) {
 		}
 	}

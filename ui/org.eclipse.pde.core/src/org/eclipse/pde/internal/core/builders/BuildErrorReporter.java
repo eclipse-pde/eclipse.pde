@@ -41,6 +41,7 @@ import org.osgi.framework.Constants;
 public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants {
 
 	private static final String DEF_SOURCE_ENTRY = PROPERTY_SOURCE_PREFIX + '.';
+	private static final String[] RESERVED_NAMES = new String[] {"meta-inf", "osgi-inf", "build.properties", "plugin.xml", "plugin.properties"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
 	private class BuildProblem {
 		String fEntryToken;
@@ -173,6 +174,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		validateIncludes(binExcludes, sourceEntryKeys);
 		validateIncludes(srcIncludes, sourceEntryKeys);
 		validateIncludes(srcExcludes, sourceEntryKeys);
+		validateSourceFoldersInSrcIncludes(srcIncludes);
 
 		try {
 			if (fProject.hasNature(JavaCore.NATURE_ID)) {
@@ -477,6 +479,45 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	}
 
+	// bug 286808
+	private void validateSourceFoldersInSrcIncludes(IBuildEntry includes) {
+		if (includes == null)
+			return;
+
+		List sourceFolderList = new ArrayList(0);
+		try {
+			IJavaProject javaProject = JavaCore.create(fProject);
+			IClasspathEntry[] classPathEntries = javaProject.getResolvedClasspath(true);
+
+			for (int index = 0; index < classPathEntries.length; index++) {
+				if (classPathEntries[index].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					sourceFolderList.add(classPathEntries[index].getPath());
+				}
+			}
+		} catch (JavaModelException e) { //do nothing
+		}
+
+		List reservedTokens = Arrays.asList(RESERVED_NAMES);
+
+		String[] tokens = includes.getTokens();
+		for (int i = 0; i < tokens.length; i++) {
+			IResource res = fProject.findMember(tokens[i]);
+			if (res == null)
+				continue;
+			String errorMessage = null;
+			if (sourceFolderList.contains(res.getFullPath())) {
+				errorMessage = PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder;
+			} else if (tokens[i].startsWith(".") || reservedTokens.contains(res.getName().toString().toLowerCase())) { //$NON-NLS-1$
+				errorMessage = NLS.bind(PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder1, res.getName());
+			}
+
+			if (errorMessage != null) {
+				prepareError(includes.getName(), tokens[i], errorMessage, PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_OTHER);
+			}
+		}
+
+	}
+
 	private void validateIncludes(IBuildEntry includes, ArrayList sourceIncludes) {
 		if (includes == null)
 			return;
@@ -660,5 +701,4 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 		return false;
 	}
-
 }
