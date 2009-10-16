@@ -1,5 +1,0 @@
-/**
- * @deprecated
- */
-public enum X {
-}
