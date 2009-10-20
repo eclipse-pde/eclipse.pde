@@ -227,7 +227,7 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 			if (nested.exists() && nested.isDirectory()) {
 				file = nested;
 			}
-			ReferenceLookupVisitor lookup = new ReferenceLookupVisitor(baseline, this.reportLocation + "\\xml"); //$NON-NLS-1$
+			ReferenceLookupVisitor lookup = new ReferenceLookupVisitor(baseline, this.reportLocation);
 			lookup.setAnalysisScope(scopepattern);
 			lookup.setTargetScope(referencepattern);
 			UseScanParser parser = new UseScanParser();

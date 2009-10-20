@@ -15,6 +15,8 @@
 	- 'apifreeze_reportcoversion' from org.eclipse.pde.api.tools.internal.tasks.APIFreezeReportConversionTask
 	- 'apianalysis from org.eclipse.pde.api.tools.internal.tasks.APIToolsAnalysisTask
 	- 'apianalysis_reportconversion' from org.eclipse.pde.api.tools.internal.tasks.AnalysisReportConversionTask
+	- 'apimigration' from org.eclipse.pde.api.tools.internal.tasks.ApiMigrationTask
+	- 'apimigration_reportconversion' org.eclipse.pde.api.tools.internal.tasks.ApiMigrationReportConversionTask
 	- 'apifile_generation' from org.eclipse.pde.api.tools.internal.tasks.ApiFileGenerationTask
 	- 'comparetask' from org.eclipse.pde.api.tools.internal.tasks.CompareTask
 -->

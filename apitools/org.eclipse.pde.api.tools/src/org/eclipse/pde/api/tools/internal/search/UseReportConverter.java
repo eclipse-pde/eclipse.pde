@@ -920,11 +920,15 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);
 			buffer.append(REF_SCRIPT);
-			buffer.append(OPEN_TITLE).append(NLS.bind(SearchMessages.UseReportConverter_types_used_in, report.name)).append(CLOSE_TITLE); 
+			buffer.append(OPEN_TITLE).append(getReferencedTypeTitle(report.name)).append(CLOSE_TITLE); 
 			buffer.append(CLOSE_HEAD); 
 			buffer.append(OPEN_BODY); 
-			buffer.append(OPEN_H3).append(NLS.bind(SearchMessages.UseReportConverter_types_used_in, report.name)).append(CLOSE_H3);
+			buffer.append(OPEN_H3).append(getReferencedTypeHeader(report.name)).append(CLOSE_H3);
 			buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter_list_of_all_refing_bundles, new String[] {"<a href=\"#bundles\">", "</a>"})).append(CLOSE_P); //$NON-NLS-1$ //$NON-NLS-2$
+			String additional = getAdditionalReferencedTypeInformation();
+			if(additional != null) {
+				buffer.append(additional);
+			}
 			buffer.append(getTerminologySection());
 			buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_referenced_type));
 			CountGroup counts = null;
@@ -990,6 +994,33 @@ public class UseReportConverter extends HTMLConvertor {
 	}
 
 	/**
+	 * Returns a string of additional information to print out at the top of the referenced types page.
+	 * @return additional referenced type information.
+	 */
+	protected String getAdditionalReferencedTypeInformation() {
+		return null;
+	}
+	
+	/**
+	 * Returns the page title to use for the referenced types page
+	 * @param bundle
+	 * @return the page title for the referenced types page
+	 */
+	protected String getReferencedTypeTitle(String bundle) {
+		return NLS.bind(SearchMessages.UseReportConverter_types_used_in, bundle);
+	}
+	
+	/**
+	 * Returns the header title to use for the reference types page. This header
+	 * is the first header on the top of the page.
+	 * @param bundle
+	 * @return the header title for the referenced types page
+	 */
+	protected String getReferencedTypeHeader(String bundle) {
+		return NLS.bind(SearchMessages.UseReportConverter_types_used_in, bundle);
+	}
+	
+	/**
 	 * Writes the page that displays all of the members used in a type
 	 * @param map
 	 * @param type
@@ -1005,14 +1036,14 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);
 			buffer.append(REF_SCRIPT);
-			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_bundle_usage_information).append(CLOSE_TITLE); 
+			buffer.append(OPEN_TITLE).append(getTypeTitle(typename)).append(CLOSE_TITLE); 
 			buffer.append(CLOSE_HEAD); 
 			buffer.append(OPEN_BODY); 
-			buffer.append(OPEN_H3).append(NLS.bind(SearchMessages.UseReportConverter_usage_details, Signature.getSimpleName(typename))).append(CLOSE_H3); 
+			buffer.append(OPEN_H3).append(getTypeHeader(typename)).append(CLOSE_H3); 
 			buffer.append(getTypeCountSummary(typename, type.counts, map.size()));
-			buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_reference_details).append(CLOSE_H4); 
+			buffer.append(OPEN_H4).append(getTypeDetailsHeader()).append(CLOSE_H4); 
 			buffer.append("<table width=\"50%\" border=\"1\">\n"); //$NON-NLS-1$
-			buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_click_an_entry_to_see_details).append(CLOSE_P); 
+			buffer.append(OPEN_P).append(getTypeDetails()).append(CLOSE_P); 
 			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
 			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_TR); 
@@ -1053,6 +1084,41 @@ public class UseReportConverter extends HTMLConvertor {
 				writer.close();
 			}
 		}
+	}
+	
+	/**
+	 * Returns the header to use for the section that describes the type details table
+	 * @return the details header
+	 */
+	protected String getTypeDetailsHeader() {
+		return SearchMessages.UseReportConverter_reference_details;
+	}
+	
+	/**
+	 * Returns the blurb that follows the type details header
+	 * @return the details information
+	 * @see #getTypeDetailsHeader()
+	 */
+	protected String getTypeDetails() {
+		return SearchMessages.UseReportConverter_click_an_entry_to_see_details;
+	}
+	
+	/**
+	 * Returns the title to use for the type references page
+	 * @param typename
+	 * @return the type references page title
+	 */
+	protected String getTypeTitle(String typename) {
+		return NLS.bind(SearchMessages.UseReportConverter_usage_details, Signature.getSimpleName(typename));
+	}
+	
+	/**
+	 * Returns the header to use for the types page. This is the first header on the page
+	 * @param typename
+	 * @return the type page header
+	 */
+	protected String getTypeHeader(String typename) {
+		return NLS.bind(SearchMessages.UseReportConverter_usage_details, Signature.getSimpleName(typename));
 	}
 	
 	/**
@@ -1155,6 +1221,22 @@ public class UseReportConverter extends HTMLConvertor {
 	}
 	
 	/**
+	 * Returns the page title for the index page
+	 * @return the index page title
+	 */
+	protected String getIndexTitle() {
+		return SearchMessages.UseReportConverter_bundle_usage_information;
+	}
+	
+	/**
+	 * Returns the main header for the index page, this header appears as the first header for the page
+	 * @return the index page header
+	 */
+	protected String getIndexHeader() {
+		return SearchMessages.UseReportConverter_bundle_usage_information;
+	}
+	
+	/**
 	 * Writes the main index file for the reports
 	 * @param reportsRoot
 	 */
@@ -1168,10 +1250,10 @@ public class UseReportConverter extends HTMLConvertor {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
-			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_bundle_usage_information).append(CLOSE_TITLE); 
+			buffer.append(OPEN_TITLE).append(getIndexTitle()).append(CLOSE_TITLE); 
 			buffer.append(CLOSE_HEAD); 
 			buffer.append(OPEN_BODY); 
-			buffer.append(OPEN_H3).append(SearchMessages.UseReportConverter_bundle_usage_information).append(CLOSE_H3); 
+			buffer.append(OPEN_H3).append(getIndexHeader()).append(CLOSE_H3); 
 			buffer.append(OPEN_H4).append(SearchMessages.UseReportConvertor_additional_infos_section).append(CLOSE_H4); 
 			if(this.hasmissing) {
 				buffer.append(OPEN_P); 

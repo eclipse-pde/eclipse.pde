@@ -30,6 +30,14 @@ public class SearchMessages extends NLS {
 	public static String could_not_create_file;
 	public static String missing_xml_files_location;
 	public static String invalid_directory_name;
+	public static String MigrationReportConvertor_bundle_migration_information;
+	public static String MigrationReportConvertor_bundles_have_references;
+	public static String MigrationReportConvertor_click_table_entry;
+	public static String MigrationReportConvertor_member_has_unresolved_refs;
+	public static String MigrationReportConvertor_migration_details;
+	public static String MigrationReportConvertor_table_shows_unresolved;
+	public static String MigrationReportConvertor_type_migration_information;
+	public static String MigrationReportConvertor_type_with_unresolved_refs;
 	public static String ReferenceLookupVisitor_0;
 	public static String SkippedComponent_component_was_excluded;
 	public static String UseReportConverter_xslt_file_not_valid;
