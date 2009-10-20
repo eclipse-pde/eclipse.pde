@@ -103,7 +103,8 @@ public class BrandingIron implements IXMLConstants {
 				}
 			else
 				icon = new File(icons[0]);
-			Utils.copy(icon, new File(root, "icon.xpm")); //$NON-NLS-1$
+			if (icon != null)
+				Utils.copy(icon, new File(root, "icon.xpm")); //$NON-NLS-1$
 		}
 	}
 
