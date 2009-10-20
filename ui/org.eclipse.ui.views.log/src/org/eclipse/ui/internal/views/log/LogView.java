@@ -10,7 +10,6 @@
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584, 207344
  *     													bugs 207323, 207931, 207101
  *     													bugs 172658, 216341, 216657
- *     Michael Rennie <Michael_Rennie@ca.ibm.com> - bug 208637
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
  *     Tuukka Lehtonen <tuukka.lehtonen@semantum.fi>  - bug 247907
  *******************************************************************************/
@@ -786,6 +785,9 @@ public class LogView extends ViewPart implements ILogListener {
 		});
 	}
 
+	/**
+	 * Reloads the log
+	 */
 	protected void reloadLog() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -806,7 +808,10 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
-	private void readLogFile() {
+	/**
+	 * Reads the chosen backing log file
+	 */
+	void readLogFile() {
 		elements.clear();
 		groups.clear();
 
@@ -1199,12 +1204,26 @@ public class LogView extends ViewPart implements ILogListener {
 	public void saveState(IMemento memento) {
 		if (this.fMemento == null || memento == null)
 			return;
-		this.fMemento.putInteger(P_COLUMN_1, fColumn1.getWidth());
-		this.fMemento.putInteger(P_COLUMN_2, fColumn2.getWidth());
-		this.fMemento.putInteger(P_COLUMN_3, fColumn3.getWidth());
+		//store some sane values to prevent the view from being broken
+		this.fMemento.putInteger(P_COLUMN_1, getColumnWidth(fColumn1, 300));
+		this.fMemento.putInteger(P_COLUMN_2, getColumnWidth(fColumn2, 150));
+		this.fMemento.putInteger(P_COLUMN_3, getColumnWidth(fColumn3, 150));
 		this.fMemento.putString(P_ACTIVATE, fActivateViewAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putMemento(this.fMemento);
 		writeSettings();
+	}
+
+	/**
+	 * Returns the width of the column or the default value if the column has been resized to be not visible
+	 * @param column the column to get the width from
+	 * @param defaultwidth the width to return if the column has been resized to not be visible
+	 * @return the width of the column or the default value
+	 * 
+	 * @since 3.6
+	 */
+	int getColumnWidth(TreeColumn column, int defaultwidth) {
+		int width = column.getWidth();
+		return width < 1 ? defaultwidth : width;
 	}
 
 	private void addMouseListeners() {
@@ -1530,6 +1549,9 @@ public class LogView extends ViewPart implements ILogListener {
 		return (new InstanceScope()).getNode(Activator.PLUGIN_ID);
 	}
 
+	/**
+	 * Loads any saved {@link IDialogSettings} into the backing view memento
+	 */
 	private void readSettings() {
 		IDialogSettings s = getLogSettings();
 		if (s == null) {
@@ -1549,14 +1571,33 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 
 		Preferences p = getLogPreferences(); // never returns null
-		fMemento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1, 300));
-		fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2, 150));
-		fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3, 150));
+		fMemento.putInteger(P_COLUMN_1, getColumnWidthPreference(p, P_COLUMN_1, 300));
+		fMemento.putInteger(P_COLUMN_2, getColumnWidthPreference(p, P_COLUMN_2, 150));
+		fMemento.putInteger(P_COLUMN_3, getColumnWidthPreference(p, P_COLUMN_3, 150));
 		fMemento.putBoolean(P_ACTIVATE, p.getBoolean(P_ACTIVATE, true));
 		fMemento.putInteger(P_ORDER_VALUE, p.getInt(P_ORDER_VALUE, DESCENDING));
 		fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE, LogView.DATE));
 		fMemento.putBoolean(P_SHOW_FILTER_TEXT, p.getBoolean(P_SHOW_FILTER_TEXT, true));
 		fMemento.putInteger(P_GROUP_BY, p.getInt(P_GROUP_BY, LogView.GROUP_BY_NONE));
+	}
+
+	/**
+	 * Returns the width to use for the column represented by the given key. The default width
+	 * is returned iff:
+	 * <ul>
+	 * <li>There is no preference for the given key</li>
+	 * <li>The returned preference value is too small, making the columns invisible by width.</li>
+	 * </ul>
+	 * @param preferences
+	 * @param key
+	 * @param defaultwidth
+	 * @return the stored width for the a column described by the given key or the default width
+	 * 
+	 * @since 3.6
+	 */
+	int getColumnWidthPreference(Preferences preferences, String key, int defaultwidth) {
+		int width = preferences.getInt(key, defaultwidth);
+		return width < 1 ? defaultwidth : width;
 	}
 
 	private void writeSettings() {
