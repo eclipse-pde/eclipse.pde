@@ -1211,8 +1211,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		String customEncodingsVal = properties.getProperty(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX + name);
 		String warningLevels = properties.getProperty(PROPERTY_JAVAC_WARNINGS_PREFIX + name);
+		String errorLevels = properties.getProperty(PROPERTY_JAVAC_ERRORS_PREFIX + name);
 
-		if (customEncodingsVal == null && warningLevels == null && classpath.size() == 0) {
+		if (customEncodingsVal == null && warningLevels == null && errorLevels == null && classpath.size() == 0) {
 			return;
 		}
 
@@ -1225,11 +1226,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		try {
 			try {
 				//only create the file if we are going to write something in it
-				if (warningLevels != null || customEncodingsVal != null)
+				if (warningLevels != null || customEncodingsVal != null || errorLevels != null)
 					writer = new BufferedWriter(new FileWriter(file));
 
 				if (warningLevels != null) {
 					writer.write("-warn:" + warningLevels + "\n"); //$NON-NLS-1$//$NON-NLS-2$
+				}
+
+				if (errorLevels != null) {
+					writer.write("-err:" + errorLevels + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 				if (customEncodingsVal != null) {

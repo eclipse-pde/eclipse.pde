@@ -1504,6 +1504,70 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(failedMessage != null && failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
 	}
 
+	public void testBug291527() throws Exception {
+		IFolder buildFolder = newTest("291527");
+
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+		IFolder B = Utils.createFolder(buildFolder, "plugins/B");
+		IFolder C = Utils.createFolder(buildFolder, "plugins/C");
+
+		Attributes additional = new Attributes();
+		additional.put(new Attributes.Name("Export-Package"), "api;x-friends:=\"B\"");
+		Utils.generateBundleManifest(A, "A", "1.0.0", additional);
+		Utils.generatePluginBuildProperties(A, null);
+
+		StringBuffer code = new StringBuffer();
+		code.append("package api;                \n");
+		code.append("public class A{             \n");
+		code.append("   public static int a = 1; \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(A.getFile("src/api/A.java"), code);
+
+		Properties extraProperties = new Properties();
+		extraProperties.put("javacErrors..", "unusedLocal");
+		Utils.generateBundleManifest(B, "B", "1.0.0", null);
+		Utils.generatePluginBuildProperties(B, extraProperties);
+
+		code = new StringBuffer();
+		code.append("package api;                \n");
+		code.append("public class A{             \n");
+		code.append("   public void f() {        \n");
+		code.append("      int b = 2;            \n");
+		code.append("   }                        \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(B.getFile("src/api/A.java"), code);
+
+		extraProperties = new Properties();
+		extraProperties.put("javacErrors..", "discouraged");
+
+		additional = new Attributes();
+		additional.put(new Attributes.Name("Require-Bundle"), "A");
+		Utils.generateBundleManifest(C, "C", "1.0.0", additional);
+		Utils.generatePluginBuildProperties(C, extraProperties);
+
+		code = new StringBuffer();
+		code.append("package c;                  \n");
+		code.append("import api.A;               \n");
+		code.append("public class C{             \n");
+		code.append("   public void f() {        \n");
+		code.append("      A.a = 2;              \n");
+		code.append("   }                        \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(C.getFile("src/c/C.java"), code);
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"A", "B", "C"});
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		properties.put("baseLocation", "");
+		properties.put("pluginPath", "${buildDirectory}"); //178449
+		properties.put("javacFailOnError", "false");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"), new String [] {"The local variable b is never read", "1 problem (1 error)"});
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String [] {"Discouraged access: The type A", "3 problems (3 errors)"});
+	}
+	
 	public void testBug284806() throws Exception {
 		IFolder buildFolder = newTest("284806");
 		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
