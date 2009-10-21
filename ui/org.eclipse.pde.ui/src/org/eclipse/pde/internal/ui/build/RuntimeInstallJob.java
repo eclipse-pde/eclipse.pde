@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.provisional.p2.core.*;
+import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
 import org.eclipse.equinox.internal.provisional.p2.director.ProvisioningPlan;
 import org.eclipse.equinox.internal.provisional.p2.engine.*;
@@ -24,6 +24,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
+import org.eclipse.equinox.internal.provisional.p2.ui.ProvisioningOperationRunner;
 import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
 import org.eclipse.osgi.util.NLS;
@@ -54,6 +55,7 @@ public class RuntimeInstallJob extends Job {
 	public RuntimeInstallJob(String jobName, FeatureExportInfo info) {
 		super(jobName);
 		fInfo = info;
+		ProvisioningOperationRunner.manageJob(this, ProvisioningOperationRunner.RESTART_OR_APPLY);
 	}
 
 	/**
@@ -137,19 +139,21 @@ public class RuntimeInstallJob extends Job {
 			}
 
 			if (toInstall.size() > 0) {
+				ProvisioningContext pc = new ProvisioningContext(new URI[] {destination});
+				pc.setArtifactRepositories(new URI[] {destination});
 				MultiStatus accumulatedStatus = new MultiStatus(PDEPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 				ProfileChangeRequest request = InstallAction.computeProfileChangeRequest((IInstallableUnit[]) toInstall.toArray(new IInstallableUnit[toInstall.size()]), IProfileRegistry.SELF, accumulatedStatus, monitor);
 				if (request == null || accumulatedStatus.getSeverity() == IStatus.CANCEL || !(accumulatedStatus.isOK() || accumulatedStatus.getSeverity() == IStatus.INFO)) {
 					return accumulatedStatus;
 				}
 
-				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, new ProvisioningContext(new URI[] {destination}), new SubProgressMonitor(monitor, 5));
+				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, pc, new SubProgressMonitor(monitor, 5));
 				IStatus status = thePlan.getStatus();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 					return status;
 				}
 
-				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), profile, new SubProgressMonitor(monitor, 5));
+				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), pc, new SubProgressMonitor(monitor, 5));
 
 				return status;
 			}
