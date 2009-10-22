@@ -22,6 +22,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 
 /**
@@ -50,6 +51,11 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	private IApiScope fScope = null;
 	
 	/**
+	 * Patterns for jar API type roots to not scan
+	 */
+	private String[] jarPatterns = null;
+	
+	/**
 	 * Constructor
 	 * @param elements an array of {@link IApiElement}s for the search engine to use
 	 * @param scope the raw list of {@link IApiElement}s to extract references from
@@ -74,13 +80,47 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptContainer(org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer)
+	 */
+	public boolean acceptContainer(IApiTypeContainer container) {
+		return considerTypeContainer(container);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
 	 */
 	public boolean acceptMember(IApiMember member) {
 		// don't consider inner types, as they are considered with the root type
-		if (member.getType() == IApiElement.TYPE) {
-			IApiType type = (IApiType) member;
-			return !(type.isMemberType() || type.isLocal());
+		switch(member.getType()) {
+			case IApiElement.TYPE: {
+				IApiType type = (IApiType) member;
+				return !(type.isMemberType() || type.isLocal());
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns if the given {@link IApiTypeContainer} should be processed
+	 * @param container
+	 * @return true if the container should be processed false otherwise
+	 */
+	boolean considerTypeContainer(IApiTypeContainer container) {
+		if(jarPatterns != null && container != null) {
+			if(container.getContainerType() == IApiTypeContainer.ARCHIVE) {
+				String[] pparts = null;
+				for (int i = 0; i < jarPatterns.length; i++) {
+					pparts = jarPatterns[i].split(":"); //$NON-NLS-1$
+					if(pparts.length != 2) {
+						continue;
+					}
+					if(container.getApiComponent().getId().equals(pparts[0])) {
+						if(container.getName().endsWith(pparts[1])) {
+							return false;
+						}
+					}
+				}
+			}
 		}
 		return true;
 	}
@@ -160,5 +200,13 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	public boolean includesInternal() {
 		return (fSearchMask & INCLUDE_INTERNAL) > 0;
+	}
+	
+	/**
+	 * The patterns for jar names to exclude from the search
+	 * @param patterns
+	 */
+	public void setJarPatterns(String[] patterns) {
+		jarPatterns = patterns;
 	}
 }

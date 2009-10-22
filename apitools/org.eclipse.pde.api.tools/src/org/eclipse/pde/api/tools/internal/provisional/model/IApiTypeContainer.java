@@ -18,6 +18,23 @@ import org.eclipse.core.runtime.CoreException;
  * @since 1.0.0
  */
 public interface IApiTypeContainer extends IApiElement {
+	
+	/**
+	 * Container type that is a JAR or ZIP archive
+	 */
+	public static final int ARCHIVE = 1;
+	/**
+	 * Container type that is a folder rooted in the file system
+	 */
+	public static final int DIRECTORY = 2;
+	/**
+	 * Container type that is a folder rooted in the workspace
+	 */
+	public static final int FOLDER = 3;
+	/**
+	 * Container type that is an {@link IApiComponent}
+	 */
+	public static final int COMPONENT = 4;
 
 	/**
 	 * Returns the names of all packages in this container in dot
@@ -67,4 +84,16 @@ public interface IApiTypeContainer extends IApiElement {
 	 * @throws CoreException if closing fails
 	 */
 	public void close() throws CoreException;
+	
+	/**
+	 * Returns the kind of container this is, one of:
+	 * <ul>
+	 * <li>{@link #ARCHIVE}</li>
+	 * <li>{@link #DIRECTORY}</li>
+	 * <li>{@link #FOLDER}</li>
+	 * <li>{@link #STUB}</li>
+	 * </ul>
+	 * @return the type of container this is
+	 */
+	public int getContainerType();
 }

@@ -32,6 +32,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.SearchMessages;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -75,6 +76,13 @@ public final class ApiSearchEngine {
 			this.reporter = reporter;
 			this.element = element;
 			this.monitor = (SubMonitor) monitor;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor#visit(org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer)
+		 */
+		public boolean visit(IApiTypeContainer container) {
+			return requestor.acceptContainer(container);
 		}
 		
 		/* (non-Javadoc)

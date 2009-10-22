@@ -20,10 +20,8 @@ public class ActionMessages extends NLS {
 	public static String ApiToolingSetupObjectContribution_0;
 	public static String SelectABaseline;
 	public static String SetAsDefault;
-	public static String EnterFileName;
 	public static String SelectFileName;
 	public static String Browse;
-	public static String ConvertToHtml;
 	public static String CompareDialogTitle;
 	public static String CompareDialogCollectingElementTaskName;
 	public static String CompareDialogComputeDeltasTaskName;
@@ -42,11 +40,9 @@ public class ActionMessages extends NLS {
 	public static String SelectSessionAction_label;
 	public static String SelectSessionAction_tooltip;
 	public static String SelectSessionActionEntry_label;
-	public static String DeltaDetailsDialogTitle;
 	public static String ExportSessionAction_failed_to_create_parent_folders;
 	public static String ExportSessionAction_label;
 	public static String ExportSessionAction_tooltip;
-	public static String EnterFileNameForExport;
 	public static String ExportActionTitle;
 	public static String ExportDialogDescription;
 	public static String PropertyPackageVisibility;

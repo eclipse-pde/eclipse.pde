@@ -76,9 +76,18 @@ public final class ApiUseTask extends CommonUtilsTask {
 	private String[] apiPatterns = null;
 	
 	/**
-	 * Package name patterns (regular expressions) to consdier as internal or <code>null</code> if none.
+	 * Package name patterns (regular expressions) to consider as internal or <code>null</code> if none.
 	 */
 	private String[] internalPatterns = null;
+	
+	/**
+	 * Archive name patterns to not scan during analysis.
+	 * Formulation:
+	 * <pre>
+	 * <bundle name>:<path to jar>
+	 * </pre>
+	 */
+	private String[] archivePatterns = null;
 	
 	/**
 	 * Set the location of the current product you want to search.
@@ -190,6 +199,15 @@ public final class ApiUseTask extends CommonUtilsTask {
 	}
 	
 	/**
+	 * Sets any archive name patterns to not scan during the analysis.
+	 * 
+	 * @param patterns
+	 */
+	public void setArchivePatterns(String patterns) {
+		archivePatterns = parsePatterns(patterns);
+	}
+	
+	/**
 	 * Parses and returns patterns as an array of Strings or <code>null</code> if none.
 	 * 
 	 * @param patterns comma separated list or <code>null</code>
@@ -259,6 +277,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 					ids,
 					(IApiElement[]) scope.toArray(new IApiElement[scope.size()]), 
 					getSearchFlags());
+			requestor.setJarPatterns(archivePatterns);
 			// override API descriptions as required
 			if (apiPatterns != null || internalPatterns != null) {
 				// modify API descriptions

@@ -37,7 +37,6 @@ public class MarkerMessages extends NLS {
 	public static String OpenPropertyPageResolution_page_id_cannot_be_null;
 	public static String OpenPropertyPageResolution_the_page_name_cannot_be_null;
 	public static String RemoveFilterProblemResolution_remove_unused_filter;
-	public static String RemoveFilterProblemResolution_remove_unused_filter_job_name;
 	public static String RemoveFilterProblemResolution_remove_unused_filters;
 	public static String RemoveFilterProblemResolution_removes_selected_problem_filter;
 	public static String RemoveUnsupportedTagOperation_removeing_unsupported_tag;

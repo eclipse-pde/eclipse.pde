@@ -55,7 +55,10 @@ public class FolderApiTypeContainer extends ApiElement implements IApiTypeContai
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
 	 */
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
-		doVisit(fRoot, Util.DEFAULT_PACKAGE_NAME, visitor);
+		if(visitor.visit(this)) {
+			doVisit(fRoot, Util.DEFAULT_PACKAGE_NAME, visitor);
+		}
+		visitor.end(this);
 	}
 	
 	/**
@@ -202,5 +205,12 @@ public class FolderApiTypeContainer extends ApiElement implements IApiTypeContai
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		return findTypeRoot(qualifiedName);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+	 */
+	public int getContainerType() {
+		return FOLDER;
 	}
 }

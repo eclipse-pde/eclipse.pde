@@ -180,6 +180,9 @@ public class TagScannerTests extends TestCase {
 			public IApiComponent getApiComponent() {
 				return null;
 			}
+			public int getContainerType() {
+				return 0;
+			}
 		};
 		IApiDescription manifest = newDescription();
 		try { 

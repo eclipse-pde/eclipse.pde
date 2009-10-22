@@ -154,4 +154,10 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		return buffer.toString();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+	 */
+	public int getContainerType() {
+		return IApiTypeContainer.COMPONENT;
+	}
 }

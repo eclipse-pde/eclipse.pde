@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal;
 
-import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
-import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage;
-import org.eclipse.pde.api.tools.ui.internal.wizards.CompareToBaselineWizard;
 import org.eclipse.pde.api.tools.ui.internal.actions.ExportDialog;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsPreferencePage;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ProjectSelectionDialog;
 import org.eclipse.pde.api.tools.ui.internal.properties.ApiErrorsWarningsPropertyPage;
 import org.eclipse.pde.api.tools.ui.internal.properties.ApiFiltersPropertyPage;
+import org.eclipse.pde.api.tools.ui.internal.use.ArchivePatternPage;
+import org.eclipse.pde.api.tools.ui.internal.use.DescriptionPatternPage;
+import org.eclipse.pde.api.tools.ui.internal.use.PatternSelectionPage;
+import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
+import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizardPage;
+import org.eclipse.pde.api.tools.ui.internal.wizards.CompareToBaselineWizard;
 /**
  * Listing of ids used a help context ids
  * @since 1.0.0
@@ -67,11 +70,22 @@ public interface IApiToolsHelpContextIds {
 	 * Constant representing the help id for the {@link ExportDialog}
 	 */
 	public static final String API_COMPARE_EXPORT_DIALOG = PREFIX + "api_compare_export_dialog"; //$NON-NLS-1$
+	/**
+	 * Constant representing the help id for the {@link ArchivePatternPage}
+	 */
+	public static final String APITOOLS_ARCHIVE_PATTERN_WIZARD_PAGE = PREFIX + "apitools_archive_pattern_wizard_page"; //$NON-NLS-1$
+	/**
+	 * Constant representing the help id for the {@link DescriptionPatternPage}
+	 */
+	public static final String APITOOLS_DESCRIPTION_PATTERN_WIZARD_PAGE = PREFIX + "apitools_description_pattern_wizard_page"; //$NON-NLS-1$
+	/**
+	 * Constant representing the help id for the {@link PatternSelectionPage}
+	 */
+	public static final String APITOOLS_PATTERN_SELECTION_WIZARD_PAGE = PREFIX + "apitools_pattern_selection_wizard_page"; //$NON-NLS-1$
 	
 	//LAUNCH CONFIGS
 	
 	public static final String API_USE_PATTERN_TAB = PREFIX + "api_use_pattern_tab"; //$NON-NLS-1$
 	public static final String API_USE_SCAN_TAB = PREFIX + "api_use_main_tab"; //$NON-NLS-1$
-	public static final String API_USE_PATTERN_DIALOG = PREFIX + "api_use_pattern_dialog"; //$NON-NLS-1$
 	
 }

@@ -48,6 +48,7 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	 */
 	public static final String INTERNAL_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".INTERNAL_PATTERNS_LIST"; //$NON-NLS-1$
 	public static final String API_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".API_PATTERNS_LIST"; //$NON-NLS-1$
+	public static final String JAR_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".JAR_PATTERNS_LIST"; //$NON-NLS-1$
 	
 	/**
 	 * Scope of bundles to search - a regular expression to match against bundle symbolic names.

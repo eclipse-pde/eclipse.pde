@@ -101,6 +101,6 @@ public abstract class ApiElement implements IApiElement {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getApiComponent()
 	 */
 	public IApiComponent getApiComponent() {
-		return null;
+		return (IApiComponent) getAncestor(COMPONENT);
 	}
 }

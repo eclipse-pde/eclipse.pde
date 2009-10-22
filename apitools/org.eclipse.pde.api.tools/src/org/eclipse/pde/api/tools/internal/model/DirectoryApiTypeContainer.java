@@ -141,45 +141,48 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
 	 */
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
-		init();
-		String[] packageNames = getPackageNames();
-		for (int i = 0; i < packageNames.length; i++) {
-			String pkg = packageNames[i];
-			if (visitor.visitPackage(pkg)) {
-				String location = (String) fPackages.get(pkg);
-				if(location == null) {
-					continue;
-				}
-				File dir = new File(location);
-				if(!dir.exists()) {
-					continue;
-				}
-				File[] files = dir.listFiles(new FileFilter() {
-					public boolean accept(File file) {
-						return file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX);
+		if(visitor.visit(this)) {
+			init();
+			String[] packageNames = getPackageNames();
+			for (int i = 0; i < packageNames.length; i++) {
+				String pkg = packageNames[i];
+				if (visitor.visitPackage(pkg)) {
+					String location = (String) fPackages.get(pkg);
+					if(location == null) {
+						continue;
 					}
-				});
-				if (files != null) {
-					List classFiles = new ArrayList();
-					for (int j = 0; j < files.length; j++) {
-						String name = files[j].getName();
-						String typeName = name.substring(0, name.length() - 6);
-						if (pkg.length() > 0) {
-							typeName = pkg + "." + typeName; //$NON-NLS-1$
+					File dir = new File(location);
+					if(!dir.exists()) {
+						continue;
+					}
+					File[] files = dir.listFiles(new FileFilter() {
+						public boolean accept(File file) {
+							return file.isFile() && file.getName().endsWith(Util.DOT_CLASS_SUFFIX);
 						}
-						classFiles.add(new LocalApiTypeRoot(this, files[j].getAbsolutePath(), typeName));
-					}
-					Collections.sort(classFiles);
-					Iterator cfIterator = classFiles.iterator();
-					while (cfIterator.hasNext()) {
-						IApiTypeRoot classFile = (IApiTypeRoot) cfIterator.next();
-						visitor.visit(pkg, classFile);
-						visitor.end(pkg, classFile);
+					});
+					if (files != null) {
+						List classFiles = new ArrayList();
+						for (int j = 0; j < files.length; j++) {
+							String name = files[j].getName();
+							String typeName = name.substring(0, name.length() - 6);
+							if (pkg.length() > 0) {
+								typeName = pkg + "." + typeName; //$NON-NLS-1$
+							}
+							classFiles.add(new LocalApiTypeRoot(this, files[j].getAbsolutePath(), typeName));
+						}
+						Collections.sort(classFiles);
+						Iterator cfIterator = classFiles.iterator();
+						while (cfIterator.hasNext()) {
+							IApiTypeRoot classFile = (IApiTypeRoot) cfIterator.next();
+							visitor.visit(pkg, classFile);
+							visitor.end(pkg, classFile);
+						}
 					}
 				}
+				visitor.endVisitPackage(pkg);
 			}
-			visitor.endVisitPackage(pkg);
 		}
+		visitor.end(this);
 	}
 
 	/**
@@ -289,5 +292,12 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		return findTypeRoot(qualifiedName);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+	 */
+	public int getContainerType() {
+		return DIRECTORY;
 	}
 }

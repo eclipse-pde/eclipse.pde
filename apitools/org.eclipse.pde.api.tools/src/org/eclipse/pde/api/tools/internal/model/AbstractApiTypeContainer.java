@@ -216,5 +216,12 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 			fApiTypeContainers.add(containers[i]);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+	 */
+	public int getContainerType() {
+		return 0;
+	}
 
 }

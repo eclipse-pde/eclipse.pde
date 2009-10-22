@@ -32,7 +32,7 @@ public abstract class ApiTypeContainerVisitor {
 	public boolean visit(IApiComponent component) {
 		return true;
 	}
-
+	
 	/**
 	 * End visiting a component. This method is only called when
 	 * the class file container being visited is contained in an API component.
@@ -45,6 +45,31 @@ public abstract class ApiTypeContainerVisitor {
 		// subclasses may re-implement
 	}
 
+	/**
+	 * Visits a container and returns whether class files
+	 * in the container should be visited.
+	 * <p>
+	 * The default implementation does nothing and returns <code>true</code>.
+	 * Subclasses may re-implement.
+	 * </p>
+	 * @param container
+	 * @return
+	 */
+	public boolean visit(IApiTypeContainer container) {
+		return true;
+	}
+	
+	/**
+	 * Ends visiting a container.
+	 * <p>
+	 * The default implementation does nothing. Subclasses may re-implement.
+	 * </p>
+	 * @param container
+	 */
+	public void end(IApiTypeContainer container) {
+		//subclasses my re-implement
+	}
+	
 	/**
 	 * Visits a package in the container and returns whether class files
 	 * in the package should be visited.

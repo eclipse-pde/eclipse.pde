@@ -216,6 +216,9 @@ public class TestSuiteHelper {
 			public IApiComponent getHost() throws CoreException {
 				return null;
 			}
+			public int getContainerType() {
+				return 0;
+			}
 		};
 	}
 	

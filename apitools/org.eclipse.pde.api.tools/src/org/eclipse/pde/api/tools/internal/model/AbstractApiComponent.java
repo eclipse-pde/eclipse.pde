@@ -171,6 +171,13 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 		return Factory.componentDescriptor(this.getId(), this.getVersion());
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+	 */
+	public int getContainerType() {
+		return IApiTypeContainer.COMPONENT;
+	}
+	
 	/**
 	 * Lazily creates a new {@link IApiFilterStore} when it is requested
 	 * 

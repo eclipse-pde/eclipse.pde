@@ -135,6 +135,7 @@ public class BadClassfileTests extends TestCase {
 			public boolean acceptReference(IReference reference) {return true;}
 			public boolean acceptMember(IApiMember member) {return true;}
 			public boolean acceptComponent(IApiComponent component) {return true;}
+			public boolean acceptContainer(IApiTypeContainer container) {return false;}
 		};
 		IApiSearchReporter reporter = new IApiSearchReporter() {
 			public void reportResults(IApiElement element, IReference[] references) {}

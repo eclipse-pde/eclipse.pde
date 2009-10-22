@@ -14,6 +14,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 
 /**
  * A default search requestor to use for API tools
@@ -52,6 +53,16 @@ public interface IApiSearchRequestor {
 	 * @return true if this requestor cares about the given {@link IApiComponent}, false otherwise.
 	 */
 	public boolean acceptComponent(IApiComponent component);
+	
+	/**
+	 * Returns whether this requestor cares about the given {@link IApiTypeContainer} or not.
+	 * This allows the requestor to direct the {@link ApiSearchEngine} to ignore certain type containers
+	 * while searching a component
+	 * 
+	 * @param container
+	 * @return true if this requestor cares about the given {@link IApiTypeContainer} false otherwise.
+	 */
+	public boolean acceptContainer(IApiTypeContainer container);
 	
 	/**
 	 * Returns whether this requestor cares about the given {@link IApiMember} or not.

@@ -107,6 +107,9 @@ public class ApiUseScanJob extends Job {
 				kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
 			}
 			UseSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
+			List jars = this.configuration.getAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, (List)null);
+			String[] sjars = getStrings(jars);
+			requestor.setJarPatterns(sjars);
 			List api = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
 			String[] sapi = getStrings(api);
 			List internal = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);

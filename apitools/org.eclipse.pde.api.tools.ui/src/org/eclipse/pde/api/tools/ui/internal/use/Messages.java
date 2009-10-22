@@ -17,15 +17,10 @@ import org.eclipse.osgi.util.NLS;
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.use.messages"; //$NON-NLS-1$
-	public static String ApiProfileWizardPage_0;
 	public static String ApiUsePatternTab_add;
-	public static String ApiUsePatternTab_add_pattern;
+	public static String ApiUsePatternTab_archive;
 	public static String ApiUsePatternTab_API;
-	public static String ApiUsePatternTab_API_pattern;
 	public static String ApiUsePatternTab_edit;
-	public static String ApiUsePatternTab_edit_pattern;
-	public static String ApiUsePatternTab_edit_regex;
-	public static String ApiUsePatternTab_enter_pattern;
 	public static String ApiUsePatternTab_internal;
 	public static String ApiUsePatternTab_patterns;
 	public static String ApiUsePatternTab_patterns_title;
@@ -38,7 +33,6 @@ public class Messages extends NLS {
 	public static String ApiUseScanJob_cleaning_xml_loc;
 	public static String ApiUseScanJob_collecting_target_components;
 	public static String ApiUseScanJob_creating_html_reports;
-	public static String ApiUseScanJob_creating_search_scope;
 	public static String ApiUseScanJob_deleteing_file;
 	public static String ApiUseScanJob_deleting_old_reports;
 	public static String ApiUseScanJob_deleting_root_folder;
@@ -78,7 +72,30 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_select_install_location;
 	public static String ApiUseScanTab_target_definitions;
 	public static String ApiUseScanTab_targets;
-	public static String ApiUseScanTab_workspace_projects;
+	public static String ArchivePatternPage_archive_name;
+	public static String ArchivePatternPage_bundle_name;
+	public static String ArchivePatternPage_create_nested_pattern;
+	public static String ArchivePatternPage_edit_acrhive_eclusion_pattern;
+	public static String ArchivePatternPage_enter_a_pattern;
+	public static String ArchivePatternPage_enter_bundle_name;
+	public static String ArchivePatternPage_nested_archive_pattern;
+	public static String DescriptionPatternPage_api_pattern;
+	public static String DescriptionPatternPage_create_package__pattern;
+	public static String DescriptionPatternPage_edit_package_pattern;
+	public static String DescriptionPatternPage_package_name_pattern;
+	public static String DescriptionPatternPage_patetern;
+	public static String DescriptionPatternPage_provide_regex;
+	public static String PatternSelectionPage_archive_pattern;
+	public static String PatternSelectionPage_archive_pattern_desc;
+	public static String PatternSelectionPage_description;
+	public static String PatternSelectionPage_must_select_type;
+	public static String PatternSelectionPage_no_desc;
+	public static String PatternSelectionPage_package_pattern;
+	public static String PatternSelectionPage_package_pattern_desc;
+	public static String PatternSelectionPage_pattern_types;
+	public static String PatternSelectionPage_select_pattern;
+	public static String PatternSelectionPage_select_type;
+	public static String PatternWizard_use_scan_patterns;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

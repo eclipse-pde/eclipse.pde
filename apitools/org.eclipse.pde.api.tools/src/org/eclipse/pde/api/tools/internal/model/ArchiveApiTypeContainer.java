@@ -182,30 +182,33 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
 	 */
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
-		init();
-		List packages = new ArrayList(fPackages.keySet());
-		Collections.sort(packages);
-		Iterator iterator = packages.iterator();
-		while (iterator.hasNext()) {
-			String pkg = (String) iterator.next();
-			if (visitor.visitPackage(pkg)) {
-				List types = new ArrayList((Set) fPackages.get(pkg));
-				Iterator cfIterator = types.iterator();
-				List classFiles = new ArrayList(types.size());
-				while (cfIterator.hasNext()) {
-					String entryName = (String) cfIterator.next();
-					classFiles.add(new ArchiveApiTypeRoot(this, entryName));
+		if(visitor.visit(this)) {
+			init();
+			List packages = new ArrayList(fPackages.keySet());
+			Collections.sort(packages);
+			Iterator iterator = packages.iterator();
+			while (iterator.hasNext()) {
+				String pkg = (String) iterator.next();
+				if (visitor.visitPackage(pkg)) {
+					List types = new ArrayList((Set) fPackages.get(pkg));
+					Iterator cfIterator = types.iterator();
+					List classFiles = new ArrayList(types.size());
+					while (cfIterator.hasNext()) {
+						String entryName = (String) cfIterator.next();
+						classFiles.add(new ArchiveApiTypeRoot(this, entryName));
+					}
+					Collections.sort(classFiles);
+					cfIterator = classFiles.iterator();
+					while (cfIterator.hasNext()) {
+						ArchiveApiTypeRoot classFile = (ArchiveApiTypeRoot) cfIterator.next();
+						visitor.visit(pkg, classFile);
+						visitor.end(pkg, classFile);
+					}
 				}
-				Collections.sort(classFiles);
-				cfIterator = classFiles.iterator();
-				while (cfIterator.hasNext()) {
-					ArchiveApiTypeRoot classFile = (ArchiveApiTypeRoot) cfIterator.next();
-					visitor.visit(pkg, classFile);
-					visitor.end(pkg, classFile);
-				}
+				visitor.endVisitPackage(pkg);
 			}
-			visitor.endVisitPackage(pkg);
 		}
+		visitor.end(this);
 	}
 
 	/**
@@ -326,5 +329,12 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		return findTypeRoot(qualifiedName);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+	 */
+	public int getContainerType() {
+		return ARCHIVE;
 	}
 }
