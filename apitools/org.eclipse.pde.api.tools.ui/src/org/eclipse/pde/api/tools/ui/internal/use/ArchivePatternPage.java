@@ -91,7 +91,7 @@ public class ArchivePatternPage extends UsePatternPage {
 				setErrorMessage(Messages.ArchivePatternPage_enter_bundle_name);
 			}
 			else {
-				setMessage("You must enter a bundle name"); //$NON-NLS-1$
+				setMessage(Messages.ArchivePatternPage_enter_bundle_name);
 			}
 			return false;
 		}
@@ -100,7 +100,7 @@ public class ArchivePatternPage extends UsePatternPage {
 				setErrorMessage(Messages.ArchivePatternPage_enter_a_pattern);
 			}
 			else {
-				setMessage("You must enter a pattern"); //$NON-NLS-1$
+				setMessage(Messages.ArchivePatternPage_enter_a_pattern); 
 			}
 			return false;
 		}
