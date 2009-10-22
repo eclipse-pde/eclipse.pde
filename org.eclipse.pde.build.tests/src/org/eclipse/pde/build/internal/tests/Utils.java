@@ -14,7 +14,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
 import java.util.jar.Attributes.Name;
-
 import org.apache.tools.ant.filters.ReplaceTokens;
 import org.apache.tools.ant.util.ReaderInputStream;
 import org.apache.tools.zip.ZipEntry;
@@ -26,6 +25,8 @@ import org.eclipse.pde.internal.build.FeatureGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 public class Utils {
+	private static final String ID = "id";
+	private static final String VERSION = "version";
 
 	/**
 	 * Transfer the contents of resource into the destination IFile.  During the transfer, replace all 
@@ -113,6 +114,7 @@ public class Utils {
 		writeBuffer(folder.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
 		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 	}
+
 	static public void storeBuildProperties(IFolder buildFolder, Properties buildProperties) throws FileNotFoundException, IOException {
 		storeProperties(buildFolder.getFile("build.properties"), buildProperties);
 	}
@@ -160,11 +162,11 @@ public class Utils {
 	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features) throws CoreException, IOException {
 		generateProduct(productFile, id, version, application, entryList, features, null);
 	}
-	
+
 	static public void generateProduct(IFile productFile, String id, String version, String application, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
 		generateProduct(productFile, null, id, version, application, null, entryList, features, extra);
 	}
-	
+
 	static public void generateProduct(IFile productFile, String id, String version, String application, String launcher, String[] entryList, boolean features, StringBuffer extra) throws CoreException, IOException {
 		generateProduct(productFile, null, id, version, application, launcher, entryList, features, extra);
 	}
@@ -202,17 +204,31 @@ public class Utils {
 		if (features) {
 			buffer.append("  <features>\n");
 			for (int i = 0; i < entryList.length; i++) {
+				Map items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i], false);
 				buffer.append("    <feature id=\"");
-				buffer.append(entryList[i]);
-				buffer.append("\"/>\n");
+				buffer.append(items.get(ID));
+				buffer.append("\"");
+				if (items.containsKey(VERSION)) {
+					buffer.append(" version=\"");
+					buffer.append(items.get(VERSION));
+					buffer.append("\"");
+				}
+				buffer.append("/>\n");
 			}
 			buffer.append("  </features>\n");
 		} else {
 			buffer.append("  <plugins>\n");
 			for (int i = 0; i < entryList.length; i++) {
+				Map items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i], false);
 				buffer.append("    <plugin id=\"");
-				buffer.append(entryList[i]);
-				buffer.append("\"/>\n");
+				buffer.append(items.get(ID));
+				buffer.append("\"");
+				if (items.containsKey(VERSION)) {
+					buffer.append(" version=\"");
+					buffer.append(items.get(VERSION));
+					buffer.append("\"");
+				}
+				buffer.append("/>\n");
 			}
 			buffer.append("  </plugins>\n");
 		}

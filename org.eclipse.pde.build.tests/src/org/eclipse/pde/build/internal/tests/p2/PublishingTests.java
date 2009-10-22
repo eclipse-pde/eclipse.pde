@@ -17,16 +17,11 @@ import java.util.*;
 import java.util.jar.Attributes;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import junit.framework.AssertionFailedError;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
-import org.eclipse.equinox.internal.provisional.p2.metadata.VersionRange;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IRequiredCapability;
+import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
@@ -154,9 +149,9 @@ public class PublishingTests extends P2TestCase {
 		properties.put("filteredDependencyCheck", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runProductBuild(buildFolder);
-		
+
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
-		
+
 		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		getIU(meta, "org.eclipse.equinox.common");
 		getIU(meta, "f.feature.group");
@@ -1568,15 +1563,15 @@ public class PublishingTests extends P2TestCase {
 			//expected
 		}
 		assertFalse(duplicate);
-		
+
 		try {
 			assertLogContainsLines(ini, new String[] {"-showSplash", "org.eclipse.platform", "-showSplash", "org.eclipse.platform"});
-			duplicate= true;
+			duplicate = true;
 		} catch (Error e) {
 			//expected
 		}
 		assertFalse(duplicate);
-		
+
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
@@ -1757,7 +1752,7 @@ public class PublishingTests extends P2TestCase {
 
 		IFile product = buildFolder.getFile("foo.product");
 		Utils.generateProduct(product, "foo", "1.0.0", null, new String[] {"f"}, true);
-		
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
 		properties.put("includeLaunchers", "false");
@@ -1772,5 +1767,37 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(meta, "foo");
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "f.feature.group");
 		getIU(meta, "f.feature.group");
+	}
+
+	public void testBug293048() throws Exception {
+		IFolder buildFolder = newTest("293048");
+		IFolder A1 = Utils.createFolder(buildFolder, "plugins/A_1.0.0");
+		IFolder A2 = Utils.createFolder(buildFolder, "plugins/A_2.0.0");
+
+		Utils.generateBundle(A1, "a", "1.0.0.qualifier");
+		Utils.generateBundle(A2, "a", "2.0.0.qualifier");
+
+		IFile product = buildFolder.getFile("foo.product");
+		Utils.generateProduct(product, "foo", "1.0.0", new String[] {"a;version=1.0.0.qualifier", "a;version=2.0.0.qualifier"}, false);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("includeLaunchers", "false");
+		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		IInstallableUnit iu = getIU(repo, "foo");
+		IRequiredCapability[] required = iu.getRequiredCapabilities();
+		for (int i = 0; i < required.length; i++) {
+			if (required[i].getName().equals("a")) {
+				VersionRange range = required[i].getRange();
+				assertTrue(range.getMinimum().getQualifier().startsWith("20"));
+				assertTrue(range.getMinimum().getMajor() == 1 || range.getMinimum().getMajor() == 2);
+			}
+		}
 	}
 }
