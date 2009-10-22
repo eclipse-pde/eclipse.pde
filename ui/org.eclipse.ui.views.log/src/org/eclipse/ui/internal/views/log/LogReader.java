@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.views.log;
 
 import java.io.*;
+import java.text.ParseException;
 import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;
@@ -99,21 +100,29 @@ class LogReader {
 					if (currentSession == null) { // create fake session if there was no any
 						currentSession = new LogSession();
 					}
-					LogEntry entry = new LogEntry();
-					entry.setSession(currentSession);
-					entry.processEntry(line);
-					setNewParent(parents, entry, 0);
-					current = entry;
-					addEntry(current, entries, memento);
+					try {
+						LogEntry entry = new LogEntry();
+						entry.setSession(currentSession);
+						entry.processEntry(line);
+						setNewParent(parents, entry, 0);
+						current = entry;
+						addEntry(current, entries, memento);
+					} catch (ParseException pe) {
+						//do nothing, just toss the entry
+					}
 				} else if (state == SUBENTRY_STATE) {
 					if (parents.size() > 0) {
-						LogEntry entry = new LogEntry();
-						entry.setSession(session);
-						int depth = entry.processSubEntry(line);
-						setNewParent(parents, entry, depth);
-						current = entry;
-						LogEntry parent = (LogEntry) parents.get(depth - 1);
-						parent.addChild(entry);
+						try {
+							LogEntry entry = new LogEntry();
+							entry.setSession(session);
+							int depth = entry.processSubEntry(line);
+							setNewParent(parents, entry, depth);
+							current = entry;
+							LogEntry parent = (LogEntry) parents.get(depth - 1);
+							parent.addChild(entry);
+						} catch (ParseException pe) {
+							//do nothing, just toss the bad entry
+						}
 					}
 				} else if (state == MESSAGE_STATE) {
 					swriter = new StringWriter();
