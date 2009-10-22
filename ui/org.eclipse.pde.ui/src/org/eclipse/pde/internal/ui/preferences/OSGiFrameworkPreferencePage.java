@@ -121,7 +121,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 
 		Link text = new Link(comp, SWT.WRAP);
 		final IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(OSGiFrameworkManager.POINT_ID);
-		text.setText((SchemaRegistry.getSchemaURL(point) != null) ? PDEUIMessages.OSGiFrameworkPreferencePage_installed : PDEUIMessages.OSGiFrameworkPreferencePage_installed_nolink);
+		text.setText((point != null && SchemaRegistry.getSchemaURL(point) != null) ? PDEUIMessages.OSGiFrameworkPreferencePage_installed : PDEUIMessages.OSGiFrameworkPreferencePage_installed_nolink);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
