@@ -242,7 +242,8 @@ set here?
 		<arg line="--launcher.suppressErrors" />
 		<arg line="-consoleLog" />
 		<arg line="-flavor ${p2.flavor}" />
-		<arg line="-installIU ${p2.director.iu}" />
+		<arg value="-installIU" />
+		<arg value="${p2.director.iu}" />
 		<arg line="-version ${p2.director.version}" />
 		<arg value="-p2.os" />
 		<arg value="${p2.quoted.os}" />
