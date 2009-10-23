@@ -17,7 +17,7 @@ Require-Bundle:
  org.eclipse.equinox.p2.repository.tools;bundle-version="[1.0.0,2.0.0)";resolution:=optional
 Export-Package: 
  org.eclipse.pde.build,
- org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.core,org.eclipse.pde.ui",
+ org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.core,org.eclipse.pde.ui,org.eclipse.pde.launching",
  org.eclipse.pde.internal.build.ant;x-internal:=true,
  org.eclipse.pde.internal.build.builder;x-internal:=true,
  org.eclipse.pde.internal.build.fetch;x-internal:=true,
