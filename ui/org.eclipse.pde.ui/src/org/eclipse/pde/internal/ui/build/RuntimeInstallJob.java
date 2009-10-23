@@ -116,7 +116,7 @@ public class RuntimeInstallJob extends Job {
 				version = QualifierReplacer.replaceQualifierInVersion(version, id, null, null);
 
 				// Check if the right version exists in the new meta repo
-				Version newVersion = new Version(version);
+				Version newVersion = Version.parseVersion(version);
 				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), new Collector(), monitor);
 				if (queryMatches.size() == 0) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
@@ -186,9 +186,9 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setId(id + ".patch"); //$NON-NLS-1$
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_NAME, NLS.bind(PDEUIMessages.RuntimeInstallJob_installPatchName, id));
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_DESCRIPTION, PDEUIMessages.RuntimeInstallJob_installPatchDescription);
-		Version patchVersion = new Version("1.0.0." + QualifierReplacer.getDateQualifier()); //$NON-NLS-1$
+		Version patchVersion = Version.createOSGi(1, 0, 0, QualifierReplacer.getDateQualifier());
 		iuPatchDescription.setVersion(patchVersion);
-		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(new Version(0, 0, 0), true, patchVersion, false), 0, null));
+		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(Version.createOSGi(0, 0, 0), true, patchVersion, false), 0, null));
 
 		ArrayList list = new ArrayList(1);
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
