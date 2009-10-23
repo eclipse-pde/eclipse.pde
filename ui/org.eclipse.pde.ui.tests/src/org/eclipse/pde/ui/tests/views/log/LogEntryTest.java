@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     Zend Technologies Ltd. - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
-package org.eclipse.ui.internal.views.log;
+package org.eclipse.pde.ui.tests.views.log;
+
+import org.eclipse.ui.internal.views.log.LogEntry;
 
 import java.text.ParseException;
 import java.util.Calendar;

@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     Zend Technologies Ltd. - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
-package org.eclipse.ui.internal.views.log;
+package org.eclipse.pde.ui.tests.views.log;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -16,7 +17,7 @@ import junit.framework.TestSuite;
 public class AllLogViewTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for org.eclipse.ui.internal.views.log");
+		TestSuite suite = new TestSuite("Test for log view");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(LogEntryTest.class);
 		//$JUnit-END$

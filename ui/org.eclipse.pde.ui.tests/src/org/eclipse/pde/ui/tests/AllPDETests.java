@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import org.eclipse.ui.internal.views.log.AllLogViewTests;
+import org.eclipse.pde.ui.tests.views.log.AllLogViewTests;
 
 import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
 

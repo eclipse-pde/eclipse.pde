@@ -192,7 +192,7 @@ public class LogEntry extends AbstractEntry {
 	 * @param line
 	 * @throws ParseException
 	 */
-	void processEntry(String line) throws ParseException {
+	public void processEntry(String line) throws ParseException {
 		//!ENTRY <pluginID> <severity> <code> <date>
 		//!ENTRY <pluginID> <date> if logged by the framework!!!
 		StringTokenizer stok = new StringTokenizer(line, SPACE);
@@ -259,7 +259,7 @@ public class LogEntry extends AbstractEntry {
 	 * @return the depth of the sub-entry
 	 * @throws ParseException
 	 */
-	int processSubEntry(String line) throws ParseException {
+	public int processSubEntry(String line) throws ParseException {
 		//!SUBENTRY <depth> <pluginID> <severity> <code> <date>
 		//!SUBENTRY  <depth> <pluginID> <date>if logged by the framework!!!
 		StringTokenizer stok = new StringTokenizer(line, SPACE);
