@@ -398,7 +398,7 @@ public interface IPDELauncherConstants {
 	 * Launch configuration attribute key.  The value is a boolean specifying
 	 * whether a p2 profile should be 
 	 * 
-	 * This attribute could be promoted as API in IPDELauncherConstants
+	 * @since 3.6
 	 */
 	String GENERATE_PROFILE = "generateProfile"; //$NON-NLS-1$
 }
