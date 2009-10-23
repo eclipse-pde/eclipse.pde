@@ -61,11 +61,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 				}
 				throw e;
 			}
-			// if restarting, remove the restart flag from the launch config
-			if (configuration.getAttribute(IPDEConstants.RESTART, false) && configuration instanceof ILaunchConfigurationWorkingCopy) {
-				((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IPDEConstants.RESTART, false);
-				((ILaunchConfigurationWorkingCopy) configuration).doSave();
-			}
+
 			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
 			runnerConfig.setVMArguments(getVMArguments(configuration));
 			runnerConfig.setProgramArguments(getProgramArguments(configuration));

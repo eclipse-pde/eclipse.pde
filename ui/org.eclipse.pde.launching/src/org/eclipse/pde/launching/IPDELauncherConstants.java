@@ -393,4 +393,12 @@ public interface IPDELauncherConstants {
 	 * @since 3.6
 	 */
 	String ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.pde.ui.RuntimeWorkbench"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key.  The value is a boolean specifying
+	 * whether a p2 profile should be 
+	 * 
+	 * This attribute could be promoted as API in IPDELauncherConstants
+	 */
+	String GENERATE_PROFILE = "generateProfile"; //$NON-NLS-1$
 }

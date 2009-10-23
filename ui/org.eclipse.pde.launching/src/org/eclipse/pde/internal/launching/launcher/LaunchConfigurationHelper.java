@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
-
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -28,6 +23,9 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
  * Contains helper methods for launching an Eclipse Runtime Workbench
@@ -37,6 +35,12 @@ public class LaunchConfigurationHelper {
 	private static final String PROP_OSGI_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
 	private static final String PROP_OSGI_BUNDLES = "osgi.bundles"; //$NON-NLS-1$
 	private static final String PROP_P2_DATA_AREA = "eclipse.p2.data.area"; //$NON-NLS-1$
+	private static final String DEFAULT_PROFILE_NAME = "SelfHostingProfile"; //$NON-NLS-1$
+
+	/**
+	 * The p2 data area will be set to a directory with this name inside the configuration folder
+	 */
+	private static final String DEFAULT_P2_DIRECTORY = ".p2"; //$NON-NLS-1$
 
 	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
 		try {
@@ -83,7 +87,7 @@ public class LaunchConfigurationHelper {
 		return mgr.performStringSubstitution(text);
 	}
 
-	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map bundles, Map bundlesWithStartLevels, File directory) throws CoreException {
+	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map bundles, Map bundlesWithStartLevels, File configurationDirectory) throws CoreException {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
@@ -98,12 +102,6 @@ public class LaunchConfigurationHelper {
 			String bundleList = properties.getProperty(PROP_OSGI_BUNDLES);
 			if (bundleList != null)
 				properties.setProperty(PROP_OSGI_BUNDLES, computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), bundles, bundlesWithStartLevels));
-			String dataArea = properties.getProperty(PROP_P2_DATA_AREA);
-			if (dataArea != null) {
-				// Make the p2 data area in the configuration area itself, rather than a sibling of the configuration
-				// area (which is a the root pde.core shared metadata area) @see bug 272810
-				properties.setProperty(PROP_P2_DATA_AREA, "@config.dir/.p2"); //$NON-NLS-1$
-			}
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String) null);
 			if (templateLoc != null) {
@@ -120,25 +118,28 @@ public class LaunchConfigurationHelper {
 		} else {
 			properties = new Properties();
 		}
-		if (!directory.exists()) {
-			directory.mkdirs();
+		if (!configurationDirectory.exists()) {
+			configurationDirectory.mkdirs();
 		}
 		String osgiBundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
 
-		// if we are launching using P2, write out P2 files (bundles.txt) and add P2 property to config.ini
+		// Special processing for launching with p2
 		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
+
+			// Write out P2 files (bundles.txt)
 			URL bundlesTxt = null;
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			if (usedefault || useFeatures) {
-				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, 4, false, directory, osgiBundles);
+				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, 4, false, configurationDirectory, osgiBundles);
 			} else {
-				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, start, autostart, directory, null);
+				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, start, autostart, configurationDirectory, null);
 			}
 
+			// Add bundles.txt as p2 config data
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
 				// if we have simple configurator and update configurator together, ensure update doesn't reconcile
@@ -146,11 +147,27 @@ public class LaunchConfigurationHelper {
 					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
+
+			// Make the p2 data area in the configuration area itself, rather than a sibling of the configuration
+			// area (which is a the root pde.core shared metadata area) @see bug 272810
+			properties.setProperty(PROP_P2_DATA_AREA, "@config.dir/".concat(DEFAULT_P2_DIRECTORY)); //$NON-NLS-1$
+
+			// Generate a profile to launch with, set the profile id as the default
+			if (configuration.getAttribute(IPDELauncherConstants.GENERATE_PROFILE, false)) {
+				String profileID = DEFAULT_PROFILE_NAME;
+				File p2DataArea = new File(configurationDirectory, DEFAULT_P2_DIRECTORY);
+
+				// Unless we are restarting an existing profile, generate/overwrite the profile
+				if (!configuration.getAttribute(IPDEConstants.RESTART, false) || !P2Utils.profileExists(profileID, p2DataArea)) {
+					P2Utils.createProfile(profileID, p2DataArea, bundles.values());
+				}
+				properties.setProperty("eclipse.p2.profile", profileID); //$NON-NLS-1$
+			}
 		}
 
 		setBundleLocations(bundles, properties, autostart);
 
-		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
+		save(new File(configurationDirectory, "config.ini"), properties); //$NON-NLS-1$
 		return properties;
 	}
 

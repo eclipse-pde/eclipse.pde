@@ -17,16 +17,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.director.PlannerHelper;
+import org.eclipse.equinox.internal.provisional.p2.engine.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.VersionRange;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
+import org.osgi.framework.Constants;
 
 /**
- * Utilities to read and write bundle and source information files.
+ * Utilities to read and write p2 files
  * 
  * @since 3.4
  */
@@ -38,6 +46,14 @@ public class P2Utils {
 	private static final String BUNDLE_INFO_PATH = BUNDLE_INFO_FOLDER + File.separator + "bundles.info"; //$NON-NLS-1$
 
 	public static final String P2_FLAVOR_DEFAULT = "tooling"; //$NON-NLS-1$
+
+	public static final ITouchpointType TOUCHPOINT_OSGI = MetadataFactory.createTouchpointType("org.eclipse.equinox.p2.osgi", Version.createOSGi(1, 0, 0)); //$NON-NLS-1$
+	private static final String CAPABILITY_NS_OSGI_BUNDLE = "osgi.bundle"; //$NON-NLS-1$
+	private static final String CAPABILITY_NS_OSGI_FRAGMENT = "osgi.fragment"; //$NON-NLS-1$
+	public static final String TYPE_ECLIPSE_BUNDLE = "bundle"; //$NON-NLS-1$
+	public static final String NAMESPACE_ECLIPSE_TYPE = "org.eclipse.equinox.p2.eclipse.type"; //$NON-NLS-1$
+	public static final IProvidedCapability BUNDLE_CAPABILITY = MetadataFactory.createProvidedCapability(NAMESPACE_ECLIPSE_TYPE, TYPE_ECLIPSE_BUNDLE, Version.createOSGi(1, 0, 0));
+	public static final String CAPABILITY_NS_JAVA_PACKAGE = "java.package"; //$NON-NLS-1$
 
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the
@@ -294,6 +310,141 @@ public class P2Utils {
 			PDECore.logException(e);
 			return null;
 		}
+	}
+
+	/**
+	 * Returns whether a profile with the given ID exists in a profile registry
+	 * stored in the give p2 data area.
+	 * 
+	 * @param profileID id of the profile to check
+	 * @param p2DataArea data area where the profile registry is
+	 * @return whether the profile exists
+	 */
+	public static boolean profileExists(String profileID, File p2DataArea) {
+		// Create a custom registry that checks the profile in the proper location
+		File engineArea = new File(p2DataArea, EngineActivator.ID);
+		File registryArea = new File(engineArea, SimpleProfileRegistry.DEFAULT_STORAGE_DIR);
+		registryArea.mkdirs();
+		SimpleProfileRegistry customRegistry = new SimpleProfileRegistry(registryArea);
+
+		return customRegistry.containsProfile(profileID);
+	}
+
+	/**
+	 * Generates a profile containing metadata for all of the bundles in the provided collection.
+	 * The profile will have the given profile ID and will be persisted in the profile registry
+	 * directory inside the given p2 data area.
+	 * 
+	 * @param profileID the ID to be used when creating the profile, if a profile with the same name exists, it will be overwritten
+	 * @param p2DataArea the directory which contains p2 data including the profile registry, if the directory path doesn't exist it will be created
+	 * @param bundles the collection of bundles to create metadata for and add to the profile
+	 * 
+	 * @throws CoreException if the profile cannot be generated
+	 */
+	public static void createProfile(String profileID, File p2DataArea, Collection bundles) throws CoreException {
+		// TODO Could avoid using internal p2 code if multiple instances of the p2 servers could be run on the same vm (being looked at in 3.6)
+
+		// Create a custom registry that stores the profile in the proper location
+		File engineArea = new File(p2DataArea, EngineActivator.ID);
+		File registryArea = new File(engineArea, SimpleProfileRegistry.DEFAULT_STORAGE_DIR);
+		registryArea.mkdirs();
+		SimpleProfileRegistry customRegistry = new SimpleProfileRegistry(registryArea);
+
+		// Delete any previous profiles with the same ID
+		customRegistry.removeProfile(profileID);
+
+		// Create the profile
+		IProfile profile = null;
+		Properties props = new Properties();
+		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
+		profile = customRegistry.addProfile(profileID, props);
+
+		// Create metadata for the bundles
+		Collection ius = new ArrayList(bundles.size());
+		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
+			IPluginModelBase model = (IPluginModelBase) iterator.next();
+			BundleDescription bundle = model.getBundleDescription();
+			ius.add(createBundleIU(bundle));
+		}
+
+		// Create operands to install the metadata
+		Operand[] operands = new Operand[ius.size() * 2];
+		int i = 0;
+		for (Iterator iter = ius.iterator(); iter.hasNext();) {
+			IInstallableUnit iu = (IInstallableUnit) iter.next();
+			operands[i++] = new InstallableUnitOperand(null, iu);
+			operands[i++] = new InstallableUnitPropertyOperand(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", null, PlannerHelper.createOptionalInclusionRule(iu));
+		}
+
+		// Add the metadata to the profile
+		ProvisioningContext context = new ProvisioningContext();
+		PhaseSet phaseSet = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_COLLECT | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
+		File profileDataDirectory = customRegistry.getProfileDataDirectory(profile.getProfileId());
+		EngineSession session = new EngineSession(profile, profileDataDirectory, context);
+		IStatus status = phaseSet.perform(new ActionManager(), session, profile, operands, context, new NullProgressMonitor());
+
+		if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
+			throw new CoreException(status);
+		}
+	}
+
+	/**
+	 * Creates an installable unit from a bundle description
+	 * 
+	 * @param bd bundle description to create metadata for
+	 * @return an installable unit
+	 */
+	private static IInstallableUnit createBundleIU(BundleDescription bd) {
+		InstallableUnitDescription iu = new MetadataFactory.InstallableUnitDescription();
+		iu.setSingleton(bd.isSingleton());
+		iu.setId(bd.getSymbolicName());
+		iu.setVersion(Version.fromOSGiVersion(bd.getVersion()));
+		iu.setFilter(bd.getPlatformFilter());
+		iu.setTouchpointType(TOUCHPOINT_OSGI);
+
+		boolean isFragment = bd.getHost() != null;
+
+		//Process the required bundles
+		BundleSpecification requiredBundles[] = bd.getRequiredBundles();
+		ArrayList reqsDeps = new ArrayList();
+		if (isFragment)
+			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getHost().getName(), VersionRange.fromOSGiVersionRange(bd.getHost().getVersionRange()), null, false, false));
+		for (int j = 0; j < requiredBundles.length; j++)
+			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_OSGI_BUNDLE, requiredBundles[j].getName(), VersionRange.fromOSGiVersionRange(requiredBundles[j].getVersionRange()), null, requiredBundles[j].isOptional(), false));
+
+		// Process the import packages
+		ImportPackageSpecification osgiImports[] = bd.getImportPackages();
+		for (int i = 0; i < osgiImports.length; i++) {
+			// TODO we need to sort out how we want to handle wild-carded dynamic imports - for now we ignore them
+			ImportPackageSpecification importSpec = osgiImports[i];
+			String importPackageName = importSpec.getName();
+			if (importPackageName.indexOf('*') != -1)
+				continue;
+			VersionRange versionRange = VersionRange.fromOSGiVersionRange(importSpec.getVersionRange());
+			//TODO this needs to be refined to take into account all the attribute handled by imports
+			boolean isOptional = importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC) || importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_OPTIONAL);
+			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_JAVA_PACKAGE, importPackageName, versionRange, null, isOptional, false));
+		}
+		iu.setRequiredCapabilities((IRequiredCapability[]) reqsDeps.toArray(new IRequiredCapability[reqsDeps.size()]));
+
+		// Create set of provided capabilities
+		ArrayList providedCapabilities = new ArrayList();
+		providedCapabilities.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, bd.getSymbolicName(), Version.fromOSGiVersion(bd.getVersion())));
+		providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getSymbolicName(), Version.fromOSGiVersion(bd.getVersion())));
+
+		// Process the export package
+		ExportPackageDescription exports[] = bd.getExportPackages();
+		for (int i = 0; i < exports.length; i++) {
+			//TODO make sure that we support all the refinement on the exports
+			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_JAVA_PACKAGE, exports[i].getName(), Version.fromOSGiVersion(exports[i].getVersion())));
+		}
+		// Here we add a bundle capability to identify bundles
+		providedCapabilities.add(BUNDLE_CAPABILITY);
+		if (isFragment)
+			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_FRAGMENT, bd.getHost().getName(), Version.fromOSGiVersion(bd.getVersion())));
+
+		iu.setCapabilities((IProvidedCapability[]) providedCapabilities.toArray(new IProvidedCapability[providedCapabilities.size()]));
+		return MetadataFactory.createInstallableUnit(iu);
 	}
 
 }
