@@ -122,8 +122,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IBuildEntry srcExcludes = null;
 		IBuildEntry jarsExtra = null;
 		IBuildEntry bundleList = null;
-		ArrayList sourceEntries = new ArrayList();
-		ArrayList sourceEntryKeys = new ArrayList();
+		ArrayList sourceEntries = new ArrayList(1);
+		ArrayList sourceEntryKeys = new ArrayList(1);
+		HashMap outputEntries = new HashMap(4);
 		Map encodingEntries = new HashMap();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -140,6 +141,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				srcExcludes = entries[i];
 			else if (name.startsWith(PROPERTY_SOURCE_PREFIX))
 				sourceEntries.add(entries[i]);
+			else if (name.startsWith(PROPERTY_OUTPUT_PREFIX))
+				outputEntries.put(entries[i].getName(), entries[i]);
 			else if (name.startsWith(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX))
 				encodingEntries.put(entries[i].getName(), entries[i].getTokens()[0]);
 			else if (name.equals(PROPERTY_JAR_EXTRA_CLASSPATH))
@@ -182,12 +185,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				IClasspathEntry[] cpes = jp.getRawClasspath();
 				validateMissingLibraries(sourceEntryKeys, cpes);
 				validateSourceEntries(sourceEntries, cpes);
+				validateOutputEntries(outputEntries, sourceEntries, cpes);
 			}
 		} catch (JavaModelException e) {
 		} catch (CoreException e) {
 		}
 
 		validateSourceEntries(sourceEntries);
+		validateOutputEntries(outputEntries);
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys, build);
 		validateBinIncludes(binIncludes);
 		//validateDefaultEncoding(sourceEntries, encodingEntries);
@@ -373,7 +378,27 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				if (folderEntry == null || !folderEntry.exists() || !(folderEntry instanceof IFolder))
 					prepareError(name, tokens[j], NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, tokens[j]), PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_OTHER);
 			}
+		}
+	}
 
+	/**
+	 * Checks that all folders in output.<library> entry exists in project
+	 *  
+	 * @param outputEntries
+	 */
+	private void validateOutputEntries(HashMap outputEntries) {
+		Collection outputEntrySet = outputEntries.values();
+		for (Iterator iterator = outputEntrySet.iterator(); iterator.hasNext();) {
+			IBuildEntry outputEntry = (IBuildEntry) iterator.next();
+			String name = outputEntry.getName();
+			String[] tokens = outputEntry.getTokens();
+			for (int j = 0; j < tokens.length; j++) {
+				if (".".equals(tokens[j])) //$NON-NLS-1$
+					continue;
+				IResource folderEntry = fProject.findMember(tokens[j]);
+				if (folderEntry == null || !folderEntry.exists() || !(folderEntry instanceof IFolder))
+					prepareError(name, tokens[j], NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, tokens[j]), PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_OTHER);
+			}
 		}
 	}
 
@@ -477,6 +502,54 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		} else
 			prepareError(DEF_SOURCE_ENTRY, null, NLS.bind(PDECoreMessages.BuildErrorReporter_classpathEntryMissing, unlistedEntries), PDEMarkerFactory.B_SOURCE_ADDITION, PDEMarkerFactory.CAT_OTHER);
 
+	}
+
+	/**
+	 * Every source folder in source.&lt;library&gt; entry should have the corresponding output folder in the output.&lt;library&gt; entry
+	 *  
+	 * @param outputEntries
+	 * @param sourceEntries
+	 * @param cpes
+	 */
+	//bug 253950
+	private void validateOutputEntries(HashMap outputEntries, ArrayList sourceEntries, IClasspathEntry[] cpes) {
+		HashMap sourceFolders = new HashMap(4);
+		for (int i = 0; i < cpes.length; i++) {
+			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				String sourceFolder = cpes[i].getPath().removeFirstSegments(1).addTrailingSeparator().toString();
+				sourceFolders.put(sourceFolder, cpes[i]);
+			}
+		}
+
+		for (Iterator iterator = sourceEntries.iterator(); iterator.hasNext();) {
+			IBuildEntry sourceEntry = (IBuildEntry) iterator.next();
+			String[] sourceEntryTokens = sourceEntry.getTokens();
+			for (int i = 0; i < sourceEntryTokens.length; i++) {
+				if (sourceFolders.containsKey(sourceEntryTokens[i])) {
+					String libName = sourceEntry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
+					IBuildEntry outputEntry = (IBuildEntry) outputEntries.get(PROPERTY_OUTPUT_PREFIX + libName);
+					if (outputEntry == null || outputEntry.getTokens().length == 0)
+						continue;
+
+					List outputEntryTokens = Arrays.asList(outputEntry.getTokens());
+					IClasspathEntry sourceFolderCPEntry = (IClasspathEntry) sourceFolders.get(sourceEntryTokens[i]);
+					IPath outputLocation = sourceFolderCPEntry.getOutputLocation();
+					if (outputLocation == null) {
+						try {
+							outputLocation = JavaCore.create(fProject).getOutputLocation();
+						} catch (JavaModelException e) {
+							//can not proceed without output location
+							continue;
+						}
+					}
+					String outputEntryToken = outputLocation.removeFirstSegments(1).addTrailingSeparator().toString();
+					if (!outputEntryTokens.contains(outputEntryToken)) {
+						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_missingOutputLocation, sourceEntryTokens[i], libName);
+						prepareError(outputEntry.getName(), outputEntryToken, message, PDEMarkerFactory.B_ADDDITION, PDEMarkerFactory.CAT_OTHER);
+					}
+				}
+			}
+		}
 	}
 
 	// bug 286808
