@@ -925,6 +925,23 @@ public class FeatureExportOperation extends Job {
 		}
 	}
 
+	private BundleDescription getMatchingLauncher(String[] configuration, BundleDescription[] fragments) {
+		//return the launcher fragment that matches the given configuration
+		Dictionary environment = getEnvironment(configuration);
+		for (int i = 0; i < fragments.length; i++) {
+			if (!isNLFragment(fragments[i]) && shouldAddPlugin(fragments[i], environment))
+				return fragments[i];
+		}
+		return null;
+	}
+
+	private boolean isNLFragment(BundleDescription fragment) {
+		//this assumes a name like org.eclipse.equinox.launcher.<ws>.<os>.<arch>.nl_de
+		String symbolicName = fragment.getSymbolicName();
+		int idx = symbolicName.lastIndexOf('.');
+		return (idx > -1 && symbolicName.regionMatches(true, idx + 1, "nl", 0, 2)); //$NON-NLS-1$
+	}
+
 	protected void createFeature(String featureID, String featureLocation, String[][] configurations, boolean includeLauncher) throws IOException {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
@@ -946,6 +963,29 @@ public class FeatureExportOperation extends Job {
 					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
 					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
 					root.appendChild(includes);
+				} else {
+					IPluginModelBase launcherPlugin = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
+					if (launcherPlugin != null) {
+						BundleDescription bundle = launcherPlugin.getBundleDescription();
+						if (bundle != null) {
+							Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
+							plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
+							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+							root.appendChild(plugin);
+							BundleDescription[] fragments = bundle.getFragments();
+							for (int i = 0; i < configurations.length; i++) {
+								BundleDescription launcherFragment = getMatchingLauncher(configurations[i], fragments);
+								if (launcherFragment != null) {
+									Element fragment = doc.createElement("plugin"); //$NON-NLS-1$
+									fragment.setAttribute("id", launcherFragment.getSymbolicName()); //$NON-NLS-1$
+									fragment.setAttribute("version", launcherFragment.getVersion().toString()); //$NON-NLS-1$ 
+									fragment.setAttribute("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+									setFilterAttributes(fragment, configurations[i]);
+									root.appendChild(fragment);
+								}
+							}
+						}
+					}
 				}
 			}
 
