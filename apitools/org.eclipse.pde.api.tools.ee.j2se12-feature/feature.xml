@@ -2,7 +2,7 @@
 <feature 
       id="org.eclipse.pde.api.tools.ee.j2se12_feature"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="%providerName">
 
    <description>

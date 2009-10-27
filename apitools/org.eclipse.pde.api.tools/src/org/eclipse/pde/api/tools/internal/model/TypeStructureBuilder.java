@@ -324,12 +324,17 @@ public class TypeStructureBuilder extends ClassAdapter {
 		ApiType type = null;
 		try {
 			Map pool = new HashMap();
-			inputStream.readShort(); // read file version (for now there is only one version)
+			short currentVersion = inputStream.readShort(); // read file version (for now there is only one version)
 			short poolSize = inputStream.readShort();
 			for (int i = 0; i < poolSize; i++) {
 				String readUtf = inputStream.readUTF();
 				int index = inputStream.readShort();
 				pool.put(new Integer(index), readUtf);
+			}
+			int access = 0;
+			// access flag was added in version 2 of the stub format
+			if (currentVersion == 2) {
+				access = inputStream.readChar();
 			}
 			int classIndex = inputStream.readShort();
 			String name = (String) pool.get(new Integer(classIndex));
@@ -337,7 +342,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			simpleSig.append('L');
 			simpleSig.append(name);
 			simpleSig.append(';');
-			type = new ApiType(apiComponent, name.replace('/', '.'), simpleSig.toString(), null, 0, null, archiveApiTypeRoot);
+			type = new ApiType(apiComponent, name.replace('/', '.'), simpleSig.toString(), null, access, null, archiveApiTypeRoot);
 			int superclassNameIndex = inputStream.readShort();
 			if (superclassNameIndex != -1) {
 				String superclassName = (String) pool.get(new Integer(superclassNameIndex));

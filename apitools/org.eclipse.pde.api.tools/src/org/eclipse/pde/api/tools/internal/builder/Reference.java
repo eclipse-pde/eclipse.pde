@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
@@ -366,7 +367,24 @@ public class Reference implements IReference {
 							new IApiComponent[] { sourceComponent },
 							superclassName);
 					IApiType superclass = classFile.getStructure();
-					return resolveVirtualMethod0(sourceComponent, superclass, methodName, methodSignature);
+					boolean resolved = resolveVirtualMethod0(sourceComponent, superclass, methodName, methodSignature);
+					if (resolved) {
+						return resolved;
+					}
+				}
+				if (Flags.isAbstract(type.getModifiers())) {
+					interfacesNames = type.getSuperInterfaceNames();
+					if (interfacesNames != null) {
+						for (int i = 0, max = interfacesNames.length; i < max; i++) {
+							IApiTypeRoot classFile = Util.getClassFile(
+									new IApiComponent[] { sourceComponent },
+									interfacesNames[i]);
+							IApiType superinterface = classFile.getStructure();
+							if (superinterface != null && resolveVirtualMethod0(sourceComponent, superinterface, methodName, methodSignature)) {
+								return true;
+							}
+						}
+					}
 				}
 		}
 		return false;
