@@ -373,7 +373,7 @@ public class P2Utils {
 		for (Iterator iter = ius.iterator(); iter.hasNext();) {
 			IInstallableUnit iu = (IInstallableUnit) iter.next();
 			operands[i++] = new InstallableUnitOperand(null, iu);
-			operands[i++] = new InstallableUnitPropertyOperand(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", null, PlannerHelper.createOptionalInclusionRule(iu));
+			operands[i++] = new InstallableUnitPropertyOperand(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", null, PlannerHelper.createOptionalInclusionRule(iu)); //$NON-NLS-1$
 		}
 
 		// Add the metadata to the profile
