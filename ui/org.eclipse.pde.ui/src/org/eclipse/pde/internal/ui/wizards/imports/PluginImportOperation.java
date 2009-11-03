@@ -464,21 +464,9 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return true if source was found for at least one library, false otherwise
 	 */
 	private boolean canFindSource(IPluginModelBase model) {
-		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-
-		// Check for a source bundle
-		if (manager.hasBundleManifestLocation(model.getPluginBase())) {
+		// Check the manager(s) for source
+		if (getSourceManager(model) != null) {
 			return true;
-		}
-
-		// Check for an old style source plug-in
-		String[] libraries = getLibraryNames(model);
-		for (int i = 0; i < libraries.length; i++) {
-			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-			IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
-			if (srcPath != null) {
-				return true;
-			}
 		}
 
 		// Check for source inside the binary plug-in
@@ -504,6 +492,55 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Should be used inside this class rather than PDEPlugin.getSourceLocationManager as it checks if the alternate
+	 * source manager has source for the given plug-in.  The alternate source manager is set if we are importing from
+	 * a location other than the active target platform.  In that case we want to use source from the import location
+	 * if available.  If this method returns <code>null</code> no seperate source feature/bundle could be found.  There
+	 * may still be source stored internally in the plug-in.
+	 * 
+	 * @return the most relevant source manager than contains source for the plug-in or <code>null</code> if no separate source could be found
+	 */
+	private SourceLocationManager getSourceManager(IPluginModelBase model) {
+		// Check the alternate source manager first
+		if (fAlternateSource != null) {
+			// Check for a source bundle
+			if (fAlternateSource.hasBundleManifestLocation(model.getPluginBase())) {
+				return fAlternateSource;
+			}
+
+			// Check for an old style source plug-in
+			String[] libraries = getLibraryNames(model);
+			for (int i = 0; i < libraries.length; i++) {
+				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+				IPath srcPath = fAlternateSource.findSourcePath(model.getPluginBase(), new Path(zipName));
+				if (srcPath != null) {
+					return fAlternateSource;
+				}
+			}
+		}
+
+		// Check the pde default source manager second
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+
+		// Check for a source bundle
+		if (manager.hasBundleManifestLocation(model.getPluginBase())) {
+			return manager;
+		}
+
+		// Check for an old style source plug-in
+		String[] libraries = getLibraryNames(model);
+		for (int i = 0; i < libraries.length; i++) {
+			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+			IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+			if (srcPath != null) {
+				return manager;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -596,16 +633,12 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
 			Map sourceMap = new HashMap(libraries.length);
-			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+			SourceLocationManager manager = getSourceManager(model);
 			for (int i = 0; i < libraries.length; i++) {
 				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
 				IPluginBase pluginBase = model.getPluginBase();
 				// check default locations
 				IPath srcPath = manager.findSourcePath(pluginBase, new Path(zipName));
-				// check alternate locations
-				if (srcPath == null && fAlternateSource != null) {
-					srcPath = fAlternateSource.findSourcePath(pluginBase, new Path(zipName));
-				}
 				if (srcPath != null) {
 					zipName = srcPath.lastSegment();
 					IPath dstPath = new Path(zipName);
@@ -643,7 +676,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			String[] libraries = getLibraryNames(model);
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
-			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+			SourceLocationManager manager = getSourceManager(model);
 
 			// Check if we have new style individual source bundles
 			if (manager.hasBundleManifestLocation(model.getPluginBase())) {
@@ -720,19 +753,24 @@ public class PluginImportOperation extends WorkspaceJob {
 	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations) throws CoreException, ZipException, IOException {
 		IImportStructureProvider provider;
 		Object root;
+		IPath prefixPath;
+		IPath defaultSourcePath = new Path(DEFAULT_SOURCE_DIR);
 		if (isJARd(model)) {
 			provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
 			root = ((ZipFileStructureProvider) provider).getRoot();
+			prefixPath = defaultSourcePath;
 		} else {
 			provider = FileSystemStructureProvider.INSTANCE;
-			root = new File(model.getInstallLocation());
+			File rootFile = new File(model.getInstallLocation());
+			root = rootFile;
+			prefixPath = new Path(rootFile.getPath()).append(defaultSourcePath);
 		}
-		IPath defaultSourcePath = new Path(DEFAULT_SOURCE_DIR);
+
 		ArrayList collected = new ArrayList();
 		PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
 		if (collected.size() > 0) {
 			Set packages = new HashSet();
-			PluginImportHelper.collectJavaPackages(provider, collected, defaultSourcePath, packages);
+			PluginImportHelper.collectJavaPackages(provider, collected, prefixPath, packages);
 			addPackageEntries(packages, defaultSourcePath, packageLocations);
 			addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
@@ -774,7 +812,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @throws CoreException is there is a problem importing the files
 	 */
 	private void importAdditionalSourceFiles(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
-		File sourceLocation = PDECore.getDefault().getSourceLocationManager().findSourcePlugin(model.getPluginBase());
+		File sourceLocation = getSourceManager(model).findSourcePlugin(model.getPluginBase());
 		if (sourceLocation != null) {
 			if (sourceLocation.isFile()) {
 				ArrayList collected = new ArrayList();
