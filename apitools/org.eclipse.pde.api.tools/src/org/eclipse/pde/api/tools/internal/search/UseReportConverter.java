@@ -57,6 +57,8 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -534,6 +536,7 @@ public class UseReportConverter extends HTMLConvertor {
 	private File htmlIndex = null;
 	SAXParser parser = null;
 	private boolean hasmissing = false;
+	private UseMetadata metadata = null;
 	
 	/**
 	 * Constructor
@@ -824,7 +827,7 @@ public class UseReportConverter extends HTMLConvertor {
 			else {
 				buffer.append(OPEN_P).append(getMissingBundlesHeader()).append(CLOSE_P); 
 				buffer.append("<table border=\"1\" width=\"50%\">\n"); //$NON-NLS-1$
-				buffer.append(OPEN_TR).append("<td bgcolor=\"#CC9933\" width=\"38%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_required_bundles).append(CLOSE_B).append(CLOSE_TD).append(CLOSE_TR); //$NON-NLS-1$ 
+				buffer.append(OPEN_TR).append("<td bgcolor=\"#CC9933\" width=\"36%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_required_bundles).append(CLOSE_B).append(CLOSE_TD).append(CLOSE_TR); //$NON-NLS-1$ 
 			}
 			String value = null;
 			for (Iterator iter = sorted.iterator(); iter.hasNext();) {
@@ -929,7 +932,6 @@ public class UseReportConverter extends HTMLConvertor {
 			if(additional != null) {
 				buffer.append(additional);
 			}
-			buffer.append(getTerminologySection());
 			buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_referenced_type));
 			CountGroup counts = null;
 			String link = null;
@@ -960,8 +962,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_TR); 
 			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"70%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_bundle).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
-			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"20%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_version).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
-			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"10%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_count).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"14%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_version).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"36%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_count).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 			buffer.append(CLOSE_TR);
 			Collections.sort(referees, compare);
 			IComponentDescriptor comp = null;
@@ -1250,10 +1252,12 @@ public class UseReportConverter extends HTMLConvertor {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+			writeMetadataHeaders(buffer);
 			buffer.append(OPEN_TITLE).append(getIndexTitle()).append(CLOSE_TITLE); 
 			buffer.append(CLOSE_HEAD); 
 			buffer.append(OPEN_BODY); 
-			buffer.append(OPEN_H3).append(getIndexHeader()).append(CLOSE_H3); 
+			buffer.append(OPEN_H3).append(getIndexHeader()).append(CLOSE_H3);
+			writeMetadataSummary(buffer);
 			buffer.append(OPEN_H4).append(SearchMessages.UseReportConvertor_additional_infos_section).append(CLOSE_H4); 
 			if(this.hasmissing) {
 				buffer.append(OPEN_P); 
@@ -1262,12 +1266,12 @@ public class UseReportConverter extends HTMLConvertor {
 				buffer.append(CLOSE_P); 
 			}
 			buffer.append(OPEN_P); 
-			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {"<a href=\"./not_searched.html\">", "</a></p>\n"}));  //$NON-NLS-1$//$NON-NLS-2$ 
+			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {"<a href=\"./not_searched.html\">", "</a></p>\n"}));  //$NON-NLS-1$//$NON-NLS-2$
+			buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
 			if(getAdditionalIndexInfo() != null) {
 				buffer.append(getAdditionalIndexInfo());
 			}
 			if(sortedreports.size() > 0) {
-				buffer.append(getTerminologySection());
 				buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_bundle));
 				if(sortedreports.size() > 0) {
 					Report report = null;
@@ -1305,6 +1309,211 @@ public class UseReportConverter extends HTMLConvertor {
 	}
 	
 	/**
+	 * This method is called during the HTML header creation phase to allow
+	 * META header elements to be written for metadata objects
+	 * @param buffer
+	 * @throws Exception
+	 */
+	void writeMetadataHeaders(StringBuffer buffer) throws Exception {
+		writeMetaTag(buffer, "description", SearchMessages.UseReportConverter_root_index_description); //$NON-NLS-1$
+		//TODO could write metadata information here
+	}
+	
+	/**
+	 * This method is called during the initial index page creation to allow
+	 * and executive summary of the use scan to be written out from metadata
+	 * @param buffer
+	 * @throws Exception
+	 */
+	void writeMetadataSummary(StringBuffer buffer) throws Exception {
+		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_scan_details).append(CLOSE_H4);
+		getMetadata();
+		if(this.metadata != null) {
+			buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.UseReportConverter_scan_details).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_scan_date).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.getRunAtDate()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_description).append(CLOSE_TD); 
+			String desc = this.metadata.getDescription();
+			buffer.append(openTD(36)).append((desc != null ? desc : SearchMessages.UseReportConverter_none)).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_includes_API_refs).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.includesAPI()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_includes_internal_refs).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.includesInternal()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_baseline_loc).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.getBaselineLocation()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_scope_pattern).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.getScopePattern()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_reference_pattern).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.getReferencePattern()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_report_location).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.getReportLocation()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_api_pattern).append(CLOSE_TD); 
+			buffer.append(openTD(36)); 
+			String[] patterns = this.metadata.getApiPatterns();
+			if(patterns != null) {
+				buffer.append(this.metadata.getApiPatterns());
+				for (int i = 0; i < patterns.length; i++) {
+					buffer.append(patterns[i]).append(BR);
+				}
+			}
+			else {
+				buffer.append(SearchMessages.UseReportConverter_none);
+			}
+			buffer.append(CLOSE_TD);
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_internal_patterns).append(CLOSE_TD); 
+			buffer.append(openTD(36)); 
+			patterns = this.metadata.getInternalPatterns();
+			if(patterns != null) {
+				for (int i = 0; i < patterns.length; i++) {
+					buffer.append(patterns[i]).append(BR);
+				}
+			}
+			else {
+				buffer.append(SearchMessages.UseReportConverter_none); 
+			}
+			buffer.append(CLOSE_TD);
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_archive_patterns).append(CLOSE_TD); 
+			buffer.append(openTD(36)); 
+			patterns = this.metadata.getArchivePatterns();
+			if(patterns != null) {
+				for (int i = 0; i < patterns.length; i++) {
+					buffer.append(patterns[i]).append(BR);
+				}
+			}
+			else {
+				buffer.append(SearchMessages.UseReportConverter_none); 
+			}
+			buffer.append(CLOSE_TD);
+			buffer.append(CLOSE_TR);
+			buffer.append(CLOSE_TABLE);
+		}
+	}
+	
+	/**
+	 * Returns the use metadata from this scan
+	 * @return
+	 * @throws Exception
+	 */
+	UseMetadata getMetadata() throws Exception {
+		if(this.metadata == null) {
+			File xml = null;
+			try {
+				xml = new File(this.reportsRoot, "meta"+XML_EXTENSION);  //$NON-NLS-1$
+				if(xml.exists()) {
+					String xmlstr = Util.getFileContentAsString(xml);
+					Element doc = Util.parseDocument(xmlstr);
+					this.metadata = new UseMetadata();
+					Element element = null;
+					String value = null, name = null;
+					NodeList nodes = doc.getElementsByTagName("*"); //$NON-NLS-1$
+					for(int i = 0; i < nodes.getLength(); i++) {
+						element = (Element) nodes.item(i);
+						value = element.getAttribute(UseMetadata.VALUE);
+						name = element.getNodeName();
+						if(UseMetadata.FLAGS.equals(name)) {
+							try {
+								this.metadata.setSearchflags(Integer.parseInt(value));
+							}
+							catch(NumberFormatException nfe) {
+								//do nothing
+							}
+							continue;
+						}
+						if(UseMetadata.RUNATDATE.equals(name)) {
+							this.metadata.setRunAtDate(value);
+							continue;
+						}
+						if(UseMetadata.DESCRIPTION.equals(name)) {
+							this.metadata.setDescription(value);
+							continue;
+						}
+						if(UseMetadata.BASELINELOCATION.equals(name)) {
+							this.metadata.setBaselineLocation(value);
+							continue;
+						}
+						if(UseMetadata.REPORTLOCATION.equals(name)) {
+							this.metadata.setReportLocation(value);
+							continue;
+						}
+						if(UseMetadata.SCOPEPATTERN.equals(name)) {
+							this.metadata.setScopePattern(value);
+							continue;
+						}
+						if(UseMetadata.REFERENCEPATTERN.equals(name)) {
+							this.metadata.setReferencePattern(value);
+							continue;
+						}
+						if(UseMetadata.APIPATTERNS.equals(name)) {
+							this.metadata.setApiPatterns(readPatterns(element));
+							continue;
+						}
+						if(UseMetadata.INTERNALPATTERNS.equals(name)) {
+							this.metadata.setInternalPatterns(readPatterns(element));
+							continue;
+						}
+						if(UseMetadata.ARCHIVEPATTERNS.equals(name)) {
+							this.metadata.setArchivePatterns(readPatterns(element));
+							continue;
+						}
+					}
+				}
+			}
+			catch (CoreException e) {
+				throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata, xml.getAbsolutePath()));
+			}
+		}
+		return this.metadata;
+	}
+	
+	/**
+	 * Reads saved patterns from the meta.xml file
+	 * @param element
+	 * @return the array of patterns or <code>null</code>
+	 */
+	private String[] readPatterns(Element element) {
+		String[] pats = null;
+		NodeList patterns = element.getElementsByTagName(UseMetadata.PATTERN);
+		int length = patterns.getLength();
+		if(length > 0) {
+			pats = new String[length];
+			for (int j = 0; j < length; j++) {
+				pats[j] = ((Element)patterns.item(j)).getAttribute(UseMetadata.VALUE);
+			}
+		}
+		return pats;
+	}
+	
+	/**
+	 * Writes out a META tag of the kind <code>description</code>
+	 * @param buffer
+	 * @param description
+	 */
+	void writeMetaTag(StringBuffer buffer, String name, String content) {
+		buffer.append("<meta name=\"").append(name).append("\" content=\"").append(content).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+	
+	/**
 	 * Returns the HTML markup for the default references table header.
 	 * Where the first column contains the linked item and the following five columns are 
 	 * API, Internal, Permissible, Fragment-Permissible and Other reference counts respectively
@@ -1313,14 +1522,25 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	String getReferencesTableHeader(String columnname) {
 		StringBuffer buffer = new StringBuffer();
+		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_references).append(CLOSE_H4);
 		buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
 		buffer.append(OPEN_TR); 
-		buffer.append("\t<td bgcolor=\"#CC9933\" width=\"38%\">").append(OPEN_B).append(columnname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_api_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_internal_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_internal_permissible_references).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_fragment_permissible_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_other_references).append(CLOSE_B).append(CLOSE_TD);  //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" width=\"30%\">").append(OPEN_B).append(columnname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(SearchMessages.UseReportConverter_api_ref_description).append("\"\">"); //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_api_references).append(CLOSE_B).append(CLOSE_TD); 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(SearchMessages.UseReportConverter_internal_ref_description).append("\">"); //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_internal_references).append(CLOSE_B).append(CLOSE_TD); 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(SearchMessages.UseReportConverter_permissible_ref_description).append("\">"); //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_internal_permissible_references).append(CLOSE_B).append(CLOSE_TD); 
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(SearchMessages.UseReportConverter_fragment_ref_description).append("\">"); //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_fragment_permissible_references).append(CLOSE_B).append(CLOSE_TD);  
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(SearchMessages.UseReportConverter_other_ref_description).append("\">"); //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_other_references).append(CLOSE_B).append(CLOSE_TD);  
 		buffer.append(CLOSE_TR); 
 		return buffer.toString();
 	}
@@ -1344,24 +1564,6 @@ public class UseReportConverter extends HTMLConvertor {
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalFragmentPermissibleRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalOtherRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append(CLOSE_TR); 
-		return buffer.toString();
-	}
-	
-	/**
-	 * Returns the terminology section
-	 * @return the terminology section
-	 */
-	protected String getTerminologySection() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_terminology).append(CLOSE_H4); 
-		buffer.append(OPEN_OL); 
-		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_api_ref_description).append(CLOSE_LI);  
-		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_internal_ref_description).append(CLOSE_LI);  
-		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_permissible_ref_description).append(CLOSE_LI);  
-		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_fragment_ref_description).append(CLOSE_LI);  
-		buffer.append(OPEN_LI).append(SearchMessages.UseReportConverter_other_ref_description).append(CLOSE_LI);  
-		buffer.append(CLOSE_OL); 
-		buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P); 
 		return buffer.toString();
 	}
 	

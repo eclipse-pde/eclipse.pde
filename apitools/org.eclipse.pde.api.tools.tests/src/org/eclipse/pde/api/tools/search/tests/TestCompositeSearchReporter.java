@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
+import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 
 /**
  * Test implementation of a search reporter that delegates to two
@@ -84,5 +85,10 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 			this.reporters.get(i).reportResults(element, references);
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
+	 */
+	public void reportMetadata(IMetadata data) {
+	}
 }

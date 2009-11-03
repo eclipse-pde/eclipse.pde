@@ -34,4 +34,11 @@ public interface IApiSearchReporter {
 	 * @param notsearched array of elements not searched 
 	 */
 	public void reportNotSearched(final IApiElement[] elements);
+	
+	/**
+	 * Reports the given metadata object out to the report directory.
+	 * Does no work if the metadata is <code>null</code>
+	 * @param data the data object to write out
+	 */
+	public void reportMetadata(IMetadata data);
 }

@@ -79,13 +79,18 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	
 	boolean initializing = false;
 	Combo baseline, targetCombo;
-	Button radioBaseline, radioTarget, radioInstall;
-	Button baselinesButton, targetsButton, installButton;
+	Button radioBaseline = null, 
+		   radioTarget = null, 
+		   radioInstall = null,
+		   baselinesButton = null, 
+		   targetsButton = null, 
+		   installButton = null;
 	ITargetHandle[] targetHandles = new ITargetHandle[0];
-	Text installLocation;
-	Text searchScope = null;
-	Text targetScope = null;
-	Text reportlocation = null;
+	Text installLocation = null,
+		 searchScope = null,
+		 targetScope = null,
+		 reportlocation = null,
+		 description = null;
 	Button considerapi = null,
 		   considerinternal = null,
 		   createhtml = null,
@@ -243,6 +248,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalIndent = 10;
 		this.openreport.setEnabled(false);
 		this.openreport.addSelectionListener(selectionadapter);
+		SWTFactory.createLabel(group, Messages.ApiUseScanTab_description, 1);
+		this.description = SWTFactory.createText(group, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP, 2, GridData.FILL_HORIZONTAL);
+		gd = (GridData) this.description.getLayoutData();
+		gd.heightHint = 40;
+		this.description.addModifyListener(modifyadapter);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_USE_SCAN_TAB);
 		setControl(comp);
 	}
@@ -405,6 +415,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.cleanhtmllocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_HTML, configuration));
 			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, "")); //$NON-NLS-1$
 			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, "")); //$NON-NLS-1$
+			this.description.setText(configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, "")); //$NON-NLS-1$
 			updateTarget();
 		} catch (CoreException e) {
 			setErrorMessage(e.getStatus().getMessage());
@@ -498,6 +509,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATH, path.toPortableString());
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, this.searchScope.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, this.targetScope.getText().trim());
+		configuration.setAttribute(ApiUseLaunchDelegate.DESCRIPTION, this.description.getText().trim());
 	}
 	
 	/**

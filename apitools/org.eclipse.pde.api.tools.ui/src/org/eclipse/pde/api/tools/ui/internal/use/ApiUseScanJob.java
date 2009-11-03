@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.ui.internal.use;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +43,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiDescriptionModifier;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.eclipse.pde.api.tools.internal.search.UseMetadata;
 import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
@@ -60,6 +62,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.MessageFormat;
 
 /**
@@ -137,13 +140,28 @@ public class ApiUseScanJob extends Job {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
 				scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
 			}
+			UseMetadata data = new UseMetadata(
+					kinds, 
+					this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null), 
+					this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null), 
+					baseline.getLocation(), 
+					xmlPath, 
+					sapi, 
+					sinternal, 
+					sjars,
+					DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()),
+					this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String)null));
 			IApiSearchReporter reporter = new XmlSearchReporter(
 					xmlPath, 
 					false);
-			//do it now, we know what will not be searched a priori
-			reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
-			ApiSearchEngine engine = new ApiSearchEngine();
-			engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
+			try {
+				ApiSearchEngine engine = new ApiSearchEngine();
+				engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
+			}
+			finally {
+				reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
+				reporter.reportMetadata(data);
+			}
 			if(isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
 				String htmlPath = rootpath.append("html").toOSString(); //$NON-NLS-1$
 				performReportCreation(
@@ -153,7 +171,6 @@ public class ApiUseScanJob extends Job {
 						isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT),
 						localmonitor.newChild(10));
 			}
-			
 			// Dispose the baseline if it's not managed (it's temporary)
 			ApiBaselineManager apiManager = ApiBaselineManager.getManager();
 			IApiBaseline[] baselines = apiManager.getApiBaselines();

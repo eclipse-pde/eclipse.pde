@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,9 +34,12 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiDescriptionModifier;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.eclipse.pde.api.tools.internal.search.UseMetadata;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
+
+import com.ibm.icu.text.DateFormat;
 
 /**
  * Ant task for performing the API use analysis of a given Eclipse SDK
@@ -265,7 +269,17 @@ public final class ApiUseTask extends CommonUtilsTask {
 		assertParameters();
 		writeDebugHeader();
 		cleanReportLocation();
-		
+		UseMetadata data = new UseMetadata(
+				getSearchFlags(), 
+				this.scopepattern, 
+				this.referencepattern, 
+				this.currentBaselineLocation, 
+				this.reportLocation, 
+				this.apiPatterns, 
+				this.internalPatterns, 
+				this.archivePatterns,
+				DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()), 
+				getDescription());
 		IApiBaseline baseline = getBaseline(CURRENT_BASELINE_NAME, this.currentBaselineLocation);
 		IApiSearchReporter reporter = new XmlSearchReporter(this.reportLocation, this.debug);
 		try {
@@ -304,6 +318,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 				deleteBaseline(this.currentBaselineLocation, this.baselinedir);
 			}
 			reporter.reportNotSearched((IApiElement[]) this.notsearched.toArray(new IApiElement[this.notsearched.size()]));
+			reporter.reportMetadata(data);
 		}
 	}
 	

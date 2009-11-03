@@ -31,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
+import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -146,6 +147,38 @@ public class XmlSearchReporter implements IApiSearchReporter {
 				}
 			} 
 			catch (IOException e) {}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
+	 */
+	public void reportMetadata(IMetadata data) {
+		if(data == null) {
+			return;
+		}
+		try {
+			if(this.debug) {
+				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
+			}
+			File rootfile = new File(fLocation);
+			if(!rootfile.exists()) {
+				rootfile.mkdirs();
+			}
+			File file = new File(rootfile, "meta.xml"); //$NON-NLS-1$
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			data.serializeToFile(file);
+		}
+		catch(FileNotFoundException fnfe) {
+			ApiPlugin.log(fnfe);
+		}
+		catch(IOException ioe) {
+			ApiPlugin.log(ioe);
+		}
+		catch (CoreException ce) {
+			ApiPlugin.log(ce);
 		}
 	}
 }

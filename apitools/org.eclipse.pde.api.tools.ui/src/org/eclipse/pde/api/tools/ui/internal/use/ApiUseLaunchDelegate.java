@@ -67,6 +67,16 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final String SEARCH_MODIFIERS = ApiUIPlugin.PLUGIN_ID + ".SEARCH_MODIFIERS"; //$NON-NLS-1$
 	
 	/**
+	 * Path to root directory of XML reports
+	 */
+	public static final String REPORT_PATH = ApiUIPlugin.PLUGIN_ID + ".XML_PATH"; //$NON-NLS-1$
+	
+	/**
+	 * Human-readable description of the report
+	 */
+	public static final String DESCRIPTION = ApiUIPlugin.PLUGIN_ID + ".DESCRIPTION"; //$NON-NLS-1$
+	
+	/**
 	 * Search modifiers
 	 */
 	public static final int MOD_API_REFERENCES			= 1;
@@ -76,10 +86,7 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final int CREATE_HTML					= 1 << 4;
 	public static final int DISPLAY_REPORT				= 1 << 5;
 	
-	/**
-	 * Path to root directory of XML reports
-	 */
-	public static final String REPORT_PATH = ApiUIPlugin.PLUGIN_ID + ".XML_PATH"; //$NON-NLS-1$
+	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)

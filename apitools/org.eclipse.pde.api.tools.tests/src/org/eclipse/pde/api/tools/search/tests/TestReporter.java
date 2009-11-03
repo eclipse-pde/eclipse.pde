@@ -20,6 +20,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
+import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 
 /**
  * Test reporter for the search engine tests
@@ -170,5 +171,11 @@ public class TestReporter implements IApiSearchReporter {
 				this.notsearched = null;
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
+	 */
+	public void reportMetadata(IMetadata data) {
 	}
 }

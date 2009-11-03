@@ -57,6 +57,7 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_clean_html_report_dir;
 	public static String ApiUseScanTab_clean_report_dir;
 	public static String ApiUseScanTab_create_html_report;
+	public static String ApiUseScanTab_description;
 	public static String ApiUseScanTab_enter_report_location;
 	public static String ApiUseScanTab_install_location;
 	public static String ApiUseScanTab_internal_references;

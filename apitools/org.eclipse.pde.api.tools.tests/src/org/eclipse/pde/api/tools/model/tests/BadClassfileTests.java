@@ -41,6 +41,7 @@ import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
+import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 
 /**
  * Tests that our framework properly handles bad class files.
@@ -140,6 +141,7 @@ public class BadClassfileTests extends TestCase {
 		IApiSearchReporter reporter = new IApiSearchReporter() {
 			public void reportResults(IApiElement element, IReference[] references) {}
 			public void reportNotSearched(IApiElement[] elements) {}
+			public void reportMetadata(IMetadata data) {}
 		};
 		engine.search(baseline, requestor, reporter, null);
 	}
