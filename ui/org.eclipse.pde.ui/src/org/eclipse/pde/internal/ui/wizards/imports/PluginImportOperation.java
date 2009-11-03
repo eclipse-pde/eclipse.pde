@@ -193,6 +193,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			// Target Weaving: if we are importing plug-ins in the runtime workbench from the host workbench, import everything as-is and return
+			// Target weaving will also break things when importing from a non-default target because the dev.properties changes the libraries to 'bin/' see bug 294005
 			if (Platform.inDevelopmentMode()) {
 				File location = new File(model.getInstallLocation());
 				if (location.isDirectory()) {
@@ -1047,6 +1048,10 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Gets the list of libraries from the model and returns an array of their expanded
 	 * names.  Will add the default library name if no libraries are specified.
+	 * 
+	 * <p>If run in dev mode (target workbench), and the plug-in is in the host workspace
+	 * the library names will be replaced with 'bin/'.  See bug 294005.</p>
+	 * 
 	 * @param model
 	 * @return list of library names
 	 */
