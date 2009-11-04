@@ -652,21 +652,23 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			Map sourceMap = new HashMap(libraries.length);
 			SourceLocationManager manager = getSourceManager(model);
-			for (int i = 0; i < libraries.length; i++) {
-				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-				IPluginBase pluginBase = model.getPluginBase();
-				// check default locations
-				IPath srcPath = manager.findSourcePath(pluginBase, new Path(zipName));
-				if (srcPath != null) {
-					zipName = srcPath.lastSegment();
-					IPath dstPath = new Path(zipName);
-					sourceMap.put(libraries[i], dstPath);
-					if (project.findMember(dstPath) == null) {
-						if (mode == IMPORT_BINARY) {
-							PluginImportHelper.copyArchive(new File(srcPath.toOSString()), project.getFile(dstPath), new SubProgressMonitor(monitor, 1));
-						} else if (mode == IMPORT_BINARY_WITH_LINKS) {
-							IFile dstFile = project.getFile(dstPath);
-							dstFile.createLink(srcPath, IResource.NONE, new SubProgressMonitor(monitor, 1));
+			if (manager != null) {
+				for (int i = 0; i < libraries.length; i++) {
+					String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+					IPluginBase pluginBase = model.getPluginBase();
+					// check default locations
+					IPath srcPath = manager.findSourcePath(pluginBase, new Path(zipName));
+					if (srcPath != null) {
+						zipName = srcPath.lastSegment();
+						IPath dstPath = new Path(zipName);
+						sourceMap.put(libraries[i], dstPath);
+						if (project.findMember(dstPath) == null) {
+							if (mode == IMPORT_BINARY) {
+								PluginImportHelper.copyArchive(new File(srcPath.toOSString()), project.getFile(dstPath), new SubProgressMonitor(monitor, 1));
+							} else if (mode == IMPORT_BINARY_WITH_LINKS) {
+								IFile dstFile = project.getFile(dstPath);
+								dstFile.createLink(srcPath, IResource.NONE, new SubProgressMonitor(monitor, 1));
+							}
 						}
 					}
 				}
@@ -695,63 +697,66 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
 			SourceLocationManager manager = getSourceManager(model);
+			if (manager != null) {
 
-			// Check if we have new style individual source bundles
-			if (manager.hasBundleManifestLocation(model.getPluginBase())) {
-				File srcFile = manager.findSourcePlugin(model.getPluginBase());
-				Set sourceRoots = manager.findSourceRoots(model.getPluginBase());
-				for (int i = 0; i < libraries.length; i++) {
-					if (libraries[i].equals(DEFAULT_LIBRARY_NAME)) {
-						// Need to pull out any java source that is not in another source root
-						IResource destination = project.getFolder(DEFAULT_SOURCE_DIR);
-						if (!destination.exists()) {
-							List excludeFolders = new ArrayList(sourceRoots.size());
-							for (Iterator iterator = sourceRoots.iterator(); iterator.hasNext();) {
-								String root = (String) iterator.next();
-								if (!root.equals(DEFAULT_LIBRARY_NAME)) {
-									excludeFolders.add(new Path(root));
+				// Check if we have new style individual source bundles
+				if (manager.hasBundleManifestLocation(model.getPluginBase())) {
+					File srcFile = manager.findSourcePlugin(model.getPluginBase());
+					Set sourceRoots = manager.findSourceRoots(model.getPluginBase());
+					for (int i = 0; i < libraries.length; i++) {
+						if (libraries[i].equals(DEFAULT_LIBRARY_NAME)) {
+							// Need to pull out any java source that is not in another source root
+							IResource destination = project.getFolder(DEFAULT_SOURCE_DIR);
+							if (!destination.exists()) {
+								List excludeFolders = new ArrayList(sourceRoots.size());
+								for (Iterator iterator = sourceRoots.iterator(); iterator.hasNext();) {
+									String root = (String) iterator.next();
+									if (!root.equals(DEFAULT_LIBRARY_NAME)) {
+										excludeFolders.add(new Path(root));
+									}
 								}
+								Set collectedPackages = new HashSet();
+								PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders, destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
+								addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+								addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
+
 							}
-							Set collectedPackages = new HashSet();
-							PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders, destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
-							addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-							addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
-
+						} else if (sourceRoots.contains(getSourceDirName(libraries[i]))) {
+							IPath sourceDir = new Path(getSourceDirName(libraries[i]));
+							if (!project.getFolder(sourceDir).exists()) {
+								Set collectedPackages = new HashSet();
+								PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
+								addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
+								addPackageEntries(collectedPackages, sourceDir, packageLocations);
+							}
 						}
-					} else if (sourceRoots.contains(getSourceDirName(libraries[i]))) {
-						IPath sourceDir = new Path(getSourceDirName(libraries[i]));
-						if (!project.getFolder(sourceDir).exists()) {
+					}
+					return true;
+				}
+
+				// Old style, zips in folders, determine the source zip name/location and extract it to the project
+				boolean sourceFound = false;
+				for (int i = 0; i < libraries.length; i++) {
+					String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+					IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+					if (srcPath != null) {
+						sourceFound = true;
+						IPath dstPath = new Path(getSourceDirName(libraries[i]));
+						IResource destination = project.getFolder(dstPath);
+						if (!destination.exists()) {
 							Set collectedPackages = new HashSet();
-							PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
-							addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
-							addPackageEntries(collectedPackages, sourceDir, packageLocations);
+							PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
+							addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
+							addPackageEntries(collectedPackages, dstPath, packageLocations);
 						}
 					}
 				}
-				return true;
+				return sourceFound;
 			}
-
-			// Old style, zips in folders, determine the source zip name/location and extract it to the project
-			boolean sourceFound = false;
-			for (int i = 0; i < libraries.length; i++) {
-				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-				IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
-				if (srcPath != null) {
-					sourceFound = true;
-					IPath dstPath = new Path(getSourceDirName(libraries[i]));
-					IResource destination = project.getFolder(dstPath);
-					if (!destination.exists()) {
-						Set collectedPackages = new HashSet();
-						PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
-						addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
-						addPackageEntries(collectedPackages, dstPath, packageLocations);
-					}
-				}
-			}
-			return sourceFound;
 		} finally {
 			monitor.done();
 		}
+		return false;
 	}
 
 	/**
@@ -838,31 +843,34 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @throws CoreException is there is a problem importing the files
 	 */
 	private void importAdditionalSourceFiles(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
-		File sourceLocation = getSourceManager(model).findSourcePlugin(model.getPluginBase());
-		if (sourceLocation != null) {
-			if (sourceLocation.isFile()) {
-				ZipFile zip = null;
-				try {
-					zip = new ZipFile(sourceLocation);
-					ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
-					ArrayList collected = new ArrayList();
-					PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
-					PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
-				} catch (IOException e) {
-					IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
-					throw new CoreException(status);
-				} finally {
-					if (zip != null) {
-						try {
-							zip.close();
-						} catch (IOException e) {
+		SourceLocationManager manager = getSourceManager(model);
+		if (manager != null) {
+			File sourceLocation = manager.findSourcePlugin(model.getPluginBase());
+			if (sourceLocation != null) {
+				if (sourceLocation.isFile()) {
+					ZipFile zip = null;
+					try {
+						zip = new ZipFile(sourceLocation);
+						ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
+						ArrayList collected = new ArrayList();
+						PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
+						PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
+					} catch (IOException e) {
+						IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+						throw new CoreException(status);
+					} finally {
+						if (zip != null) {
+							try {
+								zip.close();
+							} catch (IOException e) {
+							}
 						}
 					}
+				} else {
+					ArrayList collected = new ArrayList();
+					PluginImportHelper.collectNonJavaNonBuildFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
+					PluginImportHelper.importContent(sourceLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, monitor);
 				}
-			} else {
-				ArrayList collected = new ArrayList();
-				PluginImportHelper.collectNonJavaNonBuildFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
-				PluginImportHelper.importContent(sourceLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, monitor);
 			}
 		}
 	}
