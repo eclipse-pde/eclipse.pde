@@ -34,6 +34,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	private static final String SEPARATOR = ","; //$NON-NLS-1$
 	private static final String TASK_IU = "iu"; //$NON-NLS-1$
 	private static final String TASK_REPO2RUNNABLE = "p2.repo2runnable"; //$NON-NLS-1$
+	private static final String TARGET_GET_IU_FROM_REPO = "FetchIUFromRepo"; //$NON-NLS-1$
 
 	/*
 	 * Helper method to throw an exception with the given message.
@@ -46,39 +47,59 @@ public class P2IUFetchFactory implements IFetchFactory {
 	 * @see org.eclipse.pde.build.IFetchFactory#addTargets(org.eclipse.pde.build.IAntScript)
 	 */
 	public void addTargets(IAntScript script) {
-		//
+		// Macro for:
+		// <p2.repo2runnable source="${source}" destination="${destination}">
+		//    <iu id="aBundle" version="1" />
+		// </p2.repo2runnable>
+
+		script.println();
+
+		List attributes = new ArrayList();
+		attributes.add(ATTRIBUTE_ID);
+		attributes.add(ATTRIBUTE_VERSION);
+		attributes.add(ATTRIBUTE_SOURCE);
+		script.printMacroDef(TARGET_GET_IU_FROM_REPO, attributes);
+		script.printEchoTask(null, NLS.bind(Messages.fetching_p2Repo, new String[] {Utils.getMacroFormat(ATTRIBUTE_ID), Utils.getMacroFormat(ATTRIBUTE_VERSION), Utils.getMacroFormat(ATTRIBUTE_SOURCE), Utils.getPropertyFormat(IBuildPropertiesConstants.PROPERTY_TRANSFORMED_REPO)}), "info"); //$NON-NLS-1$
+
+		// TODO ensure this is the right value to set. 
+		// TODO also we might need to put the real expanded path here.
+		Map args = new LinkedHashMap(2);
+		args.put(ATTRIBUTE_DESTINATION, Utils.getPropertyFormat(IBuildPropertiesConstants.PROPERTY_TRANSFORMED_REPO));
+		args.put(ATTRIBUTE_SOURCE, Utils.getMacroFormat(ATTRIBUTE_SOURCE));
+		script.printStartTag(TASK_REPO2RUNNABLE, args);
+		script.incrementIdent();
+
+		args.clear();
+		args.put(ATTRIBUTE_ID, Utils.getMacroFormat(ATTRIBUTE_ID));
+		args.put(ATTRIBUTE_VERSION, Utils.getMacroFormat(ATTRIBUTE_VERSION));
+		script.printElement(TASK_IU, args);
+
+		script.decrementIdent();
+		script.printEndTag(TASK_REPO2RUNNABLE);
+
+		script.printEndMacroDef();
+		script.println();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveElementCall(java.util.Map, org.eclipse.core.runtime.IPath, org.eclipse.pde.build.IAntScript)
 	 */
 	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script) {
-		// <p2.transform source="${source}" destination="${destination}">
-		//    <iu id="aBundle" version="1" />
-		// </p2.transform>
-		script.println();
-		script.print('<' + TASK_REPO2RUNNABLE);
-		// TODO ensure this is the right value to set. 
-		// TODO also we might need to put the real expanded path here.
-		script.printAttribute(ATTRIBUTE_DESTINATION, "${transformedRepoLocation}", true);
-		script.printAttribute(ATTRIBUTE_SOURCE, (String) entryInfos.get(KEY_REPOSITORY), true);
-		script.println(">"); //$NON-NLS-1$
 
-		script.print("<"); //$NON-NLS-1$
-		script.print(TASK_IU);
-		script.printAttribute(ATTRIBUTE_ID, (String) entryInfos.get(KEY_ID), true);
-		script.printAttribute(ATTRIBUTE_VERSION, (String) entryInfos.get(KEY_VERSION), true);
-		script.println("/>"); //$NON-NLS-1$
+		// <FetchIUFromRepo id="aBundle" version="1" source="file:/fromRepo" />
 
-		script.printEndTag(TASK_REPO2RUNNABLE);
-		script.println();
+		Map params = new LinkedHashMap(4);
+		params.put(ATTRIBUTE_ID, entryInfos.get(KEY_ID));
+		params.put(ATTRIBUTE_VERSION, entryInfos.get(KEY_VERSION));
+		params.put(ATTRIBUTE_SOURCE, entryInfos.get(KEY_REPOSITORY));
+		script.printElement(TARGET_GET_IU_FROM_REPO, params);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveFilesCall(java.util.Map, org.eclipse.core.runtime.IPath, java.lang.String[], org.eclipse.pde.build.IAntScript)
 	 */
 	public void generateRetrieveFilesCall(Map entryInfos, IPath destination, String[] files, IAntScript script) {
-		// 
+		script.println();
 	}
 
 	/* (non-Javadoc)
@@ -104,7 +125,10 @@ public class P2IUFetchFactory implements IFetchFactory {
 		}
 
 		entryInfos.put(KEY_ID, table.get(KEY_ID));
-		entryInfos.put(KEY_VERSION, table.get(KEY_VERSION));
+		if (table.containsKey(KEY_VERSION))
+			entryInfos.put(KEY_VERSION, table.get(KEY_VERSION));
+		else
+			entryInfos.put(KEY_VERSION, ""); //$NON-NLS-1$
 		entryInfos.put(KEY_REPOSITORY, table.get(KEY_REPOSITORY));
 	}
 

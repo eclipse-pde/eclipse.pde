@@ -15,6 +15,7 @@ public interface IXMLConstants {
 
 	// general
 	public static final String PROPERTY_ASSIGNMENT_PREFIX = "${"; //$NON-NLS-1$
+	public static final String MACRO_ASSIGNMENT_PREFIX = "@{"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSIGNMENT_SUFFIX = "}"; //$NON-NLS-1$
 	public static final String JDT_COMPILER_ADAPTER = "org.eclipse.jdt.core.JDTCompilerAdapter"; //$NON-NLS-1$
 

@@ -730,6 +730,14 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return sb.toString();
 	}
 
+	public static String getMacroFormat(String propertyName) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(MACRO_ASSIGNMENT_PREFIX);
+		sb.append(propertyName);
+		sb.append(PROPERTY_ASSIGNMENT_SUFFIX);
+		return sb.toString();
+	}
+
 	public static boolean isBinary(BundleDescription bundle) {
 		Properties bundleProperties = ((Properties) bundle.getUserObject());
 		if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null) {

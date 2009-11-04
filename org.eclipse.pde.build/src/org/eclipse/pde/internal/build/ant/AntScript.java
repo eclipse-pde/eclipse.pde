@@ -632,8 +632,13 @@ public class AntScript implements IAntScript {
 	}
 
 	public void printEchoTask(String file, String message) {
+		printEchoTask(null, message, null);
+	}
+
+	public void printEchoTask(String file, String message, String level) {
 		printTab();
 		output.print("<echo"); //$NON-NLS-1$
+		printAttribute("level", level, false); //$NON-NLS-1$
 		printAttribute("file", file, false); //$NON-NLS-1$
 		printAttribute("message", message, true); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
@@ -752,6 +757,49 @@ public class AntScript implements IAntScript {
 		output.print("<"); //$NON-NLS-1$
 		output.print(tag);
 		output.println(">"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Print a start tag in the Ant script for the given element name.
+	 * 
+	 * @param tag the name of the element
+	 */
+	public void printStartTag(String tag, Map arguments) {
+		printTab();
+		output.print("<"); //$NON-NLS-1$
+		output.print(tag);
+		Set entries = arguments.entrySet();
+		for (Iterator iter = entries.iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			printAttribute((String) entry.getKey(), (String) entry.getValue(), true);
+		}
+		output.println(">"); //$NON-NLS-1$
+	}
+
+	public void incrementIdent() {
+		indent++;
+	}
+
+	public void decrementIdent() {
+		indent--;
+	}
+
+	/**
+	 * Print an element the Ant script for the given name including a closing " /&gt;".
+	 * 
+	 * @param tag the name of the element
+	 * @param arguments the arguments
+	 */
+	public void printElement(String tag, Map arguments) {
+		printTab();
+		output.print("<"); //$NON-NLS-1$
+		output.print(tag);
+		Set entries = arguments.entrySet();
+		for (Iterator iter = entries.iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			printAttribute((String) entry.getKey(), (String) entry.getValue(), true);
+		}
+		output.println("/>"); //$NON-NLS-1$
 	}
 
 	/**

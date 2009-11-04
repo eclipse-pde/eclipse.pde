@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.build;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,7 +49,7 @@ public interface IAntScript {
 	 * Print a empty line.
 	 */
 	public void println();
-	
+
 	/**
 	 * Print an ant call task as defined by <a href="http://ant.apache.org/manual/CoreTasks/antcall.html">AntCall</a>}.
 	 * @param target the target executed by the call. This value can not be <code>null</code>.
@@ -56,7 +57,7 @@ public interface IAntScript {
 	 * @param params Specifies as key / value pairs, the properties to set before running the specified target. This value can be <code>null</code>
 	 */
 	public void printAntCallTask(String target, boolean inheritAll, Map params);
-	
+
 	/**
 	 * Print an XML attribute. <code>name=value</code>.
 	 * @param name the name of the attribute to print. This value can not be <code>null</code>.
@@ -65,24 +66,52 @@ public interface IAntScript {
 	 * If the <code>value</code> is <code>null</code> and the attribute is mandatory, the printed value will be "". 
 	 */
 	public void printAttribute(String name, String value, boolean mandatory);
-	
+
 	/**
 	 * Print tagName as an xml begin tag (<code>&lt;tagName&gt;<code>).
 	 * @param tagName the tag to print.
 	 */
 	public void printStartTag(String tagName);
-	
+
+	/**
+	 * Print tagName as an xml begin tag with attributes (<code>&lt;tagName [attributes...] &gt;<code>).
+	 * @param tag
+	 * @param attributes
+	 * @since 3.6
+	 */
+	public void printStartTag(String tag, Map attributes);
+
 	/**
 	 * Print tagName as an xml end tag (<code>&lt;/tagName&gt;<code>).
 	 * @param endTag the tag to print.
 	 */
 	public void printEndTag(String endTag);
-	
+
+	/**
+	 * Print an xml element with attributes (<code>&lt;tagName [attributes...] /&gt;<code>).
+	 * @param tag
+	 * @param attributes
+	 * @since 3.6
+	 */
+	public void printElement(String tag, Map attributes);
+
 	/**
 	 * Print as many tabs as current nesting level requires
 	 */
 	public void printTabs();
-	
+
+	/**
+	 * Increment the nesting level
+	 * @since 3.6
+	 */
+	public void incrementIdent();
+
+	/**
+	 * Decrement the nesting level
+	 * @since 3.6
+	 */
+	public void decrementIdent();
+
 	/**
 	 * Print a target declaration. See <a href="http://ant.apache.org/manual/using.html#targets">Ant's targets</a>. 
 	 * @param name the name of the target. This value can not be <code>null</code>.
@@ -92,9 +121,32 @@ public interface IAntScript {
 	 * @param description a short description of this target's function. This value can be <code>null</code>
 	 */
 	public void printTargetDeclaration(String name, String depends, String ifClause, String unlessClause, String description);
-	
+
 	/**
 	 * Print the end tag for a target declaration.
 	 */
 	public void printTargetEnd();
+
+	/**
+	 * Print an <a href="http://ant.apache.org/manual/CoreTasks/echo.html">echo</a> task
+	 * @param file - file to write the message to (or null)
+	 * @param message - the message to echo
+	 * @param level - the level to report the message (ie, "error", "warning", "info"), "warning" is the default if null is passed.
+	 * @since 3.6
+	 */
+	public void printEchoTask(String file, String message, String level);
+
+	/**
+	 * Print the beginning of a <a href="http://ant.apache.org/manual/CoreTasks/macrodef.html">macro definition</a>
+	 * @param macroName
+	 * @param attributes
+	 * @since 3.6
+	 */
+	public void printMacroDef(String macroName, List attributes);
+
+	/**
+	 * Print the end of the macro
+	 * @since 3.6
+	 */
+	public void printEndMacroDef();
 }
