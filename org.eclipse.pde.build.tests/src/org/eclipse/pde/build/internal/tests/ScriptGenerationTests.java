@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.jar.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.Parallel;
 import org.apache.tools.ant.types.Path;
@@ -231,26 +230,25 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(included[1].getId(), "bar");
 		assertEquals(included[2].getId(), "disco");
 	}
-	
+
 	public void testBug203270() throws Exception {
 		//test the highest version of a bundle is selected when both are resolved
 		IFolder buildFolder = newTest("203270");
-		
+
 		IFolder A1 = Utils.createFolder(buildFolder, "plugins/a_1");
 		IFolder A2 = Utils.createFolder(buildFolder, "plugins/a_3");
 		IFolder A3 = Utils.createFolder(buildFolder, "plugins/a_2");
-		
-		
+
 		Utils.generateBundle(A1, "a", "1.0.0.1");
 		Utils.generateBundle(A2, "a", "1.0.0.3");
 		Utils.generateBundle(A3, "a", "1.0.0.2");
-		
-		Utils.generateFeature(buildFolder, "f", null, new String[] { "a;version=1.0.0.qualifier" });
-		
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;version=1.0.0.qualifier"});
+
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
 		properties.put("baseLocation", " ");
 		generateScripts(buildFolder, properties);
-		
+
 		assertResourceFile(buildFolder, "plugins/a_3/build.xml");
 	}
 
@@ -286,7 +284,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Utils.generatePluginBuildProperties(buildFolder, null);
 		Attributes manifestAdditions = new Attributes();
-		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.equinox.preferences");
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), EQUINOX_PREFERENCES);
 		Utils.generateBundleManifest(buildFolder, "bundle", "1.0.0", manifestAdditions);
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
@@ -301,7 +299,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		String path = child.toString();
 
 		//Assert classpath has correct contents
-		int idx[] = {0, path.indexOf("org.eclipse.equinox.preferences"), path.indexOf("org.eclipse.osgi"), path.indexOf("org.eclipse.equinox.common"), path.indexOf("org.eclipse.equinox.registry"), path.indexOf("org.eclipse.core.jobs")};
+		int idx[] = {0, path.indexOf(EQUINOX_PREFERENCES), path.indexOf(OSGI), path.indexOf(EQUINOX_COMMON), path.indexOf(EQUINOX_REGISTRY), path.indexOf(CORE_JOBS)};
 		for (int i = 0; i < idx.length - 1; i++) {
 			assertTrue(idx[i] < idx[i + 1]);
 		}
@@ -355,10 +353,10 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Utils.generatePluginBuildProperties(bundleFolder, null);
 		Attributes manifestAdditions = new Attributes();
-		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.equinox.registry");
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), EQUINOX_REGISTRY);
 		Utils.generateBundleManifest(bundleFolder, "bundle", "1.0.0", manifestAdditions);
 
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundle", "org.eclipse.osgi", "org.eclipse.equinox.common", "org.eclipse.equinox.registry", "org.eclipse.core.jobs"});
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundle", OSGI, EQUINOX_COMMON, EQUINOX_REGISTRY, CORE_JOBS});
 
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "rcp");
 		props.put("filteredDependencyCheck", "true");
@@ -503,7 +501,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	public void testBug210464() throws Exception {
 		IFolder buildFolder = newTest("210464 space");
 
-		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"org.eclipse.osgi"});
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] {OSGI});
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "featureA"));
 
@@ -575,7 +573,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	public void testBug237475() throws Exception {
 		IFolder buildFolder = newTest("237475");
 
-		Utils.generateFeature(buildFolder, "f", new String[] {"opt;optional=true"}, new String[] {"org.eclipse.osgi"});
+		Utils.generateFeature(buildFolder, "f", new String[] {"opt;optional=true"}, new String[] {OSGI});
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f"));
 	}
 
@@ -691,7 +689,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		// Build 1 compiles B against source A
 		// A must compile first, testing flatten dependencies (non-flattened order is depth first putting B before A).
-		Utils.generateFeature(build1, "F1", new String[] {"F2"}, new String[] {"A;unpack=true", "org.eclipse.osgi"});
+		Utils.generateFeature(build1, "F1", new String[] {"F2"}, new String[] {"A;unpack=true", OSGI});
 		Utils.generateFeature(build1, "F2", null, new String[] {"B"});
 
 		Properties properties = BuildConfiguration.getBuilderProperties(build1);
@@ -934,7 +932,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		//1: without any particular profiles defined in build.properties, default to largest (1.6?) which does contain org.xml.sax
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
 		buildProperties.put("baseLocation", " ");
-		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
+		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle(OSGI)).getAbsolutePath());
 		generateScripts(buildFolder, buildProperties);
 
 		//2: define CDC-1.1/Foundation-1.1, expect failure since that profile doesn't have org.xml.sax
@@ -973,7 +971,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
 		buildProperties.put("baseLocation", " ");
-		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
+		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle(OSGI)).getAbsolutePath());
 		buildProperties.put("customEESources", custom.getLocation().toOSString());
 		buildProperties.put("MyCustomProfile", "someLibrary.jar");
 		generateScripts(buildFolder, buildProperties);
@@ -1012,7 +1010,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
 		buildProperties.put("baseLocation", " ");
-		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
+		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle(OSGI)).getAbsolutePath());
 		buildProperties.put("customEESources", custom.getLocation().toOSString() + ".jar");
 		buildProperties.put("MyCustomProfile", "someLibrary.jar");
 		generateScripts(buildFolder, buildProperties);
@@ -1431,7 +1429,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("  not going to compile      \n");
 		code.append("}                           \n");
 		Utils.writeBuffer(C.getFile("src/c/CD.java"), code);
-		
+
 		Properties extraProperties = new Properties();
 		extraProperties.put("exclude..", "**/CD.java");
 
@@ -1563,11 +1561,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("javacFailOnError", "false");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
-		
-		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"), new String [] {"The local variable b is never read", "1 problem (1 error)"});
-		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String [] {"Discouraged access: The type A", "3 problems (3 errors)"});
+
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"), new String[] {"The local variable b is never read", "1 problem (1 error)"});
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String[] {"Discouraged access: The type A", "3 problems (3 errors)"});
 	}
-	
+
 	public void testBug284806() throws Exception {
 		IFolder buildFolder = newTest("284806");
 		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
@@ -1580,11 +1578,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("bin.includes", "lib.so, META-INF/, .");
 		Utils.generatePluginBuildProperties(A, properties);
 
-		Utils.generateFeature(buildFolder, "f", null, new String [] { "foo"} );
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"foo"});
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
 		buildProperties.put("baseLocation", " ");
 		buildProperties.put("configs", "win32,win32,x86");
-		
+
 		String failedMessage = null;
 		try {
 			generateScripts(buildFolder, buildProperties);
@@ -1592,7 +1590,7 @@ public class ScriptGenerationTests extends PDETestCase {
 			failedMessage = e.getMessage();
 		}
 		assertTrue(failedMessage != null && failedMessage.indexOf("Unsatisfied native code filter: lib.so; selection-filter=\"(osgi.os=foobar)\"") > -1);
-		
+
 		properties = new Properties();
 		properties.put("buildDirectory", buildFolder.getLocation().toOSString());
 		properties.put("baseLocation", " ");

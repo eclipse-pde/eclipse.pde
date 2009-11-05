@@ -14,9 +14,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.zip.ZipOutputStream;
-
 import junit.framework.AssertionFailedError;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
@@ -64,15 +62,15 @@ public class P2Tests extends P2TestCase {
 		ArrayList ius = new ArrayList();
 		ius.add(getIU(repository, "test"));
 		ius.add(getIU(repository, "org.eclipse.equinox.launcher"));
-		ius.add(getIU(repository, "org.eclipse.osgi"));
-		ius.add(getIU(repository, "org.eclipse.core.runtime"));
+		ius.add(getIU(repository, OSGI));
+		ius.add(getIU(repository, CORE_RUNTIME));
 
 		//check some start level info
-		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + "org.eclipse.core.runtime");
+		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + CORE_RUNTIME);
 		assertTouchpoint(iu, "configure", "markStarted(started: true);");
 		ius.add(iu);
 
-		iu = getIU(repository, "tooling" + p2Config + "org.eclipse.equinox.common");
+		iu = getIU(repository, "tooling" + p2Config + EQUINOX_COMMON);
 		assertTouchpoint(iu, "configure", "setStartLevel(startLevel:2);markStarted(started: true);");
 		ius.add(iu);
 
@@ -111,7 +109,7 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("237096");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] {OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false"});
 		Properties featureProperties = new Properties();
 		featureProperties.put("root", "rootfiles");
 		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), featureProperties);
@@ -137,8 +135,8 @@ public class P2Tests extends P2TestCase {
 		assertNotNull(repository);
 
 		ArrayList ius = new ArrayList();
-		ius.add(getIU(repository, "org.eclipse.osgi"));
-		ius.add(getIU(repository, "org.eclipse.core.runtime"));
+		ius.add(getIU(repository, OSGI));
+		ius.add(getIU(repository, CORE_RUNTIME));
 		ius.add(getIU(repository, "org.eclipse.launcher.ANY.ANY.ANY"));
 		ius.add(getIU(repository, "toolingorg.eclipse.launcher.ANY.ANY.ANY"));
 
@@ -151,7 +149,7 @@ public class P2Tests extends P2TestCase {
 		IFile productFile = buildFolder.getFile("rcp.product");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {OSGI, SIMPLE_CONFIGURATOR}, false);
 
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
@@ -202,7 +200,7 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("222962");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] {OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false"});
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
@@ -230,7 +228,7 @@ public class P2Tests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi", "org.eclipse.core.runtime", "org.eclipse.equinox.simpleconfigurator", "org.eclipse.equinox.preferences"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {OSGI, CORE_RUNTIME, SIMPLE_CONFIGURATOR, EQUINOX_PREFERENCES}, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
@@ -252,13 +250,13 @@ public class P2Tests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
 
-		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + "org.eclipse.core.runtime");
+		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + CORE_RUNTIME);
 		assertTouchpoint(iu, "configure", "markStarted(started: true);");
 
 		boolean fail = false;
 		try {
 			//bug 270524
-			getIU(repository, "tooling" + p2Config + "org.eclipse.equinox.preferences");
+			getIU(repository, "tooling" + p2Config + EQUINOX_PREFERENCES);
 			fail = true;
 		} catch (AssertionFailedError e) {
 			//expected
@@ -308,7 +306,7 @@ public class P2Tests extends P2TestCase {
 
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"org.eclipse.osgi;unpack=false", "org.eclipse.core.runtime;unpack=false"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] {OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false"});
 		Properties featureProperties = new Properties();
 		featureProperties.put("root", "rootfiles");
 		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), featureProperties);
@@ -351,7 +349,7 @@ public class P2Tests extends P2TestCase {
 		IFolder buildFolder = newTest("262421");
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.eclipse.osgi"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {OSGI}, false);
 
 		IFile p2Inf = buildFolder.getFile("p2.inf");
 		StringBuffer buffer = new StringBuffer();
@@ -631,7 +629,7 @@ public class P2Tests extends P2TestCase {
 		assertEquals(artifact.getName(), "testRepoName"); //bug 274094
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Mirroring completed with warnings and/or errors.");
 		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: osgi.bundle,b,1.0.0", "Difference found for B.class"});
-		boolean failed = true; 
+		boolean failed = true;
 		try {
 			assertLogContainsLine(buildFolder.getFile("compare.log"), "build.properties");
 			failed = false;
@@ -743,7 +741,7 @@ public class P2Tests extends P2TestCase {
 
 		IFile productFile = buildFolder.getFile("rcp.product");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
-		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0", "my.app", null, new String[] {OSGI, SIMPLE_CONFIGURATOR}, false, null);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();

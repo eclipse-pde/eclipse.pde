@@ -632,7 +632,7 @@ public class AntScript implements IAntScript {
 	}
 
 	public void printEchoTask(String file, String message) {
-		printEchoTask(null, message, null);
+		printEchoTask(file, message, null);
 	}
 
 	public void printEchoTask(String file, String message, String level) {

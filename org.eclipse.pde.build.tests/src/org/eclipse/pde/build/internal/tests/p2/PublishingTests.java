@@ -46,7 +46,7 @@ public class PublishingTests extends P2TestCase {
 		Properties properties = new Properties();
 		properties.put("bin.includes", "META-INF/, ., about.txt");
 		Attributes manifestAdditions = new Attributes();
-		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.osgi");
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), OSGI);
 		Utils.generateBundleManifest(bundle, "bundle", "1.0.0.qualifier", manifestAdditions);
 		Utils.generatePluginBuildProperties(bundle, properties);
 
@@ -85,7 +85,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(repository, "bundle");
 		assertEquals(iu.getId(), "bundle");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
-		assertRequires(iu, "osgi.bundle", "org.eclipse.osgi");
+		assertRequires(iu, "osgi.bundle", OSGI);
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
@@ -101,12 +101,12 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeProperties(rootFile, rootProperties);
 
 		IFile productFile = buildFolder.getFile("foo.product");
-		Utils.generateProduct(productFile, "foo", "1.0.0.qualifier", null, new String[] {"org.eclipse.osgi"}, false);
+		Utils.generateProduct(productFile, "foo", "1.0.0.qualifier", null, new String[] {OSGI}, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("p2.gathering", "true");
 		properties.put("product", productFile.getLocation().toOSString());
-		properties.put("pluginList", "org.eclipse.equinox.common");
+		properties.put("pluginList", EQUINOX_COMMON);
 		properties.put("generatedBuildProperties", rootFile.getLocation().toOSString());
 		properties.put("includeLaunchers", "false");
 		properties.put("configs", "win32,win32,x86");
@@ -120,7 +120,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "foo.root.feature.feature.group");
 		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
 
-		getIU(metadata, "org.eclipse.equinox.common");
+		getIU(metadata, EQUINOX_COMMON);
 		iu = getIU(metadata, "foo");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "foo.root.feature.feature.group");
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
@@ -130,14 +130,14 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("277824_2");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.equinox.common"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] {EQUINOX_COMMON});
 		Utils.writeBuffer(f.getFile("file.txt"), new StringBuffer("I'm a file!"));
 		Properties properties = new Properties();
 		properties.put("root", "file:file.txt");
 		Utils.storeBuildProperties(f, properties);
 
 		IFile productFile = buildFolder.getFile("foo.product");
-		Utils.generateProduct(productFile, "foo", "1.0.0.qualifier", null, new String[] {"org.eclipse.osgi"}, false);
+		Utils.generateProduct(productFile, "foo", "1.0.0.qualifier", null, new String[] {OSGI}, false);
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("p2.gathering", "true");
@@ -153,7 +153,7 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
 
 		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
-		getIU(meta, "org.eclipse.equinox.common");
+		getIU(meta, EQUINOX_COMMON);
 		getIU(meta, "f.feature.group");
 	}
 
@@ -271,7 +271,7 @@ public class PublishingTests extends P2TestCase {
 		properties.put("bin.includes", "META-INF/, .");
 		properties.put("customBuildCallbacks", "customBuildCallbacks.xml");
 		Attributes manifestAdditions = new Attributes();
-		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.osgi");
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), OSGI);
 		Utils.generateBundleManifest(bundle, "bundle", "1.0.0.qualifier", manifestAdditions);
 		Utils.generatePluginBuildProperties(bundle, properties);
 
@@ -338,7 +338,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.writeBuffer(bundle.getFile("META-INF/p2.inf"), inf);
 
 		IFile productFile = buildFolder.getFile("foo.product");
-		Utils.generateProduct(productFile, "foo", "1.0.0", null, new String[] {"org.eclipse.osgi", "bundle"}, false);
+		Utils.generateProduct(productFile, "foo", "1.0.0", null, new String[] {OSGI, "bundle"}, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
@@ -359,7 +359,7 @@ public class PublishingTests extends P2TestCase {
 	protected File findExecutableFeature(File delta) throws Exception {
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				return name.startsWith("org.eclipse.equinox.executable");
+				return name.startsWith(EQUINOX_EXECUTABLE);
 			}
 		};
 
@@ -427,7 +427,7 @@ public class PublishingTests extends P2TestCase {
 
 		File originalExecutable = findExecutableFeature(delta);
 
-		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.equinox.executable");
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", EQUINOX_EXECUTABLE);
 		properties.put("launcherName", "eclipse");
 		properties.put("p2.gathering", "true");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
@@ -437,7 +437,7 @@ public class PublishingTests extends P2TestCase {
 		String buildXMLPath = new File(originalExecutable, "build.xml").getAbsolutePath();
 		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
 
-		String executable = "org.eclipse.equinox.executable";
+		String executable = EQUINOX_EXECUTABLE;
 		String fileName = originalExecutable.getName();
 		String version = fileName.substring(fileName.indexOf('_') + 1);
 		Set entries = new HashSet();
@@ -490,7 +490,7 @@ public class PublishingTests extends P2TestCase {
 		Properties properties = new Properties();
 		properties.put("bin.includes", "META-INF/, .");
 		Attributes manifestAdditions = new Attributes();
-		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.osgi");
+		manifestAdditions.put(new Attributes.Name("Require-Bundle"), OSGI);
 		manifestAdditions.put(new Attributes.Name("Export-Package"), "b");
 		Utils.generateBundleManifest(bundle, "bundle", "1.0.0.qualifier", manifestAdditions);
 		Utils.generatePluginBuildProperties(bundle, properties);
@@ -617,7 +617,7 @@ public class PublishingTests extends P2TestCase {
 		branding.append("</launcher>                           \n");
 
 		//bug 273115 - no version
-		Utils.generateProduct(product, "org.example.rcp", null, null, new String[] {"org.eclipse.osgi"}, false, branding);
+		Utils.generateProduct(product, "org.example.rcp", null, null, new String[] {OSGI}, false, branding);
 
 		//steal the icons from test 237922
 		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
@@ -661,7 +661,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(repository, "org.example.rcp");
 		assertEquals(iu.getId(), "org.example.rcp");
 		assertEquals(iu.getVersion().toString(), "0.0.0");
-		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.osgi");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", OSGI);
 
 		//bug 218377
 		iu = getIU(repository, "org.example.rcp_root.carbon.macosx.ppc");
@@ -688,7 +688,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateBundle(p, "p");
 
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"p", "org.eclipse.osgi"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"p", OSGI});
 		Utils.writeBuffer(f.getFile("about.html"), new StringBuffer("about!\n"));
 		Utils.writeBuffer(f.getFile("rootFiles/license.html"), new StringBuffer("license"));
 		Properties properties = new Properties();
@@ -710,7 +710,7 @@ public class PublishingTests extends P2TestCase {
 		runBuild(buildFolder);
 
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
-		IInstallableUnit osgi = getIU(repository, "org.eclipse.osgi");
+		IInstallableUnit osgi = getIU(repository, OSGI);
 
 		IFile tar = buildFolder.getFile("I.TestBuild/f-TestBuild-group.group.group.tar.gz");
 		assertResourceFile(tar);
@@ -774,7 +774,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.generatePluginBuildProperties(headless, properties);
 
 		IFile productFile = buildFolder.getFile("headless.product");
-		String[] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", "org.eclipse.equinox.app", "org.eclipse.equinox.common", "org.eclipse.equinox.preferences", "org.eclipse.equinox.registry", "org.eclipse.osgi"};
+		String[] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", EQUINOX_APP, EQUINOX_COMMON, EQUINOX_PREFERENCES, EQUINOX_REGISTRY, OSGI};
 		Utils.generateProduct(productFile, "headless.product", "1.0.0.qualifier", "headless.application", "headless", bundles, false, null);
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("instructions.configure", "addRepository(type:0,location:file${#58}//foo/bar);");
@@ -891,7 +891,7 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(iu);
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.core.commands_" + iu.getVersion() + ".jar", entries);
 		assertJarVerifies(new File(buildFile, "tmp/eclipse/plugins/org.eclipse.core.commands_" + iu.getVersion() + ".jar"));
-		iu = getIU(repository, "org.eclipse.equinox.app");
+		iu = getIU(repository, EQUINOX_APP);
 		assertNotNull(iu);
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.equinox.app_" + iu.getVersion() + ".jar", entries);
 		iu = getIU(repository, "org.eclipse.help");
@@ -908,7 +908,7 @@ public class PublishingTests extends P2TestCase {
 	public void testMultiConfig() throws Exception {
 		IFolder buildFolder = newTest("multiConfig");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.osgi;os=win32", "org.eclipse.equinox.common;os=linux"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] {OSGI + ";os=win32", EQUINOX_COMMON + ";os=linux"});
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
@@ -923,8 +923,8 @@ public class PublishingTests extends P2TestCase {
 		FileUtils.unzipFile(tar.getLocation().toFile(), untarred);
 
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("unzipped").getLocation().toOSString());
-		IInstallableUnit osgi = getIU(repository, "org.eclipse.osgi");
-		IInstallableUnit common = getIU(repository, "org.eclipse.equinox.common");
+		IInstallableUnit osgi = getIU(repository, OSGI);
+		IInstallableUnit common = getIU(repository, EQUINOX_COMMON);
 
 		assertResourceFile(buildFolder, "unzipped/plugins/org.eclipse.osgi_" + osgi.getVersion() + ".jar");
 		assertResourceFile(buildFolder, "unzipped/plugins/org.eclipse.equinox.common_" + common.getVersion() + ".jar");
@@ -1030,7 +1030,7 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(delta);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {OSGI, SIMPLE_CONFIGURATOR}, false, null);
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("org.eclipse.pde.build.append.launchers", "false");
 		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
@@ -1072,7 +1072,7 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(delta);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common", "org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {OSGI, EQUINOX_COMMON, "org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86"}, false);
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("org.eclipse.pde.build.append.startlevels", "false");
 		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
@@ -1222,7 +1222,7 @@ public class PublishingTests extends P2TestCase {
 		IFolder buildFolder = newTest("264743").getFolder("build1");
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-		properties.put("topLevelElementId", "org.eclipse.equinox.executable");
+		properties.put("topLevelElementId", EQUINOX_EXECUTABLE);
 		properties.put("p2.gathering", "true");
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("archivesFormat", "group,group,group-folder");
@@ -1236,7 +1236,7 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 		IInstallableUnit iu = getIU(metadata, "equinox.executable");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable.feature.jar");
-		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.launcher");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", EQUINOX_LAUNCHER);
 		Set entries = new HashSet();
 		entries.add("bin/win32/win32/x86/launcher.exe");
 		entries.add("bin/carbon/macosx/ppc/Eclipse.app/Contents/MacOS/launcher");
@@ -1246,7 +1246,7 @@ public class PublishingTests extends P2TestCase {
 		IFolder build2 = Utils.createFolder(buildFolder, "../build2");
 
 		IFile productFile = build2.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", null, "rcp", new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"}, false, null);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", null, "rcp", new String[] {OSGI, EQUINOX_COMMON}, false, null);
 
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("configs", "win32,win32,x86 & linux,gtk,x86 & macosx,carbon,ppc");
@@ -1385,7 +1385,7 @@ public class PublishingTests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] {OSGI, EQUINOX_COMMON});
 		Utils.writeBuffer(buildFolder.getFile("features/f/important.txt"), new StringBuffer("boo-urns"));
 		Properties properties = new Properties();
 		properties.put("bin.includes", "feature.xml");
@@ -1440,7 +1440,7 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(delta);
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.simpleconfigurator"}, false, null);
+		Utils.generateProduct(productFile, "uid.product", "rcp.product", "1.0.0.qualifier", "my.app", null, new String[] {OSGI, SIMPLE_CONFIGURATOR}, false, null);
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("requires.1.namespace", "foo");
 		p2Inf.put("requires.1.name", "bar");
@@ -1538,9 +1538,9 @@ public class PublishingTests extends P2TestCase {
 		extra.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>	\n");
 		extra.append(" </launcherArgs>																				\n");
 		extra.append(" <configurations>																				\n");
-		extra.append("    <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"2\" />			\n");
+		extra.append("    <plugin id=\"" + EQUINOX_COMMON + "\" autoStart=\"true\" startLevel=\"2\" />			\n");
 		extra.append(" </configurations>																			\n");
-		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"}, false, extra);
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {OSGI, EQUINOX_COMMON}, false, extra);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
@@ -1576,10 +1576,10 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
-		IInstallableUnit common = getIU(repo, "org.eclipse.equinox.common");
+		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
 		IRequiredCapability[] required = iu.getRequiredCapabilities();
 		assertEquals(required.length, 2);
-		if (required[0].getName().equals("org.eclipse.equinox.common"))
+		if (required[0].getName().equals(EQUINOX_COMMON))
 			assertEquals(required[0].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 		else
 			assertEquals(required[1].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
@@ -1593,7 +1593,7 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(delta);
 
 		IFile product = rcp.getFile("rcp.product");
-		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"org.eclipse.osgi"}, false, null);
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {OSGI}, false, null);
 
 		StringBuffer inf = new StringBuffer();
 		inf.append("requires.1.namespace=org.eclipse.equinox.p2.iu									\n");
@@ -1665,7 +1665,7 @@ public class PublishingTests extends P2TestCase {
 		extra.append("   <linux>/bundle/config.ini</linux>\n");
 		extra.append("   <macosx>/bundle/config.ini</macosx>\n");
 		extra.append("</configIni>\n");
-		String[] entries = new String[] {"org.eclipse.equinox.common", "org.eclipse.osgi", "org.eclipse.equinox.app", "org.eclipse.equinox.registry"};
+		String[] entries = new String[] {EQUINOX_COMMON, OSGI, EQUINOX_APP, EQUINOX_REGISTRY};
 		Utils.generateProduct(product, "bundle.product", "1.0.0", null, entries, false, extra);
 
 		String configString = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
@@ -1690,10 +1690,10 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 
 		IFile config = buildFolder.getFile("tmp/eclipse/configuration/config.ini");
-		IInstallableUnit iu = getIU(metadata, "org.eclipse.equinox.common");
+		IInstallableUnit iu = getIU(metadata, EQUINOX_COMMON);
 		String line = "org.eclipse.equinox.common_" + iu.getVersion() + ".jar@2\\:start";
 		assertLogContainsLine(config, line);
-		iu = getIU(metadata, "org.eclipse.equinox.app");
+		iu = getIU(metadata, EQUINOX_APP);
 		line = "org.eclipse.equinox.app_" + iu.getVersion() + ".jar@4\\:start";
 		assertLogContainsLine(config, line);
 	}
@@ -1703,13 +1703,15 @@ public class PublishingTests extends P2TestCase {
 		IFolder F = Utils.createFolder(buildFolder, "features/F");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
 
+		String[] bundles = new String[] {OSGI, EQUINOX_COMMON, CORE_JOBS, SIMPLE_CONFIGURATOR};
+		String[] bundleVersions = Utils.getVersionsNoQualifier(bundles);
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<feature id=\"F\" version=\"1.0.0\">		\n");
 		buffer.append("  <requires>											\n");
-		buffer.append("     <import plugin=\"org.eclipse.equinox.simpleconfigurator\" version=\"1.0.100\" match=\"equivalent\" />	\n");
-		buffer.append("     <import plugin=\"org.eclipse.core.jobs\" version=\"3.4.100\" match=\"equivalent\" />	\n");
-		buffer.append("     <import plugin=\"org.eclipse.equinox.common\" version=\"3.5.0\" match=\"equivalent\" />	\n");
-		buffer.append("     <import plugin=\"org.eclipse.osgi\" version=\"3.6.0\" match=\"equivalent\" />	\n");
+		for (int i = 0; i < bundleVersions.length; i++) {
+			buffer.append("     <import plugin=\"" + bundles[i] + "\" version=\"" + bundleVersions[i] + "\" match=\"equivalent\" />	\n");
+		}
 		buffer.append("  </requires>											\n");
 		buffer.append("</feature>											\n");
 		Utils.writeBuffer(F.getFile("feature.xml"), buffer);
@@ -1720,7 +1722,7 @@ public class PublishingTests extends P2TestCase {
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer extra = new StringBuffer();
 		extra.append(" <configurations>																					\n");
-		extra.append("    <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"2\" />				\n");
+		extra.append("    <plugin id=\"" + EQUINOX_COMMON + "\" autoStart=\"true\" startLevel=\"2\" />				\n");
 		extra.append("    <plugin id=\"org.eclipse.equinox.simpleconfigurator\" autoStart=\"true\" startLevel=\"1\" />	\n");
 		extra.append(" </configurations>																				\n");
 		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {"F"}, true, extra);
@@ -1742,13 +1744,13 @@ public class PublishingTests extends P2TestCase {
 
 		//bug 283091
 		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
-		assertNull(getIU(meta, "org.eclipse.equinox.app", false));
+		assertNull(getIU(meta, EQUINOX_APP, false));
 	}
 
 	public void testBug284499() throws Exception {
 		IFolder buildFolder = newTest("284499");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.osgi", "org.eclipse.equinox.common"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] {OSGI, EQUINOX_COMMON});
 
 		IFile product = buildFolder.getFile("foo.product");
 		Utils.generateProduct(product, "foo", "1.0.0", null, new String[] {"f"}, true);

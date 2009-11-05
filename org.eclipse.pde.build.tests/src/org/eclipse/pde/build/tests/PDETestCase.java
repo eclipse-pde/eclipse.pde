@@ -13,9 +13,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
-
 import junit.framework.TestCase;
-
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
@@ -37,6 +35,16 @@ import org.osgi.framework.ServiceReference;
 
 public abstract class PDETestCase extends TestCase {
 	public static final String PROJECT_NAME = "pde.build";
+	public static final String EQUINOX_COMMON = "org.eclipse.equinox.common";
+	public static final String SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator";
+	public static final String EQUINOX_EXECUTABLE = "org.eclipse.equinox.executable";
+	public static final String EQUINOX_LAUNCHER = "org.eclipse.equinox.launcher";
+	public static final String EQUINOX_APP = "org.eclipse.equinox.app";
+	public static final String EQUINOX_REGISTRY = "org.eclipse.equinox.registry";
+	public static final String EQUINOX_PREFERENCES = "org.eclipse.equinox.preferences";
+	public static final String CORE_JOBS = "org.eclipse.core.jobs";
+	public static final String CORE_RUNTIME = "org.eclipse.core.runtime";
+	public static final String OSGI = "org.eclipse.osgi";
 
 	private IFolder buildFolder = null;
 
@@ -232,7 +240,7 @@ public abstract class PDETestCase extends TestCase {
 		File ioFile = file.getLocation().toFile();
 		assertTrue(ioFile.length() > 0);
 	}
-	
+
 	/**
 	 * Assert that the given log file contains the given message
 	 * The message is expected to be contained on a single line
@@ -279,10 +287,11 @@ public abstract class PDETestCase extends TestCase {
 	 * @param buildXML
 	 * @throws Exception
 	 */
-	
+
 	public static Project assertValidAntScript(IFile buildXML) throws Exception {
 		return assertValidAntScript(buildXML, null);
 	}
+
 	public static Project assertValidAntScript(IFile buildXML, Map alternateTasks) throws Exception {
 		assertResourceFile((IFolder) buildXML.getParent(), buildXML.getName());
 
@@ -307,7 +316,7 @@ public abstract class PDETestCase extends TestCase {
 	public static void assertJarVerifies(File jarFile) throws Exception {
 		assertJarVerifies(jarFile, false);
 	}
-	
+
 	public static void assertJarVerifies(File jarFile, boolean throwIfNotSigned) throws Exception {
 		BundleContext context = Activator.getDefault().getContext();
 

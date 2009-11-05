@@ -56,6 +56,15 @@ public class Utils {
 		inputStream.close();
 	}
 
+	static public String[] getVersionsNoQualifier(String[] bundles) {
+		String[] results = new String[bundles.length];
+		for (int i = 0; i < bundles.length; i++) {
+			org.osgi.framework.Version version = Platform.getBundle(bundles[i]).getVersion();
+			results[i] = String.valueOf(version.getMajor()) + "." + version.getMinor() + '.' + version.getMicro();
+		}
+		return results;
+	}
+
 	static public void generateAllElements(IFolder buildFolder, String element) throws CoreException, IOException {
 		if (element != null) {
 			// get the productBuild/allElements.xml and replace @ELEMENT@ with element
