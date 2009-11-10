@@ -55,6 +55,8 @@ public class PDECoreMessages extends NLS {
 	// Status text #####################################
 	public static String BinaryRepositoryProvider_veto;
 
+	public static String P2Utils_UnableToAcquireP2Service;
+
 	public static String ProductExportOperation_0;
 
 	public static String PropertiesTextChangeListener_editNames_delete;
