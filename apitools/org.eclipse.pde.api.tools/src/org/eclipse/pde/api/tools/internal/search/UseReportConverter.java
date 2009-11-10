@@ -622,6 +622,7 @@ public class UseReportConverter extends HTMLConvertor {
 			if(DEBUG) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			writeMetaPage(this.htmlRoot);
 		}
 		finally {
 			if(localmonitor != null) {
@@ -788,6 +789,52 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	protected String getMissingBundlesHeader() {
 		return SearchMessages.UseReportConverter_reported_missing_bundles;
+	}
+	
+	/**
+	 * Writes any existing metadata out to a meta.html file in the root of the 
+	 * HTML report location
+	 * @param htmlroot
+	 * @throws Exception
+	 */
+	void writeMetaPage(File htmlroot) throws Exception {
+		File meta = null;
+		PrintWriter writer = null;
+		try {
+			File file = new File(this.reportsRoot, "meta.xml"); //$NON-NLS-1$
+			if(!file.exists()) {
+				//do nothing if no meta.xml file
+				return;
+			}
+			String filename = "meta"; //$NON-NLS-1$
+			meta = new File(htmlroot, filename+HTML_EXTENSION); 
+			if(!meta.exists()) {
+				meta.createNewFile();
+			}
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(HTML_HEADER);
+			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
+			buffer.append(OPEN_TITLE).append(SearchMessages.UseReportConverter_use_scan_info).append(CLOSE_TITLE); 
+			buffer.append(CLOSE_HEAD); 
+			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_H3).append(SearchMessages.UseReportConverter_use_scan_info).append(CLOSE_H3);
+			writeMetadataSummary(buffer); 
+			buffer.append(W3C_FOOTER);
+			
+			//write file
+			FileWriter fileWriter = new FileWriter(meta);
+			writer = new PrintWriter(new BufferedWriter(fileWriter));
+			writer.println(buffer.toString());
+			writer.flush();
+		}
+		catch(IOException ioe) {
+			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, meta.getAbsolutePath()));
+		}
+		finally {
+			if(writer != null) {
+				writer.close();
+			}
+		}
 	}
 	
 	/**

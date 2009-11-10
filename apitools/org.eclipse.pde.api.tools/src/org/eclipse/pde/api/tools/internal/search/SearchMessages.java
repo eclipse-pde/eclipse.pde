@@ -108,6 +108,7 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_terminology;
 	public static String UseReportConverter_types_used_in;
 	public static String UseReportConverter_usage_details;
+	public static String UseReportConverter_use_scan_info;
 	public static String UseReportConverter_version;
 	public static String UseReportConvertor_additional_infos_section;
 	public static String UseScanParser_analyzing_references;
