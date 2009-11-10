@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.equinox.p2.operations.IUPropertyUtils;
+
 import com.ibm.icu.text.MessageFormat;
 import java.net.URI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.target.*;

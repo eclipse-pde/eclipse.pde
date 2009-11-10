@@ -17,16 +17,14 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
-import org.eclipse.equinox.internal.provisional.p2.director.ProvisioningPlan;
-import org.eclipse.equinox.internal.provisional.p2.engine.*;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
+import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.ui.ProvisioningOperationRunner;
-import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
-import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
+import org.eclipse.equinox.p2.operations.*;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
@@ -42,6 +40,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class RuntimeInstallJob extends Job {
 
 	private FeatureExportInfo fInfo;
+	private ProvisioningUI ui;
 
 	/**
 	 * Creates a new job that will install exported plug-ins.  For a 
@@ -55,7 +54,9 @@ public class RuntimeInstallJob extends Job {
 	public RuntimeInstallJob(String jobName, FeatureExportInfo info) {
 		super(jobName);
 		fInfo = info;
-		ProvisioningOperationRunner.manageJob(this, ProvisioningOperationRunner.RESTART_OR_APPLY);
+		// This provisioning UI manages the currently running profile.
+		ui = ProvisioningUI.getDefaultUI();
+		ui.manageJob(this, ProvisioningJob.RESTART_OR_APPLY);
 	}
 
 	/**
@@ -77,15 +78,16 @@ public class RuntimeInstallJob extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
+			ProvisioningSession session = ui.getSession();
 			monitor.beginTask(PDEUIMessages.RuntimeInstallJob_Job_name_installing, 12 + (2 * fInfo.items.length));
 
 			// p2 needs to know about the generated repos
 			URI destination = new File(fInfo.destinationDirectory).toURI();
-			ProvisioningUtil.loadArtifactRepository(destination, new SubProgressMonitor(monitor, 1));
+			session.loadArtifactRepository(destination, new SubProgressMonitor(monitor, 1));
 
-			IMetadataRepository metaRepo = ProvisioningUtil.loadMetadataRepository(destination, new SubProgressMonitor(monitor, 1));
+			IMetadataRepository metaRepo = session.loadMetadataRepository(destination, new SubProgressMonitor(monitor, 1));
 
-			IProfile profile = ProvisioningUtil.getProfile(IProfileRegistry.SELF);
+			IProfile profile = session.getProfile(IProfileRegistry.SELF);
 			if (profile == null) {
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
@@ -139,22 +141,14 @@ public class RuntimeInstallJob extends Job {
 			}
 
 			if (toInstall.size() > 0) {
-				ProvisioningContext pc = new ProvisioningContext(new URI[] {destination});
-				pc.setArtifactRepositories(new URI[] {destination});
-				MultiStatus accumulatedStatus = new MultiStatus(PDEPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
-				ProfileChangeRequest request = InstallAction.computeProfileChangeRequest((IInstallableUnit[]) toInstall.toArray(new IInstallableUnit[toInstall.size()]), IProfileRegistry.SELF, accumulatedStatus, monitor);
-				if (request == null || accumulatedStatus.getSeverity() == IStatus.CANCEL || !(accumulatedStatus.isOK() || accumulatedStatus.getSeverity() == IStatus.INFO)) {
-					return accumulatedStatus;
-				}
-
-				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, pc, new SubProgressMonitor(monitor, 5));
-				IStatus status = thePlan.getStatus();
+				InstallOperation operation = ui.getInstallOperation((IInstallableUnit[]) toInstall.toArray(new IInstallableUnit[toInstall.size()]), new URI[] {destination});
+				operation.resolveModal(new SubProgressMonitor(monitor, 5));
+				IStatus status = operation.getResolutionResult();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 					return status;
 				}
-
-				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), pc, new SubProgressMonitor(monitor, 5));
-
+				ProvisioningJob job = operation.getProvisioningJob(null);
+				status = job.runModal(new SubProgressMonitor(monitor, 5));
 				return status;
 			}
 
