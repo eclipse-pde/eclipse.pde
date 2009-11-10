@@ -352,10 +352,6 @@ public class P2Utils {
 	 * @throws CoreException if the profile cannot be generated
 	 */
 	public static void createProfile(String profileID, File p2DataArea, Collection bundles) throws CoreException {
-//		File engineArea = new File(p2DataArea, EngineActivator.ID);
-//		File registryArea = new File(engineArea, SimpleProfileRegistry.DEFAULT_STORAGE_DIR);
-//		registryArea.mkdirs();
-
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
 		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
 		if (provider == null) {
