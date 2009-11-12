@@ -347,7 +347,7 @@ public class P2Utils {
 	 * 
 	 * @param profileID the ID to be used when creating the profile, if a profile with the same name exists, it will be overwritten
 	 * @param p2DataArea the directory which contains p2 data including the profile registry, if the directory path doesn't exist it will be created
-	 * @param bundles the collection of bundles to create metadata for and add to the profile
+	 * @param bundles the collection of IPluginModelBase objects representing bundles to create metadata for and add to the profile
 	 * 
 	 * @throws CoreException if the profile cannot be generated
 	 */
