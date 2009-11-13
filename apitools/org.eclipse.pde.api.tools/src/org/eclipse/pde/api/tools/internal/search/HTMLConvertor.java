@@ -76,7 +76,7 @@ public abstract class HTMLConvertor {
 	/**
 	 * Closing html tag: <code>&lt;html&gt;</code>
 	 */
-	static final String CLOSE_HTML = "</html>\n"; //$NON-NLS-1$
+	public static final String CLOSE_HTML = "</html>\n"; //$NON-NLS-1$
 	/**
 	 * Closing table tag: <code>&lt;/table&gt;</code>
 	 */
@@ -113,6 +113,14 @@ public abstract class HTMLConvertor {
 	 * Closing ol tag: <code>&lt;/ol&gt;</code>
 	 */
 	public static final String CLOSE_OL = "</ol>\n"; //$NON-NLS-1$
+	/**
+	 * Opening ul tag: <code>&lt;ul&gt;</code>
+	 */
+	public static final String OPEN_UL = "<ul>\n"; //$NON-NLS-1$
+	/**
+	 * Closing ul tag: <code>&lt;/ul&gt;</code>
+	 */
+	public static final String CLOSE_UL = "</ul>\n"; //$NON-NLS-1$
 	/**
 	 * Opening tr tag: <code>&lt;tr&gt;</code>
 	 */
