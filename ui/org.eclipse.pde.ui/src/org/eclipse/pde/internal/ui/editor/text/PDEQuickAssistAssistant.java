@@ -134,7 +134,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			for (int i = 0; i < contributedResolutions.length; i++) {
 				IMarkerResolution resolution = contributedResolutions[i];
 				// only add contributed marker resolutions if they don't come from PDE
-				if (!(resolution instanceof AbstractPDEMarkerResolution))
+				if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(contributedResolutions[i]))
 					resolutions.add(contributedResolutions[i]);
 			}
 

@@ -2642,6 +2642,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditorContributor_externStringsActionName;
 
+	public static String MultiFixResolution_FixAll;
+
 	public static String SplashSection_progressBar;
 	public static String SplashSection_progressX;
 	public static String SplashSection_progressWidth;
@@ -2688,6 +2690,8 @@ public class PDEUIMessages extends NLS {
 	public static String RemoveBuildEntryResolution_removeEntry;
 
 	public static String RemoveBuildEntryResolution_removeToken;
+
+	public static String ReplaceBuildEntryResolution_replaceToken;
 
 	public static String AddBuildEntryResolution_add;
 
