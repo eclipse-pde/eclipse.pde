@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.provisional.p2.core.*;
+import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
 import org.eclipse.equinox.internal.provisional.p2.director.ProvisioningPlan;
 import org.eclipse.equinox.internal.provisional.p2.engine.*;
@@ -24,6 +24,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
+import org.eclipse.equinox.internal.provisional.p2.ui.ProvisioningOperationRunner;
 import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
 import org.eclipse.osgi.util.NLS;
@@ -54,6 +55,7 @@ public class RuntimeInstallJob extends Job {
 	public RuntimeInstallJob(String jobName, FeatureExportInfo info) {
 		super(jobName);
 		fInfo = info;
+		ProvisioningOperationRunner.manageJob(this, ProvisioningOperationRunner.RESTART_OR_APPLY);
 	}
 
 	/**
@@ -114,7 +116,7 @@ public class RuntimeInstallJob extends Job {
 				version = QualifierReplacer.replaceQualifierInVersion(version, id, null, null);
 
 				// Check if the right version exists in the new meta repo
-				Version newVersion = new Version(version);
+				Version newVersion = Version.parseVersion(version);
 				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), new Collector(), monitor);
 				if (queryMatches.size() == 0) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
@@ -137,19 +139,21 @@ public class RuntimeInstallJob extends Job {
 			}
 
 			if (toInstall.size() > 0) {
+				ProvisioningContext pc = new ProvisioningContext(new URI[] {destination});
+				pc.setArtifactRepositories(new URI[] {destination});
 				MultiStatus accumulatedStatus = new MultiStatus(PDEPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 				ProfileChangeRequest request = InstallAction.computeProfileChangeRequest((IInstallableUnit[]) toInstall.toArray(new IInstallableUnit[toInstall.size()]), IProfileRegistry.SELF, accumulatedStatus, monitor);
 				if (request == null || accumulatedStatus.getSeverity() == IStatus.CANCEL || !(accumulatedStatus.isOK() || accumulatedStatus.getSeverity() == IStatus.INFO)) {
 					return accumulatedStatus;
 				}
 
-				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, new ProvisioningContext(new URI[] {destination}), new SubProgressMonitor(monitor, 5));
+				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, pc, new SubProgressMonitor(monitor, 5));
 				IStatus status = thePlan.getStatus();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 					return status;
 				}
 
-				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), profile, new SubProgressMonitor(monitor, 5));
+				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), pc, new SubProgressMonitor(monitor, 5));
 
 				return status;
 			}
@@ -182,9 +186,9 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setId(id + ".patch"); //$NON-NLS-1$
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_NAME, NLS.bind(PDEUIMessages.RuntimeInstallJob_installPatchName, id));
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_DESCRIPTION, PDEUIMessages.RuntimeInstallJob_installPatchDescription);
-		Version patchVersion = new Version("1.0.0." + QualifierReplacer.getDateQualifier()); //$NON-NLS-1$
+		Version patchVersion = Version.createOSGi(1, 0, 0, QualifierReplacer.getDateQualifier());
 		iuPatchDescription.setVersion(patchVersion);
-		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(new Version(0, 0, 0), true, patchVersion, false), 0, null));
+		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(Version.createOSGi(0, 0, 0), true, patchVersion, false), 0, null));
 
 		ArrayList list = new ArrayList(1);
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));

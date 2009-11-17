@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import org.eclipse.ui.internal.views.log.AllLogViewTests;
-
 import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
 
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
@@ -41,7 +39,6 @@ public class AllPDETests {
 		suite.addTest(AllPDERuntimeTests.suite());
 		suite.addTest(ExportBundleTests.suite());
 		suite.addTest(AllLauncherTests.suite());
-		suite.addTest(AllLogViewTests.suite());
 		return suite;
 	}
 
