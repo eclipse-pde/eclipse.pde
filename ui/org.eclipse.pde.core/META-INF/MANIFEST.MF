@@ -67,5 +67,6 @@ Require-Bundle:
  org.eclipse.equinox.p2.garbagecollector;bundle-version="[1.0.100,2.0.0)"
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Import-Package: com.ibm.icu.util
+Import-Package: com.ibm.icu.util,
+ org.eclipse.equinox.p2.touchpoint.eclipse.query
 Bundle-ActivationPolicy: lazy

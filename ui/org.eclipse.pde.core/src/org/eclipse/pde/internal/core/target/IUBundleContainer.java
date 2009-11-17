@@ -27,6 +27,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadata
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.engine.IProvisioningPlan;
+import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -83,29 +84,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * </p>
 	 */
 	private boolean fIncludeMultipleEnvironments = false;
-
-	/**
-	 * Query for bundles in a profile. Every IU that ends up being installed as a bundle
-	 * provides a capability in the name space "osgi.bundle".
-	 */
-	class BundleQuery extends MatchQuery {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.internal.provisional.p2.query.MatchQuery#isMatch(java.lang.Object)
-		 */
-		public boolean isMatch(Object candidate) {
-			if (candidate instanceof IInstallableUnit) {
-				IInstallableUnit unit = (IInstallableUnit) candidate;
-				IProvidedCapability[] provided = unit.getProvidedCapabilities();
-				for (int i = 0; i < provided.length; i++) {
-					if (provided[i].getNamespace().equals("osgi.bundle")) { //$NON-NLS-1$
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-	}
 
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
@@ -265,7 +243,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// query for bundles
-		BundleQuery query = new BundleQuery();
+		OSGiBundleQuery query = new OSGiBundleQuery();
 		Collector collector = new Collector();
 		slice.query(query, collector, new SubProgressMonitor(subMonitor, 10));
 
@@ -423,7 +401,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// query for bundles
-		collector = slice.query(new BundleQuery(), new Collector(), new SubProgressMonitor(subMonitor, 10));
+		collector = slice.query(new OSGiBundleQuery(), new Collector(), new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
