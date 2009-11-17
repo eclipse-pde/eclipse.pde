@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -23,6 +21,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * Adds/Removes the target bundles to/from Java search
@@ -40,11 +39,20 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	 * Adds/Removes the target bundles to/from Java search
 	 * 
 	 * @param target	The target definition whose bundles are to be added/removed.
-	 * @param add		<code>true</code> for adding and <code>false></code> for removing.
 	 */
 	public static void synchWithTarget(ITargetDefinition target) {
 		fTargetDefinition = target;
 		fAdd = true;
+		fBundles = null;
+		scheduleJob();
+	}
+
+	/**
+	 * Removes all bundles from Java search
+	 */
+	public static void clearAll() {
+		fTargetDefinition = null;
+		fAdd = false;
 		fBundles = null;
 		scheduleJob();
 	}
@@ -57,6 +65,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	 */
 	public static void changeBundles(IPluginModelBase[] bundles, boolean add) {
 		Assert.isNotNull(bundles);
+		fTargetDefinition = null;
 		fBundles = bundles;
 		fAdd = add;
 		scheduleJob();
@@ -127,7 +136,11 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 			if (fAdd) {
 				manager.addToJavaSearch(fBundles);
 			} else {
-				manager.removeFromJavaSearch(fBundles);
+				if (fBundles != null) {
+					manager.removeFromJavaSearch(fBundles);
+				} else {
+					manager.removeAllFromJavaSearch();
+				}
 			}
 			subMon.worked(25);
 

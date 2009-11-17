@@ -124,12 +124,14 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		boolean synchJavaSearch = fAddToJavaSearch.getSelection();
 		if (store.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH) != synchJavaSearch) {
 			store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, synchJavaSearch);
-			if (synchJavaSearch) {
-				try {
+			try {
+				if (synchJavaSearch) {
 					AddToJavaSearchJob.synchWithTarget(TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition());
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
+				} else {
+					AddToJavaSearchJob.clearAll();
 				}
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
 			}
 		}
 
