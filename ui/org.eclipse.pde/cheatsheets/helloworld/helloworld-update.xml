@@ -60,7 +60,7 @@
       </subitem>
       <subitem label="Input &quot;helloworld.site&quot; into the &quot;Project Name&quot; text box on the &quot;Update Site Project&quot; page" 
                skip="false"/>
-      <subitem label="Uncheck the &quot;Use default location&quot; check box
+      <subitem label="Deselect the &quot;Use default location&quot; check box"
                skip="false"/>  
       <subitem label="Note:  For the purpose of this cheat sheet we will define a Windows pathname for our update site location.  For Unix platforms, adjust accordingly." 
                skip="true"/>  
