@@ -13,12 +13,15 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
+import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.IUPropertyUtils;
-import org.eclipse.equinox.p2.ui.*;
+import org.eclipse.equinox.p2.ui.Policy;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
@@ -102,7 +105,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
 		// TODO we use the service session from the self profile.  In the future we may want
 		// to set up our own services for the profile (separate repo managers, etc).
-		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), profile.getProfileId(), selfProvisioningUI.getPolicy());
+		// We use our own new policy so we don't bash the SDK's settings.
+		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), profile.getProfileId(), new Policy());
 	}
 
 	/**
@@ -171,8 +175,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createRepositoryComboArea(Composite parent) {
-		Policy policy = new Policy();
-		policy.setRepositoryManipulator(new ColocatedRepositoryManipulator(null));
+		profileUI.getPolicy().setRepositoryPreferencePageId(null);
 		fRepoSelector = new RepositorySelectionGroup(profileUI, getContainer(), parent, fQueryContext);
 		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
 			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
@@ -314,7 +317,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * Creates a default query context to setup the available IU Group
 	 */
 	private void createQueryContext() {
-		fQueryContext = ProvisioningUI.getDefaultUI().getPolicy().getQueryContext();
+		fQueryContext = ProvUI.getQueryContext(ProvisioningUI.getDefaultUI().getPolicy());
 		fQueryContext.setInstalledProfileId(fProfile.getProfileId());
 		fQueryContext.showAlreadyInstalled();
 	}
