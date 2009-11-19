@@ -19,7 +19,6 @@ import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.operations.IUPropertyUtils;
 import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.IAction;
@@ -342,11 +341,11 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs();
 		if (selected.length == 1) {
 			StringBuffer result = new StringBuffer();
-			String description = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
+			String description = profileUI.getTranslationSupport().getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
 			if (description != null) {
 				result.append(description);
 			} else {
-				String name = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
+				String name = profileUI.getTranslationSupport().getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
 				if (name != null)
 					result.append(name);
 				else
