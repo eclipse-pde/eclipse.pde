@@ -35,6 +35,7 @@ public class SearchMessages extends NLS {
 	public static String MigrationReportConvertor_click_table_entry;
 	public static String MigrationReportConvertor_member_has_unresolved_refs;
 	public static String MigrationReportConvertor_migration_details;
+	public static String MigrationReportConvertor_no_reported_migration_problems;
 	public static String MigrationReportConvertor_table_shows_unresolved;
 	public static String MigrationReportConvertor_type_migration_information;
 	public static String MigrationReportConvertor_type_with_unresolved_refs;
@@ -45,6 +46,7 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_core_exep_reading_metadata;
 	public static String UseReportConverter_coreexception_writing_html_file;
 	public static String UseReportConverter_te_applying_xslt_skipped;
+	public static String UseReportConverter_no_additional_scan_info;
 	public static String UseReportConverter_no_xstl_specified;
 	public static String UseReportConverter_scan_date;
 	public static String UseReportConverter_scan_details;
@@ -70,6 +72,8 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_bundles_that_were_not_searched;
 	public static String UseReportConverter_click_an_entry_to_see_details;
 	public static String UseReportConverter_description;
+	public static String UseReportConverter_filter_pattern;
+	public static String UseReportConverter_filter_pattern_not_valid;
 	public static String UseReportConverter_following_bundles_have_refs;
 	public static String UseReportConverter_fragment_permissible_references;
 	public static String UseReportConverter_fragment_ref_description;

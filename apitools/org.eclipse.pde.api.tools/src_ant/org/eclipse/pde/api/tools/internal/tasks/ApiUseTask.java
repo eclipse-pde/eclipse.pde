@@ -14,10 +14,8 @@ package org.eclipse.pde.api.tools.internal.tasks;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -209,27 +207,6 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 */
 	public void setArchivePatterns(String patterns) {
 		archivePatterns = parsePatterns(patterns);
-	}
-	
-	/**
-	 * Parses and returns patterns as an array of Strings or <code>null</code> if none.
-	 * 
-	 * @param patterns comma separated list or <code>null</code>
-	 * @return individual patterns or <code>null</code>
-	 */
-	private String[] parsePatterns(String patterns) {
-		if (patterns == null || patterns.trim().length() == 0) {
-			return null;
-		}
-		String[] strings = patterns.split(","); //$NON-NLS-1$
-		List list = new ArrayList();
-		for (int i = 0; i < strings.length; i++) {
-			String pattern = strings[i].trim();
-			if (pattern.length() > 0) {
-				list.add(pattern);
-			}
-		}
-		return (String[]) list.toArray(new String[list.size()]);
 	}
 	
 	/**

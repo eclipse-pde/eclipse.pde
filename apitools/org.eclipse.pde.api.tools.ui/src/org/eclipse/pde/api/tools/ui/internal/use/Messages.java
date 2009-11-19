@@ -26,6 +26,7 @@ public class Messages extends NLS {
 	public static String ApiUsePatternTab_patterns_title;
 	public static String ApiUsePatternTab_provide_regex;
 	public static String ApiUsePatternTab_remove;
+	public static String ApiUsePatternTab_report;
 	public static String ApiUseScanJob_api_use_report;
 	public static String ApiUseScanJob_baseline_does_not_exist;
 	public static String ApiUseScanJob_baseline_name_missing;
@@ -94,9 +95,16 @@ public class Messages extends NLS {
 	public static String PatternSelectionPage_package_pattern;
 	public static String PatternSelectionPage_package_pattern_desc;
 	public static String PatternSelectionPage_pattern_types;
+	public static String PatternSelectionPage_report_conversion_pattern;
+	public static String PatternSelectionPage_report_conversion_pattern_desc;
 	public static String PatternSelectionPage_select_pattern;
 	public static String PatternSelectionPage_select_type;
 	public static String PatternWizard_use_scan_patterns;
+	public static String ReportPatternPage_create_conversion_pattern;
+	public static String ReportPatternPage_edit_conversion_pattern;
+	public static String ReportPatternPage_enter_conversion_pattern;
+	public static String ReportPatternPage_pattern;
+	public static String ReportPatternPage_report_conversion_pattern;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

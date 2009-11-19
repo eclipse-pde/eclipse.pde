@@ -24,9 +24,10 @@ public class MigrationReportConvertor extends UseReportConverter {
 	 * Constructor
 	 * @param htmlroot
 	 * @param xmlroot
+	 * @param patterns
 	 */
-	public MigrationReportConvertor(String htmlroot, String xmlroot) {
-		super(htmlroot, xmlroot);
+	public MigrationReportConvertor(String htmlroot, String xmlroot, String[] patterns) {
+		super(htmlroot, xmlroot, patterns);
 	}
 
 	/* (non-Javadoc)
@@ -103,11 +104,23 @@ public class MigrationReportConvertor extends UseReportConverter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getAdditionalIndexInfo()
+	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getAdditionalIndexInfo(boolean)
 	 */
-	protected String getAdditionalIndexInfo() {
+	protected String getAdditionalIndexInfo(boolean hasreports) {
+		if(hasreports) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(SearchMessages.MigrationReportConvertor_bundles_have_references);
+			return buffer.toString();
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getNoReportsInformation()
+	 */
+	protected String getNoReportsInformation() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(SearchMessages.MigrationReportConvertor_bundles_have_references);
+		buffer.append(OPEN_P).append(BR).append(SearchMessages.MigrationReportConvertor_no_reported_migration_problems).append(CLOSE_P); 
 		return buffer.toString();
 	}
 }

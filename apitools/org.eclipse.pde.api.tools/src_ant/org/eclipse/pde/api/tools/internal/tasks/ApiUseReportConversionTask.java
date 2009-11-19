@@ -29,6 +29,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	private String xmlReportsLocation = null;
 	private String htmlReportsLocation = null;
 	private String xsltFileLocation = null;
+	private String[] filterPatterns = null;
 	
 	/**
 	 * Set the debug value.
@@ -64,6 +65,15 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	}
 	
 	/**
+	 * Set the group of {@link String} patterns to use as heuristics to filter
+	 * during the report conversion
+	 * @param patterns
+	 */
+	public void setFilterPatterns(String patterns) {
+		this.filterPatterns = parsePatterns(patterns);
+	}
+	
+	/**
 	 * Sets the location of the XSLT file to use in the conversion of the XML
 	 * the HTML.
 	 * 
@@ -92,7 +102,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		}
 		try {
 			Util.delete(new File(this.htmlReportsLocation));
-			UseReportConverter converter = new UseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation);
+			UseReportConverter converter = new UseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation, this.filterPatterns);
 			UseReportConverter.setDebug(this.debug);
 			converter.convert(this.xsltFileLocation, null);
 			File index = converter.getReportIndex();

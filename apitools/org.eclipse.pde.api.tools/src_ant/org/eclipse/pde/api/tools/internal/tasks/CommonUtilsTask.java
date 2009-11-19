@@ -262,4 +262,25 @@ public abstract class CommonUtilsTask extends Task {
 			}
 		}
 	}
+	
+	/**
+	 * Parses and returns patterns as an array of Strings or <code>null</code> if none.
+	 * 
+	 * @param patterns comma separated list or <code>null</code>
+	 * @return individual patterns or <code>null</code>
+	 */
+	protected String[] parsePatterns(String patterns) {
+		if (patterns == null || patterns.trim().length() == 0) {
+			return null;
+		}
+		String[] strings = patterns.split(","); //$NON-NLS-1$
+		List list = new ArrayList();
+		for (int i = 0; i < strings.length; i++) {
+			String pattern = strings[i].trim();
+			if (pattern.length() > 0) {
+				list.add(pattern);
+			}
+		}
+		return (String[]) list.toArray(new String[list.size()]);
+	}
 }

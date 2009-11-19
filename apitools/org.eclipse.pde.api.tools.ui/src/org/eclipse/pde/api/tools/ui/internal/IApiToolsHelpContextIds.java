@@ -19,6 +19,7 @@ import org.eclipse.pde.api.tools.ui.internal.properties.ApiFiltersPropertyPage;
 import org.eclipse.pde.api.tools.ui.internal.use.ArchivePatternPage;
 import org.eclipse.pde.api.tools.ui.internal.use.DescriptionPatternPage;
 import org.eclipse.pde.api.tools.ui.internal.use.PatternSelectionPage;
+import org.eclipse.pde.api.tools.ui.internal.use.ReportPatternPage;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizardPage;
@@ -74,6 +75,10 @@ public interface IApiToolsHelpContextIds {
 	 * Constant representing the help id for the {@link ArchivePatternPage}
 	 */
 	public static final String APITOOLS_ARCHIVE_PATTERN_WIZARD_PAGE = PREFIX + "apitools_archive_pattern_wizard_page"; //$NON-NLS-1$
+	/**
+	 * Constant representing the help id for the {@link ReportPatternPage}
+	 */
+	public static final String APITOOLS_REPORT_PATTERN_WIZARD_PAGE = PREFIX + "apitools_report_pattern_wizard_page"; //$NON-NLS-1$
 	/**
 	 * Constant representing the help id for the {@link DescriptionPatternPage}
 	 */

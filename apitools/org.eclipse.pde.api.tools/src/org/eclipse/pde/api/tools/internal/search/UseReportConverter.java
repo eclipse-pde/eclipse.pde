@@ -27,6 +27,8 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -84,6 +86,42 @@ public class UseReportConverter extends HTMLConvertor {
 		HashMap keys = new HashMap();
 		ArrayList referees = new ArrayList();
 		
+		/**
+		 * Returns if the reference should be reported or not
+		 * @param desc
+		 * @return true if the reference should be reported false otherwise
+		 */
+		private boolean acceptReference(IMemberDescriptor desc) {
+			if(filterPatterns != null) {
+				for (int i = 0; i < filterPatterns.length; i++) {
+					if(filterPatterns[i].matcher(desc.getPackage().getName()).find()) {
+						//TODO should we record filtered results?
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		
+		/**
+		 * Returns the enclosing {@link IReferenceTypeDescriptor} for the given member
+		 * descriptor
+		 * @param member
+		 * @return the enclosing {@link IReferenceTypeDescriptor} or <code>null</code>
+		 */
+		IReferenceTypeDescriptor getEnclosingDescriptor(IMemberDescriptor member) {
+			switch(member.getElementType()) {
+			case IElementDescriptor.TYPE: {
+				return (IReferenceTypeDescriptor) member;
+			}
+			case IElementDescriptor.METHOD:
+			case IElementDescriptor.FIELD: {
+				return member.getEnclosingType();
+			}
+		}
+		return null;
+	}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 		 */
@@ -104,7 +142,12 @@ public class UseReportConverter extends HTMLConvertor {
 					System.out.println("Writing report for bundle: "+target.getId()); //$NON-NLS-1$
 					start = System.currentTimeMillis();
 				}
-				writeReferencedMemberPage(this.currentreport, this.referees);
+				if(this.currentreport.counts.getTotalRefCount() > 0) {
+					writeReferencedMemberPage(this.currentreport, this.referees);
+				}
+				else {
+					this.reports.remove(this.currentreport);
+				}
 				if(DEBUG) {
 					System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
@@ -131,24 +174,15 @@ public class UseReportConverter extends HTMLConvertor {
 		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 		 */
 		public void endVisitReferencingComponent(IComponentDescriptor component) {
-			this.referees.add(this.currentreferee);
+			if(this.currentreferee.counts.getTotalRefCount() > 0) {
+				this.referees.add(this.currentreferee);
+			}
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
 		 */
 		public boolean visitMember(IMemberDescriptor referencedMember) {
-			IReferenceTypeDescriptor desc = null;
-			switch(referencedMember.getElementType()) {
-				case IElementDescriptor.TYPE: {
-					desc = (IReferenceTypeDescriptor) referencedMember;
-					break;
-				}
-				case IElementDescriptor.METHOD:
-				case IElementDescriptor.FIELD: {
-					desc = referencedMember.getEnclosingType();
-					break;
-				}
-			}
+			IReferenceTypeDescriptor desc = getEnclosingDescriptor(referencedMember);
 			if(desc == null) {
 				return false;
 			}
@@ -171,9 +205,29 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 		
 		/* (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
+		 */
+		public void endVisitMember(IMemberDescriptor referencedMember) {
+			if(this.currentmember.children.size() == 0) {
+				TreeMap map = (TreeMap) this.currentreport.children.get(this.currenttype);
+				map.remove(referencedMember);
+			}
+			if(this.currenttype.counts.getTotalRefCount() == 0) {
+				IReferenceTypeDescriptor desc = getEnclosingDescriptor(referencedMember);
+				if(desc != null) {
+					this.keys.remove(desc);
+					this.currentreport.children.remove(this.currenttype);
+				}
+			}
+		}
+		
+		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor, int, int)
 		 */
 		public void visitReference(int refKind, IMemberDescriptor fromMember, int lineNumber, int visibility) {
+			if(!acceptReference(fromMember)) {
+				return;
+			}
 			String refname = org.eclipse.pde.api.tools.internal.builder.Reference.getReferenceText(refKind);
 			ArrayList refs = (ArrayList) this.currentmember.children.get(refname);
 			if(refs == null) {
@@ -537,15 +591,34 @@ public class UseReportConverter extends HTMLConvertor {
 	SAXParser parser = null;
 	private boolean hasmissing = false;
 	private UseMetadata metadata = null;
+	Pattern[] filterPatterns = null;
 	
 	/**
 	 * Constructor
 	 * @param htmlroot the folder root where the HTML reports should be written
 	 * @param xmlroot the folder root where the current API use scan output is located
+	 * @param patterns array of regular expressions to prune HTML output with
 	 */
-	public UseReportConverter(String htmlroot, String xmlroot) {
+	public UseReportConverter(String htmlroot, String xmlroot, String[] patterns) {
 		this.xmlLocation = xmlroot;
 		this.htmlLocation = htmlroot;
+		if(patterns != null) {
+			ArrayList pats = new ArrayList(patterns.length);
+			for (int i = 0; i < patterns.length; i++) {
+				try {
+					pats.add(Pattern.compile(patterns[i]));
+				}
+				catch(PatternSyntaxException pse) {
+					if(DEBUG) {
+						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, patterns[i]));
+						System.out.println(pse.getMessage());
+					}
+				}
+			}
+			if(!pats.isEmpty()) {
+				this.filterPatterns = (Pattern[]) pats.toArray(new Pattern[pats.size()]);
+			}
+		}
 	}
 	
 	/**
@@ -1314,11 +1387,12 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			buffer.append(OPEN_P); 
 			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {"<a href=\"./not_searched.html\">", "</a></p>\n"}));  //$NON-NLS-1$//$NON-NLS-2$
-			buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
-			if(getAdditionalIndexInfo() != null) {
-				buffer.append(getAdditionalIndexInfo());
+			String additional = getAdditionalIndexInfo(sortedreports.size() > 0);
+			if(additional != null) {
+				buffer.append(additional);
 			}
 			if(sortedreports.size() > 0) {
+				buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
 				buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_bundle));
 				if(sortedreports.size() > 0) {
 					Report report = null;
@@ -1336,7 +1410,7 @@ public class UseReportConverter extends HTMLConvertor {
 				}
 			}
 			else {
-				buffer.append(OPEN_P).append(BR).append(SearchMessages.UseReportConverter_no_reported_usage).append(CLOSE_P); 
+				buffer.append(getNoReportsInformation()); 
 			}
 			buffer.append(W3C_FOOTER);
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);  
@@ -1353,6 +1427,15 @@ public class UseReportConverter extends HTMLConvertor {
 				writer.close();
 			}
 		}
+	}
+	
+	/**
+	 * @return the string to write if there are no reported bundles
+	 */
+	protected String getNoReportsInformation() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(OPEN_P).append(BR).append(SearchMessages.UseReportConverter_no_reported_usage).append(CLOSE_P); 
+		return buffer.toString();
 	}
 	
 	/**
@@ -1453,7 +1536,23 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			buffer.append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_filter_pattern).append(CLOSE_TD); 
+			buffer.append(openTD(36)); 
+			if(this.filterPatterns != null) {
+				for (int i = 0; i < this.filterPatterns.length; i++) {
+					buffer.append(this.filterPatterns[i].pattern()).append(BR);
+				}
+			}
+			else {
+				buffer.append(SearchMessages.UseReportConverter_none); 
+			}
+			buffer.append(CLOSE_TD);
+			buffer.append(CLOSE_TR);
 			buffer.append(CLOSE_TABLE);
+		}
+		else {
+			buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_no_additional_scan_info).append(CLOSE_P);
 		}
 	}
 	
@@ -1616,9 +1715,11 @@ public class UseReportConverter extends HTMLConvertor {
 	
 	/**
 	 * Allows additional infos to be added to the HTML at the top of the report page
-	 * @return
+	 * @param hasreports
+	 * 
+	 * @return additional information string to add
 	 */
-	protected String getAdditionalIndexInfo() {
+	protected String getAdditionalIndexInfo(boolean hasreports) {
 		return null;
 	}
 	

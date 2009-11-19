@@ -43,6 +43,7 @@ public class PatternWizard extends Wizard {
 			addPage(new PatternSelectionPage());
 			addPage(new DescriptionPatternPage(null, -1));
 			addPage(new ArchivePatternPage(null));
+			addPage(new ReportPatternPage(null));
 		}
 		else {
 			switch(this.kind) {
@@ -53,6 +54,10 @@ public class PatternWizard extends Wizard {
 				}
 				case Pattern.JAR: {
 					addPage(new ArchivePatternPage(this.pattern));
+					break;
+				}
+				case Pattern.REPORT: {
+					addPage(new ReportPatternPage(this.pattern));
 					break;
 				}
 			}

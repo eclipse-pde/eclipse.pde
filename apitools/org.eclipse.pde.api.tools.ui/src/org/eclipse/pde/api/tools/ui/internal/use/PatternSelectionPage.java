@@ -65,7 +65,8 @@ public class PatternSelectionPage extends WizardPage {
 	
 	final PatternElement[] fgelements = {
 		new PatternElement(Messages.PatternSelectionPage_package_pattern, Messages.PatternSelectionPage_package_pattern_desc, null, DescriptionPatternPage.PAGE_NAME),
-		new PatternElement(Messages.PatternSelectionPage_archive_pattern, Messages.PatternSelectionPage_archive_pattern_desc, null, ArchivePatternPage.PAGE_NAME)
+		new PatternElement(Messages.PatternSelectionPage_archive_pattern, Messages.PatternSelectionPage_archive_pattern_desc, null, ArchivePatternPage.PAGE_NAME),
+		new PatternElement(Messages.PatternSelectionPage_report_conversion_pattern, Messages.PatternSelectionPage_report_conversion_pattern_desc, null, ReportPatternPage.PAGE_NAME)
 	};
 	
 	TableViewer viewer = null;

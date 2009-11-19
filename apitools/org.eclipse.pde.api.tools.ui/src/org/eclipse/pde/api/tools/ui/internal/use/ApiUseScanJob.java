@@ -169,6 +169,7 @@ public class ApiUseScanJob extends Job {
 						htmlPath,
 						xmlPath,
 						isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT),
+						getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List)null)),
 						localmonitor.newChild(10));
 			}
 			// Dispose the baseline if it's not managed (it's temporary)
@@ -363,14 +364,15 @@ public class ApiUseScanJob extends Job {
 	void performReportCreation(boolean cleanh, 
 			String hlocation, 
 			String rlocation, 
-			boolean openhtml, 
+			boolean openhtml,
+			String[] patterns,
 			IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_creating_html_reports, 10);
 		if(cleanh) {
 			cleanReportLocation(hlocation, localmonitor.newChild(5));
 		}
 		try {
-			UseReportConverter converter = new UseReportConverter(hlocation, rlocation);
+			UseReportConverter converter = new UseReportConverter(hlocation, rlocation, patterns);
 			converter.convert(null, localmonitor.newChild(5));
 			if(openhtml) {
 				final File index = converter.getReportIndex();

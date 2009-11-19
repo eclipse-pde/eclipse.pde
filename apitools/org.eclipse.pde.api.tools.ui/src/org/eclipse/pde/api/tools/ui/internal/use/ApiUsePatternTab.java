@@ -11,9 +11,10 @@
 package org.eclipse.pde.api.tools.ui.internal.use;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.CoreException;
@@ -34,8 +35,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
@@ -85,6 +85,9 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 						case Pattern.JAR: {
 							return Messages.ApiUsePatternTab_archive;
 						}
+						case Pattern.REPORT: {
+							return Messages.ApiUsePatternTab_report;
+						}
 					}
 				}
 			}
@@ -109,16 +112,26 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	class Pattern {
-		static final int API = 1, INTERNAL = 2, JAR = 3;
+		static final int API = 1, INTERNAL = 2, JAR = 3, REPORT = 4;
 		String pattern = null;
 		int kind = -1;
 		public Pattern(String pattern, int kind) {
 			this.pattern = pattern;
 			this.kind = kind;
 		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			return this.pattern;
+		}
 	}
 	
-	HashSet patterns = new HashSet();
+	TreeSet patterns = new TreeSet(new Comparator() {
+		public int compare(Object o1, Object o2) {
+			return ((Pattern)o1).pattern.compareTo(((Pattern)o2).pattern);
+		}
+	});
 	TableViewer viewer = null;
 	Image image = null;
 	Button addbutton = null, editbutton = null, removebutton = null;
@@ -151,12 +164,9 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		table.setLayoutData(gd);
 		this.viewer = new TableViewer(table);
 		this.viewer.setColumnProperties(columnnames);
-		this.viewer.setSorter(new ViewerSorter() {
+		this.viewer.setComparator(new ViewerComparator() {
 			public int category(Object element) {
 				return ((Pattern)element).kind;
-			}
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				return ((Pattern)e1).pattern.compareTo(((Pattern)e2).pattern);
 			}
 		});
 		this.viewer.setLabelProvider(new Labels());
@@ -294,6 +304,12 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 					addPattern((String) iter.next(), Pattern.JAR);
 				}
 			}
+			pats = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List)null);
+			if(pats != null) {
+				for (Iterator iter = pats.iterator(); iter.hasNext();) {
+					addPattern((String) iter.next(), Pattern.REPORT);
+				}
+			}
 			this.viewer.refresh();
 		}
 		catch(CoreException ce) {
@@ -327,6 +343,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		ArrayList api = new ArrayList();
 		ArrayList internal = new ArrayList();
 		ArrayList jar = new ArrayList();
+		ArrayList report = new ArrayList();
 		Pattern pattern = null;
 		for (Iterator iter = this.patterns.iterator(); iter.hasNext();) {
 			pattern = (Pattern) iter.next();
@@ -343,11 +360,16 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 					jar.add(pattern.pattern);
 					break;
 				}
+				case Pattern.REPORT: {
+					report.add(pattern.pattern);
+					break;
+				}
 			}
 		}
 		configuration.setAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, api.size() > 0 ? api : (List)null);
 		configuration.setAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, internal.size() > 0 ? internal : (List)null);
 		configuration.setAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, jar.size() > 0 ? jar : (List)null);
+		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, report.size() > 0 ? report : (List)null);
 	}
 
 	/* (non-Javadoc)
