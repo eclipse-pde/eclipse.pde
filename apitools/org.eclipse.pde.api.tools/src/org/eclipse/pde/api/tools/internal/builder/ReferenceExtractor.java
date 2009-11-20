@@ -1084,6 +1084,18 @@ public class ReferenceExtractor extends ClassAdapter {
 		if (fIsVisitMembers) {
 			IApiType owner = (IApiType) this.getMember();
 			IApiField field = owner.getField(name);
+			if(field == null) {
+				ApiPlugin.log(
+						new Status(
+								IStatus.WARNING, 
+								ApiPlugin.PLUGIN_ID, 
+								NLS.bind(BuilderMessages.ReferenceExtractor_failed_to_lookup_field, 
+										new String[] {name, Signatures.getQualifiedTypeSignature(owner)})
+						)
+				);
+				//if we can't find the method there is no point trying to process it
+				return null;
+			}
 			this.enterMember(field);
 			if((access & Opcodes.ACC_SYNTHETIC) == 0) {
 				if(signature != null) {
