@@ -13,12 +13,12 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
+import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
-import org.eclipse.equinox.internal.provisional.p2.ui.actions.PropertyDialogAction;
-import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.*;
-import org.eclipse.equinox.internal.provisional.p2.ui.policy.*;
+import org.eclipse.equinox.p2.operations.IUPropertyUtils;
+import org.eclipse.equinox.p2.ui.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
@@ -87,6 +87,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fIncludeRequiredButton;
 	private Button fAllPlatformsButton;
 	private Text fDetailsText;
+	private ProvisioningUI profileUI;
 
 	/**
 	 * Constructor for creating a new container
@@ -98,6 +99,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		setMessage(Messages.EditIUContainerPage_6);
 		fTarget = definition;
 		fProfile = profile;
+		ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
+		// TODO we use the service session from the self profile.  In the future we may want
+		// to set up our own services for the profile (separate repo managers, etc).
+		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), profile.getProfileId(), selfProvisioningUI.getPolicy());
 	}
 
 	/**
@@ -167,8 +172,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 */
 	private void createRepositoryComboArea(Composite parent) {
 		Policy policy = new Policy();
-		policy.setRepositoryManipulator(new ColocatedRepositoryManipulator(policy, null));
-		fRepoSelector = new RepositorySelectionGroup(getContainer(), parent, policy, fQueryContext);
+		policy.setRepositoryManipulator(new ColocatedRepositoryManipulator(null));
+		fRepoSelector = new RepositorySelectionGroup(profileUI, getContainer(), parent, fQueryContext);
 		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
 			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
 				fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
@@ -191,7 +196,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createAvailableIUArea(Composite parent) {
-		fAvailableIUGroup = new AvailableIUGroup(parent);
+		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent);
 		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
@@ -309,7 +314,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * Creates a default query context to setup the available IU Group
 	 */
 	private void createQueryContext() {
-		fQueryContext = Policy.getDefault().getQueryContext();
+		fQueryContext = ProvisioningUI.getDefaultUI().getPolicy().getQueryContext();
 		fQueryContext.setInstalledProfileId(fProfile.getProfileId());
 		fQueryContext.showAlreadyInstalled();
 	}

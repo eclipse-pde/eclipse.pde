@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.target.provisional;
 import java.net.URI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 
 /**
  * A service to manage target platform definitions available to the workspace.
@@ -131,29 +130,16 @@ public interface ITargetPlatformService {
 	public IBundleContainer newProfileContainer(String home, String configurationLocation);
 
 	/**
-	 * Creates and returns a bundle container that contains all bundles contained in
-	 * the specified installable units (IU's) in the given repositories. If repositories are
-	 * not specified default repositories are searched (based on user preferences).
+	 * Creates and returns a bundle container that contains all installable units described
+	 * by the given set of IDs and Versions.
 	 * 
-	 * @param units installable units
-	 * @param repositories URI's describing repository locations or <code>null</code> to use
-	 * 	default repositories
-	 * @return bundle container
-	 */
-	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories);
-
-	/**
-	 * Creates and returns a bundle container that contains all bundles contained in
-	 * the specified installable units (IU's) in the given repositories. If repositories are
-	 * not specified default repositories are searched (based on user preferences).
+	 * TODO Consider passing InstallableUnitDescriptions
 	 * 
 	 * @param unitIds installable unit identifiers
 	 * @param versions version identifiers
-	 * @param repositories URI's describing repository locations or <code>null</code> to use
-	 * 	default repositories
 	 * @return bundle container
 	 */
-	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories);
+	public IBundleContainer newIUContainer(String[] unitIds, String[] versions);
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles referenced by

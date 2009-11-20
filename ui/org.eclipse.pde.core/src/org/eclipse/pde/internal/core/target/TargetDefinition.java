@@ -11,16 +11,15 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
-import java.util.*;
+import java.net.URI;
+import java.util.Collection;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
-import org.eclipse.equinox.internal.provisional.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;
@@ -46,14 +45,40 @@ public class TargetDefinition implements ITargetDefinition {
 	private String fWS;
 	private String fNL;
 
-	// bundle containers
+	/**
+	 * Set of bundle containers in this target definition
+	 */
 	private IBundleContainer[] fContainers;
 
-	// handle
+	/**
+	 * Collection of explicit repository locations to include in this target
+	 */
+	private URI[] fRepos;
+
+	/**
+	 * Set of BundleInfo objects that will be used as implicit dependencies
+	 */
+	private BundleInfo[] fImplicit;
+
+	/**
+	 * Set of BundleInfo descriptions to be included in the target
+	 */
+	private Set fIncluded;
+
+	/**
+	 * Set of BundleInfo descriptions that are optionally included in the target 
+	 */
+	private Set fOptional;
+
+	/**
+	 * Handle that controls the persistence of this target
+	 */
 	private ITargetHandle fHandle;
 
-	// implicit dependencies
-	private BundleInfo[] fImplicit;
+	/**
+	 * Helper object encapsulating target resolution code, if this target is not resolved this can be <code>null</code>
+	 */
+	private TargetResolver fResolver;
 
 	/**
 	 * Constructs a target definition based on the given handle. 
@@ -63,17 +88,175 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getLocations()
+	 */
+	public IBundleContainer[] getBundleContainers() {
+		if (fContainers == null) {
+			return new IBundleContainer[0];
+		}
+		return fContainers;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setLocations(org.eclipse.pde.internal.core.target.provisional.IBundleContainer[])
+	 */
+	public void setBundleContainers(IBundleContainer[] locations) {
+		if (locations != null && locations.length == 0) {
+			locations = null;
+		}
+		fContainers = locations;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getRepositories()
+	 */
+	public URI[] getRepositories() {
+		if (fRepos == null) {
+			return new URI[0];
+		}
+		return fRepos;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setRepositories(java.net.URI[])
+	 */
+	public void setRepositories(URI[] repos) {
+		if (repos != null && repos.length == 0) {
+			repos = null;
+		}
+		fRepos = repos;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus resolve(IProgressMonitor monitor) throws CoreException {
+		fResolver = new TargetResolver(this);
+		return fResolver.resolve(monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isResolved()
+	 */
+	public boolean isResolved() {
+		return fResolver != null && fResolver.getStatus() != null && (fResolver.getStatus().getSeverity() == IStatus.OK || fResolver.getStatus().getSeverity() == IStatus.WARNING);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolveStatus()
+	 */
+	public IStatus getResolveStatus() {
+		return fResolver != null ? fResolver.getStatus() : null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getAvailableUnits()
+	 */
+	public IInstallableUnit[] getAvailableUnits() {
+		if (isResolved()) {
+			Collection available = fResolver.getAvailableIUs();
+			return (IInstallableUnit[]) available.toArray(new IInstallableUnit[available.size()]);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getIncludedUnits()
+	 */
+	public IInstallableUnit[] getIncludedUnits(IProgressMonitor monitor) {
+		if (isResolved()) {
+			Collection included = fResolver.getIncludedIUs(monitor);
+			return (IInstallableUnit[]) included.toArray(new IInstallableUnit[included.size()]);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getMissingUnits(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public BundleInfo[] getMissingUnits(IProgressMonitor monitor) {
+		if (isResolved()) {
+			Collection missing = fResolver.getMissingIUs(monitor);
+			return (BundleInfo[]) missing.toArray(new BundleInfo[missing.size()]);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getIncluded()
+	 */
+	public BundleInfo[] getIncluded() {
+		if (fIncluded == null) {
+			return null;
+		}
+		return (BundleInfo[]) fIncluded.toArray(new BundleInfo[fIncluded.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#addIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 */
+	public void addIncluded(BundleInfo[] toAdd) {
+		for (int i = 0; i < toAdd.length; i++) {
+			fIncluded.add(toAdd[i]);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#removeIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 */
+	public void removeIncluded(BundleInfo[] toRemove) {
+		for (int i = 0; i < toRemove.length; i++) {
+			fIncluded.remove(toRemove[i]);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#clearIncluded()
+	 */
+	public void clearIncluded() {
+		fIncluded = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getOptional()
+	 */
+	public BundleInfo[] getOptional() {
+		if (fOptional == null) {
+			return null;
+		}
+		return (BundleInfo[]) fOptional.toArray(new BundleInfo[fOptional.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#addOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 */
+	public void addOptional(BundleInfo[] toAdd) {
+		for (int i = 0; i < toAdd.length; i++) {
+			fOptional.add(toAdd[i]);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#removeOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 */
+	public void removeOptional(BundleInfo[] toRemove) {
+		for (int i = 0; i < toRemove.length; i++) {
+			fOptional.remove(toRemove[i]);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#clearOptional()
+	 */
+	public void clearOptional() {
+		fOptional = null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getArch()
 	 */
 	public String getArch() {
 		return fArch;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundleContainers()
-	 */
-	public IBundleContainer[] getBundleContainers() {
-		return fContainers;
 	}
 
 	/* (non-Javadoc)
@@ -174,140 +357,6 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setBundleContainers(org.eclipse.pde.internal.core.target.provisional.IBundleContainer[])
-	 */
-	public void setBundleContainers(IBundleContainer[] containers) {
-		if (containers != null && containers.length == 0) {
-			containers = null;
-		}
-		fContainers = containers;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus resolve(IProgressMonitor monitor) {
-		IBundleContainer[] containers = getBundleContainers();
-		int num = 0;
-		if (containers != null) {
-			num = containers.length;
-		}
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 10);
-		try {
-			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
-			if (containers != null) {
-				for (int i = 0; i < containers.length; i++) {
-					if (subMonitor.isCanceled()) {
-						return Status.CANCEL_STATUS;
-					}
-					subMonitor.subTask(Messages.TargetDefinition_4);
-					IStatus s = containers[i].resolve(this, subMonitor.newChild(10));
-					if (!s.isOK()) {
-						status.add(s);
-					}
-				}
-			}
-			if (status.isOK()) {
-				return Status.OK_STATUS;
-			}
-			return status;
-		} finally {
-			subMonitor.done();
-			if (monitor != null) {
-				monitor.done();
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isResolved()
-	 */
-	public boolean isResolved() {
-		IBundleContainer[] containers = getBundleContainers();
-		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				IBundleContainer container = containers[i];
-				if (!container.isResolved()) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundleStatus()
-	 */
-	public IStatus getBundleStatus() {
-		if (isResolved()) {
-			IBundleContainer[] containers = getBundleContainers();
-			if (containers != null) {
-				MultiStatus result = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_5, null);
-				for (int i = 0; i < containers.length; i++) {
-					IBundleContainer container = containers[i];
-					IStatus containerStatus = container.getBundleStatus();
-					if (containerStatus != null) {
-						result.add(containerStatus);
-					}
-				}
-				if (result.isOK()) {
-					// Return generic ok status instead of problem multi-status with no children
-					return Status.OK_STATUS;
-				}
-				return result;
-			}
-			return Status.OK_STATUS;
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundles()
-	 */
-	public IResolvedBundle[] getBundles() {
-		return getBundles(false);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getAllBundles()
-	 */
-	public IResolvedBundle[] getAllBundles() {
-		return getBundles(true);
-	}
-
-	/**
-	 * Gathers and returns all or included bundles in this target or <code>null</code> if
-	 * not resolved.
-	 * 
-	 * @param allBundles whether to consider all bundles, or just those included/optional
-	 * @return bundles or <code>null</code>
-	 */
-	private IResolvedBundle[] getBundles(boolean allBundles) {
-		if (isResolved()) {
-			IBundleContainer[] containers = getBundleContainers();
-			if (containers != null) {
-				List all = new ArrayList();
-				for (int i = 0; i < containers.length; i++) {
-					IBundleContainer container = containers[i];
-					IResolvedBundle[] bundles = null;
-					if (allBundles) {
-						bundles = container.getAllBundles();
-					} else {
-						bundles = container.getBundles();
-					}
-					for (int j = 0; j < bundles.length; j++) {
-						IResolvedBundle rb = bundles[j];
-						all.add(rb);
-					}
-				}
-				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
-			}
-			return new IResolvedBundle[0];
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getHandle()
 	 */
 	public ITargetHandle getHandle() {
@@ -383,14 +432,16 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedImplicitDependencies()
 	 */
 	public IResolvedBundle[] getResolvedImplicitDependencies() {
-		int size = 0;
-		if (fImplicit != null) {
-			size = fImplicit.length;
-		}
-		if (size == 0) {
-			return new IResolvedBundle[0];
-		}
-		return AbstractBundleContainer.getMatchingBundles(getBundles(), fImplicit, null, null);
+		// TODO Use new API
+		return null;
+//		int size = 0;
+//		if (fImplicit != null) {
+//			size = fImplicit.length;
+//		}
+//		if (size == 0) {
+//			return new IResolvedBundle[0];
+//		}
+//		return AbstractBundleContainer.getMatchingBundles(getBundles(), fImplicit, null, null);
 	}
 
 	/* (non-Javadoc)
@@ -510,17 +561,16 @@ public class TargetDefinition implements ITargetDefinition {
 		if (c2 == null) {
 			return false;
 		}
-		if (c1.length == c2.length) {
-			for (int i = 0; i < c2.length; i++) {
-				AbstractBundleContainer ac1 = (AbstractBundleContainer) c1[i];
-				AbstractBundleContainer ac2 = (AbstractBundleContainer) c2[i];
-				if (!ac1.isContentEqual(ac2)) {
-					return false;
-				}
-			}
-			return true;
+		if (c1.length != c2.length) {
+			return false;
 		}
-		return false;
+
+		for (int i = 0; i < c2.length; i++) {
+			if (!c1[i].isContentEqual(c2[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -544,214 +594,4 @@ public class TargetDefinition implements ITargetDefinition {
 		return buf.toString();
 	}
 
-	/**
-	 * Returns the existing profile for this target definition or <code>null</code> if none.
-	 *  
-	 * @return profile or <code>null</code>
-	 */
-	public IProfile findProfile() {
-		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		if (registry != null) {
-			AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
-			String id;
-			try {
-				id = handle.getProfileId();
-				return registry.getProfile(id);
-			} catch (CoreException e) {
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns whether software site containers are configured to provision for all environments
-	 * versus a single environment.
-	 * 
-	 * @return whether all environments will be provisioned
-	 */
-	private boolean isAllEnvironments() {
-		IBundleContainer[] containers = getBundleContainers();
-		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				if (containers[i] instanceof IUBundleContainer) {
-					IUBundleContainer iu = (IUBundleContainer) containers[i];
-					if (iu.getIncludeAllEnvironments()) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the mode used to provision this target - slice versus plan or <code>null</code> if
-	 * this target has no software sites.
-	 * 
-	 * @return provisioning mode or <code>null</code>
-	 */
-	private String getProvisionMode() {
-		IBundleContainer[] containers = getBundleContainers();
-		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				if (containers[i] instanceof IUBundleContainer) {
-					IUBundleContainer iu = (IUBundleContainer) containers[i];
-					if (iu.getIncludeAllRequired()) {
-						return TargetDefinitionPersistenceHelper.MODE_PLANNER;
-					}
-					return TargetDefinitionPersistenceHelper.MODE_SLICER;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the profile for the this target handle, creating one if required.
-	 * 
-	 * @return profile
-	 * @throws CoreException in unable to retrieve profile
-	 */
-	public IProfile getProfile() throws CoreException {
-		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
-		}
-		AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
-		String id = handle.getProfileId();
-		IProfile profile = registry.getProfile(id);
-		if (profile != null) {
-			boolean recreate = false;
-			// check if all environments setting is the same
-			boolean all = false;
-			String value = profile.getProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS);
-			if (value != null) {
-				all = Boolean.valueOf(value).booleanValue();
-				if (!Boolean.toString(isAllEnvironments()).equals(value)) {
-					recreate = true;
-				}
-			}
-			// ensure environment & NL settings are still the same (else we need a new profile)
-			String property = null;
-			if (!recreate && !all) {
-				property = generateEnvironmentProperties();
-				value = profile.getProperty(IProfile.PROP_ENVIRONMENTS);
-				if (!property.equals(value)) {
-					recreate = true;
-				}
-			}
-			// check provisioning mode: slice versus plan
-			String mode = getProvisionMode();
-			if (mode != null) {
-				value = profile.getProperty(AbstractTargetHandle.PROP_PROVISION_MODE);
-				if (!mode.equals(value)) {
-					recreate = true;
-				}
-			}
-
-			if (!recreate) {
-				property = generateNLProperty();
-				value = profile.getProperty(IProfile.PROP_NL);
-				if (!property.equals(value)) {
-					recreate = true;
-				}
-			}
-			if (!recreate) {
-				// check top level IU's. If any have been removed from the containers that are
-				// still in the profile, we need to recreate (rather than uninstall)
-				IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
-				propertyQuery.setProfile(profile);
-				Collector collector = profile.query(propertyQuery, new Collector(), null);
-				Iterator iterator = collector.iterator();
-				if (iterator.hasNext()) {
-					Set installedIUs = new HashSet();
-					while (iterator.hasNext()) {
-						IInstallableUnit unit = (IInstallableUnit) iterator.next();
-						installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
-					}
-					IBundleContainer[] containers = getBundleContainers();
-					if (containers != null) {
-						for (int i = 0; i < containers.length; i++) {
-							if (containers[i] instanceof IUBundleContainer) {
-								IUBundleContainer bc = (IUBundleContainer) containers[i];
-								String[] ids = bc.getIds();
-								Version[] versions = bc.getVersions();
-								for (int j = 0; j < versions.length; j++) {
-									installedIUs.remove(new NameVersionDescriptor(ids[j], versions[j].toString()));
-								}
-							}
-						}
-					}
-					if (!installedIUs.isEmpty()) {
-						recreate = true;
-					}
-				}
-			}
-			if (recreate) {
-				handle.deleteProfile();
-				profile = null;
-			}
-		}
-		if (profile == null) {
-			// create profile
-			Map properties = new HashMap();
-			properties.put(IProfile.PROP_INSTALL_FOLDER, AbstractTargetHandle.INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
-			properties.put(IProfile.PROP_CACHE, AbstractTargetHandle.BUNDLE_POOL.toOSString());
-			properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
-			// set up environment & NL properly so OS specific fragments are down loaded/installed
-			properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
-			properties.put(IProfile.PROP_NL, generateNLProperty());
-			String mode = getProvisionMode();
-			if (mode != null) {
-				properties.put(AbstractTargetHandle.PROP_PROVISION_MODE, mode);
-				properties.put(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(isAllEnvironments()));
-			}
-			profile = registry.addProfile(id, properties);
-		}
-		return profile;
-	}
-
-	/**
-	 * Generates the environment properties string for this target definition's p2 profile.
-	 * 
-	 * @return environment properties
-	 */
-	private String generateEnvironmentProperties() {
-		// TODO: are there constants for these keys?
-		StringBuffer env = new StringBuffer();
-		String ws = getWS();
-		if (ws == null) {
-			ws = Platform.getWS();
-		}
-		env.append("osgi.ws="); //$NON-NLS-1$
-		env.append(ws);
-		env.append(","); //$NON-NLS-1$
-		String os = getOS();
-		if (os == null) {
-			os = Platform.getOS();
-		}
-		env.append("osgi.os="); //$NON-NLS-1$
-		env.append(os);
-		env.append(","); //$NON-NLS-1$
-		String arch = getArch();
-		if (arch == null) {
-			arch = Platform.getOSArch();
-		}
-		env.append("osgi.arch="); //$NON-NLS-1$
-		env.append(arch);
-		return env.toString();
-	}
-
-	/**
-	 * Generates the NL property for this target definition's p2 profile.
-	 * 
-	 * @return NL profile property
-	 */
-	private String generateNLProperty() {
-		String nl = getNL();
-		if (nl == null) {
-			nl = Platform.getNL();
-		}
-		return nl;
-	}
 }

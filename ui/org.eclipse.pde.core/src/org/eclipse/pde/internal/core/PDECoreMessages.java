@@ -55,6 +55,8 @@ public class PDECoreMessages extends NLS {
 	// Status text #####################################
 	public static String BinaryRepositoryProvider_veto;
 
+	public static String P2Utils_UnableToAcquireP2Service;
+
 	public static String ProductExportOperation_0;
 
 	public static String PropertiesTextChangeListener_editNames_delete;
@@ -231,7 +233,6 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_srcIncludesSourceFolder1;
 	public static String BuildErrorReporter_classpathEntryMissing;
 	public static String BuildErrorReporter_missingFile;
-	public static String BuildErrorReporter_missingOutputLocation;
 	public static String BuildErrorReporter_entiresMustRefDirs;
 	public static String BuildErrorReporter_dirsMustEndSlash;
 	public static String BuildErrorReporter_classpathEntryMissing1;

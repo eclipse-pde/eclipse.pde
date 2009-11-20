@@ -13,14 +13,15 @@ package org.eclipse.pde.internal.core.target;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -67,13 +68,10 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String PDE_INSTRUCTION = "pde"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
-	private static final String INSTALLABLE_UNIT = "unit"; //$NON-NLS-1$
+	private static final String REPOSITORIES = "repositories"; //$NON-NLS-1$
 	private static final String REPOSITORY = "repository"; //$NON-NLS-1$
-	private static final String ATTR_INCLUDE_MODE = "includeMode"; //$NON-NLS-1$
-	public static final String MODE_SLICER = "slicer"; //$NON-NLS-1$
-	public static final String MODE_PLANNER = "planner"; //$NON-NLS-1$
-	private static final String ATTR_INCLUDE_ALL_PLATFORMS = "includeAllPlatforms"; //$NON-NLS-1$
 	private static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
+	private static final String INSTALLABLE_UNIT = "unit"; //$NON-NLS-1$
 	private static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	private static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	private static final String CONTENT = "content"; //$NON-NLS-1$
@@ -81,9 +79,17 @@ public class TargetDefinitionPersistenceHelper {
 	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
 	private static final String FEATURES = "features"; //$NON-NLS-1$
 	private static final String EXTRA_LOCATIONS = "extraLocations"; //$NON-NLS-1$
+
+	private static final String TYPE_DIRECTORY = "Directory"; //$NON-NLS-1$
+	private static final String TYPE_INSTALLATION = "Profile"; //$NON-NLS-1$
+	private static final String TYPE_REPOSITORY = "InstallableUnit"; //$NON-NLS-1$
+	private static final String TYPE_FEATURE = "Feature"; //$NON-NLS-1$
+
 	private static ITargetPlatformService fTargetService;
 
-	/* Example Old Style Xml
+	/* 
+	** Example Legacy < 3.5 XML **
+	
 	<?xml version="1.0" encoding="UTF-8"?>
 	<?pde version="3.2"?>
 
@@ -132,14 +138,12 @@ public class TargetDefinitionPersistenceHelper {
 	
 	</target>
 
-	 */
-
-	/* Example New Style XML
+	** Example 3.5 XML **
 
 	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 	<?pde version="3.5"?>
 
-	<target description="A description" name="A name">
+	<target name="A name">
 	<locations>
 	<location path="d:\targets\provisioning-base" type="Profile">
 	<includeBundles>
@@ -149,7 +153,6 @@ public class TargetDefinitionPersistenceHelper {
 	<plugin id="org.eclipse.osgi.services"/>
 	<plugin id="org.junit"/>
 	</includeBundles>
-	
 	</location>
 	<location path="D:\targets\equinox\eclipse" type="Directory">
 	<includeBundles>
@@ -180,6 +183,11 @@ public class TargetDefinitionPersistenceHelper {
 	<plugin id="ie.wombat.jbdiff.test"/>
 	</implicitDependencies>
 	</target>
+	
+	** Example 3.6 XML **
+
+	TODO Provide example
+	
 	 */
 
 	/**
@@ -196,7 +204,7 @@ public class TargetDefinitionPersistenceHelper {
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		Document doc = docBuilder.newDocument();
 
-		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + ICoreConstants.TARGET35 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + ICoreConstants.TARGET36 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		doc.appendChild(instruction);
 
 		Element rootElement = doc.createElement(ROOT);
@@ -206,13 +214,38 @@ public class TargetDefinitionPersistenceHelper {
 		}
 
 		IBundleContainer[] containers = definition.getBundleContainers();
-		if (containers != null && containers.length > 0) {
+		if (containers.length > 0) {
 			Element containersElement = doc.createElement(LOCATIONS);
 			for (int i = 0; i < containers.length; i++) {
-				Element containerElement = serializeBundleContainer(doc, (AbstractBundleContainer) containers[i]);
+				Element containerElement = serializeLocation(doc, containers[i]);
 				containersElement.appendChild(containerElement);
 			}
 			rootElement.appendChild(containersElement);
+		}
+
+		URI[] repos = definition.getRepositories();
+		if (repos.length > 0) {
+			Element reposElement = doc.createElement(REPOSITORIES);
+			for (int i = 0; i < containers.length; i++) {
+				Element repoElement = doc.createElement(REPOSITORY);
+				repoElement.setAttribute(LOCATION, repos[i].toASCIIString());
+				reposElement.appendChild(repoElement);
+			}
+			rootElement.appendChild(reposElement);
+		}
+
+		BundleInfo[] includedBundles = definition.getIncluded();
+		if (includedBundles != null) {
+			Element included = doc.createElement(INCLUDE_BUNDLES);
+			serializeBundles(doc, included, includedBundles);
+			rootElement.appendChild(included);
+		}
+
+		BundleInfo[] optionalBundles = definition.getIncluded();
+		if (optionalBundles != null) {
+			Element optional = doc.createElement(OPTIONAL_BUNDLES);
+			serializeBundles(doc, optional, optionalBundles);
+			rootElement.appendChild(optional);
 		}
 
 		if (definition.getOS() != null || definition.getWS() != null || definition.getArch() != null || definition.getNL() != null) {
@@ -312,8 +345,12 @@ public class TargetDefinitionPersistenceHelper {
 			definition.setName(name);
 		}
 
-		AbstractBundleContainer oldStylePrimaryContainer = null;
+		IBundleContainer oldStylePrimaryContainer = null;
 		List bundleContainers = new ArrayList();
+		// If we are reading a 3.5 target file the included/optional are per location and must be collected
+		List included35 = new ArrayList();
+		List optional35 = new ArrayList();
+		List repositores35 = new ArrayList();
 		NodeList list = root.getChildNodes();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
@@ -327,13 +364,13 @@ public class TargetDefinitionPersistenceHelper {
 						if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element locationElement = (Element) locationNode;
 							if (locationElement.getNodeName().equalsIgnoreCase(LOCATION)) {
-								bundleContainers.add(deserializeBundleContainer(locationElement));
+								bundleContainers.add(deserializeBundleContainer(locationElement, included35, optional35, repositores35));
 							}
 						}
 					}
 				} else if (nodeName.equalsIgnoreCase(LOCATION)) {
 					// This is the 'home' location in old style target platforms
-					oldStylePrimaryContainer = (AbstractBundleContainer) deserializeBundleContainer(element);
+					oldStylePrimaryContainer = deserializeBundleContainer(element, included35, optional35, repositores35);
 				} else if (nodeName.equalsIgnoreCase(CONTENT)) {
 					// Additional locations and other bundle content settings were stored under this tag in old style target platforms
 					// Only included if the content has useAllPlugins='true' otherwise we create bundle containers for the restrictions
@@ -341,10 +378,25 @@ public class TargetDefinitionPersistenceHelper {
 					if (useAll) {
 						bundleContainers.add(oldStylePrimaryContainer);
 					}
-					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, oldStylePrimaryContainer, useAll));
+					bundleContainers.addAll(deserializeBundleContainersFromOldStyleElement(element, oldStylePrimaryContainer, useAll, included35, optional35));
 					// It is possible to have an empty content section, in which case we should add the primary container, bug 268709
 					if (bundleContainers.isEmpty()) {
 						bundleContainers.add(oldStylePrimaryContainer);
+					}
+				} else if (nodeName.equalsIgnoreCase(REPOSITORIES)) {
+					URI[] uris = deserializeRepositories(element);
+					definition.setRepositories(uris);
+				} else if (nodeName.equalsIgnoreCase(INCLUDE_BUNDLES)) {
+					// TODO Does not handle cases where everything was purposely excluded
+					BundleInfo[] included = deserializeBundles(element);
+					if (included.length > 0) {
+						definition.addIncluded(included);
+					}
+				} else if (nodeName.equalsIgnoreCase(OPTIONAL_BUNDLES)) {
+					// TODO Does not handle cases where everything was purposely excluded
+					BundleInfo[] optional = deserializeBundles(element);
+					if (optional.length > 0) {
+						definition.addOptional(optional);
 					}
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
@@ -438,59 +490,60 @@ public class TargetDefinitionPersistenceHelper {
 			}
 		}
 		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
+
+		// TODO We are not handling targets that have purposely excluded everything
+		// TODO We are not handling iu bundle containers that used the default repo set
+		if (included35.size() > 0) {
+			definition.addIncluded((BundleInfo[]) included35.toArray(new BundleInfo[included35.size()]));
+		}
+		if (optional35.size() > 0) {
+			definition.addOptional((BundleInfo[]) optional35.toArray(new BundleInfo[optional35.size()]));
+		}
+		if (repositores35.size() > 0) {
+			// TODO Test
+			URI[] repos = definition.getRepositories();
+			URI[] newRepos = new URI[repos.length + repositores35.size()];
+			repositores35.toArray(newRepos);
+			for (int i = 0; i < repos.length; i++) {
+				newRepos[i + repositores35.size()] = repos[i];
+			}
+			definition.setRepositories(newRepos);
+		}
 	}
 
-	private static Element serializeBundleContainer(Document doc, AbstractBundleContainer container) throws CoreException {
-		Element containerElement = doc.createElement(LOCATION);
-		if (!(container instanceof IUBundleContainer)) {
-			containerElement.setAttribute(ATTR_LOCATION_PATH, container.getLocation(false));
+	private static Element serializeLocation(Document doc, IBundleContainer location) throws CoreException {
+		Element locationElement = doc.createElement(LOCATION);
+		if (location instanceof AbstractLocalBundleContainer) {
+			locationElement.setAttribute(ATTR_LOCATION_PATH, ((AbstractLocalBundleContainer) location).getLocation(false));
 		}
-		containerElement.setAttribute(ATTR_LOCATION_TYPE, container.getType());
-		if (container instanceof FeatureBundleContainer) {
-			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) container).getFeatureId());
-			String version = ((FeatureBundleContainer) container).getFeatureVersion();
+
+		if (location instanceof DirectoryBundleContainer) {
+			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_DIRECTORY);
+		} else if (location instanceof FeatureBundleContainer) {
+			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_FEATURE);
+			locationElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) location).getFeatureId());
+			String version = ((FeatureBundleContainer) location).getFeatureVersion();
 			if (version != null) {
-				containerElement.setAttribute(ATTR_VERSION, version);
+				locationElement.setAttribute(ATTR_VERSION, version);
 			}
-		} else if (container instanceof ProfileBundleContainer) {
-			String configurationArea = ((ProfileBundleContainer) container).getConfigurationLocation();
+		} else if (location instanceof ProfileBundleContainer) {
+			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_INSTALLATION);
+			String configurationArea = ((ProfileBundleContainer) location).getConfigurationLocation();
 			if (configurationArea != null) {
-				containerElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
+				locationElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
 			}
-		} else if (container instanceof IUBundleContainer) {
-			IUBundleContainer iubc = (IUBundleContainer) container;
-			containerElement.setAttribute(ATTR_INCLUDE_MODE, iubc.getIncludeAllRequired() ? MODE_PLANNER : MODE_SLICER);
-			containerElement.setAttribute(ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(iubc.getIncludeAllEnvironments()));
-			String[] ids = iubc.getIds();
-			Version[] versions = iubc.getVersions();
-			for (int i = 0; i < ids.length; i++) {
+		} else if (location instanceof IUBundleContainer) {
+			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_REPOSITORY);
+			IUBundleContainer iubc = (IUBundleContainer) location;
+			InstallableUnitDescription[] descriptions = iubc.getRootIUs(null, null);
+			for (int i = 0; i < descriptions.length; i++) {
 				Element unit = doc.createElement(INSTALLABLE_UNIT);
-				unit.setAttribute(ATTR_ID, ids[i]);
-				unit.setAttribute(ATTR_VERSION, versions[i].toString());
-				containerElement.appendChild(unit);
-			}
-			URI[] repositories = iubc.getRepositories();
-			if (repositories != null) {
-				for (int i = 0; i < repositories.length; i++) {
-					Element repo = doc.createElement(REPOSITORY);
-					repo.setAttribute(LOCATION, repositories[i].toASCIIString());
-					containerElement.appendChild(repo);
-				}
+				unit.setAttribute(ATTR_ID, descriptions[i].getId());
+				unit.setAttribute(ATTR_VERSION, descriptions[i].getVersion().toString());
+				locationElement.appendChild(unit);
 			}
 		}
-		BundleInfo[] includedBundles = container.getIncludedBundles();
-		if (includedBundles != null) {
-			Element included = doc.createElement(INCLUDE_BUNDLES);
-			serializeBundles(doc, included, includedBundles);
-			containerElement.appendChild(included);
-		}
-		BundleInfo[] optionalBundles = container.getOptionalBundles();
-		if (optionalBundles != null) {
-			Element optional = doc.createElement(OPTIONAL_BUNDLES);
-			serializeBundles(doc, optional, optionalBundles);
-			containerElement.appendChild(optional);
-		}
-		return containerElement;
+		return locationElement;
 	}
 
 	private static void serializeBundles(Document doc, Element parent, BundleInfo[] bundles) {
@@ -505,7 +558,7 @@ public class TargetDefinitionPersistenceHelper {
 		}
 	}
 
-	private static IBundleContainer deserializeBundleContainer(Element location) throws CoreException {
+	private static IBundleContainer deserializeBundleContainer(Element location, List included, List optional, List repositories) throws CoreException {
 		String def = location.getAttribute(ATTR_USE_DEFAULT);
 		String path = null;
 		String type = null;
@@ -513,39 +566,41 @@ public class TargetDefinitionPersistenceHelper {
 			// old style
 			if (Boolean.valueOf(def).booleanValue()) {
 				path = "${eclipse_home}"; //$NON-NLS-1$
-				type = ProfileBundleContainer.TYPE;
+				type = TYPE_INSTALLATION;
 			}
 		} else {
 			path = location.getAttribute(ATTR_LOCATION_PATH);
 			type = location.getAttribute(ATTR_LOCATION_TYPE);
 		}
+
+		if (path.length() == 0) {
+			path = "${eclipse_home}"; //$NON-NLS-1$
+		}
+
 		if (type.length() == 0) {
 			if (path.endsWith("plugins")) { //$NON-NLS-1$
-				type = DirectoryBundleContainer.TYPE;
+				type = TYPE_DIRECTORY;
 			} else {
-				type = ProfileBundleContainer.TYPE;
+				type = TYPE_INSTALLATION;
 			}
 		}
+
 		IBundleContainer container = null;
-		if (DirectoryBundleContainer.TYPE.equals(type)) {
+		if (TYPE_DIRECTORY.equals(type)) {
 			container = getTargetPlatformService().newDirectoryContainer(path);
-		} else if (ProfileBundleContainer.TYPE.equals(type)) {
+		} else if (TYPE_INSTALLATION.equals(type)) {
 			String configArea = location.getAttribute(ATTR_CONFIGURATION);
 			container = getTargetPlatformService().newProfileContainer(path, configArea.length() > 0 ? configArea : null);
-		} else if (FeatureBundleContainer.TYPE.equals(type)) {
+		} else if (TYPE_FEATURE.equals(type)) {
 			String version = location.getAttribute(ATTR_VERSION);
 			container = getTargetPlatformService().newFeatureContainer(path, location.getAttribute(ATTR_ID), version.length() > 0 ? version : null);
-		} else if (IUBundleContainer.TYPE.equals(type)) {
-			String includeMode = location.getAttribute(ATTR_INCLUDE_MODE);
-			String includeAllPlatforms = location.getAttribute(ATTR_INCLUDE_ALL_PLATFORMS);
-			NodeList list = location.getChildNodes();
+		} else if (TYPE_REPOSITORY.equals(type)) {
 			List ids = new ArrayList();
 			List versions = new ArrayList();
-			List repos = new ArrayList();
+			NodeList list = location.getChildNodes();
 			for (int i = 0; i < list.getLength(); ++i) {
 				Node node = list.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					// TODO: missing id/version
 					Element element = (Element) node;
 					if (element.getNodeName().equalsIgnoreCase(INSTALLABLE_UNIT)) {
 						String id = element.getAttribute(ATTR_ID);
@@ -560,9 +615,8 @@ public class TargetDefinitionPersistenceHelper {
 						String loc = element.getAttribute(LOCATION);
 						if (loc.length() > 0) {
 							try {
-								repos.add(new URI(loc));
+								repositories.add(new URI(loc));
 							} catch (URISyntaxException e) {
-								// TODO: illegal syntax
 							}
 						}
 					}
@@ -570,19 +624,7 @@ public class TargetDefinitionPersistenceHelper {
 			}
 			String[] iuIDs = (String[]) ids.toArray(new String[ids.size()]);
 			String[] iuVer = (String[]) versions.toArray(new String[versions.size()]);
-			URI[] uris = (URI[]) repos.toArray(new URI[repos.size()]);
-			container = new IUBundleContainer(iuIDs, iuVer, uris);
-			if (includeMode != null && includeMode.trim().length() > 0) {
-				if (includeMode.equals(MODE_PLANNER)) {
-					((IUBundleContainer) container).setIncludeAllRequired(true, null);
-				} else if (includeMode.equals(MODE_SLICER)) {
-					((IUBundleContainer) container).setIncludeAllRequired(false, null);
-				}
-			}
-			if (includeAllPlatforms != null && includeAllPlatforms.trim().length() > 0) {
-				((IUBundleContainer) container).setIncludeAllEnvironments(Boolean.valueOf(includeAllPlatforms).booleanValue(), null);
-			}
-
+			container = new IUBundleContainer(iuIDs, iuVer);
 		}
 
 		NodeList list = location.getChildNodes();
@@ -591,11 +633,15 @@ public class TargetDefinitionPersistenceHelper {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				if (element.getNodeName().equalsIgnoreCase(INCLUDE_BUNDLES)) {
-					BundleInfo[] included = deserializeBundles(element);
-					container.setIncludedBundles(included);
+					BundleInfo[] oldIncluded = deserializeBundles(element);
+					for (int j = 0; j < oldIncluded.length; j++) {
+						included.add(oldIncluded[j]);
+					}
 				} else if (element.getNodeName().equalsIgnoreCase(OPTIONAL_BUNDLES)) {
-					BundleInfo[] optional = deserializeBundles(element);
-					container.setOptionalBundles(optional);
+					BundleInfo[] oldOptional = deserializeBundles(element);
+					for (int j = 0; j < oldOptional.length; j++) {
+						optional.add(oldOptional[j]);
+					}
 				}
 			}
 		}
@@ -603,8 +649,8 @@ public class TargetDefinitionPersistenceHelper {
 		return container;
 	}
 
-	private static BundleInfo[] deserializeBundles(Element bundleContainer) {
-		NodeList nodes = bundleContainer.getChildNodes();
+	private static BundleInfo[] deserializeBundles(Element parentElement) {
+		NodeList nodes = parentElement.getChildNodes();
 		List bundles = new ArrayList(nodes.getLength());
 		for (int j = 0; j < nodes.getLength(); ++j) {
 			Node include = nodes.item(j);
@@ -620,6 +666,27 @@ public class TargetDefinitionPersistenceHelper {
 		return (BundleInfo[]) bundles.toArray(new BundleInfo[bundles.size()]);
 	}
 
+	private static URI[] deserializeRepositories(Element parentElement) {
+		NodeList nodes = parentElement.getChildNodes();
+		List repos = new ArrayList();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element) node;
+				if (element.getNodeName().equalsIgnoreCase(REPOSITORY)) {
+					String loc = element.getAttribute(LOCATION);
+					if (loc.length() > 0) {
+						try {
+							repos.add(new URI(loc));
+						} catch (URISyntaxException e) {
+						}
+					}
+				}
+			}
+		}
+		return (URI[]) repos.toArray(new URI[repos.size()]);
+	}
+
 	/**
 	 * Parses old content section.
 	 * 
@@ -628,11 +695,9 @@ public class TargetDefinitionPersistenceHelper {
 	 * @param useAll whether all bundles in the locations should be considered vs. only those specified
 	 * @return list of bundle containers
 	 */
-	private static List deserializeBundleContainersFromOldStyleElement(Element content, AbstractBundleContainer primaryContainer, boolean useAll) throws CoreException {
+	private static List deserializeBundleContainersFromOldStyleElement(Element content, IBundleContainer primaryContainer, boolean useAll, List included, List optional) throws CoreException {
 		List containers = new ArrayList();
 		NodeList list = content.getChildNodes();
-		List included = new ArrayList(list.getLength());
-		List optional = new ArrayList();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -679,8 +744,8 @@ public class TargetDefinitionPersistenceHelper {
 							Element feature = (Element) lNode;
 							String id = feature.getAttribute(ATTR_ID);
 							if (id.length() > 0) {
-								if (primaryContainer != null) {
-									containers.add(getTargetPlatformService().newFeatureContainer(primaryContainer.getLocation(false), id, null));
+								if (primaryContainer != null && primaryContainer instanceof AbstractLocalBundleContainer) {
+									containers.add(getTargetPlatformService().newFeatureContainer(((AbstractLocalBundleContainer) primaryContainer).getLocation(false), id, null));
 								}
 							}
 						}
@@ -689,21 +754,13 @@ public class TargetDefinitionPersistenceHelper {
 
 			}
 		}
-		// in the old world, the restrictions were global to all containers
-		if (!useAll && (included.size() > 0 || optional.size() > 0)) {
-			Iterator iterator = containers.iterator();
-			while (iterator.hasNext()) {
-				IBundleContainer container = (IBundleContainer) iterator.next();
-				if (!(container instanceof FeatureBundleContainer)) {
-					if (included.size() > 0) {
-						container.setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
-					}
-					if (optional.size() > 0) {
-						container.setOptionalBundles((BundleInfo[]) optional.toArray(new BundleInfo[optional.size()]));
-					}
-				}
-			}
+
+		// in the old world, setting useAllPlugins to true meant don't set any exclusions
+		if (useAll) {
+			included.clear();
+			optional.clear();
 		}
+
 		return containers;
 	}
 

@@ -13,28 +13,26 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
+import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.publisher.Publisher;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.site.PluginPathFinder;
-import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 
 /**
  * A bundle container representing an installed profile.
  * 
  * @since 3.5 
  */
-public class ProfileBundleContainer extends AbstractBundleContainer {
-
-	/**
-	 * Constant describing the type of bundle container 
-	 */
-	public static final String TYPE = "Profile"; //$NON-NLS-1$
+public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 
 	/**
 	 * Path to home/root install location. May contain string variables.
@@ -48,6 +46,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	private String fConfiguration;
 
 	/**
+	 * Cached, loaded metadata repository holding metadata for this container
+	 */
+	private IMetadataRepository fRepo;
+
+	/**
 	 * Creates a new bundle container for the profile at the specified location.
 	 * 
 	 * @param home path in local file system, may contain string variables
@@ -59,36 +62,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		fConfiguration = configurationLocation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
-	 */
-	public String getLocation(boolean resolve) throws CoreException {
-		if (resolve) {
-			return resolveHomeLocation().toOSString();
-		}
-		return fHome;
-	}
+	public IRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+		// TODO Use the progress monitor
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
-	 */
-	public String getType() {
-		return TYPE;
-	}
-
-	/**
-	 * Returns the configuration area for this container if one was specified during creation.
-	 * 
-	 * @return string path to configuration location or <code>null</code>
-	 */
-	public String getConfigurationLocation() {
-		return fConfiguration;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
@@ -101,82 +77,132 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			}
 		}
 
-		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
-		if (infos == null) {
-			IResolvedBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
-			if (platformXML != null) {
-				return platformXML;
+		// TODO Hopefully this logic can be moved into ProfileMetadataRepository, see bug 294511
+		// Use hard coded directories for now
+		File profileArea = new File(configUrl.getFile(), "p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile");
+		if (!profileArea.isDirectory()) {
+			profileArea = new File(getLocation(true), "p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile");
+			if (!profileArea.isDirectory()) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Could not find profile for installation: " + getLocation(false)));
 			}
-			infos = new BundleInfo[0];
 		}
 
-		if (monitor.isCanceled()) {
-			return new IResolvedBundle[0];
+		// TODO Have to handle cases where p2 is not present (platform.xml and directory)
+//		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
+//		if (infos == null) {
+//			IResolvedBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
+//			if (platformXML != null) {
+//				return platformXML;
+//			}
+//			infos = new BundleInfo[0];
+//		}
+//
+//		if (monitor.isCanceled()) {
+//			return new IResolvedBundle[0];
+//		}
+
+		fRepo = Publisher.loadMetadataRepository(agent, profileArea.toURI(), false, false);
+		return new IRepository[] {fRepo};
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public InstallableUnitDescription[] getRootIUs(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMon = SubMonitor.convert(monitor, "Collecting contents of " + getLocation(true), 100);
+
+		// Ensure that the metadata has been generated
+		if (fRepo == null) {
+			generateRepositories(agent, subMon.newChild(50));
+		}
+		subMon.setWorkRemaining(50);
+
+		if (fRepo == null) {
+			return new InstallableUnitDescription[0];
 		}
 
-		BundleInfo[] source = P2Utils.readSourceBundles(home, configUrl);
-		if (source == null) {
-			source = new BundleInfo[0];
+		// Collect all installable units in the repository
+		Collector result = new Collector();
+		fRepo.query(InstallableUnitQuery.ANY, result, subMon.newChild(50));
+
+		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.size()];
+		int i = 0;
+		for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+			IInstallableUnit unit = (IInstallableUnit) iterator.next();
+			descriptions[i] = new InstallableUnitDescription();
+			descriptions[i].setId(unit.getId());
+			descriptions[i].setVersion(unit.getVersion());
+			i++;
 		}
-		IResolvedBundle[] all = new IResolvedBundle[infos.length + source.length];
-		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, all.length);
-		for (int i = 0; i < infos.length; i++) {
-			if (monitor.isCanceled()) {
-				return new IResolvedBundle[0];
-			}
-			BundleInfo info = infos[i];
-			all[i] = resolveBundle(info, false);
-			localMonitor.worked(1);
+
+		return descriptions;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
+	 */
+	public boolean isContentEqual(IBundleContainer container) {
+		if (container instanceof ProfileBundleContainer) {
+			ProfileBundleContainer pbc = (ProfileBundleContainer) container;
+			return fHome.equals(pbc.fHome) && isNullOrEqual(fConfiguration, fConfiguration);
 		}
-		int index = 0;
-		for (int i = infos.length; i < all.length; i++) {
-			if (monitor.isCanceled()) {
-				return new IResolvedBundle[0];
-			}
-			BundleInfo info = source[index];
-			all[i] = resolveBundle(info, true);
-			index++;
-			localMonitor.worked(1);
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractLocalBundleContainer#getLocation(boolean)
+	 */
+	public String getLocation(boolean resolve) throws CoreException {
+		if (resolve) {
+			return resolveHomeLocation().toOSString();
 		}
-		localMonitor.done();
-		return all;
+		return fHome;
 	}
 
 	/**
-	 * Resolves installed bundles based on update manager's platform XML.
+	 * Returns the configuration area for this container if one was specified during creation.
 	 * 
-	 * @param definition
-	 * @param home
-	 * @param monitor
-	 * @return resolved bundles or <code>null</code> if none
-	 * @throws CoreException
+	 * @return string path to configuration location or <code>null</code>
 	 */
-	protected IResolvedBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
-		File[] files = PluginPathFinder.getPaths(home, false, false);
-		if (files.length > 0) {
-			List all = new ArrayList(files.length);
-			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-			for (int i = 0; i < files.length; i++) {
-				if (localMonitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-				try {
-					IResolvedBundle rb = generateBundle(files[i]);
-					if (rb != null) {
-						all.add(rb);
-					}
-				} catch (CoreException e) {
-					// ignore invalid bundles
-				}
-				localMonitor.worked(1);
-			}
-			localMonitor.done();
-			if (!all.isEmpty()) {
-				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
-			}
-		}
-		return null;
+	public String getConfigurationLocation() {
+		return fConfiguration;
 	}
+
+//	/**
+//	 * Resolves installed bundles based on update manager's platform XML.
+//	 * 
+//	 * @param definition
+//	 * @param home
+//	 * @param monitor
+//	 * @return resolved bundles or <code>null</code> if none
+//	 * @throws CoreException
+//	 */
+//	protected IResolvedBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
+//		File[] files = PluginPathFinder.getPaths(home, false, false);
+//		if (files.length > 0) {
+//			List all = new ArrayList(files.length);
+//			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
+//			for (int i = 0; i < files.length; i++) {
+//				if (localMonitor.isCanceled()) {
+//					throw new OperationCanceledException();
+//				}
+//				try {
+//					IResolvedBundle rb = generateBundle(files[i]);
+//					if (rb != null) {
+//						all.add(rb);
+//					}
+//				} catch (CoreException e) {
+//					// ignore invalid bundles
+//				}
+//				localMonitor.worked(1);
+//			}
+//			localMonitor.done();
+//			if (!all.isEmpty()) {
+//				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
+//			}
+//		}
+//		return null;
+//	}
 
 	/**
 	 * Returns the home location with all variables resolved as a path.
@@ -217,17 +243,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
-	 */
-	public boolean isContentEqual(AbstractBundleContainer container) {
-		if (container instanceof ProfileBundleContainer) {
-			ProfileBundleContainer pbc = (ProfileBundleContainer) container;
-			return fHome.equals(pbc.fHome) && isNullOrEqual(fConfiguration, fConfiguration) && super.isContentEqual(container);
-		}
-		return false;
-	}
-
 	private boolean isNullOrEqual(Object o1, Object o2) {
 		if (o1 == null) {
 			return o2 == null;
@@ -242,7 +257,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

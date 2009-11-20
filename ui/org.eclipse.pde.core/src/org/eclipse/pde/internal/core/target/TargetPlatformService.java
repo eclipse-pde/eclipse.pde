@@ -15,11 +15,7 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -245,7 +241,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newFeatureContainer(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public IBundleContainer newFeatureContainer(String home, String id, String version) {
-		return new FeatureBundleContainer(home, id, version);
+		// TODO New API
+		return null;
+//		return new FeatureBundleContainer(home, id, version);
 	}
 
 	/* (non-Javadoc)
@@ -429,6 +427,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	private void initializePluginContent(PDEPreferencesManager preferences, ITargetDefinition target) {
+		// TODO New API
 		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
 		IBundleContainer primary = target.getBundleContainers()[0];
 		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
@@ -437,7 +436,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 			return;
 		}
 		if (!value.equals(ICoreConstants.VALUE_SAVED_ALL)) {
-			// restrictions on container
+			// restrictions
 			IPluginModelBase[] models = PluginRegistry.getExternalModels();
 			ArrayList list = new ArrayList(models.length);
 			for (int i = 0; i < models.length; i++) {
@@ -449,10 +448,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 			if (list.size() > 0) {
-				primary.setIncludedBundles((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
+				target.clearIncluded();
+				target.addIncluded((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
 			}
 		}
-
 	}
 
 	/**
@@ -525,63 +524,59 @@ public class TargetPlatformService implements ITargetPlatformService {
 			return null;
 		}
 
-		// Get the current models from the target platform
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
-		Set allLocations = new HashSet(models.length);
-		Map stateLocations = new HashMap(models.length);
-		for (int i = 0; i < models.length; i++) {
-			IPluginModelBase base = models[i];
-			allLocations.add(base.getInstallLocation());
-			stateLocations.put(base.getInstallLocation(), base);
-		}
+		// TODO New API
+		return null;
 
-		// Compare the platform bundles against the definition ones and collect any missing bundles
-		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
-		IResolvedBundle[] bundles = target.getAllBundles();
-		Set alreadyConsidered = new HashSet(bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
-			BundleInfo info = bundle.getBundleInfo();
-			File file = URIUtil.toFile(info.getLocation());
-			String location = file.getAbsolutePath();
-			stateLocations.remove(location);
-			NameVersionDescriptor desc = new NameVersionDescriptor(info.getSymbolicName(), info.getVersion());
-			if (!alreadyConsidered.contains(desc)) {
-				alreadyConsidered.add(desc);
-				// ignore duplicates (symbolic name & version)
-				if (!allLocations.contains(location)) {
-					// it's not in the state... if it's not really in the target either (missing) this
-					// is not an error
-					IStatus status = bundle.getStatus();
-					if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
-						// its in the target, missing in the state
-						IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
-						multi.add(s);
-					}
-				}
-			}
-		}
+//		// Get the current models from the target platform
+//		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
+//		Set allLocations = new HashSet(models.length);
+//		Map stateLocations = new HashMap(models.length);
+//		for (int i = 0; i < models.length; i++) {
+//			IPluginModelBase base = models[i];
+//			allLocations.add(base.getInstallLocation());
+//			stateLocations.put(base.getInstallLocation(), base);
+//		}
+//
+//		// Compare the platform bundles against the definition ones and collect any missing bundles
+//		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
+//		IResolvedBundle[] bundles = target.getAllBundles();
+//		Set alreadyConsidered = new HashSet(bundles.length);
+//		for (int i = 0; i < bundles.length; i++) {
+//			IResolvedBundle bundle = bundles[i];
+//			BundleInfo info = bundle.getBundleInfo();
+//			File file = URIUtil.toFile(info.getLocation());
+//			String location = file.getAbsolutePath();
+//			stateLocations.remove(location);
+//			NameVersionDescriptor desc = new NameVersionDescriptor(info.getSymbolicName(), info.getVersion());
+//			if (!alreadyConsidered.contains(desc)) {
+//				alreadyConsidered.add(desc);
+//				// ignore duplicates (symbolic name & version)
+//				if (!allLocations.contains(location)) {
+//					// it's not in the state... if it's not really in the target either (missing) this
+//					// is not an error
+//					IStatus status = bundle.getStatus();
+//					if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
+//						// its in the target, missing in the state
+//						IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
+//						multi.add(s);
+//					}
+//				}
+//			}
+//		}
+//
+//		// Anything left over is in the state and not the target (have been removed from the target)
+//		Iterator iterator = stateLocations.values().iterator();
+//		while (iterator.hasNext()) {
+//			IPluginModelBase model = (IPluginModelBase) iterator.next();
+//			IStatus status = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, model.getPluginBase().getId(), null);
+//			multi.add(status);
+//		}
+//
+//		if (multi.isOK()) {
+//			return Status.OK_STATUS;
+//		}
+//		return multi;
 
-		// Anything left over is in the state and not the target (have been removed from the target)
-		Iterator iterator = stateLocations.values().iterator();
-		while (iterator.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iterator.next();
-			IStatus status = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, model.getPluginBase().getId(), null);
-			multi.add(status);
-		}
-
-		if (multi.isOK()) {
-			return Status.OK_STATUS;
-		}
-		return multi;
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit[], java.net.URI[])
-	 */
-	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories) {
-		return new IUBundleContainer(units, repositories);
 	}
 
 	/**
@@ -589,24 +584,26 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * and returns a list of profile identifiers that were deleted.
 	 */
 	public List cleanOrphanedTargetDefinitionProfiles() throws CoreException {
-		List list = new ArrayList();
-		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		if (registry != null) {
-			IProfile[] profiles = registry.getProfiles();
-			for (int i = 0; i < profiles.length; i++) {
-				IProfile profile = profiles[i];
-				String id = profile.getProfileId();
-				if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-					String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
-					AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
-					if (!target.exists()) {
-						target.deleteProfile();
-						list.add(id);
-					}
-				}
-			}
-		}
-		return list;
+		// TODO New API
+		return null;
+//		List list = new ArrayList();
+//		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
+//		if (registry != null) {
+//			IProfile[] profiles = registry.getProfiles();
+//			for (int i = 0; i < profiles.length; i++) {
+//				IProfile profile = profiles[i];
+//				String id = profile.getProfileId();
+//				if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+//					String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
+//					AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
+//					if (!target.exists()) {
+//						target.deleteProfile();
+//						list.add(id);
+//					}
+//				}
+//			}
+//		}
+//		return list;
 	}
 
 	/**
@@ -614,28 +611,29 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * having PDE's bundle pool area grow unbounded.
 	 */
 	public void garbageCollect() {
-		IProfileRegistry registry = (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
-		if (registry != null) {
-			IProfile[] profiles = registry.getProfiles();
-			if (profiles.length > 0) {
-				IProfile profile = null;
-				for (int i = 0; i < profiles.length; i++) {
-					if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-						profile = profiles[i];
-						break;
-					}
-				}
-				if (profile != null) {
-					new GarbageCollector().runGC(profile);
-				}
-			}
-		}
+		// TODO New API
+//		IProfileRegistry registry = (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
+//		if (registry != null) {
+//			IProfile[] profiles = registry.getProfiles();
+//			if (profiles.length > 0) {
+//				IProfile profile = null;
+//				for (int i = 0; i < profiles.length; i++) {
+//					if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+//						profile = profiles[i];
+//						break;
+//					}
+//				}
+//				if (profile != null) {
+//					new GarbageCollector().runGC(profile);
+//				}
+//			}
+//		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(java.lang.String[], java.lang.String[], java.net.URI[])
 	 */
-	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories) {
-		return new IUBundleContainer(unitIds, versions, repositories);
+	public IBundleContainer newIUContainer(String[] unitIds, String[] versions) {
+		return new IUBundleContainer(unitIds, versions);
 	}
 }

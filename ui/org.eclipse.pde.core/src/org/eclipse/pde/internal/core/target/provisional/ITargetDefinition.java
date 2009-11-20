@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
+import java.net.URI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.environment.Constants;
 
@@ -22,6 +24,56 @@ import org.eclipse.osgi.service.environment.Constants;
  * @since 3.5 
  */
 public interface ITargetDefinition {
+
+	public boolean isResolved();
+
+	/**
+	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+	    to call done() on the given monitor. Accepts null, indicating that no progress should be
+	    reported and that the operation cannot be cancelled.
+	 * @return
+	 */
+	public IStatus resolve(IProgressMonitor monitor) throws CoreException;
+
+	public IStatus getResolveStatus();
+
+	public IBundleContainer[] getBundleContainers();
+
+	public void setBundleContainers(IBundleContainer[] locations);
+
+	public URI[] getRepositories();
+
+	public void setRepositories(URI[] repos);
+
+	public IInstallableUnit[] getAvailableUnits();
+
+	/**
+	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+	    to call done() on the given monitor. Accepts null, indicating that no progress should be
+	    reported and that the operation cannot be cancelled.
+	    @return
+	 */
+	public IInstallableUnit[] getIncludedUnits(IProgressMonitor monitor);
+
+	// TODO Consider using InstallableUnitDescription instead of BundleInfo
+
+	public BundleInfo[] getMissingUnits(IProgressMonitor monitor);
+
+	public void addIncluded(BundleInfo[] toAdd);
+
+	public void removeIncluded(BundleInfo[] toRemove);
+
+	public void clearIncluded();
+
+	public void addOptional(BundleInfo[] toAdd);
+
+	public void removeOptional(BundleInfo[] toRemove);
+
+	public void clearOptional();
+
+	public BundleInfo[] getIncluded();
+
+	public BundleInfo[] getOptional();
 
 	/**
 	 * Returns the name of this target, or <code>null</code> if none
@@ -128,85 +180,6 @@ public interface ITargetDefinition {
 	 * @param locale identifier or <code>null</code> for default
 	 */
 	public void setNL(String nl);
-
-	/**
-	 * Returns the bundle containers defined by this target, possible <code>null</code>.
-	 * 
-	 * @return bundle containers or <code>null</code>
-	 */
-	public IBundleContainer[] getBundleContainers();
-
-	/**
-	 * Sets the bundle containers in this target definition or <code>null</code> if none.
-	 * 
-	 * @param containers bundle containers or <code>null</code>
-	 */
-	public void setBundleContainers(IBundleContainer[] containers);
-
-	/**
-	 * Returns all bundles in this target definition or <code>null</code>
-	 * if this container is not resolved.  Equivalent to collecting the result
-	 * of {@link IBundleContainer#getBundles()} on each of the bundle containers
-	 * in this target.
-	 * <p>
-	 * Some of the returned bundles may have non-OK statuses.  These bundles may be missing some
-	 * information (location, version, source target).  To get a bundle's status call
-	 * {@link IResolvedBundle#getStatus()}.  You can also use {@link #getBundleStatus()} to
-	 * get the complete set of problems.
-	 * </p>
-	 * @see #getBundleStatus()
-	 * @return resolved bundles or <code>null</code>
-	 */
-	public IResolvedBundle[] getBundles();
-
-	/**
-	 * Returns the list of resolved bundles in this target definition or <code>null</code>. 
-	 * Does not filter based on any includedBundles or optionalBundles set on bundle containers.
-	 * Returns <code>null</code> if this target has not been resolved. 
-	 * Use {@link #getBundles()} to get the restricted list of bundles.
-	 *  
-	 * @return collection of resolved bundles or <code>null</code>
-	 */
-	public IResolvedBundle[] getAllBundles();
-
-	/**
-	 * Resolves all bundles in this target definition by resolving each
-	 * bundle container in this target definition.
-	 * <p>
-	 * Returns a multi-status containing any non-OK statuses produced when
-	 * resolving each bundle container in this target.  An OK status will be
-	 * returned if the resolution was successful.  A CANCEL status will be 
-	 * returned if the monitor is canceled. For more information on the contents
-	 * of the status see {@link IBundleContainer#resolve(ITargetDefinition, IProgressMonitor)}
-	 * </p><p>
-	 * Note that the returned status may be different than the result of 
-	 * calling {@link #getBundleStatus()}.
-	 * </p>
-	 * @param monitor progress monitor or <code>null</code>
-	 * @return resolution status
-	 * @throws CoreException if unable to resolve
-	 */
-	public IStatus resolve(IProgressMonitor monitor);
-
-	/**
-	 * Returns whether this target's bundle containers are currently in
-	 * a resolved state.
-	 * 
-	 * @return whether this target's bundle containers are currently in
-	 * a resolved state
-	 */
-	public boolean isResolved();
-
-	/**
-	 * Returns a multi-status containing the bundle status of all bundle containers
-	 * in this target or <code>null</code> if this target has not been resolved.  For
-	 * information on the statuses collected from the bundle containers see
-	 * {@link IBundleContainer#getBundleStatus()}.
-	 * 
-	 * @see #getBundles()
-	 * @return multi-status containing status for each bundle container or <code>null</code>
-	 */
-	public IStatus getBundleStatus();
 
 	/**
 	 * Returns any program arguments that should be used when launching this target
