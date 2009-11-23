@@ -231,7 +231,6 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_srcIncludesSourceFolder1;
 	public static String BuildErrorReporter_classpathEntryMissing;
 	public static String BuildErrorReporter_missingFile;
-	public static String BuildErrorReporter_missingOutputLocation;
 	public static String BuildErrorReporter_entiresMustRefDirs;
 	public static String BuildErrorReporter_dirsMustEndSlash;
 	public static String BuildErrorReporter_classpathEntryMissing1;
@@ -290,6 +289,14 @@ public class PDECoreMessages extends NLS {
 	public static String XMLTextChangeListener_editNames_removeNode;
 
 	public static String SearchablePluginsManager_createProjectTaskName;
+
+	public static String SourceEntryErrorReporter_DifferentTargetLibrary;
+	public static String SourceEntryErrorReporter_DupeOutputFolder;
+	public static String SourceEntryErrorReporter_DupeSourceFolder;
+	public static String SourceEntryErrorReporter_ExtraOutputFolder;
+	public static String SourceEntryErrorReporter_InvalidOutputFolder;
+	public static String SourceEntryErrorReporter_InvalidSourceFolder;
+	public static String SourceEntryErrorReporter_MissingOutputEntry;
 
 	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
 
