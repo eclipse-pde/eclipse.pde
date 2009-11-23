@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
@@ -22,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.launching.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class EclipsePluginValidationOperation extends LaunchValidationOperation {
 	public static final int CREATE_EXTENSION_ERROR_CODE = 1000;
@@ -68,7 +67,11 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 	}
 
 	private String getApplication(String product) {
-		String bundleID = product.substring(0, product.lastIndexOf('.'));
+		String bundleID = product;
+		int index = product.lastIndexOf('.');
+		if (index >= 0) {
+			bundleID = product.substring(0, product.lastIndexOf('.'));
+		}
 		BundleDescription bundle = getState().getBundle(bundleID, null);
 		if (bundle != null) {
 			IPluginModelBase model = PluginRegistry.findModel(bundle);
