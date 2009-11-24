@@ -26,6 +26,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.Inst
 import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
+import org.eclipse.equinox.p2.engine.IEngine;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -402,7 +403,8 @@ public class P2Utils {
 		// Add the metadata to the profile
 		ProvisioningContext context = new ProvisioningContext();
 		PhaseSet phaseSet = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_COLLECT | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
-		IStatus status = engine.perform(profile, phaseSet, operands, context, new NullProgressMonitor());
+		ProvisioningPlan plan = new ProvisioningPlan(profile, operands, context);
+		IStatus status = engine.perform(plan, phaseSet, new NullProgressMonitor());
 
 		if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
 			throw new CoreException(status);

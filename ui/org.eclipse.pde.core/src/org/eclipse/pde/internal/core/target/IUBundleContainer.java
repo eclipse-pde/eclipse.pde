@@ -26,6 +26,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.repository.IRepositoryManager;
+import org.eclipse.equinox.p2.engine.IEngine;
 import org.eclipse.equinox.p2.engine.IProvisioningPlan;
 import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
@@ -225,7 +226,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 		allOps.add(new PropertyOperand(AbstractTargetHandle.PROP_PROVISION_MODE, null, TargetDefinitionPersistenceHelper.MODE_PLANNER));
 		allOps.add(new PropertyOperand(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, null, Boolean.toString(false)));
-		IStatus result = engine.perform(profile, phases, (Operand[]) allOps.toArray(new Operand[allOps.size()]), context, new SubProgressMonitor(subMonitor, 140));
+		plan = new ProvisioningPlan(profile, (Operand[]) allOps.toArray(new Operand[allOps.size()]), context);
+		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -383,7 +385,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		IEngine engine = getEngine();
 		ProvisioningContext context = new ProvisioningContext(repositories);
 		context.setArtifactRepositories(repositories);
-		IStatus result = engine.perform(profile, phases, (Operand[]) operands.toArray(new Operand[operands.size()]), context, new SubProgressMonitor(subMonitor, 140));
+		ProvisioningPlan plan = new ProvisioningPlan(profile, (Operand[]) operands.toArray(new Operand[operands.size()]), context);
+		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
