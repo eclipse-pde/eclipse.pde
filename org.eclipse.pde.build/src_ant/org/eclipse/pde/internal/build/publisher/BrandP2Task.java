@@ -23,7 +23,6 @@ import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.artifact.repository.*;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.engine.Phase;
 import org.eclipse.equinox.internal.provisional.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.p2.engine.phases.Collect;
@@ -60,6 +59,10 @@ public class BrandP2Task extends Repo2RunnableTask {
 		application = new Repo2Runnable() {
 			protected PhaseSet getPhaseSet() {
 				return new PhaseSet(new Phase[] {new Collect(100), new Install(100)}) { /* nothing to override */};
+			}
+
+			protected PhaseSet getNativePhase() {
+				return null;
 			}
 		};
 	}

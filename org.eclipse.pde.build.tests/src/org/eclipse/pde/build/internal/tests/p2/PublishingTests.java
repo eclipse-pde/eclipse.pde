@@ -808,6 +808,10 @@ public class PublishingTests extends P2TestCase {
 			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
 			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
 		}
+
+		IFolder binaryFolder = buildFolder.getFolder("/tmp/eclipse/binary");
+		assertFalse(binaryFolder.exists());
+
 		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
 		getIU(finalRepo, "a.jre.javase");
 		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
@@ -822,6 +826,7 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
 		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
 		assertEquals(iu.getVersion(), productIu.getVersion());
+
 	}
 
 	public void testBug265726() throws Exception {
