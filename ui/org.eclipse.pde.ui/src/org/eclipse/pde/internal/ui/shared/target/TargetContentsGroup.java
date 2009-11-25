@@ -1053,14 +1053,35 @@ public class TargetContentsGroup extends FilteredTree {
 	public void saveIncludedBundleState(Object[] changeContainers) {
 		for (int i = 0; i < changeContainers.length; i++) {
 			if (changeContainers[i] instanceof IBundleContainer) {
-				Set checked = (Set) fContainerChecked.get(changeContainers[i]);
+				IBundleContainer container = (IBundleContainer) changeContainers[i];
+				Set checked = (Set) fContainerChecked.get(container);
 				if (checked.size() == ((Collection) fContainerBundles.get(changeContainers[i])).size()) {
 					((IBundleContainer) changeContainers[i]).setIncludedBundles(null);
 				} else {
 					List included = new ArrayList(checked.size());
+					// need to save version information if a checked bundle has multiple versions available
+					IResolvedBundle[] allBundles = container.getAllBundles();
+					Set multi = new HashSet(); // BSNs of bundles with multiple versions available
+					Set all = new HashSet();
+					for (int j = 0; j < allBundles.length; j++) {
+						IResolvedBundle rb = allBundles[j];
+						if (!all.add(rb.getBundleInfo().getSymbolicName())) {
+							multi.add(rb.getBundleInfo().getSymbolicName());
+						}
+					}
 					for (Iterator iterator = checked.iterator(); iterator.hasNext();) {
 						IResolvedBundle currentBundle = (IResolvedBundle) iterator.next();
-						included.add(new BundleInfo(currentBundle.getBundleInfo().getSymbolicName(), null, null, BundleInfo.NO_BUNDLEID, false));
+						BundleInfo bi = currentBundle.getBundleInfo();
+						String bsn = bi.getSymbolicName();
+						BundleInfo info = null;
+						if (multi.contains(bsn)) {
+							// include version info
+							info = new BundleInfo(bsn, bi.getVersion(), null, BundleInfo.NO_BUNDLEID, false);
+						} else {
+							// don't store version info
+							info = new BundleInfo(bsn, null, null, BundleInfo.NO_BUNDLEID, false);
+						}
+						included.add(info);
 					}
 					((IBundleContainer) changeContainers[i]).setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
 				}

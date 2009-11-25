@@ -35,13 +35,32 @@ public class ExternalModelManager extends AbstractModelManager {
 			for (int i = 0; i < fModels.length; i++)
 				fModels[i].setEnabled(true);
 		} else if (!saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
+			String versionString = pref.getString(ICoreConstants.CHECKED_VERSION_PLUGINS);
+			Set versions = new HashSet();
+			Set versionIds = new HashSet();
+			if (versionString != null && versionString.trim().length() > 0) {
+				if (!versionString.equals(ICoreConstants.VALUE_SAVED_NONE)) {
+					// restore version information, if any
+					StringTokenizer stok = new StringTokenizer(versionString);
+					while (stok.hasMoreTokens()) {
+						NameVersionDescriptor desc = NameVersionDescriptor.fromPortableString(stok.nextToken());
+						versions.add(desc);
+						versionIds.add(desc.getId());
+					}
+				}
+			}
 			Vector result = new Vector();
 			StringTokenizer stok = new StringTokenizer(saved);
 			while (stok.hasMoreTokens()) {
 				result.add(stok.nextToken());
 			}
 			for (int i = 0; i < fModels.length; i++) {
-				fModels[i].setEnabled(!result.contains(fModels[i].getPluginBase().getId()));
+				String id = fModels[i].getPluginBase().getId();
+				if (versionIds.contains(id)) {
+					fModels[i].setEnabled(!versions.contains(new NameVersionDescriptor(id, fModels[i].getPluginBase().getVersion())));
+				} else {
+					fModels[i].setEnabled(!result.contains(id));
+				}
 			}
 		}
 		// enable pooled bundles properly (only if part of the profile)

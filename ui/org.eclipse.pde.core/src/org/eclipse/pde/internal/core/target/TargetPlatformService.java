@@ -440,11 +440,22 @@ public class TargetPlatformService implements ITargetPlatformService {
 			// restrictions on container
 			IPluginModelBase[] models = PluginRegistry.getExternalModels();
 			ArrayList list = new ArrayList(models.length);
+			Set disabledIDs = new HashSet();
+			for (int i = 0; i < models.length; i++) {
+				if (!models[i].isEnabled()) {
+					disabledIDs.add(models[i].getPluginBase().getId());
+				}
+			}
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].isEnabled()) {
 					String id = models[i].getPluginBase().getId();
 					if (id != null) {
-						list.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+						if (disabledIDs.contains(id)) {
+							// include version info since some versions are disabled
+							list.add(new BundleInfo(id, models[i].getPluginBase().getVersion(), null, BundleInfo.NO_LEVEL, false));
+						} else {
+							list.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+						}
 					}
 				}
 			}

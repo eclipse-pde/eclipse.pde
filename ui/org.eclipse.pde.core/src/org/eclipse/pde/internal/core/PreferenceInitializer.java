@@ -30,6 +30,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences preferences = new InstanceScope().getNode(PDECore.PLUGIN_ID);
 		defaultPreferences.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		defaultPreferences.put(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
+		defaultPreferences.put(ICoreConstants.CHECKED_VERSION_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
 		if (preferences.get(ICoreConstants.TARGET_MODE, defaultPreferences.get(ICoreConstants.TARGET_MODE, "")).equals(ICoreConstants.VALUE_USE_THIS)) { //$NON-NLS-1$
 			preferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
 		} else {

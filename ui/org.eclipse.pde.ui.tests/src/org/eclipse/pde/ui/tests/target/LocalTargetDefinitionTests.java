@@ -17,11 +17,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
@@ -34,6 +32,9 @@ import org.osgi.framework.ServiceReference;
  * @since 3.5 
  */
 public class LocalTargetDefinitionTests extends AbstractTargetTest {
+	
+	public static final NameVersionDescriptor MULTI_VERSION_LOW_DESCRIPTION = new NameVersionDescriptor("a.typical.bundle", "1.0.0.200907071058");
+	public static final NameVersionDescriptor MULTI_VERSION_HIGH_DESCRIPTION = new NameVersionDescriptor("a.typical.bundle", "1.1.0.200907071100");
 	
 	public static Test suite() {
 		return new TestSuite(LocalTargetDefinitionTests.class);
@@ -943,4 +944,91 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 	}
 	
+	/**
+	 * Tests that a single (lower) version of a bundle can be included in the target platform.
+	 * 
+	 * @throws Exception
+	 */
+	public void testLowerVersionOfBundle() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_LOW_DESCRIPTION});
+	}
+	
+	/**
+	 * Tests that a single (higher) version of a bundle can be included in the target platform.
+	 * 
+	 * @throws Exception
+	 */
+	public void testHigherVersionOfBundle() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_HIGH_DESCRIPTION});
+	}
+	
+	/**
+	 * Tests all versions of a bundle can be excluded.
+	 * 
+	 * @throws Exception
+	 */
+	public void testNoVersionsOfBundle() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[0]);
+	}
+	
+	/**
+	 * Tests all versions of a bundle can be included.
+	 * 
+	 * @throws Exception
+	 */
+	public void testAllVersionsOfBundle() throws Exception {
+		doIncludeVersions(null);
+	}
+	
+	/**
+	 * Tests all versions of a bundle can be included.
+	 * 
+	 * @throws Exception
+	 */
+	public void testAllVersionsOfBundleExplicit() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_LOW_DESCRIPTION, MULTI_VERSION_HIGH_DESCRIPTION});
+	}
+	
+	protected void doIncludeVersions(NameVersionDescriptor[] descriptions) throws Exception {
+		String bsn = MULTI_VERSION_LOW_DESCRIPTION.getId();
+		
+		IPath extras = extractMultiVersionPlugins();
+		ITargetDefinition target = getNewTarget();
+		IBundleContainer container = getTargetService().newDirectoryContainer(extras.toOSString());
+		BundleInfo[] infos = null;
+		if (descriptions != null) {
+			infos = new BundleInfo[descriptions.length];
+			for (int i = 0; i < infos.length; i++) {
+				infos[i] = new BundleInfo(descriptions[i].getId(), descriptions[i].getVersion(), null, 0, false);
+			}
+		}
+		container.setIncludedBundles(infos);
+		target.setBundleContainers(new IBundleContainer[]{container});
+		try {
+			getTargetService().saveTargetDefinition(target);
+			setTargetPlatform(target);
+			IPluginModelBase[] models = PluginRegistry.getExternalModels();
+			Set enabled = new HashSet();
+			for (int i = 0; i < models.length; i++) {
+				IPluginModelBase pm = models[i];
+				if (pm.getBundleDescription().getSymbolicName().equals(bsn)) {
+					NameVersionDescriptor desc = new NameVersionDescriptor(pm.getPluginBase().getId(), pm.getPluginBase().getVersion());
+					if (pm.isEnabled()) {
+						enabled.add(desc);
+					}
+				}
+			}
+			if (descriptions == null) {
+				
+			} else {
+				assertEquals("Wrong number of enabled bundles", descriptions.length, enabled.size());
+				for (int i = 0; i < descriptions.length; i++) {
+					assertTrue("Missing bundle", enabled.contains(descriptions[i]));
+				}
+			}
+		} finally {
+			getTargetService().deleteTarget(target.getHandle());
+			resetTargetPlatform();
+		}
+	}
 }

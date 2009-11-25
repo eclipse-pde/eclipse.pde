@@ -10,21 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-
-import java.util.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-
 import java.io.*;
 import java.net.URL;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
@@ -83,6 +76,23 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		doUnZip(location,"/tests/targets/classic-plugins.zip");
 		return location.append("plugins");
+	}	
+	
+	/**
+	 * Extracts the multiple versions plug-ins archive, if not already done, and returns a path to the
+	 * root directory containing the plug-ins.
+	 * 
+	 * @return path to the directory containing the bundles
+	 * @throws Exception
+	 */
+	protected IPath extractMultiVersionPlugins() throws Exception {
+		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath location = stateLocation.append("multi-versions");
+		if (location.toFile().exists()) {
+			return location;
+		}
+		doUnZip(location,"/tests/targets/multi-versions.zip");
+		return location;
 	}	
 
 	/**
