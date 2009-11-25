@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Locale;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
 import org.osgi.framework.Bundle;
@@ -74,7 +73,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	public ClassLoader getClassLoader(final String pluginId) {
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null)
-			throw new IllegalArgumentException("No Classloader found for plug-in " + pluginId); //$NON-NLS-1$
+			throw new IllegalArgumentException("No Classloader found for plug-in " + pluginId + " (plug-in was not resolved)"); //$NON-NLS-1$ //$NON-NLS-2$
 		return new BundleClassLoader(bundle);
 	}
 
