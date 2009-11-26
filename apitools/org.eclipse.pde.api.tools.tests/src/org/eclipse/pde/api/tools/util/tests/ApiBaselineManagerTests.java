@@ -732,7 +732,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateLibraryRemovedFromClasspath() {
 		IPath libPath = null;
 		IApiComponent component = null;
-		IPluginModelBase model = null;
 		try {
 			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
@@ -751,7 +750,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			assertNotNull("the added event for the package fragment was not received", obj);
 			
 			// remove from bundle class path
-			model = PluginRegistry.findModel(project.getProject());
+			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 			assertNotNull("the plugin model for the testing project must exist", model);
 			IFile file = (IFile) model.getUnderlyingResource();
 			assertNotNull("the underlying model file must exist", file);
@@ -772,9 +771,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		finally {
 			if(component != null) {
 				component.dispose();
-			}
-			if(model != null) {
-				model.dispose();
 			}
 			if(libPath != null) {
 				FileUtils.delete(libPath.toOSString());
