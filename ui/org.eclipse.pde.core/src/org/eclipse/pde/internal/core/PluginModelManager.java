@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.internal.core.target.*;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -22,7 +24,6 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class PluginModelManager implements IModelProviderListener {
@@ -123,7 +124,6 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		Set addedBSNs = new HashSet();
 		// Adds to the master table and the state newly created plug-ins in the workspace
 		// (ie. new plug-in project or a closed project that has just been re-opened).
 		// Also, if the target location changes, we add all plug-ins from the new target
@@ -132,10 +132,8 @@ public class PluginModelManager implements IModelProviderListener {
 			for (int i = 0; i < added.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) added[i];
 				String id = model.getPluginBase().getId();
-				if (id != null) {
+				if (id != null)
 					handleAdd(id, model, delta);
-					addedBSNs.add(id);
-				}
 			}
 		}
 
@@ -163,21 +161,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fState != null) {
 			// if the target location has not changed, incrementally re-resolve the state after processing all the add/remove/modify changes
 			// Otherwise, the state is in a good resolved state
-			StateDelta stateDelta = null;
-			if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) == 0) {
-				if ((e.getEventTypes() & IModelProviderEvent.ENVIRONMENT_CHANGED) != 0) {
-					// environment has changed, do complete resolution
-					stateDelta = fState.resolveState(false);
-				} else {
-					if (addedBSNs.isEmpty()) {
-						// resolve incrementally
-						stateDelta = fState.resolveState(true);
-					} else {
-						// resolve based on added bundles, in case there are multiple versions of the added bundles
-						stateDelta = fState.resolveState((String[]) addedBSNs.toArray(new String[addedBSNs.size()]));
-					}
-				}
-			}
+			StateDelta stateDelta = (e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 ? null : fState.resolveState((e.getEventTypes() & IModelProviderEvent.ENVIRONMENT_CHANGED) != 0 ? false : true);
 			// trigger a classpath update for all workspace plug-ins affected by the
 			// processed batch of changes
 			updateAffectedEntries(stateDelta);
