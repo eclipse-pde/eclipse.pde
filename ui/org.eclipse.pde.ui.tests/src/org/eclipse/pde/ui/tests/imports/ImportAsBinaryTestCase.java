@@ -35,6 +35,11 @@ public class ImportAsBinaryTestCase extends BaseImportTestCase {
 		// Note: Ant is exempt from importing as source
 		doSingleImport("org.apache.ant", true);
 	}
+	
+	public void testImportJUnit4() {
+		// Note: JUnit 4 does not have source but it is a java project
+		doSingleImport("org.junit", 4, true);
+	}
 
 	protected void verifyProject(String projectName, boolean isJava) {
 		try {
