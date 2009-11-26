@@ -84,9 +84,9 @@ public class RuntimeInstallJob extends Job {
 
 			// p2 needs to know about the generated repos
 			URI destination = new File(fInfo.destinationDirectory).toURI();
-			ui.loadArtifactRepository(destination, new SubProgressMonitor(monitor, 1));
+			ui.loadArtifactRepository(destination, false, new SubProgressMonitor(monitor, 1));
 
-			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, new SubProgressMonitor(monitor, 1));
+			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, new SubProgressMonitor(monitor, 1));
 
 			IProfile profile = session.getProfileRegistry().getProfile(IProfileRegistry.SELF);
 			if (profile == null) {
