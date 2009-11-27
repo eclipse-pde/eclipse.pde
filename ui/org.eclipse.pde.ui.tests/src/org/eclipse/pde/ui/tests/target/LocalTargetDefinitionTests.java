@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import java.util.Iterator;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -694,6 +696,34 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		container.resolve(definition, null);
 		IResolvedBundle[] bundles = container.getBundles();
 		
+		
+//		<plugin id="org.eclipse.jdt.doc.isv" version="3.6.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.junit.source" version="3.8.2.v20090203-1005" unpack="false"/>
+//		<plugin id="org.hamcrest.core.source" version="1.1.0.v20090501071000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.source" version="3.6.0.v200911262000" unpack="false"/>
+//		<plugin id="org.eclipse.ant.ui.source" version="3.5.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.apt.core.source" version="3.3.400.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.apt.ui.source" version="3.3.300.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.apt.pluggable.core.source" version="1.0.300.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.compiler.apt.source" version="1.0.300.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.compiler.tool.source" version="1.0.100.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.core.source" version="3.6.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.core.manipulation.source" version="1.3.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.debug.ui.source" version="3.5.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.debug.source" version="3.6.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.junit.source" version="3.6.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.junit.core.source" version="3.6.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.junit.runtime.source" version="3.4.200.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.junit4.runtime.source" version="1.1.100.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.launching.source" version="3.5.100.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.ui.source" version="3.6.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.junit4.source" version="4.7.0.N20091126-2000" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.launching.macosx.source" version="3.2.0.N20091126-2000" os="macosx" unpack="false"/>
+//		<plugin id="org.eclipse.jdt.launching.ui.macosx.source" version="1.0.0.N20091126-2000" os="macosx" unpack="false"/>
+//		<plugin id="org.eclipse.ant.launching.source" version="1.0.0.N20091126-2000" unpack="false"/>
+		
+		
+		
 		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt.source");
 		expected.add("org.eclipse.ant.launching.source");
@@ -713,8 +743,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.junit4.runtime.source");
 		expected.add("org.eclipse.jdt.launching.source");
 		expected.add("org.eclipse.jdt.ui.source");
-		// 2 versions of JUnit
-		expected.add("org.junit.source");
 		expected.add("org.junit.source");
 		expected.add("org.junit4.source");
 		expected.add("org.hamcrest.core.source");
@@ -722,6 +750,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
 			expected.add("org.eclipse.jdt.launching.ui.macosx.source");
 		}
+		
+		// Add one to the count for org.eclipse.jdt.doc.isv
 		assertEquals("Wrong number of bundles", expected.size() + 1, bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			if (bundles[i].getBundleInfo().getSymbolicName().equals("org.eclipse.jdt.doc.isv")) {
