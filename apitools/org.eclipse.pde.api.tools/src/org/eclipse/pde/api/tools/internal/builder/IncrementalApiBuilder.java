@@ -352,7 +352,7 @@ public class IncrementalApiBuilder {
 	 */
 	void addDependentsOf(String typename) {
 		// the qualifiedStrings are of the form 'p1/p2' & the simpleStrings are just 'X'
-		int idx = typename.lastIndexOf('.');
+		int idx = typename.lastIndexOf('/');
 		String packageName = (idx < 0 ? Util.EMPTY_STRING : typename.substring(0, idx));
 		String typeName = (idx < 0 ? typename : typename.substring(idx+1, typename.length()));
 		idx = typeName.indexOf('$');
@@ -427,7 +427,7 @@ public class IncrementalApiBuilder {
 				path = (IPath) iterator.next();
 				if(path.isPrefixOf(typepath)) {
 					typepath = typepath.removeFirstSegments(path.segmentCount()).removeFileExtension();
-					return typepath.toString().replace('/', '.');
+					return typepath.toString();
 				}
 			}
 		}

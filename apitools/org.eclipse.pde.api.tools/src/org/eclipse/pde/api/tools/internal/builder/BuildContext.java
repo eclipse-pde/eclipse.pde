@@ -97,7 +97,7 @@ public class BuildContext implements IBuildContext {
 		if(this.structchanged == null) {
 			this.structchanged = new StringSet(16);
 		}
-		this.structchanged.add(typename);
+		this.structchanged.add(typename.replace('/', '.'));
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class BuildContext implements IBuildContext {
 		if(this.removed == null) {
 			this.removed = new StringSet(16);
 		}
-		this.removed.add(typename);
+		this.removed.add(typename.replace('/', '.'));
 	}
 	
 	/**
@@ -129,7 +129,7 @@ public class BuildContext implements IBuildContext {
 		if(this.dependents == null) {
 			this.dependents = new StringSet(32);
 		}
-		this.dependents.add(typename);
+		this.dependents.add(typename.replace('/', '.'));
 	}
 
 	/* (non-Javadoc)
@@ -160,7 +160,7 @@ public class BuildContext implements IBuildContext {
 		if(typename == null) {
 			return false;
 		}
-		return structchanged != null && structchanged.includes(typename);
+		return structchanged != null && structchanged.includes(typename.replace('/', '.'));
 	}
 
 	/* (non-Javadoc)
@@ -170,7 +170,7 @@ public class BuildContext implements IBuildContext {
 		if(typename == null) {
 			return false;
 		}
-		return dependents != null && dependents.includes(typename);
+		return dependents != null && dependents.includes(typename.replace('/', '.'));
 	}
 
 	/* (non-Javadoc)
@@ -180,6 +180,6 @@ public class BuildContext implements IBuildContext {
 		if(typename == null) {
 			return false;
 		}
-		return removed != null && removed.includes(typename);
+		return removed != null && removed.includes(typename.replace('/', '.'));
 	}
 }

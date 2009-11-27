@@ -35,6 +35,7 @@ public class DependentUsageTests extends UsageTest {
 	static final IPath I_PATH = new Path("/refproject/src/i/");
 	static final IPath M_PATH = new Path("/refproject/src/m/");
 	static final IPath XYZ_PATH = new Path("/usagetests/src/x/y/z/");
+	static final IPath MPPATH = new Path("/refproject/src/pack/multi/part");
 	
 	/**
 	 * Constructor
@@ -410,5 +411,65 @@ public class DependentUsageTests extends UsageTest {
 					{"interref", "clazz"}
 				});
 		deployTest("test10", XYZ_PATH, I_PATH, "interref.java", addtag);
+	}
+	
+	/**
+	 * tests adding an @noextend restriction to a type in a multi-part package name
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
+	 * 
+	 * @throws Exception
+	 */
+	public void testAddExtendRestrictionMultiPartPackageName() throws Exception {
+		test11(true);
+	}
+	
+	/**
+	 * tests removing an @noextend restriction to a type in a multi-part package name
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
+	 * 
+	 * @throws Exception
+	 */
+	public void testRemoveExtendRestrictionMultiPartPackageName() throws Exception {
+		test11(false);
+	}
+	
+	private void test11(boolean addtag) throws Exception {
+		setExpectedProblemIds(new int[] {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS)
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"mpClassRef", "test11"}
+			});
+		deployTest("test11", XYZ_PATH, MPPATH, "mpClassRef.java", addtag);
+	}
+	
+	/**
+	 * tests adding an @noinstantiate restriction to a type in a multi-part package name
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
+	 * 
+	 * @throws Exception
+	 */
+	public void testAddInstantiateRestrictionMultiPartPackageName() throws Exception {
+		test12(true);
+	}
+	
+	/**
+	 * tests removing an @noinstantiate restriction to a type in a multi-part package name
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=296375
+	 * 
+	 * @throws Exception
+	 */
+	public void testRemoveInstantiateRestrictionMultiPartPackageName() throws Exception {
+		test12(false);
+	}
+	
+	private void test12(boolean addtag) throws Exception {
+		setExpectedProblemIds(new int[] {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"mpClassRef", "test12"}
+			});
+		deployTest("test12", XYZ_PATH, MPPATH, "mpClassRef.java", addtag);
 	}
 }
