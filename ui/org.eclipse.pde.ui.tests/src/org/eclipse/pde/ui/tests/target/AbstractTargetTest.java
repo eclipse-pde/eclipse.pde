@@ -10,14 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+
+import java.util.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+
 import java.io.*;
 import java.net.URL;
-import java.util.*;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
@@ -227,17 +234,17 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @param target target definition
 	 * @return all BundleInfos
 	 */
-//	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
-//		if (!target.isResolved()) {
-//			target.resolve(null);
-//		}
-//		IResolvedBundle[] bundles = target.getBundles();
-//		List list = new ArrayList(bundles.length);
-//		for (int i = 0; i < bundles.length; i++) {
-//			list.add(bundles[i].getBundleInfo());
-//		}
-//		return list;
-//	}		
+	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
+		if (!target.isResolved()) {
+			target.resolve(null);
+		}
+		IResolvedBundle[] bundles = target.getBundles();
+		List list = new ArrayList(bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			list.add(bundles[i].getBundleInfo());
+		}
+		return list;
+	}		
 	
 	/**
 	 * Returns a list of bundles included in the given container.
@@ -246,12 +253,12 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @return included bundles
 	 * @throws Exception
 	 */
-//	protected List getBundleInfos(IBundleContainer container) throws Exception {
-//		IResolvedBundle[] bundles = container.getBundles();
-//		List list = new ArrayList(bundles.length);
-//		for (int i = 0; i < bundles.length; i++) {
-//			list.add(bundles[i].getBundleInfo());
-//		}
-//		return list;
-//	}
+	protected List getBundleInfos(IBundleContainer container) throws Exception {
+		IResolvedBundle[] bundles = container.getBundles();
+		List list = new ArrayList(bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			list.add(bundles[i].getBundleInfo());
+		}
+		return list;
+	}
 }
