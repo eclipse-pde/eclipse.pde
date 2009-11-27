@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +27,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.*;
 
 public class LauncherUtils {
@@ -322,7 +321,7 @@ public class LauncherUtils {
 				if (project instanceof IProject) {
 					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
 					if (model != null) {
-						Set plugins = DependencyManager.getSelfAndDependencies(model);
+						Set plugins = DependencyManager.getSelfAndDependencies(model, null);
 						return plugins.contains("org.eclipse.swt"); //$NON-NLS-1$
 					}
 				}
