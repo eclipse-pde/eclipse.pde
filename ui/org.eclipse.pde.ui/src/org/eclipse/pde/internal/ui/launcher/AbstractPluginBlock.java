@@ -739,8 +739,7 @@ public abstract class AbstractPluginBlock {
 			if (checked[i] instanceof IPluginModelBase)
 				toCheck.add(checked[i]);
 
-		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-		Set additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection(), new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+		Set additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection());
 
 		Iterator it = additionalIds.iterator();
 		while (it.hasNext()) {
