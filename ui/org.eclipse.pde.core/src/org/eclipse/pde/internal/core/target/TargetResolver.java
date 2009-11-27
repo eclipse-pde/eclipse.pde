@@ -5,15 +5,18 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
 import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IEngine;
+import org.eclipse.equinox.p2.metadata.query.IQuery;
 import org.eclipse.equinox.p2.publisher.Publisher;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
@@ -25,12 +28,17 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
  */
 public class TargetResolver {
 
+	private static final String PROFILE_NAME = "TARGET_PROFILE";
+
 	private ITargetDefinition fTarget;
 	private IProvisioningAgent fAgent;
 
-	private IStatus fStatus;
+	private MultiStatus fStatus;
+	private List fAllRepos;
+	private List fRootIUs;
 	private Collection fAvailableIUs;
-	private Collection fMissingNames;
+
+	private IProfile fProfile;
 
 	/**
 	 * Query to find installable units that match a set of id/version pairs stored in InstallableUnitDescription objects
@@ -49,8 +57,14 @@ public class TargetResolver {
 				return true;
 			IInstallableUnit unit = (IInstallableUnit) object;
 			for (int i = 0; i < fDescriptions.length; i++) {
-				if (fDescriptions[i].getId().equalsIgnoreCase(unit.getId()) && fDescriptions[i].getVersion().equals(unit.getVersion()))
+				if (fDescriptions[i].getId().equalsIgnoreCase(unit.getId()) && fDescriptions[i].getVersion().equals(unit.getVersion())) {
+					// TODO Unexpected problem when testing
+					if (unit.getId().indexOf("feature.jar") >= 0) {
+						return false;
+					}
+
 					return true;
+				}
 			}
 			return false;
 		}
@@ -70,96 +84,209 @@ public class TargetResolver {
 		return fAvailableIUs;
 	}
 
-	public Collection getMissingIUNames() {
-		return fMissingNames;
-	}
-
-	public IStatus resolve(IProgressMonitor monitor) throws CoreException {
-		fStatus = null;
-		if (fAgent == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
-		}
-
+	public IStatus resolve(IProgressMonitor monitor) {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.TargetDefinition_1, 80);
+		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.AbstractBundleContainer_0, null);
 
 		try {
+			if (fAgent == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			}
+
+			fAllRepos = new ArrayList();
+			fRootIUs = new ArrayList();
+			fAvailableIUs = new ArrayList();
 
 			// TODO Handle exceptions more gracefully, or try to continue
 			// TODO Give descriptive names to monitor tasks/subtasks
 
 			// Ask locations to generate repositories
-			List repos = generateRepos(subMon.newChild(20));
+			fStatus.add(generateRepos(subMon.newChild(20)));
 			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
+				fStatus.add(Status.CANCEL_STATUS);
+				return fStatus;
 			}
 
 			// Combine generated repos and explicit repos
-			List explicit = loadExplicitRepos(subMon.newChild(20));
-			repos.addAll(explicit);
+			fStatus.add(loadExplicitRepos(subMon.newChild(20)));
 			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
+				fStatus.add(Status.CANCEL_STATUS);
+				return fStatus;
 			}
 
 			// Collect the list of IUs
-			List rootIUs = collectRootIUs(subMon.newChild(20));
+			fStatus.add(collectRootIUs(subMon.newChild(20)));
 			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
+				fStatus.add(Status.CANCEL_STATUS);
+				return fStatus;
 			}
 
 			// Use slicer/planner to get complete enclosure of IUs
-			collectAllIUs(rootIUs, repos, subMon.newChild(20));
+			fStatus.add(collectAllIUs(subMon.newChild(20)));
 			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
+				fStatus.add(Status.CANCEL_STATUS);
+				return fStatus;
 			}
 
-			fStatus = Status.OK_STATUS;
-			return fStatus;
-
 		} catch (CoreException e) {
-			fStatus = e.getStatus();
-			throw e;
+			fStatus.add(e.getStatus());
 		}
+		return fStatus;
 	}
 
-	private List generateRepos(IProgressMonitor monitor) throws CoreException {
-		List repos = new ArrayList();
+	public IStatus provision(IProgressMonitor monitor) throws CoreException {
+		if (fAgent == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		IProfileRegistry registry = (IProfileRegistry) fAgent.getService(IProfileRegistry.SERVICE_NAME);
+		if (registry == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		IEngine engine = (IEngine) fAgent.getService(IEngine.SERVICE_NAME);
+		if (engine == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		// TODO Monitor and status handling
+		fProfile = null;
+
+		// Delete any previous profiles with the same ID
+		registry.removeProfile(PROFILE_NAME);
+
+		// Create the profile
+		Properties props = new Properties();
+		// TODO Need to set install folder and bundle pool
+//		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
+
+//		properties.put(IProfile.PROP_INSTALL_FOLDER, AbstractTargetHandle.INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
+//		properties.put(IProfile.PROP_CACHE, AbstractTargetHandle.BUNDLE_POOL.toOSString());
+//		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
+//		// set up environment & NL properly so OS specific fragments are down loaded/installed
+//		properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
+
+		fProfile = registry.addProfile(PROFILE_NAME, props);
+
+		// Create the provisioning context
+		Set repos = new HashSet();
+		for (Iterator iterator = fAllRepos.iterator(); iterator.hasNext();) {
+			IRepository currentRepo = (IRepository) iterator.next();
+			if (currentRepo instanceof IMetadataRepository) {
+				repos.add(currentRepo.getLocation());
+			}
+		}
+		ProvisioningContext context = new ProvisioningContext((URI[]) repos.toArray(new URI[repos.size()]));
+
+		// Get the list of installable units including
+		Collection includedIUs = calculateIncludedIUs(null);
+
+		// Create operands to install the metadata
+		ArrayList operands = new ArrayList(includedIUs.size());
+		Iterator itor = includedIUs.iterator();
+		while (itor.hasNext()) {
+			operands.add(new InstallableUnitOperand(null, (IInstallableUnit) itor.next()));
+		}
+		// Add installed property to rootIUS
+//		for (Iterator iterator = fRootIUs.iterator(); iterator.hasNext();) {
+//			IInstallableUnit unit = (IInstallableUnit) iterator.next();
+//			operands.add(new InstallableUnitPropertyOperand(unit, AbstractTargetHandle.PROP_INSTALLED_IU, null, Boolean.toString(true)));
+//		}
+
+		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
+		ProvisioningPlan plan = new ProvisioningPlan(fProfile, (Operand[]) operands.toArray(new Operand[operands.size()]), context);
+		IStatus result = engine.perform(plan, phases, null);
+
+		if (!result.isOK() && result.getSeverity() != IStatus.CANCEL) {
+			throw new CoreException(result);
+		}
+
+		return Status.OK_STATUS;
+	}
+
+	public BundleInfo[] getProvisionedBundles() {
+		if (fProfile != null) {
+			IQuery query = new MatchQuery() {
+				public boolean isMatch(Object candidate) {
+					if (candidate instanceof IInstallableUnit) {
+						IInstallableUnit unit = (IInstallableUnit) candidate;
+						IProvidedCapability[] provided = unit.getProvidedCapabilities();
+						for (int j = 0; j < provided.length; j++) {
+							if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+								return true;
+							}
+						}
+					}
+					return false;
+				}
+			};
+			List urls = new ArrayList();
+			Collector result = fProfile.query(query, new Collector(), null);
+			for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+				IInstallableUnit unit = (IInstallableUnit) iterator.next();
+
+				// TODO
+//				Map bundles = new LinkedHashMap();
+//				IFileArtifactRepository repo = getBundlePool(profile);
+//				Iterator iterator = collector.iterator();
+//				while (iterator.hasNext()) {
+//					IInstallableUnit unit = (IInstallableUnit) iterator.next();
+//					IArtifactKey[] artifacts = unit.getArtifacts();
+//					for (int i = 0; i < artifacts.length; i++) {
+//						IArtifactKey key = artifacts[i];
+//						File file = repo.getArtifactFile(key);
+//						if (file == null) {
+//							// TODO: missing bundle
+//						} else {
+//							IResolvedBundle bundle = generateBundle(file);
+//							if (bundle != null) {
+//								bundles.put(bundle.getBundleInfo(), bundle);
+//							}
+//						}
+//					}
+//				}
+
+			}
+		}
+		return new BundleInfo[0];
+	}
+
+	private IStatus generateRepos(IProgressMonitor monitor) throws CoreException {
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
 			IRepository[] currentRepos = containers[i].generateRepositories(fAgent, subMon.newChild(1));
 			for (int j = 0; j < currentRepos.length; j++) {
-				repos.add(currentRepos[j]);
+				fAllRepos.add(currentRepos[j]);
 			}
 		}
-		return repos;
+		return Status.OK_STATUS;
 	}
 
-	private List loadExplicitRepos(IProgressMonitor monitor) throws CoreException {
-		List repos = new ArrayList();
+	private IStatus loadExplicitRepos(IProgressMonitor monitor) throws CoreException {
 		URI[] explicit = fTarget.getRepositories();
 		SubMonitor subMon = SubMonitor.convert(monitor, explicit.length);
 		for (int i = 0; i < explicit.length; i++) {
-			repos.add(Publisher.loadMetadataRepository(fAgent, explicit[i], false, false));
+			fAllRepos.add(Publisher.loadMetadataRepository(fAgent, explicit[i], false, false));
 			subMon.worked(1);
 		}
-		return repos;
+		return Status.OK_STATUS;
 	}
 
-	private List collectRootIUs(IProgressMonitor monitor) throws CoreException {
-		List ius = new ArrayList();
+	private IStatus collectRootIUs(IProgressMonitor monitor) throws CoreException {
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
 			InstallableUnitDescription[] currentIUs = containers[i].getRootIUs(fAgent, subMon.newChild(1));
 			for (int j = 0; j < currentIUs.length; j++) {
-				ius.add(currentIUs[j]);
+				fRootIUs.add(currentIUs[j]);
 			}
 		}
-		return ius;
+		return Status.OK_STATUS;
 	}
 
-	private IStatus collectAllIUs(List rootIUS, List repos, IProgressMonitor monitor) {
-		if (repos.size() == 0) {
+	private IStatus collectAllIUs(IProgressMonitor monitor) {
+		if (fAllRepos.size() == 0) {
 			fAvailableIUs = new ArrayList(0);
 			return Status.OK_STATUS;
 		}
@@ -168,14 +295,14 @@ public class TargetResolver {
 
 		// Combine the repositories into a single queryable object
 		IQueryable allRepos;
-		if (repos.size() == 1) {
-			allRepos = (IMetadataRepository) repos.get(0);
+		if (fAllRepos.size() == 1) {
+			allRepos = (IMetadataRepository) fAllRepos.get(0);
 		} else {
-			allRepos = new CompoundQueryable((IMetadataRepository[]) repos.toArray(new IMetadataRepository[repos.size()]));
+			allRepos = new CompoundQueryable((IMetadataRepository[]) fAllRepos.toArray(new IMetadataRepository[fAllRepos.size()]));
 		}
 
 		// Get the list of root IUs as actual installable units
-		InstallableUnitDescription[] rootDescriptions = (InstallableUnitDescription[]) rootIUS.toArray(new InstallableUnitDescription[rootIUS.size()]);
+		InstallableUnitDescription[] rootDescriptions = (InstallableUnitDescription[]) fRootIUs.toArray(new InstallableUnitDescription[fRootIUs.size()]);
 		IUDescriptionQuery rootIUQuery = new IUDescriptionQuery(rootDescriptions);
 		Collector result = new Collector();
 		allRepos.query(rootIUQuery, result, subMon.newChild(10));
@@ -186,12 +313,12 @@ public class TargetResolver {
 
 		// Create slicer to calculate requirements
 		PermissiveSlicer slicer = null;
-		// TODO How to handle platform specific problems
 		Properties props = new Properties();
-		props.setProperty("osgi.os", fTarget.getOS() != null ? fTarget.getOS() : Platform.getOS()); //$NON-NLS-1$
-		props.setProperty("osgi.ws", fTarget.getWS() != null ? fTarget.getWS() : Platform.getWS()); //$NON-NLS-1$
-		props.setProperty("osgi.arch", fTarget.getArch() != null ? fTarget.getArch() : Platform.getOSArch()); //$NON-NLS-1$
-		props.setProperty("osgi.nl", fTarget.getNL() != null ? fTarget.getNL() : Platform.getNL()); //$NON-NLS-1$
+		// TODO How to handle platform specific problems
+//		props.setProperty("osgi.os", fTarget.getOS() != null ? fTarget.getOS() : Platform.getOS()); //$NON-NLS-1$
+//		props.setProperty("osgi.ws", fTarget.getWS() != null ? fTarget.getWS() : Platform.getWS()); //$NON-NLS-1$
+//		props.setProperty("osgi.arch", fTarget.getArch() != null ? fTarget.getArch() : Platform.getOSArch()); //$NON-NLS-1$
+//		props.setProperty("osgi.nl", fTarget.getNL() != null ? fTarget.getNL() : Platform.getNL()); //$NON-NLS-1$
 		slicer = new PermissiveSlicer(allRepos, props, true, false, false, true, false);
 		subMon.worked(10);
 
@@ -212,7 +339,12 @@ public class TargetResolver {
 
 	}
 
-	public Collection getIncludedIUs(IProgressMonitor monitor) {
+	public Collection calculateMissingIUs(IProgressMonitor monitor) {
+		// TODO Copy logic from other method?
+		return calculateIncludedIUs(monitor);
+	}
+
+	public Collection calculateIncludedIUs(IProgressMonitor monitor) {
 		// TODO Fix logic, move to TargetDefinition to allow cacheing 
 
 		BundleInfo[] included = fTarget.getIncluded();
@@ -235,254 +367,5 @@ public class TargetResolver {
 
 		// TODO
 		return fAvailableIUs;
-
-//		for (int i = 0; i < collection.length; i++) {
-//			IResolvedBundle resolved = collection[i];
-//		}
-//		List resolved = new ArrayList();
-//		if (included == null) {
-//			for (int i = 0; i < collection.length; i++) {
-//				resolved.add(collection[i]);
-//			}
-//		} else {
-//			for (int i = 0; i < included.length; i++) {
-//				BundleInfo info = included[i];
-//				resolved.add(resolveBundle(bundleMap, info, false, parentContainer));
-//			}
-//		}
-//		if (optional != null) {
-//			for (int i = 0; i < optional.length; i++) {
-//				BundleInfo option = optional[i];
-//				IResolvedBundle resolveBundle = resolveBundle(bundleMap, option, true, parentContainer);
-//				IStatus status = resolveBundle.getStatus();
-//				if (status.isOK()) {
-//					// add to list if not there already
-//					if (!resolved.contains(resolveBundle)) {
-//						resolved.add(resolveBundle);
-//					}
-//				} else {
-//					// missing optional bundle - add it to the list
-//					resolved.add(resolveBundle);
-//				}
-//			}
-//		}
-//		return (IResolvedBundle[]) resolved.toArray(new IResolvedBundle[resolved.size()]);
 	}
-
-	public Collection getMissingIUs(IProgressMonitor monitor) {
-		// TODO Fix logic, move to TargetDefinition to allow caching 
-		return new ArrayList(0);
-	}
-
-//	/**
-//	 * Returns the existing profile for this target definition or <code>null</code> if none.
-//	 *  
-//	 * @return profile or <code>null</code>
-//	 */
-//	public IProfile findProfile() {
-//		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-//		if (registry != null) {
-//			AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
-//			String id;
-//			try {
-//				id = handle.getProfileId();
-//				return registry.getProfile(id);
-//			} catch (CoreException e) {
-//			}
-//		}
-//		return null;
-//	}
-//
-//	/**
-//	 * Returns whether software site containers are configured to provision for all environments
-//	 * versus a single environment.
-//	 * 
-//	 * @return whether all environments will be provisioned
-//	 */
-//	private boolean isAllEnvironments() {
-//		IBundleContainer[] containers = getBundleContainers();
-//		if (containers != null) {
-//			for (int i = 0; i < containers.length; i++) {
-//				if (containers[i] instanceof IUBundleContainer) {
-//					IUBundleContainer iu = (IUBundleContainer) containers[i];
-//					if (iu.getIncludeAllEnvironments()) {
-//						return true;
-//					}
-//				}
-//			}
-//		}
-//		return false;
-//	}
-//
-//	/**
-//	 * Returns the mode used to provision this target - slice versus plan or <code>null</code> if
-//	 * this target has no software sites.
-//	 * 
-//	 * @return provisioning mode or <code>null</code>
-//	 */
-//	private String getProvisionMode() {
-//		IBundleContainer[] containers = getBundleContainers();
-//		if (containers != null) {
-//			for (int i = 0; i < containers.length; i++) {
-//				if (containers[i] instanceof IUBundleContainer) {
-//					IUBundleContainer iu = (IUBundleContainer) containers[i];
-//					if (iu.getIncludeAllRequired()) {
-//						return TargetDefinitionPersistenceHelper.MODE_PLANNER;
-//					}
-//					return TargetDefinitionPersistenceHelper.MODE_SLICER;
-//				}
-//			}
-//		}
-//		return null;
-//	}
-//
-//	/**
-//	 * Returns the profile for the this target handle, creating one if required.
-//	 * 
-//	 * @return profile
-//	 * @throws CoreException in unable to retrieve profile
-//	 */
-//	public IProfile getProfile() throws CoreException {
-//		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-//		if (registry == null) {
-//			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
-//		}
-//		AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
-//		String id = handle.getProfileId();
-//		IProfile profile = registry.getProfile(id);
-//		if (profile != null) {
-//			boolean recreate = false;
-//			// check if all environments setting is the same
-//			boolean all = false;
-//			String value = profile.getProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS);
-//			if (value != null) {
-//				all = Boolean.valueOf(value).booleanValue();
-//				if (!Boolean.toString(isAllEnvironments()).equals(value)) {
-//					recreate = true;
-//				}
-//			}
-//			// ensure environment & NL settings are still the same (else we need a new profile)
-//			String property = null;
-//			if (!recreate && !all) {
-//				property = generateEnvironmentProperties();
-//				value = profile.getProperty(IProfile.PROP_ENVIRONMENTS);
-//				if (!property.equals(value)) {
-//					recreate = true;
-//				}
-//			}
-//			// check provisioning mode: slice versus plan
-//			String mode = getProvisionMode();
-//			if (mode != null) {
-//				value = profile.getProperty(AbstractTargetHandle.PROP_PROVISION_MODE);
-//				if (!mode.equals(value)) {
-//					recreate = true;
-//				}
-//			}
-//
-//			if (!recreate) {
-//				property = generateNLProperty();
-//				value = profile.getProperty(IProfile.PROP_NL);
-//				if (!property.equals(value)) {
-//					recreate = true;
-//				}
-//			}
-//			if (!recreate) {
-//				// check top level IU's. If any have been removed from the containers that are
-//				// still in the profile, we need to recreate (rather than uninstall)
-//				IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
-//				propertyQuery.setProfile(profile);
-//				Collector collector = profile.query(propertyQuery, new Collector(), null);
-//				Iterator iterator = collector.iterator();
-//				if (iterator.hasNext()) {
-//					Set installedIUs = new HashSet();
-//					while (iterator.hasNext()) {
-//						IInstallableUnit unit = (IInstallableUnit) iterator.next();
-//						installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
-//					}
-//					IBundleContainer[] containers = getBundleContainers();
-//					if (containers != null) {
-//						for (int i = 0; i < containers.length; i++) {
-//							if (containers[i] instanceof IUBundleContainer) {
-//								IUBundleContainer bc = (IUBundleContainer) containers[i];
-//								String[] ids = bc.getIds();
-//								Version[] versions = bc.getVersions();
-//								for (int j = 0; j < versions.length; j++) {
-//									installedIUs.remove(new NameVersionDescriptor(ids[j], versions[j].toString()));
-//								}
-//							}
-//						}
-//					}
-//					if (!installedIUs.isEmpty()) {
-//						recreate = true;
-//					}
-//				}
-//			}
-//			if (recreate) {
-//				handle.deleteProfile();
-//				profile = null;
-//			}
-//		}
-//		if (profile == null) {
-//			// create profile
-//			Map properties = new HashMap();
-//			properties.put(IProfile.PROP_INSTALL_FOLDER, AbstractTargetHandle.INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
-//			properties.put(IProfile.PROP_CACHE, AbstractTargetHandle.BUNDLE_POOL.toOSString());
-//			properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
-//			// set up environment & NL properly so OS specific fragments are down loaded/installed
-//			properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
-//			properties.put(IProfile.PROP_NL, generateNLProperty());
-//			String mode = getProvisionMode();
-//			if (mode != null) {
-//				properties.put(AbstractTargetHandle.PROP_PROVISION_MODE, mode);
-//				properties.put(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(isAllEnvironments()));
-//			}
-//			profile = registry.addProfile(id, properties);
-//		}
-//		return profile;
-//	}
-//
-//	/**
-//	 * Generates the environment properties string for this target definition's p2 profile.
-//	 * 
-//	 * @return environment properties
-//	 */
-//	private String generateEnvironmentProperties() {
-//		// TODO: are there constants for these keys?
-//		StringBuffer env = new StringBuffer();
-//		String ws = getWS();
-//		if (ws == null) {
-//			ws = Platform.getWS();
-//		}
-//		env.append("osgi.ws="); //$NON-NLS-1$
-//		env.append(ws);
-//		env.append(","); //$NON-NLS-1$
-//		String os = getOS();
-//		if (os == null) {
-//			os = Platform.getOS();
-//		}
-//		env.append("osgi.os="); //$NON-NLS-1$
-//		env.append(os);
-//		env.append(","); //$NON-NLS-1$
-//		String arch = getArch();
-//		if (arch == null) {
-//			arch = Platform.getOSArch();
-//		}
-//		env.append("osgi.arch="); //$NON-NLS-1$
-//		env.append(arch);
-//		return env.toString();
-//	}
-//
-//	/**
-//	 * Generates the NL property for this target definition's p2 profile.
-//	 * 
-//	 * @return NL profile property
-//	 */
-//	private String generateNLProperty() {
-//		String nl = getNL();
-//		if (nl == null) {
-//			nl = Platform.getNL();
-//		}
-//		return nl;
-//	}
-
 }

@@ -130,7 +130,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus resolve(IProgressMonitor monitor) throws CoreException {
+	public IStatus resolve(IProgressMonitor monitor) {
 		fResolver = new TargetResolver(this);
 		return fResolver.resolve(monitor);
 	}
@@ -165,7 +165,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public IInstallableUnit[] getIncludedUnits(IProgressMonitor monitor) {
 		if (isResolved()) {
-			Collection included = fResolver.getIncludedIUs(monitor);
+			Collection included = fResolver.calculateIncludedIUs(monitor);
 			return (IInstallableUnit[]) included.toArray(new IInstallableUnit[included.size()]);
 		}
 		return null;
@@ -176,9 +176,45 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public BundleInfo[] getMissingUnits(IProgressMonitor monitor) {
 		if (isResolved()) {
-			Collection missing = fResolver.getMissingIUs(monitor);
+			Collection missing = fResolver.calculateMissingIUs(monitor);
 			return (BundleInfo[]) missing.toArray(new BundleInfo[missing.size()]);
 		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#provision(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus provision(IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMon = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 100);
+		if (!isResolved()) {
+			resolve(subMon.newChild(50));
+		}
+		subMon.setWorkRemaining(50);
+
+		// If the target failed to resolve then return the resolve status
+		if (!isResolved()) {
+			return getResolveStatus();
+		}
+
+		return fResolver.provision(subMon.newChild(50));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getProvisionedBundles()
+	 */
+	public BundleInfo[] getProvisionedBundles() {
+		if (isResolved()) {
+			return fResolver.getProvisionedBundles();
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getProvisionedFeatures()
+	 */
+	public BundleInfo[] getProvisionedFeatures() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -431,9 +467,9 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedImplicitDependencies()
 	 */
-	public IResolvedBundle[] getResolvedImplicitDependencies() {
-		// TODO Use new API
-		return null;
+//	public IResolvedBundle[] getResolvedImplicitDependencies() {
+//		// TODO Use new API
+//		return null;
 //		int size = 0;
 //		if (fImplicit != null) {
 //			size = fImplicit.length;
@@ -442,7 +478,7 @@ public class TargetDefinition implements ITargetDefinition {
 //			return new IResolvedBundle[0];
 //		}
 //		return AbstractBundleContainer.getMatchingBundles(getBundles(), fImplicit, null, null);
-	}
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])

@@ -18,15 +18,34 @@ import org.osgi.framework.Constants;
 public interface ICoreConstants {
 
 	// Target Platform
+	/**
+	 * @deprecated Use TargetPlatform
+	 */
 	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
-	String SAVED_PLATFORM = "saved_platform"; //$NON-NLS-1$
-	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
-	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
-	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
+	/**
+	 * @deprecated Use TargetPlatform
+	 */
+	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
+
+	/**
+	 * @deprecated Use TargetPlatform
+	 */
 	String CHECKED_PLUGINS = "checkedPlugins"; //$NON-NLS-1$
 	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
 	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
 	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
+
+	/**
+	 * @deprecated Will no longer be set or read
+	 */
+	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
+
+	/**
+	 * @deprecated Will no longer be set or read
+	 */
+	String SAVED_PLATFORM = "saved_platform"; //$NON-NLS-1$
+	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
+	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
 	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
 	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
 	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
@@ -34,8 +53,11 @@ public interface ICoreConstants {
 	String VM_LAUNCHER_INI = "vm_launcher_ini"; //$NON-NLS-1$
 	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
 	String GROUP_PLUGINS_VIEW = "group_plugins"; //$NON-NLS-1$
-	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
 	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
+
+	/**
+	 * @deprecated No longer necessary
+	 */
 	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
 
 	// Target Environment

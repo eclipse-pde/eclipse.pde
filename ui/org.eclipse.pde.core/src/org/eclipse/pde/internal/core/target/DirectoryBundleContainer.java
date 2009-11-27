@@ -35,7 +35,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
@@ -200,7 +199,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 	 * 
 	 * @return directory if unable to resolve variables in the path
 	 */
-	protected File getDirectory() throws CoreException {
+	private File getDirectory() throws CoreException {
 		String path = resolveVariables(fPath);
 		return new File(path);
 	}
@@ -229,7 +228,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 	 * @param root the location the container specifies as a root directory
 	 * @return the given directory or its plug-ins sub directory if present
 	 */
-	private File getSite(File root) {
+	protected File getSite(File root) {
 		File file = new File(root, IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
 		if (file.exists()) {
 			return file;
@@ -268,7 +267,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 				}
 			}
 			if (manifestStream == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
 			}
 			Map map = ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
 			// Validate manifest - BSN must be present.
@@ -278,13 +277,13 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 				map = loadPluginXML(bundleLocation); // not a bundle manifest, try plugin.xml
 			}
 			if (map == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
 			}
 			return map;
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);
 		}

@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -132,9 +132,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		private Image getImage(ITargetDefinition target) {
 			int flag = 0;
 			if (target.equals(fActiveTarget) && target.isResolved()) {
-				if (target.getBundleStatus().getSeverity() == IStatus.WARNING) {
+				if (target.getResolveStatus().getSeverity() == IStatus.WARNING) {
 					flag = SharedLabelProvider.F_WARNING;
-				} else if (target.getBundleStatus().getSeverity() == IStatus.ERROR) {
+				} else if (target.getResolveStatus().getSeverity() == IStatus.ERROR) {
 					flag = SharedLabelProvider.F_ERROR;
 				}
 			}
@@ -433,7 +433,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 			if (fActiveTarget.isResolved()) {
 				// Check if the bundle resolution has errors
-				IStatus bundleStatus = fActiveTarget.getBundleStatus();
+				IStatus bundleStatus = fActiveTarget.getResolveStatus();
 				if (bundleStatus.getSeverity() == IStatus.ERROR) {
 					ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_14, PDEUIMessages.TargetPlatformPreferencePage2_15, bundleStatus, IStatus.ERROR);
 				}
@@ -774,14 +774,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 								AddToJavaSearchJob.synchWithTarget(fActiveTarget);
 							}
 							Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
-							IResolvedBundle[] bundles;
-							bundles = fActiveTarget.getAllBundles();
-							if (bundles != null) {
-								for (int index = 0; index < bundles.length; index++) {
-									BundleInfo bundleInfo = bundles[index].getBundleInfo();
-									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(bundleInfo.getSymbolicName())) {
-										Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());
-										if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
+							IInstallableUnit[] units = fActiveTarget.getIncludedUnits(null);
+							if (units != null) {
+								for (int index = 0; index < units.length; index++) {
+									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(units[index].getId())) {
+										if (platformOsgiVersion.compareTo(units[index].getVersion()) < 0) {
 											Display.getDefault().syncExec(new Runnable() {
 												public void run() {
 													MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);

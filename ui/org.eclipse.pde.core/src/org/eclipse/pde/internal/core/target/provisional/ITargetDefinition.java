@@ -33,7 +33,7 @@ public interface ITargetDefinition {
 	    reported and that the operation cannot be cancelled.
 	 * @return
 	 */
-	public IStatus resolve(IProgressMonitor monitor) throws CoreException;
+	public IStatus resolve(IProgressMonitor monitor);
 
 	public IStatus getResolveStatus();
 
@@ -58,6 +58,12 @@ public interface ITargetDefinition {
 	// TODO Consider using InstallableUnitDescription instead of BundleInfo
 
 	public BundleInfo[] getMissingUnits(IProgressMonitor monitor);
+
+	public IStatus provision(IProgressMonitor monitor) throws CoreException;
+
+	public BundleInfo[] getProvisionedBundles();
+
+	public BundleInfo[] getProvisionedFeatures();
 
 	public void addIncluded(BundleInfo[] toAdd);
 
@@ -238,12 +244,12 @@ public interface ITargetDefinition {
 	 */
 	public BundleInfo[] getImplicitDependencies();
 
-	/**
-	 * Returns implicit dependencies resolved against the actual bundles contained in this target
-	 * or <code>null</code> if this target has not been resolved. Matches symbolic names and optional
-	 * versions of implicit dependencies against the actual bundles in this target.
-	 *  
-	 * @return resolved implicit dependencies or <code>null</code>
-	 */
-	public IResolvedBundle[] getResolvedImplicitDependencies();
+//	/**
+//	 * Returns implicit dependencies resolved against the actual bundles contained in this target
+//	 * or <code>null</code> if this target has not been resolved. Matches symbolic names and optional
+//	 * versions of implicit dependencies against the actual bundles in this target.
+//	 *  
+//	 * @return resolved implicit dependencies or <code>null</code>
+//	 */
+//	public IResolvedBundle[] getResolvedImplicitDependencies();
 }

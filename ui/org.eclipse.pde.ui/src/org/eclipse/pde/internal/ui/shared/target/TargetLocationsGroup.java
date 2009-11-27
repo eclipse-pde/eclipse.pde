@@ -11,14 +11,13 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
@@ -269,14 +268,6 @@ public class TargetLocationsGroup {
 			IBundleContainer oldContainer = null;
 			if (selected instanceof IBundleContainer) {
 				oldContainer = (IBundleContainer) selected;
-			} else if (selected instanceof IResolvedBundle) {
-				TreeItem[] treeSelection = fTreeViewer.getTree().getSelection();
-				if (treeSelection.length > 0) {
-					Object parent = treeSelection[0].getParentItem().getData();
-					if (parent instanceof IBundleContainer) {
-						oldContainer = (IBundleContainer) parent;
-					}
-				}
 			}
 			if (oldContainer != null) {
 				Shell parent = fTreeViewer.getTree().getShell();
@@ -372,31 +363,6 @@ public class TargetLocationsGroup {
 			if (parentElement instanceof ITargetDefinition) {
 				IBundleContainer[] containers = ((ITargetDefinition) parentElement).getBundleContainers();
 				return containers != null ? containers : new Object[0];
-			} else if (parentElement instanceof IBundleContainer) {
-				IBundleContainer container = (IBundleContainer) parentElement;
-				if (container.isResolved()) {
-					IStatus status = container.getBundleStatus();
-					if (!status.isOK() && !status.isMultiStatus()) {
-						return new Object[] {status};
-					}
-					if (fShowContentButton.getSelection()) {
-						return container.getBundles();
-					} else if (!status.isOK()) {
-						// Show multi-status children so user can easily see problems
-						if (status.isMultiStatus()) {
-							return status.getChildren();
-						}
-					} else if (parentElement instanceof IUBundleContainer) {
-						// Show the IUs as children
-						// TODO See if we can get the profile using API
-						try {
-							IProfile profile = ((TargetDefinition) fTarget).getProfile();
-							return ((IUBundleContainer) parentElement).getInstallableUnits(profile);
-						} catch (CoreException e) {
-							return new Object[] {e.getStatus()};
-						}
-					}
-				}
 			}
 			return new Object[0];
 		}
