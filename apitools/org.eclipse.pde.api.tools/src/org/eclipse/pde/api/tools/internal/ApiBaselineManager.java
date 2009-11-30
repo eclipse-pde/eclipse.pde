@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,6 +60,7 @@ import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
+import org.eclipse.pde.api.tools.internal.model.WorkspaceBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -66,6 +68,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.DependencyManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -403,7 +406,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			IApiComponent comp = components[i];
 			if (!comp.isSystemComponent()) {
 				celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
-				celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getId());
+				celement.setAttribute(IApiXmlConstants.ATTR_ID, comp.getSymbolicName());
 				celement.setAttribute(IApiXmlConstants.ATTR_VERSION, comp.getVersion());
 				celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(comp.getLocation()).toPortableString());
 				root.appendChild(celement);
@@ -665,14 +668,19 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		long time = System.currentTimeMillis();
 		IApiBaseline baseline = null; 
 		try {
-			baseline = ApiModelFactory.newApiBaseline(ApiBaselineManager.WORKSPACE_API_BASELINE_ID);
+			baseline = new WorkspaceBaseline();
 			// populate it with only projects that are API aware
-			IPluginModelBase[] models = PluginRegistry.getActiveModels();
-			List componentsList = new ArrayList(models.length);
+			Set ids = DependencyManager.getSelfandDependencies(PluginRegistry.getWorkspaceModels(), null);
+			List componentsList = new ArrayList(ids.size());
 			IApiComponent apiComponent = null;
-			for (int i = 0, length = models.length; i < length; i++) {
+			IPluginModelBase model = null;
+			for (Iterator iter = ids.iterator(); iter.hasNext();) {
+				model = PluginRegistry.findModel((String) iter.next());
+				if(model == null) {
+					continue;
+				}
 				try {
-					apiComponent = ApiModelFactory.newApiComponent(baseline, models[i]);
+					apiComponent = ApiModelFactory.newApiComponent(baseline, model);
 					if (apiComponent != null) {
 						componentsList.add(apiComponent);
 					}
@@ -683,7 +691,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			baseline.addApiComponents((IApiComponent[]) componentsList.toArray(new IApiComponent[componentsList.size()]));
 		} finally {
 			if (DEBUG) {
-				System.out.println("Time to create a workspace profile : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Time to create a workspace baseline : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return baseline;

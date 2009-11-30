@@ -304,11 +304,11 @@ public final class ApiSearchEngine {
 			MultiStatus mstatus = null;
 			for (int i = 0; i < scopeelements.length; i++) {
 				try {
-					taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new String[] {scopeelements[i].getApiComponent().getId(), fRequestorContext});
+					taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new String[] {scopeelements[i].getApiComponent().getSymbolicName(), fRequestorContext});
 					localmonitor.setTaskName(taskname);
 					if(DEBUG) {
 						loopstart = System.currentTimeMillis();
-						System.out.println("Searching "+scopeelements[i].getApiComponent().getId()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
+						System.out.println("Searching "+scopeelements[i].getApiComponent().getSymbolicName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					searchReferences(requestor, scopeelements[i], reporter, localmonitor.newChild(1));
 					localmonitor.setTaskName(taskname);

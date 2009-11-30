@@ -275,7 +275,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		getState().setPlatformProperties(dictionary);
 		// clean up previous system library
 		if (fSystemLibraryComponent != null && fComponentsById != null) {
-			fComponentsById.remove(fSystemLibraryComponent.getId());
+			fComponentsById.remove(fSystemLibraryComponent.getSymbolicName());
 		}
 		if(fSystemPackageNames != null) {
 			fSystemPackageNames.clear();
@@ -301,16 +301,16 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Adds an {@link IApiComponent} to the fComponentsById mapping
 	 * @param component
 	 */
-	private void addComponent(IApiComponent component) throws CoreException {
+	protected void addComponent(IApiComponent component) throws CoreException {
 		if(component == null) {
 			return;
 		}
 		if(fComponentsById == null) {
 			fComponentsById = new HashMap();
 		}
-		fComponentsById.put(component.getId(), component);
-		if (component instanceof PluginProjectApiComponent) {
-			PluginProjectApiComponent projectApiComponent = (PluginProjectApiComponent) component;
+		fComponentsById.put(component.getSymbolicName(), component);
+		if (component instanceof ProjectComponent) {
+			ProjectComponent projectApiComponent = (ProjectComponent) component;
 			if (this.fComponentsByProjectNames == null) {
 				this.fComponentsByProjectNames = new HashMap();
 			}
@@ -324,7 +324,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
 		HashSet ees = new HashSet();
 		for (int i = 0; i < components.length; i++) {
-			BundleApiComponent component = (BundleApiComponent) components[i];
+			BundleComponent component = (BundleComponent) components[i];
 			if (component.isSourceComponent()) {
 				continue;
 			}
@@ -341,7 +341,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Resolves and initializes the system library to use based on API component requirements.
 	 * Only works when running in the framework. Has no effect if not running in the framework.
 	 */
-	private void resolveSystemLibrary(HashSet ees) {
+	protected void resolveSystemLibrary(HashSet ees) {
 		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
 			IStatus error = null;
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
@@ -526,8 +526,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @throws CoreException
 	 */
 	private void resolvePackage0(IApiComponent component, String packageName, List componentsList) throws CoreException {
-		if (component instanceof BundleApiComponent) {
-			BundleDescription bundle = ((BundleApiComponent)component).getBundleDescription();
+		if (component instanceof BundleComponent) {
+			BundleDescription bundle = ((BundleComponent)component).getBundleDescription();
 			if (bundle != null) {
 				StateHelper helper = getState().getStateHelper();
 				ExportPackageDescription[] visiblePackages = helper.getVisiblePackages(bundle);
@@ -793,8 +793,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		ArrayList bundles = new ArrayList(components.length);
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent component = components[i];
-			if (component instanceof BundleApiComponent) {
-				bundles.add(((BundleApiComponent)component).getBundleDescription());
+			if (component instanceof BundleComponent) {
+				bundles.add(((BundleComponent)component).getBundleDescription());
 			}
 		}
 		return bundles;

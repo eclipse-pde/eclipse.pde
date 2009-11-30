@@ -643,12 +643,12 @@ public class Reference implements IReference {
 			visibility = annot.getVisibility();
 			if(annot.getVisibility() == VisibilityModifiers.PRIVATE) {
 				IApiComponent host = mcomponent.getHost();
-				if(host != null && host.getId().equals(rcomponent.getId())) {
+				if(host != null && host.getSymbolicName().equals(rcomponent.getSymbolicName())) {
 					visibility = UseReportConverter.FRAGMENT_PERMISSIBLE;
 				}
 				else {
 					IApiAccess access = description.resolveAccessLevel(
-							Factory.componentDescriptor(mcomponent.getId()),  // component descriptors in API description are not version qualified
+							Factory.componentDescriptor(mcomponent.getSymbolicName()),  // component descriptors in API description are not version qualified
 							getResolvedReference().getHandle().getPackage());
 					if(access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
 						visibility = VisibilityModifiers.PRIVATE_PERMISSIBLE;

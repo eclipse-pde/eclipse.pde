@@ -96,7 +96,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	 */
 	String getId(IApiComponent component) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(component.getId()).append(" ").append('(').append(component.getVersion()).append(')'); //$NON-NLS-1$
+		buffer.append(component.getSymbolicName()).append(" ").append('(').append(component.getVersion()).append(')'); //$NON-NLS-1$
 		return buffer.toString();
 	}
 

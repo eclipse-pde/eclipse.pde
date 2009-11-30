@@ -1965,7 +1965,7 @@ public final class Util {
 	 * @return API component + version identifier
 	 */
 	public static String getDeltaComponentVersionsId(IApiComponent component) {
-		StringBuffer buffer = new StringBuffer(component.getId());
+		StringBuffer buffer = new StringBuffer(component.getSymbolicName());
 		String version = component.getVersion();
 		// remove the qualifier part
 		if (version != null) {
@@ -1995,7 +1995,7 @@ public final class Util {
 	 * @return API component + version identifier
 	 */
 	public static String getComponentVersionsId(IApiComponent component) {
-		StringBuffer buffer = new StringBuffer(component.getId());
+		StringBuffer buffer = new StringBuffer(component.getSymbolicName());
 		String version = component.getVersion();
 		// remove the qualifier part
 		if (version != null) {
@@ -2202,7 +2202,7 @@ public final class Util {
 	public static final Comparator componentsorter = new Comparator(){
 		public int compare(Object o1, Object o2) {
 			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-				return ((IApiComponent)o1).getId().compareTo(((IApiComponent)o2).getId());
+				return ((IApiComponent)o1).getSymbolicName().compareTo(((IApiComponent)o2).getSymbolicName());
 			}
 			if(o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
 				return ((SkippedComponent)o1).getComponentId().compareTo(((SkippedComponent)o2).getComponentId());
@@ -2289,7 +2289,7 @@ public final class Util {
 				pattern = Pattern.compile(componentname);
 				String componentid = null;
 				for (int j = 0, max2 = components.length; j < max2; j++) {
-					componentid = components[j].getId();
+					componentid = components[j].getSymbolicName();
 					if (pattern.matcher(componentid).matches()) {
 						list.add(componentid);
 					}

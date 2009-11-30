@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: test
 Bundle-SymbolicName: test
-Bundle-Version: test
+Bundle-Version: 1.0
 Export-Package: .,
  a.b.c,
  a.b.c.spi,

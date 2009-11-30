@@ -283,17 +283,17 @@ public class ApiUseScanJob extends Job {
 		localmonitor.setWorkRemaining(components.length);
 		for (int i = 0; i < components.length; i++) {
 			IApiComponent component = components[i];
-			localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_checking_component, component.getId()));
+			localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_checking_component, component.getSymbolicName()));
 			Util.updateMonitor(localmonitor, 1);
 			if (acceptComponent(component, pattern, true)) {
-				ids.add(component.getId());
+				ids.add(component.getSymbolicName());
 			}
 			if (acceptComponent(component, pattern2, false)) {
 				scope.add(component);
 			}
 			else {
-				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_skipping_component, component.getId()));
-				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), null));
+				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_skipping_component, component.getSymbolicName()));
+				this.notsearched.add(new SkippedComponent(component.getSymbolicName(), component.getVersion(), null));
 			}
 		}
 	}
@@ -326,7 +326,7 @@ public class ApiUseScanJob extends Job {
 		if(!allowresolve) {
 			ResolverError[] errors = component.getErrors();
 			if(errors != null) {
-				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), errors)); 
+				this.notsearched.add(new SkippedComponent(component.getSymbolicName(), component.getVersion(), errors)); 
 				return false;
 			}
 		}
@@ -334,7 +334,7 @@ public class ApiUseScanJob extends Job {
 			return false;
 		}
 		if(pattern != null) {
-			return pattern.matcher(component.getId()).matches();
+			return pattern.matcher(component.getSymbolicName()).matches();
 		}
 		return true;
 	}

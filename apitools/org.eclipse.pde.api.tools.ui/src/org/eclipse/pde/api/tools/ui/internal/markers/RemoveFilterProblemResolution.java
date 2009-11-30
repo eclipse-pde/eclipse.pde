@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -108,7 +108,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 				}
 				resource = markers[i].getResource();
 				component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(resource.getProject());
-				if(component instanceof PluginProjectApiComponent) {
+				if(component instanceof ProjectComponent) {
 					filters = (HashSet) map.get(component);
 					if(filters == null) {
 						filters = new HashSet();

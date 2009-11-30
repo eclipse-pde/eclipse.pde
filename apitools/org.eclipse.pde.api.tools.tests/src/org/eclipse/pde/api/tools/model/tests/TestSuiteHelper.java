@@ -90,7 +90,7 @@ public class TestSuiteHelper {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 			if(component != null) {
 				components.add(component);
-				requiredComponents.add(component.getId());
+				requiredComponents.add(component.getSymbolicName());
 			}
 		}
 		// collect required components
@@ -148,7 +148,7 @@ public class TestSuiteHelper {
 			public String getLocation() {
 				return null;
 			}
-			public String getId() {
+			public String getSymbolicName() {
 				return id;
 			}
 			public String[] getExecutionEnvironments() {
@@ -263,7 +263,7 @@ public class TestSuiteHelper {
 					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 					if(component != null) {
 						components.add(component);
-						requiredComponents.add(component.getId());
+						requiredComponents.add(component.getSymbolicName());
 					}
 				}
 			}
@@ -406,7 +406,7 @@ public class TestSuiteHelper {
 				} else {
 					IApiComponent apiComponent = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 					collection.add(apiComponent);
-					done.add(apiComponent.getId());
+					done.add(apiComponent.getSymbolicName());
 					addAllRequired(baseline, done, apiComponent, collection);
 				}
 			}

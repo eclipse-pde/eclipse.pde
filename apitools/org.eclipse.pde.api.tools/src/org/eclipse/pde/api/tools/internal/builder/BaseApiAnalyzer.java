@@ -59,7 +59,7 @@ import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -218,14 +218,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			boolean checkfilters = false;
 			if(baseline != null) {
-				IApiComponent reference = baseline.getApiComponent(component.getId());
+				IApiComponent reference = baseline.getApiComponent(component.getSymbolicName());
 				this.fBuildState = state;
 				if(fBuildState == null) {
 					fBuildState = getBuildState();
 				}
 				//compatibility checks
 				if(reference != null) {
-					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getId(), baseline.getName()}));
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getSymbolicName(), baseline.getName()}));
 					if(bcontext.hasChangedTypes()) {
 						String[] changedtypes = bcontext.getStructurallyChangedTypes();
 						for(int i = 0; i < changedtypes.length; i++) {
@@ -242,7 +242,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					this.fBuildState.setReexportedComponents(Util.getReexportedComponents(component));
 				} else {
-					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {component.getId(), baseline.getName()}));
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {component.getSymbolicName(), baseline.getName()}));
 					checkCompatibility(null, component, localMonitor.newChild(1));
 					Util.updateMonitor(localMonitor);
 				}
@@ -823,7 +823,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			scope = getSearchScope(component, (String[]) typenames.toArray(new String[typenames.size()]));
 		}
-		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getId()}), 2);
+		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getSymbolicName()}), 2);
 		ReferenceAnalyzer analyzer = new ReferenceAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
@@ -858,9 +858,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param monitor
 	 */
 	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
-		String id = component.getId();
+		String id = component.getSymbolicName();
 		if (DEBUG) {
-			System.out.println("comparing profiles ["+reference.getId()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			System.out.println("comparing profiles ["+reference.getSymbolicName()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		IApiTypeRoot classFile = null;
 		try {
@@ -884,7 +884,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				while (classFile == null && index < providers.length) {
 					IApiComponent p = providers[index];
 					if (!p.equals(component)) {
-						String id2 = p.getId();
+						String id2 = p.getSymbolicName();
 						if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 							classFile = p.findTypeRoot(typeName);
 						} else {
@@ -1011,15 +1011,15 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						IDelta.ADDED,
 						IDelta.API_COMPONENT,
 						null,
-						component.getId(),
-						component.getId());
+						component.getSymbolicName(),
+						component.getSymbolicName());
 				Util.updateMonitor(localmonitor, 5);
 			} else {
 				try {
 					delta = ApiComparator.compare(reference, component, VisibilityModifiers.API, localmonitor.newChild(1));
 				} finally {
 					if (DEBUG) {
-						System.out.println("Time spent for " + component.getId() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.out.println("Time spent for " + component.getSymbolicName() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					fPendingDeltaInfos.clear();
 				}
@@ -1350,7 +1350,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) throws CoreException {
 		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(
 				Path.EMPTY.toPortableString(),
-				new String[] {component.getId(), message },
+				new String[] {component.getSymbolicName(), message },
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
 				new Object[] {new Integer(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID)},
 				IElementDescriptor.RESOURCE,
@@ -1377,7 +1377,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							IApiTypeRoot typeRoot = null;
 							IApiType type = null;
 							try {
-								String id = component.getId();
+								String id = component.getSymbolicName();
 								if (Util.ORG_ECLIPSE_SWT.equals(id)) {
 									typeRoot = component.findTypeRoot(typeName);
 								} else {
@@ -1391,7 +1391,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									while (typeRoot == null && index < providers.length) {
 										IApiComponent p = providers[index];
 										if (!p.equals(component)) {
-											String id2 = p.getId();
+											String id2 = p.getSymbolicName();
 											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 												typeRoot = p.findTypeRoot(typeName);
 											} else {
@@ -1496,8 +1496,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		Version compversion = new Version(compversionval);
 		Version newversion = null;
 		if (DEBUG) {
-			System.out.println("reference version of " + reference.getId() + " : " + refversion); //$NON-NLS-1$ //$NON-NLS-2$
-			System.out.println("component version of " + component.getId() + " : " + compversion); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("reference version of " + reference.getSymbolicName() + " : " + refversion); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("component version of " + component.getSymbolicName() + " : " + compversion); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		IDelta[] breakingChanges = fBuildState.getBreakingChanges();
 		if (breakingChanges.length != 0) {
@@ -1835,8 +1835,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return Java project or <code>null</code>
 	 */
 	private IJavaProject getJavaProject(IApiComponent component) {
-		if (component instanceof PluginProjectApiComponent) {
-			PluginProjectApiComponent pp = (PluginProjectApiComponent) component;
+		if (component instanceof ProjectComponent) {
+			ProjectComponent pp = (ProjectComponent) component;
 			return pp.getJavaProject();
 		}
 		return null;

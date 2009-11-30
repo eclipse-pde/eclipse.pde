@@ -181,7 +181,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	public String getText(Object element) {
 		if (element instanceof IApiComponent) {
 			IApiComponent comp = (IApiComponent) element;
-			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getId(), comp.getVersion()});
+			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getSymbolicName(), comp.getVersion()});
 		}
 		if (element instanceof File) {
 			try {

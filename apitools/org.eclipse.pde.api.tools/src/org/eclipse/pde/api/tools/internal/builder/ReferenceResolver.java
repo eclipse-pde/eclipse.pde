@@ -145,7 +145,7 @@ public final class ReferenceResolver {
 	 */
 	private static String createSignatureKey(IReference reference) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(reference.getMember().getApiComponent().getId());
+		buffer.append(reference.getMember().getApiComponent().getSymbolicName());
 		buffer.append("#"); //$NON-NLS-1$
 		buffer.append(reference.getReferencedTypeName());
 		switch (reference.getReferenceType()) {

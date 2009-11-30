@@ -117,7 +117,7 @@ public final class ApiModelCache {
 				IApiComponent comp = element.getApiComponent();
 				if(comp != null) {
 					IApiBaseline baseline = comp.getBaseline();
-					String id = comp.getId();
+					String id = comp.getSymbolicName();
 					if(id == null) {
 						return;
 					}
@@ -129,7 +129,7 @@ public final class ApiModelCache {
 					Cache typecache = (Cache) compcache.get(id);
 					if(typecache == null) {
 						typecache = new Cache(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
-						compcache.put(comp.getId(), typecache);
+						compcache.put(comp.getSymbolicName(), typecache);
 					}
 					ApiType type = (ApiType) element;
 					if(type.isMemberType() || isMemberType(type.getName()) /*cache even a root type with a '$' in its name here as well*/) {
@@ -314,7 +314,7 @@ public final class ApiModelCache {
 					if(comp != null) {
 						try {
 							IApiBaseline baseline = comp.getBaseline();
-							return removeElementInfo(baseline.getName(), comp.getId(), element.getName(), element.getType());
+							return removeElementInfo(baseline.getName(), comp.getSymbolicName(), element.getName(), element.getType());
 						}
 						catch(CoreException ce) {}
 					}

@@ -26,8 +26,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.pde.api.tools.internal.model.BundleApiComponent;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.BundleComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
@@ -353,8 +353,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					 * Make sure that the resolved reference doesn't below to one of the imported package of
 					 * the current component
 					 */
-					if (apiComponent instanceof BundleApiComponent) {
-						BundleDescription bundle = ((BundleApiComponent)apiComponent).getBundleDescription();
+					if (apiComponent instanceof BundleComponent) {
+						BundleDescription bundle = ((BundleComponent)apiComponent).getBundleDescription();
 						ImportPackageSpecification[] importPackages = bundle.getImportPackages();
 						String referencedTypeName = reference.getReferencedTypeName();
 						int index = referencedTypeName.lastIndexOf('.');
@@ -434,8 +434,8 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				try {
 					IApiProblem problem = null;
 					IApiComponent component = reference.getMember().getApiComponent();
-					if (component instanceof PluginProjectApiComponent) {
-						PluginProjectApiComponent ppac = (PluginProjectApiComponent) component;
+					if (component instanceof ProjectComponent) {
+						ProjectComponent ppac = (ProjectComponent) component;
 						IJavaProject project = ppac.getJavaProject();
 						problem = createProblem(reference, project);
 					} else {

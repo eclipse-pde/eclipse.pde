@@ -95,7 +95,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 				this.containsErrors = true;
 				return false;
 			}
-			IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(component.getId());
+			IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(component.getSymbolicName());
 			if (referenceComponent != null && referenceComponent.getErrors() != null) {
 				this.containsErrors = true;
 				return false;
@@ -140,7 +140,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			this.containsErrors = true;
 			return;
 		}
-		IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(apiComponent.getId());
+		IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(apiComponent.getSymbolicName());
 		if (referenceComponent == null) return;
 		if (referenceComponent.getErrors() != null) {
 			this.containsErrors = true;

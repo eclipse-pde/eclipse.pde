@@ -148,7 +148,7 @@ public class ApiBaselineTests extends TestCase {
 	private void validateComponent(IApiBaseline baseline, String id, String name, String version, String environment, List<IRequiredComponentDescription> requiredComponents) throws CoreException {
 		IApiComponent component = baseline.getApiComponent(id);
 		
-		assertEquals("Id: ", id , component.getId());
+		assertEquals("Id: ", id , component.getSymbolicName());
 		assertEquals("Name: ", name , component.getName());
 		assertEquals("Version: ", version , component.getVersion());
 		String[] envs = component.getExecutionEnvironments();
@@ -273,7 +273,7 @@ public class ApiBaselineTests extends TestCase {
 		IApiComponent[] prerequisiteComponents = baseline.getPrerequisiteComponents(new IApiComponent[]{component});
 		for (int i = 0; i < prerequisiteComponents.length; i++) {
 			IApiComponent apiComponent = prerequisiteComponents[i];
-			if (apiComponent.getId().equals("org.eclipse.osgi")) {
+			if (apiComponent.getSymbolicName().equals("org.eclipse.osgi")) {
 				// done
 				return;
 			}
@@ -293,7 +293,7 @@ public class ApiBaselineTests extends TestCase {
 		assertEquals("Wrong number of dependents", 2, dependents.length);
 		for (int i = 0; i < dependents.length; i++) {
 			IApiComponent apiComponent = dependents[i];
-			if (apiComponent.getId().equals("component.b")) {
+			if (apiComponent.getSymbolicName().equals("component.b")) {
 				// done
 				return;
 			}

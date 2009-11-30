@@ -53,7 +53,7 @@ public class ComponentManifestTests extends TestCase {
 		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
 		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
-		assertEquals("Id: ", "org.eclipse.debug.ui" , component.getId());
+		assertEquals("Id: ", "org.eclipse.debug.ui" , component.getSymbolicName());
 		assertEquals("Name: ", "Debug Platform UI" , component.getName());
 		assertEquals("Version: ", "3.3.100.qualifier" , component.getVersion());
 		String[] envs = component.getExecutionEnvironments();

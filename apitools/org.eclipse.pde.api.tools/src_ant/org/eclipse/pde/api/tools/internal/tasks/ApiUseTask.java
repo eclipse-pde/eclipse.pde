@@ -311,7 +311,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 		if(!allowresolve) {
 			ResolverError[] errors = component.getErrors();
 			if(errors != null) {
-				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), errors)); 
+				this.notsearched.add(new SkippedComponent(component.getSymbolicName(), component.getVersion(), errors)); 
 				return false;
 			}
 		}
@@ -319,7 +319,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 			return false;
 		}
 		if(pattern != null) {
-			return pattern.matcher(component.getId()).matches();
+			return pattern.matcher(component.getSymbolicName()).matches();
 		}
 		return true;
 	}
@@ -343,13 +343,13 @@ public final class ApiUseTask extends CommonUtilsTask {
 		}
 		for (int i = 0; i < components.length; i++) {
 			if(acceptComponent(components[i], pattern, true)) {
-				ids.add(components[i].getId());
+				ids.add(components[i].getSymbolicName());
 			}
 			if(acceptComponent(components[i], pattern2, false)) {
 				scope.add(components[i]);
 			}
 			else {
-				this.notsearched.add(new SkippedComponent(components[i].getId(), components[i].getVersion(), components[i].getErrors()));
+				this.notsearched.add(new SkippedComponent(components[i].getSymbolicName(), components[i].getVersion(), components[i].getErrors()));
 			}
 		}
 	}

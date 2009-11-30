@@ -22,7 +22,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * Utility class for creating new {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}s
@@ -55,9 +54,8 @@ public class ApiModelFactory {
 	 * @exception CoreException if unable to create the component
 	 */
 	public static IApiComponent newApiComponent(IApiBaseline profile, String location) throws CoreException {
-		BundleApiComponent component = new BundleApiComponent(profile, location);
+		BundleComponent component = new BundleComponent(profile, location, getBundleID());
 		if(component.isValidBundle()) {
-			component.init(getBundleID());
 			return component;
 		}
 		return null;
@@ -66,14 +64,15 @@ public class ApiModelFactory {
 	/**
 	 * Creates and returns a new API component for this profile based on the given
 	 * model or <code>null</code> if the given model cannot be resolved or does not contain
-	 * a valid API component. The component is not added to the profile.
+	 * a valid API component. The component is not added to the baseline.
 	 *
+	 * @param baseline
 	 * @param model the given model
 	 * @return API component or <code>null</code> if the given model cannot be resolved or does not contain
 	 * a valid API component
 	 * @exception CoreException if unable to create the component
 	 */
-	public static IApiComponent newApiComponent(IApiBaseline profile, IPluginModelBase model) throws CoreException {
+	public static IApiComponent newApiComponent(IApiBaseline baseline, IPluginModelBase model) throws CoreException {
 		BundleDescription bundleDescription = model.getBundleDescription();
 		if (bundleDescription == null) {
 			return null;
@@ -82,36 +81,14 @@ public class ApiModelFactory {
 		if (location == null) {
 			return null;
 		}
-		BundleApiComponent component = null;
-		IPluginModelBase model2 = getProjectModel(location);
-		if (model2 != null && model == model2) {
-			if (isBinaryProject(location)) {
-				component = new BundleApiComponent(profile, location);
-			} else {
-				component = new PluginProjectApiComponent(profile, location, model);
-			}
+		BundleComponent component = null;
+		if (isBinaryProject(location)) {
+			component = new BundleComponent(baseline, location, getBundleID());
 		} else {
-			component = new BundleApiComponent(profile, location);
+			component = new ProjectComponent(baseline, location, model, getBundleID());
 		}
 		if(component.isValidBundle()) {
-			component.init(getBundleID());
 			return component;
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the plug-in model associated with the project at the specified location
-	 * or <code>null</code> if none (i.e. if its an external model).
-	 * 
-	 * @param project location
-	 * @return plug-in model or <code>null</code> if none
-	 */
-	private static IPluginModelBase getProjectModel(String location) {
-		String projectName = (new Path(location)).lastSegment();
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		if (project != null) {
-			return PluginRegistry.findModel(project); 
 		}
 		return null;
 	}
@@ -130,7 +107,7 @@ public class ApiModelFactory {
 	private static boolean isBinaryProject(String location) throws CoreException {
 		IPath path = new Path(location);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-		return project != null && Util.isBinaryProject(project);
+		return project != null && (!project.exists() || Util.isBinaryProject(project));
 	}
 
 	/**

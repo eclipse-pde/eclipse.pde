@@ -114,7 +114,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 					if(pparts.length != 2) {
 						continue;
 					}
-					if(container.getApiComponent().getId().equals(pparts[0])) {
+					if(container.getApiComponent().getSymbolicName().equals(pparts[0])) {
 						if(container.getName().endsWith(pparts[1])) {
 							return false;
 						}
@@ -133,7 +133,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 			IApiMember member = reference.getResolvedReference();
 			if(member != null) {
 				IApiComponent component = member.getApiComponent();
-				if(!fComponentIds.contains(component.getId())) {
+				if(!fComponentIds.contains(component.getSymbolicName())) {
 					return false;
 				}
 				if(component.equals(reference.getMember().getApiComponent())) {

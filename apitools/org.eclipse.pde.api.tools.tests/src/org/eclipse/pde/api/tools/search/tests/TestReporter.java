@@ -86,7 +86,7 @@ public class TestReporter implements IApiSearchReporter {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement, org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
 	 */
 	public void reportResults(IApiElement element, IReference[] references) {
-		String name = (element.getType() == IApiElement.COMPONENT ? ((IApiComponent)element).getId() : element.getName());
+		String name = (element.getType() == IApiElement.COMPONENT ? ((IApiComponent)element).getSymbolicName() : element.getName());
 		if(this.references == null) {
 			//expecting no references
 			if(references.length > 0) {

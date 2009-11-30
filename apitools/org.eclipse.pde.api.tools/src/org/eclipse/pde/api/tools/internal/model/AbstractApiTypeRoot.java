@@ -47,7 +47,7 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 		IApiType type = null;
 		if(comp != null) {
 			IApiBaseline baseline = comp.getBaseline();
-			type = (IApiType) cache.getElementInfo(baseline.getName(), comp.getId(), this.getTypeName(), IApiElement.TYPE);
+			type = (IApiType) cache.getElementInfo(baseline.getName(), comp.getSymbolicName(), this.getTypeName(), IApiElement.TYPE);
 		}
 		if(type == null) {
 			type = TypeStructureBuilder.buildTypeStructure(getContents(), getApiComponent(), this);

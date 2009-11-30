@@ -259,7 +259,7 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 		if(!allowresolve) {
 			ResolverError[] errors = component.getErrors();
 			if(errors != null) {
-				this.notsearched.add(new SkippedComponent(component.getId(), component.getVersion(), errors)); 
+				this.notsearched.add(new SkippedComponent(component.getSymbolicName(), component.getVersion(), errors)); 
 				return false;
 			}
 		}
@@ -267,7 +267,7 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 			return false;
 		}
 		if(pattern != null) {
-			return pattern.matcher(component.getId()).matches();
+			return pattern.matcher(component.getSymbolicName()).matches();
 		}
 		return true;
 	}

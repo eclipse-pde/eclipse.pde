@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -42,6 +44,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.osgi.framework.BundleException;
 
 /**
  * An API component for a plug-in project in the workspace.
@@ -50,7 +53,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
  * </p>
  * @since 1.0.0
  */
-public class PluginProjectApiComponent extends BundleApiComponent {
+public class ProjectComponent extends BundleComponent {
 	
 	/**
 	 * Constant used for controlling tracing in the plug-in workspace component
@@ -87,14 +90,14 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	/**
 	 * Constructs an API component for the given Java project in the specified profile.
 	 * 
-	 * @param profile the owning profile
+	 * @param baseline the owning API baseline
 	 * @param location the given location of the component
 	 * @param model the given model
-	 * @param project java project
+	 * @param bundleid
 	 * @throws CoreException if unable to create the API component
 	 */
-	public PluginProjectApiComponent(IApiBaseline profile, String location, IPluginModelBase model) throws CoreException {
-		super(profile, location);
+	public ProjectComponent(IApiBaseline baseline, String location, IPluginModelBase model, long bundleid) throws CoreException {
+		super(baseline, location, bundleid);
 		IPath path = new Path(location);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
@@ -105,8 +108,15 @@ public class PluginProjectApiComponent extends BundleApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#isBinaryBundle()
 	 */
-	protected boolean isBinaryBundle() {
+	protected boolean isBinary() {
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleApiComponent#getBundleDescription(java.util.Dictionary, java.lang.String, long)
+	 */
+	protected BundleDescription getBundleDescription(Dictionary manifest, String location, long id) throws BundleException {
+		return fModel.getBundleDescription();
 	}
 	
 	/* (non-Javadoc)

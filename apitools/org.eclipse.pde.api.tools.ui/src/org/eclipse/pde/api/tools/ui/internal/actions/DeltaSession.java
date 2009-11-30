@@ -436,7 +436,7 @@ public class DeltaSession implements ISession {
 					if (apiComponent != null && (kind == IDelta.REMOVED)) {
 						// need to handle reexported types
 						IApiTypeRoot typeRoot = null;
-						String id = apiComponent.getId();
+						String id = apiComponent.getSymbolicName();
 						switch(delta.getFlags()) {
 							case IDelta.REEXPORTED_TYPE :
 							case IDelta.REEXPORTED_API_TYPE :
@@ -452,7 +452,7 @@ public class DeltaSession implements ISession {
 								while (typeRoot == null && index < providers.length) {
 									IApiComponent p = providers[index];
 									if (!p.equals(apiComponent)) {
-										String id2 = p.getId();
+										String id2 = p.getSymbolicName();
 										if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 											typeRoot = p.findTypeRoot(typeName);
 										} else {
@@ -484,7 +484,7 @@ public class DeltaSession implements ISession {
 						IApiComponent apiComponent = baseline.getApiComponent(componentID);
 						if (apiComponent != null) {
 							IApiTypeRoot typeRoot = null;
-							String id = apiComponent.getId();
+							String id = apiComponent.getSymbolicName();
 							switch(delta.getFlags()) {
 								case IDelta.REEXPORTED_TYPE :
 								case IDelta.REEXPORTED_API_TYPE :
@@ -500,7 +500,7 @@ public class DeltaSession implements ISession {
 									while (typeRoot == null && index < providers.length) {
 										IApiComponent p = providers[index];
 										if (!p.equals(apiComponent)) {
-											String id2 = p.getId();
+											String id2 = p.getSymbolicName();
 											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 												typeRoot = p.findTypeRoot(typeName);
 											} else {

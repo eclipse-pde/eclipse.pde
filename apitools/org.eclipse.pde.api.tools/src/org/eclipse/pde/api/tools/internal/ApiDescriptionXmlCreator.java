@@ -72,7 +72,7 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 	 * @throws CoreException if unable to construct the visitor
 	 */
 	public ApiDescriptionXmlCreator(IApiComponent component) throws CoreException {
-		this(component.getName(), component.getId());
+		this(component.getName(), component.getSymbolicName());
 	}
 
 	/**

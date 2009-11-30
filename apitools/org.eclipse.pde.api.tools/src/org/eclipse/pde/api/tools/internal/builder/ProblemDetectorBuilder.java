@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -86,22 +86,22 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			default:
 				if (!RestrictionModifiers.isUnrestricted(mask)) {
 					if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
-						fIllegalOverride.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
+						fIllegalOverride.addIllegalMethod((IMethodDescriptor) element, fComponent.getSymbolicName());
 					}
 					if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
-						fIllegalExtends.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
+						fIllegalExtends.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getSymbolicName());
 					}
 					if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
-						fIllegalImplements.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
+						fIllegalImplements.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getSymbolicName());
 					}
 					if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
-						fIllegalInstantiate.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getId());
+						fIllegalInstantiate.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getSymbolicName());
 					}
 					if (RestrictionModifiers.isReferenceRestriction(mask)) {
 						if (element.getElementType() == IElementDescriptor.METHOD && fIllegalMethodRef != null) {
-							fIllegalMethodRef.addIllegalMethod((IMethodDescriptor) element, fComponent.getId());
+							fIllegalMethodRef.addIllegalMethod((IMethodDescriptor) element, fComponent.getSymbolicName());
 						} else if (element.getElementType() == IElementDescriptor.FIELD && fIllegalFieldRef != null) {
-							fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getId());
+							fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getSymbolicName());
 						}
 					}
 				}
@@ -122,8 +122,8 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 * if the component is not a {@link PluginProjectApiComponent}
 	 */
 	private IProject getProject(IApiComponent component) {
-		if(component instanceof PluginProjectApiComponent) {
-			PluginProjectApiComponent comp = (PluginProjectApiComponent) component;
+		if(component instanceof ProjectComponent) {
+			ProjectComponent comp = (ProjectComponent) component;
 			return comp.getJavaProject().getProject();
 		}
 		return null;

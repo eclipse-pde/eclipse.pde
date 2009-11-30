@@ -72,7 +72,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 		IApiMember method = reference.getResolvedReference();
 		String componentId = (String) fMethodComponents.get(method.getHandle());
 		// TODO: would it be faster to store component objects and use identity instead of equals?
-		return componentId != null && method.getApiComponent().getId().equals(componentId);
+		return componentId != null && method.getApiComponent().getSymbolicName().equals(componentId);
 	}
 	
 	/* (non-Javadoc)

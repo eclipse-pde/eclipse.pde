@@ -116,7 +116,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		for (int i = 0; i < containers.length; i++) {
 			comp = (IApiComponent) containers[i].getAncestor(IApiElement.COMPONENT);
 			if(comp != null) {
-				origin = comp.getId();
+				origin = comp.getSymbolicName();
 			}
 			if (origin == null) {
 				IApiTypeRoot file = containers[i].findTypeRoot(qualifiedName);
@@ -180,7 +180,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		IApiTypeContainer container = null;
 		for (Iterator iterator = this.fApiTypeContainers.iterator(); iterator.hasNext(); ) {
 			container = (IApiTypeContainer) iterator.next();
-			origin = ((IApiComponent)container.getAncestor(IApiElement.COMPONENT)).getId();
+			origin = ((IApiComponent)container.getAncestor(IApiElement.COMPONENT)).getSymbolicName();
 			if (origin != null && origin.equals(id)) {
 				containers.add(container);
 			}

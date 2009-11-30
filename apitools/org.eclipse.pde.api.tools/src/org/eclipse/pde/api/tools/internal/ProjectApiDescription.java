@@ -33,8 +33,8 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.pde.api.tools.internal.model.BundleApiComponent;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.BundleComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -563,8 +563,8 @@ public class ProjectApiDescription extends ApiDescription {
 						for (int i = 0; i < fragments.length; i++) {
 							names.add(fragments[i].getElementName());
 						}
-						PluginProjectApiComponent component = getApiComponent();
-						BundleApiComponent.initializeApiDescription(this, component.getBundleDescription(), names);
+						ProjectComponent component = getApiComponent();
+						BundleComponent.initializeApiDescription(this, component.getBundleDescription(), names);
 						fPackageTimeStamp = fManifestFile.getModificationStamp();
 					} catch (CoreException e) {
 						ApiPlugin.log(e.getStatus());
@@ -712,9 +712,9 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @return API component
 	 * @exception CoreException if the API component cannot be located
 	 */
-	private PluginProjectApiComponent getApiComponent() throws CoreException {
+	private ProjectComponent getApiComponent() throws CoreException {
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
-		PluginProjectApiComponent component = (PluginProjectApiComponent) baseline.getApiComponent(getJavaProject().getProject());
+		ProjectComponent component = (ProjectComponent) baseline.getApiComponent(getJavaProject().getProject());
 		if (component == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve project API component for API description"));  //$NON-NLS-1$
 		}

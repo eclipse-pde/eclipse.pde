@@ -30,11 +30,11 @@ public interface IApiComponent extends IApiTypeContainer {
 	
 	/**
 	 * Returns this component's symbolic name. This is a handle-only 
-	 * method - the component may not exist or ay be disposed.
+	 * method - the component may not exist or may be disposed.
 	 * 
 	 * @return component's symbolic name
 	 */
-	public String getId();
+	public String getSymbolicName();
 	
 	/**
 	 * Returns this component's API description.

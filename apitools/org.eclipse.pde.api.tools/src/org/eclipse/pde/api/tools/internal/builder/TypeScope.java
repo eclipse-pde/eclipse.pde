@@ -130,7 +130,7 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findClassFile(java.lang.String, java.lang.String)
 	 */
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
-		if (fComponent.getId().equals(id)) {
+		if (fComponent.getSymbolicName().equals(id)) {
 			return findTypeRoot(qualifiedName);
 		}
 		return null;

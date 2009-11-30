@@ -31,7 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
  * 
  * @since 1.0.0
  */
-public class SystemLibraryApiComponent extends AbstractApiComponent {
+public class SystemLibraryApiComponent extends Component {
 	
 	/**
 	 * Execution environment profile symbolic name.
@@ -84,7 +84,7 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#createApiDescription()
 	 */
 	protected IApiDescription createApiDescription() throws CoreException {
-		IApiDescription api = new ApiDescription(getId());
+		IApiDescription api = new ApiDescription(getSymbolicName());
 		for (int i = 0; i < fSystemPackages.length; i++) {
 			IPackageDescriptor pkg  = Factory.packageDescriptor(fSystemPackages[i]);
 			api.setVisibility(pkg, VisibilityModifiers.API);
@@ -130,7 +130,7 @@ public class SystemLibraryApiComponent extends AbstractApiComponent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getId()
 	 */
-	public String getId() {
+	public String getSymbolicName() {
 		return fExecEnv[0];
 	}
 	

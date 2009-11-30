@@ -21,7 +21,7 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
-import org.eclipse.pde.api.tools.internal.model.AbstractApiComponent;
+import org.eclipse.pde.api.tools.internal.model.Component;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -92,7 +92,7 @@ public class BadClassfileTests extends TestCase {
 	 */
 	public void testSearchEngine() throws Exception {
 		writePreamble("testSearchEngine()");
-		final AbstractApiComponent component = new AbstractApiComponent(null) {
+		final Component component = new Component(null) {
 			public boolean isSystemComponent() {return false;}
 			public boolean isSourceComponent() throws CoreException {return false;}
 			public boolean isFragment() throws CoreException {return false;}
@@ -102,7 +102,7 @@ public class BadClassfileTests extends TestCase {
 			public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {return null;}
 			public String[] getLowestEEs() throws CoreException {return null;}
 			public String getLocation() {return null;}
-			public String getId() {return "test";}
+			public String getSymbolicName() {return "test";}
 			public String[] getExecutionEnvironments() throws CoreException {return null;}
 			public ResolverError[] getErrors() throws CoreException {return null;}
 			protected List createApiTypeContainers() throws CoreException {

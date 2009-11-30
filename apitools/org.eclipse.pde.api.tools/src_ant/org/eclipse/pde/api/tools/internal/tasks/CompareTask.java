@@ -107,7 +107,7 @@ public class CompareTask extends CommonUtilsTask {
 							pattern = Pattern.compile(componentName);
 							for (int j = 0, max2 = apiComponents.length; j < max2; j++) {
 								IApiComponent apiComponent = apiComponents[j];
-								String componentId = apiComponent.getId();
+								String componentId = apiComponent.getSymbolicName();
 								Matcher matcher = pattern.matcher(componentId);
 								if (matcher.matches()) {
 									scope.addElement(apiComponent);

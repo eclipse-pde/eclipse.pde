@@ -92,7 +92,7 @@ public class ClassFileComparator {
 					if (result == null) {
 						// TODO should we report this failure ?
 						if (Debug) {
-							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in profile " + profile.getName() + " from component " + apiComponent.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in profile " + profile.getName() + " from component " + apiComponent.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 						break;
 					}
@@ -3228,20 +3228,20 @@ public class ClassFileComparator {
 		String packageName = Signatures.getPackageName(typeName);
 		IApiComponent[] components = profile.resolvePackage(component, packageName);
 		if (components == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getId()});
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getSymbolicName()});
 			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
-			reportStatus(new Status(IStatus.ERROR, component.getId(), msg));
+			reportStatus(new Status(IStatus.ERROR, component.getSymbolicName(), msg));
 			return null;
 		}
 		IApiTypeRoot result = Util.getClassFile(components, typeName); 
 		if (result == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getId()});
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getSymbolicName()});
 			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
-			reportStatus(new Status(IStatus.ERROR, component.getId(), msg));
+			reportStatus(new Status(IStatus.ERROR, component.getSymbolicName(), msg));
 			return null;
 		}
 		return result;

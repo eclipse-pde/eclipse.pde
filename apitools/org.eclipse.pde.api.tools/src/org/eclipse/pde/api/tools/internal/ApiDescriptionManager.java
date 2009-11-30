@@ -41,7 +41,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode;
 import org.eclipse.pde.api.tools.internal.ProjectApiDescription.TypeNode;
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
@@ -118,7 +118,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 * @param project Java project
 	 * @return API description
 	 */
-	public synchronized IApiDescription getApiDescription(PluginProjectApiComponent component, BundleDescription bundle) {
+	public synchronized IApiDescription getApiDescription(ProjectComponent component, BundleDescription bundle) {
 		IJavaProject project = component.getJavaProject();
 		ProjectApiDescription description = (ProjectApiDescription) fDescriptions.get(project);
 		if (description == null) {

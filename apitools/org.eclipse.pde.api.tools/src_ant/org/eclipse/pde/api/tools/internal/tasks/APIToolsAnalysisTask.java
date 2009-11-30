@@ -598,7 +598,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			Set visitedApiComponentNames = new HashSet();
 			for (int i = 0; i < length; i++) {
 				IApiComponent apiComponent = apiComponents[i];
-				String name = apiComponent.getId();
+				String name = apiComponent.getSymbolicName();
 				visitedApiComponentNames.add(name);
 				if (apiComponent.isSystemComponent()) {
 					continue;
@@ -644,7 +644,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			IApiComponent[] baselineApiComponents = referenceBaseline.getApiComponents();
 			for (int i = 0, max = baselineApiComponents.length; i < max; i++) {
 				IApiComponent apiComponent = baselineApiComponents[i];
-				String id = apiComponent.getId();
+				String id = apiComponent.getSymbolicName();
 				if (!visitedApiComponentNames.remove(id)) {
 					//remove component in the current baseline
 					IApiProblem problem = ApiProblemFactory.newApiProblem(id,

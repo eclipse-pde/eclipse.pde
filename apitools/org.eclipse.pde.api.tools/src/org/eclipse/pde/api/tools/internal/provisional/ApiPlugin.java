@@ -43,7 +43,7 @@ import org.eclipse.pde.api.tools.internal.builder.ReferenceExtractor;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceResolver;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
@@ -587,7 +587,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			}
 			option = Platform.getDebugOption(PLUGIN_WORKSPACE_COMPONENT_DEBUG);
 			if(option != null) {
-				PluginProjectApiComponent.setDebug(option.equalsIgnoreCase(TRUE));
+				ProjectComponent.setDebug(option.equalsIgnoreCase(TRUE));
 			}
 			option = Platform.getDebugOption(API_PROFILE_MANAGER_DEBUG);
 			if(option != null) {

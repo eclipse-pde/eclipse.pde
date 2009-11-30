@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  * 
  * @since 1.0.0
  */
-public abstract class AbstractApiComponent extends AbstractApiTypeContainer implements IApiComponent {
+public abstract class Component extends AbstractApiTypeContainer implements IApiComponent {
 	/**
 	 * API description
 	 */
@@ -46,7 +46,7 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	 * 
 	 * @param baseline the parent {@link IApiBaseline}
 	 */
-	public AbstractApiComponent(IApiBaseline baseline) {
+	public Component(IApiBaseline baseline) {
 		super(baseline, IApiElement.COMPONENT, null);
 	}
 	
@@ -60,15 +60,15 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 		visitor.end(this);
 	}	
 		
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHost()
 	 */
 	public IApiComponent getHost() throws CoreException {
 		return null;
 	}
 	
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#getBaseline()
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getBaseline()
 	 */
 	public IApiBaseline getBaseline() {
 		return (IApiBaseline) getAncestor(IApiElement.BASELINE);
@@ -83,7 +83,11 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		fApiDescription = null;
+		finally {
+			synchronized(this) {
+				fApiDescription = null;
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -161,14 +165,14 @@ public abstract class AbstractApiComponent extends AbstractApiTypeContainer impl
 	 */
 	public IApiProblemFilter newProblemFilter(IApiProblem problem) throws CoreException {
 		//TODO either expose a way to make problems or change the method to accept the parts of a problem
-		return new ApiProblemFilter(getId(), problem);
+		return new ApiProblemFilter(getSymbolicName(), problem);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHandle()
 	 */
 	public IElementDescriptor getHandle() {
-		return Factory.componentDescriptor(this.getId(), this.getVersion());
+		return Factory.componentDescriptor(this.getSymbolicName(), this.getVersion());
 	}
 	
 	/* (non-Javadoc)

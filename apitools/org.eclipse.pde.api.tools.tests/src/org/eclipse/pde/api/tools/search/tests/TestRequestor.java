@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.search.tests;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
@@ -161,7 +161,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	 */
 	private boolean acceptComponent0(IApiComponent component) throws CoreException {
 		return component != null &&  
-				!this.excluded.contains(component.getId()) && 
+				!this.excluded.contains(component.getSymbolicName()) && 
 				isApiComponent(component);
 	}
 	
@@ -172,8 +172,8 @@ public class TestRequestor implements IApiSearchRequestor {
 	 * @return true if the project represented by the given component is API tools enabled false otherwise
 	 */
 	private boolean isApiComponent(IApiComponent component) {
-		if(component instanceof PluginProjectApiComponent) {
-			PluginProjectApiComponent comp = (PluginProjectApiComponent) component;
+		if(component instanceof ProjectComponent) {
+			ProjectComponent comp = (ProjectComponent) component;
 			return comp.hasApiDescription();
 		}
 		else {

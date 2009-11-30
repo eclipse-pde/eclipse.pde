@@ -145,7 +145,7 @@ public class ApiComparator {
 				Util.updateMonitor(localmonitor);
 				IApiComponent apiComponent = apiComponents[i];
 				if (!apiComponent.isSystemComponent()) {
-					String id = apiComponent.getId();
+					String id = apiComponent.getSymbolicName();
 					IApiComponent apiComponent2 = baseline.getApiComponent(id);
 					IDelta delta = null;
 					if (apiComponent2 == null) {
@@ -186,7 +186,7 @@ public class ApiComparator {
 				Util.updateMonitor(localmonitor);
 				IApiComponent apiComponent = apiComponents2[i];
 				if (!apiComponent.isSystemComponent()) {
-					String id = apiComponent.getId();
+					String id = apiComponent.getSymbolicName();
 					if (!apiComponentsIds.contains(id)) {
 						// addition of an API component
 						globalDelta.add(
@@ -240,7 +240,7 @@ public class ApiComparator {
 			Util.updateMonitor(localmonitor, 1);
 			IDelta delta = null;
 			if (!component.isSystemComponent()) {
-				String id = component.getId();
+				String id = component.getSymbolicName();
 				IApiComponent apiComponent2 = referenceBaseline.getApiComponent(id);
 				if (apiComponent2 == null) {
 					// report addition of an API component
@@ -313,10 +313,10 @@ public class ApiComparator {
 						IDelta.ADDED,
 						IDelta.API_COMPONENT,
 						null,
-						component2.getId(),
+						component2.getSymbolicName(),
 						Util.getComponentVersionsId(component2));
 			} else if (component2 == null) {
-				String referenceComponentId = referenceComponent.getId();
+				String referenceComponentId = referenceComponent.getSymbolicName();
 				return new Delta(
 						null,
 						IDelta.API_PROFILE_ELEMENT_TYPE,
@@ -330,7 +330,7 @@ public class ApiComparator {
 			if (referenceBaseline == null || baseline == null) {
 				throw new IllegalArgumentException("The baselines cannot be null"); //$NON-NLS-1$
 			}
-			String referenceComponentId = referenceComponent.getId();
+			String referenceComponentId = referenceComponent.getSymbolicName();
 			final Delta globalDelta = new Delta();
 	
 			// check the EE first
@@ -451,7 +451,7 @@ public class ApiComparator {
 			}
 			String typeName = typeRoot2.getTypeName();
 			IApiTypeRoot typeRoot = null;
-			String id = component.getId();
+			String id = component.getSymbolicName();
 			if (Util.ORG_ECLIPSE_SWT.equals(id)) {
 				typeRoot = component.findTypeRoot(typeName);
 			} else {
@@ -737,7 +737,7 @@ public class ApiComparator {
 			final Delta globalDelta, 
 			final IProgressMonitor monitor) throws CoreException {
 		final Set typeRootBaseLineNames = new HashSet();
-		final String id = component.getId();
+		final String id = component.getSymbolicName();
 		IApiTypeContainer[] typeRootContainers = null;
 		IApiTypeContainer[] typeRootContainers2 = null;
 		final SubMonitor localmonitor = SubMonitor.convert(monitor, 4);
@@ -790,7 +790,7 @@ public class ApiComparator {
 										Util.updateMonitor(localmonitor);
 										IApiComponent p = providers[index];
 										if (!p.equals(component2)) {
-											String id2 = p.getId();
+											String id2 = p.getSymbolicName();
 											if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 												typeRoot2 = p.findTypeRoot(typeName);
 											} else {
@@ -965,7 +965,7 @@ public class ApiComparator {
 												while (typeRoot2 == null && index < providers.length) {
 													IApiComponent p = providers[index];
 													if (!p.equals(component2)) {
-														String id2 = p.getId();
+														String id2 = p.getSymbolicName();
 														if (Util.ORG_ECLIPSE_SWT.equals(id2)) {
 															typeRoot2 = p.findTypeRoot(typeName);
 														} else {

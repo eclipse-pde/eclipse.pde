@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.pde.api.tools.internal.model.PluginProjectApiComponent;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -368,8 +368,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					try {
 						IApiProblem problem = null;
 						IApiComponent component = reference.getMember().getApiComponent();
-						if (component instanceof PluginProjectApiComponent) {
-							PluginProjectApiComponent ppac = (PluginProjectApiComponent) component;
+						if (component instanceof ProjectComponent) {
+							ProjectComponent ppac = (ProjectComponent) component;
 							IJavaProject project = ppac.getJavaProject();
 							problem = createProblem(reference, project);
 						} else {
