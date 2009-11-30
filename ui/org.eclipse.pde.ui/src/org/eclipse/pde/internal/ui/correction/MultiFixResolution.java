@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution;
@@ -27,26 +28,24 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 public class MultiFixResolution extends WorkbenchMarkerResolution {
 
 	IMarker fMarker;
-	String fCategory;
 	// if quick fix is invoked from editor, then fix all related markers. If invoked from problem view, fix only the selected ones.
 	boolean problemViewQuickFix;
 
-	public MultiFixResolution(IMarker marker, String category) {
+	public MultiFixResolution(IMarker marker) {
 		fMarker = marker;
-		fCategory = category;
 		problemViewQuickFix = false;
 	}
 
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		ArrayList relatedMarkers = new ArrayList();
-		for (int i = 0; i < markers.length; i++) {
-			try {
-				if (markers[i].getAttribute(PDEMarkerFactory.CAT_ID).equals(fCategory) && !markers[i].equals(fMarker)) {
+		try {
+			String markerCategory = (String) fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
+			for (int i = 0; i < markers.length; i++) {
+				if (markerCategory.equals(markers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && !markers[i].equals(fMarker)) {
 					relatedMarkers.add(markers[i]);
 				}
-			} catch (CoreException e) {
 			}
-
+		} catch (CoreException e) {
 		}
 		problemViewQuickFix = true;
 		return (IMarker[]) relatedMarkers.toArray(new IMarker[relatedMarkers.size()]);
@@ -57,7 +56,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 	}
 
 	public Image getImage() {
-		return null;
+		return PDEPluginImages.DESC_ADD_ATT.createImage();
 	}
 
 	public String getLabel() {

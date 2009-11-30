@@ -110,8 +110,13 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		ArrayList resolutions = new ArrayList(2);
 		resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker));
 		try {
-			if (marker.getAttribute(PDEMarkerFactory.CAT_ID).equals(PDEMarkerFactory.CAT_EE)) {
-				resolutions.add(new MultiFixResolution(marker, PDEMarkerFactory.CAT_EE));
+			String markerCategory = (String) marker.getAttribute(PDEMarkerFactory.CAT_ID);
+			IMarker[] relatedMarkers = marker.getResource().findMarkers(marker.getType(), true, IResource.DEPTH_INFINITE);
+			for (int i = 0; i < relatedMarkers.length; i++) {
+				if (markerCategory.equals(relatedMarkers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && !marker.equals(relatedMarkers[i])) {
+					resolutions.add(new MultiFixResolution(marker));
+					break;
+				}
 			}
 		} catch (CoreException e) {
 		}
