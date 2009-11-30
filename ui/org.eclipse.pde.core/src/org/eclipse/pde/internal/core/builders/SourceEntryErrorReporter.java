@@ -242,7 +242,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					String libName = (String) sourceFolder.getLibs().get(0);
 					//error - missing output folder
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, sourceFolderName, PROPERTY_OUTPUT_PREFIX + libName);
-					prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getName(), message, PDEMarkerFactory.B_ADDDITION, PDEMarkerFactory.CAT_OTHER);
+					prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getName(), message, PDEMarkerFactory.B_ADDDITION, CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_MISSING_OUTPUT), PDEMarkerFactory.CAT_OTHER);
 				}
 
 				if (sourceFolder.getDupeLibName() != null) {

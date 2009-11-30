@@ -839,7 +839,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		prepareError(name, token, message, fixId, fBuildSeverity, category);
 	}
 
-	private void prepareError(String name, String token, String message, int fixId, int severity, String category) {
+	protected void prepareError(String name, String token, String message, int fixId, int severity, String category) {
 		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity, category);
 		for (int i = 0; i < fProblemList.size(); i++) {
 			BuildProblem listed = (BuildProblem) fProblemList.get(i);
