@@ -10,46 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.StringTokenizer;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEPreferencesManager;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.TracingOptionsManager;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
 
 public class LaunchArgumentsHelper {
@@ -161,7 +141,7 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static String getInitialProgramArguments() {
-		StringBuffer buffer = new StringBuffer("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"); //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"); //$NON-NLS-1$
 
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
