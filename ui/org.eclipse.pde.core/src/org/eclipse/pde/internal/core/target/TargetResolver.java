@@ -58,12 +58,15 @@ public class TargetResolver {
 			IInstallableUnit unit = (IInstallableUnit) object;
 			for (int i = 0; i < fDescriptions.length; i++) {
 				if (fDescriptions[i].getId().equalsIgnoreCase(unit.getId()) && fDescriptions[i].getVersion().equals(unit.getVersion())) {
-					// TODO Unexpected problem when testing
-					if (unit.getId().indexOf("feature.jar") >= 0) {
-						return false;
+
+					// TODO Having problems slicing non-bundle IUs
+					IProvidedCapability[] provided = unit.getProvidedCapabilities();
+					for (int j = 0; j < provided.length; j++) {
+						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+							return true;
+						}
 					}
 
-					return true;
 				}
 			}
 			return false;
@@ -315,10 +318,10 @@ public class TargetResolver {
 		PermissiveSlicer slicer = null;
 		Properties props = new Properties();
 		// TODO How to handle platform specific problems
-//		props.setProperty("osgi.os", fTarget.getOS() != null ? fTarget.getOS() : Platform.getOS()); //$NON-NLS-1$
-//		props.setProperty("osgi.ws", fTarget.getWS() != null ? fTarget.getWS() : Platform.getWS()); //$NON-NLS-1$
-//		props.setProperty("osgi.arch", fTarget.getArch() != null ? fTarget.getArch() : Platform.getOSArch()); //$NON-NLS-1$
-//		props.setProperty("osgi.nl", fTarget.getNL() != null ? fTarget.getNL() : Platform.getNL()); //$NON-NLS-1$
+		props.setProperty("osgi.os", fTarget.getOS() != null ? fTarget.getOS() : Platform.getOS()); //$NON-NLS-1$
+		props.setProperty("osgi.ws", fTarget.getWS() != null ? fTarget.getWS() : Platform.getWS()); //$NON-NLS-1$
+		props.setProperty("osgi.arch", fTarget.getArch() != null ? fTarget.getArch() : Platform.getOSArch()); //$NON-NLS-1$
+		props.setProperty("osgi.nl", fTarget.getNL() != null ? fTarget.getNL() : Platform.getNL()); //$NON-NLS-1$
 		slicer = new PermissiveSlicer(allRepos, props, true, false, false, true, false);
 		subMon.worked(10);
 
@@ -341,7 +344,7 @@ public class TargetResolver {
 
 	public Collection calculateMissingIUs(IProgressMonitor monitor) {
 		// TODO Copy logic from other method?
-		return calculateIncludedIUs(monitor);
+		return null;
 	}
 
 	public Collection calculateIncludedIUs(IProgressMonitor monitor) {

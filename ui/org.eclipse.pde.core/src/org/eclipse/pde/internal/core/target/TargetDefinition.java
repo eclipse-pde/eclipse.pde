@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
@@ -176,8 +175,11 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public BundleInfo[] getMissingUnits(IProgressMonitor monitor) {
 		if (isResolved()) {
-			Collection missing = fResolver.calculateMissingIUs(monitor);
-			return (BundleInfo[]) missing.toArray(new BundleInfo[missing.size()]);
+			return new BundleInfo[0];
+
+			// TODO Problems here
+//			Collection missing = fResolver.calculateMissingIUs(monitor);
+//			return (BundleInfo[]) missing.toArray(new BundleInfo[missing.size()]);
 		}
 		return null;
 	}
@@ -232,6 +234,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#addIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
 	public void addIncluded(BundleInfo[] toAdd) {
+		if (fIncluded == null) {
+			fIncluded = new HashSet();
+		}
 		for (int i = 0; i < toAdd.length; i++) {
 			fIncluded.add(toAdd[i]);
 		}
@@ -241,8 +246,10 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#removeIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
 	public void removeIncluded(BundleInfo[] toRemove) {
-		for (int i = 0; i < toRemove.length; i++) {
-			fIncluded.remove(toRemove[i]);
+		if (fIncluded != null) {
+			for (int i = 0; i < toRemove.length; i++) {
+				fIncluded.remove(toRemove[i]);
+			}
 		}
 	}
 
@@ -267,6 +274,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#addOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
 	public void addOptional(BundleInfo[] toAdd) {
+		if (fOptional == null) {
+			fOptional = new HashSet();
+		}
 		for (int i = 0; i < toAdd.length; i++) {
 			fOptional.add(toAdd[i]);
 		}
@@ -276,8 +286,10 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#removeOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
 	public void removeOptional(BundleInfo[] toRemove) {
-		for (int i = 0; i < toRemove.length; i++) {
-			fOptional.remove(toRemove[i]);
+		if (fOptional != null) {
+			for (int i = 0; i < toRemove.length; i++) {
+				fOptional.remove(toRemove[i]);
+			}
 		}
 	}
 
