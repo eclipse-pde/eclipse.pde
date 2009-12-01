@@ -697,11 +697,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateLibraryAddedToClasspath() throws InvocationTargetException, IOException, CoreException {
 		IFolder folder = null;
-		IApiComponent component = null;
 		try {
 			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
-			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
+			IApiComponent component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getApiTypeContainers().length;
 			
@@ -717,9 +716,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			fail(e.getMessage());
 		}
 		finally {
-			if(component != null) {
-				component.dispose();
-			}
 			if(folder != null) {
 				FileUtils.delete(folder);
 			}
@@ -731,14 +727,13 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testWPUpdateLibraryRemovedFromClasspath() {
 		IPath libPath = null;
-		IApiComponent component = null;
 		try {
 			IJavaProject project = getTestingProject();
 			assertNotNull("The testing project must exist", project);
 			
 			//add to classpath
 			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar");
-			component = getWorkspaceBaseline().getApiComponent(project.getElementName());
+			IApiComponent component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component);
 			int before  = component.getApiTypeContainers().length;
 			libPath = folder.getFullPath().append("component.a_1.0.0.jar");
@@ -769,9 +764,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			fail(e.getMessage());
 		}
 		finally {
-			if(component != null) {
-				component.dispose();
-			}
 			if(libPath != null) {
 				FileUtils.delete(libPath.toOSString());
 			}
@@ -1030,5 +1022,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
+		getWorkspaceBaseline().dispose();
 	}
 }

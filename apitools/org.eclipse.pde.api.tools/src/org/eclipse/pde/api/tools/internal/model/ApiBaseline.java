@@ -710,6 +710,14 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			//already disposed or nothing to dispose
 			return;
 		}
+		doDispose();
+		fState = null;
+	}
+
+	/**
+	 * performs the actual dispose of mappings and cached elements
+	 */
+	protected void doDispose() {
 		if (ApiPlugin.isRunningInFramework()) {
 			JavaRuntime.removeVMInstallChangedListener(this);
 		}
@@ -734,9 +742,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			fSystemLibraryComponent.dispose();
 			fSystemLibraryComponent = null;
 		}
-		fState = null;
 	}
-
+	
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline#close()
 	 */

@@ -317,8 +317,9 @@ public class BundleComponent extends Component {
 	 * Tries to look up the bundle described by the given manifest in the given state
 	 * @param manifest
 	 * @return the bundle for the given manifest, <code>null</code> otherwise
+	 * @throws BundleException
 	 */
-	protected BundleDescription lookupBundle(State state, Dictionary manifest) {
+	protected BundleDescription lookupBundle(State state, Dictionary manifest) throws BundleException {
 		Version version = null;
 		try {
 			//just in case the version is not a number
@@ -328,7 +329,11 @@ public class BundleComponent extends Component {
 		catch (NumberFormatException nfe) {
 			version = null;
 		}
-		return state.getBundle((String)manifest.get(Constants.BUNDLE_SYMBOLICNAME),	version);
+		ManifestElement[] name = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, (String)manifest.get(Constants.BUNDLE_SYMBOLICNAME));
+		if(name.length < 1) {
+			return null;
+		}
+		return state.getBundle(name[0].getValue(), version);
 	}
 	
 	/**

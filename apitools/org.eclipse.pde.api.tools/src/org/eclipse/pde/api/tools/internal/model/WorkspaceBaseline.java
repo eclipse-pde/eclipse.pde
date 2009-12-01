@@ -35,6 +35,13 @@ public class WorkspaceBaseline extends ApiBaseline {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.ApiBaseline#dispose()
+	 */
+	public void dispose() {
+		doDispose();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.ApiBaseline#getState()
 	 */
 	public State getState() {
