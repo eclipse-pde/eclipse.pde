@@ -254,25 +254,28 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
 		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-		Dictionary dictionary = new Hashtable();
 		String[] systemPackages = null;
 		if (value != null) {
 			systemPackages = value.split(","); //$NON-NLS-1$
+		}
+		if (!(this instanceof WorkspaceBaseline)) {	
+			Dictionary dictionary = new Hashtable();
 			dictionary.put(Constants.FRAMEWORK_SYSTEMPACKAGES, value);
+			value = profile.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+			if (value != null) {
+				dictionary.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, value);
+			}
+			fExecutionEnvironment = profile.getProperty("osgi.java.profile.name"); //$NON-NLS-1$
+			if (fExecutionEnvironment == null) {
+				abort("Profile file missing 'osgi.java.profile.name'" , null); //$NON-NLS-1$
+			}
+			dictionary.put("osgi.os", ANY_VALUE); //$NON-NLS-1$
+			dictionary.put("osgi.arch", ANY_VALUE); //$NON-NLS-1$
+			dictionary.put("osgi.ws", ANY_VALUE); //$NON-NLS-1$
+			dictionary.put("osgi.nl", ANY_VALUE); //$NON-NLS-1$
+			
+			getState().setPlatformProperties(dictionary);
 		}
-		value = profile.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
-		if (value != null) {
-			dictionary.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, value);
-		}
-		fExecutionEnvironment = profile.getProperty("osgi.java.profile.name"); //$NON-NLS-1$
-		if (fExecutionEnvironment == null) {
-			abort("Profile file missing 'osgi.java.profile.name'" , null); //$NON-NLS-1$
-		}
-		dictionary.put("osgi.os", ANY_VALUE); //$NON-NLS-1$
-		dictionary.put("osgi.arch", ANY_VALUE); //$NON-NLS-1$
-		dictionary.put("osgi.ws", ANY_VALUE); //$NON-NLS-1$
-		dictionary.put("osgi.nl", ANY_VALUE); //$NON-NLS-1$
-		getState().setPlatformProperties(dictionary);
 		// clean up previous system library
 		if (fSystemLibraryComponent != null && fComponentsById != null) {
 			fComponentsById.remove(fSystemLibraryComponent.getSymbolicName());
@@ -284,7 +287,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		clearComponentsCache();
 		// set new system library
 		fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
-		addComponent(fSystemLibraryComponent);
 	}
 
 	/**
