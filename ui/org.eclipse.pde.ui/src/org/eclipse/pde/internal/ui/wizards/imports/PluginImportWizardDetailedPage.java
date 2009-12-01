@@ -206,7 +206,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fSourceFilter = new SourcePluginFilter(fPage1.getState());
 		fAvailableFilter = new AvailableFilter();
 		fAvailableListViewer.addFilter(fAvailableFilter);
-		fAvailableListViewer.addFilter(fVersionFilter);
+		if (fFilterOldVersionButton.getSelection()) {
+			fAvailableListViewer.addFilter(fVersionFilter);
+		}
 		fAvailableListViewer.addFilter(fSourceFilter);
 
 		fFilterJob = new WorkbenchJob("FilterJob") { //$NON-NLS-1$
