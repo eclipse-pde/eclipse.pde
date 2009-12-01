@@ -287,6 +287,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		clearComponentsCache();
 		// set new system library
 		fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
+		addComponent(fSystemLibraryComponent);
 	}
 
 	/**
