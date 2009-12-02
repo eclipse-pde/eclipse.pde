@@ -106,6 +106,7 @@ public class $className$ extends PropertyPage {
 	}
 
 	protected void performDefaults() {
+		super.performDefaults();
 		// Populate the owner text field with the default value
 		ownerText.setText(DEFAULT_OWNER);
 	}
