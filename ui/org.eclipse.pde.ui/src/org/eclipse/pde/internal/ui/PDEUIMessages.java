@@ -70,6 +70,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsProcessor_rootMessage;
 
+	public static String PDECompilersConfigurationBlock_0;
+
 	public static String PDECompilersConfigurationBlock_general;
 	public static String PDECompilersConfigurationBlock_versioning;
 	public static String PDECompilersConfigurationBlock_references;

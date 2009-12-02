@@ -54,6 +54,7 @@ public class CompilerFlags {
 	public static final String P_NO_REQUIRED_ATT = "compilers.p.no-required-att"; //$NON-NLS-1$
 	public static final String P_NOT_EXTERNALIZED = "compilers.p.not-externalized-att"; //$NON-NLS-1$
 	public static final String P_BUILD = "compilers.p.build"; //$NON-NLS-1$
+	public static final String P_BUILD_MISSING_OUTPUT = "compilers.p.build.missing.output"; //$NON-NLS-1$
 	public static final String P_INCOMPATIBLE_ENV = "compilers.incompatible-environment"; //$NON-NLS-1$
 	public static final String P_MISSING_EXPORT_PKGS = "compilers.p.missing-packages"; //$NON-NLS-1$
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$
