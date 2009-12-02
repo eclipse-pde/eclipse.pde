@@ -78,6 +78,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		createApplicationExtension();
 		createPerspectiveExtension();
 		createViewExtension();
+		createPerspectiveViewExtension();
 		createMenuExtension();
 
 		if (getBooleanOption(KEY_PRODUCT_BRANDING))
@@ -129,6 +130,29 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		view.setAttribute("name", "View"); //$NON-NLS-1$ //$NON-NLS-2$
 		view.setAttribute("id", id + ".view"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(view);
+
+		if (!extension.isInTheModel())
+			plugin.add(extension);
+	}
+
+	private void createPerspectiveViewExtension() throws CoreException {
+		IPluginBase plugin = model.getPluginBase();
+		String id = plugin.getId();
+
+		IPluginExtension extension = createExtension("org.eclipse.ui.perspectiveExtensions", true); //$NON-NLS-1$
+		IPluginElement perspectiveExtension = model.getPluginFactory().createElement(extension);
+		perspectiveExtension.setName("perspectiveExtension"); //$NON-NLS-1$
+		perspectiveExtension.setAttribute("targetID", "*"); //$NON-NLS-1$ //$NON-NLS-2$
+		extension.add(perspectiveExtension);
+
+		IPluginElement view = model.getPluginFactory().createElement(perspectiveExtension);
+		view.setName("view"); //$NON-NLS-1$
+		view.setAttribute("id", id + ".view"); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("minimized", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("relationship", "left"); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("standalone", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		view.setAttribute("relative", "org.eclipse.ui.editorss"); //$NON-NLS-1$ //$NON-NLS-2$
+		perspectiveExtension.add(view);
 
 		if (!extension.isInTheModel())
 			plugin.add(extension);
