@@ -142,8 +142,14 @@ public class LaunchAction extends Action {
 	}
 
 	private String getVMArguments(String os) {
+		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialVMArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
+		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
+		if (userArgs.length() > 0) {
+			buffer.append(" "); //$NON-NLS-1$
+			buffer.append(userArgs);
+		}
+		return buffer.toString();
 	}
 
 	private String getJREContainer(String os) {
