@@ -238,13 +238,6 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					prepareError(PROPERTY_SOURCE_PREFIX + libName, sourceFolderName, message, PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_OTHER);
 				}
 			} else {
-				if (outputFolder.getLibs().size() == 0 && sourceFolder.getLibs().size() == 1) {
-					String libName = (String) sourceFolder.getLibs().get(0);
-					//error - missing output folder
-					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, sourceFolderName, PROPERTY_OUTPUT_PREFIX + libName);
-					prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getName(), message, PDEMarkerFactory.B_ADDDITION, CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_MISSING_OUTPUT), PDEMarkerFactory.CAT_OTHER);
-				}
-
 				if (sourceFolder.getDupeLibName() != null) {
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DupeSourceFolder, sourceFolderName, PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName());
 					prepareError(PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName(), sourceFolderName, message, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);

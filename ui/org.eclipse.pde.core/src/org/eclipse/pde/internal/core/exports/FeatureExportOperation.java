@@ -662,10 +662,8 @@ public class FeatureExportOperation extends Job {
 
 		if (fInfo.useWorkspaceCompiledClasses) {
 			generator.setUseWorkspaceBinaries(true);
-			generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()), getWorkspaceExportHelper().getWorkspaceOutputFolders(fInfo.items));
-		} else {
-			generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
 		}
+		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()), getWorkspaceExportHelper().getWorkspaceOutputFolders(fInfo.items));
 
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource && !fInfo.exportSourceBundle);
