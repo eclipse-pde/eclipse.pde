@@ -616,7 +616,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public void init(IWorkbench workbench) {
 		// ensures default targets are created when page is opened (if not created yet)
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		manager.getExternalModelManager();
+		if (!manager.isInitialized()) {
+			manager.getExternalModelManager();
+		}
 	}
 
 	/* (non-Javadoc)

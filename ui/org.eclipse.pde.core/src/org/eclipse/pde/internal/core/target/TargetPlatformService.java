@@ -252,6 +252,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getWorkspaceTargetDefinition()
 	 */
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
+		// If the plug-in registry has not been initialized we may not have a target set, getting the start forces the init
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		if (!manager.isInitialized()) {
+			manager.getExternalModelManager();
+		}
+
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
 		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
