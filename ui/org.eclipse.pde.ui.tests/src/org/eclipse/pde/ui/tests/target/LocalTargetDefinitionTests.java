@@ -973,7 +973,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 			// Check that new launch configs will be prepopulated from target
 			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
-			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} ".concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
+			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog ".concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
 		
 		} finally {
 			getTargetService().deleteTarget(definition.getHandle());
