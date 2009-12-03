@@ -91,7 +91,7 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 	 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse.core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
-		SubMonitor localmonitor = SubMonitor.convert(monitor, getLabel(), markers.length*2);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, getLabel(), (markers.length*2)+1);
 		try {
 			IApiProblemFilter filter = fFilter;
 			IApiComponent component = null;
@@ -133,18 +133,20 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 					ApiPlugin.log(ce);
 				}
 				Util.updateMonitor(localmonitor, 1);
-			}
-			//build affected projects
-			if(map.size() > 0) {
-				//touch resources to mark them as needing build
-				for (Iterator iter = resources.iterator(); iter.hasNext();) {
-					try {
-						((IResource) iter.next()).touch(null);
-					}
-					catch(CoreException ce) {}
+			}	
+			//touch resources to mark them as needing build
+			HashSet pjs = new HashSet();
+			for (Iterator iter = resources.iterator(); iter.hasNext();) {
+				try {
+					resource = (IResource) iter.next();
+					pjs.add(resource.getProject());
+					(resource).touch(localmonitor.newChild(1));
 				}
+				catch(CoreException ce) {}
+			}
+			if(pjs.size() > 0) {
 				if(!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-					IProject[] projects = (IProject[]) map.keySet().toArray(new IProject[map.size()]);
+					IProject[] projects = (IProject[]) pjs.toArray(new IProject[map.size()]);
 					Util.getBuildJob(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 				}
 			}
