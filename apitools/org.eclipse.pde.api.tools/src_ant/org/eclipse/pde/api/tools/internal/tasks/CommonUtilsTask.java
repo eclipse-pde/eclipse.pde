@@ -43,7 +43,7 @@ public abstract class CommonUtilsTask extends Task {
 	protected static final String CURRENT = "currentBaseline"; //$NON-NLS-1$
 	protected static final String CURRENT_BASELINE_NAME = "current_baseline"; //$NON-NLS-1$
 	protected static final String REFERENCE = "referenceBaseline"; //$NON-NLS-1$
-	protected static final String REFERENCE_PROFILE_NAME = "reference_baseline"; //$NON-NLS-1$
+	protected static final String REFERENCE_BASELINE_NAME = "reference_baseline"; //$NON-NLS-1$
 
 	protected boolean debug;
 	protected String eeFileLocation;

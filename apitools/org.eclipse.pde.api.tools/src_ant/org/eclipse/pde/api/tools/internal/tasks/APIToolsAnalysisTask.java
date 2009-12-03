@@ -581,7 +581,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		}
 		// run the comparison
 		// create baseline for the reference
-		IApiBaseline referenceBaseline = createBaseline(REFERENCE_PROFILE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
+		IApiBaseline referenceBaseline = createBaseline(REFERENCE_BASELINE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
 		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
 		
 		if (this.debug) {

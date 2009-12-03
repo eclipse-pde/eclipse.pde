@@ -60,7 +60,7 @@ public interface IApiCoreConstants {
 	public static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
 	
 	/**
-	 * Constant representing the name of the {@link IApiProfile} used in headless ant builds.
+	 * Constant representing the name of the {@link IApiBaseline} used in headless ant builds.
 	 * Value is: <code>ant_build_profile</code>
 	 */
 	public static final String ANT_BUILD_PROFILE_NAME = "ant_build_profile"; //$NON-NLS-1$

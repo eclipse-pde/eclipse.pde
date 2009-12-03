@@ -651,7 +651,7 @@ public final class Util {
 			case IDelta.API_COMPONENT_ELEMENT_TYPE :
 				return "API_COMPONENT_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.API_BASELINE_ELEMENT_TYPE :
-				return "API_PROFILE_ELEMENT_TYPE"; //$NON-NLS-1$
+				return "API_BASELINE_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
 				return "CONSTRUCTOR_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.METHOD_ELEMENT_TYPE :
@@ -857,7 +857,7 @@ public final class Util {
 				buffer.append("api component"); //$NON-NLS-1$
 				break;
 			case IDelta.API_BASELINE_ELEMENT_TYPE :
-				buffer.append("api profile"); //$NON-NLS-1$
+				buffer.append("api baseline"); //$NON-NLS-1$
 				break;
 			case IDelta.METHOD_ELEMENT_TYPE:
 				buffer.append("method"); //$NON-NLS-1$
