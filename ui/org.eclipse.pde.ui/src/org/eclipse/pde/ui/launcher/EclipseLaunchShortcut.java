@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.launching.PDESourcePathProvider;
-
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -35,6 +32,8 @@ import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.ApplicationSelectionDialog;
 import org.eclipse.pde.internal.ui.launcher.LaunchAction;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.PDESourcePathProvider;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -288,7 +287,8 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	private void initializePluginsList(ILaunchConfigurationWorkingCopy wc) {
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
-		Set plugins = DependencyManager.getSelfAndDependencies(fModel);
+		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
+		Set plugins = DependencyManager.getSelfAndDependencies(fModel, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
 		Iterator iter = plugins.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();

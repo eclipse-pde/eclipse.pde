@@ -627,7 +627,8 @@ public class TargetContentsGroup extends FilteredTree {
 					monitor.worked(10);
 
 					// Get all dependency bundles
-					dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(), (String[]) implicitIDs.toArray(new String[implicitIDs.size()]), state.getState()));
+					// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
+					dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(), (String[]) implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), new String[] {"org.eclipse.ui.workbench.compatibility"})); //$NON-NLS-1$
 					monitor.worked(50);
 
 				} finally {
