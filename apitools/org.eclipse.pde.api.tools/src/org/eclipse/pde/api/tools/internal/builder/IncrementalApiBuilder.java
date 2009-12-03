@@ -160,7 +160,7 @@ public class IncrementalApiBuilder {
 	}
 	
 	/**
-	 * Builds an API delta using the default profile (from the workspace settings and the current
+	 * Builds an API delta using the default baseline (from the workspace settings and the current
 	 * @param project
 	 * @param baseline the baseline to compare to
 	 * @param wbaseline the current workspace baseline

@@ -44,17 +44,17 @@ public class ApiModelFactory {
 	}
 	
 	/**
-	 * Creates and returns a new API component for this profile at the specified
+	 * Creates and returns a new API component for this baseline at the specified
 	 * location or <code>null</code> if the location specified does not contain
-	 * a valid API component. The component is not added to the profile.
+	 * a valid API component. The component is not added to the baseline.
 	 * 
 	 * @param location absolute path in the local file system to the API component
 	 * @return API component or <code>null</code> if the location specified does not contain a valid
 	 * 	API component
 	 * @exception CoreException if unable to create the component
 	 */
-	public static IApiComponent newApiComponent(IApiBaseline profile, String location) throws CoreException {
-		BundleComponent component = new BundleComponent(profile, location, getBundleID());
+	public static IApiComponent newApiComponent(IApiBaseline baseline, String location) throws CoreException {
+		BundleComponent component = new BundleComponent(baseline, location, getBundleID());
 		if(component.isValidBundle()) {
 			return component;
 		}
@@ -62,7 +62,7 @@ public class ApiModelFactory {
 	}
 	
 	/**
-	 * Creates and returns a new API component for this profile based on the given
+	 * Creates and returns a new API component for this baseline based on the given
 	 * model or <code>null</code> if the given model cannot be resolved or does not contain
 	 * a valid API component. The component is not added to the baseline.
 	 *
@@ -98,7 +98,7 @@ public class ApiModelFactory {
 	 * <p>
 	 * We accept projects that are plug-ins even if not API enabled (i.e.
 	 * with API nature), as we still need them to make a complete
-	 * API profile without resolution errors.
+	 * API baseline without resolution errors.
 	 * </p> 
 	 * @param location
 	 * @return true if the location is an imported binary project, false otherwise

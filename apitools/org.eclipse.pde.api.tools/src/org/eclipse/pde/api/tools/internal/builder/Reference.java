@@ -217,9 +217,7 @@ public class Reference implements IReference {
 	}
 	
 	/**
-	 * Resolves this reference in the given profile.
-	 * 
-	 * @param engine search engine resolving the reference
+	 * Resolves this reference
 	 * @throws CoreException
 	 */
 	public void resolve() throws CoreException {

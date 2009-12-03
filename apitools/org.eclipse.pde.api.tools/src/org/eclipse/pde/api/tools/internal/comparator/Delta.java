@@ -60,8 +60,8 @@ public class Delta implements IDelta {
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
 				writer.print("constructor"); //$NON-NLS-1$
 				break;
-			case IDelta.API_PROFILE_ELEMENT_TYPE :
-				writer.print("API profile"); //$NON-NLS-1$
+			case IDelta.API_BASELINE_ELEMENT_TYPE :
+				writer.print("API baseline"); //$NON-NLS-1$
 				break;
 		}
 		writer.print(", kind : "); //$NON-NLS-1$

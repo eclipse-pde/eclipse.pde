@@ -40,7 +40,7 @@ public interface IApiAnalyzer {
 	 * @param buildState the given build state or null if none
 	 * @param filterStore the given filter store or null if none
 	 * @param preferences the given preferences to be used for the analysis
-	 * @param baseline the profile context to check the component against
+	 * @param baseline the baseline context to check the component against
 	 * @param component the component to analyze
 	 * @param context the build context reported from the {@link ApiAnalysisBuilder}
 	 * @param monitor to report progress

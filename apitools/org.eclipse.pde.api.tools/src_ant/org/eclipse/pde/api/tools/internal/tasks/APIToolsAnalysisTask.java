@@ -662,7 +662,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 							-1,
 							-1,
 							IApiProblem.CATEGORY_COMPATIBILITY,
-							IDelta.API_PROFILE_ELEMENT_TYPE,
+							IDelta.API_BASELINE_ELEMENT_TYPE,
 							IDelta.REMOVED,
 							IDelta.API_COMPONENT);
 					allProblems.put(id, new IApiProblem[] { problem });

@@ -48,11 +48,11 @@ public interface IDelta {
 	public static final int API_COMPONENT_ELEMENT_TYPE = 2;
 
 	/**
-	 * Element type constant indicating that the delta is reported against an API profile.
+	 * Element type constant indicating that the delta is reported against an API baseline.
 	 * 
 	 * @see #getElementType()
 	 */
-	public static final int API_PROFILE_ELEMENT_TYPE = 3;
+	public static final int API_BASELINE_ELEMENT_TYPE = 3;
 
 	/**
 	 * Element type constant indicating that the delta is reported against a class type declaration.

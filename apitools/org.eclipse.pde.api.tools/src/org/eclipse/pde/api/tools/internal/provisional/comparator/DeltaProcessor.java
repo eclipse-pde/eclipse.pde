@@ -58,7 +58,7 @@ public class DeltaProcessor {
 	 */
 	static boolean isCompatible0(IDelta delta) {
 		switch(delta.getElementType()) {
-			case IDelta.API_PROFILE_ELEMENT_TYPE : {
+			case IDelta.API_BASELINE_ELEMENT_TYPE : {
 				return isApiProfileCompatible(delta);
 			}
 			case IDelta.API_COMPONENT_ELEMENT_TYPE : {
@@ -93,7 +93,7 @@ public class DeltaProcessor {
 	}
 	
 	/**
-	 * Returns if the API profile is compatible
+	 * Returns if the API baseline is compatible
 	 * @param delta
 	 * @return true if compatible, false otherwise
 	 */

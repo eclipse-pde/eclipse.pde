@@ -418,9 +418,9 @@ public class ApiProblem implements IApiProblem {
 	}
 
 	/**
-	 * Returns the string representation of the API profile problem kind
+	 * Returns the string representation of the API component problem kind
 	 * @param kind
-	 * @return the string of the API profile problem kind
+	 * @return the string of the API component problem kind
 	 */
 	public static String getApiComponentResolutionProblemKindName(int kind) {
 		switch(kind) {
@@ -432,9 +432,9 @@ public class ApiProblem implements IApiProblem {
 	}
 
 	/**
-	 * Returns the string representation of the API profile problem kind
+	 * Returns the string representation of the API baseline problem kind
 	 * @param kind
-	 * @return the string of the API profile problem kind
+	 * @return the string of the API baseline problem kind
 	 */
 	public static String getApiBaselineProblemKindName(int kind) {
 		switch(kind) {

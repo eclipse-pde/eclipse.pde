@@ -47,7 +47,7 @@ import org.objectweb.asm.signature.SignatureReader;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Compares class files from the workspace to those in the default {@link IApiProfile}
+ * Compares class files from the workspace to those in the default {@link IApiBaseline}
  * 
  * @since 1.0.0
  */
@@ -65,8 +65,8 @@ public class ClassFileComparator {
 		Debug = debugValue || Util.DEBUG;
 	}
 
-	private boolean isCheckedException(IApiBaseline profile, IApiComponent apiComponent, String exceptionName) {
-		if (profile == null) {
+	private boolean isCheckedException(IApiBaseline baseline, IApiComponent apiComponent, String exceptionName) {
+		if (baseline == null) {
 			return true;
 		}
 		try {
@@ -75,7 +75,7 @@ public class ClassFileComparator {
 			}
 			String packageName = Signatures.getPackageName(exceptionName);
 			IApiTypeRoot result = Util.getClassFile(
-					profile.resolvePackage(apiComponent, packageName),
+					baseline.resolvePackage(apiComponent, packageName),
 					exceptionName);
 			if (result != null) {
 				// TODO should this be reported as a checked exception
@@ -87,12 +87,12 @@ public class ClassFileComparator {
 					String superName = exception.getSuperclassName();
 					packageName = Signatures.getPackageName(superName);
 					result = Util.getClassFile(
-							profile.resolvePackage(apiComponent, packageName),
+							baseline.resolvePackage(apiComponent, packageName),
 							superName);
 					if (result == null) {
 						// TODO should we report this failure ?
 						if (Debug) {
-							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in profile " + profile.getName() + " from component " + apiComponent.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in baseline " + baseline.getName() + " from component " + apiComponent.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 						break;
 					}
@@ -131,8 +131,8 @@ public class ClassFileComparator {
 	 * @param classFile2 the class file from the baseline to compare to
 	 * @param component the API component from the workspace
 	 * @param component2 the API component from the baseline
-	 * @param apiState the workspace API profile
-	 * @param apiState2 the baseline API profile
+	 * @param apiState the workspace API baseline
+	 * @param apiState2 the baseline API baseline
 	 * @param visibilityModifiers any modifiers from the class file
 	 * @throws CoreException if the contents of the specified class files cannot be acquired
 	 */
@@ -152,8 +152,8 @@ public class ClassFileComparator {
 	 * @param classFile2 the class file from the baseline to compare to
 	 * @param component the API component from the workspace
 	 * @param component2 the API component from the baseline
-	 * @param apiState the workspace API profile
-	 * @param apiState2 the baseline API profile
+	 * @param apiState the workspace API baseline
+	 * @param apiState2 the baseline API baseline
 	 * @param visibilityModifiers any modifiers from the class file
 	 * @throws CoreException if the contents of the specified class file cannot be acquired
 	 */
@@ -950,8 +950,6 @@ public class ClassFileComparator {
 	 * Recursively collects all of the super-interfaces of the given type descriptor within the scope of 
 	 * the given API component
 	 * @param type
-	 * @param apiComponent
-	 * @param profile
 	 * @param set
 	 */
 	private void collectAllInterfaces(IApiType type, Set set) {
@@ -2861,8 +2859,6 @@ public class ClassFileComparator {
 	 * Returns the complete super-interface set for the given type descriptor or null, if it could not be
 	 * computed
 	 * @param type
-	 * @param apiComponent
-	 * @param profile
 	 * @return the complete super-interface set for the given descriptor, or <code>null</code>
 	 */
 	private Set getInterfacesSet(IApiType type) {
@@ -3224,11 +3220,11 @@ public class ClassFileComparator {
 			&& (Flags.isPublic(access) || Flags.isProtected(access));
 	}
 	
-	private IApiTypeRoot getType(String typeName, IApiComponent component, IApiBaseline profile) throws CoreException {
+	private IApiTypeRoot getType(String typeName, IApiComponent component, IApiBaseline baseline) throws CoreException {
 		String packageName = Signatures.getPackageName(typeName);
-		IApiComponent[] components = profile.resolvePackage(component, packageName);
+		IApiComponent[] components = baseline.resolvePackage(component, packageName);
 		if (components == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, profile.getName(), component.getSymbolicName()});
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, baseline.getName(), component.getSymbolicName()});
 			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
@@ -3237,7 +3233,7 @@ public class ClassFileComparator {
 		}
 		IApiTypeRoot result = Util.getClassFile(components, typeName); 
 		if (result == null) {
-			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, profile.getName(), component.getSymbolicName()});
+			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, baseline.getName(), component.getSymbolicName()});
 			if (Debug) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}

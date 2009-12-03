@@ -117,7 +117,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 				case IDelta.FIELD_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
 				case IDelta.METHOD_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
 				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
-				case IDelta.API_PROFILE_ELEMENT_TYPE: return getBaselineImage();
+				case IDelta.API_BASELINE_ELEMENT_TYPE: return getBaselineImage();
 				case IDelta.API_COMPONENT_ELEMENT_TYPE: {
 					IPath path = new Path(problem.getResourcePath());
 					//try to find the component via the resource handle

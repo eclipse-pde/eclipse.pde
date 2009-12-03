@@ -131,13 +131,13 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	/**
 	 * Constructs a system library from the given execution environment description file.
 	 * 
-	 * @param profile owning profile
+	 * @param baseline owning baseline
 	 * @param fileName the file name that corresponds to the stub file for the corresponding profile
 	 * @param profileName the given profile name
 	 * @exception CoreException if unable to read the execution environment description file
 	 */
-	private StubApiComponent(IApiBaseline profile, String fileName, String profileName) {
-		super(profile);
+	private StubApiComponent(IApiBaseline baseline, String fileName, String profileName) {
+		super(baseline);
 		IPath path = new Path(fileName);
 		fLibraries = new LibraryLocation[] { new LibraryLocation(path, null, null) };
 		fExecEnv = new String[]{ profileName };

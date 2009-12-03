@@ -150,7 +150,7 @@ public class BundleComponent extends Component {
 
 	/**
 	 * Constructs a new API component from the specified location in the file system
-	 * in the given profile.
+	 * in the given baseline.
 	 * 
 	 * @param baseline owning API baseline
 	 * @param location directory or jar file

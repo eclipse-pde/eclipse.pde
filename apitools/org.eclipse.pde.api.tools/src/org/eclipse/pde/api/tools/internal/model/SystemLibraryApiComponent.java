@@ -61,21 +61,21 @@ public class SystemLibraryApiComponent extends Component {
 	/**
 	 * Constructs a system library.
 	 * 
-	 * @param profile owning profile
+	 * @param baseline owning baseline
 	 */
-	protected SystemLibraryApiComponent(IApiBaseline profile){
-		super(profile);
+	protected SystemLibraryApiComponent(IApiBaseline baseline){
+		super(baseline);
 	}
 	/**
 	 * Constructs a system library from the given execution environment description file.
 	 * 
-	 * @param profile owning profile
+	 * @param baseline owning baseline
 	 * @param description EE file
 	 * @param systemPackages exported system packages
 	 * @exception CoreException if unable to read the execution environment description file
 	 */
-	public SystemLibraryApiComponent(IApiBaseline profile, ExecutionEnvironmentDescription description, String[] systemPackages) throws CoreException {
-		super(profile);
+	public SystemLibraryApiComponent(IApiBaseline baseline, ExecutionEnvironmentDescription description, String[] systemPackages) throws CoreException {
+		super(baseline);
 		init(description);
 		fSystemPackages = systemPackages;
 	}

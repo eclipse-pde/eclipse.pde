@@ -218,7 +218,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		if (wbaseline == null) {
 			if (DEBUG) {
-				System.err.println("Could not retrieve a workspace profile");  //$NON-NLS-1$
+				System.err.println("Could not retrieve a workspace baseline");  //$NON-NLS-1$
 			}
 			return NO_PROJECTS;
 		}

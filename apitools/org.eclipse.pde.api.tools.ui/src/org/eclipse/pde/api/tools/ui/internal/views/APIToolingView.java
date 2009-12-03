@@ -243,7 +243,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 					}
 				}
 				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE : return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
-				case IDelta.API_PROFILE_ELEMENT_TYPE :
+				case IDelta.API_BASELINE_ELEMENT_TYPE :
 				case IDelta.API_COMPONENT_ELEMENT_TYPE : {
 					String componentVersionId = delta.getComponentVersionId();
 					IApiComponent component = null;

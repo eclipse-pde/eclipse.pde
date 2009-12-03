@@ -139,7 +139,7 @@ public class Messages extends NLS {
 						}
 				}
 				break;
-			case IDelta.API_PROFILE_ELEMENT_TYPE :
+			case IDelta.API_BASELINE_ELEMENT_TYPE :
 				switch(delta.getKind()) {
 					case IDelta.ADDED :
 						if (delta.getFlags() == IDelta.API_COMPONENT) {

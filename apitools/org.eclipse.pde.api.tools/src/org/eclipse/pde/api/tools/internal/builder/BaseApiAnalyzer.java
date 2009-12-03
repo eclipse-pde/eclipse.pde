@@ -399,7 +399,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * Check the version changes of re-exported bundles to make sure that the given component
 	 * version is modified accordingly.
 	 * 
-	 * @param reference the given reference api profile
+	 * @param reference the given reference API component
 	 * @param component the given component
 	 */
 	private ReexportedBundleVersionInfo checkBundleVersionsOfReexportedBundles(
@@ -860,7 +860,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
 		String id = component.getSymbolicName();
 		if (DEBUG) {
-			System.out.println("comparing profiles ["+reference.getSymbolicName()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			System.out.println("comparing components ["+reference.getSymbolicName()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		IApiTypeRoot classFile = null;
 		try {
@@ -991,7 +991,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 	/**
-	 * Compares the two given profiles and generates an {@link IDelta}
+	 * Compares the two given components and generates an {@link IDelta}
 	 * 
 	 * @param jproject
 	 * @param reference
@@ -1007,7 +1007,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				delta =
 					new Delta(
 						null,
-						IDelta.API_PROFILE_ELEMENT_TYPE,
+						IDelta.API_BASELINE_ELEMENT_TYPE,
 						IDelta.ADDED,
 						IDelta.API_COMPONENT,
 						null,
@@ -1805,7 +1805,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	
 	/**
-	 * Checks to see if there is a default API profile set in the workspace,
+	 * Checks to see if there is a default API baseline set in the workspace,
 	 * if not create a marker
 	 */
 	private void checkDefaultBaselineSet() {
@@ -1884,11 +1884,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 
 		IApiBaselineManager manager = ApiBaselineManager.getManager();
-		IApiBaseline profile = manager.getWorkspaceBaseline();
-		if(profile == null) {
+		IApiBaseline baseline = manager.getWorkspaceBaseline();
+		if(baseline == null) {
 			return false;
 		}
-		IApiComponent component = profile.getApiComponent(project);
+		IApiComponent component = baseline.getApiComponent(project);
 		if(component != null) {
 			try {
 				IApiFilterStore filterStore = component.getFilterStore();

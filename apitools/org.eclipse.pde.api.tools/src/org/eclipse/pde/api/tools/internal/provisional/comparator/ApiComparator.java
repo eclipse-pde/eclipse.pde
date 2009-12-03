@@ -153,7 +153,7 @@ public class ApiComparator {
 						delta =
 							new Delta(
 									null,
-									IDelta.API_PROFILE_ELEMENT_TYPE,
+									IDelta.API_BASELINE_ELEMENT_TYPE,
 									IDelta.REMOVED,
 									IDelta.API_COMPONENT,
 									null,
@@ -192,7 +192,7 @@ public class ApiComparator {
 						globalDelta.add(
 								new Delta(
 										null,
-										IDelta.API_PROFILE_ELEMENT_TYPE,
+										IDelta.API_BASELINE_ELEMENT_TYPE,
 										IDelta.ADDED,
 										IDelta.API_COMPONENT,
 										null,
@@ -247,7 +247,7 @@ public class ApiComparator {
 					delta =
 						new Delta(
 							null,
-							IDelta.API_PROFILE_ELEMENT_TYPE,
+							IDelta.API_BASELINE_ELEMENT_TYPE,
 							IDelta.ADDED,
 							IDelta.API_COMPONENT,
 							null,
@@ -309,7 +309,7 @@ public class ApiComparator {
 				}
 				return new Delta(
 						null,
-						IDelta.API_PROFILE_ELEMENT_TYPE,
+						IDelta.API_BASELINE_ELEMENT_TYPE,
 						IDelta.ADDED,
 						IDelta.API_COMPONENT,
 						null,
@@ -319,7 +319,7 @@ public class ApiComparator {
 				String referenceComponentId = referenceComponent.getSymbolicName();
 				return new Delta(
 						null,
-						IDelta.API_PROFILE_ELEMENT_TYPE,
+						IDelta.API_BASELINE_ELEMENT_TYPE,
 						IDelta.REMOVED,
 						IDelta.API_COMPONENT,
 						null,
@@ -675,7 +675,7 @@ public class ApiComparator {
 								case IDelta.CLASS_ELEMENT_TYPE :
 								case IDelta.FIELD_ELEMENT_TYPE :
 								case IDelta.API_COMPONENT_ELEMENT_TYPE :
-								case IDelta.API_PROFILE_ELEMENT_TYPE : 
+								case IDelta.API_BASELINE_ELEMENT_TYPE : 
 									globalDelta.add(localDelta);
 							}
 						}

@@ -650,7 +650,7 @@ public final class Util {
 				return "ENUM_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.API_COMPONENT_ELEMENT_TYPE :
 				return "API_COMPONENT_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.API_PROFILE_ELEMENT_TYPE :
+			case IDelta.API_BASELINE_ELEMENT_TYPE :
 				return "API_PROFILE_ELEMENT_TYPE"; //$NON-NLS-1$
 			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
 				return "CONSTRUCTOR_ELEMENT_TYPE"; //$NON-NLS-1$
@@ -856,7 +856,7 @@ public final class Util {
 			case IDelta.API_COMPONENT_ELEMENT_TYPE :
 				buffer.append("api component"); //$NON-NLS-1$
 				break;
-			case IDelta.API_PROFILE_ELEMENT_TYPE :
+			case IDelta.API_BASELINE_ELEMENT_TYPE :
 				buffer.append("api profile"); //$NON-NLS-1$
 				break;
 			case IDelta.METHOD_ELEMENT_TYPE:
