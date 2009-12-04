@@ -301,7 +301,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
 					if(resource != null) {
-						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i]));
+						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i], null));
 					}
 				}
 				types = context.getDependentTypes();
@@ -311,12 +311,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
 					if(resource != null) {
-						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i]));
+						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i], new int[] {IApiProblem.CATEGORY_COMPATIBILITY, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.CATEGORY_VERSION}));
 					}
 				}
 			} else {
 				//full build, clean up all old markers
-				createUnusedApiFilterProblems(store.getUnusedFilters(null, null));
+				createUnusedApiFilterProblems(store.getUnusedFilters(null, null, null));
 			}
 		}
 		catch(CoreException ce) {

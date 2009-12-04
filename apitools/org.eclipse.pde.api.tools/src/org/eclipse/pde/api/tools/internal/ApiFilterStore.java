@@ -718,9 +718,13 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	/**
 	 * Returns all of the unused filters for this store at the moment in time this
 	 * method is called.
+	 * @param the resource the filter applies to
+	 * @param typeName the name of the type the filter appears on
+	 * @param categories the collection of {@link IApiProblem} categories to ignore 
+	 * @see {@link IApiProblem#getCategory()}
 	 * @return the listing of currently unused filters or an empty list, never <code>null</code>
 	 */
-	public IApiProblemFilter[] getUnusedFilters(IResource resource, String typeName) {
+	public IApiProblemFilter[] getUnusedFilters(IResource resource, String typeName, int[] categories) {
 		if(fUnusedFilters != null) {
 			Set unused = new HashSet();
 			Set set = null;
@@ -728,7 +732,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				// add any unused filters for the resource
 				set = (Set) fUnusedFilters.get(resource);
 				if (set != null) {
-					collectFilterFor(set, typeName, unused);
+					collectFilterFor(set, typeName, unused, categories);
 				}
 				if(Util.isManifest(resource.getProjectRelativePath())) {
 					//we need to add any filters that are cached for resources
@@ -744,7 +748,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 							continue;
 						}
 						set = (Set)fUnusedFilters.get(res);
-						collectFilterFor(set, typeName, unused);
+						collectFilterFor(set, typeName, unused, categories);
 					}
 				}
 			}
@@ -765,17 +769,42 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		return NO_FILTERS;
 	}
 	
-	private void collectFilterFor(Set filters, String typename, Set collector) {
+	private void collectFilterFor(Set filters, String typename, Set collector, int[] categories) {
+		ApiProblemFilter filter = null;
 		for (Iterator iter = filters.iterator(); iter.hasNext();) {
-			ApiProblemFilter filter = (ApiProblemFilter) iter.next();
+			filter = (ApiProblemFilter) iter.next();
 			IApiProblem underlyingProblem = filter.getUnderlyingProblem();
 			if (underlyingProblem != null) {
+				if(matchesCategory(underlyingProblem, categories)) {
+					continue;
+				}
 				String underlyingTypeName = underlyingProblem.getTypeName();
 				if (underlyingTypeName != null && (typename == null || underlyingTypeName.equals(typename))) {
 					collector.add(filter);
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns if the category of the given problem matches one of the categories
+	 * given in the collection. If the collection of categories is <code>null</code>
+	 * the problem does not match.
+	 * @param problem
+	 * @param categories
+	 * @return true if the given collection contains the given problems' category, false otherwise
+	 * @since 1.1
+	 */
+	private boolean matchesCategory(IApiProblem problem, int[] categories) {
+		if(categories != null) {
+			int cat = problem.getCategory();
+			for (int i = 0; i < categories.length; i++) {
+				if(cat == categories[i]) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)
