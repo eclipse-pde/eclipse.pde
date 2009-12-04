@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -22,6 +20,7 @@ import org.eclipse.jface.fieldassist.*;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -49,7 +48,7 @@ public class ProgramBlock {
 				updateProductDecorator();
 			}
 
-			fTab.updateLaunchConfigurationDialog();
+			fTab.scheduleUpdateJob();
 		}
 
 		public void modifyText(ModifyEvent e) {
@@ -79,7 +78,6 @@ public class ProgramBlock {
 			else
 				fProductComboDecoration.show();
 
-			fTab.updateLaunchConfigurationDialog();
 		}
 	}
 

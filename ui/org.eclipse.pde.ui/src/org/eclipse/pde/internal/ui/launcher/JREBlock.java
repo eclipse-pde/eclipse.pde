@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.launcher.VMHelper;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
@@ -25,9 +21,11 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.util.VMUtil;
+import org.eclipse.pde.internal.launching.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -63,7 +61,7 @@ public class JREBlock {
 		}
 
 		public void modifyText(ModifyEvent e) {
-			fTab.updateLaunchConfigurationDialog();
+			fTab.scheduleUpdateJob();
 		}
 	}
 
