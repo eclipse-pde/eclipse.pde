@@ -31,8 +31,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
+import org.eclipse.pde.api.tools.internal.CoreMessages;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
@@ -43,6 +45,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.osgi.framework.BundleException;
 
@@ -88,7 +91,7 @@ public class ProjectComponent extends BundleComponent {
 	private Map fOutputLocationToContainer = null;
 
 	/**
-	 * Constructs an API component for the given Java project in the specified profile.
+	 * Constructs an API component for the given Java project in the specified baseline.
 	 * 
 	 * @param baseline the owning API baseline
 	 * @param location the given location of the component
@@ -116,7 +119,27 @@ public class ProjectComponent extends BundleComponent {
 	 * @see org.eclipse.pde.api.tools.internal.model.BundleApiComponent#getBundleDescription(java.util.Dictionary, java.lang.String, long)
 	 */
 	protected BundleDescription getBundleDescription(Dictionary manifest, String location, long id) throws BundleException {
-		return fModel.getBundleDescription();
+		try {
+			return getModel().getBundleDescription();
+		}
+		catch(CoreException ce) {
+			throw new BundleException(ce.getMessage());
+		}
+	}
+	
+	/**
+	 * Returns the {@link IPluginModelBase} backing this component
+	 * @return the {@link IPluginModelBase} or throws and exception, never retruns <code>null</code>
+	 * @throws CoreException
+	 */
+	IPluginModelBase getModel() throws CoreException {
+		if(fModel == null) {
+			fModel = PluginRegistry.findModel(fProject.getProject());
+			if(fModel == null) {
+				abort(NLS.bind(CoreMessages.ProjectComponent_could_not_locate_model, fProject.getElementName()), null);
+			}
+		}
+		return fModel;
 	}
 	
 	/* (non-Javadoc)
@@ -335,7 +358,7 @@ public class ProjectComponent extends BundleComponent {
 						IPath location2 = res.getLocation();
 						IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(location2);
 						if (cfc == null) {
-							cfc = new FolderApiTypeContainer(component, (IContainer) res);
+							cfc = new ProjectTypeContainer(component, (IContainer) res);
 							fOutputLocationToContainer.put(location2, cfc);
 						}
 						return cfc;
@@ -357,7 +380,7 @@ public class ProjectComponent extends BundleComponent {
 							container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
 						}
 						if (container.exists()) {
-							cfc = new FolderApiTypeContainer(component, container);
+							cfc = new ProjectTypeContainer(component, container);
 							fOutputLocationToContainer.put(outputLocation, cfc);
 						}
 					}

@@ -23,6 +23,7 @@ public class CoreMessages extends NLS {
 	public static String ApiBaseline_3;
 	public static String ApiBaseline_4;
 	public static String ApiBaseline_5;
+	public static String ProjectComponent_could_not_locate_model;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CoreMessages.class);

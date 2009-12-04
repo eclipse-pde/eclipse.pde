@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -29,16 +31,50 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * An {@link IApiTypeRoot} rooted at a container in the workspace.
+ * An {@link IApiTypeRoot} rooted at a project output container in the workspace.
  * 
  * @since 1.0.0
  */
-public class FolderApiTypeContainer extends ApiElement implements IApiTypeContainer {
+public class ProjectTypeContainer extends ApiElement implements IApiTypeContainer {
+	
+	/**
+	 * Proxy visitor for collecting package names, etc for our 
+	 * type containers
+	 * 
+	 * @since 1.1
+	 */
+	class ContainerVisitor implements IResourceProxyVisitor {
+		
+		List collector = null;
+		int segmentcount = 0;
+		
+		/**
+		 * Constructor
+		 * @param collector
+		 * @param root
+		 */
+		public ContainerVisitor(List collector, IContainer root) {
+			this.collector = collector;
+			this.segmentcount = root.getFullPath().segmentCount();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
+		 */
+		public boolean visit(IResourceProxy proxy) throws CoreException {
+			if(proxy.getType() == IResource.FOLDER) {
+				String path = proxy.requestFullPath().removeFirstSegments(this.segmentcount).toString();
+				return this.collector.add(path.replace(IPath.SEPARATOR, '.'));
+			}
+			return false;
+		}
+	}
 	
 	/**
 	 * Root directory of the {@link IApiTypeContainer}
 	 */
 	private IContainer fRoot;
+	private String[] fPackageNames = null;
 	
 	/**
 	 * Constructs an {@link IApiTypeContainer} rooted at the location.
@@ -46,7 +82,7 @@ public class FolderApiTypeContainer extends ApiElement implements IApiTypeContai
 	 * @param parent the {@link IApiElement} parent for this container
 	 * @param container folder in the workspace
 	 */
-	public FolderApiTypeContainer(IApiElement parent, IContainer container) {
+	public ProjectTypeContainer(IApiElement parent, IContainer container) {
 		super(parent, IApiElement.API_TYPE_CONTAINER, container.getName());
 		this.fRoot = container;
 	}
@@ -64,14 +100,16 @@ public class FolderApiTypeContainer extends ApiElement implements IApiTypeContai
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
 	 */
-	public void close() throws CoreException {}
+	public void close() throws CoreException {
+		fPackageNames = null;
+	}
 	
 	/**
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
-		buff.append("Folder Class File Container: "+getName()); //$NON-NLS-1$
+		buff.append("Project Class File Container: "+getName()); //$NON-NLS-1$
 		return buff.toString();
 	}
 	
@@ -151,12 +189,13 @@ public class FolderApiTypeContainer extends ApiElement implements IApiTypeContai
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#getPackageNames()
 	 */
 	public String[] getPackageNames() throws CoreException {
-		List names = new ArrayList();
-		collectPackageNames(names, Util.DEFAULT_PACKAGE_NAME, fRoot);
-		String[] result = new String[names.size()];
-		names.toArray(result);
-		Arrays.sort(result);
-		return result;
+		if(fPackageNames == null) {
+			List names = new ArrayList();
+			collectPackageNames(names, Util.DEFAULT_PACKAGE_NAME, fRoot);
+			fPackageNames = (String[]) names.toArray(new String[names.size()]);
+			Arrays.sort(fPackageNames);
+		}
+		return fPackageNames;
 	}
 	
 	/**
@@ -167,37 +206,7 @@ public class FolderApiTypeContainer extends ApiElement implements IApiTypeContai
 	 * @param dir directory being visited
 	 */
 	private void collectPackageNames(List names, String packageName, IContainer dir) throws CoreException {
-		IResource[] members = dir.members();
-		boolean hasClassFiles = false;
-		List dirs = new ArrayList();
-		for (int i = 0; i < members.length; i++) {
-			IResource file = members[i];
-			switch (file.getType()) {
-			case IResource.FOLDER:
-				dirs.add(file);
-				break;
-			case IResource.FILE:
-				if (!hasClassFiles && file.getName().endsWith(Util.DOT_CLASS_SUFFIX)) {
-					names.add(packageName);
-					hasClassFiles = true;
-				}
-				break;
-			}
-		}
-		Iterator iterator = dirs.iterator();
-		while (iterator.hasNext()) {
-			IContainer child = (IContainer)iterator.next();
-			String nextName = null;
-			if (packageName.length() == 0) {
-				nextName = child.getName();
-			} else {
-				StringBuffer buffer = new StringBuffer(packageName);
-				buffer.append('.');
-				buffer.append(child.getName());
-				nextName = buffer.toString();
-			}
-			collectPackageNames(names, nextName, child);
-		}
+		dir.accept(new ContainerVisitor(names, dir), IResource.NONE);
 	}
 
 	/**
