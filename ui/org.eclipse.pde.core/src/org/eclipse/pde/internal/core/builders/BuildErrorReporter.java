@@ -265,10 +265,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		if (projectComplianceLevel.length() > 0) { //project has specific properties enabled 
 			IPluginModelBase model = PluginRegistry.findModel(fProject);
-			String[] execEnvs = model.getBundleDescription().getExecutionEnvironments();
+			String[] execEnvs = null;
+			if (model != null) {
+				BundleDescription bundleDesc = model.getBundleDescription();
+				if (bundleDesc != null) {
+					execEnvs = bundleDesc.getExecutionEnvironments();
+				}
+			}
 
-			if (execEnvs.length == 0) {
-				return; // No EE specified in manifest
+			if (execEnvs == null || execEnvs.length == 0) {
+				return;
 			}
 
 			//PDE Build uses top most entry to build the plug-in
