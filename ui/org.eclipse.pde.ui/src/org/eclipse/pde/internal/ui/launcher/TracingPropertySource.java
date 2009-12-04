@@ -55,7 +55,7 @@ public class TracingPropertySource {
 		protected void valueModified(Object value) {
 			fValues.put(getKey(), value);
 			fModified = true;
-			fBlock.getTab().updateLaunchConfigurationDialog();
+			fBlock.getTab().scheduleUpdateJob();
 		}
 	}
 
