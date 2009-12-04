@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Interface to be implemented by clients of the <code>org.eclipse.pde.build.fetchFactories</code> extension-point.
  * <p>
- * The factories are being used at various points in the execution of the PDE Build<code>eclipse.fetch</code> Ant task.
+ * The factories are being used at various points in the execution of the PDE Build <code>eclipse.fetch</code> Ant task.
  * Based on a map file entry, they are responsible for generating segments of an ant script whose execution will fetch 
  * plug-ins, fragments, bundles and features or individual files contained in one of those elements.
  * The format of a map file entry is:
@@ -36,6 +36,11 @@ import org.eclipse.core.runtime.IPath;
  * <p>
  * The fetch factories are being contributed through the <code>org.eclipse.pde.build.fetchFactories</code> 
  * extension-points.
+ * </p>
+ * <p>
+ * Fetch factories will not be re-used between different PDE Build <code>eclipse.fetch</code> Ant tasks. Each task will create at
+ * most one fetch factory instance for the duration of the task processing. This allows implementors to
+ * build and maintain stateful information. Such information must be released in {@link #addTargets(IAntScript)} call.
  * </p>
  * @since 3.2
  */
@@ -89,7 +94,7 @@ public interface IFetchFactory {
 	 * @throws CoreException if the rawEntry is incorrect.
 	 */
 	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map entryInfos) throws CoreException;
-	
+
 	/**
 	 * Generates a segment of ant script whose execution will fetch the element (bundle, plug-in, fragment, feature) indicated in the entryInfos arguments.
 	 * <p>
@@ -100,7 +105,7 @@ public interface IFetchFactory {
 	 * @param script the script in which to generate the segments of ant script. It is not authorized to generate target declaration during this call.  
 	 */
 	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script);
-	
+
 	/**
 	 * Generates a segment of ant script whose execution will fetch the specified file from the given element.
 	 * <p> 

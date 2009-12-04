@@ -794,10 +794,12 @@ public class AntScript implements IAntScript {
 		printTab();
 		output.print("<"); //$NON-NLS-1$
 		output.print(tag);
-		Set entries = arguments.entrySet();
-		for (Iterator iter = entries.iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			printAttribute((String) entry.getKey(), (String) entry.getValue(), true);
+		if (null != arguments) {
+			Set entries = arguments.entrySet();
+			for (Iterator iter = entries.iterator(); iter.hasNext();) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				printAttribute((String) entry.getKey(), (String) entry.getValue(), true);
+			}
 		}
 		output.println("/>"); //$NON-NLS-1$
 	}
@@ -1011,10 +1013,11 @@ public class AntScript implements IAntScript {
 	public void printMacroDef(String macroName, List attributes) {
 		println("<macrodef name=\"" + macroName + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent++;
-		for (Iterator iterator = attributes.iterator(); iterator.hasNext();) {
-			String attribute = (String) iterator.next();
-			println("<attribute name=\"" + attribute + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		if (null != attributes)
+			for (Iterator iterator = attributes.iterator(); iterator.hasNext();) {
+				String attribute = (String) iterator.next();
+				println("<attribute name=\"" + attribute + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		println("<sequential>"); //$NON-NLS-1$
 		indent++;
 	}
