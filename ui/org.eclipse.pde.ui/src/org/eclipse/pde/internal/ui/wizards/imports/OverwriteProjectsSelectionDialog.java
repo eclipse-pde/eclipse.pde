@@ -32,8 +32,8 @@ import org.osgi.framework.Version;
 
 /**
  * This dialog expects a list of plug-in projects. It displays a filtered list to help 
- * select the projects not to be deleted during the import process.
- * It results the list of projects that shall be deleted.
+ * select the projects to be deleted during the import process.
+ * The returned results are the list of projects that shall be deleted.
  * 
  * @see PluginImportWizardDetailedPage
  * @see PluginImportOperation
@@ -179,6 +179,11 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	private PluginFilteredTree fFilteredTree;
 	private CheckboxTreeViewer fCheckboxTreeViewer;
 
+	/**
+	 * Constructor
+	 * @param parent shell to create this dialog on top of
+	 * @param plugins list of IPluginModelBase objects that have conflicts
+	 */
 	public OverwriteProjectsSelectionDialog(Shell parent, ArrayList plugins) {
 		super(parent);
 		setTitle(PDEUIMessages.PluginImportOperation_OverwritePluginProjects);
