@@ -20,10 +20,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
@@ -40,7 +37,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.wizards.datatransfer.*;
 import org.osgi.framework.BundleException;
 
@@ -60,8 +57,6 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	private IPluginModelBase[] fModels;
 	private int fImportType;
-	private ImportQuery fReplaceQuery;
-	private ImportQuery fExecutionQuery;
 	private Hashtable fProjectClasspaths = new Hashtable();
 	private boolean fForceAutobuild;
 
@@ -85,8 +80,6 @@ public class PluginImportOperation extends WorkspaceJob {
 		super(PDEUIMessages.ImportWizard_title);
 		fModels = models;
 		fImportType = importType;
-		fReplaceQuery = new ImportQuery();
-		fExecutionQuery = new ImportQuery();
 		fForceAutobuild = forceAutobuild;
 	}
 
@@ -116,8 +109,14 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
-			monitor.beginTask(PDEUIMessages.ImportWizard_operation_creating, fModels.length + 1);
+
+			monitor.beginTask("", fModels.length + 5); //$NON-NLS-1$
 			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.ImportWizard_operation_multiProblem, null);
+
+			deleteConflictingProjects(new SubProgressMonitor(monitor, 2));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 
 			for (int i = 0; i < fModels.length; i++) {
 				monitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, fModels[i].getPluginBase().getId()));
@@ -128,7 +127,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				}
 				if (monitor.isCanceled()) {
 					try {
-						setClasspaths(new SubProgressMonitor(monitor, 1));
+						setClasspaths(new SubProgressMonitor(monitor, 3));
 					} catch (JavaModelException e) {
 						/* Do nothing as we are already cancelled */
 					}
@@ -144,6 +143,92 @@ public class PluginImportOperation extends WorkspaceJob {
 			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild)
 				runBuildJob();
 			return multiStatus;
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * If there are existing projects in the workspace with the same sybmolic name, open a dialog
+	 * asking the user if they would like to delete those projects.  The projects are deleted before
+	 * the import continues so the individual imports can do a simple search for an allowed plug-in name.
+	 * 
+	 * 
+	 */
+	private void deleteConflictingProjects(IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 5); //$NON-NLS-1$
+		try {
+			IPluginModelBase[] workspacePlugins = PluginRegistry.getWorkspaceModels();
+			HashMap workspacePluginMap = new HashMap();
+			for (int i = 0; i < workspacePlugins.length; i++) {
+				IPluginModelBase plugin = workspacePlugins[i];
+				String symbolicName = plugin.getBundleDescription().getSymbolicName();
+				ArrayList pluginsWithSameSymbolicName = (ArrayList) workspacePluginMap.get(symbolicName);
+				if (pluginsWithSameSymbolicName == null) {
+					pluginsWithSameSymbolicName = new ArrayList();
+				}
+				pluginsWithSameSymbolicName.add(plugin);
+				workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
+			}
+			monitor.worked(1);
+
+			final ArrayList conflictingPlugins = new ArrayList();
+			for (int i = 0; i < fModels.length; i++) {
+				String symbolicName = fModels[i].getBundleDescription().getSymbolicName();
+				ArrayList plugins = (ArrayList) workspacePluginMap.get(symbolicName);
+				if (plugins == null || plugins.size() == 0) {
+					continue;
+				}
+				if (!conflictingPlugins.containsAll(plugins)) {
+					conflictingPlugins.addAll(plugins);
+				}
+			}
+			monitor.worked(1);
+
+			final ArrayList overwriteProjectList = new ArrayList();
+			if (conflictingPlugins.size() > 0) {
+
+				UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_OverwritePluginProjects) {
+
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						OverwriteProjectsSelectionDialog dialog = new OverwriteProjectsSelectionDialog(getDisplay().getActiveShell(), conflictingPlugins);
+						dialog.setBlockOnOpen(true);
+						if (dialog.open() == Window.OK) {
+							overwriteProjectList.addAll(Arrays.asList(dialog.getResult()));
+							return Status.OK_STATUS;
+						}
+						return Status.CANCEL_STATUS;
+					}
+				};
+
+				try {
+					job.schedule();
+					job.join();
+				} catch (InterruptedException e1) {
+				}
+
+				if (job.getResult() == null || !job.getResult().isOK()) {
+					monitor.setCanceled(true);
+					return;
+				}
+				monitor.worked(1);
+
+				//delete the selected projects
+				for (int i = 0; i < overwriteProjectList.size(); i++) {
+					IPluginModelBase plugin = (IPluginModelBase) overwriteProjectList.get(i);
+					monitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, plugin.getPluginBase().getId()));
+					IProject project = plugin.getUnderlyingResource().getProject();
+					if (RepositoryProvider.isShared(project))
+						RepositoryProvider.unmap(project);
+					if (!safeDeleteCheck(project, monitor)) {
+						throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
+					}
+					project.delete(true, true, monitor);
+				}
+				monitor.worked(2);
+			} else {
+				monitor.worked(3);
+			}
 		} finally {
 			monitor.done();
 		}
@@ -180,11 +265,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	private void importPlugin(IPluginModelBase model, int importType, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 5); //$NON-NLS-1$
-
-			// Test is the required execution environment is supported
-			if (!testExecutionEnvironment(model)) {
-				return;
-			}
 
 			// Create the project or ask to overwrite if project exists
 			IProject project = createProject(model, new SubProgressMonitor(monitor, 1));
@@ -400,21 +480,22 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask("", 2); //$NON-NLS-1$
 			IProject project = findProject(model.getPluginBase().getId());
 			if (project.exists() || new File(project.getParent().getLocation().toFile(), project.getName()).exists()) {
-				// Query the user to see if we should overwrite
-				switch (fReplaceQuery.doQuery(NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()))) {
-					case IDialogConstants.CANCEL_ID :
-						throw new OperationCanceledException();
-					case IDialogConstants.NO_ID :
-						return null;
+
+				project = PDEPlugin.getWorkspace().getRoot().getProject(model.getPluginBase().getId());
+				if (project.exists()) {
+					File installLocation = new File(model.getInstallLocation());
+					String projectName = installLocation.getName();
+					int jarIndex = projectName.toLowerCase().lastIndexOf(".jar"); //$NON-NLS-1$
+					if (jarIndex >= 0) {
+						projectName = projectName.substring(0, jarIndex);
+					}
+					project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
+					int index = 0;
+					while (project.exists() == true) {
+						index++;
+						project = PDEPlugin.getWorkspace().getRoot().getProject(projectName + '_' + index);
+					}
 				}
-				if (RepositoryProvider.isShared(project))
-					RepositoryProvider.unmap(project);
-				if (!project.exists())
-					project.create(new SubProgressMonitor(monitor, 1));
-				if (!safeDeleteCheck(project, monitor)) {
-					throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
-				}
-				project.delete(true, true, monitor);
 			}
 
 			project.create(monitor);
@@ -559,37 +640,6 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Tests whether the required execution environment of the given plugin is supported by
-	 * the current known JREs.  If not, ask the user whether to continue.
-	 * @param model the plug-in model to test
-	 * @return true is the import should continue, false if the plug-in should be skipped
-	 * @throws OperationCanceledException if the user chooses to cancel the operation
-	 */
-	private boolean testExecutionEnvironment(IPluginModelBase model) throws OperationCanceledException {
-		BundleDescription desc = model.getBundleDescription();
-		if (desc != null) {
-			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			String[] envs = desc.getExecutionEnvironments();
-			boolean found = false;
-			for (int i = 0; i < envs.length; i++) {
-				if (manager.getEnvironment(envs[i]) != null) {
-					found = true;
-					break;
-				}
-			}
-			if (envs.length > 0 && !found) {
-				switch (fExecutionQuery.doQuery(NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, model.getPluginBase().getId(), envs[0]))) {
-					case IDialogConstants.CANCEL_ID :
-						throw new OperationCanceledException();
-					case IDialogConstants.NO_ID :
-						return false;
-				}
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -1093,47 +1143,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private boolean isJARd(IPluginModelBase model) {
 		return new File(model.getInstallLocation()).isFile();
-	}
-
-	private static class ImportQuery {
-		// If 0, ask the user in a dialog, if -1 users has chosen no to all, if +1 user has chosen yes to all
-		private int fCreateDialog = 0;
-
-		/**
-		 * @return returns one of IDialogConstants.YES_ID, IDialogConstants.NO_ID, IDialogConstants.CANCEL_ID
-		 */
-		public int doQuery(final String message) {
-			if (fCreateDialog > 0) {
-				return IDialogConstants.YES_ID;
-			}
-			if (fCreateDialog < 0) {
-				return IDialogConstants.NO_ID;
-			}
-
-			final int[] result = {IDialogConstants.CANCEL_ID};
-
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), PDEUIMessages.ImportWizard_messages_title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
-					result[0] = dialog.open();
-				}
-			});
-
-			switch (result[0]) {
-				case 0 :
-					return IDialogConstants.YES_ID;
-				case 1 :
-					fCreateDialog = +1;
-					return IDialogConstants.YES_ID;
-				case 2 :
-					return IDialogConstants.NO_ID;
-				case 3 :
-					fCreateDialog = -1;
-					return IDialogConstants.NO_ID;
-				default :
-					return IDialogConstants.CANCEL_ID;
-			}
-		}
 	}
 
 }
