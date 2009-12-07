@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+
+import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
+import org.eclipse.equinox.p2.metadata.IRequirement;
 import org.eclipse.equinox.p2.operations.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
@@ -189,20 +194,21 @@ public class RuntimeInstallJob extends Job {
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
 		iuPatchDescription.addProvidedCapabilities(list);
 
-		IRequiredCapability applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
-		IRequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
+		IRequirement applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
+		IRequirement newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new IRequirementChange[] {MetadataFactory.createRequirementChange(applyTo, newValue)});
 
-		iuPatchDescription.setApplicabilityScope(new IRequiredCapability[0][0]);
+		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
 		Collector queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					IRequiredCapability[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					IRequirement[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
 					for (int i = 0; i < reqs.length; i++) {
-						if (reqs[i].getName().equals(id)) {
-							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqs[i].getRange())) {
+						IRequiredCapability reqCap = (IRequiredCapability) reqs[i];
+						if (reqCap.getName().equals(id)) {
+							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqCap.getRange())) {
 								return true;
 							}
 						}
