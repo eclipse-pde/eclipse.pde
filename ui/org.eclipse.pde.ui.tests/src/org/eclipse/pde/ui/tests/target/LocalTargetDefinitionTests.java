@@ -743,6 +743,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.eclipse.jdt.junit4.runtime.source");
 		expected.add("org.eclipse.jdt.launching.source");
 		expected.add("org.eclipse.jdt.ui.source");
+		// There are two versions of junit available, each with source
+		expected.add("org.junit.source");
 		expected.add("org.junit.source");
 		expected.add("org.junit4.source");
 		expected.add("org.hamcrest.core.source");
