@@ -514,8 +514,9 @@ public class PluginImportOperation extends WorkspaceJob {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
-			if (resource != null)
+			if (resource != null && resource.exists()) {
 				return resource.getProject();
+			}
 		}
 		return PDEPlugin.getWorkspace().getRoot().getProject(id);
 	}
