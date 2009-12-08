@@ -246,6 +246,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		filter.setIncludeLeadingWildcard(true);
 		fFilteredTree = new PluginFilteredTree(parent, SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, filter, true);
 		fFilteredTree.setInitialText(PDEUIMessages.DuplicatePluginResolutionDialog_typeFilerText);
+		fFilteredTree.setFocus();
 		fCheckboxTreeViewer = (CheckboxTreeViewer) fFilteredTree.getViewer();
 		fCheckboxTreeViewer.setContentProvider(new PluginContentProvider());
 		fCheckboxTreeViewer.setLabelProvider(new StyledPluginLabelProvider());
@@ -260,7 +261,6 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 			fCheckboxTreeViewer.setChecked(fPluginProjectList.get(i), true);
 			fProjectCheckedStateMap.put(fPluginProjectList.get(i), Boolean.valueOf(true));
 		}
-		fCheckboxTreeViewer.getControl().setFocus();
 	}
 
 }
