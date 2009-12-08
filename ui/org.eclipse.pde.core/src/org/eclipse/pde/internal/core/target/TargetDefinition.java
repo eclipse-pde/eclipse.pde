@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-
 import java.io.*;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,11 +17,12 @@ import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.query.IUProfilePropertyQuery;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;
@@ -664,7 +663,7 @@ public class TargetDefinition implements ITargetDefinition {
 				// still in the profile, we need to recreate (rather than uninstall)
 				IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
 				propertyQuery.setProfile(profile);
-				Collector collector = profile.query(propertyQuery, new Collector(), null);
+				Collector collector = profile.query(propertyQuery, null);
 				Iterator iterator = collector.iterator();
 				if (iterator.hasNext()) {
 					Set installedIUs = new HashSet();

@@ -10,23 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-
-import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
-
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IRequirement;
 import org.eclipse.equinox.p2.operations.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
@@ -125,7 +123,7 @@ public class RuntimeInstallJob extends Job {
 
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
-				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), new Collector(), monitor);
+				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
 				if (queryMatches.size() == 0) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
@@ -133,7 +131,7 @@ public class RuntimeInstallJob extends Job {
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
 
 				// Find out if the profile already has that iu installed												
-				queryMatches = profile.query(new InstallableUnitQuery(id), new Collector(), new SubProgressMonitor(monitor, 0));
+				queryMatches = profile.query(new InstallableUnitQuery(id), new SubProgressMonitor(monitor, 0));
 				if (queryMatches.size() == 0) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
@@ -216,7 +214,7 @@ public class RuntimeInstallJob extends Job {
 				}
 				return false;
 			}
-		}, new Collector(), monitor);
+		}, monitor);
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));

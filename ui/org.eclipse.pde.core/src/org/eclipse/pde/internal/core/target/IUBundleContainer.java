@@ -10,22 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-
 import java.io.File;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
+import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.director.IPlanner;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
-import org.eclipse.equinox.internal.provisional.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
-import org.eclipse.equinox.p2.engine.IEngine;
-import org.eclipse.equinox.p2.engine.IProvisioningPlan;
+import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
@@ -249,8 +247,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		// query for bundles
 		OSGiBundleQuery query = new OSGiBundleQuery();
-		Collector collector = new Collector();
-		slice.query(query, collector, new SubProgressMonitor(subMonitor, 10));
+		Collector collector = slice.query(query, new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -365,7 +362,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-		Collector collector = slice.query(InstallableUnitQuery.ANY, new Collector(), new SubProgressMonitor(subMonitor, 10));
+		Collector collector = slice.query(InstallableUnitQuery.ANY, new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled() || collector.isEmpty()) {
 			return new IResolvedBundle[0];
@@ -407,7 +404,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// query for bundles
-		collector = slice.query(new OSGiBundleQuery(), new Collector(), new SubProgressMonitor(subMonitor, 10));
+		collector = slice.query(new OSGiBundleQuery(), new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -472,13 +469,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			fUnits = new IInstallableUnit[fIds.length];
 			for (int i = 0; i < fIds.length; i++) {
 				InstallableUnitQuery query = new InstallableUnitQuery(fIds[i], fVersions[i]);
-				Collector collector = profile.query(query, new Collector(), null);
+				Collector collector = profile.query(query, null);
 				if (collector.isEmpty()) {
 					// try repositories
 					URI[] repositories = resolveRepositories();
 					for (int j = 0; j < repositories.length; j++) {
 						IMetadataRepository repository = getRepository(repositories[j]);
-						collector = repository.query(query, new Collector(), null);
+						collector = repository.query(query, null);
 						if (!collector.isEmpty()) {
 							break;
 						}

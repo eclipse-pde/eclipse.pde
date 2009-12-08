@@ -74,7 +74,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return installable unit
 	 */
 	protected IInstallableUnit getUnit(String id, IMetadataRepository repository) {
-		Collector result = repository.query(new InstallableUnitQuery(id), new Collector(), null);
+		Collector result = repository.query(new InstallableUnitQuery(id),  null);
 		IInstallableUnit[] units  = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
 		if (units.length == 1) {
 			return units[0];
