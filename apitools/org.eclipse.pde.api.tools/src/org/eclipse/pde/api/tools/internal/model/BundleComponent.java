@@ -354,14 +354,17 @@ public class BundleComponent extends Component {
 			return createLocalApiDescription();
 		}
 		// build a composite description
-		IApiDescription[] descriptions = new IApiDescription[fragments.length + 1];
+		ArrayList descriptions = new ArrayList(fragments.length);
+		descriptions.add(createLocalApiDescription());
+		IApiComponent component = null;
 		for (int i = 0; i < fragments.length; i++) {
-			BundleDescription fragment = fragments[i];
-			BundleComponent component = (BundleComponent) getBaseline().getApiComponent(fragment.getSymbolicName());
-			descriptions[i + 1] = component.getApiDescription();
+			if(!fragments[i].isResolved()) {
+				continue;
+			}
+			component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
+			descriptions.add(component.getApiDescription());
 		}
-		descriptions[0] = createLocalApiDescription();
-		return new CompositeApiDescription(descriptions);
+		return new CompositeApiDescription((IApiDescription[]) descriptions.toArray(new IApiDescription[descriptions.size()]));
 	}
 
 	/**
@@ -445,6 +448,9 @@ public class BundleComponent extends Component {
 		}
 		BundleDescription[] fragments = bundle.getFragments();
 		for (int i = 0; i < fragments.length; i++) {
+			if(!fragments[i].isResolved()) {
+				continue;
+			}
 			addSuppliedPackages(packages, supplied, fragments[i].getExportPackages());
 		}
 		
@@ -523,9 +529,6 @@ public class BundleComponent extends Component {
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#createApiTypeContainers()
 	 */
 	protected synchronized List createApiTypeContainers() throws CoreException {
-		if (fBundleDescription == null) {
-			baselineDisposed(getBaseline());
-		}
 		List containers = new ArrayList(5);
 		try {
 			List all = new ArrayList();
@@ -537,10 +540,13 @@ public class BundleComponent extends Component {
 				considerFragments = !isApiEnabled();
 			}
 			if (considerFragments) { 
-				BundleDescription[] fragments = fBundleDescription.getFragments();
+				BundleDescription[] fragments = getBundleDescription().getFragments();
+				IApiComponent component = null;
 				for (int i = 0; i < fragments.length; i++) {
-					BundleDescription fragment = fragments[i];
-					BundleComponent component = (BundleComponent) getBaseline().getApiComponent(fragment.getSymbolicName());
+					if(!fragments[i].isResolved()) {
+						continue;
+					}
+					component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
 					if (component != null) {
 						// force initialization of the fragment so we can retrieve its class file containers
 						component.getApiTypeContainers();
@@ -1162,11 +1168,7 @@ public class BundleComponent extends Component {
 	 * @see org.eclipse.pde.api.tools.IApiComponent#hasFragments()
 	 */
 	public synchronized boolean hasFragments() throws CoreException {
-		init();
-		if (fBundleDescription == null) {
-			baselineDisposed(getBaseline());
-		}
-		return fBundleDescription.getFragments().length != 0;
+		return getBundleDescription().getFragments().length != 0;
 	}
 	
 	/**

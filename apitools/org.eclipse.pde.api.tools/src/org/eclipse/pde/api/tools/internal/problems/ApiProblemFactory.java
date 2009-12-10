@@ -560,9 +560,8 @@ public class ApiProblemFactory {
 			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				switch(kind) {
-					case IApiProblem.API_COMPONENT_RESOLUTION: {
-						return 99;
-					}
+					case IApiProblem.API_COMPONENT_RESOLUTION: return 99;
+					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM: return 31;
 				}
 			}
 		}
@@ -581,6 +580,8 @@ public class ApiProblemFactory {
 		switch(problem.getCategory()) {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 				switch(problem.getKind()) {
+					//TODO this could be its own setting
+					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM:
 					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
 				}
 				break;

@@ -1349,7 +1349,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) throws CoreException {
 		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(
-				Path.EMPTY.toPortableString(),
+				Path.EMPTY.toString(),
 				new String[] {component.getSymbolicName(), message },
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
 				new Object[] {new Integer(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID)},
@@ -1819,7 +1819,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
 		}
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(
-				Path.EMPTY.toPortableString(),
+				Path.EMPTY.toString(),
 				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
 				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID)},
 				IElementDescriptor.RESOURCE,

@@ -612,7 +612,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 	
 	/**
-	 * @return the OSGi state for this {@link IApiProfile}
+	 * @return the OSGi state for this {@link IApiBaseline}
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

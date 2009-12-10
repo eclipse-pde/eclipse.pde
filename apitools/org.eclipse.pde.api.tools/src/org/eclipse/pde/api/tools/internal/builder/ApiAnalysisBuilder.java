@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -48,6 +49,7 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -208,7 +210,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		this.currentproject = getProject();
-		if (!this.currentproject.isAccessible() || !this.currentproject.hasNature(ApiPlugin.NATURE_ID) || hasBeenBuilt(this.currentproject)) {
+		if (shouldAbort(this.currentproject)) {
 			return NO_PROJECTS;
 		}
 		if (DEBUG) {
@@ -341,6 +343,58 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			System.out.println("Finished build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return projects;
+	}
+	
+	/**
+	 * Returns if the builder should abort the build of the given project.
+	 * The build decides to abort if one of the following are true:
+	 * <ul>
+	 * <li>The project is not accessible</li>
+	 * <li>The project does not have the API tools nature</li>
+	 * <li>The project has already been built - as decided by the build framework</li>
+	 * <li>The project has fatal JDT errors that prevent the creation of class files</li>
+	 * </ul>
+	 * @param project
+	 * @return true if the builder should abort building the given project, false otherwise
+	 * @throws CoreException
+	 * @see {@link #hasBeenBuilt(IProject)}
+	 * @see {@link #hasFatalProblems(IProject)}
+	 * @since 1.1
+	 */
+	boolean shouldAbort(IProject project) throws CoreException {
+		return !project.isAccessible() || 
+			   !project.hasNature(ApiPlugin.NATURE_ID) || 
+			   hasBeenBuilt(project) ||
+			   hasFatalProblems(project);
+	}
+	
+	/**
+	 * Returns if the project we are about to build has fatal JDT problems that prevent 
+	 * class files from being built
+	 * @param project
+	 * @return true if the given project has fatal JDT problems
+	 * @see 
+	 * @throws CoreException
+	 * @see {@link org.eclipse.jdt.core.IJavaModelMarker#BUILDPATH_PROBLEM_MARKER}
+	 * @since 1.1
+	 */
+	boolean hasFatalProblems(IProject project) throws CoreException {
+		IMarker[] problems = project.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
+		if(problems.length > 0) {
+			IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(
+					Path.EMPTY.toString(), 
+					new String[] {project.getName()}, 
+					null, 
+					null, 
+					IElementDescriptor.RESOURCE, 
+					IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
+			createMarkerForProblem(
+					IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION, 
+					IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER, 
+					problem);
+			return true;
+		}
+		return false;
 	}
 	
 	/**

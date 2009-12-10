@@ -45,7 +45,7 @@ public interface IApiProblem {
 	public static final int CATEGORY_API_BASELINE = 0x50000000;
 	
 	/**
-	 * Constant representing the api component resolution problem category
+	 * Constant representing the API component resolution problem category
 	 */
 	public static final int CATEGORY_API_COMPONENT_RESOLUTION = 0x60000000;
 	/**
@@ -376,6 +376,14 @@ public interface IApiProblem {
 	 * @see #getKind()
 	 */
 	public static final int API_COMPONENT_RESOLUTION = 1;
+	/**
+	 * Constant representing the value of a workspace baseline resolution {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>2</code>
+	 * 
+	 * @see #getKind()
+	 */
+	public static final int FATAL_JDT_BUILDPATH_PROBLEM = 2;
 	/**
 	 * Returns the severity of the problem. See the severity constants defined in
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.ApiPlugin} class.
