@@ -2723,8 +2723,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String DuplicatePluginResolutionDialog_symbolicName;
 
-	public static String DuplicatePluginResolutionDialog_typeFilerText;
-
 	public static String DuplicatePluginResolutionDialog_version;
 
 	public static String OrganizeManifestsOperation_additionalDeps;
