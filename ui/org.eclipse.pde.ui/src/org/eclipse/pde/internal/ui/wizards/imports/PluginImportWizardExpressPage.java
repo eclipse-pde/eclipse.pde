@@ -104,7 +104,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 		createButtons(container);
 
-		createComputationsOption(container, 2);
+		Composite optionsComp = SWTFactory.createComposite(container, 1, 2, GridData.FILL_HORIZONTAL, 5, 0);
+		createComputationsOption(optionsComp);
 
 		fAddFragmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

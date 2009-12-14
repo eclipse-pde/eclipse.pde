@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -160,10 +159,9 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		updateCount();
 
 		// create container for buttons
-		Composite buttonContainer = new Composite(container, SWT.NONE);
-		buttonContainer.setLayout(GridLayoutFactory.fillDefaults().create());
-		createComputationsOption(buttonContainer, 3);
-		createFilterOptions(buttonContainer, 3);
+		Composite optionComp = SWTFactory.createComposite(container, 1, 3, GridData.FILL_HORIZONTAL, 5, 0);
+		createComputationsOption(optionComp);
+		createFilterOptions(optionComp);
 
 		addViewerListeners();
 		initialize();
@@ -173,15 +171,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PLUGIN_IMPORT_SECOND_PAGE);
 	}
 
-	private void createFilterOptions(Composite container, int span) {
-		Composite parent = new Composite(container, SWT.NONE);
-		parent.setLayout(GridLayoutFactory.swtDefaults().margins(5, 0).create());
-		fFilterOldVersionButton = new Button(parent, SWT.CHECK);
-		fFilterOldVersionButton.setSelection(true);
-		fFilterOldVersionButton.setText(PDEUIMessages.ImportWizard_DetailedPage_filterDesc);
-		GridData gData = new GridData(GridData.FILL_HORIZONTAL);
-		gData.horizontalSpan = span;
-		fFilterOldVersionButton.setLayoutData(gData);
+	private void createFilterOptions(Composite container) {
+		fFilterOldVersionButton = SWTFactory.createCheckButton(container, PDEUIMessages.ImportWizard_DetailedPage_filterDesc, null, true, 1);
 
 		if (getDialogSettings().get(SETTINGS_SHOW_LATEST) != null)
 			fFilterOldVersionButton.setSelection(getDialogSettings().getBoolean(SETTINGS_SHOW_LATEST));
