@@ -443,6 +443,23 @@ public class ApiDescription implements IApiDescription {
 	}
 	
 	/**
+	 * Returns the visibility of the given node, walking up the tree if needed
+	 * to resolve inherited visibility.
+	 * 
+	 * @param node
+	 * @return visibility modifier
+	 */
+	protected int resolveVisibility(ManifestNode node) {
+		ManifestNode visNode = node;
+		int vis = visNode.visibility;
+		while (vis == VISIBILITY_INHERITED) {
+			visNode = visNode.parent;
+			vis = visNode.visibility;
+		}
+		return vis;
+	}
+	
+	/**
 	 * Resolves annotations based on inheritance for the given node and element.
 	 * 
 	 * @param node manifest node
@@ -450,12 +467,7 @@ public class ApiDescription implements IApiDescription {
 	 * @return annotations
 	 */
 	protected IApiAnnotations resolveAnnotations(ManifestNode node, IElementDescriptor element) {
-		ManifestNode visNode = node;
-		int vis = visNode.visibility;
-		while (vis == VISIBILITY_INHERITED) {
-			visNode = visNode.parent;
-			vis = visNode.visibility;
-		}
+		int vis = resolveVisibility(node);
 		int res = RestrictionModifiers.NO_RESTRICTIONS;
 		if (node.element.equals(element)) {
 			res = node.restrictions;

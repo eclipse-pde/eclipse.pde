@@ -204,68 +204,73 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 			try {
 				fRefreshing = true;
-				ICompilationUnit unit = fType.getCompilationUnit();
-				if (unit != null) {
-					IResource resource = null;
-					try {
-						resource = unit.getUnderlyingResource();
-					} catch (JavaModelException e) {
-						if(DEBUG) {
-							StringBuffer buffer = new StringBuffer();
-							buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
-							buffer.append(unit);
-							System.out.println(buffer.toString());
-						}
-						// exception if the resource does not exist
-						if (!e.getJavaModelStatus().isDoesNotExist()) {
-							ApiPlugin.log(e.getStatus());
-							return this;
-						}
-					}
-					if (resource != null && resource.exists()) {
-						long stamp = resource.getModificationStamp();
-						if (stamp != fTimeStamp) {
+				int parentVis = resolveVisibility(parent);
+				if (VisibilityModifiers.isAPI(parentVis)) {
+					ICompilationUnit unit = fType.getCompilationUnit();
+					if (unit != null) {
+						IResource resource = null;
+						try {
+							resource = unit.getUnderlyingResource();
+						} catch (JavaModelException e) {
 							if(DEBUG) {
 								StringBuffer buffer = new StringBuffer();
-								buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
-								buffer.append(this);
-								buffer.append(" tag scanning the new type"); //$NON-NLS-1$
+								buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
+								buffer.append(unit);
 								System.out.println(buffer.toString());
 							}
-							modified();
-							children.clear();
-							restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-							fTimeStamp = resource.getModificationStamp();
-							try {
-								TagScanner.newScanner().scan(unit, ProjectApiDescription.this,
-									getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
-							} catch (CoreException e) {
+							// exception if the resource does not exist
+							if (!e.getJavaModelStatus().isDoesNotExist()) {
 								ApiPlugin.log(e.getStatus());
+								return this;
 							}
+						}
+						if (resource != null && resource.exists()) {
+							long stamp = resource.getModificationStamp();
+							if (stamp != fTimeStamp) {
+								if(DEBUG) {
+									StringBuffer buffer = new StringBuffer();
+									buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
+									buffer.append(this);
+									buffer.append(" tag scanning the new type"); //$NON-NLS-1$
+									System.out.println(buffer.toString());
+								}
+								modified();
+								children.clear();
+								restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+								fTimeStamp = resource.getModificationStamp();
+								try {
+									TagScanner.newScanner().scan(unit, ProjectApiDescription.this,
+										getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
+								} catch (CoreException e) {
+									ApiPlugin.log(e.getStatus());
+								}
+							}
+						} else {
+							if(DEBUG) {
+								StringBuffer buffer = new StringBuffer();
+								buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
+								buffer.append(this);
+								buffer.append(" does not exist or is null"); //$NON-NLS-1$
+								System.out.println(buffer.toString());
+							}
+							// element has been removed
+							modified();
+							parent.children.remove(element);
+							return null;
 						}
 					} else {
 						if(DEBUG) {
 							StringBuffer buffer = new StringBuffer();
-							buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
+							buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
+							buffer.append(fType);
+							buffer.append(" refreshing type manifest node: "); //$NON-NLS-1$
 							buffer.append(this);
-							buffer.append(" does not exist or is null"); //$NON-NLS-1$
 							System.out.println(buffer.toString());
 						}
-						// element has been removed
-						modified();
-						parent.children.remove(element);
-						return null;
+						// TODO: binary type
 					}
 				} else {
-					if(DEBUG) {
-						StringBuffer buffer = new StringBuffer();
-						buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
-						buffer.append(fType);
-						buffer.append(" refreshing type manifest node: "); //$NON-NLS-1$
-						buffer.append(this);
-						System.out.println(buffer.toString());
-					}
-					// TODO: binary type
+					// don't scan internal types
 				}
 			} finally {
 				fRefreshing = false;

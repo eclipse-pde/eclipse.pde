@@ -997,7 +997,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		IFile file = (IFile) model.getUnderlyingResource();
 		assertNotNull("the underlying model file must exist", file);
 		WorkspaceBundleModel newmodel = new WorkspaceBundleModel(file);
-		newmodel.getBundle().setHeader(Constants.EXPORT_PACKAGE, "export1");
+		newmodel.getBundle().setHeader(Constants.EXPORT_PACKAGE, name);
 		PluginModelEventWaiter waiter = new PluginModelEventWaiter(PluginModelDelta.CHANGED);
 		newmodel.save();
 		Object object = waiter.waitForEvent();
@@ -1014,6 +1014,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	@Override
 	protected void setUp() throws Exception {
 		createProject(TESTING_PLUGIN_PROJECT_NAME, new String[] {TESTING_PACKAGE});
+		setPackageToApi(getTestingProject(), TESTING_PACKAGE);
 	}
 	
 	/* (non-Javadoc)
