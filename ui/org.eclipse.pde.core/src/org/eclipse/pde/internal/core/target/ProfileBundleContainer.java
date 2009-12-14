@@ -15,14 +15,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.publisher.Publisher;
+import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
@@ -122,8 +122,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 		}
 
 		// Collect all installable units in the repository
-		Collector result = new Collector();
-		fRepo.query(InstallableUnitQuery.ANY, result, subMon.newChild(50));
+		Collector result = fRepo.query(InstallableUnitQuery.ANY, subMon.newChild(50));
 
 		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.size()];
 		int i = 0;

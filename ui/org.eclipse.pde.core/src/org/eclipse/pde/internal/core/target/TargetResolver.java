@@ -4,18 +4,18 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
+import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.engine.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.engine.IEngine;
+import org.eclipse.equinox.p2.engine.*;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQuery;
 import org.eclipse.equinox.p2.publisher.Publisher;
+import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -224,7 +224,7 @@ public class TargetResolver {
 				}
 			};
 			List urls = new ArrayList();
-			Collector result = fProfile.query(query, new Collector(), null);
+			Collector result = fProfile.query(query, null);
 			for (Iterator iterator = result.iterator(); iterator.hasNext();) {
 				IInstallableUnit unit = (IInstallableUnit) iterator.next();
 
@@ -307,8 +307,7 @@ public class TargetResolver {
 		// Get the list of root IUs as actual installable units
 		InstallableUnitDescription[] rootDescriptions = (InstallableUnitDescription[]) fRootIUs.toArray(new InstallableUnitDescription[fRootIUs.size()]);
 		IUDescriptionQuery rootIUQuery = new IUDescriptionQuery(rootDescriptions);
-		Collector result = new Collector();
-		allRepos.query(rootIUQuery, result, subMon.newChild(10));
+		Collector result = allRepos.query(rootIUQuery, subMon.newChild(10));
 		IInstallableUnit[] rootUnits = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
 		if (rootDescriptions.length != rootUnits.length) {
 			// TODO Return a warning status?
@@ -330,7 +329,7 @@ public class TargetResolver {
 		if (slice == null) {
 			return slicer.getStatus();
 		}
-		Collector collector = slice.query(InstallableUnitQuery.ANY, new Collector(), subMon.newChild(10));
+		Collector collector = slice.query(InstallableUnitQuery.ANY, subMon.newChild(10));
 
 		fAvailableIUs = collector.toCollection();
 		return Status.OK_STATUS;

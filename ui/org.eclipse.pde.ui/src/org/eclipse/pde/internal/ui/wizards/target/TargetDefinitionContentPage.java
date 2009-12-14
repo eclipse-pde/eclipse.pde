@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.target;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -26,7 +25,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
@@ -39,7 +37,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.progress.UIJob;
@@ -167,7 +164,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		contentTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
 		Composite contentTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(contentTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
-		fContentTree = new TargetContentsGroup(contentTabContainer);
+		fContentTree = TargetContentsGroup.createInDialog(contentTabContainer);
 		contentTab.setControl(contentTabContainer);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentTabContainer, IHelpContextIds.EDIT_TARGET_WIZARD_CONTENT_TAB);
 
@@ -225,11 +222,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				if (fLocationTree != source) {
 					fLocationTree.setInput(definition);
 				}
-				if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
-					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
-				} else {
-					fLocationTab.setImage(null);
-				}
+				// TODO Handle errors
+//				if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
+//					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+//				} else {
+//					fLocationTab.setImage(null);
+//				}
 			}
 		};
 		fContentTree.addTargetChangedListener(listener);
@@ -265,11 +263,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					}
 					fContentTree.setInput(definition);
 					fLocationTree.setInput(definition);
-					if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
-						fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
-					} else {
-						fLocationTab.setImage(null);
-					}
+					// TODO Handle errors
+//					if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
+//						fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+//					} else {
+//						fLocationTab.setImage(null);
+//					}
 					return Status.OK_STATUS;
 				}
 			}.schedule();
@@ -736,30 +735,32 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * @return list of possible dependencies
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
-		BundleInfo[] current = getTargetDefinition().getImplicitDependencies();
-		Set currentBundles = new HashSet();
-		if (current != null) {
-			for (int i = 0; i < current.length; i++) {
-				if (!currentBundles.contains(current[i].getSymbolicName())) {
-					currentBundles.add(current[i].getSymbolicName());
-				}
-			}
-		}
-
-		List targetBundles = new ArrayList();
-		IResolvedBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
-		if (allTargetBundles == null || allTargetBundles.length == 0) {
-			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
-		}
-		for (int i = 0; i < allTargetBundles.length; i++) {
-			BundleInfo bundleInfo = allTargetBundles[i].getBundleInfo();
-			if (!currentBundles.contains(bundleInfo.getSymbolicName())) {
-				currentBundles.add(bundleInfo.getSymbolicName()); // to avoid duplicate entries
-				targetBundles.add(bundleInfo);
-			}
-		}
-
-		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
+		// TODO Support implicit bundle selection
+		return new BundleInfo[0];
+//		BundleInfo[] current = getTargetDefinition().getImplicitDependencies();
+//		Set currentBundles = new HashSet();
+//		if (current != null) {
+//			for (int i = 0; i < current.length; i++) {
+//				if (!currentBundles.contains(current[i].getSymbolicName())) {
+//					currentBundles.add(current[i].getSymbolicName());
+//				}
+//			}
+//		}
+//
+//		List targetBundles = new ArrayList();
+//		IResolvedBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
+//		if (allTargetBundles == null || allTargetBundles.length == 0) {
+//			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+//		}
+//		for (int i = 0; i < allTargetBundles.length; i++) {
+//			BundleInfo bundleInfo = allTargetBundles[i].getBundleInfo();
+//			if (!currentBundles.contains(bundleInfo.getSymbolicName())) {
+//				currentBundles.add(bundleInfo.getSymbolicName()); // to avoid duplicate entries
+//				targetBundles.add(bundleInfo);
+//			}
+//		}
+//
+//		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
 	}
 
 	private void handleRemove() {

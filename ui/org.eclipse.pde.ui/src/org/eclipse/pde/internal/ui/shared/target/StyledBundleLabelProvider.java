@@ -12,9 +12,11 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -114,7 +116,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		} else if (element instanceof IInstallableUnit) {
 			IInstallableUnit iu = (IInstallableUnit) element;
 			String name = iu.getProperty(IInstallableUnit.PROP_NAME);
-			if (name == null) {
+			// TODO Quick hack to handle generated IUs that don't have proper names set
+			if (name == null || name.startsWith("%")) { //$NON-NLS-1$
 				name = iu.getId();
 			}
 			styledString.append(name);
@@ -190,14 +193,38 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ);
 			}
 		} else if (element instanceof IInstallableUnit) {
-			// TODO Get type root/bundle/fragment/source
-//			if (bundle.isFragment()) {
-//				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FRAGMENT_OBJ, flag);
-//			} else if (bundle.isSourceBundle()) {
-//				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_MF_OBJ, flag);
-//			} else {
-//				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ, flag);
-//			}
+			IInstallableUnit unit = (IInstallableUnit) element;
+
+			boolean isBundle = false;
+			boolean isFragment = false;
+			boolean isSource = false;
+
+			// Check for bundle property
+			IProvidedCapability[] provided = unit.getProvidedCapabilities();
+			for (int j = 0; j < provided.length; j++) {
+				if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+					if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+						isSource = true;
+					}
+				}
+				if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+					isBundle = true;
+				}
+				if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_FRAGMENT)) {
+					isFragment = true;
+					break; // Fragments will only ever get a fragment icon
+				}
+			}
+			// Order of these tests matter, as fragments and source are also bundles
+			if (isFragment) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FRAGMENT_OBJ);
+			}
+			if (isSource) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_MF_OBJ);
+			}
+			if (isBundle) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
+			}
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_NOREF_FEATURE_OBJ);
 		}
 		return null;

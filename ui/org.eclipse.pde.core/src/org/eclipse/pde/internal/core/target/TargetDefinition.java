@@ -18,7 +18,7 @@ import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;

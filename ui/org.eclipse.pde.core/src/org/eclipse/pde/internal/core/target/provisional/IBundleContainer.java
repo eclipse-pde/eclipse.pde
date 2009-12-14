@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.core.target.provisional;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.repository.IRepository;
 
 /**
  * A collection of bundles. A bundle container abstracts the storage and location of the

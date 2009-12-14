@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.*;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -45,7 +46,7 @@ public class TargetLocationsGroup {
 	private Button fAddButton;
 	private Button fEditButton;
 	private Button fRemoveButton;
-	private Button fShowContentButton;
+	private Button fShowReposButton;
 
 	private ITargetDefinition fTarget;
 	private ListenerList fChangeListeners = new ListenerList();
@@ -129,8 +130,7 @@ public class TargetLocationsGroup {
 		fAddButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_0, SWT.PUSH);
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
-
-		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
+		fShowReposButton = toolkit.createButton(buttonComp, "Show Repositories...", SWT.PUSH);
 
 		initializeTreeViewer(atree);
 		initializeButtons();
@@ -168,8 +168,7 @@ public class TargetLocationsGroup {
 		fAddButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_0, null);
 		fEditButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_1, null);
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
-
-		fShowContentButton = SWTFactory.createCheckButton(comp, Messages.TargetLocationsGroup_1, null, false, 2);
+		fShowReposButton = SWTFactory.createPushButton(buttonComp, "Show Repositories...", null);
 
 		initializeTreeViewer(atree);
 		initializeButtons();
@@ -229,14 +228,28 @@ public class TargetLocationsGroup {
 		fRemoveButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fRemoveButton);
 
-		fShowContentButton.addSelectionListener(new SelectionAdapter() {
+		fShowReposButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fTreeViewer.refresh();
-				fTreeViewer.expandAll();
+				TrayDialog dialog = new TrayDialog(fShowReposButton.getShell()) {
+					protected void configureShell(Shell newShell) {
+						// TODO Auto-generated method stub
+						newShell.setText("Repositories");
+						super.configureShell(newShell);
+					}
+
+					protected Control createContents(Composite parent) {
+						Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+						((GridData) comp.getLayoutData()).heightHint = 300;
+						((GridData) comp.getLayoutData()).widthHint = 300;
+						TargetReposGroup repos = TargetReposGroup.createInDialog(comp);
+						return comp;
+					}
+				};
+				dialog.open();
 			}
 		});
-		fShowContentButton.setLayoutData(new GridData());
-		SWTFactory.setButtonDimensionHint(fShowContentButton);
+		fShowReposButton.setLayoutData(new GridData());
+		SWTFactory.setButtonDimensionHint(fShowReposButton);
 	}
 
 	/**
