@@ -453,9 +453,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
 	public void saving(ISaveContext context) throws CoreException {
-		if(context.getKind() == ISaveContext.FULL_SAVE) {
-			context.needDelta();
-		}
 		ISaveParticipant sp = null;
 		for(Iterator iter = savelisteners.iterator(); iter.hasNext();) {
 			sp = (ISaveParticipant) iter.next();
@@ -478,7 +475,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		try {
 			super.start(context);
 		} finally {
-			ResourcesPlugin.getWorkspace().addSaveParticipant(this, this);
+			ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, this);
 			configurePluginDebugOptions();
 		}
 	}
@@ -490,7 +487,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		try {
 			ApiDescriptionManager.shutdown();
 			ApiBaselineManager.getManager().stop();
-			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(PLUGIN_ID);
 			FileManager.getManager().deleteFiles();
 		}
 		finally {
