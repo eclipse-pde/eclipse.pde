@@ -778,7 +778,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 							if (units != null) {
 								for (int index = 0; index < units.length; index++) {
 									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(units[index].getId())) {
-										if (platformOsgiVersion.compareTo(units[index].getVersion()) < 0) {
+										Version osgiUnitVersion = org.eclipse.equinox.internal.provisional.p2.metadata.Version.toOSGiVersion(units[index].getVersion());
+										if (platformOsgiVersion.compareTo(osgiUnitVersion) < 0) {
 											Display.getDefault().syncExec(new Runnable() {
 												public void run() {
 													MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);

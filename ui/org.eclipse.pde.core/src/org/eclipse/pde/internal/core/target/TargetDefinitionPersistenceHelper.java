@@ -21,6 +21,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -226,7 +227,7 @@ public class TargetDefinitionPersistenceHelper {
 		URI[] repos = definition.getRepositories();
 		if (repos.length > 0) {
 			Element reposElement = doc.createElement(REPOSITORIES);
-			for (int i = 0; i < containers.length; i++) {
+			for (int i = 0; i < repos.length; i++) {
 				Element repoElement = doc.createElement(REPOSITORY);
 				repoElement.setAttribute(LOCATION, repos[i].toASCIIString());
 				reposElement.appendChild(repoElement);
@@ -389,15 +390,11 @@ public class TargetDefinitionPersistenceHelper {
 				} else if (nodeName.equalsIgnoreCase(INCLUDE_BUNDLES)) {
 					// TODO Does not handle cases where everything was purposely excluded
 					BundleInfo[] included = deserializeBundles(element);
-					if (included.length > 0) {
-						definition.addIncluded(included);
-					}
+					definition.setIncluded(included);
 				} else if (nodeName.equalsIgnoreCase(OPTIONAL_BUNDLES)) {
 					// TODO Does not handle cases where everything was purposely excluded
 					BundleInfo[] optional = deserializeBundles(element);
-					if (optional.length > 0) {
-						definition.addOptional(optional);
-					}
+					definition.setOptional(optional);
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
 					for (int j = 0; j < envEntries.getLength(); ++j) {
@@ -494,10 +491,10 @@ public class TargetDefinitionPersistenceHelper {
 		// TODO We are not handling targets that have purposely excluded everything
 		// TODO We are not handling iu bundle containers that used the default repo set
 		if (included35.size() > 0) {
-			definition.addIncluded((BundleInfo[]) included35.toArray(new BundleInfo[included35.size()]));
+			definition.setIncluded((BundleInfo[]) included35.toArray(new BundleInfo[included35.size()]));
 		}
 		if (optional35.size() > 0) {
-			definition.addOptional((BundleInfo[]) optional35.toArray(new BundleInfo[optional35.size()]));
+			definition.setOptional((BundleInfo[]) optional35.toArray(new BundleInfo[optional35.size()]));
 		}
 		if (repositores35.size() > 0) {
 			// TODO Test
@@ -595,8 +592,7 @@ public class TargetDefinitionPersistenceHelper {
 			String version = location.getAttribute(ATTR_VERSION);
 			container = getTargetPlatformService().newFeatureContainer(path, location.getAttribute(ATTR_ID), version.length() > 0 ? version : null);
 		} else if (TYPE_REPOSITORY.equals(type)) {
-			List ids = new ArrayList();
-			List versions = new ArrayList();
+			List descriptions = new ArrayList();
 			NodeList list = location.getChildNodes();
 			for (int i = 0; i < list.getLength(); ++i) {
 				Node node = list.item(i);
@@ -607,8 +603,10 @@ public class TargetDefinitionPersistenceHelper {
 						if (id.length() > 0) {
 							String version = element.getAttribute(ATTR_VERSION);
 							if (version.length() > 0) {
-								ids.add(id);
-								versions.add(version);
+								InstallableUnitDescription description = new InstallableUnitDescription();
+								description.setId(id);
+								description.setVersion(Version.create(version));
+								descriptions.add(description);
 							}
 						}
 					} else if (element.getNodeName().equalsIgnoreCase(REPOSITORY)) {
@@ -622,9 +620,8 @@ public class TargetDefinitionPersistenceHelper {
 					}
 				}
 			}
-			String[] iuIDs = (String[]) ids.toArray(new String[ids.size()]);
-			String[] iuVer = (String[]) versions.toArray(new String[versions.size()]);
-			container = new IUBundleContainer(iuIDs, iuVer);
+
+			container = new IUBundleContainer((InstallableUnitDescription[]) descriptions.toArray(new InstallableUnitDescription[descriptions.size()]));
 		}
 
 		NodeList list = location.getChildNodes();

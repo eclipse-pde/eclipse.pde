@@ -484,4 +484,41 @@ public class P2Utils {
 		return MetadataFactory.createInstallableUnit(iu);
 	}
 
+	/**
+	 * Returns whether the given unit represents a source bundle by 
+	 * checking the p2 type capability value.
+	 * 
+	 * @param unit unit to check
+	 * @return <code>true</code> if the unit is a source bundle
+	 */
+	public static boolean isSourceBundle(IInstallableUnit unit) {
+		IProvidedCapability[] provided = unit.getProvidedCapabilities();
+		for (int j = 0; j < provided.length; j++) {
+			if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+				if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether the given unit represents an OSGi bundle by 
+	 * checking for the OSGi bundle capability.  Note that source bundles
+	 * and fragments are also considered OSGi bundles.
+	 * 
+	 * @param unit unit to check
+	 * @return <code>true</code> if the unit is an OSGi bundle
+	 */
+	public static boolean isBundle(IInstallableUnit unit) {
+		IProvidedCapability[] provided = unit.getProvidedCapabilities();
+		for (int j = 0; j < provided.length; j++) {
+			if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

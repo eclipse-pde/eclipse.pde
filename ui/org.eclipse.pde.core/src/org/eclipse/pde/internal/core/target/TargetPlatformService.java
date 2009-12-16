@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -446,8 +447,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 			if (list.size() > 0) {
-				target.clearIncluded();
-				target.addIncluded((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
+				target.setIncluded((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
 			}
 		}
 	}
@@ -629,9 +629,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(java.lang.String[], java.lang.String[], java.net.URI[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
-	public IBundleContainer newIUContainer(String[] unitIds, String[] versions) {
-		return new IUBundleContainer(unitIds, versions);
+	public IBundleContainer newIUContainer(InstallableUnitDescription[] descriptions) {
+		return new IUBundleContainer(descriptions);
 	}
 }

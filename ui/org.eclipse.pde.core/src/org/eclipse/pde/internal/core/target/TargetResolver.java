@@ -7,12 +7,14 @@ import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQuery;
+import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.publisher.Publisher;
 import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
@@ -224,7 +226,7 @@ public class TargetResolver {
 				}
 			};
 			List urls = new ArrayList();
-			Collector result = fProfile.query(query, null);
+			IQueryResult result = fProfile.query(query, null);
 			for (Iterator iterator = result.iterator(); iterator.hasNext();) {
 				IInstallableUnit unit = (IInstallableUnit) iterator.next();
 
@@ -307,7 +309,7 @@ public class TargetResolver {
 		// Get the list of root IUs as actual installable units
 		InstallableUnitDescription[] rootDescriptions = (InstallableUnitDescription[]) fRootIUs.toArray(new InstallableUnitDescription[fRootIUs.size()]);
 		IUDescriptionQuery rootIUQuery = new IUDescriptionQuery(rootDescriptions);
-		Collector result = allRepos.query(rootIUQuery, subMon.newChild(10));
+		IQueryResult result = allRepos.query(rootIUQuery, subMon.newChild(10));
 		IInstallableUnit[] rootUnits = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
 		if (rootDescriptions.length != rootUnits.length) {
 			// TODO Return a warning status?
@@ -329,7 +331,7 @@ public class TargetResolver {
 		if (slice == null) {
 			return slicer.getStatus();
 		}
-		Collector collector = slice.query(InstallableUnitQuery.ANY, subMon.newChild(10));
+		IQueryResult collector = slice.query(InstallableUnitQuery.ANY, subMon.newChild(10));
 
 		fAvailableIUs = collector.toCollection();
 		return Status.OK_STATUS;
@@ -347,7 +349,16 @@ public class TargetResolver {
 	}
 
 	public Collection calculateIncludedIUs(IProgressMonitor monitor) {
-		// TODO Fix logic, move to TargetDefinition to allow cacheing 
+		// TODO Move to TargetDefinition to allow cacheing 
+		// TODO We no longer support returning a status for missing included bundles
+		// VERSION DOES NOT EXIST
+//		int sev = IStatus.ERROR;
+//		String message = NLS.bind(Messages.AbstractBundleContainer_1, new Object[] {info.getVersion(), info.getSymbolicName()});
+//		if (optional) {
+//			sev = IStatus.INFO;
+//			message = NLS.bind(Messages.AbstractBundleContainer_2, new Object[] {info.getVersion(), info.getSymbolicName()});
+//		}
+//		return new ResolvedBundle(info, parentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), null, optional, false);
 
 		BundleInfo[] included = fTarget.getIncluded();
 		BundleInfo[] optional = fTarget.getOptional();
@@ -367,7 +378,65 @@ public class TargetResolver {
 			list.add(unit);
 		}
 
-		// TODO
-		return fAvailableIUs;
+		List includedIUs = new ArrayList();
+
+		// Add included bundles
+		if (included == null) {
+			includedIUs.addAll(fAvailableIUs);
+		} else {
+			for (int i = 0; i < included.length; i++) {
+				BundleInfo include = included[i];
+				IInstallableUnit bestUnit = determineBestUnit(bundleMap, include);
+				if (bestUnit != null) {
+					includedIUs.add(bestUnit);
+				}
+			}
+		}
+
+		// Add optional bundles
+		if (optional != null) {
+			for (int i = 0; i < optional.length; i++) {
+				BundleInfo option = optional[i];
+				IInstallableUnit bestUnit = determineBestUnit(bundleMap, option);
+				if (bestUnit != null && !includedIUs.contains(bestUnit)) {
+					includedIUs.add(bestUnit);
+				}
+			}
+		}
+
+		return includedIUs;
+	}
+
+	private static IInstallableUnit determineBestUnit(Map unitMap, BundleInfo info) {
+		// TODO We no longer have a way to return a status if a specific included bundle cannot be found
+		List list = (List) unitMap.get(info.getSymbolicName());
+		if (list != null) {
+			// If there is a version set, select the specific version if available, select newest otherwise 
+			if (info.getVersion() != null) {
+				Version version = Version.create(info.getVersion());
+				Iterator iterator = list.iterator();
+				while (iterator.hasNext()) {
+					IInstallableUnit unit = (IInstallableUnit) iterator.next();
+					if (version.equals(unit.getVersion())) {
+						return unit;
+					}
+				}
+			}
+
+			// If there is no version set, select newest available
+			if (list.size() > 1) {
+				// sort the list
+				Collections.sort(list, new Comparator() {
+					public int compare(Object o1, Object o2) {
+						Version v1 = ((IInstallableUnit) o1).getVersion();
+						Version v2 = ((IInstallableUnit) o2).getVersion();
+						return v1.compareTo(v2);
+					}
+				});
+			}
+			// select the last one
+			return (IInstallableUnit) list.get(list.size() - 1);
+		}
+		return null;
 	}
 }

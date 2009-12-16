@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.target;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.repository.IRepository;
@@ -35,13 +34,8 @@ public class IUBundleContainer implements IBundleContainer {
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> if
 	 *   default set
 	 */
-	IUBundleContainer(String[] ids, String[] versions) {
-		fDescriptions = new InstallableUnitDescription[ids.length];
-		for (int i = 0; i < ids.length; i++) {
-			fDescriptions[i] = new InstallableUnitDescription();
-			fDescriptions[i].setId(ids[i]);
-			fDescriptions[i].setVersion(Version.create(versions[i]));
-		}
+	IUBundleContainer(InstallableUnitDescription[] descriptions) {
+		fDescriptions = descriptions;
 	}
 
 	/* (non-Javadoc)

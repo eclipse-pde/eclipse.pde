@@ -181,7 +181,7 @@ public class TargetLocationsGroup {
 	private void initializeTreeViewer(Tree tree) {
 		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new BundleContainerContentProvider());
-		fTreeViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
+		fTreeViewer.setLabelProvider(new StyledBundleLabelProvider(true, true));
 		fTreeViewer.setComparator(new ViewerComparator());
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -268,7 +268,7 @@ public class TargetLocationsGroup {
 		Shell parent = fTreeViewer.getTree().getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		if (dialog.open() != Window.CANCEL) {
-			contentsChanged(false);
+			contentsChanged();
 			fTreeViewer.refresh();
 			updateButtons();
 		}
@@ -301,7 +301,7 @@ public class TargetLocationsGroup {
 						fTarget.setBundleContainers((IBundleContainer[]) newContainers.toArray(new IBundleContainer[newContainers.size()]));
 
 						// Update the table
-						contentsChanged(false);
+						contentsChanged();
 						fTreeViewer.refresh();
 						updateButtons();
 						fTreeViewer.setSelection(new StructuredSelection(newContainer), true);
@@ -335,7 +335,7 @@ public class TargetLocationsGroup {
 			}
 
 			// If we remove a site container, the content change update must force a re-resolve bug 275458 / bug 275401
-			contentsChanged(removedSite);
+			contentsChanged();
 			fTreeViewer.refresh(false);
 			updateButtons();
 		}
@@ -360,10 +360,10 @@ public class TargetLocationsGroup {
 	 * Informs the reporter for this table that something has changed
 	 * and is dirty.
 	 */
-	private void contentsChanged(boolean force) {
+	private void contentsChanged() {
 		Object[] listeners = fChangeListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			((ITargetChangedListener) listeners[i]).contentsChanged(fTarget, this, true, force);
+			((ITargetChangedListener) listeners[i]).contentsChanged(fTarget, this, true);
 		}
 	}
 

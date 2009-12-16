@@ -16,15 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IRequirement;
+import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.operations.*;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -84,11 +89,11 @@ public class RuntimeInstallJob extends Job {
 
 			// p2 needs to know about the generated repos
 			URI destination = new File(fInfo.destinationDirectory).toURI();
-			session.loadArtifactRepository(destination, new SubProgressMonitor(monitor, 1));
+			ui.loadArtifactRepository(destination, false, new SubProgressMonitor(monitor, 1));
 
-			IMetadataRepository metaRepo = session.loadMetadataRepository(destination, new SubProgressMonitor(monitor, 1));
+			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, new SubProgressMonitor(monitor, 1));
 
-			IProfile profile = session.getProfile(IProfileRegistry.SELF);
+			IProfile profile = session.getProfileRegistry().getProfile(IProfileRegistry.SELF);
 			if (profile == null) {
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
@@ -120,7 +125,7 @@ public class RuntimeInstallJob extends Job {
 
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
-				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), new Collector(), monitor);
+				IQueryResult queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
 				if (queryMatches.size() == 0) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
@@ -128,7 +133,7 @@ public class RuntimeInstallJob extends Job {
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
 
 				// Find out if the profile already has that iu installed												
-				queryMatches = profile.query(new InstallableUnitQuery(id), new Collector(), new SubProgressMonitor(monitor, 0));
+				queryMatches = profile.query(new InstallableUnitQuery(id), new SubProgressMonitor(monitor, 0));
 				if (queryMatches.size() == 0) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
@@ -189,20 +194,21 @@ public class RuntimeInstallJob extends Job {
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
 		iuPatchDescription.addProvidedCapabilities(list);
 
-		IRequiredCapability applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
-		IRequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
+		IRequirement applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
+		IRequirement newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new IRequirementChange[] {MetadataFactory.createRequirementChange(applyTo, newValue)});
 
-		iuPatchDescription.setApplicabilityScope(new IRequiredCapability[0][0]);
+		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		Collector queryMatches = profile.query(new MatchQuery() {
+		IQueryResult queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					IRequiredCapability[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					IRequirement[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
 					for (int i = 0; i < reqs.length; i++) {
-						if (reqs[i].getName().equals(id)) {
-							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqs[i].getRange())) {
+						IRequiredCapability reqCap = (IRequiredCapability) reqs[i];
+						if (reqCap.getName().equals(id)) {
+							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqCap.getRange())) {
 								return true;
 							}
 						}
@@ -210,7 +216,7 @@ public class RuntimeInstallJob extends Job {
 				}
 				return false;
 			}
-		}, new Collector(), monitor);
+		}, monitor);
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.target.provisional;
 import java.net.URI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 
 /**
  * A service to manage target platform definitions available to the workspace.
@@ -131,15 +132,12 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Creates and returns a bundle container that contains all installable units described
-	 * by the given set of IDs and Versions.
+	 * by the given installable unit descriptions.
 	 * 
-	 * TODO Consider passing InstallableUnitDescriptions
-	 * 
-	 * @param unitIds installable unit identifiers
-	 * @param versions version identifiers
+	 * @param descriptions list of descriptions representing the root installable units in the container
 	 * @return bundle container
 	 */
-	public IBundleContainer newIUContainer(String[] unitIds, String[] versions);
+	public IBundleContainer newIUContainer(InstallableUnitDescription[] descriptions);
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles referenced by

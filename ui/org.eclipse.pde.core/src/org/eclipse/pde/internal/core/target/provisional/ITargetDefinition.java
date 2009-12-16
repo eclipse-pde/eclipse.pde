@@ -65,19 +65,11 @@ public interface ITargetDefinition {
 
 	public BundleInfo[] getProvisionedFeatures();
 
-	public void addIncluded(BundleInfo[] toAdd);
-
-	public void removeIncluded(BundleInfo[] toRemove);
-
-	public void clearIncluded();
-
-	public void addOptional(BundleInfo[] toAdd);
-
-	public void removeOptional(BundleInfo[] toRemove);
-
-	public void clearOptional();
+	public void setIncluded(BundleInfo[] included);
 
 	public BundleInfo[] getIncluded();
+
+	public void setOptional(BundleInfo[] optional);
 
 	public BundleInfo[] getOptional();
 

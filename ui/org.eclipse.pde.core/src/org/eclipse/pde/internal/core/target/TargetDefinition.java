@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
 import java.net.URI;
-import java.util.*;
+import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
@@ -62,12 +62,12 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Set of BundleInfo descriptions to be included in the target
 	 */
-	private Set fIncluded;
+	private BundleInfo[] fIncluded;
 
 	/**
 	 * Set of BundleInfo descriptions that are optionally included in the target 
 	 */
-	private Set fOptional;
+	private BundleInfo[] fOptional;
 
 	/**
 	 * Handle that controls the persistence of this target
@@ -224,80 +224,28 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getIncluded()
 	 */
 	public BundleInfo[] getIncluded() {
-		if (fIncluded == null) {
-			return null;
-		}
-		return (BundleInfo[]) fIncluded.toArray(new BundleInfo[fIncluded.size()]);
+		return fIncluded;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#addIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
-	public void addIncluded(BundleInfo[] toAdd) {
-		if (fIncluded == null) {
-			fIncluded = new HashSet();
-		}
-		for (int i = 0; i < toAdd.length; i++) {
-			fIncluded.add(toAdd[i]);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#removeIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
-	 */
-	public void removeIncluded(BundleInfo[] toRemove) {
-		if (fIncluded != null) {
-			for (int i = 0; i < toRemove.length; i++) {
-				fIncluded.remove(toRemove[i]);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#clearIncluded()
-	 */
-	public void clearIncluded() {
-		fIncluded = null;
+	public void setIncluded(BundleInfo[] included) {
+		fIncluded = included;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getOptional()
 	 */
 	public BundleInfo[] getOptional() {
-		if (fOptional == null) {
-			return null;
-		}
-		return (BundleInfo[]) fOptional.toArray(new BundleInfo[fOptional.size()]);
+		return fOptional;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#addOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
 	 */
-	public void addOptional(BundleInfo[] toAdd) {
-		if (fOptional == null) {
-			fOptional = new HashSet();
-		}
-		for (int i = 0; i < toAdd.length; i++) {
-			fOptional.add(toAdd[i]);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#removeOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
-	 */
-	public void removeOptional(BundleInfo[] toRemove) {
-		if (fOptional != null) {
-			for (int i = 0; i < toRemove.length; i++) {
-				fOptional.remove(toRemove[i]);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#clearOptional()
-	 */
-	public void clearOptional() {
-		fOptional = null;
+	public void setOptional(BundleInfo[] optional) {
+		fOptional = optional;
 	}
 
 	/* (non-Javadoc)
@@ -523,12 +471,23 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @return whether the content of this definition is equal to the content of the specified definition
 	 */
 	public boolean isContentEqual(ITargetDefinition definition) {
+		// Environment settings
 		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
-			// check containers and implicit dependencies
-			IBundleContainer[] c1 = getBundleContainers();
-			IBundleContainer[] c2 = definition.getBundleContainers();
-			if (areContainersEqual(c1, c2)) {
-				return areEqual(getImplicitDependencies(), definition.getImplicitDependencies());
+			// Containers
+			if (areContainersEqual(getBundleContainers(), definition.getBundleContainers())) {
+				// Explicit repos
+				if (areEqual(getRepositories(), definition.getRepositories())) {
+					// Included
+					if (areEqual(getIncluded(), definition.getIncluded())) {
+						// Optional
+						if (areEqual(getOptional(), definition.getOptional())) {
+							// Implicit
+							if (areEqual(getImplicitDependencies(), definition.getImplicitDependencies())) {
+								return true;
+							}
+						}
+					}
+				}
 			}
 		}
 		return false;
@@ -543,18 +502,30 @@ public class TargetDefinition implements ITargetDefinition {
 	 * specified definition
 	 */
 	public boolean isContentEquivalent(ITargetDefinition definition) {
+		// TODO Should there be a different between isContentEqual and isContentEquivalent? Currently only different is parsing of the arguments
+		// Environment settings
 		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
-			// check containers and implicit dependencies
-			IBundleContainer[] c1 = getBundleContainers();
-			IBundleContainer[] c2 = definition.getBundleContainers();
-			if (areContainersEqual(c1, c2)) {
-				return areEqual(getImplicitDependencies(), definition.getImplicitDependencies());
+			// Containers
+			if (areContainersEqual(getBundleContainers(), definition.getBundleContainers())) {
+				// Explicit repos
+				if (areEqual(getRepositories(), definition.getRepositories())) {
+					// Included
+					if (areEqual(getIncluded(), definition.getIncluded())) {
+						// Optional
+						if (areEqual(getOptional(), definition.getOptional())) {
+							// Implicit
+							if (areEqual(getImplicitDependencies(), definition.getImplicitDependencies())) {
+								return true;
+							}
+						}
+					}
+				}
 			}
 		}
 		return false;
 	}
 
-	private boolean areEqual(BundleInfo[] c1, BundleInfo[] c2) {
+	private boolean areEqual(Object[] c1, Object[] c2) {
 		if (c1 == null) {
 			return c2 == null;
 		}

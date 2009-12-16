@@ -21,8 +21,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
-import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
+import org.eclipse.pde.internal.core.target.AbstractLocalBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
@@ -143,9 +142,9 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 				containerChanged(isItem ? 0 : TYPING_DELAY);
 			}
 		});
-		if (fContainer instanceof AbstractBundleContainer) {
+		if (fContainer instanceof AbstractLocalBundleContainer) {
 			try {
-				String location = ((AbstractBundleContainer) fContainer).getLocation(false);
+				String location = ((AbstractLocalBundleContainer) fContainer).getLocation(false);
 				fInstallLocation.setText(location);
 			} catch (CoreException e) {
 				setErrorMessage(e.getMessage());
@@ -189,9 +188,9 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * @param container bundle container being edited, possibly <code>null</code>
 	 */
 	protected void initializeInputFields(IBundleContainer container) {
-		if (container instanceof AbstractBundleContainer) {
+		if (container instanceof AbstractLocalBundleContainer) {
 			try {
-				String currentLocation = ((AbstractBundleContainer) container).getLocation(false);
+				String currentLocation = ((AbstractLocalBundleContainer) container).getLocation(false);
 				boolean found = false;
 				String[] items = fInstallLocation.getItems();
 				for (int i = 0; i < items.length; i++) {
@@ -341,12 +340,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * @throws CoreException
 	 */
 	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
-		IBundleContainer container = getTargetPlatformService().newDirectoryContainer(fInstallLocation.getText());
-		if (previous instanceof DirectoryBundleContainer) {
-			container.setIncludedBundles(previous.getIncludedBundles());
-			container.setOptionalBundles(previous.getOptionalBundles());
-		}
-		return container;
+		return getTargetPlatformService().newDirectoryContainer(fInstallLocation.getText());
 	}
 
 	/**

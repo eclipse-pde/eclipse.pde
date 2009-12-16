@@ -14,10 +14,12 @@ import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
@@ -46,6 +48,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public class TargetContentsGroup {
 
+	private FilteredCheckboxTree fFilteredTree;
 	private ContainerCheckedTreeViewer fTree;
 	private MenuManager fMenuManager;
 	private Button fSelectButton;
@@ -148,31 +151,25 @@ public class TargetContentsGroup {
 		fChangeListeners.add(listener);
 	}
 
-	/**
-	 * Informs the target content listeners that check state has changed
-	 */
-	public void contentChanged() {
-		Object[] listeners = fChangeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((ITargetChangedListener) listeners[i]).contentsChanged(fTargetDefinition, this, false, false);
-		}
-	}
-
 	private void createTreeViewer(Composite parent, FormToolkit toolkit) {
 		TreeContentProvider contentProvider = new TreeContentProvider();
-		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, contentProvider, toolkit);
-		tree.getPatternFilter().setIncludeLeadingWildcard(true);
+		fFilteredTree = new FilteredCheckboxTree(parent, contentProvider, toolkit);
+		fFilteredTree.getPatternFilter().setIncludeLeadingWildcard(true);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 300;
-		tree.setLayoutData(data);
+		fFilteredTree.setLayoutData(data);
 
-		fTree = tree.getCheckboxTreeViewer();
+		fTree = fFilteredTree.getCheckboxTreeViewer();
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(contentProvider);
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				// TODO Check
+				if (!event.getSelection().isEmpty()) {
+					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+					fFilteredTree.setChecked(selection.getFirstElement(), !fTree.getChecked(selection.getFirstElement()));
+					saveCheckState();
+				}
 			}
 		});
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -180,31 +177,21 @@ public class TargetContentsGroup {
 				updateButtons();
 			}
 		});
-		fTree.setSorter(new ViewerSorter() {
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				// TODO Sort
-//				if (e1 instanceof IResolvedBundle && e2 instanceof IResolvedBundle) {
-//					IStatus status1 = ((IResolvedBundle) e1).getStatus();
-//					IStatus status2 = ((IResolvedBundle) e2).getStatus();
-//					if (!status1.isOK() && status2.isOK()) {
-//						return -1;
-//					}
-//					if (status1.isOK() && !status2.isOK()) {
-//						return 1;
-//					}
-//				}
-				return super.compare(viewer, e1, e2);
+		fTree.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				saveCheckState();
 			}
 		});
-
+		fTree.setSorter(new ViewerSorter());
 		fMenuManager = new MenuManager();
 		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
 			public void run() {
+				// TODO Menu not appearing
 				fTree.collapseAll();
 			}
 		});
-		Menu contextMenu = fMenuManager.createContextMenu(tree);
-		tree.setMenu(contextMenu);
+		Menu contextMenu = fMenuManager.createContextMenu(fTree.getControl());
+		fTree.getControl().setMenu(contextMenu);
 	}
 
 	public void dispose() {
@@ -316,8 +303,9 @@ public class TargetContentsGroup {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
 					for (int i = 0; i < selected.length; i++) {
-						fTree.setChecked(selected, true);
+						fFilteredTree.setChecked(selected[i], true);
 					}
+					saveCheckState();
 				}
 			}
 		});
@@ -327,22 +315,36 @@ public class TargetContentsGroup {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
 					for (int i = 0; i < selected.length; i++) {
-						fTree.setChecked(selected, false);
+						fFilteredTree.setChecked(selected[i], false);
 					}
+					saveCheckState();
 				}
 			}
 		});
 
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Object[] elements = ((ITreeContentProvider) fTree.getContentProvider()).getElements(fTree.getInput());
-				fTree.setCheckedElements(elements);
+				Object[] expanded = fTree.getExpandedElements();
+				fTree.expandAll();
+				Object[] selected = fTree.getVisibleExpandedElements();
+				for (int i = 0; i < selected.length; i++) {
+					fFilteredTree.setChecked(selected[i], true);
+				}
+				fTree.setExpandedElements(expanded);
+				saveCheckState();
 			}
 		});
 
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fTree.setCheckedElements(new Object[0]);
+				Object[] expanded = fTree.getExpandedElements();
+				fTree.expandAll();
+				Object[] selected = fTree.getVisibleExpandedElements();
+				for (int i = 0; i < selected.length; i++) {
+					fFilteredTree.setChecked(selected[i], false);
+				}
+				fTree.setExpandedElements(expanded);
+				saveCheckState();
 			}
 		});
 
@@ -383,8 +385,7 @@ public class TargetContentsGroup {
 		fSourceFilter = new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IInstallableUnit) {
-					// TODO Support source filtering
-
+					return !P2Utils.isSourceBundle((IInstallableUnit) element);
 				}
 				return true;
 			}
@@ -392,8 +393,7 @@ public class TargetContentsGroup {
 		fPluginFilter = new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IInstallableUnit) {
-					// TODO Support source filtering
-
+					return P2Utils.isSourceBundle((IInstallableUnit) element);
 				}
 				return true;
 			}
@@ -447,10 +447,10 @@ public class TargetContentsGroup {
 			fDeselectButton.setEnabled(false);
 		}
 
-		// TODO Enable buttons
 		fSelectAllButton.setEnabled(fTargetDefinition != null);
 		fDeselectAllButton.setEnabled(fTargetDefinition != null);
 
+		// TODO
 		if (fTargetDefinition != null) {
 			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedElements().length), "All"}));
 		} else {
@@ -481,8 +481,11 @@ public class TargetContentsGroup {
 		fTree.setInput(Messages.TargetContentsGroup_12);
 		setEnabled(false);
 		fTree.setInput(fTargetDefinition);
-		fTree.setCheckedElements(fTargetDefinition.getIncludedUnits(null));
+		// TODO TERRIBLE PERFORMANCE! Recalculates included for every single check
+		// Expand everything first so that children have been calculated
 		fTree.expandAll();
+		IInstallableUnit[] included = fTargetDefinition.getIncludedUnits(null);
+		fFilteredTree.setCheckedElements(included);
 		setEnabled(true);
 	}
 
@@ -522,23 +525,36 @@ public class TargetContentsGroup {
 		}
 	}
 
-	public void saveIncludedBundleState(Object[] changeContainers) {
-		// TODO Save included bundle state
-//		for (int i = 0; i < changeContainers.length; i++) {
-//			if (changeContainers[i] instanceof IBundleContainer) {
-//				Set checked = (Set) fContainerChecked.get(changeContainers[i]);
-//				if (checked.size() == ((Collection) fContainerBundles.get(changeContainers[i])).size()) {
-//					((IBundleContainer) changeContainers[i]).setIncludedBundles(null);
-//				} else {
-//					List included = new ArrayList(checked.size());
-//					for (Iterator iterator = checked.iterator(); iterator.hasNext();) {
-//						IResolvedBundle currentBundle = (IResolvedBundle) iterator.next();
-//						included.add(new BundleInfo(currentBundle.getBundleInfo().getSymbolicName(), null, null, BundleInfo.NO_BUNDLEID, false));
-//					}
-//					((IBundleContainer) changeContainers[i]).setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
-//				}
-//			}
-//		}
+	/**
+	 * Saves the check state of the viewer to the target definition, informs any listeners that
+	 * the contents have changed.
+	 */
+	public void saveCheckState() {
+		if (fTargetDefinition != null) {
+			IInstallableUnit[] allUnits = fTargetDefinition.getAvailableUnits();
+			Object[] checked = fTree.getCheckedElements();
+			// Do the conversion to bundle infos now, rather than looping through the units twice
+			java.util.List leafChecked = new ArrayList(checked.length);
+			for (int i = 0; i < checked.length; i++) {
+				if (!((ITreeContentProvider) fTree.getContentProvider()).hasChildren(checked[i])) {
+					if (checked[i] instanceof IInstallableUnit) {
+						IInstallableUnit unit = (IInstallableUnit) checked[i];
+						leafChecked.add(new BundleInfo(unit.getId(), unit.getVersion().toString(), null, BundleInfo.NO_LEVEL, false));
+					}
+				}
+			}
+			if (leafChecked.size() == allUnits.length) {
+				// Everything is included
+				fTargetDefinition.setIncluded(null);
+			} else {
+				fTargetDefinition.setIncluded((BundleInfo[]) leafChecked.toArray(new BundleInfo[leafChecked.size()]));
+			}
+		}
+
+		Object[] listeners = fChangeListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((ITargetChangedListener) listeners[i]).contentsChanged(fTargetDefinition, this, false);
+		}
 	}
 
 	/**

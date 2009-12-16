@@ -278,12 +278,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#refreshContainer(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
 	 */
 	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
-		IBundleContainer container = getTargetPlatformService().newProfileContainer(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
-		if (previous instanceof ProfileBundleContainer) {
-			container.setIncludedBundles(previous.getIncludedBundles());
-			container.setOptionalBundles(previous.getOptionalBundles());
-		}
-		return container;
+		return getTargetPlatformService().newProfileContainer(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
 	}
 
 }

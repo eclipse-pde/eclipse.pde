@@ -62,11 +62,11 @@ public class ContentSection extends SectionPart {
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 
-		fContentGroup = new TargetContentsGroup(client, toolkit);
+		fContentGroup = TargetContentsGroup.createInForm(client, toolkit);
 		fEditor.getTargetChangedListener().setContentTree(fContentGroup);
 		fContentGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContentGroup.addTargetChangedListener(new ITargetChangedListener() {
-			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
+			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve) {
 				markDirty();
 			}
 		});
@@ -81,7 +81,7 @@ public class ContentSection extends SectionPart {
 	 */
 	public void refresh() {
 		// Use the change listener as it can check if we are resolved, resolving, or cancelled bug 264908
-		fEditor.getTargetChangedListener().contentsChanged(getTarget(), this, false, false);
+		fEditor.getTargetChangedListener().contentsChanged(getTarget(), this, false);
 		super.refresh();
 	}
 

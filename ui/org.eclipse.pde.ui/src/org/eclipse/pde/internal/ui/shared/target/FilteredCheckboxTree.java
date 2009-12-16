@@ -38,7 +38,21 @@ public class FilteredCheckboxTree extends FilteredTree {
 	FormToolkit fToolkit;
 	ITreeContentProvider fContentProvider;
 	ArrayList checkState = new ArrayList();
-	ContainerCheckedTreeViewer checkboxViewer;
+	FilteredContainerCheckedTreeViewer checkboxViewer;
+
+	/**
+	 * Extension of the tree viewer to allow firing of check state change events
+	 */
+	class FilteredContainerCheckedTreeViewer extends ContainerCheckedTreeViewer {
+		public FilteredContainerCheckedTreeViewer(Tree tree) {
+			super(tree);
+		}
+
+		// This method is public so that we can programmatically change check state and have listeners be updated
+		public void fireCheckStateChanged(Object element, boolean state) {
+			fireCheckStateChanged(new CheckStateChangedEvent(this, element, state));
+		}
+	}
 
 	/**
 	 * @param parent
@@ -64,31 +78,34 @@ public class FilteredCheckboxTree extends FilteredTree {
 			tree = new Tree(parent, SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		}
 
-		checkboxViewer = new ContainerCheckedTreeViewer(tree);
+		checkboxViewer = new FilteredContainerCheckedTreeViewer(tree);
 		checkboxViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				// We use an additive check state cache so we need to remove
-				// previously checked items if the user unchecked them.
-				if (!event.getChecked() && checkState != null) {
-					Iterator iter = checkState.iterator();
-					ArrayList toRemove = new ArrayList(1);
-					while (iter.hasNext()) {
-						Object element = iter.next();
-//						if (checkboxViewer.getComparer().equals(element, event.getElement())) {
-						if (element != null && element.equals(event.getElement())) {
-							toRemove.add(element);
-							// Do not break out of the loop.  We may have duplicate equal
-							// elements in the cache.  Since the cache is additive, we want
-							// to be sure we've gotten everything.
-						}
-					}
-					checkState.removeAll(toRemove);
-				} else if (event.getChecked()) {
-					rememberLeafCheckState();
-				}
+				updateCheckState(event.getElement(), event.getChecked());
 			}
 		});
 		return checkboxViewer;
+	}
+
+	void updateCheckState(Object element, boolean state) {
+		// We use an additive check state cache so we need to remove
+		// previously checked items if the user unchecked them.
+		if (!state && checkState != null) {
+			Iterator iter = checkState.iterator();
+			ArrayList toRemove = new ArrayList(1);
+			while (iter.hasNext()) {
+				Object current = iter.next();
+				if (current != null && current.equals(element)) {
+					toRemove.add(current);
+					// Do not break out of the loop.  We may have duplicate equal
+					// elements in the cache.  Since the cache is additive, we want
+					// to be sure we've gotten everything.
+				}
+			}
+			checkState.removeAll(toRemove);
+		} else if (state) {
+			rememberLeafCheckState();
+		}
 	}
 
 	/*
@@ -167,9 +184,6 @@ public class FilteredCheckboxTree extends FilteredTree {
 			element = iter.next();
 			checkboxViewer.setChecked(element, true);
 		}
-//		// We are only firing one event, knowing that this is enough for our listeners.
-//		if (element != null)
-//			checkboxViewer.fireCheckStateChanged(element, true);
 	}
 
 	public ContainerCheckedTreeViewer getCheckboxTreeViewer() {
@@ -183,4 +197,26 @@ public class FilteredCheckboxTree extends FilteredTree {
 	protected long getRefreshJobDelay() {
 		return FILTER_DELAY;
 	}
+
+	/**
+	 * Sets the given object as checked or unchecked depending on the given state.
+	 * Fires a check state changed event to notify listeners.  This method should
+	 * always be used when programmatically changing the check state of elements.
+	 * The check state listeners need to be notified so that check state can be
+	 * correctly restored after filtering.
+	 * 
+	 * @param element element with changing check state
+	 * @param state <code>true</code> to check the item, <code>false</code> to uncheck
+	 */
+	public void setChecked(Object element, boolean state) {
+		// TODO Should the event only be fired if the state has actually changed?
+		checkboxViewer.setChecked(element, state);
+		updateCheckState(element, state);
+	}
+
+	public void setCheckedElements(Object[] elements) {
+		checkboxViewer.setCheckedElements(elements);
+		rememberLeafCheckState();
+	}
+
 }

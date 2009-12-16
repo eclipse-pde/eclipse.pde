@@ -200,6 +200,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			boolean isSource = false;
 
 			// Check for bundle property
+			// There are utility methods on P2Utils for this, but save time by doing a single loop
 			IProvidedCapability[] provided = unit.getProvidedCapabilities();
 			for (int j = 0; j < provided.length; j++) {
 				if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {

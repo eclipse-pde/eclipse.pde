@@ -18,10 +18,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.publisher.Publisher;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.equinox.p2.repository.IRepository;
@@ -178,7 +178,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		}
 
 		// Collect all installable units in the repository
-		Collector result = fRepo.query(InstallableUnitQuery.ANY, subMon.newChild(50));
+		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, subMon.newChild(50));
 
 		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.size()];
 		int i = 0;
