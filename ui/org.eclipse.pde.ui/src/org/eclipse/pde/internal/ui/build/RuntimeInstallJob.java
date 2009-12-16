@@ -21,11 +21,13 @@ import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IRequirement;
+import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.operations.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
@@ -123,7 +125,7 @@ public class RuntimeInstallJob extends Job {
 
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
-				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
+				IQueryResult queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
 				if (queryMatches.size() == 0) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
@@ -199,7 +201,7 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		Collector queryMatches = profile.query(new MatchQuery() {
+		IQueryResult queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
 					IRequirement[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();

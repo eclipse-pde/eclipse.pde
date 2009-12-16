@@ -24,6 +24,7 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
 import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
@@ -247,7 +248,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		// query for bundles
 		OSGiBundleQuery query = new OSGiBundleQuery();
-		Collector collector = slice.query(query, new SubProgressMonitor(subMonitor, 10));
+		IQueryResult queryResult = slice.query(query, new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -255,7 +256,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
-		Iterator iterator = collector.iterator();
+		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
 			IArtifactKey[] artifacts = unit.getArtifacts();
@@ -362,14 +363,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-		Collector collector = slice.query(InstallableUnitQuery.ANY, new SubProgressMonitor(subMonitor, 10));
+		IQueryResult queryResult = slice.query(InstallableUnitQuery.ANY, new SubProgressMonitor(subMonitor, 10));
 
-		if (subMonitor.isCanceled() || collector.isEmpty()) {
+		if (subMonitor.isCanceled() || queryResult.isEmpty()) {
 			return new IResolvedBundle[0];
 		}
 
-		ArrayList operands = new ArrayList(collector.size());
-		Iterator itor = collector.iterator();
+		ArrayList operands = new ArrayList(queryResult.size());
+		Iterator itor = queryResult.iterator();
 		while (itor.hasNext()) {
 			operands.add(new InstallableUnitOperand(null, (IInstallableUnit) itor.next()));
 		}
@@ -404,7 +405,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// query for bundles
-		collector = slice.query(new OSGiBundleQuery(), new SubProgressMonitor(subMonitor, 10));
+		queryResult = slice.query(new OSGiBundleQuery(), new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -412,7 +413,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
-		Iterator iterator = collector.iterator();
+		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
 			IArtifactKey[] artifacts = unit.getArtifacts();
@@ -469,24 +470,24 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			fUnits = new IInstallableUnit[fIds.length];
 			for (int i = 0; i < fIds.length; i++) {
 				InstallableUnitQuery query = new InstallableUnitQuery(fIds[i], fVersions[i]);
-				Collector collector = profile.query(query, null);
-				if (collector.isEmpty()) {
+				IQueryResult queryResult = profile.query(query, null);
+				if (queryResult.isEmpty()) {
 					// try repositories
 					URI[] repositories = resolveRepositories();
 					for (int j = 0; j < repositories.length; j++) {
 						IMetadataRepository repository = getRepository(repositories[j]);
-						collector = repository.query(query, null);
-						if (!collector.isEmpty()) {
+						queryResult = repository.query(query, null);
+						if (!queryResult.isEmpty()) {
 							break;
 						}
 					}
 				}
-				if (collector.isEmpty()) {
+				if (queryResult.isEmpty()) {
 					// not found
 					fUnits = null;
 					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
 				}
-				fUnits[i] = (IInstallableUnit) collector.iterator().next();
+				fUnits[i] = (IInstallableUnit) queryResult.iterator().next();
 			}
 		}
 		return fUnits;
