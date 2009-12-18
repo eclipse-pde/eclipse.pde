@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -72,6 +73,10 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		StyledString styledString = new StyledString();
 		if (element instanceof BundleInfo) {
 			appendBundleInfo(styledString, ((BundleInfo) element).getSymbolicName(), ((BundleInfo) element).getVersion());
+		} else if (element instanceof InstallableUnitDescription) {
+			appendBundleInfo(styledString, ((InstallableUnitDescription) element).getId(), ((InstallableUnitDescription) element).getVersion().toString());
+		} else if (element instanceof InstallableUnitWrapper) {
+			return getStyledString(((InstallableUnitWrapper) element).getBestUnit());
 		} else if (element instanceof IStatus) {
 			styledString.append(((IStatus) element).getMessage());
 		} else if (element instanceof IPath) {
@@ -125,6 +130,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			styledString.append(iu.getVersion().toString(), StyledString.QUALIFIER_STYLER);
 		} else if (element instanceof String) {
 			styledString.append((String) element);
+		} else {
+			styledString.append(element.toString());
 		}
 		return styledString;
 	}
@@ -172,6 +179,10 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	public Image getImage(Object element) {
 		if (element instanceof BundleInfo) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
+		} else if (element instanceof InstallableUnitWrapper) {
+			return getImage(((InstallableUnitWrapper) element).getBestUnit());
+		} else if (element instanceof InstallableUnitDescription) {
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
 		} else if (element instanceof IStatus) {
 			int severity = ((IStatus) element).getSeverity();
 			if (severity == IStatus.WARNING || severity == IStatus.INFO) {
@@ -226,7 +237,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			if (isBundle) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
 			}
-			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_NOREF_FEATURE_OBJ);
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
 		}
 		return null;
 	}

@@ -15,7 +15,6 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
@@ -353,11 +352,13 @@ public class TargetPlatformService implements ITargetPlatformService {
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		if (value.length() > 0) {
 			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			BundleInfo[] plugins = new BundleInfo[tokenizer.countTokens()];
+			InstallableUnitDescription[] plugins = new InstallableUnitDescription[tokenizer.countTokens()];
 			int i = 0;
 			while (tokenizer.hasMoreTokens()) {
 				String id = tokenizer.nextToken();
-				plugins[i++] = new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false);
+				plugins[i] = new InstallableUnitDescription();
+				plugins[i].setId(id);
+				i++;
 			}
 			target.setImplicitDependencies(plugins);
 		}
@@ -442,12 +443,14 @@ public class TargetPlatformService implements ITargetPlatformService {
 				if (models[i].isEnabled()) {
 					String id = models[i].getPluginBase().getId();
 					if (id != null) {
-						list.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+						InstallableUnitDescription include = new InstallableUnitDescription();
+						include.setId(id);
+						list.add(include);
 					}
 				}
 			}
 			if (list.size() > 0) {
-				target.setIncluded((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
+				target.setIncluded((InstallableUnitDescription[]) list.toArray(new InstallableUnitDescription[list.size()]));
 			}
 		}
 	}

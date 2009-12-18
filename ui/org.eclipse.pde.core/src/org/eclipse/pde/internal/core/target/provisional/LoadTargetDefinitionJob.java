@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -112,29 +113,29 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-			monitor.beginTask(Messages.LoadTargetOperation_mainTaskName, 100);
+			SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_mainTaskName, 200);
 
-			loadEnvironment(preferences, new SubProgressMonitor(monitor, 5));
+			loadEnvironment(preferences, subMon.newChild(10));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			loadArgs(preferences, new SubProgressMonitor(monitor, 5));
+			loadArgs(preferences, subMon.newChild(10));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			loadJRE(preferences, new SubProgressMonitor(monitor, 15));
+			loadJRE(preferences, subMon.newChild(30));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			loadImplicitPlugins(preferences, new SubProgressMonitor(monitor, 15));
+			loadImplicitPlugins(preferences, subMon.newChild(30));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			loadPlugins(preferences, new SubProgressMonitor(monitor, 60));
+			loadPlugins(preferences, subMon.newChild(100));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -148,6 +149,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
+			subMon.worked(20);
+			subMon.done();
 		} finally {
 			monitor.done();
 		}
@@ -233,12 +236,12 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param monitor progress monitor
 	 */
 	private void loadImplicitPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) {
-		BundleInfo[] infos = fTarget.getImplicitDependencies();
+		InstallableUnitDescription[] infos = fTarget.getImplicitDependencies();
 		if (infos != null) {
 			monitor.beginTask(Messages.LoadTargetOperation_implicitPluginsTaskName, infos.length + 1);
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < infos.length; i++) {
-				buffer.append(infos[i].getSymbolicName()).append(',');
+				buffer.append(infos[i].getId()).append(',');
 				monitor.worked(1);
 			}
 			if (infos.length > 0)
@@ -285,9 +288,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				return;
 			}
 
+			// TODO Would it be safer to just get the provisioned included units?
 			// Set enablement based on included bundles
 			IPluginModelBase[] models = state.getTargetModels();
-			BundleInfo[] included = fTarget.getIncluded();
+			InstallableUnitDescription[] included = fTarget.getIncluded();
 
 			if (included == null) {
 				for (int i = 0; i < models.length; i++) {
@@ -296,13 +300,13 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			} else {
 				Map enabled = new HashMap(); // bundle names to string version
 				for (int i = 0; i < included.length; i++) {
-					enabled.put(included[i].getSymbolicName(), included[i].getVersion());
+					enabled.put(included[i].getId(), included[i].getVersion());
 				}
 				for (int i = 0; i < models.length; i++) {
 					String modelName = models[i].getBundleDescription().getSymbolicName();
 					if (enabled.containsKey(modelName)) {
-						String enabledVersion = (String) enabled.get(enabled);
-						models[i].setEnabled(enabledVersion == null ? true : Version.parseVersion(enabledVersion).equals(models[i].getBundleDescription().getVersion()));
+						Version enabledVersion = (Version) enabled.get(enabled);
+						models[i].setEnabled(enabledVersion == null ? true : enabledVersion.equals(models[i].getBundleDescription().getVersion()));
 					} else {
 						models[i].setEnabled(false);
 					}

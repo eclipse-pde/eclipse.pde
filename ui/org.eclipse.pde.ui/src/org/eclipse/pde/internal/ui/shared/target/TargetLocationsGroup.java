@@ -11,7 +11,10 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.*;
+import java.util.List;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -117,7 +120,6 @@ public class TargetLocationsGroup {
 				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
 					handleRemove();
 				}
-
 			}
 		});
 
@@ -232,7 +234,6 @@ public class TargetLocationsGroup {
 			public void widgetSelected(SelectionEvent e) {
 				TrayDialog dialog = new TrayDialog(fShowReposButton.getShell()) {
 					protected void configureShell(Shell newShell) {
-						// TODO Auto-generated method stub
 						newShell.setText("Repositories");
 						super.configureShell(newShell);
 					}
@@ -242,6 +243,7 @@ public class TargetLocationsGroup {
 						((GridData) comp.getLayoutData()).heightHint = 300;
 						((GridData) comp.getLayoutData()).widthHint = 300;
 						TargetReposGroup repos = TargetReposGroup.createInDialog(comp);
+						repos.setInput(fTarget);
 						return comp;
 					}
 				};
@@ -373,10 +375,6 @@ public class TargetLocationsGroup {
 	class BundleContainerContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof ITargetDefinition) {
-				IBundleContainer[] containers = ((ITargetDefinition) parentElement).getBundleContainers();
-				return containers != null ? containers : new Object[0];
-			}
 			return new Object[0];
 		}
 
@@ -386,15 +384,32 @@ public class TargetLocationsGroup {
 
 		public boolean hasChildren(Object element) {
 			// Since we are already resolved we can't be more efficient
-			return getChildren(element).length > 0;
+			return false;
 		}
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
 				IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
-				if (containers != null) {
-					return containers;
+				List children = new ArrayList();
+				for (int i = 0; i < containers.length; i++) {
+					if (containers[i] instanceof IUBundleContainer) {
+						try {
+							InstallableUnitDescription[] descriptions = ((IUBundleContainer) containers[i]).getRootIUs();
+							if (descriptions != null && descriptions.length > 0) {
+								for (int j = 0; j < descriptions.length; j++) {
+									children.add(new InstallableUnitWrapper(descriptions[j], fTarget));
+								}
+							} else {
+								children.add(containers[i]);
+							}
+						} catch (CoreException e) {
+							// Just ignore the container if there is an error getting the IUs
+						}
+					} else {
+						children.add(containers[i]);
+					}
 				}
+				return children.toArray();
 			} else if (inputElement instanceof String) {
 				return new Object[] {inputElement};
 			}

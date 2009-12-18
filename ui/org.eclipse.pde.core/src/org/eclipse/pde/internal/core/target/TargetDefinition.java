@@ -18,6 +18,7 @@ import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -57,17 +58,17 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Set of BundleInfo objects that will be used as implicit dependencies
 	 */
-	private BundleInfo[] fImplicit;
+	private InstallableUnitDescription[] fImplicit;
 
 	/**
-	 * Set of BundleInfo descriptions to be included in the target
+	 * Set of InstallableUnitDescription descriptions to be included in the target
 	 */
-	private BundleInfo[] fIncluded;
+	private InstallableUnitDescription[] fIncluded;
 
 	/**
-	 * Set of BundleInfo descriptions that are optionally included in the target 
+	 * Set of InstallableUnitDescription descriptions that are optionally included in the target 
 	 */
-	private BundleInfo[] fOptional;
+	private InstallableUnitDescription[] fOptional;
 
 	/**
 	 * Handle that controls the persistence of this target
@@ -162,10 +163,20 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getIncludedUnits()
 	 */
-	public IInstallableUnit[] getIncludedUnits(IProgressMonitor monitor) {
+	public IInstallableUnit[] getIncludedUnits() {
 		if (isResolved()) {
-			Collection included = fResolver.calculateIncludedIUs(monitor);
+			Collection included = fResolver.calculateIncludedIUs();
 			return (IInstallableUnit[]) included.toArray(new IInstallableUnit[included.size()]);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedUnit(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription)
+	 */
+	public IInstallableUnit getResolvedUnit(InstallableUnitDescription unit) {
+		if (isResolved()) {
+			return fResolver.getUnit(unit);
 		}
 		return null;
 	}
@@ -173,9 +184,9 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getMissingUnits(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public BundleInfo[] getMissingUnits(IProgressMonitor monitor) {
+	public InstallableUnitDescription[] getMissingUnits(IProgressMonitor monitor) {
 		if (isResolved()) {
-			return new BundleInfo[0];
+			return new InstallableUnitDescription[0];
 
 			// TODO Problems here
 //			Collection missing = fResolver.calculateMissingIUs(monitor);
@@ -187,7 +198,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#provision(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStatus provision(IProgressMonitor monitor) throws CoreException {
+	public IStatus provision(IProgressMonitor monitor) {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 100);
 		if (!isResolved()) {
 			resolve(subMon.newChild(50));
@@ -223,28 +234,28 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getIncluded()
 	 */
-	public BundleInfo[] getIncluded() {
+	public InstallableUnitDescription[] getIncluded() {
 		return fIncluded;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setIncluded(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setIncluded(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
 	 */
-	public void setIncluded(BundleInfo[] included) {
+	public void setIncluded(InstallableUnitDescription[] included) {
 		fIncluded = included;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getOptional()
 	 */
-	public BundleInfo[] getOptional() {
+	public InstallableUnitDescription[] getOptional() {
 		return fOptional;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOptional(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOptional(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
 	 */
-	public void setOptional(BundleInfo[] optional) {
+	public void setOptional(InstallableUnitDescription[] optional) {
 		fOptional = optional;
 	}
 
@@ -420,7 +431,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getImplicitDependencies()
 	 */
-	public BundleInfo[] getImplicitDependencies() {
+	public InstallableUnitDescription[] getImplicitDependencies() {
 		return fImplicit;
 	}
 
@@ -441,9 +452,9 @@ public class TargetDefinition implements ITargetDefinition {
 //	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
 	 */
-	public void setImplicitDependencies(BundleInfo[] bundles) {
+	public void setImplicitDependencies(InstallableUnitDescription[] bundles) {
 		if (bundles != null && bundles.length == 0) {
 			bundles = null;
 		}

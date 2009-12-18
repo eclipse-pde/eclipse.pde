@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -248,9 +249,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 						try {
 							getContainer().run(true, true, new IRunnableWithProgress() {
 								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-									getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
+									IStatus result = getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
 									if (monitor.isCanceled()) {
 										throw new InterruptedException();
+									}
+									if (!result.isOK()) {
+										PDEPlugin.log(result);
 									}
 								}
 							});
@@ -632,12 +636,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			public Object[] getElements(Object inputElement) {
 				ITargetDefinition target = getTargetDefinition();
 				if (target != null) {
-					BundleInfo[] bundles = target.getImplicitDependencies();
+					InstallableUnitDescription[] bundles = target.getImplicitDependencies();
 					if (bundles != null) {
 						return bundles;
 					}
 				}
-				return new BundleInfo[0];
+				return new InstallableUnitDescription[0];
 			}
 		});
 		fElementViewer.setLabelProvider(new StyledBundleLabelProvider(false, false));
@@ -720,11 +724,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
-			BundleInfo[] currentBundles = getTargetDefinition().getImplicitDependencies();
+			InstallableUnitDescription[] currentBundles = getTargetDefinition().getImplicitDependencies();
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTargetDefinition().setImplicitDependencies((BundleInfo[]) allDependencies.toArray(new BundleInfo[allDependencies.size()]));
+			getTargetDefinition().setImplicitDependencies((InstallableUnitDescription[]) allDependencies.toArray(new InstallableUnitDescription[allDependencies.size()]));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}
@@ -773,7 +777,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTargetDefinition().setImplicitDependencies((BundleInfo[]) bundles.toArray((new BundleInfo[bundles.size()])));
+			getTargetDefinition().setImplicitDependencies((InstallableUnitDescription[]) bundles.toArray((new InstallableUnitDescription[bundles.size()])));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}

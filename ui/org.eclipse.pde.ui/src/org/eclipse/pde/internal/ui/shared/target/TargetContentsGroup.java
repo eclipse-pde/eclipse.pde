@@ -14,7 +14,7 @@ import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -182,7 +182,61 @@ public class TargetContentsGroup {
 				saveCheckState();
 			}
 		});
-		fTree.setSorter(new ViewerSorter());
+		fTree.setSorter(new ViewerSorter() {
+//			public int compare(Viewer viewer, Object e1, Object e2) {
+//				if (e1 instanceof IInstallableUnit && e2 instanceof IInstallableUnit) {
+//					// Put non bundle IUs ahead of bundle IUs
+//					IProvidedCapability[] provided = ((IInstallableUnit) e1).getProvidedCapabilities();
+//					boolean isBundle = false;
+//					for (int j = 0; j < provided.length; j++) {
+//						if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+//							if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+//								isBundle = true;
+//								break;
+//							}
+//						}
+//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+//							isBundle = true;
+//							break;
+//						}
+//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_FRAGMENT)) {
+//							isBundle = true;
+//							break;
+//						}
+//					}
+//
+//					provided = ((IInstallableUnit) e2).getProvidedCapabilities();
+//					boolean isBundle2 = false;
+//					for (int j = 0; j < provided.length; j++) {
+//						if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+//							if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+//								isBundle2 = true;
+//								break;
+//							}
+//						}
+//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+//							isBundle2 = true;
+//							break;
+//						}
+//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_FRAGMENT)) {
+//							isBundle2 = true;
+//							break;
+//						}
+//					}
+//
+//					if (!isBundle && isBundle2) {
+//						return -1;
+//					}
+//
+//					if (isBundle && isBundle2) {
+//						return 1;
+//					}
+//
+//					return super.compare(viewer, ((IInstallableUnit) e1).getId(), ((IInstallableUnit) e2).getId());
+//				}
+//				return super.compare(viewer, e1, e2);
+//			}
+		});
 		fMenuManager = new MenuManager();
 		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
 			public void run() {
@@ -484,7 +538,7 @@ public class TargetContentsGroup {
 		// TODO TERRIBLE PERFORMANCE! Recalculates included for every single check
 		// Expand everything first so that children have been calculated
 		fTree.expandAll();
-		IInstallableUnit[] included = fTargetDefinition.getIncludedUnits(null);
+		IInstallableUnit[] included = fTargetDefinition.getIncludedUnits();
 		fFilteredTree.setCheckedElements(included);
 		setEnabled(true);
 	}
@@ -539,7 +593,10 @@ public class TargetContentsGroup {
 				if (!((ITreeContentProvider) fTree.getContentProvider()).hasChildren(checked[i])) {
 					if (checked[i] instanceof IInstallableUnit) {
 						IInstallableUnit unit = (IInstallableUnit) checked[i];
-						leafChecked.add(new BundleInfo(unit.getId(), unit.getVersion().toString(), null, BundleInfo.NO_LEVEL, false));
+						InstallableUnitDescription unitDescription = new InstallableUnitDescription();
+						unitDescription.setId(unit.getId());
+						unitDescription.setVersion(unit.getVersion());
+						leafChecked.add(unitDescription);
 					}
 				}
 			}
@@ -547,7 +604,7 @@ public class TargetContentsGroup {
 				// Everything is included
 				fTargetDefinition.setIncluded(null);
 			} else {
-				fTargetDefinition.setIncluded((BundleInfo[]) leafChecked.toArray(new BundleInfo[leafChecked.size()]));
+				fTargetDefinition.setIncluded((InstallableUnitDescription[]) leafChecked.toArray(new InstallableUnitDescription[leafChecked.size()]));
 			}
 		}
 

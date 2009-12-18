@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 
 /**
@@ -41,15 +41,14 @@ public class IUBundleContainer implements IBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		return new IRepository[0];
+	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+		return new IMetadataRepository[0];
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs()
 	 */
-	public InstallableUnitDescription[] getRootIUs(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		// Note: this method is called from the persistence helper with a null agent
+	public InstallableUnitDescription[] getRootIUs() throws CoreException {
 		return fDescriptions;
 	}
 
@@ -99,6 +98,9 @@ public class IUBundleContainer implements IBundleContainer {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getVMArguments()
+	 */
 	public String[] getVMArguments() {
 		return null;
 	}

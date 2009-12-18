@@ -20,7 +20,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -235,14 +234,14 @@ public class TargetDefinitionPersistenceHelper {
 			rootElement.appendChild(reposElement);
 		}
 
-		BundleInfo[] includedBundles = definition.getIncluded();
+		InstallableUnitDescription[] includedBundles = definition.getIncluded();
 		if (includedBundles != null) {
 			Element included = doc.createElement(INCLUDE_BUNDLES);
 			serializeBundles(doc, included, includedBundles);
 			rootElement.appendChild(included);
 		}
 
-		BundleInfo[] optionalBundles = definition.getIncluded();
+		InstallableUnitDescription[] optionalBundles = definition.getIncluded();
 		if (optionalBundles != null) {
 			Element optional = doc.createElement(OPTIONAL_BUNDLES);
 			serializeBundles(doc, optional, optionalBundles);
@@ -296,14 +295,14 @@ public class TargetDefinitionPersistenceHelper {
 			rootElement.appendChild(argElement);
 		}
 
-		BundleInfo[] implicitDependencies = definition.getImplicitDependencies();
+		InstallableUnitDescription[] implicitDependencies = definition.getImplicitDependencies();
 		if (implicitDependencies != null && implicitDependencies.length > 0) {
 			Element implicit = doc.createElement(IMPLICIT);
 			for (int i = 0; i < implicitDependencies.length; i++) {
 				Element plugin = doc.createElement(PLUGIN);
-				plugin.setAttribute(ATTR_ID, implicitDependencies[i].getSymbolicName());
+				plugin.setAttribute(ATTR_ID, implicitDependencies[i].getId());
 				if (implicitDependencies[i].getVersion() != null) {
-					plugin.setAttribute(ATTR_VERSION, implicitDependencies[i].getVersion());
+					plugin.setAttribute(ATTR_VERSION, implicitDependencies[i].getVersion().toString());
 				}
 				implicit.appendChild(plugin);
 			}
@@ -389,11 +388,11 @@ public class TargetDefinitionPersistenceHelper {
 					definition.setRepositories(uris);
 				} else if (nodeName.equalsIgnoreCase(INCLUDE_BUNDLES)) {
 					// TODO Does not handle cases where everything was purposely excluded
-					BundleInfo[] included = deserializeBundles(element);
+					InstallableUnitDescription[] included = deserializeBundles(element);
 					definition.setIncluded(included);
 				} else if (nodeName.equalsIgnoreCase(OPTIONAL_BUNDLES)) {
 					// TODO Does not handle cases where everything was purposely excluded
-					BundleInfo[] optional = deserializeBundles(element);
+					InstallableUnitDescription[] optional = deserializeBundles(element);
 					definition.setOptional(optional);
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
@@ -477,12 +476,16 @@ public class TargetDefinitionPersistenceHelper {
 							Element currentElement = (Element) entry;
 							if (currentElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
 								String version = currentElement.getAttribute(ATTR_VERSION);
-								BundleInfo bundle = new BundleInfo(currentElement.getAttribute(ATTR_ID), version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false);
+								InstallableUnitDescription bundle = new InstallableUnitDescription();
+								bundle.setId(currentElement.getAttribute(ATTR_ID));
+								if (version.length() > 0) {
+									bundle.setVersion(Version.parseVersion(version));
+								}
 								implicit.add(bundle);
 							}
 						}
 					}
-					definition.setImplicitDependencies((BundleInfo[]) implicit.toArray(new BundleInfo[implicit.size()]));
+					definition.setImplicitDependencies((InstallableUnitDescription[]) implicit.toArray(new InstallableUnitDescription[implicit.size()]));
 				}
 			}
 		}
@@ -491,10 +494,10 @@ public class TargetDefinitionPersistenceHelper {
 		// TODO We are not handling targets that have purposely excluded everything
 		// TODO We are not handling iu bundle containers that used the default repo set
 		if (included35.size() > 0) {
-			definition.setIncluded((BundleInfo[]) included35.toArray(new BundleInfo[included35.size()]));
+			definition.setIncluded((InstallableUnitDescription[]) included35.toArray(new InstallableUnitDescription[included35.size()]));
 		}
 		if (optional35.size() > 0) {
-			definition.setOptional((BundleInfo[]) optional35.toArray(new BundleInfo[optional35.size()]));
+			definition.setOptional((InstallableUnitDescription[]) optional35.toArray(new InstallableUnitDescription[optional35.size()]));
 		}
 		if (repositores35.size() > 0) {
 			// TODO Test
@@ -532,7 +535,7 @@ public class TargetDefinitionPersistenceHelper {
 		} else if (location instanceof IUBundleContainer) {
 			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_REPOSITORY);
 			IUBundleContainer iubc = (IUBundleContainer) location;
-			InstallableUnitDescription[] descriptions = iubc.getRootIUs(null, null);
+			InstallableUnitDescription[] descriptions = iubc.getRootIUs();
 			for (int i = 0; i < descriptions.length; i++) {
 				Element unit = doc.createElement(INSTALLABLE_UNIT);
 				unit.setAttribute(ATTR_ID, descriptions[i].getId());
@@ -543,13 +546,13 @@ public class TargetDefinitionPersistenceHelper {
 		return locationElement;
 	}
 
-	private static void serializeBundles(Document doc, Element parent, BundleInfo[] bundles) {
-		for (int j = 0; j < bundles.length; j++) {
+	private static void serializeBundles(Document doc, Element parent, InstallableUnitDescription[] units) {
+		for (int i = 0; i < units.length; i++) {
 			Element includedBundle = doc.createElement(PLUGIN);
-			includedBundle.setAttribute(ATTR_ID, bundles[j].getSymbolicName());
-			String version = bundles[j].getVersion();
+			includedBundle.setAttribute(ATTR_ID, units[i].getId());
+			Version version = units[i].getVersion();
 			if (version != null) {
-				includedBundle.setAttribute(ATTR_VERSION, version);
+				includedBundle.setAttribute(ATTR_VERSION, version.toString());
 			}
 			parent.appendChild(includedBundle);
 		}
@@ -630,12 +633,12 @@ public class TargetDefinitionPersistenceHelper {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				if (element.getNodeName().equalsIgnoreCase(INCLUDE_BUNDLES)) {
-					BundleInfo[] oldIncluded = deserializeBundles(element);
+					InstallableUnitDescription[] oldIncluded = deserializeBundles(element);
 					for (int j = 0; j < oldIncluded.length; j++) {
 						included.add(oldIncluded[j]);
 					}
 				} else if (element.getNodeName().equalsIgnoreCase(OPTIONAL_BUNDLES)) {
-					BundleInfo[] oldOptional = deserializeBundles(element);
+					InstallableUnitDescription[] oldOptional = deserializeBundles(element);
 					for (int j = 0; j < oldOptional.length; j++) {
 						optional.add(oldOptional[j]);
 					}
@@ -646,7 +649,7 @@ public class TargetDefinitionPersistenceHelper {
 		return container;
 	}
 
-	private static BundleInfo[] deserializeBundles(Element parentElement) {
+	private static InstallableUnitDescription[] deserializeBundles(Element parentElement) {
 		NodeList nodes = parentElement.getChildNodes();
 		List bundles = new ArrayList(nodes.getLength());
 		for (int j = 0; j < nodes.getLength(); ++j) {
@@ -656,11 +659,16 @@ public class TargetDefinitionPersistenceHelper {
 				if (includeElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
 					String id = includeElement.getAttribute(ATTR_ID);
 					String version = includeElement.getAttribute(ATTR_VERSION);
-					bundles.add(new BundleInfo(id, version.length() > 0 ? version : null, null, BundleInfo.NO_LEVEL, false));
+					InstallableUnitDescription description = new InstallableUnitDescription();
+					description.setId(id);
+					if (version.length() > 0) {
+						description.setVersion(Version.parseVersion(version));
+					}
+					bundles.add(description);
 				}
 			}
 		}
-		return (BundleInfo[]) bundles.toArray(new BundleInfo[bundles.size()]);
+		return (InstallableUnitDescription[]) bundles.toArray(new InstallableUnitDescription[bundles.size()]);
 	}
 
 	private static URI[] deserializeRepositories(Element parentElement) {
@@ -708,11 +716,12 @@ public class TargetDefinitionPersistenceHelper {
 							String id = plugin.getAttribute(ATTR_ID);
 							boolean isOptional = plugin.getAttribute(ATTR_OPTIONAL).equalsIgnoreCase(Boolean.toString(true));
 							if (id.length() > 0) {
-								BundleInfo info = new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false);
+								InstallableUnitDescription bundle = new InstallableUnitDescription();
+								bundle.setId(id);
 								if (isOptional) {
-									optional.add(info);
+									optional.add(bundle);
 								} else {
-									included.add(info);
+									included.add(bundle);
 								}
 							}
 						}

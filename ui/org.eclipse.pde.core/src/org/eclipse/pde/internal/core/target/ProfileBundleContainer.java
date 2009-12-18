@@ -21,7 +21,6 @@ import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.publisher.Publisher;
-import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
@@ -62,7 +61,10 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 		fConfiguration = configurationLocation;
 	}
 
-	public IRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
 		// TODO Use the progress monitor
 
 		String home = resolveHomeLocation().toOSString();
@@ -102,27 +104,16 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 //		}
 
 		fRepo = Publisher.loadMetadataRepository(agent, profileArea.toURI(), false, false);
-		return new IRepository[] {fRepo};
+		return new IMetadataRepository[] {fRepo};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public InstallableUnitDescription[] getRootIUs(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMon = SubMonitor.convert(monitor, "Collecting contents of " + getLocation(true), 100);
-
-		// Ensure that the metadata has been generated
+	public InstallableUnitDescription[] getRootIUs() throws CoreException {
 		if (fRepo == null) {
-			generateRepositories(agent, subMon.newChild(50));
-		}
-		subMon.setWorkRemaining(50);
-
-		if (fRepo == null) {
-			return new InstallableUnitDescription[0];
+			return null;
 		}
 
 		// Collect all installable units in the repository
-		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, subMon.newChild(50));
+		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, null);
 
 		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.size()];
 		int i = 0;

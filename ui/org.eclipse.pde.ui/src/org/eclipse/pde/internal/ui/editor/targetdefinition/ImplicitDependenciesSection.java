@@ -14,10 +14,11 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -107,9 +108,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fViewer = new TableViewer(table);
 		fViewer.setContentProvider(new DefaultTableProvider() {
 			public Object[] getElements(Object inputElement) {
-				BundleInfo[] bundles = getTarget().getImplicitDependencies();
+				InstallableUnitDescription[] bundles = getTarget().getImplicitDependencies();
 				if (bundles == null) {
-					return new BundleInfo[0];
+					return new InstallableUnitDescription[0];
 				}
 				return bundles;
 			}
@@ -210,11 +211,11 @@ public class ImplicitDependenciesSection extends SectionPart {
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
-			BundleInfo[] currentBundles = getTarget().getImplicitDependencies();
+			InstallableUnitDescription[] currentBundles = getTarget().getImplicitDependencies();
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTarget().setImplicitDependencies((BundleInfo[]) allDependencies.toArray(new BundleInfo[allDependencies.size()]));
+			getTarget().setImplicitDependencies((InstallableUnitDescription[]) allDependencies.toArray(new InstallableUnitDescription[allDependencies.size()]));
 			markDirty();
 			refresh();
 		}
@@ -225,22 +226,24 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 * @return list of possible dependencies
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
-		BundleInfo[] current = getTarget().getImplicitDependencies();
+		InstallableUnitDescription[] current = getTarget().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
-				currentBundles.add(current[i].getSymbolicName());
+				currentBundles.add(current[i].getId());
 			}
 		}
 
 		List targetBundles = new ArrayList();
-		IResolvedBundle[] allTargetBundles = getTarget().getAllBundles();
+		IInstallableUnit[] allTargetBundles = getTarget().getAvailableUnits();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}
 		for (int i = 0; i < allTargetBundles.length; i++) {
-			if (!currentBundles.contains(allTargetBundles[i].getBundleInfo().getSymbolicName())) {
-				targetBundles.add(allTargetBundles[i].getBundleInfo());
+			if (!currentBundles.contains(allTargetBundles[i].getId())) {
+				InstallableUnitDescription newImplicit = new InstallableUnitDescription();
+				newImplicit.setId(allTargetBundles[i].getId());
+				targetBundles.add(newImplicit);
 			}
 		}
 
@@ -253,11 +256,11 @@ public class ImplicitDependenciesSection extends SectionPart {
 		Object[] removeBundles = ((IStructuredSelection) fViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
 			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof BundleInfo) {
+				if (removeBundles[i] instanceof InstallableUnitDescription) {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTarget().setImplicitDependencies((BundleInfo[]) bundles.toArray((new BundleInfo[bundles.size()])));
+			getTarget().setImplicitDependencies((InstallableUnitDescription[]) bundles.toArray((new InstallableUnitDescription[bundles.size()])));
 			markDirty();
 			refresh();
 		}

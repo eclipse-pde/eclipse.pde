@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -22,9 +23,6 @@ import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUni
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQueryResult;
-import org.eclipse.equinox.p2.publisher.Publisher;
-import org.eclipse.equinox.p2.publisher.PublisherInfo;
-import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
@@ -78,10 +76,10 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
 		// The repository is cached in the object instance, to rescan the object must be recreated
 		if (fRepo != null) {
-			return new IRepository[] {fRepo};
+			return new IMetadataRepository[] {fRepo};
 		}
 
 		SubMonitor subMon = SubMonitor.convert(monitor, "Create repository for " + getLocation(false), 100);
@@ -99,11 +97,11 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		StateObjectFactory stateFactory = Platform.getPlatformAdmin().getFactory();
 		State state = stateFactory.createState(false);
 
-		SubMonitor loopProgress = subMon.newChild(50).setWorkRemaining(files.length);
+		SubMonitor loopProgress = subMon.newChild(45).setWorkRemaining(files.length);
 		List bundleDescriptions = new ArrayList(files.length);
 		for (int i = 0; i < files.length; i++) {
 			if (subMon.isCanceled()) {
-				return new IRepository[0];
+				return new IMetadataRepository[0];
 			}
 			try {
 				Map manifest = loadManifest(files[i]);
@@ -131,7 +129,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		}
 
 		if (subMon.isCanceled()) {
-			return new IRepository[0];
+			return new IMetadataRepository[0];
 		}
 
 		// Create metadata for the bundles
@@ -139,46 +137,44 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		subMon.worked(40);
 
 		if (subMon.isCanceled()) {
-			return new IRepository[0];
+			return new IMetadataRepository[0];
 		}
 
 		// Create the repository and add the units to it
-		// TODO Could the publisher create a state/bundle description/ius for us?
-		// TODO Need to have better naming, managing of repositories
-		Publisher publisher = new Publisher(new PublisherInfo());
-		IMetadataRepository metaRepo = publisher.createMetadataRepository(agent, getSite(getDirectory()).toURI(), "Directory Repository", false, false);
-		metaRepo.addInstallableUnits(ius);
-
-		// Register the repository in the given agent
 		IMetadataRepositoryManager repoManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-		if (repoManager != null) {
-			// If the manager is inaccessible don't register the repository
-			repoManager.addRepository(metaRepo.getLocation());
+		if (repoManager == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
-		subMon.worked(10);
-		fRepo = metaRepo;
-		return new IRepository[] {metaRepo};
+		// Create the repository, if it already exists, update its contents
+		URI repoLocation = getSite(getDirectory()).toURI();
+		IStatus repoStatus = repoManager.validateRepositoryLocation(repoLocation, subMon.newChild(5));
+		IMetadataRepository repo;
+		if (repoStatus.isOK()) {
+			repo = repoManager.loadRepository(repoLocation, subMon.newChild(5));
+			repo.removeAll();
+			repo.addInstallableUnits(ius);
+		} else {
+			repo = repoManager.createRepository(repoLocation, "Directory Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
+			subMon.worked(5);
+			repo.addInstallableUnits(ius);
+		}
+		subMon.worked(5);
+		fRepo = repo;
+		return new IMetadataRepository[] {repo};
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs()
 	 */
-	public InstallableUnitDescription[] getRootIUs(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMon = SubMonitor.convert(monitor, "Collecting contents of " + getLocation(true), 100);
-
+	public InstallableUnitDescription[] getRootIUs() throws CoreException {
 		// Ensure that the metadata has been generated
 		if (fRepo == null) {
-			generateRepositories(agent, subMon.newChild(50));
-		}
-		subMon.setWorkRemaining(50);
-
-		if (fRepo == null) {
-			return new InstallableUnitDescription[0];
+			return null;
 		}
 
 		// Collect all installable units in the repository
-		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, subMon.newChild(50));
+		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, null);
 
 		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.size()];
 		int i = 0;

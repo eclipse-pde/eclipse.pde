@@ -774,7 +774,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 								AddToJavaSearchJob.synchWithTarget(fActiveTarget);
 							}
 							Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
-							IInstallableUnit[] units = fActiveTarget.getIncludedUnits(null);
+							IInstallableUnit[] units = fActiveTarget.getIncludedUnits();
 							if (units != null) {
 								for (int index = 0; index < units.length; index++) {
 									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(units[index].getId())) {
