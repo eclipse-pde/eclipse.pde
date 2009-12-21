@@ -11,19 +11,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.internal.core.target.*;
-
+import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class PluginModelManager implements IModelProviderListener {
@@ -375,15 +374,20 @@ public class PluginModelManager implements IModelProviderListener {
 		// Cannot assign to fEntries here - will create a race condition with isInitialized()
 		Map entries = Collections.synchronizedMap(new TreeMap());
 
+		// Create a default target if one does not exist
+		initDefaultTargetPlatformDefinition();
+
+		// Get the external plug-ins from the target, resolving and provisioning it if necessary
+		URL[] externalURLs = getExternalPlugins();
+
 		// Create a state that contains all bundles from the target and workspace
 		// If a workspace bundle has the same symbolic name as a target bundle,
 		// the target counterpart is subsequently removed from the state.
-		fState = new PDEState(fWorkspaceManager.getPluginPaths(), fExternalManager.getPluginPaths(), true, new NullProgressMonitor());
+		fState = new PDEState(fWorkspaceManager.getPluginPaths(), externalURLs, true, new NullProgressMonitor());
 
-		// initialize the enabled/disabled state of target models
-		// based on whether the bundle is checked/unchecked on the Target Platform
-		// preference page.
-		fExternalManager.initializeModels(fState.getTargetModels());
+		// initialize the enablement of target models
+		// As of 3.6, all models coming from the target are considered initialized
+		fExternalManager.modelsChanged(fState.getTargetModels());
 
 		// add target models to the master table
 		boolean statechanged = addToTable(entries, fExternalManager.getAllModels());
@@ -423,9 +427,6 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 
 		fEntries = entries;
-
-		// Create default target platform definition if required
-		initDefaultTargetPlatformDefinition();
 	}
 
 	/**
@@ -435,6 +436,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * a new definition is created. 
 	 */
 	private synchronized void initDefaultTargetPlatformDefinition() {
+		// Access the preference directly.  If the user has explicitly set there to be no target platform we don't want to create one.
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (service != null) {
 			String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
@@ -491,6 +493,49 @@ public class PluginModelManager implements IModelProviderListener {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Get the bundle locations from the target, resolving and provisioning the target if necessary.
+	 */
+	private URL[] getExternalPlugins() {
+		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		if (service == null) {
+			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Could not obtain Target Platform Service"));
+			return new URL[0];
+		}
+
+		ITargetDefinition definition;
+		try {
+			definition = service.getActiveTarget();
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return new URL[0];
+		}
+
+		if (definition == null) {
+			// No active target
+			return new URL[0];
+		}
+
+		// TODO Resolve and provision in a job
+		if (definition.isResolved()) {
+			IStatus result = definition.resolve(null);
+			if (result.getSeverity() == IStatus.ERROR) {
+				PDECore.log(result);
+				return new URL[0];
+			}
+		}
+
+		if (definition.isProvisioned()) {
+			IStatus result = definition.provision(null);
+			if (result.getSeverity() == IStatus.ERROR) {
+				PDECore.log(result);
+				return new URL[0];
+			}
+		}
+
+		return TargetUtils.getPluginPaths(definition);
 	}
 
 	/**

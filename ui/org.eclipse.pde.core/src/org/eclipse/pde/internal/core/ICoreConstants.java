@@ -19,35 +19,60 @@ public interface ICoreConstants {
 
 	// Target Platform
 	/**
-	 * @deprecated Use TargetPlatform
+	 * @deprecated As of 3.5, targets no longer have a single location.  This preference is still set during target platform load for backwards compatibility
 	 */
 	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
 	/**
-	 * @deprecated Use TargetPlatform
+	 * @deprecated As of 3.5, targets no longer have a single location.  This preference is still set during target platform load for backwards compatibility
 	 */
 	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
-
 	/**
-	 * @deprecated Use TargetPlatform
+	 * @deprecated As of 3.6, all plug-ins in the target are considered to be enabled.  Unchecked plug-ins in the target UI are not included in the external models.  This preference is no longer set. 
 	 */
 	String CHECKED_PLUGINS = "checkedPlugins"; //$NON-NLS-1$
-	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
-	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
-	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
-
 	/**
-	 * @deprecated Will no longer be set or read
+	 * @deprecated As of 3.6, all plug-ins in the target are considered to be enabled.  Unchecked plug-ins in the target UI are not included in the external models.  This setting is no longer used. 
+	 */
+	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.6, all plug-ins in the target are considered to be enabled.  Unchecked plug-ins in the target UI are not included in the external models.  This setting is no longer used.  
+	 */
+	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.6, all plug-ins in the target are considered to be enabled.  Unchecked plug-ins in the target UI are not included in the external models.  This setting is no longer used.  
+	 */
+	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.5, the target may contain many types of IBundleContainer locations so there is no longer a target mode.  This preference is no longer set. 
 	 */
 	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
-
 	/**
-	 * @deprecated Will no longer be set or read
+	 * @deprecated As of 3.5, the target may contain many types of IBundleContainer locations so there is no longer a target mode.  This setting is no longer needed. 
+	 */
+	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.5, the target may contain many types of IBundleContainer locations so there is no longer a target mode.  This setting is no longer needed. 
+	 */
+	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.5, target platforms are managed using files, making a set of saved locations unecessary.  This preference is no longer set or read.
 	 */
 	String SAVED_PLATFORM = "saved_platform"; //$NON-NLS-1$
-	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
-	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.5, user selected source locations are not supported.  Source must be added to the target definition.
+	 */
 	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
+	/**
+	 * @deprecated This preference is not set or read anywhere in PDE
+	 */
 	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
+	/**
+	 * @deprecated This preference is not set or read anywhere in PDE
+	 */
+	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
+
+	// TODO The following target preferences should be deprecated as they can be obtained directly from the target using ITargetPlatformService
+
 	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
 	String VM_ARGS = "vm_args"; //$NON-NLS-1$
 	String VM_LAUNCHER_INI = "vm_launcher_ini"; //$NON-NLS-1$
@@ -55,12 +80,6 @@ public interface ICoreConstants {
 	String GROUP_PLUGINS_VIEW = "group_plugins"; //$NON-NLS-1$
 	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
 
-	/**
-	 * @deprecated No longer necessary
-	 */
-	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
-
-	// Target Environment
 	String OS = "org.eclipse.pde.ui.os"; //$NON-NLS-1$
 	String WS = "org.eclipse.pde.ui.ws"; //$NON-NLS-1$
 	String NL = "org.eclipse.pde.ui.nl"; //$NON-NLS-1$
@@ -71,7 +90,6 @@ public interface ICoreConstants {
 	String NL_EXTRA = "org.eclipse.pde.nl.extra"; //$NON-NLS-1$
 	String ARCH_EXTRA = "org.eclipse.pde.arch.extra"; //$NON-NLS-1$
 
-	// Target JRE
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
 
 	/** Constant for the string <code>extension</code> */

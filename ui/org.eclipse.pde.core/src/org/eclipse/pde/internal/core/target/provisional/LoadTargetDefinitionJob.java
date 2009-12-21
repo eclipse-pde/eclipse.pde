@@ -10,22 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.Messages;
-import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
-import org.osgi.framework.Version;
+import org.eclipse.pde.internal.core.target.*;
 
 /**
  * Sets the current target platform based on a target definition.
@@ -272,50 +269,51 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 
 			// Create models for the provisioned bundles
-			BundleInfo[] bundles = fTarget.getProvisionedBundles();
-			List bundleLocations = new ArrayList(bundles.length);
-			for (int i = 0; i < bundles.length; i++) {
-				try {
-					bundleLocations.add(bundles[i].getLocation().toURL());
-				} catch (MalformedURLException e) {
-					// Ignore invalid urls, UI should see and handle them
-				}
-			}
-			URL[] urls = (URL[]) bundleLocations.toArray(new URL[bundleLocations.size()]);
+			URL[] urls = TargetUtils.getPluginPaths(fTarget);
 			PDEState state = new PDEState(urls, true, subMon.newChild(50));
 			subMon.worked(10);
 			if (subMon.isCanceled()) {
 				return;
 			}
 
-			// TODO Would it be safer to just get the provisioned included units?
 			// Set enablement based on included bundles
 			IPluginModelBase[] models = state.getTargetModels();
-			InstallableUnitDescription[] included = fTarget.getIncluded();
-
-			if (included == null) {
-				for (int i = 0; i < models.length; i++) {
-					models[i].setEnabled(true);
-				}
-			} else {
-				Map enabled = new HashMap(); // bundle names to string version
-				for (int i = 0; i < included.length; i++) {
-					enabled.put(included[i].getId(), included[i].getVersion());
-				}
-				for (int i = 0; i < models.length; i++) {
-					String modelName = models[i].getBundleDescription().getSymbolicName();
-					if (enabled.containsKey(modelName)) {
-						Version enabledVersion = (Version) enabled.get(enabled);
-						models[i].setEnabled(enabledVersion == null ? true : enabledVersion.equals(models[i].getBundleDescription().getVersion()));
-					} else {
-						models[i].setEnabled(false);
-					}
-				}
+			for (int i = 0; i < models.length; i++) {
+				models[i].setEnabled(true);
 			}
+
 			subMon.worked(10);
 			if (subMon.isCanceled()) {
 				return;
 			}
+
+			// For backwards compatibility, continue to set the target home location and additional locations
+			IBundleContainer[] containers = fTarget.getBundleContainers();
+			String home = null;
+			Set additional = new HashSet();
+			for (int i = 0; i < containers.length; i++) {
+				if (containers[i] instanceof AbstractLocalBundleContainer) {
+					String location = ((AbstractLocalBundleContainer) containers[i]).getLocation(true);
+					if (home == null || home.equals(location)) {
+						home = location;
+					} else {
+						additional.add(location);
+					}
+				}
+			}
+			if (home == null) {
+				home = TargetPlatform.getDefaultLocation();
+			}
+			StringBuffer additionalBuf = new StringBuffer();
+			for (Iterator iterator = additional.iterator(); iterator.hasNext();) {
+				additionalBuf.append((String) iterator.next());
+				if (iterator.hasNext()) {
+					additionalBuf.append(',');
+				}
+			}
+
+			pref.setValue(ICoreConstants.PLATFORM_PATH, home);
+			pref.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, additionalBuf.toString());
 
 			// Use the TargetPlatformResetJob to update the platform
 			Job job = new TargetPlatformResetJob(state);

@@ -122,6 +122,16 @@ public interface ITargetDefinition {
 	public InstallableUnitDescription[] getMissingUnits(IProgressMonitor monitor);
 
 	/**
+	 * Returns whether this target definition is in a provisioned state.  A target in a provisioned
+	 * state if it has been both resolved and provisioned.  A provisioned target has bundles and features
+	 * on disk which can be added to the PDE State.  If a problem occurred while provisioning the target
+	 * will not be considered provisioned.
+	 * 
+	 * @return <code>true</code> if the target is provisioned
+	 */
+	public boolean isProvisioned();
+
+	/**
 	 * Provisions this target, using the metadata in this target to collect physical
 	 * bundles and features.  If this target is not resolved, this method will attempt
 	 * to resolve it before provisioning.  Provisioning may involve fetching artifacts
@@ -134,6 +144,14 @@ public interface ITargetDefinition {
 	 * @throws CoreException
 	 */
 	public IStatus provision(IProgressMonitor monitor);
+
+	/**
+	 * Returns the status generated the last time {@link #provision(IProgressMonitor)} was called on this
+	 * target definition.  Will return <code>null</code> if this target has never been provisioned.
+	 * 
+	 * @return status from last provision operation or <code>null</code>
+	 */
+	public IStatus getProvisionStatus();
 
 	/**
 	 * Returns a list of {@link BundleInfo} objects describing the physical locations of the bundles

@@ -28,6 +28,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences defaultPreferences = new DefaultScope().getNode(PDECore.PLUGIN_ID);
 		IEclipsePreferences preferences = new InstanceScope().getNode(PDECore.PLUGIN_ID);
+
+		// The following preferences are available for backwards compatibility, but they are no longer set or read
 		defaultPreferences.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		defaultPreferences.put(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
 		if (preferences.get(ICoreConstants.TARGET_MODE, defaultPreferences.get(ICoreConstants.TARGET_MODE, "")).equals(ICoreConstants.VALUE_USE_THIS)) { //$NON-NLS-1$
@@ -35,6 +37,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		} else {
 			defaultPreferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
 		}
+
 		// set defaults for the target environment variables.
 		defaultPreferences.put(ICoreConstants.OS, Platform.getOS());
 		defaultPreferences.put(ICoreConstants.WS, Platform.getWS());

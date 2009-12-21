@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
-
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,7 +26,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -39,6 +37,7 @@ import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.FilterableCheck
 import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotifier;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -209,19 +208,7 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected IPluginModelBase[] getExternalModels() {
 		if (fExternalModels == null) {
-			PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
-			String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
-			if (saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
-				fExternalModels = new IPluginModelBase[0];
-				return fExternalModels;
-			}
-
 			IPluginModelBase[] models = PluginRegistry.getExternalModels();
-			if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
-				fExternalModels = models;
-				return fExternalModels;
-			}
-
 			ArrayList list = new ArrayList(models.length);
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].isEnabled()) {

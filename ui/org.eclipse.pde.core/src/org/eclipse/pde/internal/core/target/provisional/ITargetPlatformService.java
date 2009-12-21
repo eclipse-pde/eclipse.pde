@@ -39,6 +39,33 @@ public interface ITargetPlatformService {
 	public static final int STATUS_MISSING_FROM_TARGET_DEFINITION = 2;
 
 	/**
+	 * Returns the target definition that represents the active target platform.  The
+	 * returned definition is not guaranteed to be resolved or provisioned.  Callers
+	 * may resolve or provision the definition themselves.  
+	 * <p>If the target contents are modified, the definition should be saved using
+	 * {@link ITargetPlatformService#saveTargetDefinition(ITargetDefinition)} and 
+	 * a {@link LoadTargetDefinitionJob} should be run so that the PDE model gets 
+	 * updated correctly.
+	 * </p><p>
+	 * Will return <code>null</code> if no active target platform has been set.
+	 * </p>
+	 * @return Cached active target definition or <code>null</code>
+	 * @exception CoreException if an error occurs getting the active workspace target handle
+	 */
+	public ITargetDefinition getActiveTarget() throws CoreException;
+
+	/**
+	 * TODO Consider removing in favour of {@link #getActiveTarget()}
+	 * 
+	 * Returns a handle to the target definition that corresponds to the active target platform
+	 * or <code>null</code> if none.
+	 * 
+	 * @return handle to workspace target platform or <code>null</code> if none
+	 * @exception CoreException if an error occurs generating the handle
+	 */
+	public ITargetHandle getWorkspaceTargetHandle() throws CoreException;
+
+	/**
 	 * Returns handles to all target definitions known in the workspace.
 	 * 
 	 * @return handles to all target definitions known in the workspace
@@ -151,15 +178,6 @@ public interface ITargetPlatformService {
 	 * @return bundle container
 	 */
 	public IBundleContainer newFeatureContainer(String home, String featureId, String version);
-
-	/**
-	 * Returns a handle to the target definition that corresponds to the active target platform
-	 * or <code>null</code> if none.
-	 * 
-	 * @return handle to workspace target platform or <code>null</code> if none
-	 * @exception CoreException if an error occurs generating the handle
-	 */
-	public ITargetHandle getWorkspaceTargetHandle() throws CoreException;
 
 	/**
 	 * Returns a status describing whether the given target definition is synchronized with

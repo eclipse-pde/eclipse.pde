@@ -99,6 +99,7 @@ public class PDEPreferencesTestCase extends TestCase {
 	}
 	
 	public void testPDECoreDefaultPreferences(){
+		// TODO The target preferences are now deprecated, we should choose new ones to test
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		assertEquals(preferences.getDefaultString(ICoreConstants.TARGET_MODE), ICoreConstants.VALUE_USE_THIS);
 		assertEquals(preferences.getDefaultString(ICoreConstants.CHECKED_PLUGINS), ICoreConstants.VALUE_SAVED_ALL);
@@ -115,6 +116,7 @@ public class PDEPreferencesTestCase extends TestCase {
 	}
 	
 	public void testPreferencesCompatability(){
+		// TODO The target preferences are now deprecated, we should choose new ones to test
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();		
 		PDEPreferencesManager preferencesManager = PDECore.getDefault().getPreferencesManager();
 		assertEquals(preferences.getString(ICoreConstants.TARGET_MODE), preferencesManager.getString(ICoreConstants.TARGET_MODE));

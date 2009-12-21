@@ -28,23 +28,24 @@ public class TargetPreferenceModifyListener extends PreferenceModifyListener {
 		 */
 		public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 			if (node.name().equals(PDECore.PLUGIN_ID)) {
-				// remove all target platform setting preferences
-				node.remove(ICoreConstants.ADDITIONAL_LOCATIONS);
-				node.remove(ICoreConstants.ARCH);
+				// the following preference are no longer set or read, but still may exist due to backwards compatibility 
 				node.remove(ICoreConstants.CHECKED_PLUGINS);
-				node.remove(ICoreConstants.IMPLICIT_DEPENDENCIES);
-				node.remove(ICoreConstants.NL);
 				node.remove(ICoreConstants.PLATFORM_PATH);
-				node.remove(ICoreConstants.POOLED_BUNDLES);
-				node.remove(ICoreConstants.PROGRAM_ARGS);
-				node.remove(ICoreConstants.OS);
+				node.remove(ICoreConstants.ADDITIONAL_LOCATIONS);
+				node.remove(ICoreConstants.TARGET_MODE);
 				for (int i = 0; i < 4; i++) {
 					StringBuffer key = new StringBuffer();
 					key.append(ICoreConstants.SAVED_PLATFORM);
 					key.append(i);
 					node.remove(key.toString());
 				}
-				node.remove(ICoreConstants.TARGET_MODE);
+
+				// remove all target platform setting preferences
+				node.remove(ICoreConstants.IMPLICIT_DEPENDENCIES);
+				node.remove(ICoreConstants.ARCH);
+				node.remove(ICoreConstants.NL);
+				node.remove(ICoreConstants.PROGRAM_ARGS);
+				node.remove(ICoreConstants.OS);
 				node.remove(ICoreConstants.TARGET_PLATFORM_REALIZATION);
 				node.remove(ICoreConstants.TARGET_PROFILE);
 				node.remove(ICoreConstants.VM_ARGS);

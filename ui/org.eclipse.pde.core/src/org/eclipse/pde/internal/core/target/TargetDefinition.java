@@ -81,6 +81,11 @@ public class TargetDefinition implements ITargetDefinition {
 	private TargetResolver fResolver;
 
 	/**
+	 * Helper object encapsulating target provisioning code, if this target is not provisioned, this can be <code>null</code>
+	 */
+	private TargetProvisioner fProvisioner;
+
+	/**
 	 * Constructs a target definition based on the given handle. 
 	 */
 	TargetDefinition(ITargetHandle handle) {
@@ -101,6 +106,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setLocations(org.eclipse.pde.internal.core.target.provisional.IBundleContainer[])
 	 */
 	public void setBundleContainers(IBundleContainer[] locations) {
+		// No longer resolved
+		fResolver = null;
+		fProvisioner = null;
 		if (locations != null && locations.length == 0) {
 			locations = null;
 		}
@@ -121,6 +129,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setRepositories(java.net.URI[])
 	 */
 	public void setRepositories(URI[] repos) {
+		// No longer resolved
+		fResolver = null;
+		fProvisioner = null;
 		if (repos != null && repos.length == 0) {
 			repos = null;
 		}
@@ -196,6 +207,13 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isProvisioned()
+	 */
+	public boolean isProvisioned() {
+		return isResolved() && fProvisioner != null && fProvisioner.getStatus() != null && (fProvisioner.getStatus().getSeverity() == IStatus.OK || fProvisioner.getStatus().getSeverity() == IStatus.WARNING);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#provision(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus provision(IProgressMonitor monitor) {
@@ -210,15 +228,23 @@ public class TargetDefinition implements ITargetDefinition {
 			return getResolveStatus();
 		}
 
-		return fResolver.provision(subMon.newChild(50));
+		fProvisioner = new TargetProvisioner(fResolver);
+		return fProvisioner.provision(subMon.newChild(50));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getProvisionStatus()
+	 */
+	public IStatus getProvisionStatus() {
+		return fProvisioner != null ? fProvisioner.getStatus() : null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getProvisionedBundles()
 	 */
 	public BundleInfo[] getProvisionedBundles() {
-		if (isResolved()) {
-			return fResolver.getProvisionedBundles();
+		if (isProvisioned()) {
+			return fProvisioner.getProvisionedBundles();
 		}
 		return null;
 	}
@@ -242,6 +268,8 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setIncluded(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
 	 */
 	public void setIncluded(InstallableUnitDescription[] included) {
+		// We are no longer provisioned
+		fProvisioner = null;
 		fIncluded = included;
 	}
 
@@ -256,6 +284,8 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOptional(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
 	 */
 	public void setOptional(InstallableUnitDescription[] optional) {
+		// No longer provisioned
+		fProvisioner = null;
 		fOptional = optional;
 	}
 

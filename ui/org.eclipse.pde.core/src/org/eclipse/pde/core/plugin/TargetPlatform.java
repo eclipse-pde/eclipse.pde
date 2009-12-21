@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 
 /**
  * The central class for the plug-in development target platform. This class cannot
@@ -45,10 +46,10 @@ public class TargetPlatform {
 	private static String IDE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
 	/**
-	 * Returns the target platform's main location as specified on the <b>Environment</b>
-	 * tab of the <b>Plug-in Development > Target Platform</b> preference page.
+	 * Returns the active target platform's main location
 	 *  
-	 * @return the target platform's main location
+	 * @return the target platform's main location or an empty string if none was found.
+	 * @deprecated As of 3.6, targets do not have a single home location.  For backwards compatibility the target location is set to the first local location found.  You can use the {@link ITargetPlatformService} to access the active target definition 
 	 */
 	public static String getLocation() {
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();

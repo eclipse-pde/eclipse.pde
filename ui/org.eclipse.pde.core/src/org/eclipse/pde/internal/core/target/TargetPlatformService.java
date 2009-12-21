@@ -41,6 +41,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 	private static Map fExtTargetHandles;
 
 	/**
+	 * Cached target definition for the active target platform
+	 */
+	private static ITargetDefinition fActiveTarget;
+
+	/**
 	 * Collects target files in the workspace
 	 */
 	class ResourceProxyVisitor implements IResourceProxyVisitor {
@@ -73,6 +78,34 @@ public class TargetPlatformService implements ITargetPlatformService {
 			fgDefault = new TargetPlatformService();
 		}
 		return fgDefault;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getActiveTarget()
+	 */
+	public ITargetDefinition getActiveTarget() throws CoreException {
+		// TODO It would be far safer if we could return a read only copy of the active target
+		ITargetHandle handle = getWorkspaceTargetHandle();
+		if (handle == null) {
+			return null;
+		}
+		if (fActiveTarget != null && handle.equals(fActiveTarget.getHandle())) {
+			return fActiveTarget;
+		}
+		fActiveTarget = handle.getTargetDefinition();
+		return fActiveTarget;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getWorkspaceTargetDefinition()
+	 */
+	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
+		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
+			return getTarget(memento);
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -242,18 +275,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	public IBundleContainer newFeatureContainer(String home, String id, String version) {
 		return new FeatureBundleContainer(home, id, version);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getWorkspaceTargetDefinition()
-	 */
-	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
-		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
-			return getTarget(memento);
-		}
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -427,7 +448,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	private void initializePluginContent(PDEPreferencesManager preferences, ITargetDefinition target) {
-		// TODO New API
 		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
 		IBundleContainer primary = target.getBundleContainers()[0];
 		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
