@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -339,7 +340,37 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		Group group = SWTFactory.createGroup(comp, PDEUIMessages.TargetPlatformPreferencePage2_25, 1, 1, GridData.FILL_HORIZONTAL);
 		fDetails = new TableViewer(group);
 		fDetails.setLabelProvider(new StyledBundleLabelProvider(true, true));
-		fDetails.setContentProvider(new ArrayContentProvider());
+		fDetails.setContentProvider(new ArrayContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				// Replace IU containers with the root IUs
+				if (inputElement instanceof ITargetDefinition) {
+					IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
+					List children = new ArrayList();
+					for (int i = 0; i < containers.length; i++) {
+						if (containers[i] instanceof IUBundleContainer) {
+							try {
+								InstallableUnitDescription[] descriptions = ((IUBundleContainer) containers[i]).getRootIUs();
+								if (descriptions != null && descriptions.length > 0) {
+									for (int j = 0; j < descriptions.length; j++) {
+										children.add(descriptions[j]);
+									}
+								} else {
+									children.add(containers[i]);
+								}
+							} catch (CoreException e) {
+								// Just ignore the container if there is an error getting the IUs
+							}
+						} else {
+							children.add(containers[i]);
+						}
+					}
+					return children.toArray();
+				} else if (inputElement instanceof String) {
+					return new Object[] {inputElement};
+				}
+				return new Object[0];
+			}
+		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 50;
 		fDetails.getControl().setLayoutData(gd);
@@ -594,7 +625,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	protected void updateDetails() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (selection.size() == 1) {
-			fDetails.setInput(((ITargetDefinition) selection.getFirstElement()).getBundleContainers());
+			fDetails.setInput(selection.getFirstElement());
 		} else {
 			fDetails.setInput(null);
 		}

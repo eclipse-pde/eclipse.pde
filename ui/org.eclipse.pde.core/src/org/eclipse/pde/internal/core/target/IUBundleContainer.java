@@ -34,7 +34,7 @@ public class IUBundleContainer implements IBundleContainer {
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> if
 	 *   default set
 	 */
-	IUBundleContainer(InstallableUnitDescription[] descriptions) {
+	public IUBundleContainer(InstallableUnitDescription[] descriptions) {
 		fDescriptions = descriptions;
 	}
 

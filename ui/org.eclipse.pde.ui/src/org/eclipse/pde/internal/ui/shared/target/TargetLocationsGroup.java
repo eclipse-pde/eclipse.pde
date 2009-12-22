@@ -320,14 +320,29 @@ public class TargetLocationsGroup {
 			Set newContainers = new HashSet();
 			newContainers.addAll(Arrays.asList(fTarget.getBundleContainers()));
 			Iterator iterator = selection.iterator();
-			boolean removedSite = false;
 			while (iterator.hasNext()) {
 				Object currentSelection = iterator.next();
 				if (currentSelection instanceof IBundleContainer) {
-					if (currentSelection instanceof IUBundleContainer) {
-						removedSite = true;
-					}
 					newContainers.remove(currentSelection);
+				} else if (currentSelection instanceof InstallableUnitWrapper) {
+					IUBundleContainer container = ((InstallableUnitWrapper) currentSelection).getContainer();
+					newContainers.remove(container);
+					// If there are other root IUs in the container, add a new container without the given IU
+					InstallableUnitDescription[] oldIUs = null;
+					try {
+						oldIUs = container.getRootIUs();
+					} catch (CoreException e) {
+						// Method should only be returning an array, ignore any errors
+					}
+					if (oldIUs != null && oldIUs.length > 1) {
+						List newIUs = new ArrayList();
+						for (int i = 0; i < oldIUs.length; i++) {
+							if (!oldIUs[i].equals(currentSelection)) {
+								newIUs.add(currentSelection);
+							}
+						}
+						newContainers.add(new IUBundleContainer((InstallableUnitDescription[]) newIUs.toArray(new InstallableUnitDescription[newIUs.size()])));
+					}
 				}
 			}
 			if (newContainers.size() > 0) {
@@ -336,7 +351,6 @@ public class TargetLocationsGroup {
 				fTarget.setBundleContainers(null);
 			}
 
-			// If we remove a site container, the content change update must force a re-resolve bug 275458 / bug 275401
 			contentsChanged();
 			fTreeViewer.refresh(false);
 			updateButtons();
@@ -350,7 +364,8 @@ public class TargetLocationsGroup {
 		boolean removeAllowed = false;
 		Iterator iter = selection.iterator();
 		while (iter.hasNext()) {
-			if (iter.next() instanceof IBundleContainer) {
+			Object next = iter.next();
+			if (next instanceof IBundleContainer || next instanceof InstallableUnitWrapper) {
 				removeAllowed = true;
 				break;
 			}
@@ -397,7 +412,7 @@ public class TargetLocationsGroup {
 							InstallableUnitDescription[] descriptions = ((IUBundleContainer) containers[i]).getRootIUs();
 							if (descriptions != null && descriptions.length > 0) {
 								for (int j = 0; j < descriptions.length; j++) {
-									children.add(new InstallableUnitWrapper(descriptions[j], fTarget));
+									children.add(new InstallableUnitWrapper(descriptions[j], ((IUBundleContainer) containers[i]), fTarget));
 								}
 							} else {
 								children.add(containers[i]);

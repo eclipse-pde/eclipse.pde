@@ -466,22 +466,6 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedImplicitDependencies()
-	 */
-//	public IResolvedBundle[] getResolvedImplicitDependencies() {
-//		// TODO Use new API
-//		return null;
-//		int size = 0;
-//		if (fImplicit != null) {
-//			size = fImplicit.length;
-//		}
-//		if (size == 0) {
-//			return new IResolvedBundle[0];
-//		}
-//		return AbstractBundleContainer.getMatchingBundles(getBundles(), fImplicit, null, null);
-//	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
 	 */
 	public void setImplicitDependencies(InstallableUnitDescription[] bundles) {

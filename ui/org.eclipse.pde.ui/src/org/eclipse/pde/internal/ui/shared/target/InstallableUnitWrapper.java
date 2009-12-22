@@ -8,7 +8,8 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 /**
  * Wraps the installable unit descriptions provided by IUBundleContainer.  If a resolved target is available
  * this class can calculate and the cache the actual installable unit from the target.  An installable unit
- * can provide better information for the label providers than the installable unit description can.
+ * can provide better information for the label providers than the installable unit description can.  Has a 
+ * pointer to its parent container so the wrapper can be be interacted with in tables and trees
  * 
  * @see InstallableUnitDescription
  * @see IInstallableUnit
@@ -23,10 +24,16 @@ public class InstallableUnitWrapper {
 	// TODO Is caching this in the object actually beneficial?
 	private IInstallableUnit fUnit;
 	private ITargetDefinition fTarget;
+	private IUBundleContainer fContainer;
 
-	public InstallableUnitWrapper(InstallableUnitDescription description, ITargetDefinition target) {
+	public InstallableUnitWrapper(InstallableUnitDescription description, IUBundleContainer container, ITargetDefinition target) {
 		fDescription = description;
 		fTarget = target;
+		fContainer = container;
+	}
+
+	public IUBundleContainer getContainer() {
+		return fContainer;
 	}
 
 	public Object getBestUnit() {

@@ -12,20 +12,21 @@ package org.eclipse.pde.internal.ui.wizards.target;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
@@ -648,9 +649,9 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				BundleInfo bundle1 = (BundleInfo) e1;
-				BundleInfo bundle2 = (BundleInfo) e2;
-				return super.compare(viewer, bundle1.getSymbolicName(), bundle2.getSymbolicName());
+				InstallableUnitDescription bundle1 = (InstallableUnitDescription) e1;
+				InstallableUnitDescription bundle2 = (InstallableUnitDescription) e2;
+				return super.compare(viewer, bundle1.getId(), bundle2.getId());
 			}
 		});
 		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -719,8 +720,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			Object[] models = dialog.getResult();
 			ArrayList pluginsToAdd = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
-				BundleInfo desc = ((BundleInfo) models[i]);
-				pluginsToAdd.add(new BundleInfo(desc.getSymbolicName(), null, null, BundleInfo.NO_LEVEL, false));
+				IInstallableUnit desc = ((IInstallableUnit) models[i]);
+				InstallableUnitDescription description = new InstallableUnitDescription();
+				description.setId(desc.getId());
+				pluginsToAdd.add(description);
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
@@ -738,33 +741,39 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * Gets a list of all the bundles that can be added as implicit dependencies
 	 * @return list of possible dependencies
 	 */
-	protected BundleInfo[] getValidBundles() throws CoreException {
-		// TODO Support implicit bundle selection
-		return new BundleInfo[0];
-//		BundleInfo[] current = getTargetDefinition().getImplicitDependencies();
-//		Set currentBundles = new HashSet();
-//		if (current != null) {
-//			for (int i = 0; i < current.length; i++) {
-//				if (!currentBundles.contains(current[i].getSymbolicName())) {
-//					currentBundles.add(current[i].getSymbolicName());
-//				}
-//			}
-//		}
-//
-//		List targetBundles = new ArrayList();
-//		IResolvedBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
-//		if (allTargetBundles == null || allTargetBundles.length == 0) {
-//			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
-//		}
-//		for (int i = 0; i < allTargetBundles.length; i++) {
-//			BundleInfo bundleInfo = allTargetBundles[i].getBundleInfo();
-//			if (!currentBundles.contains(bundleInfo.getSymbolicName())) {
-//				currentBundles.add(bundleInfo.getSymbolicName()); // to avoid duplicate entries
-//				targetBundles.add(bundleInfo);
-//			}
-//		}
-//
-//		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
+	protected IInstallableUnit[] getValidBundles() throws CoreException {
+		InstallableUnitDescription[] current = getTargetDefinition().getImplicitDependencies();
+		Set currentBundles = new HashSet();
+		if (current != null) {
+			for (int i = 0; i < current.length; i++) {
+				if (!currentBundles.contains(current[i].getId())) {
+					currentBundles.add(current[i].getId());
+				}
+			}
+		}
+
+		List targetBundles = new ArrayList();
+		IInstallableUnit[] allTargetBundles = getTargetDefinition().getAvailableUnits();
+		if (allTargetBundles == null || allTargetBundles.length == 0) {
+			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+		}
+
+		for (int i = 0; i < allTargetBundles.length; i++) {
+			IInstallableUnit currentUnit = allTargetBundles[i];
+			IProvidedCapability[] provided = currentUnit.getProvidedCapabilities(); // only consider bundle units
+			for (int j = 0; j < provided.length; j++) {
+				if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+					if (!currentBundles.contains(currentUnit.getId())) {
+						currentBundles.add(currentUnit.getId()); // to avoid duplicate entries
+						targetBundles.add(currentUnit);
+					}
+					break;
+				}
+			}
+
+		}
+
+		return (IInstallableUnit[]) targetBundles.toArray(new IInstallableUnit[targetBundles.size()]);
 	}
 
 	private void handleRemove() {
@@ -773,7 +782,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Object[] removeBundles = ((IStructuredSelection) fElementViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
 			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof BundleInfo) {
+				if (removeBundles[i] instanceof InstallableUnitDescription) {
 					bundles.remove(removeBundles[i]);
 				}
 			}

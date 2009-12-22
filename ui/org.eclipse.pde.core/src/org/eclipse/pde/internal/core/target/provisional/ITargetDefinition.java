@@ -385,12 +385,4 @@ public interface ITargetDefinition {
 	 */
 	public InstallableUnitDescription[] getImplicitDependencies();
 
-//	/**
-//	 * Returns implicit dependencies resolved against the actual bundles contained in this target
-//	 * or <code>null</code> if this target has not been resolved. Matches symbolic names and optional
-//	 * versions of implicit dependencies against the actual bundles in this target.
-//	 *  
-//	 * @return resolved implicit dependencies or <code>null</code>
-//	 */
-//	public IResolvedBundle[] getResolvedImplicitDependencies();
 }
