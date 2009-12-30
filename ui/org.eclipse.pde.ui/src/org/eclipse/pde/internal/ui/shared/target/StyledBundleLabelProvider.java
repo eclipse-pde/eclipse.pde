@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ui.shared.target;
 import com.ibm.icu.text.MessageFormat;
 import java.net.URI;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.metadata.TranslationSupport;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.p2.common.TranslationSupport;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -50,7 +50,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fShowVersion = showVersion;
 		fAppendResolvedVariables = appendResolvedVariables;
-		fTranslations = new TranslationSupport();
+		fTranslations = TranslationSupport.getInstance();
 	}
 
 	/* (non-Javadoc)

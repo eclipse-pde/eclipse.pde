@@ -259,9 +259,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			IArtifactKey[] artifacts = unit.getArtifacts();
-			for (int i = 0; i < artifacts.length; i++) {
-				IArtifactKey key = artifacts[i];
+			List/*<IArtifactKey*/artifacts = unit.getArtifacts();
+			for (int i = 0; i < artifacts.size(); i++) {
+				IArtifactKey key = (IArtifactKey) artifacts.get(i);
 				File file = repo.getArtifactFile(key);
 				if (file == null) {
 					// TODO: missing bundle
@@ -337,15 +337,15 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		IProgressMonitor loadMonitor = new SubProgressMonitor(subMonitor, 10);
 		loadMonitor.beginTask(null, repoCount * 10);
-		IMetadataRepository[] metadataRepos = new IMetadataRepository[repoCount];
+		List metadataRepos = new ArrayList(repoCount);
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (int i = 0; i < repoCount; ++i)
-			metadataRepos[i] = manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10));
+			metadataRepos.add(manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10)));
 		loadMonitor.done();
 
 		IQueryable allMetadata;
 		if (repoCount == 1) {
-			allMetadata = metadataRepos[0];
+			allMetadata = (IQueryable) metadataRepos.get(0);
 		} else {
 			allMetadata = new CompoundQueryable(metadataRepos);
 		}
@@ -369,8 +369,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
-		ArrayList operands = new ArrayList(queryResult.size());
-		Iterator itor = queryResult.iterator();
+		Set querySet = queryResult.unmodifiableSet();
+		ArrayList operands = new ArrayList(querySet.size());
+		Iterator itor = querySet.iterator();
 		while (itor.hasNext()) {
 			operands.add(new InstallableUnitOperand(null, (IInstallableUnit) itor.next()));
 		}
@@ -416,9 +417,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			IArtifactKey[] artifacts = unit.getArtifacts();
-			for (int i = 0; i < artifacts.length; i++) {
-				IArtifactKey key = artifacts[i];
+			List/*<IArtifactKey>*/artifacts = unit.getArtifacts();
+			for (int i = 0; i < artifacts.size(); i++) {
+				IArtifactKey key = (IArtifactKey) artifacts.get(i);
 				File file = repo.getArtifactFile(key);
 				if (file == null) {
 					// TODO: missing bundle

@@ -126,20 +126,20 @@ public class RuntimeInstallJob extends Job {
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
 				IQueryResult queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
-				if (queryMatches.size() == 0) {
+				if (queryMatches.isEmpty()) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
 
-				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
+				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
 
 				// Find out if the profile already has that iu installed												
 				queryMatches = profile.query(new InstallableUnitQuery(id), new SubProgressMonitor(monitor, 0));
-				if (queryMatches.size() == 0) {
+				if (queryMatches.isEmpty()) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
-					Version existingVersion = ((IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0]).getVersion();
+					Version existingVersion = ((IInstallableUnit) queryMatches.iterator().next()).getVersion();
 					toInstall.add(createInstallableUnitPatch(id, newVersion, existingVersion, profile, monitor));
 				}
 				monitor.worked(2);
@@ -204,9 +204,9 @@ public class RuntimeInstallJob extends Job {
 		IQueryResult queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					IRequirement[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
-					for (int i = 0; i < reqs.length; i++) {
-						IRequiredCapability reqCap = (IRequiredCapability) reqs[i];
+					List/*<IRequirement>*/reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					for (int i = 0; i < reqs.size(); i++) {
+						IRequiredCapability reqCap = (IRequiredCapability) reqs.get(i);
 						if (reqCap.getName().equals(id)) {
 							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqCap.getRange())) {
 								return true;
@@ -218,7 +218,7 @@ public class RuntimeInstallJob extends Job {
 			}
 		}, monitor);
 		if (!queryMatches.isEmpty()) {
-			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
+			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
 		}
 
