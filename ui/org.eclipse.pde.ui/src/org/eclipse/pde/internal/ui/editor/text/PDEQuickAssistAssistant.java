@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mohammed Mostafa <mmostafa@ca.ibm.com> - bug 296522
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
@@ -119,31 +120,46 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public boolean canFix(Annotation annotation) {
-			if (!(annotation instanceof SimpleMarkerAnnotation))
-				return false;
-
-			ArrayList resolutions = new ArrayList(5);
-
-			// grab the local resolutions first
-			IMarker marker = ((SimpleMarkerAnnotation) annotation).getMarker();
-			IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
-			resolutions.addAll(Arrays.asList(localResolutions));
-
-			// grab the contributed resolutions
-			IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
-			for (int i = 0; i < contributedResolutions.length; i++) {
-				IMarkerResolution resolution = contributedResolutions[i];
-				// only add contributed marker resolutions if they don't come from PDE
-				if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(contributedResolutions[i]))
-					resolutions.add(contributedResolutions[i]);
+			boolean bRetVal = false;
+			if (annotation instanceof SimpleMarkerAnnotation) {
+				// check local resolutions first
+				IMarker marker = ((SimpleMarkerAnnotation) annotation).getMarker();
+				IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
+				if (localResolutions.length > 0) {
+					bRetVal = true;
+				}
+				// check the contributed resolutions if needed
+				if (!bRetVal) {
+					IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
+					if (contributedResolutions.length > 0) {
+						bRetVal = true;
+					}
+				}
 			}
+			return bRetVal;
 
-			boolean canFix = resolutions.size() > 0;
-			if (canFix)
-				if (!fResMap.containsKey(marker))
+		}
+
+		private void populateDataModelForAnnotation(SimpleMarkerAnnotation annotation) {
+			// grab the local resolutions first
+			IMarker marker = annotation.getMarker();
+			if (!fResMap.containsKey(marker)) {
+				ArrayList resolutions = new ArrayList(5);
+				IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
+				resolutions.addAll(Arrays.asList(localResolutions));
+
+				// grab the contributed resolutions
+				IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
+				for (int i = 0; i < contributedResolutions.length; i++) {
+					IMarkerResolution resolution = contributedResolutions[i];
+					// only add contributed marker resolutions if they don't come from PDE
+					if (!(resolution instanceof AbstractPDEMarkerResolution))
+						resolutions.add(contributedResolutions[i]);
+				}
+				if (resolutions.size() > 0) {
 					fResMap.put(marker, resolutions.toArray(new IMarkerResolution[resolutions.size()]));
-
-			return canFix;
+				}
+			}
 		}
 
 		public boolean canAssist(IQuickAssistInvocationContext invocationContext) {
@@ -173,6 +189,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				}
 
 				SimpleMarkerAnnotation annotation = (SimpleMarkerAnnotation) key;
+				populateDataModelForAnnotation(annotation);
 				IMarker marker = annotation.getMarker();
 
 				IMarkerResolution[] mapping = (IMarkerResolution[]) fResMap.get(marker);
