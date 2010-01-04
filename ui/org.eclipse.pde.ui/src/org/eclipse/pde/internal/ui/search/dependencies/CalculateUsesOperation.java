@@ -40,6 +40,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			if (packages.isEmpty())
 				return;
 			Map pkgsAndUses = findPackageReferences(packages, monitor);
+			if (monitor.isCanceled()) {
+				return;
+			}
 			handleSetUsesDirectives(pkgsAndUses);
 		} finally {
 			monitor.done();
@@ -68,6 +71,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.EMPTY_SET, false);
 		monitor.beginTask("", frags.length * 2); //$NON-NLS-1$
 		for (int i = 0; i < frags.length; i++) {
+			if (monitor.isCanceled()) {
+				return pkgsAndUses;
+			}
 			monitor.subTask(NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, frags[i].getElementName()));
 			if (packages.contains(frags[i].getElementName())) {
 				HashSet pkgs = new HashSet();
