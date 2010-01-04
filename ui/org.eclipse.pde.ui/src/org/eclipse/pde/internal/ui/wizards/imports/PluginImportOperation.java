@@ -335,14 +335,22 @@ public class PluginImportOperation extends WorkspaceJob {
 			// Extract the binary plug-in (for non-class files)
 			// Use the package locations map to put files that belong in the package directory structure into the proper source directory
 			if (isJARd(model)) {
-				Map collected = new HashMap();
-				ZipFileStructureProvider provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
-				PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
-				for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
-					IPath currentDestination = (IPath) iterator.next();
-					IPath destination = project.getFullPath();
-					destination = destination.append(currentDestination);
-					PluginImportHelper.importContent(provider.getRoot(), destination, provider, (List) collected.get(currentDestination), new NullProgressMonitor());
+				ZipFile zip = null;
+				try {
+					zip = new ZipFile(new File(model.getInstallLocation()));
+					ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
+					Map collected = new HashMap();
+					PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
+					for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
+						IPath currentDestination = (IPath) iterator.next();
+						IPath destination = project.getFullPath();
+						destination = destination.append(currentDestination);
+						PluginImportHelper.importContent(provider.getRoot(), destination, provider, (List) collected.get(currentDestination), new NullProgressMonitor());
+					}
+				} finally {
+					if (zip != null) {
+						zip.close();
+					}
 				}
 				monitor.worked(1);
 			} else {
@@ -482,11 +490,13 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		// Check for source inside the binary plug-in
+		ZipFile zip = null;
 		try {
 			IImportStructureProvider provider;
 			Object root;
 			if (isJARd(model)) {
-				provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
+				zip = new ZipFile(new File(model.getInstallLocation()));
+				provider = new ZipFileStructureProvider(zip);
 				root = ((ZipFileStructureProvider) provider).getRoot();
 			} else {
 				provider = FileSystemStructureProvider.INSTANCE;
@@ -501,6 +511,13 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 		} catch (IOException e) {
 			// Do nothing, any other problems will be caught during binary import
+		} finally {
+			if (zip != null) {
+				try {
+					zip.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 
 		return false;
@@ -720,22 +737,31 @@ public class PluginImportOperation extends WorkspaceJob {
 	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations) throws CoreException, ZipException, IOException {
 		IImportStructureProvider provider;
 		Object root;
-		if (isJARd(model)) {
-			provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
-			root = ((ZipFileStructureProvider) provider).getRoot();
-		} else {
-			provider = FileSystemStructureProvider.INSTANCE;
-			root = new File(model.getInstallLocation());
-		}
-		IPath defaultSourcePath = new Path(DEFAULT_SOURCE_DIR);
-		ArrayList collected = new ArrayList();
-		PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
-		if (collected.size() > 0) {
-			Set packages = new HashSet();
-			PluginImportHelper.collectJavaPackages(provider, collected, defaultSourcePath, packages);
-			addPackageEntries(packages, defaultSourcePath, packageLocations);
-			addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-			return true;
+
+		ZipFile zip = null;
+		try {
+			if (isJARd(model)) {
+				zip = new ZipFile(new File(model.getInstallLocation()));
+				provider = new ZipFileStructureProvider(zip);
+				root = ((ZipFileStructureProvider) provider).getRoot();
+			} else {
+				provider = FileSystemStructureProvider.INSTANCE;
+				root = new File(model.getInstallLocation());
+			}
+			IPath defaultSourcePath = new Path(DEFAULT_SOURCE_DIR);
+			ArrayList collected = new ArrayList();
+			PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
+			if (collected.size() > 0) {
+				Set packages = new HashSet();
+				PluginImportHelper.collectJavaPackages(provider, collected, defaultSourcePath, packages);
+				addPackageEntries(packages, defaultSourcePath, packageLocations);
+				addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+				return true;
+			}
+		} finally {
+			if (zip != null) {
+				zip.close();
+			}
 		}
 		return false;
 	}
@@ -777,16 +803,24 @@ public class PluginImportOperation extends WorkspaceJob {
 		File sourceLocation = PDECore.getDefault().getSourceLocationManager().findSourcePlugin(model.getPluginBase());
 		if (sourceLocation != null) {
 			if (sourceLocation.isFile()) {
-				ArrayList collected = new ArrayList();
-				ZipFileStructureProvider provider = null;
+				ZipFile zip = null;
 				try {
-					provider = new ZipFileStructureProvider(new ZipFile(sourceLocation));
+					zip = new ZipFile(sourceLocation);
+					ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
+					ArrayList collected = new ArrayList();
+					PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
+					PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 				} catch (IOException e) {
 					IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 					throw new CoreException(status);
+				} finally {
+					if (zip != null) {
+						try {
+							zip.close();
+						} catch (IOException e) {
+						}
+					}
 				}
-				PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
-				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 			} else {
 				ArrayList collected = new ArrayList();
 				PluginImportHelper.collectNonJavaNonBuildFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
@@ -805,16 +839,24 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private void importRequiredPluginFiles(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		if (isJARd(model)) {
-			ArrayList collected = new ArrayList();
-			ZipFileStructureProvider provider = null;
+			ZipFile zip = null;
 			try {
-				provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
+				zip = new ZipFile(new File(model.getInstallLocation()));
+				ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
+				ArrayList collected = new ArrayList();
+				PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
+				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 			} catch (IOException e) {
 				IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 				throw new CoreException(status);
+			} finally {
+				if (zip != null) {
+					try {
+						zip.close();
+					} catch (IOException e) {
+					}
+				}
 			}
-			PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
-			PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 		} else {
 			ArrayList collected = new ArrayList();
 			File file = new File(model.getInstallLocation());
