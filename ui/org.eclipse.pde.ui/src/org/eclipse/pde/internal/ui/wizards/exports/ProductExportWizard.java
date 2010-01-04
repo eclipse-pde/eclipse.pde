@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.ProductExportOperation;
@@ -121,21 +118,6 @@ public class ProductExportWizard extends BaseExportWizard {
 				bundle = state.getBundle(plugins[i].getId(), null);
 			if (bundle != null)
 				list.add(bundle);
-		}
-		// implicitly add the new launcher plug-in/fragment if we are to use the
-		// new launching story and the launcher plug-in/fragment are not already included in the .product file
-		IPluginModelBase launcherPlugin = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
-		if (launcherPlugin != null) {
-			BundleDescription bundle = launcherPlugin.getBundleDescription();
-			if (bundle != null && !list.contains(bundle)) {
-				list.add(bundle);
-				BundleDescription[] fragments = bundle.getFragments();
-				for (int i = 0; i < fragments.length; i++) {
-					if (!list.contains(fragments[i])) {
-						list.add(fragments[i]);
-					}
-				}
-			}
 		}
 		return (BundleDescription[]) list.toArray(new BundleDescription[list.size()]);
 	}
