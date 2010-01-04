@@ -259,10 +259,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			List/*<IArtifactKey*/artifacts = unit.getArtifacts();
-			for (int i = 0; i < artifacts.size(); i++) {
-				IArtifactKey key = (IArtifactKey) artifacts.get(i);
-				File file = repo.getArtifactFile(key);
+			Collection/*<IArtifactKey*/artifacts = unit.getArtifacts();
+			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+				File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
 				if (file == null) {
 					// TODO: missing bundle
 				} else {
@@ -417,10 +416,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			List/*<IArtifactKey>*/artifacts = unit.getArtifacts();
-			for (int i = 0; i < artifacts.size(); i++) {
-				IArtifactKey key = (IArtifactKey) artifacts.get(i);
-				File file = repo.getArtifactFile(key);
+			Collection/*<IArtifactKey>*/artifacts = unit.getArtifacts();
+			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+				File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
 				if (file == null) {
 					// TODO: missing bundle
 				} else {

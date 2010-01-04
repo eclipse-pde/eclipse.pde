@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.ui.build;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
@@ -204,9 +203,9 @@ public class RuntimeInstallJob extends Job {
 		IQueryResult queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					List/*<IRequirement>*/reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
-					for (int i = 0; i < reqs.size(); i++) {
-						IRequiredCapability reqCap = (IRequiredCapability) reqs.get(i);
+					Collection/*<IRequirement>*/reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
+						IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 						if (reqCap.getName().equals(id)) {
 							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqCap.getRange())) {
 								return true;
