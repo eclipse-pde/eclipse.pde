@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
- *     Simon Muschel <smuschel@gmx.de> - bugs 215743, 260549
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -78,8 +77,6 @@ public class PDECoreMessages extends NLS {
 	public static String FeatureInfo_copyright;
 	public static String PluginObject_readOnlyChange;
 	public static String FeatureObject_readOnlyChange;
-	public static String SiteBuildOperation_0;
-
 	public static String SiteObject_readOnlyChange;
 
 	public static String BuildObject_readOnlyException;
@@ -114,7 +111,6 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Feature_patchedMatch;
 	public static String Builders_Feature_missingUnpackFalse;
 	public static String Builders_Feature_mismatchUnpackBundleShape;
-	public static String Builders_Feature_mismatchPluginVersion;
 	public static String Builders_Schema_compiling;
 	public static String Builders_Schema_compilingSchemas;
 	public static String Builders_Schema_removing;
@@ -125,8 +121,6 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Schema_valueRequired;
 	public static String Builders_Schema_valueNotRequired;
 	public static String Builders_Schema_duplicateElement;
-	public static String Builders_Schema_includeNotValid;
-	public static String Builders_Schema_referencedElementNotFound;
 
 	public static String Builders_Manifest_missingRequired;
 	public static String Builders_Manifest_dependency;
@@ -225,27 +219,11 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_emptyEntry;
 	public static String BuildErrorReporter_binIncludesMissing;
 	public static String BuildErrorReporter_sourceMissing;
-
-	public static String BuildErrorReporter_srcIncludesSourceFolder;
-
-	public static String BuildErrorReporter_srcIncludesSourceFolder1;
 	public static String BuildErrorReporter_classpathEntryMissing;
 	public static String BuildErrorReporter_missingFile;
 	public static String BuildErrorReporter_entiresMustRefDirs;
 	public static String BuildErrorReporter_dirsMustEndSlash;
 	public static String BuildErrorReporter_classpathEntryMissing1;
-
-	public static String BuildErrorReporter_CompilercomplianceLevel;
-
-	public static String BuildErrorReporter_DisallowIdentifiers;
-
-	public static String BuildErrorReporter_GeneratedClassFilesCompatibility;
-
-	public static String BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken;
-
-	public static String BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry;
-
-	public static String BuildErrorReporter_SourceCompatibility;
 
 	public static String ExportWizard_badDirectory;
 
@@ -289,14 +267,6 @@ public class PDECoreMessages extends NLS {
 	public static String XMLTextChangeListener_editNames_removeNode;
 
 	public static String SearchablePluginsManager_createProjectTaskName;
-
-	public static String SourceEntryErrorReporter_DifferentTargetLibrary;
-	public static String SourceEntryErrorReporter_DupeOutputFolder;
-	public static String SourceEntryErrorReporter_DupeSourceFolder;
-	public static String SourceEntryErrorReporter_ExtraOutputFolder;
-	public static String SourceEntryErrorReporter_InvalidOutputFolder;
-	public static String SourceEntryErrorReporter_InvalidSourceFolder;
-	public static String SourceEntryErrorReporter_MissingOutputEntry;
 
 	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
 

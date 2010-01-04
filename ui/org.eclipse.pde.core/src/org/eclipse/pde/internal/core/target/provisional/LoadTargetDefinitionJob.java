@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -57,27 +56,9 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param target target definition or <code>null</code> if none
 	 */
 	public static void load(ITargetDefinition target) {
-		load(target, null);
-	}
-
-	/**
-	 * Constructs a new operation to load the specified target definition
-	 * as the current target platform. When <code>null</code> is specified
-	 * the target platform is empty and all other settings are default.  This
-	 * method will cancel all existing LoadTargetDefinitionJob instances then
-	 * schedules the operation as a user job.  Adds the given listener to the
-	 * job that is started.
-	 * 
-	 * @param target target definition or <code>null</code> if none
-	 * @param listener job change listener that will be added to the created job
-	 */
-	public static void load(ITargetDefinition target, IJobChangeListener listener) {
 		Job.getJobManager().cancel(JOB_FAMILY_ID);
 		Job job = new LoadTargetDefinitionJob(target);
 		job.setUser(true);
-		if (listener != null) {
-			job.addJobChangeListener(listener);
-		}
 		job.schedule();
 	}
 
@@ -353,7 +334,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			Set included = new HashSet();
 			Set duplicates = new HashSet();
 			List infos = new ArrayList();
-			Set includedIds = new HashSet();
 
 			if (!fTarget.isResolved()) {
 				fTarget.resolve(subMon.newChild(20));
@@ -378,7 +358,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 						}
 						infos.add(bundleInfo);
 						included.add(bundleInfo);
-						includedIds.add(bundleInfo.getSymbolicName());
 						duplicates.add(desc);
 					}
 				}
@@ -392,6 +371,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 					IBundleContainer container = containers[i];
 					BundleInfo[] restrictions = container.getIncludedBundles();
 					if (restrictions != null) {
+						container.setIncludedBundles(null);
 						IResolvedBundle[] all = container.getAllBundles();
 						for (int j = 0; j < all.length; j++) {
 							IResolvedBundle bi = all[j];
@@ -416,14 +396,12 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			// generate URLs and save CHECKED_PLUGINS (which are missing), and add to master list of paths
 			StringBuffer checked = new StringBuffer();
-			StringBuffer versions = new StringBuffer();
 			int i = 0;
 			iterator = missing.iterator();
-			Set missingDescriptions = new HashSet(missing.size());
+			Set missingIds = new HashSet(missing.size());
 			while (iterator.hasNext()) {
 				BundleInfo bi = (BundleInfo) iterator.next();
-				NameVersionDescriptor desc = new NameVersionDescriptor(bi.getSymbolicName(), bi.getVersion());
-				missingDescriptions.add(desc);
+				missingIds.add(bi.getSymbolicName());
 				try {
 					paths.add(new File(bi.getLocation()).toURL());
 				} catch (MalformedURLException e) {
@@ -434,21 +412,13 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				}
 				checked.append(bi.getSymbolicName());
 				i++;
-				if (includedIds.contains(bi.getSymbolicName())) {
-					// multiple versions of the bundle are available and some are included - store version info of excluded bundles
-					if (versions.length() > 0) {
-						versions.append(" "); //$NON-NLS-1$
-					}
-					versions.append(desc.toPortableString());
-				}
 			}
 
 			URL[] urls = (URL[]) paths.toArray(new URL[paths.size()]);
 			PDEState state = new PDEState(urls, true, new SubProgressMonitor(monitor, 45));
 			IPluginModelBase[] models = state.getTargetModels();
 			for (i = 0; i < models.length; i++) {
-				NameVersionDescriptor nv = new NameVersionDescriptor(models[i].getPluginBase().getId(), models[i].getPluginBase().getVersion());
-				models[i].setEnabled(!missingDescriptions.contains(nv));
+				models[i].setEnabled(!missingIds.contains(models[i].getPluginBase().getId()));
 			}
 			// save CHECKED_PLUGINS
 			if (urls.length == 0) {
@@ -457,13 +427,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
 			} else {
 				pref.setValue(ICoreConstants.CHECKED_PLUGINS, checked.toString());
-			}
-			// save CHECKED_VERSION_PLUGINS
-			if (versions.length() > 0) {
-				pref.setValue(ICoreConstants.CHECKED_VERSION_PLUGINS, versions.toString());
-			} else {
-				// no version information required
-				pref.setValue(ICoreConstants.CHECKED_VERSION_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
 			}
 
 			// saved POOLED_BUNDLES
@@ -508,4 +471,5 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			subMon.done();
 		}
 	}
+
 }
