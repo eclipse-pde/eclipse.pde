@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.*;
@@ -91,15 +90,30 @@ public class FilteredCheckboxTree extends FilteredTree {
 		// We use an additive check state cache so we need to remove
 		// previously checked items if the user unchecked them.
 		if (!state && checkState != null) {
-			Iterator iter = checkState.iterator();
 			ArrayList toRemove = new ArrayList(1);
-			while (iter.hasNext()) {
-				Object current = iter.next();
-				if (current != null && current.equals(element)) {
-					toRemove.add(current);
-					// Do not break out of the loop.  We may have duplicate equal
-					// elements in the cache.  Since the cache is additive, we want
-					// to be sure we've gotten everything.
+			if (fContentProvider.hasChildren(element)) {
+				Set unchecked = new HashSet();
+				Object[] children = fContentProvider.getChildren(element);
+				for (int i = 0; i < children.length; i++) {
+					unchecked.add(children[i]);
+				}
+				Iterator iter = checkState.iterator();
+				while (iter.hasNext()) {
+					Object current = iter.next();
+					if (current != null && unchecked.contains(current)) {
+						toRemove.add(current);
+					}
+				}
+			} else {
+				Iterator iter = checkState.iterator();
+				while (iter.hasNext()) {
+					Object current = iter.next();
+					if (current != null && current.equals(element)) {
+						toRemove.add(current);
+						// Do not break out of the loop.  We may have duplicate equal
+						// elements in the cache.  Since the cache is additive, we want
+						// to be sure we've gotten everything.
+					}
 				}
 			}
 			checkState.removeAll(toRemove);
