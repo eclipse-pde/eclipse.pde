@@ -210,7 +210,7 @@ public class TargetResolver {
 		if (fAllRepos.size() == 1) {
 			allRepos = (IMetadataRepository) fAllRepos.get(0);
 		} else {
-			allRepos = new CompoundQueryable((IMetadataRepository[]) fAllRepos.toArray(new IMetadataRepository[fAllRepos.size()]));
+			allRepos = new CompoundQueryable(fAllRepos);
 		}
 
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems collecting installable units", null);
@@ -253,7 +253,7 @@ public class TargetResolver {
 			status.add(slicer.getStatus());
 		} else {
 			IQueryResult collector = slice.query(InstallableUnitQuery.ANY, subMon.newChild(10));
-			fAvailableIUs = collector.toCollection();
+			fAvailableIUs = collector.toSet();
 		}
 
 		if (!status.isOK()) {
@@ -342,7 +342,7 @@ public class TargetResolver {
 		if (fAllRepos.size() == 1) {
 			allRepos = (IMetadataRepository) fAllRepos.get(0);
 		} else {
-			allRepos = new CompoundQueryable((IMetadataRepository[]) fAllRepos.toArray(new IMetadataRepository[fAllRepos.size()]));
+			allRepos = new CompoundQueryable(fAllRepos);
 		}
 
 		// Look for the requested unit

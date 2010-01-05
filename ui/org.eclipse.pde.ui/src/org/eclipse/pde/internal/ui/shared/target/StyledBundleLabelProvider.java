@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import java.util.Collection;
+import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
@@ -212,17 +214,18 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 			// Check for bundle property
 			// There are utility methods on P2Utils for this, but save time by doing a single loop
-			IProvidedCapability[] provided = unit.getProvidedCapabilities();
-			for (int j = 0; j < provided.length; j++) {
-				if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
-					if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+			Collection provided = unit.getProvidedCapabilities();
+			for (Iterator iterator = provided.iterator(); iterator.hasNext();) {
+				IProvidedCapability currentProvided = (IProvidedCapability) iterator.next();
+				if (currentProvided.getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+					if (currentProvided.getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
 						isSource = true;
 					}
 				}
-				if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+				if (currentProvided.getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
 					isBundle = true;
 				}
-				if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_FRAGMENT)) {
+				if (currentProvided.getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_FRAGMENT)) {
 					isFragment = true;
 					break; // Fragments will only ever get a fragment icon
 				}

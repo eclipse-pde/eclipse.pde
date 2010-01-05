@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -760,17 +759,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		for (int i = 0; i < allTargetBundles.length; i++) {
 			IInstallableUnit currentUnit = allTargetBundles[i];
-			IProvidedCapability[] provided = currentUnit.getProvidedCapabilities(); // only consider bundle units
-			for (int j = 0; j < provided.length; j++) {
-				if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
-					if (!currentBundles.contains(currentUnit.getId())) {
-						currentBundles.add(currentUnit.getId()); // to avoid duplicate entries
-						targetBundles.add(currentUnit);
-					}
-					break;
+			if (P2Utils.isBundle(currentUnit)) {
+				if (!currentBundles.contains(currentUnit.getId())) {
+					currentBundles.add(currentUnit.getId()); // to avoid duplicate entries
+					targetBundles.add(currentUnit);
 				}
 			}
-
 		}
 
 		return (IInstallableUnit[]) targetBundles.toArray(new IInstallableUnit[targetBundles.size()]);

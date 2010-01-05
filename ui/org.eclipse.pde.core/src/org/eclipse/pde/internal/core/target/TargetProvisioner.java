@@ -6,8 +6,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.*;
@@ -112,22 +110,18 @@ public class TargetProvisioner {
 		IQuery query = new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					IProvidedCapability[] provided = ((IInstallableUnit) candidate).getProvidedCapabilities();
-					for (int i = 0; i < provided.length; i++) {
-						if (provided[i].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
-							return true;
-						}
+					if (P2Utils.isBundle((IInstallableUnit) candidate)) {
+						return true;
 					}
 				}
 				return false;
 			}
 		};
-		Collector includedBundles = new Collector();
-		query.perform(includedIUs.iterator(), includedBundles);
+		IQueryResult includedBundles = query.perform(includedIUs.iterator());
 		subMon.worked(5);
 
 		// Create operands to install the metadata
-		ArrayList operands = new ArrayList(includedBundles.size());
+		ArrayList operands = new ArrayList(includedBundles.unmodifiableSet().size());
 		Iterator iterator = includedBundles.iterator();
 		while (iterator.hasNext()) {
 			operands.add(new InstallableUnitOperand(null, (IInstallableUnit) iterator.next()));
@@ -159,11 +153,8 @@ public class TargetProvisioner {
 				public boolean isMatch(Object candidate) {
 					if (candidate instanceof IInstallableUnit) {
 						IInstallableUnit unit = (IInstallableUnit) candidate;
-						IProvidedCapability[] provided = unit.getProvidedCapabilities();
-						for (int j = 0; j < provided.length; j++) {
-							if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
-								return true;
-							}
+						if (P2Utils.isBundle(unit)) {
+							return true;
 						}
 					}
 					return false;

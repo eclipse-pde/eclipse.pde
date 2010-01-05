@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
@@ -76,17 +75,11 @@ public class FeatureBundleContainer extends DirectoryBundleContainer {
 		return fVersion;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.DirectoryBundleContainer#getRootIUs(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public InstallableUnitDescription[] getRootIUs(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMon = SubMonitor.convert(monitor, 100);
-
-		InstallableUnitDescription[] allUnits = super.getRootIUs(agent, subMon.newChild(100));
+	public InstallableUnitDescription[] getRootIUs() throws CoreException {
+		InstallableUnitDescription[] allUnits = super.getRootIUs();
 		if (allUnits.length == 0) {
 			return allUnits;
 		}
-		subMon.setWorkRemaining(50);
 
 		IFeatureModel model = null;
 		try {
@@ -109,17 +102,11 @@ public class FeatureBundleContainer extends DirectoryBundleContainer {
 			if (!dir.exists() || !dir.isDirectory()) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_5, fId)));
 			}
-			if (subMon.isCanceled()) {
-				return new InstallableUnitDescription[0];
-			}
 
 			IFeature feature = model.getFeature();
 			IFeaturePlugin[] plugins = feature.getPlugins();
 			Map includedPlugins = new HashMap();
 			for (int i = 0; i < plugins.length; i++) {
-				if (subMon.isCanceled()) {
-					return new InstallableUnitDescription[0];
-				}
 				IFeaturePlugin plugin = plugins[i];
 				includedPlugins.put(plugin.getId(), plugin.getVersion());
 			}

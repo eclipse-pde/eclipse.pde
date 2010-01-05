@@ -176,7 +176,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		// Collect all installable units in the repository
 		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, null);
 
-		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.size()];
+		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.unmodifiableSet().size()];
 		int i = 0;
 		for (Iterator iterator = result.iterator(); iterator.hasNext();) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();

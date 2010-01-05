@@ -492,10 +492,11 @@ public class P2Utils {
 	 * @return <code>true</code> if the unit is a source bundle
 	 */
 	public static boolean isSourceBundle(IInstallableUnit unit) {
-		IProvidedCapability[] provided = unit.getProvidedCapabilities();
-		for (int j = 0; j < provided.length; j++) {
-			if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
-				if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+		Collection provided = unit.getProvidedCapabilities();
+		for (Iterator iterator = provided.iterator(); iterator.hasNext();) {
+			IProvidedCapability current = (IProvidedCapability) iterator.next();
+			if (current.getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+				if (current.getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
 					return true;
 				}
 			}
@@ -512,9 +513,10 @@ public class P2Utils {
 	 * @return <code>true</code> if the unit is an OSGi bundle
 	 */
 	public static boolean isBundle(IInstallableUnit unit) {
-		IProvidedCapability[] provided = unit.getProvidedCapabilities();
-		for (int j = 0; j < provided.length; j++) {
-			if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+		Collection provided = unit.getProvidedCapabilities();
+		for (Iterator iterator = provided.iterator(); iterator.hasNext();) {
+			IProvidedCapability current = (IProvidedCapability) iterator.next();
+			if (current.getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
 				return true;
 			}
 		}
