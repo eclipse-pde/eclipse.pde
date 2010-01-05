@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,6 +177,11 @@ public interface IApiProblemTypes {
 	public static final String REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED =
 		"report_api_breakage_when_major_version_incremented"; //$NON-NLS-1$
 
+	/**
+	 * @since 1.1
+	 */
+	public static final String AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS = "automatically_removed_unused_problem_filters"; //$NON-NLS-1$
+	
 	// Version numbering problems
 	public static final String MISSING_SINCE_TAG = "missing_since_tag"; //$NON-NLS-1$
 	public static final String MALFORMED_SINCE_TAG = "malformed_since_tag"; //$NON-NLS-1$

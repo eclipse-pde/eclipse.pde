@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -409,6 +409,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 
 	private static final Key KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT = 
 		getApiToolsKey(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
+	/**
+	 * @since 1.1
+	 */
+	private static final Key KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS = 
+		getApiToolsKey(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS);
 
 	private static final int API_SCANNING_USAGE_PAGE_ID = 0;
 	private static final int COMPATIBILITY_PAGE_ID = 1;
@@ -417,7 +422,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 
 	static Key[] fgAllApiComponentResolutionKeys = {
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
-		KEY_UNUSED_PROBLEM_FILTERS
+		KEY_UNUSED_PROBLEM_FILTERS,
+		KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS
 	};
 
 	static Key[] fgAllCompatibilityKeys = {
@@ -610,6 +616,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
 		KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
+		KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS
 	};
 
 	/**
@@ -633,6 +640,15 @@ public class ApiErrorsWarningsConfigurationBlock {
 		ApiPlugin.VALUE_ERROR,
 		ApiPlugin.VALUE_WARNING,
 		ApiPlugin.VALUE_IGNORE,
+	};
+	
+	/**
+	 * Default value set for check box controls
+	 * @since 1.1
+	 */
+	private static final String[] CHECKBOX_VALUES = {
+		ApiPlugin.VALUE_ENABLED,
+		ApiPlugin.VALUE_DISABLED
 	};
 	
 	/**
@@ -1000,13 +1016,13 @@ public class ApiErrorsWarningsConfigurationBlock {
 					vcomp,
 					PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMinorWithoutApiChange,
 					KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE,
-					new String[] { ApiPlugin.VALUE_DISABLED, ApiPlugin.VALUE_ENABLED },
+					CHECKBOX_VALUES,
 					2);
 				addCheckBox(
 					vcomp,
 					PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMajorWithoutBreakingChange,
 					KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
-					new String[] { ApiPlugin.VALUE_DISABLED, ApiPlugin.VALUE_ENABLED },
+					CHECKBOX_VALUES,
 					2);
 				break;
 			}
@@ -1015,13 +1031,18 @@ public class ApiErrorsWarningsConfigurationBlock {
 				initializeComboControls(vcomp,
 					new String[] {
 						PreferenceMessages.ReportApiComponentResolutionFailure,
-						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_unused_problem_filters
+						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_unused_problem_filters,
 					},
 					new Key[] {
 						KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
 						KEY_UNUSED_PROBLEM_FILTERS
 					}
 				);
+				addCheckBox(vcomp, 
+						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters, 
+						KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS, 
+						CHECKBOX_VALUES, 
+						0);
 				break;
 			}
 			case COMPATIBILITY_PAGE_ID : {

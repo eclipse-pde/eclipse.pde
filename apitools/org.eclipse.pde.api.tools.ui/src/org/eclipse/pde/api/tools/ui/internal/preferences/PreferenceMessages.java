@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_0;
 	public static String ApiErrorsWarningsConfigurationBlock_1;
 	public static String ApiErrorsWarningsConfigurationBlock_2;
+	public static String ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters;
 	public static String ApiErrorsWarningsPreferencePage_0;
 	public static String ApiErrorsWarningsPreferencePage_1;
 	public static String ApiProblemSeveritiesConfigurationBlock_3;

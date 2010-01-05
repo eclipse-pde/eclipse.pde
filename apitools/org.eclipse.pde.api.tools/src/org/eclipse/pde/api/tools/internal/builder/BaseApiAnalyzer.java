@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,9 @@ import java.util.jar.JarFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -291,9 +294,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		try {
 			ApiFilterStore store = (ApiFilterStore)reference.getFilterStore();
-			IProject project = fJavaProject.getProject(); 
+			IProject project = fJavaProject.getProject();
+			boolean autoremove = ApiPlugin.getDefault().getEnableState(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS, project).equals(ApiPlugin.VALUE_ENABLED);
+			ArrayList toremove = null;
+			if(autoremove) {
+				toremove = new ArrayList(8);
+			}
+			IApiProblemFilter[] filters = null;
 			if(context.hasTypes()) {
 				IResource resource = null;
+				
 				String[] types = context.getStructurallyChangedTypes();
 				for (int i = 0; i < types.length; i++) {
 					if(types[i] == null) {
@@ -301,7 +311,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
 					if(resource != null) {
-						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i], null));
+						filters = store.getUnusedFilters(resource, types[i], null);
+						if(autoremove) {
+							toremove.add(filters);
+							continue;
+						}
+						createUnusedApiFilterProblems(filters);
 					}
 				}
 				types = context.getDependentTypes();
@@ -311,12 +326,30 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
 					if(resource != null) {
-						createUnusedApiFilterProblems(store.getUnusedFilters(resource, types[i], new int[] {IApiProblem.CATEGORY_COMPATIBILITY, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.CATEGORY_VERSION}));
+						filters = store.getUnusedFilters(
+								resource, 
+								types[i], 
+								new int[] {IApiProblem.CATEGORY_COMPATIBILITY, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.CATEGORY_VERSION});
+						if(autoremove) {
+							toremove.add(filters);
+							continue;
+						}
+						createUnusedApiFilterProblems(filters);
 					}
 				}
+				if(autoremove) {
+					removeUnusedProblemFilters(store, toremove, monitor);
+				}
 			} else {
-				//full build, clean up all old markers
-				createUnusedApiFilterProblems(store.getUnusedFilters(null, null, null));
+				filters = store.getUnusedFilters(null, null, null);
+				if(autoremove) {
+					toremove.add(filters);
+					removeUnusedProblemFilters(store, toremove, monitor);
+				}
+				else {
+					//full build, clean up all old markers
+					createUnusedApiFilterProblems(filters);
+				}
 			}
 		}
 		catch(CoreException ce) {
@@ -326,7 +359,30 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			Util.updateMonitor(monitor, 1);
 		}
 	}
-
+	
+	/**
+	 * Removes the given set of {@link IApiProblemFilter}s from the given {@link IApiFilterStore}
+	 * using a workspace runnable to avoid resource notifications
+	 * @param store the store to remove from
+	 * @param filterlist list of arrays of filters to batch remove
+	 * @param monitor 
+	 * @throws CoreException
+	 * @since 1.1
+	 */
+	void removeUnusedProblemFilters(final IApiFilterStore store, final List filterlist, final IProgressMonitor monitor) throws CoreException {
+		IWorkspaceRunnable runner = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IApiProblemFilter[] filters = null;
+				for (Iterator iter = filterlist.iterator(); iter.hasNext();) {
+					filters = (IApiProblemFilter[]) iter.next();
+					store.removeFilters(filters);
+				}
+				store.removeFilters(filters);
+			}
+		};
+		ResourcesPlugin.getWorkspace().run(runner, null, IWorkspace.AVOID_UPDATE, monitor);
+	}
+	
 	/**
 	 * Creates a new unused {@link IApiProblemFilter} problem
 	 * @param filters the filters to create the problems for
