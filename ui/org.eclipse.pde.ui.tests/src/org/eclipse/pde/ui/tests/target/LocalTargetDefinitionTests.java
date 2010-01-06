@@ -746,7 +746,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// There are two versions of junit available, each with source
 		expected.add("org.junit.source");
 		expected.add("org.junit.source");
-		expected.add("org.junit4.source");
 		expected.add("org.hamcrest.core.source");
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
