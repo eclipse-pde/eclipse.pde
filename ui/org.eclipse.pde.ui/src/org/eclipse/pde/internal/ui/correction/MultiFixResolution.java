@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009 IBM Corporation and others.
+ *  Copyright (c) 2009, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		try {
 			String markerCategory = (String) fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
 			for (int i = 0; i < markers.length; i++) {
-				if (markerCategory.equals(markers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && !markers[i].equals(fMarker)) {
+				if (markerCategory.equals(markers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && !markers[i].equals(fMarker) && markers[i].getResource().equals(fMarker.getResource())) {
 					relatedMarkers.add(markers[i]);
 				}
 			}
@@ -98,7 +98,14 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		if (!(obj instanceof MultiFixResolution))
 			return false;
 		MultiFixResolution multiFix = (MultiFixResolution) obj;
-		return multiFix.fMarker.equals(fMarker);
+		try {
+			String categoryId = (String) multiFix.fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
+			if (categoryId == null)
+				return false;
+			return categoryId.equals(fMarker.getAttribute(PDEMarkerFactory.CAT_ID));
+		} catch (CoreException e) {
+		}
+		return false;
 	}
 
 }

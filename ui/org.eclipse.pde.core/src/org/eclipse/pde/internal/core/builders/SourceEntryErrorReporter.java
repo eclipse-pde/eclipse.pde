@@ -285,6 +285,19 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
+		HashMap missingOutputEntryErrors = new HashMap(4);
+		class MissingOutputEntry {
+			public StringBuffer fSsrcFolders = new StringBuffer();
+			public StringBuffer fOutputFolders = new StringBuffer();
+
+			public String get(StringBuffer field) {
+				if (field.charAt(field.length() - 1) == ',') {
+					field.deleteCharAt(field.length() - 1);
+				}
+				return field.toString().trim();
+			}
+		}
+
 		for (Iterator iterator = fSourceFolderMap.keySet().iterator(); iterator.hasNext();) {
 			IPath sourcePath = (IPath) iterator.next();
 			SourceFolder sourceFolder = (SourceFolder) fSourceFolderMap.get(sourcePath);
@@ -306,10 +319,21 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				}
 			} else {
 				if (outputFolder.getLibs().size() == 0 && sourceFolder.getLibs().size() == 1) {
-					String libName = (String) sourceFolder.getLibs().get(0);
 					//error - missing output folder
-					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, sourcePath.toString(), PROPERTY_OUTPUT_PREFIX + libName);
-					prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_ADDDITION, CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_MISSING_OUTPUT), PDEMarkerFactory.CAT_OTHER);
+
+					String libName = (String) sourceFolder.getLibs().get(0);
+					MissingOutputEntry errorEntry = (MissingOutputEntry) missingOutputEntryErrors.get(libName);
+					if (errorEntry == null)
+						errorEntry = new MissingOutputEntry();
+
+					if (errorEntry.fSsrcFolders.indexOf(sourcePath.toString() + ',') < 0) {
+						errorEntry.fSsrcFolders.append(' ' + sourcePath.toString() + ',');
+					}
+
+					if (errorEntry.fOutputFolders.indexOf(outputFolder.getToken() + ',') < 0) {
+						errorEntry.fOutputFolders.append(' ' + outputFolder.getToken() + ',');
+					}
+					missingOutputEntryErrors.put(libName, errorEntry);
 				}
 
 				if (sourceFolder.getDupeLibName() != null) {
@@ -319,6 +343,12 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
+		for (Iterator iter = missingOutputEntryErrors.keySet().iterator(); iter.hasNext();) {
+			String libName = (String) iter.next();
+			MissingOutputEntry errorEntry = (MissingOutputEntry) missingOutputEntryErrors.get(libName);
+			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.get(errorEntry.fSsrcFolders), PROPERTY_OUTPUT_PREFIX + libName);
+			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.get(errorEntry.fOutputFolders), message, PDEMarkerFactory.B_ADDDITION, CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_MISSING_OUTPUT), PDEMarkerFactory.CAT_OTHER);
+		}
 	}
 
 	private String join(ProjectFolder[] folders) {
