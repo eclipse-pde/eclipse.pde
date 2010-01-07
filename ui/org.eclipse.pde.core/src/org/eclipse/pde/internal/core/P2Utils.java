@@ -24,6 +24,7 @@ import org.eclipse.equinox.internal.provisional.p2.director.PlannerHelper;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.VersionRange;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
 import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
@@ -59,6 +60,21 @@ public class P2Utils {
 	public static final String NAMESPACE_ECLIPSE_TYPE = "org.eclipse.equinox.p2.eclipse.type"; //$NON-NLS-1$
 	public static final IProvidedCapability BUNDLE_CAPABILITY = MetadataFactory.createProvidedCapability(NAMESPACE_ECLIPSE_TYPE, TYPE_ECLIPSE_BUNDLE, Version.createOSGi(1, 0, 0));
 	public static final String CAPABILITY_NS_JAVA_PACKAGE = "java.package"; //$NON-NLS-1$
+
+	/**
+	 * Query that returns any installable unit that represents an OSGi bundle.  Note that
+	 * source bundles and fragments are considered OSGi bundles.
+	 */
+	public static final MatchQuery BUNDLE_QUERY = new MatchQuery() {
+		public boolean isMatch(Object candidate) {
+			if (candidate instanceof IInstallableUnit) {
+				if (P2Utils.isBundle((IInstallableUnit) candidate)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	};
 
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the

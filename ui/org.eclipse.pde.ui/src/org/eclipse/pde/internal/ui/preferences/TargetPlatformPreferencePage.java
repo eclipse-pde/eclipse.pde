@@ -132,11 +132,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		private Image getImage(ITargetDefinition target) {
 			int flag = 0;
-			if (target.equals(fActiveTarget) && target.isResolved()) {
-				if (target.getResolveStatus().getSeverity() == IStatus.WARNING) {
-					flag = SharedLabelProvider.F_WARNING;
-				} else if (target.getResolveStatus().getSeverity() == IStatus.ERROR) {
-					flag = SharedLabelProvider.F_ERROR;
+			if (target.equals(fActiveTarget)) {
+				IStatus resolveStatus = target.getResolveStatus();
+				if (resolveStatus != null) {
+					if (resolveStatus.getSeverity() == IStatus.WARNING) {
+						flag = SharedLabelProvider.F_WARNING;
+					} else if (resolveStatus.getSeverity() == IStatus.ERROR) {
+						flag = SharedLabelProvider.F_ERROR;
+					}
 				}
 			}
 			if (fRunningHost != null && fRunningHost.isContentEquivalent(target)) {
@@ -205,7 +208,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/**
 	 * Stores whether the current target platform is out of synch with the file system and must be reloaded
 	 */
-	private boolean isOutOfSynch = false;
+	private boolean forceReload = false;
 
 	/**
 	 * Composite containing a warning image and label for when the backing file for the active target could not be found
@@ -344,7 +347,25 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			public Object[] getElements(Object inputElement) {
 				// Replace IU containers with the root IUs
 				if (inputElement instanceof ITargetDefinition) {
-					IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
+					ITargetDefinition selectedTarget = ((ITargetDefinition) inputElement);
+
+					// Display any errors for the active target in the details
+					if (selectedTarget.equals(fActiveTarget)) {
+						IStatus resolveStatus = selectedTarget.getResolveStatus();
+						if (resolveStatus != null && resolveStatus.getSeverity() == IStatus.ERROR) {
+							if (resolveStatus instanceof MultiStatus && ((MultiStatus) resolveStatus).getChildren().length > 0) {
+								return ((MultiStatus) resolveStatus).getChildren();
+							}
+							return new Object[] {resolveStatus};
+						}
+						IStatus provisionStatus = selectedTarget.getProvisionStatus();
+						if (provisionStatus != null && provisionStatus.getSeverity() == IStatus.ERROR) {
+							return new Object[] {provisionStatus};
+						}
+					}
+
+					// Display the bundle containers
+					IBundleContainer[] containers = selectedTarget.getBundleContainers();
 					List children = new ArrayList();
 					for (int i = 0; i < containers.length; i++) {
 						if (containers[i] instanceof IUBundleContainer) {
@@ -384,6 +405,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					if (target.getHandle().equals(fPrevious)) {
 						fActiveTarget = target;
 						fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
+						fTableViewer.setSelection(new StructuredSelection(fActiveTarget), true);
 						fTableViewer.refresh(target);
 						break;
 					}
@@ -435,7 +457,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private void handleReload() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
-			isOutOfSynch = false;
+			forceReload = false;
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell()) {
 				protected void configureShell(Shell shell) {
 					super.configureShell(shell);
@@ -462,27 +484,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				// Do nothing, resolve will happen when user presses ok
 			}
 
-			if (fActiveTarget.isResolved()) {
-				// Check if the bundle resolution has errors
-				IStatus bundleStatus = fActiveTarget.getResolveStatus();
-				if (bundleStatus.getSeverity() == IStatus.ERROR) {
-					ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_14, PDEUIMessages.TargetPlatformPreferencePage2_15, bundleStatus, IStatus.ERROR);
-				}
-
-				// Compare the target to the existing platform
-				try {
-					if (bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious) && ((TargetDefinition) fPrevious.getTargetDefinition()).isContentEquivalent(fActiveTarget)) {
-						IStatus compare = getTargetService().compareWithTargetPlatform(fActiveTarget);
-						if (!compare.isOK()) {
-							MessageDialog.openInformation(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_17, PDEUIMessages.TargetPlatformPreferencePage2_18);
-							isOutOfSynch = true;
-						}
-					}
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
-					setErrorMessage(e.getMessage());
-				}
+			// Check if the bundle resolution has errors
+			IStatus bundleStatus = fActiveTarget.getResolveStatus();
+			if (bundleStatus != null && bundleStatus.getSeverity() == IStatus.ERROR) {
+				ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_14, PDEUIMessages.TargetPlatformPreferencePage2_15, bundleStatus, IStatus.ERROR);
 			}
+
+			forceReload = true;
+
 			fTableViewer.refresh(true);
 		}
 	}
@@ -707,7 +716,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				if (activeHandle == null) {
 					// load empty
 					load = true;
-				} else if (!fPrevious.equals(activeHandle) || isOutOfSynch) {
+				} else if (!fPrevious.equals(activeHandle) || forceReload) {
 					toLoad = fActiveTarget;
 					load = true;
 				} else {

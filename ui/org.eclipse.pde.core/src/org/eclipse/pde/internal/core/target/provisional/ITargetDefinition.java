@@ -61,7 +61,7 @@ public interface ITargetDefinition {
 	/**
 	 * Returns whether this target definition is in a resolved state.  A target in a resolved
 	 * state has metadata for its contents.  If a problem occurred while resolving the target
-	 * will not be considered resolved.
+	 * it will not be considered resolved.
 	 * 
 	 * @return <code>true</code> if the target is resolved
 	 */

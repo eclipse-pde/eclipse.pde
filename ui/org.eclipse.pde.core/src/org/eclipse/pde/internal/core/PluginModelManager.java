@@ -519,7 +519,7 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 
 		// TODO Resolve and provision in a job
-		if (definition.isResolved()) {
+		if (!definition.isResolved()) {
 			IStatus result = definition.resolve(null);
 			if (result.getSeverity() == IStatus.ERROR) {
 				PDECore.log(result);
@@ -527,7 +527,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		if (definition.isProvisioned()) {
+		if (!definition.isProvisioned()) {
 			IStatus result = definition.provision(null);
 			if (result.getSeverity() == IStatus.ERROR) {
 				PDECore.log(result);

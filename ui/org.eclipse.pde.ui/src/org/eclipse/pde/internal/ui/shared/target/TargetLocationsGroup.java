@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.*;
 import java.util.List;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
@@ -197,7 +196,6 @@ public class TargetLocationsGroup {
 				}
 			}
 		});
-		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 	}
 
 	/**
@@ -262,6 +260,7 @@ public class TargetLocationsGroup {
 	public void setInput(ITargetDefinition target) {
 		fTarget = target;
 		fTreeViewer.setInput(fTarget);
+		fTreeViewer.expandAll();
 		updateButtons();
 	}
 
@@ -272,6 +271,7 @@ public class TargetLocationsGroup {
 		if (dialog.open() != Window.CANCEL) {
 			contentsChanged();
 			fTreeViewer.refresh();
+			fTreeViewer.expandAll();
 			updateButtons();
 		}
 	}
@@ -305,6 +305,7 @@ public class TargetLocationsGroup {
 						// Update the table
 						contentsChanged();
 						fTreeViewer.refresh();
+						fTreeViewer.expandAll();
 						updateButtons();
 						fTreeViewer.setSelection(new StructuredSelection(newContainer), true);
 					}
@@ -353,6 +354,7 @@ public class TargetLocationsGroup {
 
 			contentsChanged();
 			fTreeViewer.refresh(false);
+			fTreeViewer.expandAll();
 			updateButtons();
 		}
 	}
@@ -390,6 +392,9 @@ public class TargetLocationsGroup {
 	class BundleContainerContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof MultiStatus) {
+				return ((MultiStatus) parentElement).getChildren();
+			}
 			return new Object[0];
 		}
 
@@ -398,14 +403,22 @@ public class TargetLocationsGroup {
 		}
 
 		public boolean hasChildren(Object element) {
-			// Since we are already resolved we can't be more efficient
+			if (element instanceof MultiStatus && ((MultiStatus) element).getChildren().length > 0) {
+				return true;
+			}
 			return false;
 		}
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
-				IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
 				List children = new ArrayList();
+
+				IStatus resolveStatus = ((ITargetDefinition) inputElement).getResolveStatus();
+				if (resolveStatus != null && resolveStatus.getSeverity() != IStatus.OK) {
+					children.add(resolveStatus);
+				}
+
+				IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
 				for (int i = 0; i < containers.length; i++) {
 					if (containers[i] instanceof IUBundleContainer) {
 						try {

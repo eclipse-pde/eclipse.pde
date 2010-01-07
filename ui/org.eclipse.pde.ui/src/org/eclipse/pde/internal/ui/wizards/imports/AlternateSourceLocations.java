@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.core.target.ResolvedBundle;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 
 /**
  * Used to locate source when performing an import that is *not* from the active
@@ -33,7 +31,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	/**
 	 * Resolved bundles corresponding to models
 	 */
-	private IResolvedBundle[] bundles;
+	private IInstallableUnit[] bundles;
 
 	/**
 	 * List of source locations that reference root folders containing
@@ -48,9 +46,9 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * @param plugins models to consider as source locations
 	 * @param rbs corresponding resolved bundles
 	 */
-	public AlternateSourceLocations(IPluginModelBase[] plugins, IResolvedBundle rbs[]) {
+	public AlternateSourceLocations(IPluginModelBase[] plugins, IInstallableUnit[] units) {
 		models = plugins;
-		bundles = rbs;
+		bundles = units;
 	}
 
 	/**

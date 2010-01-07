@@ -37,39 +37,6 @@ public class TargetResolver {
 	private List fRootIUs;
 	private Collection fAvailableIUs;
 
-	/**
-	 * Query to find installable units that match a set of id/version pairs stored in InstallableUnitDescription objects
-	 */
-//	private class IUDescriptionQuery extends MatchQuery {
-//		private InstallableUnitDescription[] fDescriptions;
-//
-//		public IUDescriptionQuery(InstallableUnitDescription[] descriptions) {
-//			fDescriptions = descriptions;
-//		}
-//
-//		public boolean isMatch(Object object) {
-//			if (!(object instanceof IInstallableUnit))
-//				return false;
-//			if (fDescriptions == null)
-//				return true;
-//			IInstallableUnit unit = (IInstallableUnit) object;
-//			for (int i = 0; i < fDescriptions.length; i++) {
-//				if (fDescriptions[i].getId().equalsIgnoreCase(unit.getId()) && fDescriptions[i].getVersion().equals(unit.getVersion())) {
-//
-//					// TODO Having problems slicing non-bundle IUs
-//					IProvidedCapability[] provided = unit.getProvidedCapabilities();
-//					for (int j = 0; j < provided.length; j++) {
-//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
-//							return true;
-//						}
-//					}
-//
-//				}
-//			}
-//			return false;
-//		}
-//	}
-
 	TargetResolver(ITargetDefinition target) {
 		fTarget = target;
 		// TODO Get proper agent in target metadata area
@@ -90,17 +57,18 @@ public class TargetResolver {
 
 		try {
 			if (fAgent == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+				fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+				return fStatus;
 			}
 
 			fAllRepos = new ArrayList();
 			fRootIUs = new ArrayList();
 			fAvailableIUs = new ArrayList();
 
-			// TODO Handle exceptions more gracefully, or try to continue
 			// TODO Give descriptive names to monitor tasks/subtasks
 
 			// Ask locations to generate repositories
+			subMon.subTask("Generate metadata for local locations");
 			IStatus result = generateRepos(subMon.newChild(20));
 			if (!result.isOK()) {
 				fStatus.add(result);
@@ -111,6 +79,7 @@ public class TargetResolver {
 			}
 
 			// Combine generated repos and explicit repos
+			subMon.subTask("Check remote repositories");
 			result = loadExplicitRepos(subMon.newChild(20));
 			if (!result.isOK()) {
 				fStatus.add(result);
@@ -121,6 +90,7 @@ public class TargetResolver {
 			}
 
 			// Collect the list of IUs
+			subMon.subTask("Find the complete set of plug-ins");
 			result = collectRootIUs(subMon.newChild(20));
 			if (!result.isOK()) {
 				fStatus.add(result);
@@ -140,22 +110,33 @@ public class TargetResolver {
 				return fStatus;
 			}
 
+			subMon.subTask(""); //$NON-NLS-1$
+
 		} catch (CoreException e) {
 			fStatus.add(e.getStatus());
 		}
+		subMon.done();
 		return fStatus;
 	}
 
-	private IStatus generateRepos(IProgressMonitor monitor) throws CoreException {
+	private IStatus generateRepos(IProgressMonitor monitor) {
+		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems reading local plug-in locations", null);
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
-			IRepository[] currentRepos = containers[i].generateRepositories(fAgent, subMon.newChild(1));
-			for (int j = 0; j < currentRepos.length; j++) {
-				fAllRepos.add(currentRepos[j]);
+			try {
+				IRepository[] currentRepos = containers[i].generateRepositories(fAgent, subMon.newChild(1));
+				for (int j = 0; j < currentRepos.length; j++) {
+					fAllRepos.add(currentRepos[j]);
+				}
+			} catch (CoreException e) {
+				repoStatus.add(e.getStatus());
 			}
 		}
-		return Status.OK_STATUS;
+		if (repoStatus.getChildren().length == 1) {
+			return repoStatus.getChildren()[0];
+		}
+		return repoStatus;
 	}
 
 	private IStatus loadExplicitRepos(IProgressMonitor monitor) throws CoreException {
@@ -189,8 +170,10 @@ public class TargetResolver {
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
 			InstallableUnitDescription[] currentIUs = containers[i].getRootIUs();
-			for (int j = 0; j < currentIUs.length; j++) {
-				fRootIUs.add(currentIUs[j]);
+			if (currentIUs != null) {
+				for (int j = 0; j < currentIUs.length; j++) {
+					fRootIUs.add(currentIUs[j]);
+				}
 			}
 			subMon.worked(1);
 		}

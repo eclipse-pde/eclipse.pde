@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -67,6 +68,8 @@ public class TargetContentsGroup {
 	private ViewerFilter fPluginFilter;
 
 	private ITargetDefinition fTargetDefinition;
+
+	private int fItemCount;
 
 	private int fGrouping;
 	private static final int GROUP_BY_NONE = 0;
@@ -352,6 +355,15 @@ public class TargetContentsGroup {
 			fGroupCombo.select(0);
 		}
 
+		// TODO Don't allow different grouping for now.
+		fGroupLabel.setVisible(false);
+		if (fGroupCombo != null) {
+			fGroupCombo.setVisible(false);
+		}
+		if (fGroupComboPart != null) {
+			fGroupComboPart.getControl().setVisible(false);
+		}
+
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fTree.getSelection().isEmpty()) {
@@ -360,6 +372,7 @@ public class TargetContentsGroup {
 						fFilteredTree.setChecked(selected[i], true);
 					}
 					saveCheckState();
+					updateButtons();
 				}
 			}
 		});
@@ -372,43 +385,55 @@ public class TargetContentsGroup {
 						fFilteredTree.setChecked(selected[i], false);
 					}
 					saveCheckState();
+					updateButtons();
 				}
 			}
 		});
 
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Object[] expanded = fTree.getExpandedElements();
-				fTree.expandAll();
-				Object[] selected = fTree.getVisibleExpandedElements();
-				for (int i = 0; i < selected.length; i++) {
-					fFilteredTree.setChecked(selected[i], true);
-				}
-				fTree.setExpandedElements(expanded);
+				fTree.setAllChecked(true);
+				fFilteredTree.saveCheckState();
 				saveCheckState();
+				updateButtons();
+
+//				// The following code can be used to select everything (including things that are not visible
+//				Object[] selected = null;
+//				if (fGrouping == GROUP_BY_NONE) {
+//					selected = fTargetDefinition.getAvailableUnits();
+//				} else {
+//					Object[] expanded = fTree.getExpandedElements();
+//					fTree.expandAll();
+//					selected = fTree.getVisibleExpandedElements();
+//					// TODO Check that the check state can be changed after resetting the expanded elements
+//					fTree.setExpandedElements(expanded);
+//				}
+//				if (selected != null && selected.length > 0) {
+//					fFilteredTree.setCheckedElements(selected);
+//					saveCheckState();
+//				}
+
 			}
 		});
 
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Object[] expanded = fTree.getExpandedElements();
-				fTree.expandAll();
-				Object[] selected = fTree.getVisibleExpandedElements();
-				for (int i = 0; i < selected.length; i++) {
-					fFilteredTree.setChecked(selected[i], false);
-				}
-				fTree.setExpandedElements(expanded);
+				fTree.setAllChecked(false);
+				fFilteredTree.saveCheckState();
 				saveCheckState();
+				updateButtons();
 			}
 		});
 
 		fShowPluginsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fShowPluginsButton.getSelection()) {
+					fFilteredTree.saveCheckState();
 					fTree.addFilter(fPluginFilter);
 				} else {
 					fTree.removeFilter(fPluginFilter);
 					fTree.expandAll();
+					fFilteredTree.restoreCheckState();
 				}
 				updateButtons();
 			}
@@ -421,10 +446,12 @@ public class TargetContentsGroup {
 		fShowSourceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fShowSourceButton.getSelection()) {
+					fFilteredTree.saveCheckState();
 					fTree.addFilter(fSourceFilter);
 				} else {
 					fTree.removeFilter(fSourceFilter);
 					fTree.expandAll();
+					fFilteredTree.restoreCheckState();
 				}
 				updateButtons();
 			}
@@ -506,7 +533,7 @@ public class TargetContentsGroup {
 
 		// TODO
 		if (fTargetDefinition != null) {
-			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedElements().length), "All"}));
+			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fFilteredTree.getCheckedLeafNodeCount()), Integer.toString(fItemCount)}));
 		} else {
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}
@@ -518,8 +545,22 @@ public class TargetContentsGroup {
 	 */
 	public void setInput(ITargetDefinition input) {
 		fTargetDefinition = input;
+		fItemCount = 0;
 
-		if (input == null || !input.isResolved()) {
+		if (input == null) {
+			fTree.setInput(Messages.TargetContentsGroup_10);
+			setEnabled(false);
+			return;
+		}
+
+		IStatus resolveStatus = input.getResolveStatus();
+		if (resolveStatus != null && resolveStatus.getSeverity() == IStatus.ERROR) {
+			fTree.setInput(resolveStatus);
+			setEnabled(false);
+			return;
+		}
+
+		if (!input.isResolved()) {
 			fTree.setInput(Messages.TargetContentsGroup_10);
 			setEnabled(false);
 			return;
@@ -532,14 +573,16 @@ public class TargetContentsGroup {
 			return;
 		}
 
-		fTree.setInput(Messages.TargetContentsGroup_12);
+		fItemCount = units.length;
+
 		setEnabled(false);
 		fTree.setInput(fTargetDefinition);
-		// TODO TERRIBLE PERFORMANCE! Recalculates included for every single check
 		// Expand everything first so that children have been calculated
 		fTree.expandAll();
 		IInstallableUnit[] included = fTargetDefinition.getIncludedUnits();
-		fFilteredTree.setCheckedElements(included);
+		fTree.setCheckedElements(included);
+		fFilteredTree.saveCheckState();
+
 		setEnabled(true);
 	}
 
@@ -645,13 +688,18 @@ public class TargetContentsGroup {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
+
+				return ((ITargetDefinition) inputElement).getAvailableUnits();
+
+				// Temporary code to test nesting in the tree
+//				Collection[] lists = new Collection[] {new ArrayList(), new ArrayList(), new ArrayList()};
+//				IInstallableUnit[] units = ((ITargetDefinition) inputElement).getAvailableUnits();
+//				for (int i = 0; i < units.length; i++) {
+//					lists[i % 3].add(units[i]);
+//				}
+//				return lists;
+
 				// TODO Support grouping?
-				Collection[] lists = new Collection[] {new ArrayList(), new ArrayList(), new ArrayList()};
-				IInstallableUnit[] units = ((ITargetDefinition) inputElement).getAvailableUnits();
-				for (int i = 0; i < units.length; i++) {
-					lists[i % 3].add(units[i]);
-				}
-				return lists;
 //				if (fGrouping == GROUP_BY_NONE) {
 //					return fAllBundles.toArray();
 //				} else if (fGrouping == GROUP_BY_CONTAINER) {

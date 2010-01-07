@@ -48,7 +48,7 @@ public interface IBundleContainer {
 	 * The descriptions will contain both an ID and a version.  The root installable units along with their dependencies will be added
 	 * to the target during the {@link ITargetDefinition#resolve(IProgressMonitor)} operation.
 	 *  
-	 * @return list of installable unit descriptions, possibly empty
+	 * @return list of installable unit descriptions, possibly empty, or <code>null</code> if {@link #generateRepositories(IProvisioningAgent, IProgressMonitor)} has not been called
 	 * @throws CoreException if there is a problem creating the descriptions
 	 */
 	public InstallableUnitDescription[] getRootIUs() throws CoreException;

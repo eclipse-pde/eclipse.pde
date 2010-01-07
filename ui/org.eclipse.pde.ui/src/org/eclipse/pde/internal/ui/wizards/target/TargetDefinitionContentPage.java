@@ -38,6 +38,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.progress.UIJob;
@@ -53,8 +54,8 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private Text fNameText;
-	private TabItem fLocationTab;
 	private TargetLocationsGroup fLocationTree;
+	private TabItem fLocationTab;
 	private TargetContentsGroup fContentTree;
 
 	// Environment pull-downs
@@ -213,6 +214,14 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 						setCancelled = true;
 					}
 				}
+				IStatus resolveStatus = definition.getResolveStatus();
+				if (resolveStatus != null && resolveStatus.getSeverity() == IStatus.ERROR) {
+					setErrorMessage(resolveStatus.getMessage());
+					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+				} else {
+					setErrorMessage(null);
+					fLocationTab.setImage(null);
+				}
 				if (fContentTree != source) {
 					if (setCancelled) {
 						fContentTree.setCancelled(); // If the user cancelled the resolve, change the text to say it was cancelled
@@ -223,12 +232,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				if (fLocationTree != source) {
 					fLocationTree.setInput(definition);
 				}
-				// TODO Handle errors
-//				if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
-//					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
-//				} else {
-//					fLocationTab.setImage(null);
-//				}
+
 			}
 		};
 		fContentTree.addTargetChangedListener(listener);
@@ -267,12 +271,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					}
 					fContentTree.setInput(definition);
 					fLocationTree.setInput(definition);
-					// TODO Handle errors
-//					if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
-//						fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
-//					} else {
-//						fLocationTab.setImage(null);
-//					}
+					IStatus resolveStatus = definition.getResolveStatus();
+					if (resolveStatus != null && resolveStatus.getSeverity() == IStatus.ERROR) {
+						fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+					} else {
+						fLocationTab.setImage(null);
+					}
 					return Status.OK_STATUS;
 				}
 			}.schedule();

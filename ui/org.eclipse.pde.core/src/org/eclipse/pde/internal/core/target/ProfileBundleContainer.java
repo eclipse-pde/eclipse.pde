@@ -10,19 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.Properties;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.publisher.Publisher;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 
@@ -32,6 +34,17 @@ import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
  * @since 3.5 
  */
 public class ProfileBundleContainer extends AbstractLocalBundleContainer {
+
+	// The following constants are duplicated from org.eclipse.equinox.internal.p2.core.Activator
+	private static final String CONFIG_INI = "config.ini"; //$NON-NLS-1$
+	private static final String PROP_AGENT_DATA_AREA = "eclipse.p2.data.area"; //$NON-NLS-1$
+	private static final String PROP_PROFILE = "eclipse.p2.profile"; //$NON-NLS-1$
+	private static final String PROP_CONFIG_DIR = "osgi.configuration.area"; //$NON-NLS-1$
+	private static final String PROP_USER_DIR = "user.dir"; //$NON-NLS-1$
+	private static final String PROP_USER_HOME = "user.home"; //$NON-NLS-1$
+	private static final String VAR_CONFIG_DIR = "@config.dir"; //$NON-NLS-1$
+	private static final String VAR_USER_DIR = "@user.dir"; //$NON-NLS-1$
+	private static final String VAR_USER_HOME = "@user.home"; //$NON-NLS-1$
 
 	/**
 	 * Path to home/root install location. May contain string variables.
@@ -67,26 +80,75 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
 		// TODO Use the progress monitor
 
+		// Get the installation location
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
-
-		URL configUrl = getConfigurationArea();
-		if (configUrl != null) {
-			if (!new File(configUrl.getFile()).isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
-			}
+		URL configURL = getConfigurationArea();
+		if (configURL == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
+		}
+		File configArea = new File(configURL.getFile());
+		if (!configArea.isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, configArea)));
 		}
 
-		// TODO Hopefully this logic can be moved into ProfileMetadataRepository, see bug 294511
-		// Use hard coded directories for now
-		File profileArea = new File(configUrl.getFile(), "p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile");
-		if (!profileArea.isDirectory()) {
-			profileArea = new File(getLocation(true), "p2/org.eclipse.equinox.p2.engine/profileRegistry/SDKProfile.profile");
-			if (!profileArea.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Could not find profile for installation: " + getLocation(false)));
+		// Location of the profile
+		File p2DataArea = null;
+		String profileName = null;
+
+		// Load the config.ini to try and find the backing profile
+		File configIni = new File(configArea, CONFIG_INI);
+		if (configIni.isFile()) {
+			// Read config.ini
+			Properties configProps = new Properties();
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(configIni);
+				configProps.load(fis);
+				fis.close();
+			} catch (IOException e) {
+				PDECore.log(e);
+			} finally {
+				try {
+					if (fis != null)
+						fis.close();
+				} catch (IOException e) {
+				}
 			}
+
+			String p2Area = configProps.getProperty(PROP_AGENT_DATA_AREA);
+			if (p2Area != null) {
+				if (p2Area.startsWith(VAR_USER_HOME)) {
+					String base = substituteVar(configProps, p2Area, VAR_USER_HOME, PROP_USER_HOME, configArea);
+					p2Area = new Path(base).toFile().getAbsolutePath();
+				} else if (p2Area.startsWith(VAR_USER_DIR)) {
+					String base = substituteVar(configProps, p2Area, VAR_USER_DIR, PROP_USER_DIR, configArea);
+					p2Area = new Path(base).toFile().getAbsolutePath();
+				} else if (p2Area.startsWith(VAR_CONFIG_DIR)) {
+					String base = substituteVar(configProps, p2Area, VAR_CONFIG_DIR, PROP_CONFIG_DIR, configArea);
+					p2Area = new Path(base).toFile().getAbsolutePath();
+				}
+				p2DataArea = new File(p2Area);
+			}
+
+			profileName = configProps.getProperty(PROP_PROFILE);
+		}
+
+		if (p2DataArea == null || !p2DataArea.isDirectory()) {
+			p2DataArea = new File(configArea, "p2");
+		}
+
+		if (profileName == null || profileName.length() == 0) {
+			profileName = "SDKProfile";
+		}
+
+		IPath profilePath = new Path(p2DataArea.getAbsolutePath());
+		profilePath = profilePath.append(EngineActivator.ID).append("profileRegistry").append(profileName + ".profile");
+		File profile = profilePath.toFile();
+		if (!profile.exists()) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Could not find profile at: {0}", profile.toString())));
 		}
 
 		// TODO Have to handle cases where p2 is not present (platform.xml and directory)
@@ -103,7 +165,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 //			return new IResolvedBundle[0];
 //		}
 
-		fRepo = Publisher.loadMetadataRepository(agent, profileArea.toURI(), false, false);
+		fRepo = Publisher.loadMetadataRepository(agent, profile.toURI(), false, false);
 		return new IMetadataRepository[] {fRepo};
 	}
 
@@ -113,7 +175,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 		}
 
 		// Collect all installable units in the repository
-		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, null);
+		IQueryResult result = fRepo.query(P2Utils.BUNDLE_QUERY, null);
 
 		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.unmodifiableSet().size()];
 		int i = 0;
@@ -193,6 +255,22 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 //		}
 //		return null;
 //	}
+
+	/**
+	 * Replaces a variable in config.ini
+	 * @param props properties containing entries from the 
+	 * @param source the string to replace the var in
+	 * @param var the variable to replace
+	 * @param prop the property to lookup for a replacement value
+	 * @param defaultValue value to use if the property can't be found
+	 * @return source string with the variable replaced with the proper value
+	 */
+	private String substituteVar(Properties props, String source, String var, String prop, File defaultValue) {
+		String value = props.getProperty(prop);
+		if (value == null)
+			value = defaultValue.getAbsolutePath();
+		return value + source.substring(var.length());
+	}
 
 	/**
 	 * Returns the home location with all variables resolved as a path.

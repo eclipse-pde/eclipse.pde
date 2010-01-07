@@ -1,7 +1,6 @@
 package org.eclipse.pde.internal.core.target;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
@@ -34,7 +33,10 @@ public class TargetUtils {
 		List bundleLocations = new ArrayList(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			try {
-				bundleLocations.add(bundles[i].getLocation().toURL());
+				URI location = bundles[i].getLocation();
+				if (location != null) {
+					bundleLocations.add(location.toURL());
+				}
 			} catch (MalformedURLException e) {
 				// Ignore invalid urls, UI should see and handle them
 			}

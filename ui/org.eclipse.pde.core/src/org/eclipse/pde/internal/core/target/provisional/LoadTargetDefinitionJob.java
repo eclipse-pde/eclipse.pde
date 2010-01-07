@@ -110,8 +110,9 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-			SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_mainTaskName, 200);
+			SubMonitor subMon = SubMonitor.convert(monitor, "", 200); //$NON-NLS-1$
 
+			subMon.subTask("Load environment settings");
 			loadEnvironment(preferences, subMon.newChild(10));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -132,11 +133,13 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				return Status.CANCEL_STATUS;
 			}
 
+			subMon.subTask("Load target plug-ins");
 			loadPlugins(preferences, subMon.newChild(100));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
+			subMon.subTask("Set additional preferences");
 			loadAdditionalPreferences(preferences);
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -148,6 +151,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 			subMon.worked(20);
 			subMon.done();
+		} catch (CoreException e) {
+			return e.getStatus();
 		} finally {
 			monitor.done();
 		}
@@ -257,21 +262,21 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @throws CoreException
 	 */
 	private void loadPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(Messages.LoadTargetOperation_loadPluginsTaskName, 200);
-		// TODO Is this proper use of SubMonitor?
-		SubMonitor subMon = SubMonitor.convert(monitor, 200);
+		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_loadPluginsTaskName, 100);
 		try {
 
 			// Provision the target to make it local
-			fTarget.provision(subMon.newChild(100));
+			IStatus result = fTarget.provision(subMon.newChild(50));
 			if (subMon.isCanceled()) {
 				return;
+			}
+			if (result.getSeverity() == IStatus.ERROR) {
+				throw new CoreException(result);
 			}
 
 			// Create models for the provisioned bundles
 			URL[] urls = TargetUtils.getPluginPaths(fTarget);
-			PDEState state = new PDEState(urls, true, subMon.newChild(50));
-			subMon.worked(10);
+			PDEState state = new PDEState(urls, true, subMon.newChild(25));
 			if (subMon.isCanceled()) {
 				return;
 			}
@@ -281,8 +286,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			for (int i = 0; i < models.length; i++) {
 				models[i].setEnabled(true);
 			}
-
-			subMon.worked(10);
+			subMon.worked(5);
 			if (subMon.isCanceled()) {
 				return;
 			}
@@ -322,11 +326,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				job.join();
 			} catch (InterruptedException e) {
 			}
-			monitor.worked(40);
+			subMon.worked(20);
 
 		} finally {
-			monitor.done();
 			subMon.done();
+			monitor.done();
 		}
 	}
 

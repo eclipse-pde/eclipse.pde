@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -105,11 +106,11 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 					return Status.CANCEL_STATUS;
 				}
 
-				IResolvedBundle[] bundles = fTargetDefinition.getBundles();
+				IInstallableUnit[] bundles = fTargetDefinition.getIncludedUnits();
 				fAdd = true;
 				List models = new ArrayList(bundles.length);
 				for (int index = 0; index < bundles.length; index++) {
-					IPluginModelBase model = PluginRegistry.findModel(bundles[index].getBundleInfo().getSymbolicName());
+					IPluginModelBase model = PluginRegistry.findModel(bundles[index].getId());
 					if (model != null) {
 						models.add(model);
 					}

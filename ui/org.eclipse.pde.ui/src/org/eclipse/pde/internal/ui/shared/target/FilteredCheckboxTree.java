@@ -172,8 +172,9 @@ public class FilteredCheckboxTree extends FilteredTree {
 	void rememberLeafCheckState() {
 		ContainerCheckedTreeViewer v = (ContainerCheckedTreeViewer) getViewer();
 		Object[] checked = v.getCheckedElements();
-		if (checkState == null)
+		if (checkState == null) {
 			checkState = new ArrayList(checked.length);
+		}
 		for (int i = 0; i < checked.length; i++)
 			if (!v.getGrayed(checked[i]) && fContentProvider.getChildren(checked[i]).length == 0)
 				if (!checkState.contains(checked[i]))
@@ -228,9 +229,27 @@ public class FilteredCheckboxTree extends FilteredTree {
 		updateCheckState(element, state);
 	}
 
-	public void setCheckedElements(Object[] elements) {
-		checkboxViewer.setCheckedElements(elements);
+	public void saveCheckState() {
+		// TODO This breaks the checked leaf node count and is out of date if multiple filters are used
+		checkState = null;
 		rememberLeafCheckState();
+	}
+
+	public void restoreCheckState() {
+		restoreLeafCheckState();
+	}
+
+	/**
+	 * Returns the number of leaf nodes checked.  This method only checks the the cached check
+	 * state.  If the table viewer has been modified without updating the check state the number
+	 * returned by this method may not be accurate.
+	 * @return number of leaf nodes checked according to the cached check state
+	 */
+	public int getCheckedLeafNodeCount() {
+		if (checkState == null) {
+			return 0;
+		}
+		return checkState.size();
 	}
 
 }
