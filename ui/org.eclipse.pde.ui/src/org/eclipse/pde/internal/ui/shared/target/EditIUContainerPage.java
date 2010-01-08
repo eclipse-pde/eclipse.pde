@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -341,11 +341,11 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs();
 		if (selected.length == 1) {
 			StringBuffer result = new StringBuffer();
-			String description = profileUI.getTranslationSupport().getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
+			String description = selected[0].getProperty(IInstallableUnit.PROP_DESCRIPTION, null);
 			if (description != null) {
 				result.append(description);
 			} else {
-				String name = profileUI.getTranslationSupport().getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
+				String name = selected[0].getProperty(IInstallableUnit.PROP_NAME, null);
 				if (name != null)
 					result.append(name);
 				else
