@@ -518,17 +518,8 @@ public class PluginModelManager implements IModelProviderListener {
 			return new URL[0];
 		}
 
-		// TODO Resolve and provision in a job
-		if (!definition.isResolved()) {
-			IStatus result = definition.resolve(null);
-			if (result.getSeverity() == IStatus.ERROR) {
-				PDECore.log(result);
-				return new URL[0];
-			}
-		}
-
 		if (!definition.isProvisioned()) {
-			IStatus result = definition.provision(null);
+			IStatus result = definition.provisionExisting(null);
 			if (result.getSeverity() == IStatus.ERROR) {
 				PDECore.log(result);
 				return new URL[0];

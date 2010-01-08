@@ -12,7 +12,8 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
@@ -28,6 +29,7 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.TargetUtils;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
@@ -61,19 +63,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private URI fRepoLocation;
 
 	/**
-	 * If this wizard is editing an existing bundle container instead of creating a new one from scratch it will be stored here
-	 */
-	private IUBundleContainer fEditContainer;
-
-	/**
 	 * Used to provide special attributes/filtering to the available iu group 
 	 */
 	private IUViewQueryContext fQueryContext;
-
-	/**
-	 * The parent target definition
-	 */
-	private ITargetDefinition fTarget;
 
 	private RepositorySelectionGroup fRepoSelector;
 	private AvailableIUGroup fAvailableIUGroup;
@@ -81,10 +73,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private IAction fPropertyAction;
 	private Button fShowCategoriesButton;
 	private Button fShowOldVersionsButton;
-//	private Button fIncludeRequiredButton;
-//	private Button fAllPlatformsButton;
 	private Text fDetailsText;
-	private ProvisioningUI profileUI;
+	private ProvisioningUI fProfileUI;
 
 	/**
 	 * Constructor for creating a new container
@@ -94,24 +84,11 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		super("AddP2Container"); //$NON-NLS-1$
 		setTitle(Messages.EditIUContainerPage_5);
 		setMessage(Messages.EditIUContainerPage_6);
-		fTarget = definition;
 		ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
 		// TODO we use the service session from the self profile.  In the future we may want
 		// to set up our own services for the profile (separate repo managers, etc).
 		// We use our own new policy so we don't bash the SDK's settings.
-		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), profile.getProfileId(), new Policy());
-	}
-
-	/**
-	 * Constructor for editing an existing container
-	 * @param container the container to edit
-	 * @param profile profile from the parent target, used to setup the p2 UI
-	 */
-	protected EditIUContainerPage(IUBundleContainer container, ITargetDefinition definition) {
-		this(definition);
-		setTitle(Messages.EditIUContainerPage_7);
-		setMessage(Messages.EditIUContainerPage_6);
-		fEditContainer = container;
+		fProfileUI = new ProvisioningUI(selfProvisioningUI.getSession(), TargetUtils.getProfileID(definition), new Policy());
 	}
 
 	/* (non-Javadoc)
@@ -131,6 +108,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		}
 		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(descriptions);
 		return container;
+	}
+
+	public URI getSelectedSite() {
+		return fRepoLocation;
 	}
 
 	/* (non-Javadoc)
@@ -161,11 +142,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		restoreWidgetState();
 		setControl(composite);
 		setPageComplete(false);
-		if (fEditContainer == null) {
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCATION_ADD_SITE_WIZARD);
-		} else {
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCATION_EDIT_SITE_WIZARD);
-		}
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCATION_ADD_SITE_WIZARD);
 	}
 
 	/**
@@ -173,8 +150,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createRepositoryComboArea(Composite parent) {
-		profileUI.getPolicy().setRepositoryPreferencePageId(null);
-		fRepoSelector = new RepositorySelectionGroup(profileUI, getContainer(), parent, fQueryContext);
+		fProfileUI.getPolicy().setRepositoryPreferencePageId(null);
+		fRepoSelector = new RepositorySelectionGroup(fProfileUI, getContainer(), parent, fQueryContext);
 		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
 			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
 				fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
@@ -197,7 +174,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createAvailableIUArea(Composite parent) {
-		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent);
+		fAvailableIUGroup = new AvailableIUGroup(fProfileUI, parent);
 		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
@@ -268,55 +245,14 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 		Group slicerGroup = SWTFactory.createGroup(parent, Messages.EditIUContainerPage_1, 1, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createWrapLabel(slicerGroup, Messages.EditIUContainerPage_2, 1, 400);
-//		fIncludeRequiredButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_3, null, true, 1);
-//		fIncludeRequiredButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				fAllPlatformsButton.setEnabled(!fIncludeRequiredButton.getSelection());
-//				warnIfGlobalSettingChanged();
-//			}
-//		});
-//		fAllPlatformsButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_8, null, false, 1);
-//		fAllPlatformsButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				warnIfGlobalSettingChanged();
-//			}
-//		});
-//		((GridData) fAllPlatformsButton.getLayoutData()).horizontalIndent = 10;
 	}
-
-//	private void warnIfGlobalSettingChanged() {
-//		boolean warn = false;
-//		if (fTarget != null) {
-//			IBundleContainer[] containers = fTarget.getBundleContainers();
-//			if (containers != null) {
-//				for (int i = 0; i < containers.length; i++) {
-//					if (containers[i] instanceof IUBundleContainer && containers[i] != fEditContainer) {
-//						IUBundleContainer container = (IUBundleContainer) containers[i];
-//						if (container.getIncludeAllRequired() != fIncludeRequiredButton.getSelection()) {
-//							warn = true;
-//							break;
-//						}
-//						if (!fIncludeRequiredButton.getSelection() && container.getIncludeAllEnvironments() != fAllPlatformsButton.getSelection()) {
-//							warn = true;
-//							break;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		if (warn) {
-//			setMessage(Messages.EditIUContainerPage_4, IStatus.WARNING);
-//		} else {
-//			setMessage(Messages.EditIUContainerPage_6);
-//		}
-//	}
 
 	/**
 	 * Creates a default query context to setup the available IU Group
 	 */
 	private void createQueryContext() {
 		fQueryContext = ProvUI.getQueryContext(ProvisioningUI.getDefaultUI().getPolicy());
-		fQueryContext.setInstalledProfileId(fProfile.getProfileId());
+//		fQueryContext.setInstalledProfileId(fProfile.getProfileId());
 		fQueryContext.showAlreadyInstalled();
 	}
 
@@ -340,11 +276,19 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs();
 		if (selected.length == 1) {
 			StringBuffer result = new StringBuffer();
-			String description = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
+
+			String description = fProfileUI.getTranslationSupport().getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
 			if (description != null) {
 				result.append(description);
 			} else {
-				String name = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
+				String name = fProfileUI.getTranslationSupport().getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
+
+//			String description = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
+//			if (description != null) {
+//				result.append(description);
+//			} else {
+//				String name = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
+
 				if (name != null)
 					result.append(name);
 				else
@@ -382,11 +326,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		boolean showOldVersions = fQueryContext.getShowLatestVersionsOnly();
 
 		// Init the checkboxes and repo selector combo
-		if (fEditContainer != null) {
-			if (fEditContainer.getRepositories() != null) {
-				uri = fEditContainer.getRepositories()[0];
-			}
-		} else if (settings != null) {
+		if (settings != null) {
 			String stringURI = settings.get(SETTINGS_SELECTED_REPOSITORY);
 			if (stringURI != null && stringURI.trim().length() > 0) {
 				try {
@@ -405,8 +345,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 		if (uri != null) {
 			fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_SPECIFIED, uri);
-		} else if (fEditContainer != null) {
-			fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_ALL, null);
 		} else {
 			fRepoSelector.setRepositorySelection(AvailableIUGroup.AVAILABLE_NONE, null);
 		}
@@ -414,62 +352,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		fShowCategoriesButton.setSelection(showCategories);
 		fShowOldVersionsButton.setSelection(showOldVersions);
 
-//		if (fEditContainer != null) {
-//			fIncludeRequiredButton.setSelection(fEditContainer.getIncludeAllRequired());
-//			fAllPlatformsButton.setSelection(fEditContainer.getIncludeAllEnvironments());
-//		} else {
-//			// If we are creating a new container, but there is an existing iu container we should use it's settings (otherwise we overwrite them)
-//			IBundleContainer[] knownContainers = fTarget.getBundleContainers();
-//			if (knownContainers != null) {
-//				for (int i = 0; i < knownContainers.length; i++) {
-//					if (knownContainers[i] instanceof IUBundleContainer) {
-//						fIncludeRequiredButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeAllRequired());
-//					}
-//				}
-//			}
-//		}
-//
-//		// If the user can create two containers with different settings for include required we won't resolve correctly
-//		// If the user has an existing container, don't let them edit the options, bug 275013
-//		if (fTarget != null) {
-//			IBundleContainer[] containers = fTarget.getBundleContainers();
-//			if (containers != null) {
-//				for (int i = 0; i < containers.length; i++) {
-//					if (containers[i] instanceof IUBundleContainer && containers[i] != fEditContainer) {
-//						fIncludeRequiredButton.setSelection(((IUBundleContainer) containers[i]).getIncludeAllRequired());
-//						fAllPlatformsButton.setSelection(((IUBundleContainer) containers[i]).getIncludeAllEnvironments());
-//						break;
-//					}
-//				}
-//			}
-//		}
-//
-//		fAllPlatformsButton.setEnabled(!fIncludeRequiredButton.getSelection());
-
 		updateViewContext();
 		fRepoSelector.getDefaultFocusControl().setFocus();
 		updateDetails();
 
-		// If we are editing a bundle check any installable units
-		if (fEditContainer != null) {
-			try {
-				// TODO This code does not do a good job, selecting, revealing, and collapsing all
-				// Only able to check items if we don't have categories
-				fQueryContext.setViewType(IUViewQueryContext.AVAILABLE_VIEW_FLAT);
-				fAvailableIUGroup.updateAvailableViewState();
-				fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits(fProfile));
-				// Make sure view is back in proper state
-				updateViewContext();
-				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
-				if (units.length > 0) {
-					fAvailableIUGroup.getCheckboxTreeViewer().setSelection(new StructuredSelection(units[0]), true);
-				}
-				fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
-
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-			}
-		}
 	}
 
 }

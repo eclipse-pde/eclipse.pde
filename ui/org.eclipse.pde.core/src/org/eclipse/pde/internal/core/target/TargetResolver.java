@@ -33,14 +33,13 @@ public class TargetResolver {
 	private IProvisioningAgent fAgent;
 
 	private MultiStatus fStatus;
-	private List fAllRepos;
+	private List fMetaRepos;
 	private List fRootIUs;
 	private Collection fAvailableIUs;
 
 	TargetResolver(ITargetDefinition target) {
 		fTarget = target;
-		// TODO Get proper agent in target metadata area
-		fAgent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		fAgent = TargetUtils.getAgentForTarget(target);
 	}
 
 	public IStatus getStatus() {
@@ -61,7 +60,7 @@ public class TargetResolver {
 				return fStatus;
 			}
 
-			fAllRepos = new ArrayList();
+			fMetaRepos = new ArrayList();
 			fRootIUs = new ArrayList();
 			fAvailableIUs = new ArrayList();
 
@@ -127,7 +126,7 @@ public class TargetResolver {
 			try {
 				IRepository[] currentRepos = containers[i].generateRepositories(fAgent, subMon.newChild(1));
 				for (int j = 0; j < currentRepos.length; j++) {
-					fAllRepos.add(currentRepos[j]);
+					fMetaRepos.add(currentRepos[j]);
 				}
 			} catch (CoreException e) {
 				repoStatus.add(e.getStatus());
@@ -151,7 +150,7 @@ public class TargetResolver {
 		SubMonitor subMon = SubMonitor.convert(monitor, explicit.length * 3);
 		for (int i = 0; i < explicit.length; i++) {
 			try {
-				fAllRepos.add(registry.loadRepository(explicit[i], subMon.newChild(3)));
+				fMetaRepos.add(registry.loadRepository(explicit[i], subMon.newChild(3)));
 			} catch (ProvisionException e) {
 				result.add(e.getStatus());
 			}
@@ -181,7 +180,7 @@ public class TargetResolver {
 	}
 
 	private IStatus collectAllIUs(IProgressMonitor monitor) {
-		if (fAllRepos.size() == 0) {
+		if (fMetaRepos.size() == 0) {
 			fAvailableIUs = new ArrayList(0);
 			return Status.OK_STATUS;
 		}
@@ -190,10 +189,10 @@ public class TargetResolver {
 
 		// Combine the repositories into a single queryable object
 		IQueryable allRepos;
-		if (fAllRepos.size() == 1) {
-			allRepos = (IMetadataRepository) fAllRepos.get(0);
+		if (fMetaRepos.size() == 1) {
+			allRepos = (IMetadataRepository) fMetaRepos.get(0);
 		} else {
-			allRepos = new CompoundQueryable(fAllRepos);
+			allRepos = new CompoundQueryable(fMetaRepos);
 		}
 
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems collecting installable units", null);
@@ -257,7 +256,7 @@ public class TargetResolver {
 	 * @return List of IMetadataRepositories that were loaded during the resolve
 	 */
 	public List getResolvedRepositories() {
-		return fAllRepos;
+		return fMetaRepos;
 	}
 
 	public Collection calculateIncludedIUs() {
@@ -322,10 +321,10 @@ public class TargetResolver {
 	public IInstallableUnit getUnit(InstallableUnitDescription unit) {
 		// Combine the repositories into a single queryable object
 		IQueryable allRepos;
-		if (fAllRepos.size() == 1) {
-			allRepos = (IMetadataRepository) fAllRepos.get(0);
+		if (fMetaRepos.size() == 1) {
+			allRepos = (IMetadataRepository) fMetaRepos.get(0);
 		} else {
-			allRepos = new CompoundQueryable(fAllRepos);
+			allRepos = new CompoundQueryable(fMetaRepos);
 		}
 
 		// Look for the requested unit

@@ -4,6 +4,8 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
@@ -42,6 +44,26 @@ public class TargetUtils {
 			}
 		}
 		return (URL[]) bundleLocations.toArray(new URL[bundleLocations.size()]);
+	}
+
+	/**
+	 * Return the provisioning agent to be used with the given target definition.  May return 
+	 * <code>null</code> if the provisioning agent service is unavailable.
+	 * @param definition target to get the provisioning agent for
+	 * @return provisioning agent or <code>null</code>
+	 */
+	public static IProvisioningAgent getAgentForTarget(ITargetDefinition definition) {
+		// TODO The agent might end up being managed by the target itself, to make it easier to persist
+		return (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+	}
+
+	public static String getProfileID(ITargetDefinition definition) {
+		// TODO The agent might end up being managed by the target itself, to make it easier to persist
+		return "TARGET_PROFILE";
+	}
+
+	public static String getSharedBundlePool() {
+		return "/home/cwindatt/Cache/";
 	}
 
 }

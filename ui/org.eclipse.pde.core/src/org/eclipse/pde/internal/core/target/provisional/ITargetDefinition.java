@@ -70,8 +70,9 @@ public interface ITargetDefinition {
 	/**
 	 * Resolves this target, collecting metadata for its contents.  Metadata may be generated
 	 * for local bundles and remote repositories may be loaded.  The status returned by this 
-	 * method can be accessed using {@link #getResolveStatus()}.
-	 * 
+	 * method can be accessed using {@link #getResolveStatus()}.  The target will not be provisioned
+	 * after running this method and {@link #provision(IProgressMonitor)} must be called.
+	 *  
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	    to call done() on the given monitor. Accepts null, indicating that no progress should be
 	    reported and that the operation cannot be cancelled.
@@ -122,10 +123,9 @@ public interface ITargetDefinition {
 	public InstallableUnitDescription[] getMissingUnits(IProgressMonitor monitor);
 
 	/**
-	 * Returns whether this target definition is in a provisioned state.  A target in a provisioned
-	 * state if it has been both resolved and provisioned.  A provisioned target has bundles and features
-	 * on disk which can be added to the PDE State.  If a problem occurred while provisioning the target
-	 * will not be considered provisioned.
+	 * Returns whether this target definition is in a provisioned state.  A target that is in a provisioned
+	 * state has bundles and features on disk which can be added to the PDE State.  If a problem occurred 
+	 * while provisioning the target it will not be considered provisioned.
 	 * 
 	 * @return <code>true</code> if the target is provisioned
 	 */
@@ -134,9 +134,10 @@ public interface ITargetDefinition {
 	/**
 	 * Provisions this target, using the metadata in this target to collect physical
 	 * bundles and features.  If this target is not resolved, this method will attempt
-	 * to resolve it before provisioning.  Provisioning may involve fetching artifacts
-	 * from remote repositories.
-	 * 
+	 * to resolve it before provisioning.  
+	 * <p>
+	 * This method may contact remote repositories and download artifacts from them.
+	 * </p>
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	    to call done() on the given monitor. Accepts null, indicating that no progress should be
 	    reported and that the operation cannot be cancelled.
@@ -144,6 +145,25 @@ public interface ITargetDefinition {
 	 * @throws CoreException
 	 */
 	public IStatus provision(IProgressMonitor monitor);
+
+	/**
+	 * TODO Consider moving this API to a method on ITargetService that provides a "restored target"
+	 * 
+	 * Checks if a profile backing this target exists and if so, uses it to provision this target.  This
+	 * method can be called without calling {@link #resolve(IProgressMonitor)}.  If no profile exists,
+	 * there is a problem reading the profile or if one or more of the provisioned bundles do not exist
+	 * on disk this method will return an error status.
+	 * <p>
+	 * This method will not contact remote sites.  The provisioned target may be out of date if repositories or
+	 * directory content has changed. 
+	 * </p>
+	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+	    to call done() on the given monitor. Accepts null, indicating that no progress should be
+	    reported and that the operation cannot be cancelled.
+	 * @return status indicating result of the provision operation.  May return a {@link MultiStatus}
+	 * @throws CoreException
+	 */
+	public IStatus provisionExisting(IProgressMonitor monitor);
 
 	/**
 	 * Returns the status generated the last time {@link #provision(IProgressMonitor)} was called on this

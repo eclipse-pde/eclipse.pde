@@ -20,9 +20,12 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.internal.provisional.spi.p2.artifact.repository.SimpleArtifactRepositoryFactory;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQueryResult;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
@@ -162,6 +165,32 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		subMon.worked(5);
 		fRepo = repo;
 		return new IMetadataRepository[] {repo};
+	}
+
+	public IFileArtifactRepository generateArtifactRepository() throws CoreException {
+		// Ensure that the metadata has been generated
+		if (fRepo == null) {
+			return null;
+		}
+
+//		URI repoLocation = getSite(getDirectory()).toURI();
+//		IStatus repoStatus = manager.validateRepositoryLocation(repoLocation, subMon.newChild(5));
+//		IMetadataRepository repo;
+//		if (repoStatus.isOK()) {
+//			repo = repoManager.loadRepository(repoLocation, subMon.newChild(5));
+//			repo.removeAll();
+//			repo.addInstallableUnits(ius);
+//		} else {
+//			repo = repoManager.createRepository(repoLocation, "Directory Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
+//			subMon.worked(5);
+//			repo.addInstallableUnits(ius);
+//		}
+
+		// Create the artifact repository.  This will fail if a repository already exists here
+		SimpleArtifactRepositoryFactory factory = new SimpleArtifactRepositoryFactory();
+		URI repoLocation = getSite(getDirectory()).toURI();
+		IFileArtifactRepository artifactRepository = (IFileArtifactRepository) factory.create(repoLocation, "Sample Artifact Repository", IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, Collections.EMPTY_MAP);
+		return artifactRepository;
 	}
 
 	/* (non-Javadoc)

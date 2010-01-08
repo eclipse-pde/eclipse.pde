@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -184,7 +185,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						if (container != null) {
 							fPage1.storeSettings();
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
-							if (oldContainers == null) {
+							if (oldContainers.length == 0) {
 								fTarget.setBundleContainers(new IBundleContainer[] {container});
 							} else {
 								IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];
@@ -224,7 +225,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						if (container != null) {
 							fPage1.storeSettings();
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
-							if (oldContainers == null) {
+							if (oldContainers.length == 0) {
 								fTarget.setBundleContainers(new IBundleContainer[] {container});
 							} else {
 								IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];
@@ -259,7 +260,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							if (containers != null) {
 								((AddFeatureContainersPage) getPages()[0]).storeSettings();
 								IBundleContainer[] oldContainers = fTarget.getBundleContainers();
-								if (oldContainers == null) {
+								if (oldContainers.length == 0) {
 									fTarget.setBundleContainers(containers);
 								} else {
 									IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + containers.length];
@@ -293,17 +294,41 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 					}
 
 					public boolean performFinish() {
+						// Add the container to the list of containers in the target
 						IBundleContainer container = ((EditIUContainerPage) getPages()[0]).getBundleContainer();
 						if (container != null) {
 							((EditIUContainerPage) getPages()[0]).storeSettings();
 							IBundleContainer[] oldContainers = fTarget.getBundleContainers();
-							if (oldContainers == null) {
+							if (oldContainers.length == 0) {
 								fTarget.setBundleContainers(new IBundleContainer[] {container});
 							} else {
 								IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];
 								System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
 								newContainers[newContainers.length - 1] = container;
 								fTarget.setBundleContainers(newContainers);
+							}
+						}
+						// If the user chose a specific site to download from, add it to the list of explicit repositories
+						URI site = ((EditIUContainerPage) getPages()[0]).getSelectedSite();
+						if (site != null) {
+							URI[] oldSites = fTarget.getRepositories();
+							if (oldSites.length == 0) {
+								fTarget.setRepositories(new URI[] {site});
+							} else {
+								// Check that we aren't adding a duplicate
+								boolean found = false;
+								for (int i = 0; i < oldSites.length; i++) {
+									if (site.equals(oldSites[i])) {
+										found = true;
+										break;
+									}
+								}
+								if (!found) {
+									URI[] newSites = new URI[oldSites.length + 1];
+									System.arraycopy(oldSites, 0, newSites, 0, oldSites.length);
+									newSites[newSites.length - 1] = site;
+									fTarget.setRepositories(newSites);
+								}
 							}
 						}
 						return true;
@@ -415,7 +440,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 									// First try the specified dir, then try the plugins dir
 									IBundleContainer container = getTargetPlatformService().newDirectoryContainer(dirs[i].getPath());
 									IBundleContainer[] oldContainers = fTarget.getBundleContainers();
-									if (oldContainers == null) {
+									if (oldContainers.length == 0) {
 										fTarget.setBundleContainers(new IBundleContainer[] {container});
 									} else {
 										IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];

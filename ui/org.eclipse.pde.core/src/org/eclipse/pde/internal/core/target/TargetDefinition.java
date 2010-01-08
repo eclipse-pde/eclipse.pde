@@ -142,6 +142,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus resolve(IProgressMonitor monitor) {
+		fProvisioner = null;
 		fResolver = new TargetResolver(this);
 		return fResolver.resolve(monitor);
 	}
@@ -210,7 +211,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isProvisioned()
 	 */
 	public boolean isProvisioned() {
-		return isResolved() && fProvisioner != null && fProvisioner.getStatus() != null && (fProvisioner.getStatus().getSeverity() == IStatus.OK || fProvisioner.getStatus().getSeverity() == IStatus.WARNING);
+		return fProvisioner != null && fProvisioner.getStatus() != null && (fProvisioner.getStatus().getSeverity() == IStatus.OK || fProvisioner.getStatus().getSeverity() == IStatus.WARNING);
 	}
 
 	/* (non-Javadoc)
@@ -228,8 +229,17 @@ public class TargetDefinition implements ITargetDefinition {
 			return getResolveStatus();
 		}
 
-		fProvisioner = new TargetProvisioner(fResolver);
+		fProvisioner = new TargetProvisioner(this, fResolver);
 		return fProvisioner.provision(subMon.newChild(50));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#provisionExisting(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus provisionExisting(IProgressMonitor monitor) {
+		SubMonitor subMon = SubMonitor.convert(monitor, "Provisioning target from existing profile", 50);
+		fProvisioner = new TargetProvisioner(this, fResolver);
+		return fProvisioner.provisionExisting(subMon);
 	}
 
 	/* (non-Javadoc)

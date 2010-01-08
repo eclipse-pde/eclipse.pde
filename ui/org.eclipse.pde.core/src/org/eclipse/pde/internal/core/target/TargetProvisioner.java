@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.core.target;
 
+import java.io.File;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -12,8 +13,11 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
 /**
  * Helper class for TargetDefinition to encapsulate code for provisioning a target.
@@ -24,18 +28,17 @@ import org.eclipse.pde.internal.core.*;
  */
 public class TargetProvisioner {
 
-	private static final String PROFILE_NAME = "TARGET_PROFILE";
-
-	private IProvisioningAgent fAgent;
+	private ITargetDefinition fTarget;
 	private TargetResolver fResolver;
+	private IProvisioningAgent fAgent;
 
 	private MultiStatus fStatus;
 	private IProfile fProfile;
 
-	TargetProvisioner(TargetResolver resolver) {
+	TargetProvisioner(ITargetDefinition target, TargetResolver resolver) {
+		fTarget = target;
 		fResolver = resolver;
-		// TODO Get proper agent in target metadata area
-		fAgent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		fAgent = TargetUtils.getAgentForTarget(target);
 	}
 
 	public IStatus getStatus() {
@@ -70,22 +73,22 @@ public class TargetProvisioner {
 		SubMonitor subMon = SubMonitor.convert(monitor, "Provisioning bundles in target platform", 100);
 
 		fProfile = null;
+		String profileName = TargetUtils.getProfileID(fTarget);
 
 		// Delete any previous profiles with the same ID
-		registry.removeProfile(PROFILE_NAME);
+		registry.removeProfile(profileName);
 
 		// Create the profile
 		Properties props = new Properties();
 		// TODO Need to set install folder and bundle pool
-		props.setProperty(IProfile.PROP_INSTALL_FOLDER, "/home/cwindatt/Cache/");
+		props.put(IProfile.PROP_CACHE, TargetUtils.getSharedBundlePool());
 
 //		properties.put(IProfile.PROP_INSTALL_FOLDER, AbstractTargetHandle.INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
-//		properties.put(IProfile.PROP_CACHE, AbstractTargetHandle.BUNDLE_POOL.toOSString());
 //		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 //		// set up environment & NL properly so OS specific fragments are down loaded/installed
 //		properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
 		try {
-			fProfile = registry.addProfile(PROFILE_NAME, props);
+			fProfile = registry.addProfile(profileName, props);
 		} catch (ProvisionException e) {
 			fStatus.add(e.getStatus());
 			return fStatus;
@@ -147,8 +150,57 @@ public class TargetProvisioner {
 		return fStatus;
 	}
 
+	public IStatus provisionExisting(IProgressMonitor monitor) {
+		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems occurred while provisioning plug-ins in the target platform", null);
+		fProfile = null;
+
+		if (fAgent == null) {
+			fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			return fStatus;
+		}
+
+		IProfileRegistry registry = (IProfileRegistry) fAgent.getService(IProfileRegistry.SERVICE_NAME);
+		if (registry == null) {
+			fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			return fStatus;
+		}
+
+		SubMonitor subMon = SubMonitor.convert(monitor, "Loading previous target profile", 50);
+
+		String profileName = TargetUtils.getProfileID(fTarget);
+		fProfile = registry.getProfile(profileName);
+
+		if (fProfile == null) {
+			fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Could not find a profile to restore from.  Use the Target Platform Preference Page to reload."));
+			return fStatus;
+		}
+
+		// TODO Test to see if all bundles specified in the profile actually exist on disk.
+
+		subMon.done();
+		return fStatus;
+
+	}
+
 	public BundleInfo[] getProvisionedBundles() {
 		if (fProfile != null) {
+
+			// Hack to test directory containers, need to create a compound set of artifact repos that can be queried
+//			IFileArtifactRepository repo = null;
+//			try {
+//				IBundleContainer[] containers = fResolver.fTarget.getBundleContainers();
+//				for (int i = 0; i < containers.length; i++) {
+//					if (containers[i] instanceof DirectoryBundleContainer) {
+//						repo = ((DirectoryBundleContainer) containers[i]).generateArtifactRepository();
+//					}
+//				}
+//			} catch (CoreException e) {
+//				// TODO For now, just don't set the repository
+//			}
+
+			// Hack to just use bundle pool
+			IFileArtifactRepository repo = getBundlePool(fProfile);
+
 			List bundleInfos = new ArrayList();
 			IQueryResult result = fProfile.query(P2Utils.BUNDLE_QUERY, null);
 			for (Iterator iterator = result.iterator(); iterator.hasNext();) {
@@ -156,15 +208,17 @@ public class TargetProvisioner {
 				Collection artifacts = unit.getArtifacts();
 				if (!artifacts.isEmpty()) {
 					IArtifactKey key = (IArtifactKey) artifacts.iterator().next();
-//					IFileArtifactRepository repo = getBundlePool(profile);
-//					File file = repo.getArtifactFile(key);
-//					if (file == null) {
-//						// TODO: missing bundle
-//					} else {
-// TODO Add in bundle location
-					BundleInfo newBundle = new BundleInfo(unit.getId(), unit.getVersion().toString(), null, BundleInfo.NO_LEVEL, false);
+					URI location = null;
+					// TODO Hack for testing
+					if (repo != null) {
+						File file = repo.getArtifactFile(key);
+						if (file != null && file.exists()) {
+							location = file.toURI();
+						}
+					}
+					BundleInfo newBundle = new BundleInfo(unit.getId(), unit.getVersion().toString(), location, BundleInfo.NO_LEVEL, false);
 					bundleInfos.add(newBundle);
-//					}
+
 				}
 
 			}
@@ -172,4 +226,33 @@ public class TargetProvisioner {
 		}
 		return new BundleInfo[0];
 	}
+
+	/**
+	 * Returns the local bundle pool (repository) where bundles are stored for the
+	 * given profile.
+	 * 
+	 * @param profile profile bundles are stored
+	 * @return local file artifact repository
+	 * @throws CoreException
+	 */
+	private IFileArtifactRepository getBundlePool(IProfile profile) {
+		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) fAgent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+		if (manager == null) {
+			// TODO Handle broken service
+//			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			return null;
+		}
+
+		String path = profile.getProperty(IProfile.PROP_CACHE);
+		if (path != null) {
+			URI uri = new File(path).toURI();
+			try {
+				return (IFileArtifactRepository) manager.loadRepository(uri, null);
+			} catch (ProvisionException e) {
+				//the repository doesn't exist, so fall through and create a new one
+			}
+		}
+		return null;
+	}
+
 }

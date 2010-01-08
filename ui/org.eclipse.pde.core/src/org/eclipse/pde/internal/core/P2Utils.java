@@ -29,7 +29,9 @@ import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.S
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.engine.*;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -454,6 +456,10 @@ public class P2Utils {
 		iu.setVersion(Version.fromOSGiVersion(bd.getVersion()));
 		iu.setFilter(bd.getPlatformFilter());
 		iu.setTouchpointType(TOUCHPOINT_OSGI);
+		if (bd.getLocation() != null) {
+			IArtifactKey key = BundlesAction.createBundleArtifactKey(bd.getSymbolicName(), bd.getVersion().toString());
+			iu.setArtifacts(new IArtifactKey[] {key});
+		}
 
 		boolean isFragment = bd.getHost() != null;
 

@@ -14,7 +14,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
@@ -23,12 +22,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  */
 public class EditBundleContainerWizard extends Wizard {
 
-	private ITargetDefinition fTarget;
 	private IBundleContainer fContainer;
 	private IEditBundleContainerPage fPage;
 
-	public EditBundleContainerWizard(ITargetDefinition target, IBundleContainer container) {
-		fTarget = target;
+	public EditBundleContainerWizard(IBundleContainer container) {
 		fContainer = container;
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(AddBundleContainerSelectionPage.SETTINGS_SECTION);
 		if (settings == null) {
@@ -48,8 +45,6 @@ public class EditBundleContainerWizard extends Wizard {
 			fPage = new EditProfileContainerPage(fContainer);
 		} else if (fContainer instanceof FeatureBundleContainer) {
 			fPage = new EditFeatureContainerPage(fContainer);
-		} else if (fContainer instanceof IUBundleContainer) {
-			fPage = new EditIUContainerPage((IUBundleContainer) fContainer, fTarget);
 		}
 		if (fPage != null) {
 			addPage(fPage);
