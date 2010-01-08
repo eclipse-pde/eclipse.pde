@@ -910,7 +910,16 @@ public class ApiErrorsWarningsConfigurationBlock {
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(this.selectionlistener);
 		
-		String currValue= key.getStoredValue(fLookupOrder, false, fManager);
+		String currValue = null;
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=280619
+		//only look up the project and default scopes if the project
+		//already contains project-specific settings
+		if(hasProjectSpecificSettings(fProject)) {
+			currValue = key.getStoredValue(new IScopeContext[] {new ProjectScope(fProject), new DefaultScope()}, false, fManager);
+		}
+		else {
+			currValue = key.getStoredValue(fLookupOrder, false, fManager);
+		}
 		checkBox.setSelection(data.getSelection(currValue) == 0);
 		fCheckBoxes.add(checkBox);
 		return checkBox;
@@ -1052,7 +1061,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 					vcomp,
 					PreferenceMessages.CompatibilityReportApiBreakageWhenMajorVersionIncremented,
 					KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
-					new String[] { ApiPlugin.VALUE_ENABLED, ApiPlugin.VALUE_DISABLED },
+					CHECKBOX_VALUES,
 					2);
 				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
 				scomp.setExpandHorizontal(true);
@@ -1623,9 +1632,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 	}
 	
 	/**
-	 * returns if this block has fProject specific settings
-	 * @param fProject
-	 * @return true if there are fProject specific settings, false otherwise
+	 * returns if this block has project specific settings
+	 * @param project
+	 * @return true if there are project specific settings, false otherwise
 	 */
 	public boolean hasProjectSpecificSettings(IProject project) {
 		if (project != null) {
