@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,6 +138,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					String xml = getStoreAsXml();
 					IFile file = project.getFile(getFilterFilePath(false));
 					if(xml == null) {
+						if(DEBUG) {
+							System.out.println("no XML to persist for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 						// no filters - delete the file if it exists
 						if (file.isAccessible()) {
 							IFolder folder = (IFolder) file.getParent();
@@ -390,9 +393,15 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	synchronized String getStoreAsXml() throws CoreException {
 		if(fFilterMap == null) {
+			if(DEBUG) {
+				System.out.println("no filter map returning null XML for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return null;
 		}
 		if(fFilterMap.isEmpty()) {
+			if(DEBUG) {
+				System.out.println("empty filter map returning null XML for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return null;
 		}
 		Document document = Util.newDocument();
@@ -824,7 +833,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=222442
 			fTriggeredChange = false;
 			if(DEBUG) {
-				System.out.println("ignoring trigered change"); //$NON-NLS-1$
+				System.out.println("ignoring triggered change"); //$NON-NLS-1$
 			}
 			return;
 		}

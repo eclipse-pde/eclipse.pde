@@ -303,7 +303,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			IApiProblemFilter[] filters = null;
 			if(context.hasTypes()) {
 				IResource resource = null;
-				
 				String[] types = context.getStructurallyChangedTypes();
 				for (int i = 0; i < types.length; i++) {
 					if(types[i] == null) {
@@ -313,7 +312,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					if(resource != null) {
 						filters = store.getUnusedFilters(resource, types[i], null);
 						if(autoremove) {
-							toremove.add(filters);
+							addToList(toremove, filters);
 							continue;
 						}
 						createUnusedApiFilterProblems(filters);
@@ -331,7 +330,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								types[i], 
 								new int[] {IApiProblem.CATEGORY_COMPATIBILITY, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.CATEGORY_VERSION});
 						if(autoremove) {
-							toremove.add(filters);
+							addToList(toremove, filters);
 							continue;
 						}
 						createUnusedApiFilterProblems(filters);
@@ -343,7 +342,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			} else {
 				filters = store.getUnusedFilters(null, null, null);
 				if(autoremove) {
-					toremove.add(filters);
+					addToList(toremove, filters);
 					removeUnusedProblemFilters(store, toremove, monitor);
 				}
 				else {
@@ -361,10 +360,24 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	
 	/**
+	 * Adds all of the non-null elements from the given array to the given list
+	 * @param list
+	 * @param array
+	 * @since 1.1
+	 */
+	void addToList(List list, Object[] array) {
+		for (int i = 0; i < array.length; i++) {
+			if(array[i] != null) {
+				list.add(array[i]);
+			}
+		}
+	}
+	
+	/**
 	 * Removes the given set of {@link IApiProblemFilter}s from the given {@link IApiFilterStore}
 	 * using a workspace runnable to avoid resource notifications
 	 * @param store the store to remove from
-	 * @param filterlist list of arrays of filters to batch remove
+	 * @param filterlist list of filters to batch remove
 	 * @param monitor 
 	 * @throws CoreException
 	 * @since 1.1
@@ -372,12 +385,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	void removeUnusedProblemFilters(final IApiFilterStore store, final List filterlist, final IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable runner = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IApiProblemFilter[] filters = null;
-				for (Iterator iter = filterlist.iterator(); iter.hasNext();) {
-					filters = (IApiProblemFilter[]) iter.next();
-					store.removeFilters(filters);
-				}
-				store.removeFilters(filters);
+				store.removeFilters((IApiProblemFilter[]) filterlist.toArray(new IApiProblemFilter[filterlist.size()]));
 			}
 		};
 		ResourcesPlugin.getWorkspace().run(runner, null, IWorkspace.AVOID_UPDATE, monitor);
