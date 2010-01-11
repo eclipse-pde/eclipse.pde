@@ -295,7 +295,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			ApiFilterStore store = (ApiFilterStore)reference.getFilterStore();
 			IProject project = fJavaProject.getProject();
-			boolean autoremove = ApiPlugin.getDefault().getEnableState(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS, project).equals(ApiPlugin.VALUE_ENABLED);
+			boolean autoremove = ApiPlugin.getDefault().getEnableState(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS, project);
 			ArrayList toremove = null;
 			if(autoremove) {
 				toremove = new ArrayList(8);
@@ -645,7 +645,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			// we ignore it for non-OSGi case
 			return false;
 		}
-		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, fJavaProject.getProject().getProject()).equals(ApiPlugin.VALUE_ENABLED);
+		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, fJavaProject.getProject().getProject());
 	}
 	
 	/**
@@ -695,14 +695,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			// we ignore it for non-OSGi case
 			return true;
 		}
-		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, fJavaProject.getProject().getProject()).equals(ApiPlugin.VALUE_DISABLED);
+		return !ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, fJavaProject.getProject().getProject());
 	}
 	private boolean ignoreMajorVersionCheckWithoutBreakingChange() {
 		if (fJavaProject == null) {
 			// we ignore it for non-OSGi case
 			return true;
 		}
-		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, fJavaProject.getProject().getProject()).equals(ApiPlugin.VALUE_DISABLED);
+		return !ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, fJavaProject.getProject().getProject());
 	}
 	/**
 	 * @return if the invalid tag check should be ignored

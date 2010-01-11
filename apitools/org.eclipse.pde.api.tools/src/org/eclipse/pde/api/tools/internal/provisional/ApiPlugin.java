@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal.provisional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ISaveContext;
@@ -507,15 +506,14 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public int getSeverityLevel(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
-		List scopes = new ArrayList();
-		scopes.add(new InstanceScope());
-		if(project != null) {
-			scopes.add(new ProjectScope(project));
+		IScopeContext[] context = null;
+		if(hasProjectSettings(project)) {
+			context = new IScopeContext[] {new ProjectScope(project), new DefaultScope()};
 		}
-		String value = service.getString(PLUGIN_ID, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
-		if(value == null) {
-			value = service.getString(PLUGIN_ID, prefkey, VALUE_IGNORE, new IScopeContext[]{new DefaultScope()});
+		else {
+			context = new IScopeContext[] {new InstanceScope(), new DefaultScope()};
 		}
+		String value = service.get(prefkey, null, getPreferences(context));
 		if(VALUE_ERROR.equals(value)) {
 			return SEVERITY_ERROR;
 		}
@@ -523,6 +521,55 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			return SEVERITY_WARNING;
 		}
 		return SEVERITY_IGNORE;
+	}
+	
+	/**
+	 * Returns the array of {@link IEclipsePreferences} nodes to look in to determine
+	 * the value of a given preference. 
+	 * This method will return <code>null</code> iff:
+	 * <ul>
+	 * <li>the given array of contexts are <code>null</code></li> 
+	 * <li>if no nodes could be determined from the given contexts</li>
+	 * </ul>
+	 * @param context
+	 * @return the array of {@link IEclipsePreferences} to look in or <code>null</code>.
+	 * @since 1.1
+	 */
+	IEclipsePreferences[] getPreferences(IScopeContext[] context) {
+		if(context != null) {
+			ArrayList nodes = new ArrayList(context.length);
+			IEclipsePreferences node = null;
+			for (int i = 0; i < context.length; i++) {
+				node = context[i].getNode(PLUGIN_ID);
+				if(node != null) {
+					nodes.add(node);
+				}
+			}
+			if(nodes.size() > 0) {
+				return (IEclipsePreferences[]) nodes.toArray(new IEclipsePreferences[nodes.size()]);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns if the given project has project-specific settings
+	 * @param project
+	 * @return true if the project has specific settings, false otherwise
+	 * @since 1.1
+	 */
+	boolean hasProjectSettings(IProject project) {
+		if(project != null) {
+			ProjectScope scope = new ProjectScope(project);
+			IEclipsePreferences node = scope.getNode(PLUGIN_ID);
+			try {
+				return node != null && node.keys().length > 0;
+			}
+			catch(BackingStoreException bse) {
+				log(bse);
+			}
+		}
+		return false;
 	}
 	
 	public ISessionManager getSessionManager() {
@@ -542,18 +589,17 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * @param project the given project or <code>null</code>
 	 * @return the enable state
 	 */
-	public String getEnableState(String prefkey, IProject project) {
+	public boolean getEnableState(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
-		List scopes = new ArrayList();
-		scopes.add(new InstanceScope());
-		if(project != null) {
-			scopes.add(new ProjectScope(project));
+		IScopeContext[] context = null;
+		if(hasProjectSettings(project)) {
+			context = new IScopeContext[] {new ProjectScope(project), new DefaultScope()};
 		}
-		String value = service.getString(PLUGIN_ID, prefkey, null, (IScopeContext[]) scopes.toArray(new IScopeContext[scopes.size()]));
-		if(value == null) {
-			value = service.getString(PLUGIN_ID, prefkey, VALUE_DISABLED, new IScopeContext[]{new DefaultScope()}); 
+		else {
+			context = new IScopeContext[] {new InstanceScope(), new DefaultScope()};
 		}
-		return value;
+		String value = service.get(prefkey, null, getPreferences(context));
+		return VALUE_ENABLED.equals(value);
 	}
 	/**
 	 * Method to configure all of the debug options for this plugin
