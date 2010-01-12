@@ -182,7 +182,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				IDSConstants.VALUE_REFERENCE_POLICY_DYNAMIC,
 				IDSConstants.VALUE_REFERENCE_POLICY_STATIC };
 
-		if (attribute != null) {
+		if (attribute != null && attribute.length() > 0) {
 			for (int i = 0; i < allowedValues.length; i++) {
 				if (allowedValues[i].equalsIgnoreCase(attribute)) {
 					return;
