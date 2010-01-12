@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (isNonAPIReference(reference)) {
+		if (super.considerReference(reference) & isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			if (member != null && matchesSourceModifiers(member) && matchesSourceApiRestrictions(member)) {
 				retainReference(reference);

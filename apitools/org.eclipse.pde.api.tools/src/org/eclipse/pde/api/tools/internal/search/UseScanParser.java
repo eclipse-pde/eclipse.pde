@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,9 +146,14 @@ public class UseScanParser {
 					origin = Factory.typeDescriptor(qName);
 				}
 				String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
+				String flags = attributes.getValue(IApiXmlConstants.ATTR_FLAGS);
 				try {
 					int num = Integer.parseInt(line);
-					setReference(origin, num);
+					int flgs = 0;
+					if(flags != null) {
+						flgs = Integer.parseInt(flags);
+					}
+					setReference(origin, num, flgs);
 				} catch (NumberFormatException e) {
 					// TODO:
 					System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
@@ -180,13 +185,12 @@ public class UseScanParser {
 		Util.updateMonitor(localmonitor, 1);
 		File[] origins = null;
 		File[] xmlfiles = null;
-		SubMonitor smonitor = localmonitor.newChild(7);
-		smonitor.setWorkRemaining(referees.length);
+		localmonitor.setWorkRemaining(referees.length);
 		visitor.visitScan();
 		try {
 			SAXParser parser = getParser();
 			for (int i = 0; i < referees.length; i++) {
-				smonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {referees[i].getName()}));
+				localmonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {referees[i].getName()}));
 				origins = getDirectories(referees[i]);
 				origins = sort(origins); // sort to visit in determined order
 				for (int j = 0; j < origins.length; j++) {
@@ -199,6 +203,7 @@ public class UseScanParser {
 						xmlfiles = sort(xmlfiles); // sort to visit in determined order
 						for (int k = 0; k < xmlfiles.length; k++) {
 							try {
+								localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_parsing_xml_file_0, xmlfiles[k].getName()));
 								ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
 								parser.parse(xmlfiles[k], handler);
 							} 
@@ -207,7 +212,7 @@ public class UseScanParser {
 						}
 					}
 				}
-				Util.updateMonitor(smonitor, 1);
+				Util.updateMonitor(localmonitor, 1);
 			}
 			endMember();
 			endReferencingComponent();
@@ -215,9 +220,7 @@ public class UseScanParser {
 		}
 		finally {
 			visitor.endVisitScan();
-			if(!smonitor.isCanceled()) {
-				smonitor.done();
-			}
+			localmonitor.done();
 		}		
 	}
 	
@@ -327,9 +330,9 @@ public class UseScanParser {
 		referenceKind = refKind;
 	}
 	
-	public void setReference(IMemberDescriptor from, int lineNumber) {
+	public void setReference(IMemberDescriptor from, int lineNumber, int flags) {
 		if (visitReferencingComponent&& visitMembers && visitReferences) {
-			visitor.visitReference(referenceKind, from, lineNumber, visibility);
+			visitor.visitReference(referenceKind, flags, from, lineNumber, visibility);
 		}
 	}
 	

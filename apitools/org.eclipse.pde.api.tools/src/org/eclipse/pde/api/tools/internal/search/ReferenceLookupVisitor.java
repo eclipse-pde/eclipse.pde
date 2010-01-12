@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,11 +131,11 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, java.lang.String, int, int)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, int, org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor, int, int)
 	 */
-	public void visitReference(int refKind, IMemberDescriptor origin, int lineNumber, int visibility) {
+	public void visitReference(int refKind, int refFlags, IMemberDescriptor origin, int lineNumber, int visibility) {
 		Reference ref = null;
 		IApiMember resolved = null;
 		if (currType != null) {
@@ -161,7 +161,7 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		}
 		if (resolved == null) {
 			// ERROR - failed to resolve
-			addError(new ReferenceDescriptor(referencingComponent, origin, lineNumber, targetComponent, targetMember, refKind, visibility));
+			addError(new ReferenceDescriptor(referencingComponent, origin, lineNumber, targetComponent, targetMember, refKind, refFlags, visibility));
 		}
 	}
 	

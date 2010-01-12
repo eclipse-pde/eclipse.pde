@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,11 +99,12 @@ public class UseScanVisitor {
 	 * Visits a reference to the current member.
 	 * 
 	 * @param refKind the kind of {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference} 
+	 * @param refFlags the flags of the {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference}
 	 * @param fromMember describes the member the reference was made from 
 	 * @param lineNumber the line number the reference was on or -1 if unknown
 	 * @param visibility see {@link org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers}
 	 */
-	public void visitReference(int refKind, IMemberDescriptor fromMember, int lineNumber, int visibility) {
+	public void visitReference(int refKind, int refFlags, IMemberDescriptor fromMember, int lineNumber, int visibility) {
 		
 	}
 	

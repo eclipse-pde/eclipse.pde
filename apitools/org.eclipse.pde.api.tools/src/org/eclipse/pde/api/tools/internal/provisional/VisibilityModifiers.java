@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,11 @@ public final class VisibilityModifiers {
 	 * audience (service provider interface).
 	 */
 	public static final int SPI = 0x0004;
-	
+	/**
+	 * Visibility constant indicating an element is API but illegal to use.
+	 * i.e. the element has API restrictions
+	 */
+	public static final int ILLEGAL_API = 0x0016;
 	/**
 	 * Visibility constant indicating an element is private, but some
 	 * clients have been permitted access to the element.
@@ -119,6 +123,9 @@ public final class VisibilityModifiers {
 			}
 			case SPI: {
 				return "SPI"; //$NON-NLS-1$
+			}
+			case ILLEGAL_API: {
+				return "ILLEGAL_API"; //$NON-NLS-1$
 			}
 			case 0: {
 				return "INHERITED"; //$NON-NLS-1$

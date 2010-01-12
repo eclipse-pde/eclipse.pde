@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * @param componentId the component the type is located in
 	 */
 	void addIllegalMethod(IMethodDescriptor method, String componentId) {
-		fIllegalMethods.put(new MethodKey(method.getName(), method.getSignature()), method);
+		fIllegalMethods.put(new MethodKey(method.getEnclosingType().getQualifiedName(), method.getName(), method.getSignature()), method);
 		fMethodComponents.put(method, componentId);
 	}	
 
@@ -55,7 +55,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (fIllegalMethods.containsKey(new MethodKey(reference.getReferencedMemberName(), reference.getReferencedSignature()))) {
+		if (super.considerReference(reference) & fIllegalMethods.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature()))) {
 			retainReference(reference);
 			return true;
 		}

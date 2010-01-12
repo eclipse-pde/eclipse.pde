@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final int KIND_TARGET_DEFINITION = 1;
 	public static final int KIND_API_BASELINE = 2;
 	public static final int KIND_INSTALL_PATH = 3;
+	public static final int KIND_HTML_ONLY = 4;
 	
 	/**
 	 * Target definition handle
@@ -82,12 +83,11 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	 */
 	public static final int MOD_API_REFERENCES			= 1;
 	public static final int MOD_INTERNAL_REFERENCES		= 1 << 1;
+	public static final int MOD_ILLEGAL_USE				= 1 << 6;
 	public static final int CLEAN_XML					= 1 << 2;
 	public static final int CLEAN_HTML					= 1 << 3;
 	public static final int CREATE_HTML					= 1 << 4;
 	public static final int DISPLAY_REPORT				= 1 << 5;
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)

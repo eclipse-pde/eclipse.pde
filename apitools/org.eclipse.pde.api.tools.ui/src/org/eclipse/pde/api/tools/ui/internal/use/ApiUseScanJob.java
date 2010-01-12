@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,74 +95,97 @@ public class ApiUseScanJob extends Job {
 		// Build API baseline
 		SubMonitor localmonitor = SubMonitor.convert(monitor);
 		try {
-			localmonitor.setTaskName(Messages.ApiUseScanJob_preparing_for_scan);
-			localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 14 : 13));
-			// create baseline
-			IApiBaseline baseline = createApiBaseline(localmonitor.newChild(1));
-			Set ids = new HashSet();
-			TreeSet scope = new TreeSet(Util.componentsorter);	
-			getContext(baseline, ids, scope, localmonitor.newChild(2));
-			int kinds = 0;
-			if (isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES)) {
-				kinds |= IApiSearchRequestor.INCLUDE_API;
-			}
-			if (isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES)) {
-				kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
-			}
-			UseSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
-			List jars = this.configuration.getAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, (List)null);
-			String[] sjars = getStrings(jars);
-			requestor.setJarPatterns(sjars);
-			List api = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
-			String[] sapi = getStrings(api);
-			List internal = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
-			String[] sinternal = getStrings(internal);
-			if (sapi != null || sinternal != null) {
-				// modify API descriptions
-				IApiComponent[] components = baseline.getApiComponents();
-				ApiDescriptionModifier visitor = new ApiDescriptionModifier(sinternal, sapi);
-				for (int i = 0; i < components.length; i++) {
-					IApiComponent component = components[i];
-					if (!component.isSystemComponent() && !component.isSourceComponent()) {
-						visitor.setApiDescription(component.getApiDescription());
-						component.getApiDescription().accept(visitor, null);
-					}
-				}
-			}
 			IPath rootpath = null;
 			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String)null);
 			if (xmlPath == null) {
 				abort(Messages.ApiUseScanJob_missing_xml_loc);
 			}
 			rootpath = new Path(xmlPath); 
-			xmlPath = rootpath.append("xml").toOSString(); //$NON-NLS-1$
-			if(isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
-				localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
-				scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
+			int kind = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_KIND, 0);
+			if(kind != ApiUseLaunchDelegate.KIND_HTML_ONLY) {
+				localmonitor.setTaskName(Messages.ApiUseScanJob_preparing_for_scan);
+				localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 14 : 13));
+				// create baseline
+				IApiBaseline baseline = createApiBaseline(kind, localmonitor.newChild(1));
+				Set ids = new HashSet();
+				TreeSet scope = new TreeSet(Util.componentsorter);	
+				getContext(baseline, ids, scope, localmonitor.newChild(2));
+				int kinds = 0;
+				if (isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES)) {
+					kinds |= IApiSearchRequestor.INCLUDE_API;
+				}
+				if (isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES)) {
+					kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
+				}
+				if(isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE)) {
+					kinds |= IApiSearchRequestor.INCLUDE_ILLEGAL_USE;
+				}
+				UseSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
+				List jars = this.configuration.getAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, (List)null);
+				String[] sjars = getStrings(jars);
+				requestor.setJarPatterns(sjars);
+				List api = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
+				String[] sapi = getStrings(api);
+				List internal = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
+				String[] sinternal = getStrings(internal);
+				if (sapi != null || sinternal != null) {
+					// modify API descriptions
+					IApiComponent[] components = baseline.getApiComponents();
+					ApiDescriptionModifier visitor = new ApiDescriptionModifier(sinternal, sapi);
+					for (int i = 0; i < components.length; i++) {
+						IApiComponent component = components[i];
+						if (!component.isSystemComponent() && !component.isSourceComponent()) {
+							visitor.setApiDescription(component.getApiDescription());
+							component.getApiDescription().accept(visitor, null);
+						}
+					}
+				}
+				xmlPath = rootpath.append("xml").toOSString(); //$NON-NLS-1$
+				if(isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
+					localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
+					scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
+				}
+				UseMetadata data = new UseMetadata(
+						kinds, 
+						this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null), 
+						this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null), 
+						baseline.getLocation(), 
+						xmlPath, 
+						sapi, 
+						sinternal, 
+						sjars,
+						DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()),
+						this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String)null));
+				IApiSearchReporter reporter = new XmlSearchReporter(
+						xmlPath, 
+						false);
+				try {
+					ApiSearchEngine engine = new ApiSearchEngine();
+					engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
+				}
+				finally {
+					reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
+					reporter.reportMetadata(data);
+					// Dispose the baseline if it's not managed (it's temporary)
+					ApiBaselineManager apiManager = ApiBaselineManager.getManager();
+					IApiBaseline[] baselines = apiManager.getApiBaselines();
+					boolean dispose = true;
+					for (int i = 0; i < baselines.length; i++) {
+						if (baseline.equals(baselines[i])) {
+							dispose = false;
+							break;
+						}
+					}
+					if (dispose) {
+						baseline.dispose();
+					}
+				}
 			}
-			UseMetadata data = new UseMetadata(
-					kinds, 
-					this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null), 
-					this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null), 
-					baseline.getLocation(), 
-					xmlPath, 
-					sapi, 
-					sinternal, 
-					sjars,
-					DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()),
-					this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String)null));
-			IApiSearchReporter reporter = new XmlSearchReporter(
-					xmlPath, 
-					false);
-			try {
-				ApiSearchEngine engine = new ApiSearchEngine();
-				engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
-			}
-			finally {
-				reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
-				reporter.reportMetadata(data);
+			else {
+				localmonitor.setWorkRemaining(10);
 			}
 			if(isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
+				localmonitor.setTaskName("Generating HTML reports");
 				String htmlPath = rootpath.append("html").toOSString(); //$NON-NLS-1$
 				performReportCreation(
 						isSpecified(ApiUseLaunchDelegate.CLEAN_HTML),
@@ -172,19 +195,7 @@ public class ApiUseScanJob extends Job {
 						getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List)null)),
 						localmonitor.newChild(10));
 			}
-			// Dispose the baseline if it's not managed (it's temporary)
-			ApiBaselineManager apiManager = ApiBaselineManager.getManager();
-			IApiBaseline[] baselines = apiManager.getApiBaselines();
-			boolean dispose = true;
-			for (int i = 0; i < baselines.length; i++) {
-				if (baseline.equals(baselines[i])) {
-					dispose = false;
-					break;
-				}
-			}
-			if (dispose) {
-				baseline.dispose();
-			}
+			
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
@@ -212,13 +223,13 @@ public class ApiUseScanJob extends Job {
 
 	/**
 	 * Creates a new {@link IApiBaseline} from the location set in the backing launch configuration
+	 * @param kind
 	 * @param monitor
 	 * @return the new {@link IApiBaseline}
 	 * @throws CoreException
 	 */
-	private IApiBaseline createApiBaseline(IProgressMonitor monitor) throws CoreException {
+	private IApiBaseline createApiBaseline(int kind, IProgressMonitor monitor) throws CoreException {
 		ApiBaselineManager bmanager = ApiBaselineManager.getManager();
-		int kind = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_KIND, 0);
 		switch (kind) {
 			case ApiUseLaunchDelegate.KIND_API_BASELINE:
 				String name = this.configuration.getAttribute(ApiUseLaunchDelegate.BASELINE_NAME, (String)null);

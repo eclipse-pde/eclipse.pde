@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
@@ -54,6 +55,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Tab for an API use scan
+ * @since 1.1
  */
 public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	
@@ -82,21 +84,25 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	Button radioBaseline = null, 
 		   radioTarget = null, 
 		   radioInstall = null,
+		   radioReportOnly = null,
 		   baselinesButton = null, 
 		   targetsButton = null, 
-		   installButton = null;
+		   installButton = null,
+		   considerapi = null,
+		   considerinternal = null,
+		   consideruse = null,
+		   createhtml = null,
+		   openreport = null,
+		   cleanreportlocation = null,
+		   cleanhtmllocation = null;
 	ITargetHandle[] targetHandles = new ITargetHandle[0];
 	Text installLocation = null,
 		 searchScope = null,
 		 targetScope = null,
 		 reportlocation = null,
 		 description = null;
-	Button considerapi = null,
-		   considerinternal = null,
-		   createhtml = null,
-		   openreport = null,
-		   cleanreportlocation = null,
-		   cleanhtmllocation = null;
+	Group searchForGroup = null,
+		  searchInGroup = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -196,21 +202,32 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		this.radioReportOnly = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_generate_html_only);
+		gd = (GridData)this.radioReportOnly.getLayoutData();
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalSpan = 2;
+		this.radioReportOnly.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTarget();
+			}
+		});
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_HORIZONTAL);
-		SWTFactory.createLabel(group, Messages.ApiUseScanTab_references_to, 1);
-		this.targetScope = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
+		searchForGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_HORIZONTAL);
+		SWTFactory.createLabel(searchForGroup, Messages.ApiUseScanTab_references_to, 1);
+		this.targetScope = SWTFactory.createText(searchForGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.targetScope.addModifyListener(modifyadapter);		
-		this.considerapi = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_api_references, null, true, 2);
+		this.considerapi = SWTFactory.createCheckButton(searchForGroup, Messages.ApiUseScanTab_api_references, null, true, 2);
 		this.considerapi.addSelectionListener(selectionadapter);
-		this.considerinternal = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_internal_references, null, true, 2);
+		this.considerinternal = SWTFactory.createCheckButton(searchForGroup, Messages.ApiUseScanTab_internal_references, null, true, 2);
 		this.considerinternal.addSelectionListener(selectionadapter);		
+		this.consideruse = SWTFactory.createCheckButton(searchForGroup, Messages.ApiUseScanTab_illegal_api_use, null, true, 2);
+		this.consideruse.addSelectionListener(selectionadapter);
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_in, 2, 1, GridData.FILL_HORIZONTAL);
-		gd = (GridData)group.getLayoutData();
+		searchInGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_in, 2, 1, GridData.FILL_HORIZONTAL);
+		gd = (GridData)searchInGroup.getLayoutData();
 		gd.verticalAlignment = SWT.FILL;
-		SWTFactory.createLabel(group, Messages.ApiUseScanTab_bundles_matching, 1);
-		this.searchScope = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
+		SWTFactory.createLabel(searchInGroup, Messages.ApiUseScanTab_bundles_matching, 1);
+		this.searchScope = SWTFactory.createText(searchInGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.searchScope.addModifyListener(modifyadapter);
 		
 		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
@@ -269,6 +286,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				targetsButton.setEnabled(false);
 				installLocation.setEnabled(false);
 				installButton.setEnabled(false);
+				this.createhtml.setEnabled(true);
+				setGroupEnablement(this.searchForGroup, true);
+				setGroupEnablement(this.searchInGroup, true);
 				break;
 			}
 			case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION: {
@@ -278,6 +298,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				targetsButton.setEnabled(true);
 				installLocation.setEnabled(false);
 				installButton.setEnabled(false);
+				this.createhtml.setEnabled(true);
+				setGroupEnablement(this.searchForGroup, true);
+				setGroupEnablement(this.searchInGroup, true);
 				break;
 			}
 			case ApiUseLaunchDelegate.KIND_INSTALL_PATH: {
@@ -287,10 +310,38 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				targetsButton.setEnabled(false);
 				installLocation.setEnabled(true);
 				installButton.setEnabled(true);
+				this.createhtml.setEnabled(true);
+				setGroupEnablement(this.searchForGroup, true);
+				setGroupEnablement(this.searchInGroup, true);
+				break;
+			}
+			case ApiUseLaunchDelegate.KIND_HTML_ONLY: {
+				baseline.setEnabled(false);
+				baselinesButton.setEnabled(false);
+				targetCombo.setEnabled(false);
+				targetsButton.setEnabled(false);
+				installLocation.setEnabled(false);
+				installButton.setEnabled(false);
+				this.createhtml.setSelection(true);
+				this.createhtml.setEnabled(false);
+				setGroupEnablement(this.searchForGroup, false);
+				setGroupEnablement(this.searchInGroup, false);
 				break;
 			}
 		}
 		updateLaunchConfigurationDialog();
+	}
+	
+	/**
+	 * Sets the enabled state of all of the child of the given group
+	 * @param group
+	 * @param enabled
+	 */
+	void setGroupEnablement(Group group, boolean enabled) {
+		Control[] children = group.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].setEnabled(enabled);
+		}
 	}
 	
 	/**
@@ -303,6 +354,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			return ApiUseLaunchDelegate.KIND_TARGET_DEFINITION;
 		} else if (this.radioInstall.getSelection()) {
 			return ApiUseLaunchDelegate.KIND_INSTALL_PATH;
+		} else if(this.radioReportOnly.getSelection()) {
+			return ApiUseLaunchDelegate.KIND_HTML_ONLY;
 		} else {
 			return -1;
 		}
@@ -402,10 +455,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			if(this.targetCombo.getSelectionIndex() < 0) {
 				this.targetCombo.select(0);
 			}
-			this.installLocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, "")); //$NON-NLS-1$
+			this.installLocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, IApiToolsConstants.EMPTY_STRING)); 
 			this.considerapi.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES, configuration));
 			this.considerinternal.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, configuration));
-			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, "")); //$NON-NLS-1$
+			this.consideruse.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE, configuration));
+			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
 			this.cleanreportlocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_XML, configuration));
 			boolean enabled = isSpecified(ApiUseLaunchDelegate.CREATE_HTML, configuration);
 			this.createhtml.setSelection(enabled);
@@ -413,9 +467,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.cleanhtmllocation.setEnabled(enabled);
 			this.openreport.setSelection(isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT, configuration));
 			this.cleanhtmllocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_HTML, configuration));
-			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, "")); //$NON-NLS-1$
-			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, "")); //$NON-NLS-1$
-			this.description.setText(configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, "")); //$NON-NLS-1$
+			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
+			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
+			this.description.setText(configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
 			updateTarget();
 		} catch (CoreException e) {
 			setErrorMessage(e.getStatus().getMessage());
@@ -438,28 +492,46 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				radioBaseline.setSelection(true);
 				radioTarget.setSelection(false);
 				radioInstall.setSelection(false);
+				radioReportOnly.setSelection(false);
 				break;
 			}
 			case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION: {
 				radioBaseline.setSelection(false);
 				radioTarget.setSelection(true);
 				radioInstall.setSelection(false);
+				radioReportOnly.setSelection(false);
 				break;
 			}
 			case ApiUseLaunchDelegate.KIND_INSTALL_PATH: {
 				radioBaseline.setSelection(false);
 				radioTarget.setSelection(false);
 				radioInstall.setSelection(true);
+				radioReportOnly.setSelection(false);
+				break;
+			}
+			case ApiUseLaunchDelegate.KIND_HTML_ONLY: {
+				radioBaseline.setSelection(false);
+				radioTarget.setSelection(false);
+				radioInstall.setSelection(false);
+				radioReportOnly.setSelection(true);
 				break;
 			}
 			default: {
 				radioBaseline.setSelection(true);
 				radioTarget.setSelection(false);
 				radioInstall.setSelection(false);
+				radioReportOnly.setSelection(false);
 			}
 		}
 	}
 	
+	/**
+	 * Returns <code>true</code> if the given modifier is set in the configuration
+	 * @param modifier
+	 * @param configuration
+	 * @return
+	 * @throws CoreException
+	 */
 	private boolean isSpecified(int modifier, ILaunchConfiguration configuration) throws CoreException {
 		int modifiers = configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, 0);
 		return (modifiers & modifier) > 0;
@@ -503,6 +575,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		modifiers = consider(this.cleanreportlocation, ApiUseLaunchDelegate.CLEAN_XML, modifiers);
 		modifiers = consider(this.considerapi, ApiUseLaunchDelegate.MOD_API_REFERENCES, modifiers);
 		modifiers = consider(this.considerinternal, ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, modifiers);
+		modifiers = consider(this.consideruse, ApiUseLaunchDelegate.MOD_ILLEGAL_USE, modifiers);
 		modifiers = consider(this.createhtml, ApiUseLaunchDelegate.CREATE_HTML, modifiers);
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
 		IPath path = new Path(this.reportlocation.getText().trim());

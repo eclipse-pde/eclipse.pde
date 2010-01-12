@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,11 @@ public class Reference implements IReference {
 	private int fKind;
 	
 	/**
+	 * Flags for the reference
+	 */
+	private int fFlags = 0;
+	
+	/**
 	 * One of the valid type, method, field.
 	 */
 	private int fType;
@@ -104,6 +109,21 @@ public class Reference implements IReference {
 		return fKind;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IReference#getReferenceFlags()
+	 */
+	public int getReferenceFlags() {
+		return fFlags;
+	}
+	
+	/**
+	 * OR's the given set of new flags with the current set of flags
+	 * @param newflags
+	 */
+	public void setFlags(int newflags) {
+		fFlags |= newflags;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getReferenceType()
 	 */
@@ -664,6 +684,8 @@ public class Reference implements IReference {
 				getLineNumber(),
 				(IComponentDescriptor)rcomponent.getHandle(),
 				res.getHandle(),
-				getReferenceKind(), visibility);
+				getReferenceKind(),
+				getReferenceFlags(),
+				visibility);
 	}
 }

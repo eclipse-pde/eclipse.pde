@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,11 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * If internal references should be considered in the search
 	 */
 	private boolean considerinternal = false;
+	/**
+	 * if illegal API use should be reported in the search
+	 * @since 1.1
+	 */
+	private boolean considerillegaluse = false;
 	/**
 	 * Set of project names that were not searched
 	 */
@@ -169,6 +174,17 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 */
 	public void setConsiderAPI(String considerapi) {
 		this.considerapi = Boolean.toString(true).equals(considerapi);
+	}
+	
+	/**
+	 * Sets if illegal API use should be considered in the search.
+	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
+	 * <p>Default is <code>false</code>.</p>
+	 * 
+	 * @param considerillegaluse the given value
+	 */
+	public void setConsiderIllegalUse(String considerillegaluse) {
+		this.considerillegaluse = Boolean.toString(true).equals(considerillegaluse);
 	}
 	
 	/**
@@ -362,6 +378,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	protected int getSearchFlags() {
 		int flags = (this.considerapi ? IApiSearchRequestor.INCLUDE_API : 0);
 		flags |= (this.considerinternal ? IApiSearchRequestor.INCLUDE_INTERNAL : 0);
+		flags |= (this.considerillegaluse ? IApiSearchRequestor.INCLUDE_ILLEGAL_USE : 0);
 		return flags;
 	}
 	
@@ -434,6 +451,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 			System.out.println("Report location : " + this.reportLocation); //$NON-NLS-1$
 			System.out.println("Searching for API references : " + this.considerapi); //$NON-NLS-1$
 			System.out.println("Searching for internal references : " + this.considerinternal); //$NON-NLS-1$
+			System.out.println("Searching for illegal API use : "+ this.considerillegaluse); //$NON-NLS-1$
 			if(this.scopepattern == null) {
 				System.out.println("No scope pattern defined - searching all bundles"); //$NON-NLS-1$
 			}

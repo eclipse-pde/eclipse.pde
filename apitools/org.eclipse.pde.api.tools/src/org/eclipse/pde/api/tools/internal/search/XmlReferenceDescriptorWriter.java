@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class XmlReferenceDescriptorWriter {
 	public static final String TYPE_REFERENCES = "type_references"; //$NON-NLS-1$
 	public static final String METHOD_REFERENCES = "method_references"; //$NON-NLS-1$
 	public static final String FIELD_REFERENCES = "field_references"; //$NON-NLS-1$
-	
+	private static final Integer V_ILLEGAL = new Integer(VisibilityModifiers.ILLEGAL_API);
 	private String fLocation = null;
 	private HashMap fReferenceMap = null;
 	private DocumentBuilder parser = null;
@@ -151,30 +151,12 @@ public class XmlReferenceDescriptorWriter {
 				mmap = new HashMap();
 				rmap.put(id, mmap);
 			}
-			visibility = new Integer(references[i].getVisibility());
-//			fDescription = rcomponent.getApiDescription();
-//			annot = fDescription.resolveAnnotations(references[i].getResolvedReference().getHandle());
-//			if(annot != null) {
-//				visibility = new Integer(annot.getVisibility());
-//				if(annot.getVisibility() == VisibilityModifiers.PRIVATE) {
-//					IApiComponent host = mcomponent.getHost();
-//					if(host != null && host.getId().equals(rcomponent.getId())) {
-//						visibility = new Integer(UseReportConverter.FRAGMENT_PERMISSIBLE);
-//					}
-//					else {
-//						IApiAccess access = fDescription.resolveAccessLevel(
-//								mcomponent.getHandle(), 
-//								getPackageDescriptor(references[i].getResolvedReference()));
-//						if(access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
-//							visibility = new Integer(VisibilityModifiers.PRIVATE_PERMISSIBLE);
-//						}
-//					}
-//				}
-//			}
-//			else {
-//				//overflow for those references that cannot be resolved
-//				visibility = new Integer(VisibilityModifiers.ALL_VISIBILITIES);
-//			}
+			if((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
+				visibility = V_ILLEGAL;
+			}
+			else {
+				visibility = new Integer(references[i].getVisibility());
+			}
 			vmap = (HashMap) mmap.get(visibility);
 			if(vmap == null) {
 				vmap = new HashMap();
@@ -473,6 +455,7 @@ public class XmlReferenceDescriptorWriter {
 			kelement = document.createElement(IApiXmlConstants.REFERENCE_KIND);
 			kelement.setAttribute(IApiXmlConstants.ATTR_REFERENCE_KIND_NAME, Reference.getReferenceText(kind.intValue()));
 			kelement.setAttribute(IApiXmlConstants.ATTR_KIND, kind.toString());
+			kelement.setAttribute(IApiXmlConstants.ATTR_FLAGS, Integer.toString(reference.getReferenceFlags()));
 			parent.appendChild(kelement);
 		}
 		Element relement = document.createElement(IApiXmlConstants.ATTR_REFERENCE);

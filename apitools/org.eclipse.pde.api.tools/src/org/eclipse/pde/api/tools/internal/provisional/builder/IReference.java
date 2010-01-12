@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,13 @@ public interface IReference {
 	 * @see #getReferenceType()
 	 */
 	public static final int T_METHOD_REFERENCE = 3;
+	
+	/**
+	 * Flag to indicate the reference is illegal, i.e. a reference
+	 * made to an API restricted {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}
+	 * @since 1.1
+	 */
+	public static final int F_ILLEGAL = 1;
 	
 	/**
 	 * Constant representing the superclass of the class is a class in the target space.
@@ -313,6 +320,13 @@ public interface IReference {
 	 * @return reference kind - one of the reference modifiers
 	 */
 	public int getReferenceKind();
+	
+	/**
+	 * Returns any flags set on the reference
+	 * 
+	 * @return any flags set on the reference
+	 */
+	public int getReferenceFlags();
 	
 	/**
 	 * Returns the type of reference that has been made - one of type, field, or method.

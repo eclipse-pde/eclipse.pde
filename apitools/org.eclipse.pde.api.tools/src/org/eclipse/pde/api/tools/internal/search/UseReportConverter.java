@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,11 +220,11 @@ public class UseReportConverter extends HTMLConvertor {
 				}
 			}
 		}
-		
+	
 		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor, int, int)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, int, org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor, int, int)
 		 */
-		public void visitReference(int refKind, IMemberDescriptor fromMember, int lineNumber, int visibility) {
+		public void visitReference(int refKind, int refFlags, IMemberDescriptor fromMember, int lineNumber, int visibility) {
 			if(!acceptReference(fromMember)) {
 				return;
 			}
@@ -264,6 +264,13 @@ public class UseReportConverter extends HTMLConvertor {
 							this.currenttype.counts.total_fragment_permissible_type_count++;
 							this.currentreferee.counts.total_fragment_permissible_type_count++;
 							this.currentreport.counts.total_fragment_permissible_type_count++;
+							break;
+						}
+						case VisibilityModifiers.ILLEGAL_API: {
+							this.currentmember.counts.total_illegal_type_count++;
+							this.currenttype.counts.total_illegal_type_count++;
+							this.currentreferee.counts.total_illegal_type_count++;
+							this.currentreport.counts.total_illegal_type_count++;
 							break;
 						}
 						default: {
@@ -306,6 +313,13 @@ public class UseReportConverter extends HTMLConvertor {
 							this.currentreport.counts.total_fragment_permissible_method_count++;
 							break;
 						}
+						case VisibilityModifiers.ILLEGAL_API: {
+							this.currentmember.counts.total_illegal_method_count++;
+							this.currenttype.counts.total_illegal_method_count++;
+							this.currentreferee.counts.total_illegal_method_count++;
+							this.currentreport.counts.total_illegal_method_count++;
+							break;
+						}
 						default: {
 							this.currentmember.counts.total_other_method_count++;
 							this.currenttype.counts.total_other_method_count++;
@@ -344,6 +358,13 @@ public class UseReportConverter extends HTMLConvertor {
 							this.currenttype.counts.total_fragment_permissible_field_count++;
 							this.currentreferee.counts.total_fragment_permissible_field_count++;
 							this.currentreport.counts.total_fragment_permissible_field_count++;
+							break;
+						}
+						case VisibilityModifiers.ILLEGAL_API: {
+							this.currentmember.counts.total_illegal_field_count++;
+							this.currenttype.counts.total_illegal_field_count++;
+							this.currentreferee.counts.total_illegal_field_count++;
+							this.currentreport.counts.total_illegal_field_count++;
 							break;
 						}
 						default: {
@@ -450,16 +471,19 @@ public class UseReportConverter extends HTMLConvertor {
 		int total_private_field_count = 0;
 		int total_permissable_field_count = 0;
 		int total_fragment_permissible_field_count = 0;
+		int total_illegal_field_count = 0;
 		int total_other_field_count = 0;
 		int total_api_method_count = 0;
 		int total_private_method_count = 0;
 		int total_permissable_method_count = 0;
 		int total_fragment_permissible_method_count = 0;
+		int total_illegal_method_count = 0;
 		int total_other_method_count = 0;
 		int total_api_type_count = 0;
 		int total_private_type_count = 0;
 		int total_permissable_type_count = 0;
 		int total_fragment_permissible_type_count = 0;
+		int total_illegal_type_count = 0;
 		int total_other_type_count = 0;
 		
 		public int getTotalRefCount() {
@@ -477,7 +501,10 @@ public class UseReportConverter extends HTMLConvertor {
 					total_permissable_type_count +
 					total_fragment_permissible_field_count +
 					total_fragment_permissible_method_count +
-					total_fragment_permissible_type_count;
+					total_fragment_permissible_type_count +
+					total_illegal_field_count +
+					total_illegal_method_count +
+					total_illegal_type_count;
 		}
 		
 		public int getTotalApiRefCount() {
@@ -498,6 +525,10 @@ public class UseReportConverter extends HTMLConvertor {
 		
 		public int getTotalFragmentPermissibleRefCount() {
 			return total_fragment_permissible_field_count + total_fragment_permissible_method_count + total_fragment_permissible_type_count;
+		}
+		
+		public int getTotalIllegalRefCount() {
+			return total_illegal_field_count + total_illegal_method_count + total_illegal_type_count;
 		}
 	}
 	
@@ -542,7 +573,11 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Colour red for internal references
 	 */
-	 static final String INTERNAL_REFS_COLOUR = "#F6CECE"; //$NON-NLS-1$
+	static final String INTERNAL_REFS_COLOUR = "#E0A0A0"; //$NON-NLS-1$
+	/**
+	 * Colour light blue for illegal references
+	 */
+	static final String ILLEGAL_REFS_COLOUR = "#E0E0E0";  //$NON-NLS-1$
 	/**
 	 * Style HTML bits for a page that shows references
 	 */
@@ -1090,7 +1125,7 @@ public class UseReportConverter extends HTMLConvertor {
 			for (int i = 0; i < referees.size(); i++) {
 				type = (Type) referees.get(i);
 				comp = (IComponentDescriptor) type.desc;
-				buffer.append("<tr bgcolor=\"").append((type.counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
+				buffer.append("<tr bgcolor=\"").append(getRowColour(counts)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
 				buffer.append("\t").append(OPEN_TD).append(comp.getId()).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append("\t").append(OPEN_TD).append(comp.getVersion()).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append("\t<td align=\"center\">").append(type.counts.getTotalRefCount()).append(CLOSE_TD); //$NON-NLS-1$
@@ -1115,6 +1150,22 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 	}
 
+	/**
+	 * Returns the colour to use based on certain counts
+	 * @param counts
+	 * @return the colour to use
+	 * @since 1.1
+	 */
+	String getRowColour(CountGroup counts) {
+		if(counts.getTotalInternalRefCount() > 0) {
+			return INTERNAL_REFS_COLOUR;
+		}
+		if(counts.getTotalIllegalRefCount() > 0) {
+			return ILLEGAL_REFS_COLOUR;
+		}
+		return NORMAL_REFS_COLOUR;
+	}
+	
 	/**
 	 * Returns a string of additional information to print out at the top of the referenced types page.
 	 * @return additional referenced type information.
@@ -1478,6 +1529,10 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(openTD(36)).append(this.metadata.includesInternal()).append(CLOSE_TD); 
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_includes_illegal_use).append(CLOSE_TD); 
+			buffer.append(openTD(36)).append(this.metadata.includesIllegalUse()).append(CLOSE_TD); 
+			buffer.append(CLOSE_TR);
+			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_baseline_loc).append(CLOSE_TD); 
 			buffer.append(openTD(36)).append(this.metadata.getBaselineLocation()).append(CLOSE_TD); 
 			buffer.append(CLOSE_TR);
@@ -1683,7 +1738,11 @@ public class UseReportConverter extends HTMLConvertor {
 		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_internal_permissible_references).append(CLOSE_B).append(CLOSE_TD); 
 		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
 		buffer.append(SearchMessages.UseReportConverter_fragment_ref_description).append("\">"); //$NON-NLS-1$
-		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_fragment_permissible_references).append(CLOSE_B).append(CLOSE_TD);  
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_fragment_permissible_references).append(CLOSE_B).append(CLOSE_TD);
+		//illegal use header
+		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(SearchMessages.UseReportConverter_illegal_ref_description).append("\">");  //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_illegal).append(CLOSE_B).append(CLOSE_TD);  
 		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
 		buffer.append(SearchMessages.UseReportConverter_other_ref_description).append("\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_other_references).append(CLOSE_B).append(CLOSE_TD);  
@@ -1702,12 +1761,13 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	String getReferenceTableEntry(CountGroup counts, String link, String linktext) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<tr bgcolor=\"").append((counts.getTotalInternalRefCount() > 0 ? INTERNAL_REFS_COLOUR : NORMAL_REFS_COLOUR)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("<tr bgcolor=\"").append(getRowColour(counts)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append("\t<td><a href=\"").append(link).append("\">").append(linktext).append("</a>").append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalApiRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalInternalRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalPermissableRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalFragmentPermissibleRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
+		buffer.append("\t<td align=\"center\">").append(counts.getTotalIllegalRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalOtherRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append(CLOSE_TR); 
 		return buffer.toString();

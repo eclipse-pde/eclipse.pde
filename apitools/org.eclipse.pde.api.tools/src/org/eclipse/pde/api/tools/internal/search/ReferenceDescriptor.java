@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,15 +27,17 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 	
 	private int line;
 	private int kind;
+	private int flags;
 	private int visibility;
 	
-	public ReferenceDescriptor(IComponentDescriptor from, IMemberDescriptor origin, int line, IComponentDescriptor to, IMemberDescriptor target, int kind, int vis) {
+	public ReferenceDescriptor(IComponentDescriptor from, IMemberDescriptor origin, int line, IComponentDescriptor to, IMemberDescriptor target, int kind, int flags, int vis) {
 		this.origin = origin;
 		this.target = target;
 		this.from = from;
 		this.to = to;
 		this.line = line;
 		this.kind = kind;
+		this.flags = flags;
 		this.visibility = vis;
 	}
 	
@@ -90,18 +92,21 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getReferenceFlags()
+	 */
+	public int getReferenceFlags() {
+		return flags;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getReferenceType()
 	 */
 	public int getReferenceType() {
 		switch (getReferencedMember().getElementType()) {
-		case IElementDescriptor.TYPE:
-			return IReference.T_TYPE_REFERENCE;
-		case IElementDescriptor.METHOD:
-			return IReference.T_METHOD_REFERENCE;
-		case IElementDescriptor.FIELD:
-			return IReference.T_FIELD_REFERENCE;
-		default:
-			return -1;
+			case IElementDescriptor.TYPE: return IReference.T_TYPE_REFERENCE;
+			case IElementDescriptor.METHOD: return IReference.T_METHOD_REFERENCE;
+			case IElementDescriptor.FIELD: return IReference.T_FIELD_REFERENCE;
+			default: return -1;
 		}
 	}
 
@@ -125,5 +130,4 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 	public int getVisibility() {
 		return visibility;
 	}
-
 }

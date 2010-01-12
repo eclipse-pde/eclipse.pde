@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,13 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.builder.ProblemDetectorBuilder;
+import org.eclipse.pde.api.tools.internal.builder.Reference;
+import org.eclipse.pde.api.tools.internal.builder.ReferenceAnalyzer;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -54,6 +59,8 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * Patterns for jar API type roots to not scan
 	 */
 	private String[] jarPatterns = null;
+
+	ReferenceAnalyzer fAnalyzer = null;
 	
 	/**
 	 * Constructor
@@ -69,6 +76,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	public UseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds) {
 		fSearchMask = searchkinds;
 		fComponentIds = elementnames;
+		fAnalyzer = new ReferenceAnalyzer();
 		prepareScope(scope);
 	}
 	
@@ -76,7 +84,13 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
 	 */
 	public boolean acceptComponent(IApiComponent component) {
-		return true; //fComponentIds.contains(component);
+		if(!component.isSystemComponent() && fComponentIds.contains(component.getSymbolicName())) {
+			if(includesIllegalUse()) {
+				fAnalyzer.buildProblemDetectors(component, ProblemDetectorBuilder.K_USE, null);
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -133,13 +147,10 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 			IApiMember member = reference.getResolvedReference();
 			if(member != null) {
 				IApiComponent component = member.getApiComponent();
-				if(!fComponentIds.contains(component.getSymbolicName())) {
-					return false;
-				}
 				if(component.equals(reference.getMember().getApiComponent())) {
 					return false;
 				}
-				if(includesAPI() && includesInternal()) {
+				if(isIllegalUse(reference) || (includesAPI() && includesInternal())) {
 					return true;
 				}
 				IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
@@ -155,7 +166,25 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 			}
 		}
 		catch(CoreException ce) {
-			//ApiPlugin.log(ce);
+			ApiPlugin.log(ce);
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns true if the given reference is an illegal usage reference
+	 * iff illegal use is part of the search mask.
+	 * @param reference
+	 * @return true if the reference is illegal use false otherwise
+	 * @since 1.1
+	 */
+	boolean isIllegalUse(IReference reference) {
+		IApiProblemDetector[] detectors = fAnalyzer.getProblemDetectors(reference.getReferenceKind());
+		for (int i = 0; i < detectors.length; i++) {
+			if(detectors[i].considerReference(reference)) {
+				((Reference)reference).setFlags(IReference.F_ILLEGAL);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -164,8 +193,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getReferenceKinds()
 	 */
 	public int getReferenceKinds() {
-		int kinds = IReference.MASK_REF_ALL & ~IReference.REF_CONSTANTPOOL;
-		return kinds;
+		return IReference.MASK_REF_ALL & ~IReference.REF_CONSTANTPOOL;
 	}
 	
 	/**
@@ -200,6 +228,13 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	public boolean includesInternal() {
 		return (fSearchMask & INCLUDE_INTERNAL) > 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesIllegalUse()
+	 */
+	public boolean includesIllegalUse() {
+		return (fSearchMask & INCLUDE_ILLEGAL_USE) > 0;
 	}
 	
 	/**

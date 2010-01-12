@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (fIllegalTypes.containsKey(reference.getReferencedTypeName())) {
+		if (super.considerReference(reference) & fIllegalTypes.containsKey(reference.getReferencedTypeName())) {
 			retainReference(reference);
 			return true;
 		}

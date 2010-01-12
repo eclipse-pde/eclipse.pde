@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @param componentId the component the type is located in
 	 */
 	void addIllegalField(IFieldDescriptor field, String componentId) {
-		fIllegalFields.put(new MethodKey(field.getEnclosingType().getQualifiedName(), field.getName()), field);
+		fIllegalFields.put(new MethodKey(field.getEnclosingType().getQualifiedName(), field.getName(), null), field);
 		fFieldComponents.put(field, componentId);
 	}	
 	
@@ -61,7 +61,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (fIllegalFields.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName()))) {
+		if (super.considerReference(reference) & fIllegalFields.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature()))) {
 			retainReference(reference);
 			return true;
 		}

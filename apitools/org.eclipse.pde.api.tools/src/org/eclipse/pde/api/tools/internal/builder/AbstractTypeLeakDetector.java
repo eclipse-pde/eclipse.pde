@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	public boolean considerReference(IReference reference) {
 		// consider the reference if the location the reference is made from is visible:
 		// i.e. a public or protected class in an API package
-		if (isNonAPIReference(reference)) {
+		if (super.considerReference(reference) & isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			int modifiers = member.getModifiers();
 			if (((Flags.AccPublic | Flags.AccProtected) & modifiers) > 0) {

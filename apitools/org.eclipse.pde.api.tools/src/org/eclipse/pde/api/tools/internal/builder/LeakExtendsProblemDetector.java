@@ -151,9 +151,14 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	private void gatherVisibleMethods(IApiType type, Set members, int modifiers) {
 		IApiMethod[] methods = type.getMethods();
 		for (int i = 0; i < methods.length; i++) {
-			IApiMethod method = methods[i];
-			if ((method.getModifiers() & modifiers) > 0 && !method.isConstructor() && !method.isSynthetic()) {
-				members.add(new MethodKey(method.getName(), method.getSignature()));
+			try {
+				IApiMethod method = methods[i];
+				if ((method.getModifiers() & modifiers) > 0 && !method.isConstructor() && !method.isSynthetic()) {
+					members.add(new MethodKey(method.getEnclosingType().getName(), method.getName(), method.getSignature()));
+				}
+			}
+			catch(CoreException ce) {
+				//do nothing just ignore the method
 			}
 		}
 	}

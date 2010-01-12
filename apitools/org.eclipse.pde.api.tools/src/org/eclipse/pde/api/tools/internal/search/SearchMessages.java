@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,10 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_following_bundles_have_refs;
 	public static String UseReportConverter_fragment_permissible_references;
 	public static String UseReportConverter_fragment_ref_description;
+	public static String UseReportConverter_illegal;
+	public static String UseReportConverter_illegal_ref_description;
 	public static String UseReportConverter_includes_API_refs;
+	public static String UseReportConverter_includes_illegal_use;
 	public static String UseReportConverter_includes_internal_refs;
 	public static String UseReportConverter_inlined_description;
 	public static String UseReportConverter_internal_patterns;
@@ -117,6 +120,7 @@ public class SearchMessages extends NLS {
 	public static String UseReportConvertor_additional_infos_section;
 	public static String UseScanParser_analyzing_references;
 	public static String UseScanParser_parsing;
+	public static String UseScanParser_parsing_xml_file_0;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);

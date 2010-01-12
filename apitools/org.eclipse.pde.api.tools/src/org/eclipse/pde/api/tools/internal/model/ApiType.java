@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,7 +203,7 @@ public class ApiType extends ApiMember implements IApiType {
 			fMethods = new LinkedHashMap();
 		}
 		ApiMethod method = new ApiMethod(this, name, signature, genericSig, modifiers, exceptions);
-		fMethods.put(new MethodKey(name, signature), method);
+		fMethods.put(new MethodKey(getName(), name, signature), method);
 		return method;
 	}
 
@@ -230,7 +230,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public IApiMethod getMethod(String name, String signature) {
 		if (fMethods != null) {
-			return (IApiMethod) fMethods.get(new MethodKey(name, signature));
+			return (IApiMethod) fMethods.get(new MethodKey(getName(), name, signature));
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,8 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_create_html_report;
 	public static String ApiUseScanTab_description;
 	public static String ApiUseScanTab_enter_report_location;
+	public static String ApiUseScanTab_generate_html_only;
+	public static String ApiUseScanTab_illegal_api_use;
 	public static String ApiUseScanTab_install_location;
 	public static String ApiUseScanTab_internal_references;
 	public static String ApiUseScanTab_must_search_something;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,11 @@ public interface IApiSearchRequestor {
 	 * @see #includesInternal()
 	 */
 	public static final int INCLUDE_INTERNAL = 0x0002;	
+	/**
+	 * Search mask that will cause the engine to consider
+	 * illegal API use when searching
+	 */
+	public static final int INCLUDE_ILLEGAL_USE = 0x0004;
 	
 	/**
 	 * Returns the {@link IApiScope} to be searched
@@ -109,4 +114,11 @@ public interface IApiSearchRequestor {
 	 * @return true if reference to internal elements should be considered, false otherwise
 	 */
 	public boolean includesInternal();
+	
+	/**
+	 * Returns true if the current search mask includes considering illegal API use.
+	 * 
+	 * @return true if references to illegal API use should be considered, false otherwise
+	 */
+	public boolean includesIllegalUse();
 }

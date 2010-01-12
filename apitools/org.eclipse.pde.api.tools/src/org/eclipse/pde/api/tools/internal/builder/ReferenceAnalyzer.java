@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,58 +152,6 @@ public class ReferenceAnalyzer {
 	}
 	
 	/**
-	 * Performs the actual reference extraction and analysis.
-	 * 
-	 * @param scope the scope to extract and analyze references from
-	 * @param detectors problem detectors to use
-	 * @param monitor progress monitor
-	 * @return any problems
-	 * @throws CoreException
-	 */
-	private IApiProblem[] analyze(IApiTypeContainer scope, IApiProblemDetector[] detectors, IProgressMonitor monitor) throws CoreException {
-		try {
-			// 1. index problem detectors
-			indexProblemDetectors(detectors);
-			// 2. extract references
-			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ReferenceAnalyzer_analyzing_api, 3);
-			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use); 
-			extractReferences(scope, localMonitor);
-			localMonitor.worked(1);
-			if (localMonitor.isCanceled()) {
-				return EMPTY_RESULT;
-			}
-			// 3. resolve problematic references
-			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
-			if (fReferences.size() != 0) {
-				ReferenceResolver.resolveReferences(fReferences, localMonitor);
-			}
-			localMonitor.worked(1);
-			if (localMonitor.isCanceled()) {
-				return EMPTY_RESULT;
-			}		
-			// 4. create problems
-			List allProblems = new LinkedList();
-			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
-			for (int i = 0; i < detectors.length; i++) {
-				IApiProblemDetector detector = detectors[i];
-				List problems = detector.createProblems();
-				allProblems.addAll(problems);
-				if (localMonitor.isCanceled()) {
-					return EMPTY_RESULT;
-				}
-			}
-			IApiProblem[] array = (IApiProblem[]) allProblems.toArray(new IApiProblem[allProblems.size()]);
-			localMonitor.worked(1);
-			localMonitor.done();
-			return array;
-		} finally {
-			// clean up
-			fIndexedDetectors = null;
-			fReferences.clear();
-		}
-	}
-	
-	/**
 	 * Indexes the problem detectors by the reference kinds they are interested in.
 	 * For example, a detector interested in a
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers#REF_INSTANTIATE}
@@ -212,7 +160,7 @@ public class ReferenceAnalyzer {
 	 * 
 	 * @param detectors problem detectors
 	 */
-	private void indexProblemDetectors(IApiProblemDetector[] detectors) {
+	void indexProblemDetectors(IApiProblemDetector[] detectors) {
 		fIndexedDetectors = new IApiProblemDetector[32][];
 		for (int i = 0; i < detectors.length; i++) {
 			IApiProblemDetector detector = detectors[i];
@@ -255,7 +203,7 @@ public class ReferenceAnalyzer {
 	 * @param monitor progress monitor
 	 * @exception CoreException if the scan fails
 	 */
-	private void extractReferences(IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
+	void extractReferences(IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
 		fStatus = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, BuilderMessages.ReferenceAnalyzer_api_analysis_error, null); 
 		String[] packageNames = scope.getPackageNames();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, packageNames.length);
@@ -287,24 +235,81 @@ public class ReferenceAnalyzer {
 	 */
 	public IApiProblem[] analyze(IApiComponent component, IApiTypeContainer scope, IProgressMonitor monitor) throws CoreException {
 		// build problem detectors
-		IApiProblemDetector[] detectors = buildProblemDetectors(component, monitor);
+		IApiProblemDetector[] detectors = buildProblemDetectors(component, ProblemDetectorBuilder.K_ALL, monitor);
 		// analyze
-		return analyze(scope, detectors, monitor);
+		try {
+			// 1. extract references
+			SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.ReferenceAnalyzer_analyzing_api, 3);
+			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use); 
+			extractReferences(scope, localMonitor);
+			localMonitor.worked(1);
+			if (localMonitor.isCanceled()) {
+				return EMPTY_RESULT;
+			}
+			// 2. resolve problematic references
+			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
+			if (fReferences.size() != 0) {
+				ReferenceResolver.resolveReferences(fReferences, localMonitor);
+			}
+			localMonitor.worked(1);
+			if (localMonitor.isCanceled()) {
+				return EMPTY_RESULT;
+			}		
+			// 3. create problems
+			List allProblems = new LinkedList();
+			localMonitor.subTask(BuilderMessages.ReferenceAnalyzer_analyzing_api_checking_use);
+			for (int i = 0; i < detectors.length; i++) {
+				IApiProblemDetector detector = detectors[i];
+				List problems = detector.createProblems();
+				allProblems.addAll(problems);
+				if (localMonitor.isCanceled()) {
+					return EMPTY_RESULT;
+				}
+			}
+			IApiProblem[] array = (IApiProblem[]) allProblems.toArray(new IApiProblem[allProblems.size()]);
+			localMonitor.worked(1);
+			localMonitor.done();
+			return array;
+		} finally {
+			// clean up
+			fIndexedDetectors = null;
+			fReferences.clear();
+		}
+	}
+	
+	/**
+	 * Returns the collection of problem detectors for the given reference kind
+	 * @param referencekind
+	 * @return
+	 */
+	public IApiProblemDetector[] getProblemDetectors(int referencekind) {
+		if(fIndexedDetectors != null) {
+			int index = getLog2(referencekind);
+			if(index > -1 && index < fIndexedDetectors.length) {
+				IApiProblemDetector[] detectors = fIndexedDetectors[index];
+				if(detectors != null) {
+					return detectors;
+				}
+			}
+			return NO_PROBLEM_DETECTORS;
+		}
+		return NO_PROBLEM_DETECTORS;
 	}
 	
 	/**
 	 * Builds problem detectors to use when analyzing the given component.
 	 * 
 	 * @param component component to be analyzed
+	 * @param kindmask the kinds of detectors to build. See {@link ProblemDetectorBuilder} for kinds
 	 * @param monitor 
 	 * 
 	 * @return problem detectors
 	 */
-	private IApiProblemDetector[] buildProblemDetectors(IApiComponent component, IProgressMonitor monitor) {
+	public IApiProblemDetector[] buildProblemDetectors(IApiComponent component, int kindmask, IProgressMonitor monitor) {
 		try {
 			long start = System.currentTimeMillis();
 			IApiComponent[] components = component.getBaseline().getPrerequisiteComponents(new IApiComponent[]{component});
-			final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component);
+			final ProblemDetectorBuilder visitor = new ProblemDetectorBuilder(component, kindmask);
 			for (int i = 0; i < components.length; i++) {
 				Util.updateMonitor(monitor);
 				IApiComponent prereq = components[i];
@@ -338,8 +343,12 @@ public class ReferenceAnalyzer {
 			component.getApiDescription().accept(nameVisitor, null);
 			List detectors = visitor.getProblemDetectors();
 			int size = detectors.size();
-			if (size == 0) return NO_PROBLEM_DETECTORS;
-			return (IApiProblemDetector[]) detectors.toArray(new IApiProblemDetector[size]);
+			if (size == 0) {
+				return NO_PROBLEM_DETECTORS;
+			}
+			IApiProblemDetector[] array = (IApiProblemDetector[]) detectors.toArray(new IApiProblemDetector[size]);
+			indexProblemDetectors(array);
+			return array;
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}

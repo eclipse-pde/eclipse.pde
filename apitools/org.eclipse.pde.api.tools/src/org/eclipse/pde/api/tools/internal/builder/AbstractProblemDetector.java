@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,13 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 */
 	protected List getRetainedReferences() {
 		return fPotentialProblems;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
+	public boolean considerReference(IReference reference) {
+		return reference != null && (reference.getReferenceKind() & getReferenceKinds()) > 0;
 	}
 	
 	/**
