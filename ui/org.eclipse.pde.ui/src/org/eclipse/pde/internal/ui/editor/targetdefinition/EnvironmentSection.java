@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,20 +144,45 @@ public class EnvironmentSection extends SectionPart {
 				getTarget().setOS(getText(fOSCombo));
 			}
 		});
+		// see bug 292068
+		fOSCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				markDirty();
+				getTarget().setOS(getText(fOSCombo));
+			}
+		});
+
 		fWSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				markDirty();
 				getTarget().setWS(getText(fWSCombo));
 			}
 		});
+		// see bug 292068
+		fWSCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				markDirty();
+				getTarget().setWS(getText(fWSCombo));
+			}
+		});
+
 		fArchCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				markDirty();
 				getTarget().setArch(getText(fArchCombo));
 			}
 		});
+		// see bug 292068
+		fArchCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				markDirty();
+				getTarget().setArch(getText(fArchCombo));
+			}
+		});
+
 		fNLCombo.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent event) {
+
 				// if we haven't gotten all the values for the NL's, display a busy cursor to the user while we find them.
 				if (!LOCALES_INITIALIZED) {
 					try {
@@ -186,6 +211,22 @@ public class EnvironmentSection extends SectionPart {
 
 					fNLCombo.addModifyListener(new ModifyListener() {
 						public void modifyText(ModifyEvent e) {
+							String value = getText(fNLCombo);
+							if (value == null) {
+								getTarget().setNL(null);
+							} else {
+								int index = value.indexOf("-"); //$NON-NLS-1$
+								if (index > 0)
+									value = value.substring(0, index);
+								getTarget().setNL(value.trim());
+							}
+							markDirty();
+						}
+					});
+
+					// see bug 292068
+					fNLCombo.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
 							String value = getText(fNLCombo);
 							if (value == null) {
 								getTarget().setNL(null);

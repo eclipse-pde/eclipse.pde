@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -336,12 +336,24 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				getTargetDefinition().setOS(getModelValue(fOSCombo.getText()));
 			}
 		});
+		// see bug 292068
+		fOSCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getTargetDefinition().setOS(getModelValue(fOSCombo.getText()));
+			}
+		});
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_ws, 1);
 
 		fWSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
 		fWSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				getTargetDefinition().setWS(getModelValue(fWSCombo.getText()));
+			}
+		});
+		// see bug 292068
+		fWSCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				getTargetDefinition().setWS(getModelValue(fWSCombo.getText()));
 			}
 		});
@@ -354,12 +366,28 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				getTargetDefinition().setArch(getModelValue(fArchCombo.getText()));
 			}
 		});
+		// see bug 292068
+		fArchCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getTargetDefinition().setArch(getModelValue(fArchCombo.getText()));
+			}
+		});
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_nl, 1);
 
 		fNLCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
 		fNLCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				String value = fNLCombo.getText();
+				int index = value.indexOf("-"); //$NON-NLS-1$
+				if (index > 0)
+					value = value.substring(0, index);
+				getTargetDefinition().setNL(getModelValue(value));
+			}
+		});
+		// see bug 292068
+		fNLCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				String value = fNLCombo.getText();
 				int index = value.indexOf("-"); //$NON-NLS-1$
 				if (index > 0)
@@ -387,10 +415,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	/**
-	* Delimits a comma separated preference and add the items to the given set
-	* @param set
-	* @param preference
-	*/
+	 * Delimits a comma separated preference and add the items to the given set
+	 * @param set
+	 * @param preference
+	 */
 	private void addExtraChoices(Set set, String preference) {
 		StringTokenizer tokenizer = new StringTokenizer(preference, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
