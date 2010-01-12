@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.VersionRange;
+
 import java.io.File;
 import java.net.URI;
 import java.util.*;
