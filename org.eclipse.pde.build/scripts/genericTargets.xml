@@ -219,68 +219,22 @@ set here?
 	<property name="p2.director.extraVMArgs" value="-Declipse.p2.MD5Check=false" />
 	<property name="p2.director.profile" value="profile" />
 	<property name="p2.director.version" value="" />
-	<!-- by default, fork using the same config area we are running under -->
-	<property name="p2.director.configArea" value="${osgi.configuration.area}" />
-	<condition property="p2.director.devMode" value="-dev &quot;${osgi.dev}&quot;" else="">
-		<isset property="osgi.dev" />
-	</condition>
 	
-	<!-- on windows we need to quote os,ws,arch so that '*' does not get expanded -->
-	<condition property="p2.quoted.os" value="&quot;${os}&quot;" else="${os}">
-		<and><equals arg1="*" arg2="${os}"/><os family="windows" /></and>
-	</condition>
-	<condition property="p2.quoted.ws" value="&quot;${ws}&quot;" else="${ws}">
-		<and><equals arg1="*" arg2="${ws}"/><os family="windows" /></and>
-	</condition>
-	<condition property="p2.quoted.arch" value="&quot;${arch}&quot;" else="${arch}">
-		<and><equals arg1="*" arg2="${arch}"/><os family="windows" /></and>
-	</condition>
-	
-	<java jar="${equinoxLauncherJar}" fork="true" failonerror="false" resultproperty="p2.director.return.code" outputproperty="p2.director.java.output">
-		<arg line="-application org.eclipse.equinox.p2.director.app.application" />
-		<arg line="-nosplash" />
-		<arg line="--launcher.suppressErrors" />
-		<arg line="-consoleLog" />
-		<arg line="-flavor ${p2.flavor}" />
-		<arg value="-installIU" />
-		<arg value="${p2.director.iu}" />
-		<arg line="-version ${p2.director.version}" />
-		<arg value="-p2.os" />
-		<arg value="${p2.quoted.os}" />
-		<arg value="-p2.ws" />
-		<arg value="${p2.quoted.ws}" />
-		<arg value="-p2.arch" />
-		<arg value="${p2.quoted.arch}" />
-		<arg line="-roaming" />
-		<arg value="-profile" />
-		<arg value="${p2.director.profile}" />
-		<arg line="${p2.director.extraArgs}" />
-		<arg line="-metadataRepository"/>
-		<arg value="${p2.repo}" />
-		<arg line="-artifactRepository"/>
-		<arg value="${p2.repo}" />
-		<arg line="-destination"/>
-		<arg value="${p2.director.installPath}" />
-		<arg line="-bundlepool"/>
-		<arg value="${p2.director.bundlepool}" />
-
-		<jvmarg value="-Declipse.p2.data.area=${p2.director.dataArea}" />
-		<jvmarg value="-Declipse.p2.profile=@none" />
-		<jvmarg line="${p2.director.extraVMArgs}" />
-		
-		<arg line="${p2.director.devMode}"/>
-		<sysproperty key="osgi.configuration.area" value="${p2.director.configArea}" />
-	</java>
-	<echo message="${p2.director.java.output}" />
-	<antcall target="logDirectorCall"/>
-	<condition property="p2.director.error">
-		<isfailure code="${p2.director.return.code}" />
-	</condition>
-	<fail if="p2.director.error" message="A Problem occured while running the director." />
-</target>
-	
-<target name="logDirectorCall" if="p2.director.log" >
-	<echo message="${p2.director.java.output}" file="${p2.director.log}" append="true" />
+	<p2.director 
+		os="${os}" ws="${ws}" arch="${arch}" 
+		flavor="${p2.flavor}" 
+		roaming="true" 
+		profile="${p2.director.profile}"
+		extraArguments="${p2.director.extraArgs}"
+		metadataRepository="${p2.repo}" 
+		artifactRepository="${p2.repo}" 
+		destination="${p2.director.installPath}" 
+		bundlepool="${p2.director.bundlepool}"
+		agentLocation="${p2.director.dataArea}"
+		outputProperty="p2.director.java.output"
+		logFile="${p2.director.log}">
+		<iu id="${p2.director.iu}" version="${p2.director.version}" />
+	</p2.director>
 </target>
 	
 </project>

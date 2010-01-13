@@ -11,20 +11,20 @@ package org.eclipse.pde.build.internal.tests.p2;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository;
+import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
 import org.eclipse.equinox.p2.internal.repository.tools.RepositoryUtilities;
+import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.repository.artifact.*;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.osgi.framework.*;
 
@@ -152,13 +152,13 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public IInstallableUnit getIU(IMetadataRepository repository, String name, boolean assertNotNull) {
-		Collector collector = repository.query(new InstallableUnitQuery(name), new Collector(), null);
+		IQueryResult queryResult = repository.query(new InstallableUnitQuery(name), null);
 
 		IInstallableUnit unit = null;
-		if (collector.size() > 0) 
-			unit = (IInstallableUnit) collector.iterator().next();
+		if (!queryResult.isEmpty())
+			unit = (IInstallableUnit) queryResult.iterator().next();
 		if (assertNotNull) {
-			assertEquals(collector.size(), 1);
+			assertEquals(queryResult.unmodifiableSet().size(), 1);
 			assertNotNull(unit);
 		}
 		return unit;
@@ -175,9 +175,9 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
-		ITouchpointData[] data = iu.getTouchpointData();
-		for (int i = 0; i < data.length; i++) {
-			ITouchpointInstruction instruction = data[i].getInstruction(phase);
+		List/*<ITouchpointData>*/data = iu.getTouchpointData();
+		for (int i = 0; i < data.size(); i++) {
+			ITouchpointInstruction instruction = ((ITouchpointData) data.get(i)).getInstruction(phase);
 			if (instruction != null && instruction.getBody().indexOf(action) > -1)
 				return;
 		}
@@ -185,9 +185,10 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {
-		IProvidedCapability[] caps = iu.getProvidedCapabilities();
-		for (int i = 0; i < caps.length; i++) {
-			if (caps[i].getNamespace().equals(namespace) && caps[i].getName().equals(name))
+		Collection/*<IProvidedCapability>*/caps = iu.getProvidedCapabilities();
+		for (Iterator iterator = caps.iterator(); iterator.hasNext();) {
+			IProvidedCapability cap = (IProvidedCapability) iterator.next();
+			if (cap.getNamespace().equals(namespace) && cap.getName().equals(name))
 				return;
 
 		}
@@ -195,9 +196,10 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public void assertRequires(IInstallableUnit iu, String namespace, String name) {
-		IRequiredCapability[] reqs = iu.getRequiredCapabilities();
-		for (int i = 0; i < reqs.length; i++) {
-			if (reqs[i].getNamespace().equals(namespace) && reqs[i].getName().equals(name))
+		Collection/*<IRequirement>*/reqs = iu.getRequiredCapabilities();
+		for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
+			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
+			if (reqCap.getNamespace().equals(namespace) && reqCap.getName().equals(name))
 				return;
 
 		}
@@ -208,9 +210,10 @@ public class P2TestCase extends PDETestCase {
 		outer: for (Iterator iterator = requiredIUs.iterator(); iterator.hasNext();) {
 			IInstallableUnit reqIU = (IInstallableUnit) iterator.next();
 
-			IRequiredCapability[] reqs = iu.getRequiredCapabilities();
-			for (int i = 0; i < reqs.length; i++) {
-				if (reqs[i].getNamespace().equals(IU_NAMESPACE) && reqs[i].getName().equals(reqIU.getId()) && reqs[i].getRange().isIncluded(reqIU.getVersion())) {
+			Collection/*<IRequirement>*/reqs = iu.getRequiredCapabilities();
+			for (Iterator iterator2 = reqs.iterator(); iterator2.hasNext();) {
+				IRequiredCapability reqCap = (IRequiredCapability) iterator2.next();
+				if (reqCap.getNamespace().equals(IU_NAMESPACE) && reqCap.getName().equals(reqIU.getId()) && reqCap.getRange().isIncluded(reqIU.getVersion())) {
 					iterator.remove();
 					continue outer;
 				}

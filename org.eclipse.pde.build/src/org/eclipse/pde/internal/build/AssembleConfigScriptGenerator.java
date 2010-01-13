@@ -755,7 +755,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			}
 			if (!BuildDirector.p2Gathering) {
 				script.printTab();
-				script.print("<p2.generator "); //$NON-NLS-1$
+				script.print("<p2.new.generator "); //$NON-NLS-1$
 				script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), true); //$NON-NLS-1$
 				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
 				script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
@@ -782,7 +782,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 					script.printProperty(PROPERTY_P2_PRODUCT_MOD, productFile.getLocation());
 				}
 				script.printTab();
-				script.print("<p2.generator "); //$NON-NLS-1$
+				script.print("<p2.new.generator "); //$NON-NLS-1$
 				script.printAttribute("config", rootFolder, true); //$NON-NLS-1$
 				script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$ 
 				script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
@@ -801,6 +801,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				if (productFile != null) {
 					script.printAttribute("exe", rootFolder + '/' + Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), true); //$NON-NLS-1$
 					script.printAttribute("productFile", Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_MOD), true); //$NON-NLS-1$
+				} else {
+					script.printAttribute("root", Utils.getPropertyFormat(PROPERTY_P2_ROOT_NAME), true); //$NON-NLS-1$
+					script.printAttribute("rootVersion", Utils.getPropertyFormat(PROPERTY_P2_ROOT_VERSION), true); //$NON-NLS-1$
 				}
 				script.println("/>"); //$NON-NLS-1$
 			}

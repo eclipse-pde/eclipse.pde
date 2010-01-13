@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
-
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.taskdefs.Parallel;
 import org.eclipse.ant.core.AntCorePlugin;

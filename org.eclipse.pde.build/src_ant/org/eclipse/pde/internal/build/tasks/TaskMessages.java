@@ -31,6 +31,11 @@ public class TaskMessages extends NLS {
 	public static String error_invalidConfig;
 	public static String error_branding;
 
+	public static String error_callingGenerator;
+	public static String error_artifactRepoNotURI;
+	public static String error_metadataRepoNotURI;
+	public static String error_locationNotURI;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, TaskMessages.class);

@@ -80,7 +80,12 @@
             library="lib/pdebuild-ant.jar"
             name="eclipse.publish.featuresAndBundles">
       </antTask>
-      
+	<antTask
+		class="org.eclipse.pde.internal.build.generator.GeneratorTask"
+		library="lib/pdebuild-ant.jar"
+		name="p2.new.generator">
+	</antTask>
+    
    </extension>
 <!-- Extra Classpath -->
    <extension

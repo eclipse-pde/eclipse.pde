@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;

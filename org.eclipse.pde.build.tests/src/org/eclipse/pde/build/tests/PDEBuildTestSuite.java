@@ -11,7 +11,6 @@ package org.eclipse.pde.build.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.pde.build.internal.tests.*;
 import org.eclipse.pde.build.internal.tests.p2.P2Tests;
 import org.eclipse.pde.build.internal.tests.p2.PublishingTests;

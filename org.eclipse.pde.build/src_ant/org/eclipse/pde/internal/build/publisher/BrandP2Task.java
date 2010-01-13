@@ -20,21 +20,23 @@ import org.apache.tools.ant.Project;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
+import org.eclipse.equinox.internal.p2.engine.Phase;
+import org.eclipse.equinox.internal.p2.engine.PhaseSet;
+import org.eclipse.equinox.internal.p2.engine.phases.Collect;
+import org.eclipse.equinox.internal.p2.engine.phases.Install;
 import org.eclipse.equinox.internal.p2.metadata.*;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.*;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.engine.Phase;
-import org.eclipse.equinox.internal.provisional.p2.engine.PhaseSet;
-import org.eclipse.equinox.internal.provisional.p2.engine.phases.Collect;
-import org.eclipse.equinox.internal.provisional.p2.engine.phases.Install;
-import org.eclipse.equinox.internal.provisional.p2.metadata.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
-import org.eclipse.equinox.p2.internal.repository.tools.Activator;
+import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.IUDescription;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.Repo2RunnableTask;
+import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.spi.ArtifactDescriptor;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
@@ -74,8 +76,15 @@ public class BrandP2Task extends Repo2RunnableTask {
 		if (launcherProvider == null || launcherProvider.startsWith("${")) //$NON-NLS-1$
 			launcherProvider = IPDEBuildConstants.FEATURE_EQUINOX_EXECUTABLE;
 
-		IMetadataRepository metadataRepo = loadMetadataRepository();
-		IArtifactRepository artifactRepo = loadArtifactRepository();
+		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) BundleHelper.getDefault().acquireService(IMetadataRepositoryManager.class.getName());
+		if (metadataManager == null)
+			throw new BuildException(TaskMessages.error_metadataRepoManagerService);
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) BundleHelper.getDefault().acquireService(IArtifactRepositoryManager.class.getName());
+		if (artifactManager == null)
+			throw new BuildException(TaskMessages.error_artifactRepoManagerService);
+
+		IMetadataRepository metadataRepo = loadMetadataRepository(metadataManager);
+		IArtifactRepository artifactRepo = loadArtifactRepository(artifactManager);
 
 		try {
 			super.setDestination(getRootFolder());
@@ -90,7 +99,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 			getProject().log(e.getMessage(), Project.MSG_WARN);
 		} finally {
 			try {
-				cleanupRepositories();
+				cleanupRepositories(metadataManager, artifactManager);
 			} catch (ProvisionException e) {
 				getProject().log(e.getMessage(), Project.MSG_WARN);
 			}
@@ -98,9 +107,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 		}
 	}
 
-	private void cleanupRepositories() throws ProvisionException {
-		IMetadataRepositoryManager metadataManager = Activator.getMetadataRepositoryManager();
-		IArtifactRepositoryManager artifactManager = Activator.getArtifactRepositoryManager();
+	private void cleanupRepositories(IMetadataRepositoryManager metadataManager, IArtifactRepositoryManager artifactManager) throws ProvisionException {
 		URI destination = new Path(getRootFolder()).toFile().toURI();
 
 		if (metadataManager != null) {
@@ -116,13 +123,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 		}
 	}
 
-	private IArtifactRepository loadArtifactRepository() throws BuildException {
+	private IArtifactRepository loadArtifactRepository(IArtifactRepositoryManager manager) throws BuildException {
 		if (artifactURI == null)
 			throw new BuildException(TaskMessages.error_noArtifactRepo);
-
-		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) BundleHelper.getDefault().acquireService(IArtifactRepositoryManager.class.getName());
-		if (manager == null)
-			throw new BuildException(TaskMessages.error_artifactRepoManagerService);
 
 		removeArtifactRepo = !manager.contains(artifactURI);
 
@@ -139,13 +142,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 		return repo;
 	}
 
-	private IMetadataRepository loadMetadataRepository() throws BuildException {
+	private IMetadataRepository loadMetadataRepository(IMetadataRepositoryManager manager) throws BuildException {
 		if (metadataURI == null)
 			throw new BuildException(TaskMessages.error_noMetadataRepo);
-
-		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) BundleHelper.getDefault().acquireService(IMetadataRepositoryManager.class.getName());
-		if (manager == null)
-			throw new BuildException(TaskMessages.error_metadataRepoManagerService);
 
 		removeMetadataRepo = !manager.contains(metadataURI);
 
@@ -212,9 +211,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 		newIUDescription.setTouchpointType(originalIU.getTouchpointType());
 		newIUDescription.setFilter(originalIU.getFilter());
 
-		ITouchpointData[] data = brandTouchpointData(originalIU.getTouchpointData());
-		for (int i = 0; i < data.length; i++) {
-			newIUDescription.addTouchpointData(data[i]);
+		List data = brandTouchpointData(originalIU.getTouchpointData());
+		for (int i = 0; i < data.size(); i++) {
+			newIUDescription.addTouchpointData((ITouchpointData) data.get(i));
 		}
 
 		IArtifactKey key = new ArtifactKey(PublisherHelper.BINARY_ARTIFACT_CLASSIFIER, newIUDescription.getId(), newIUDescription.getVersion());
@@ -250,7 +249,10 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private static final String INSTALL = "install"; //$NON-NLS-1$
 	private static final String CONFIGURE = "configure"; //$NON-NLS-1$
 
-	private ITouchpointData[] brandTouchpointData(ITouchpointData[] data) {
+	private List/*<ITouchpointData>*/brandTouchpointData(List/*<ITouchpointData>*/data) {
+		ArrayList results = new ArrayList(data.size() + 1);
+		results.addAll(data);
+
 		boolean haveChmod = false;
 
 		String brandedLauncher = null;
@@ -261,12 +263,13 @@ public class BrandP2Task extends Repo2RunnableTask {
 		else
 			brandedLauncher = launcherName;
 
-		for (int i = 0; i < data.length; i++) {
-			Map instructions = new HashMap(data[i].getInstructions());
+		for (int i = 0; i < results.size(); i++) {
+			ITouchpointData td = (ITouchpointData) results.get(i);
+			Map instructions = new HashMap(td.getInstructions());
 
 			String[] phases = new String[] {INSTALL, CONFIGURE};
 			for (int phase = 0; phase < phases.length; phase++) {
-				ITouchpointInstruction instruction = data[i].getInstruction(phases[phase]);
+				ITouchpointInstruction instruction = td.getInstruction(phases[phase]);
 				if (instruction == null)
 					continue;
 
@@ -310,7 +313,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 				}
 			}
 
-			data[i] = new TouchpointData(instructions);
+			results.set(i, new TouchpointData(instructions));
 		}
 
 		//add a chmod if there wasn't one before
@@ -319,12 +322,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 			TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
 			Map instructions = new HashMap();
 			instructions.put(INSTALL, newInstruction);
-			ArrayList newData = new ArrayList(data.length + 1);
-			newData.addAll(Arrays.asList(data));
-			newData.add(new TouchpointData(instructions));
-			data = (ITouchpointData[]) newData.toArray(new ITouchpointData[newData.size()]);
+			results.add(new TouchpointData(instructions));
 		}
-		return data;
+		return results;
 	}
 
 	private String toString(String[] elements, String separator) {

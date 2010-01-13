@@ -12,7 +12,6 @@ package org.eclipse.pde.build.internal.tests;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;

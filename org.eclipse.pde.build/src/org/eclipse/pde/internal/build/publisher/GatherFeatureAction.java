@@ -9,15 +9,14 @@
 package org.eclipse.pde.internal.build.publisher;
 
 import java.io.File;
+import java.util.Collection;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.FeatureParser;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.ArtifactDescriptor;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactDescriptor;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.publisher.IPublisherInfo;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
+import org.eclipse.equinox.p2.repository.artifact.spi.ArtifactDescriptor;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 
 public class GatherFeatureAction extends FeaturesAction {
@@ -97,12 +96,12 @@ public class GatherFeatureAction extends FeaturesAction {
 			return;
 
 		// add all the artifacts associated with the feature
-		IArtifactKey[] artifacts = featureIU.getArtifacts();
-		if (artifacts.length > 1) {
+		Collection artifacts = featureIU.getArtifacts();
+		if (artifacts.size() > 1) {
 			//boo!
 		}
 
-		ArtifactDescriptor ad = (ArtifactDescriptor) PublisherHelper.createArtifactDescriptor(artifacts[0], null);
+		ArtifactDescriptor ad = (ArtifactDescriptor) PublisherHelper.createArtifactDescriptor(publisherInfo.getArtifactRepository(), (IArtifactKey) artifacts.iterator().next(), null);
 		processArtifactPropertiesAdvice(featureIU, ad, publisherInfo);
 		ad.setProperty(IArtifactDescriptor.DOWNLOAD_CONTENTTYPE, IArtifactDescriptor.TYPE_ZIP);
 

@@ -211,7 +211,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 				script.printProperty(PROPERTY_P2_PRODUCT_MOD, product.getLocation());
 			}
 			script.printTab();
-			script.print("<p2.generator "); //$NON-NLS-1$
+			script.print("<p2.new.generator "); //$NON-NLS-1$
 			script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$
 			script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 			script.printAttribute("metadataRepository", Utils.getPropertyFormat(PROPERTY_P2_METADATA_REPO), true); //$NON-NLS-1$ 

@@ -21,10 +21,11 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
-import org.eclipse.equinox.internal.provisional.p2.metadata.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
+import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
+import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.Activator;
@@ -817,7 +818,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
 		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
 		//check up to the date on the timestamp, don't worry about hours/mins
-		assertTrue(productIu.getVersion().getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
+		assertTrue(Version.toOSGiVersion(productIu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
 		assertTouchpoint(productIu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
 
 		IInstallableUnit iu = getIU(finalRepo, "toolingorg.eclipse.equinox.common");
@@ -1317,8 +1318,8 @@ public class PublishingTests extends P2TestCase {
 
 		URI repoURI = URIUtil.fromString("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
-		Collector collector = metadata.query(new InstallableUnitQuery("a"), new Collector(), null);
-		assertTrue(collector.size() == 0);
+		IQueryResult queryResult = metadata.query(new InstallableUnitQuery("a"), null);
+		assertTrue(queryResult.isEmpty());
 		getIU(metadata, "b");
 	}
 
@@ -1468,7 +1469,7 @@ public class PublishingTests extends P2TestCase {
 		try {
 			runProductBuild(buildFolder);
 		} catch (Exception e) {
-			assertTrue(e.getMessage().indexOf("A Problem occured while running the director") > -1);
+			assertTrue(e.getMessage().indexOf("A problem occured while invoking the director") > -1);
 		}
 
 		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] {"Installation failed.", "Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo bar [1.0.0]' but it could not be found"});
@@ -1582,12 +1583,15 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
-		IRequiredCapability[] required = iu.getRequiredCapabilities();
-		assertEquals(required.length, 2);
-		if (required[0].getName().equals(EQUINOX_COMMON))
-			assertEquals(required[0].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
+		Collection/*<IRequirement>*/required = iu.getRequiredCapabilities();
+		assertEquals(required.size(), 2);
+		Iterator it = required.iterator();
+		IRequiredCapability req0 = (IRequiredCapability) it.next();
+		IRequiredCapability req1 = (IRequiredCapability) it.next();
+		if (req0.getName().equals(EQUINOX_COMMON))
+			assertEquals(req0.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 		else
-			assertEquals(required[1].getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
+			assertEquals(req1.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 	}
 
 	public void testPublish_P2InfConfigProperty() throws Exception {
@@ -1798,12 +1802,13 @@ public class PublishingTests extends P2TestCase {
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "foo");
-		IRequiredCapability[] required = iu.getRequiredCapabilities();
-		for (int i = 0; i < required.length; i++) {
-			if (required[i].getName().equals("a")) {
-				VersionRange range = required[i].getRange();
-				assertTrue(range.getMinimum().getQualifier().startsWith("20"));
-				assertTrue(range.getMinimum().getMajor() == 1 || range.getMinimum().getMajor() == 2);
+		Collection/*<IRequirement>*/required = iu.getRequiredCapabilities();
+		for (Iterator iterator = required.iterator(); iterator.hasNext();) {
+			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
+			if (reqCap.getName().equals("a")) {
+				VersionRange range = reqCap.getRange();
+				assertTrue(Version.toOSGiVersion(range.getMinimum()).getQualifier().startsWith("20"));
+				assertTrue(Version.toOSGiVersion(range.getMinimum()).getMajor() == 1 || Version.toOSGiVersion(range.getMinimum()).getMajor() == 2);
 			}
 		}
 	}

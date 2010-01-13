@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.4"?>
+<?pde version="3.5"?>
 
-<product name="test" id="test.product" application="test.application" version="1.0.0" useFeatures="false">
+<product name="test" id="test.product" application="test.application" version="1.0.0" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
+      <programArgs>-foo</programArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher name="test">
       <solaris/>
@@ -33,7 +33,8 @@
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.osgi"/>
-      <plugin id="test"/>
+      <plugin id="test" fragment=""/>
    </plugins>
+
 
 </product>

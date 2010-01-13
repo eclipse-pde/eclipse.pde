@@ -15,10 +15,8 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Path;

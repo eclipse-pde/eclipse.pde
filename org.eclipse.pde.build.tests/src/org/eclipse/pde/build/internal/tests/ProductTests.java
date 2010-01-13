@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
-
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.eclipse.core.resources.*;

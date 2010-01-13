@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.PrintStream;
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildLogger;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;

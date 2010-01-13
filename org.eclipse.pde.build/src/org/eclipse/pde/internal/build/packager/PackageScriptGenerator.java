@@ -115,7 +115,8 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	}
 
 	private static void generateP2FinalCall(AntScript script, String productFileLocation, String versionAdvice) {
-		script.print("<p2.generator "); //$NON-NLS-1$
+		script.printTab();
+		script.print("<p2.new.generator "); //$NON-NLS-1$
 		script.printAttribute("append", Utils.getPropertyFormat(PROPERTY_P2_APPEND), true); //$NON-NLS-1$ 
 		script.printAttribute("flavor", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 		script.printAttribute("compress", Utils.getPropertyFormat(PROPERTY_P2_COMPRESS), true); //$NON-NLS-1$

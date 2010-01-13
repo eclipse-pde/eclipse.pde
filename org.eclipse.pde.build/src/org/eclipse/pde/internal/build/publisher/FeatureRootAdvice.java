@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.build.publisher;
 import java.util.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils.IPathComputer;
 import org.eclipse.equinox.internal.p2.publisher.FileSetDescriptor;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.publisher.AbstractAdvice;
 import org.eclipse.equinox.p2.publisher.actions.IFeatureRootAdvice;
 import org.eclipse.pde.internal.build.Config;

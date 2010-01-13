@@ -11,10 +11,8 @@ package org.eclipse.pde.build.internal.tests;
 
 import java.io.File;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.build.tests.BuildConfiguration;

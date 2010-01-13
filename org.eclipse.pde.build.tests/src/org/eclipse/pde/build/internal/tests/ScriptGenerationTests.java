@@ -1502,6 +1502,30 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(failedMessage != null && failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
 	}
 
+	public void testCatchAllValue() throws Exception {
+		IFolder buildFolder = newTest("catchAll");
+
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+		Attributes additional = new Attributes();
+		additional.put(new Attributes.Name("Require-Bundle"), "org.eclipse.swt");
+		Utils.generateBundleManifest(A, "A", "1.0.0", additional);
+		Utils.generatePluginBuildProperties(A, null);
+
+		StringBuffer code = new StringBuffer();
+		code.append("package api;                \n");
+		code.append("import org.eclipse.swt.widgets.Display;");
+		code.append("public class A{             \n");
+		code.append("   public static Display d = new Display(); \n");
+		code.append("}                           \n");
+		Utils.writeBuffer(A.getFile("src/api/A.java"), code);
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"A"});
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+	}
+
 	public void testBug291527() throws Exception {
 		IFolder buildFolder = newTest("291527");
 
