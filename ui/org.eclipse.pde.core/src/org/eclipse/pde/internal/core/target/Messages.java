@@ -54,6 +54,7 @@ public class Messages extends NLS {
 	public static String LocalTargetHandle_3;
 	public static String LocalTargetHandle_4;
 	public static String LocalTargetHandle_5;
+	public static String P2Utils_UnableToAcquireP2Service;
 	public static String ProfileBundleContainer_0;
 	public static String ProfileBundleContainer_1;
 	public static String ProfileBundleContainer_2;
@@ -72,6 +73,15 @@ public class Messages extends NLS {
 	public static String TargetPlatformService_4;
 	public static String TargetPlatformService_5;
 	public static String TargetPlatformService_7;
+	public static String TargetResolver_checkRemoteRepoTask;
+	public static String TargetResolver_couldNotFindUnit;
+	public static String TargetResolver_findPluginSetTask;
+	public static String TargetResolver_generateLocalMetadataTask;
+	public static String TargetResolver_noPluginsFound;
+	public static String TargetResolver_problemsCollectingPluginSet;
+	public static String TargetResolver_problemsReadingLocal;
+	public static String TargetResolver_someLocationsDontContainPlugins;
+	public static String TargetResolver_unableToLoadRepositories;
 	public static String WorkspaceFileTargetHandle_0;
 	static {
 		// initialize resource bundle

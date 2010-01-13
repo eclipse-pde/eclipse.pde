@@ -521,8 +521,8 @@ public class PluginModelManager implements IModelProviderListener {
 		if (!definition.isProvisioned()) {
 			IStatus result = definition.provisionExisting(null);
 			if (result.getSeverity() == IStatus.ERROR) {
-				PDECore.log(result);
-				return new URL[0];
+				// TODO Hack to resolve the target on startup
+				LoadTargetDefinitionJob.load(definition);
 			}
 		}
 

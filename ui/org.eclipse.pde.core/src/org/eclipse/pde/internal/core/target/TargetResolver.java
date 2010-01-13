@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 public class TargetResolver {
 
 	private ITargetDefinition fTarget;
-	private IProvisioningAgent fAgent;
 
 	private MultiStatus fStatus;
 	private List fMetaRepos;
@@ -39,7 +38,6 @@ public class TargetResolver {
 
 	TargetResolver(ITargetDefinition target) {
 		fTarget = target;
-		fAgent = TargetUtils.getAgentForTarget(target);
 	}
 
 	public IStatus getStatus() {
@@ -53,22 +51,20 @@ public class TargetResolver {
 	public IStatus resolve(IProgressMonitor monitor) {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.TargetDefinition_1, 80);
 		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.AbstractBundleContainer_0, null);
+		IProvisioningAgent agent = TargetUtils.getProvisioningAgent(fTarget);
+		if (agent == null) {
+			fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			return fStatus;
+		}
 
 		try {
-			if (fAgent == null) {
-				fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
-				return fStatus;
-			}
-
 			fMetaRepos = new ArrayList();
 			fRootIUs = new ArrayList();
 			fAvailableIUs = new ArrayList();
 
-			// TODO Give descriptive names to monitor tasks/subtasks
-
 			// Ask locations to generate repositories
-			subMon.subTask("Generate metadata for local locations");
-			IStatus result = generateRepos(subMon.newChild(20));
+			subMon.subTask(Messages.TargetResolver_generateLocalMetadataTask);
+			IStatus result = generateRepos(agent, subMon.newChild(30));
 			if (!result.isOK()) {
 				fStatus.add(result);
 			}
@@ -78,8 +74,8 @@ public class TargetResolver {
 			}
 
 			// Combine generated repos and explicit repos
-			subMon.subTask("Check remote repositories");
-			result = loadExplicitRepos(subMon.newChild(20));
+			subMon.subTask(Messages.TargetResolver_checkRemoteRepoTask);
+			result = loadExplicitRepos(agent, subMon.newChild(10));
 			if (!result.isOK()) {
 				fStatus.add(result);
 			}
@@ -89,8 +85,8 @@ public class TargetResolver {
 			}
 
 			// Collect the list of IUs
-			subMon.subTask("Find the complete set of plug-ins");
-			result = collectRootIUs(subMon.newChild(20));
+			subMon.subTask(Messages.TargetResolver_findPluginSetTask);
+			result = collectRootIUs(subMon.newChild(10));
 			if (!result.isOK()) {
 				fStatus.add(result);
 			}
@@ -100,7 +96,7 @@ public class TargetResolver {
 			}
 
 			// Use slicer/planner to get complete enclosure of IUs
-			result = collectAllIUs(subMon.newChild(20));
+			result = collectAllIUs(subMon.newChild(30));
 			if (!result.isOK()) {
 				fStatus.add(result);
 			}
@@ -113,18 +109,20 @@ public class TargetResolver {
 
 		} catch (CoreException e) {
 			fStatus.add(e.getStatus());
+		} finally {
+			agent.stop();
 		}
 		subMon.done();
 		return fStatus;
 	}
 
-	private IStatus generateRepos(IProgressMonitor monitor) {
-		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems reading local plug-in locations", null);
+	private IStatus generateRepos(IProvisioningAgent agent, IProgressMonitor monitor) {
+		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetResolver_problemsReadingLocal, null);
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
 			try {
-				IRepository[] currentRepos = containers[i].generateRepositories(fAgent, subMon.newChild(1));
+				IRepository[] currentRepos = containers[i].generateRepositories(agent, subMon.newChild(1));
 				for (int j = 0; j < currentRepos.length; j++) {
 					fMetaRepos.add(currentRepos[j]);
 				}
@@ -138,13 +136,13 @@ public class TargetResolver {
 		return repoStatus;
 	}
 
-	private IStatus loadExplicitRepos(IProgressMonitor monitor) throws CoreException {
-		IMetadataRepositoryManager registry = (IMetadataRepositoryManager) fAgent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+	private IStatus loadExplicitRepos(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+		IMetadataRepositoryManager registry = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 		if (registry == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
-		MultiStatus result = new MultiStatus(PDECore.PLUGIN_ID, 0, "Unable to load repositories", null);
+		MultiStatus result = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetResolver_unableToLoadRepositories, null);
 
 		URI[] explicit = fTarget.getRepositories();
 		SubMonitor subMon = SubMonitor.convert(monitor, explicit.length * 3);
@@ -165,18 +163,27 @@ public class TargetResolver {
 	}
 
 	private IStatus collectRootIUs(IProgressMonitor monitor) throws CoreException {
+		MultiStatus resultCollector = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetResolver_someLocationsDontContainPlugins, null);
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
 			InstallableUnitDescription[] currentIUs = containers[i].getRootIUs();
-			if (currentIUs != null) {
+			if (currentIUs != null && currentIUs.length > 0) {
 				for (int j = 0; j < currentIUs.length; j++) {
 					fRootIUs.add(currentIUs[j]);
 				}
+			} else if (containers[i] instanceof AbstractLocalBundleContainer) {
+				resultCollector.add(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetResolver_noPluginsFound, ((AbstractLocalBundleContainer) containers[i]).getLocation(true))));
 			}
 			subMon.worked(1);
 		}
-		return Status.OK_STATUS;
+		if (resultCollector.isOK()) {
+			return Status.OK_STATUS;
+		}
+		if (resultCollector.getChildren().length == 1) {
+			return resultCollector.getChildren()[0];
+		}
+		return resultCollector;
 	}
 
 	private IStatus collectAllIUs(IProgressMonitor monitor) {
@@ -195,33 +202,25 @@ public class TargetResolver {
 			allRepos = new CompoundQueryable(fMetaRepos);
 		}
 
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems collecting installable units", null);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetResolver_problemsCollectingPluginSet, null);
 
 		// Get the list of root IUs as actual installable units
-		// TODO A compound query to save performance here wasn't working correctly, see IUDescriptionQuery
 		InstallableUnitDescription[] rootDescriptions = (InstallableUnitDescription[]) fRootIUs.toArray(new InstallableUnitDescription[fRootIUs.size()]);
 		List rootUnits = new ArrayList();
 		for (int i = 0; i < rootDescriptions.length; i++) {
 			InstallableUnitQuery query = new InstallableUnitQuery(rootDescriptions[i].getId(), rootDescriptions[i].getVersion());
 			IQueryResult result = allRepos.query(query, null);
 			if (result.isEmpty()) {
-				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Could not find unit {0} {1} in repositories.", new String[] {rootDescriptions[i].getId(), rootDescriptions[i].getVersion().toString()})));
+				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetResolver_couldNotFindUnit, new String[] {rootDescriptions[i].getId(), rootDescriptions[i].getVersion().toString()})));
 			}
 			rootUnits.add(result.iterator().next());
 		}
 		subMon.worked(10);
 
-//		IUDescriptionQuery rootIUQuery = new IUDescriptionQuery(rootDescriptions);
-//		IQueryResult result = allRepos.query(rootIUQuery, subMon.newChild(10));
-//		IInstallableUnit[] rootUnits = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
-//		if (rootDescriptions.length != rootUnits.length) {
-//			// TODO Return a warning status?
-//		}
-
 		// Create slicer to calculate requirements
 		PermissiveSlicer slicer = null;
 		Properties props = new Properties();
-		// TODO How to handle platform specific problems
+		// TODO How to handle platform specific installable units
 //		props.setProperty("osgi.os", fTarget.getOS() != null ? fTarget.getOS() : Platform.getOS()); //$NON-NLS-1$
 //		props.setProperty("osgi.ws", fTarget.getWS() != null ? fTarget.getWS() : Platform.getWS()); //$NON-NLS-1$
 //		props.setProperty("osgi.arch", fTarget.getArch() != null ? fTarget.getArch() : Platform.getOSArch()); //$NON-NLS-1$
@@ -248,7 +247,6 @@ public class TargetResolver {
 	}
 
 	public Collection calculateMissingIUs(IProgressMonitor monitor) {
-		// TODO Copy logic from other method?
 		return null;
 	}
 
@@ -260,17 +258,6 @@ public class TargetResolver {
 	}
 
 	public Collection calculateIncludedIUs() {
-		// TODO Move to TargetDefinition to allow cacheing 
-		// TODO We no longer support returning a status for missing included bundles
-		// VERSION DOES NOT EXIST
-//		int sev = IStatus.ERROR;
-//		String message = NLS.bind(Messages.AbstractBundleContainer_1, new Object[] {info.getVersion(), info.getSymbolicName()});
-//		if (optional) {
-//			sev = IStatus.INFO;
-//			message = NLS.bind(Messages.AbstractBundleContainer_2, new Object[] {info.getVersion(), info.getSymbolicName()});
-//		}
-//		return new ResolvedBundle(info, parentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), null, optional, false);
-
 		InstallableUnitDescription[] included = fTarget.getIncluded();
 		InstallableUnitDescription[] optional = fTarget.getOptional();
 		if (included == null && optional == null) {
@@ -337,7 +324,6 @@ public class TargetResolver {
 	}
 
 	private static IInstallableUnit determineBestUnit(Map unitMap, InstallableUnitDescription info) {
-		// TODO We no longer have a way to return a status if a specific included bundle cannot be found
 		List list = (List) unitMap.get(info.getId());
 		if (list != null) {
 			// If there is a version set, select the specific version if available, select newest otherwise 

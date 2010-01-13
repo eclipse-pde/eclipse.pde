@@ -121,6 +121,11 @@ public class Messages extends NLS {
 	public static String TargetContentsGroup_collapseAll;
 	public static String TargetContentsGroup_resolveCancelled;
 	public static String TargetLocationsGroup_1;
+	public static String TargetReposGroup_Add;
+	public static String TargetReposGroup_AddRepository;
+	public static String TargetReposGroup_CurrentRepos;
+	public static String TargetReposGroup_NoRepos;
+	public static String TargetReposGroup_Remove;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

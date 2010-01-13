@@ -517,15 +517,15 @@ public class TargetDefinitionPersistenceHelper {
 			locationElement.setAttribute(ATTR_LOCATION_PATH, ((AbstractLocalBundleContainer) location).getLocation(false));
 		}
 
-		if (location instanceof DirectoryBundleContainer) {
-			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_DIRECTORY);
-		} else if (location instanceof FeatureBundleContainer) {
+		if (location instanceof FeatureBundleContainer) {
 			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_FEATURE);
 			locationElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) location).getFeatureId());
 			String version = ((FeatureBundleContainer) location).getFeatureVersion();
 			if (version != null) {
 				locationElement.setAttribute(ATTR_VERSION, version);
 			}
+		} else if (location instanceof DirectoryBundleContainer) {
+			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_DIRECTORY);
 		} else if (location instanceof ProfileBundleContainer) {
 			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_INSTALLATION);
 			String configurationArea = ((ProfileBundleContainer) location).getConfigurationLocation();

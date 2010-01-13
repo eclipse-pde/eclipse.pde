@@ -19,7 +19,9 @@ import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.IAction;
@@ -74,6 +76,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fShowCategoriesButton;
 	private Button fShowOldVersionsButton;
 	private Text fDetailsText;
+	private IProvisioningAgent fAgent;
 	private ProvisioningUI fProfileUI;
 
 	/**
@@ -84,11 +87,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		super("AddP2Container"); //$NON-NLS-1$
 		setTitle(Messages.EditIUContainerPage_5);
 		setMessage(Messages.EditIUContainerPage_6);
-		ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
-		// TODO we use the service session from the self profile.  In the future we may want
-		// to set up our own services for the profile (separate repo managers, etc).
-		// We use our own new policy so we don't bash the SDK's settings.
-		fProfileUI = new ProvisioningUI(selfProvisioningUI.getSession(), TargetUtils.getProfileID(definition), new Policy());
+		fAgent = TargetUtils.getProvisioningAgent(definition);
+		String profileID = TargetUtils.getProfileID(definition);
+		fProfileUI = new ProvisioningUI(new ProvisioningSession(fAgent), profileID, new Policy());
 	}
 
 	/* (non-Javadoc)
@@ -143,6 +144,16 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		setControl(composite);
 		setPageComplete(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LOCATION_ADD_SITE_WIZARD);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	public void dispose() {
+		if (fAgent != null) {
+			fAgent.stop();
+		}
+		super.dispose();
 	}
 
 	/**
@@ -282,12 +293,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				result.append(description);
 			} else {
 				String name = fProfileUI.getTranslationSupport().getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
-
-//			String description = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
-//			if (description != null) {
-//				result.append(description);
-//			} else {
-//				String name = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
 
 				if (name != null)
 					result.append(name);

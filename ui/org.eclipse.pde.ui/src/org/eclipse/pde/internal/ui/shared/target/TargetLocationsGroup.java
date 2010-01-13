@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -131,7 +130,7 @@ public class TargetLocationsGroup {
 		fAddButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_0, SWT.PUSH);
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
-		fShowReposButton = toolkit.createButton(buttonComp, "Show Repositories...", SWT.PUSH);
+		fShowReposButton = toolkit.createButton(buttonComp, "Edit Repositories...", SWT.PUSH);
 
 		initializeTreeViewer(atree);
 		initializeButtons();
@@ -183,7 +182,19 @@ public class TargetLocationsGroup {
 		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new BundleContainerContentProvider());
 		fTreeViewer.setLabelProvider(new StyledBundleLabelProvider(true, true));
-		fTreeViewer.setComparator(new ViewerComparator());
+		fTreeViewer.setComparator(new ViewerComparator() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				boolean isStatus1 = e1 instanceof IStatus;
+				boolean isStatus2 = e2 instanceof IStatus;
+				if (isStatus1 && !isStatus2) {
+					return -1;
+				}
+				if (!isStatus1 && isStatus2) {
+					return 1;
+				}
+				return super.compare(viewer, e1, e2);
+			}
+		});
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
@@ -230,22 +241,7 @@ public class TargetLocationsGroup {
 
 		fShowReposButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TrayDialog dialog = new TrayDialog(fShowReposButton.getShell()) {
-					protected void configureShell(Shell newShell) {
-						newShell.setText("Repositories");
-						super.configureShell(newShell);
-					}
-
-					protected Control createContents(Composite parent) {
-						Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
-						((GridData) comp.getLayoutData()).heightHint = 300;
-						((GridData) comp.getLayoutData()).widthHint = 300;
-						TargetReposGroup repos = TargetReposGroup.createInDialog(comp);
-						repos.setInput(fTarget);
-						return comp;
-					}
-				};
-				dialog.open();
+				handleEditRepos();
 			}
 		});
 		fShowReposButton.setLayoutData(new GridData());
@@ -356,6 +352,14 @@ public class TargetLocationsGroup {
 			fTreeViewer.refresh(false);
 			fTreeViewer.expandAll();
 			updateButtons();
+		}
+	}
+
+	private void handleEditRepos() {
+		RepositoriesDialog dialog = new RepositoriesDialog(fTreeViewer.getTree().getShell(), fTarget);
+		if (dialog.open() == Window.OK) {
+			fTarget.setRepositories(dialog.getRepositories());
+			contentsChanged();
 		}
 	}
 

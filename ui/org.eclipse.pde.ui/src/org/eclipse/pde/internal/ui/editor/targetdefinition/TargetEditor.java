@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.SaveAsDialog;
@@ -381,8 +382,10 @@ public class TargetEditor extends FormEditor {
 			if (!resolve) {
 				if (fContentTree != null && source != fContentTree) {
 					ITargetDefinition target = getTarget();
-					// Check to see if we are resolved, resolving, or cancelled
+					// Check to see if we are resolved successfully, resolved with a problem, resolving, or cancelled
 					if (target != null && target.isResolved()) {
+						fContentTree.setInput(getTarget());
+					} else if (target != null && target.getResolveStatus() != null && target.getResolveStatus().getSeverity() != IStatus.OK && target.getResolveStatus().getSeverity() != IStatus.CANCEL) {
 						fContentTree.setInput(getTarget());
 					} else if (Job.getJobManager().find(getJobFamily()).length > 0) {
 						fContentTree.setInput(null);
@@ -437,6 +440,7 @@ public class TargetEditor extends FormEditor {
 								if (fLocationTree != null) {
 									fLocationTree.setInput(getTarget());
 								}
+								updateEditorImage(getTarget().getResolveStatus());
 								return Status.OK_STATUS;
 							}
 						};
@@ -449,4 +453,22 @@ public class TargetEditor extends FormEditor {
 		}
 	}
 
+	/**
+	 * Changes the editor image if there were resolution problems
+	 * 
+	 * @param status latest status from the target definition
+	 */
+	private void updateEditorImage(IStatus status) {
+		Image titleImage = getTitleImage();
+		if (titleImage == null) {
+			return;
+		}
+
+		if (status != null && status.getSeverity() == IStatus.ERROR) {
+			setTitleImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION, PDELabelProvider.F_ERROR));
+			return;
+		}
+
+		setTitleImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
+	}
 }

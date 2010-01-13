@@ -11,21 +11,20 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Properties;
+import java.net.*;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.IQueryResult;
-import org.eclipse.equinox.p2.publisher.Publisher;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.P2Utils;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 
 /**
@@ -34,6 +33,8 @@ import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
  * @since 3.5 
  */
 public class ProfileBundleContainer extends AbstractLocalBundleContainer {
+
+	private static final String TEMP_REPO_LOCATION = ".temp_repository";
 
 	// The following constants are duplicated from org.eclipse.equinox.internal.p2.core.Activator
 	private static final String CONFIG_INI = "config.ini"; //$NON-NLS-1$
@@ -78,20 +79,29 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		// TODO Use the progress monitor
+		SubMonitor subMon = SubMonitor.convert(monitor, "Loading repository for " + getLocation(false), 100);
 
 		// Get the installation location
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
+		File configArea = null;
 		URL configURL = getConfigurationArea();
-		if (configURL == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
+		if (configURL != null) {
+			configArea = new File(configURL.getFile());
+		} else {
+			configArea = new File(home);
 		}
-		File configArea = new File(configURL.getFile());
 		if (!configArea.isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, configArea)));
+		}
+
+		subMon.worked(5);
+
+		IMetadataRepositoryManager repoManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		if (repoManager == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		// Location of the profile
@@ -118,6 +128,8 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 				}
 			}
 
+			subMon.worked(10);
+
 			String p2Area = configProps.getProperty(PROP_AGENT_DATA_AREA);
 			if (p2Area != null) {
 				if (p2Area.startsWith(VAR_USER_HOME)) {
@@ -135,6 +147,10 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 
 			profileName = configProps.getProperty(PROP_PROFILE);
 		}
+		subMon.setWorkRemaining(85);
+		if (monitor.isCanceled()) {
+			return new IMetadataRepository[0];
+		}
 
 		if (p2DataArea == null || !p2DataArea.isDirectory()) {
 			p2DataArea = new File(configArea, "p2");
@@ -147,26 +163,97 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 		IPath profilePath = new Path(p2DataArea.getAbsolutePath());
 		profilePath = profilePath.append(EngineActivator.ID).append("profileRegistry").append(profileName + ".profile");
 		File profile = profilePath.toFile();
-		if (!profile.exists()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind("Could not find profile at: {0}", profile.toString())));
+
+		if (profile.exists()) {
+			fRepo = repoManager.loadRepository(profile.toURI(), subMon.newChild(20));
+			// When self hosting, you can end up with a repository, but only features in it, fall back on bundles.info instead
+			if (!fRepo.query(P2Utils.BUNDLE_QUERY, subMon.newChild(5)).isEmpty()) {
+				return new IMetadataRepository[] {fRepo};
+			}
+		}
+		subMon.setWorkRemaining(75);
+		if (monitor.isCanceled()) {
+			return new IMetadataRepository[0];
 		}
 
-		// TODO Have to handle cases where p2 is not present (platform.xml and directory)
-//		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
-//		if (infos == null) {
-//			IResolvedBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
-//			if (platformXML != null) {
-//				return platformXML;
-//			}
-//			infos = new BundleInfo[0];
-//		}
-//
-//		if (monitor.isCanceled()) {
-//			return new IResolvedBundle[0];
-//		}
+		// If the profile doesn't exist or is empty, fall back on other options to get installation information
+		File[] files = null;
 
-		fRepo = Publisher.loadMetadataRepository(agent, profile.toURI(), false, false);
-		return new IMetadataRepository[] {fRepo};
+		// Read bundles.txt
+		// This case will be hit when self hosting, as we don't require the user to generate a p2 profile on launch, but we do write bundles.txt
+		List fileList = new ArrayList();
+		BundleInfo[] infos = P2Utils.readBundles(home, configURL);
+		if (infos != null) {
+			for (int i = 0; i < infos.length; i++) {
+				URI location = infos[i].getLocation();
+				if (new File(location).exists()) {
+					fileList.add(new File(location));
+				}
+			}
+		}
+		subMon.worked(10);
+		infos = P2Utils.readSourceBundles(home, configURL);
+		if (infos != null) {
+			for (int i = 0; i < infos.length; i++) {
+				URI location = infos[i].getLocation();
+				if (new File(location).exists()) {
+					fileList.add(new File(location));
+				}
+			}
+		}
+		if (fileList.size() > 0) {
+			files = (File[]) fileList.toArray(new File[fileList.size()]);
+		}
+		subMon.worked(10);
+		if (monitor.isCanceled()) {
+			return new IMetadataRepository[0];
+		}
+
+		// Read platform.xml
+		if (files == null) {
+			files = org.eclipse.pde.internal.build.site.PluginPathFinder.getPaths(home, false, false);
+		}
+		subMon.worked(10);
+		if (monitor.isCanceled()) {
+			return new IMetadataRepository[0];
+		}
+
+		// Scan directory
+		if (files == null) {
+			files = readDirectory(new File(home));
+		}
+		subMon.worked(10);
+		if (monitor.isCanceled()) {
+			return new IMetadataRepository[0];
+		}
+
+		if (files == null || files.length == 0) {
+			return new IMetadataRepository[0];
+		}
+
+		IInstallableUnit[] ius = generateMetadataForFiles(files, subMon.newChild(20));
+		if (monitor.isCanceled()) {
+			return new IMetadataRepository[0];
+		}
+
+		// Save the repo in a temp location so it gets replaced each time we scan
+		File repoDir = new File(configArea, TEMP_REPO_LOCATION);
+		repoDir.mkdir();
+
+		IStatus repoStatus = repoManager.validateRepositoryLocation(repoDir.toURI(), subMon.newChild(5));
+		IMetadataRepository repo;
+		if (repoStatus.isOK()) {
+			repo = repoManager.loadRepository(repoDir.toURI(), subMon.newChild(10));
+			repo.removeAll();
+			repo.addInstallableUnits(ius);
+		} else {
+			repo = repoManager.createRepository(repoDir.toURI(), "Temporary Target Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
+			repo.addInstallableUnits(ius);
+			subMon.worked(10);
+		}
+		subMon.done();
+		fRepo = repo;
+		return new IMetadataRepository[] {repo};
 	}
 
 	public InstallableUnitDescription[] getRootIUs() throws CoreException {
@@ -220,41 +307,13 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 		return fConfiguration;
 	}
 
-//	/**
-//	 * Resolves installed bundles based on update manager's platform XML.
-//	 * 
-//	 * @param definition
-//	 * @param home
-//	 * @param monitor
-//	 * @return resolved bundles or <code>null</code> if none
-//	 * @throws CoreException
-//	 */
-//	protected IResolvedBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
-//		File[] files = PluginPathFinder.getPaths(home, false, false);
-//		if (files.length > 0) {
-//			List all = new ArrayList(files.length);
-//			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-//			for (int i = 0; i < files.length; i++) {
-//				if (localMonitor.isCanceled()) {
-//					throw new OperationCanceledException();
-//				}
-//				try {
-//					IResolvedBundle rb = generateBundle(files[i]);
-//					if (rb != null) {
-//						all.add(rb);
-//					}
-//				} catch (CoreException e) {
-//					// ignore invalid bundles
-//				}
-//				localMonitor.worked(1);
-//			}
-//			localMonitor.done();
-//			if (!all.isEmpty()) {
-//				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
-//			}
-//		}
-//		return null;
-//	}
+	private File[] readDirectory(File root) {
+		File file = new File(root, IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
+		if (file.exists()) {
+			return file.listFiles();
+		}
+		return root.listFiles();
+	}
 
 	/**
 	 * Replaces a variable in config.ini

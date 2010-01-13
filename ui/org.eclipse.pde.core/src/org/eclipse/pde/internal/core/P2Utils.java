@@ -409,7 +409,7 @@ public class P2Utils {
 		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
 			IPluginModelBase model = (IPluginModelBase) iterator.next();
 			BundleDescription bundle = model.getBundleDescription();
-			ius.add(createBundleIU(bundle));
+			ius.add(createBundleIU(bundle, false));
 		}
 
 		// Create operands to install the metadata
@@ -433,12 +433,19 @@ public class P2Utils {
 
 	}
 
-	public static IInstallableUnit[] createInstallableUnits(Collection bundles) {
+	/**
+	 * Creates installable units for each of the given {@link BundleDescription} objects.
+	 * 
+	 * @param bundles collection of {@link BundleDescription} to create installable units for
+	 * @param isSource whether the entire set of bundles are Eclipse source bundles and should have an additional provided capability
+	 * @return generated installable units
+	 */
+	public static IInstallableUnit[] createInstallableUnits(Collection bundles, boolean isSource) {
 		// TODO Cleanup and doc
 		Collection ius = new ArrayList(bundles.size());
 		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iterator.next();
-			ius.add(createBundleIU(bundle));
+			ius.add(createBundleIU(bundle, isSource));
 		}
 		return (IInstallableUnit[]) ius.toArray(new IInstallableUnit[ius.size()]);
 	}
@@ -447,9 +454,10 @@ public class P2Utils {
 	 * Creates an installable unit from a bundle description
 	 * 
 	 * @param bd bundle description to create metadata for
+	 * @param isSource whether the given bundle description describes an Eclipse source bundle
 	 * @return an installable unit
 	 */
-	private static IInstallableUnit createBundleIU(BundleDescription bd) {
+	private static IInstallableUnit createBundleIU(BundleDescription bd, boolean isSource) {
 		InstallableUnitDescription iu = new MetadataFactory.InstallableUnitDescription();
 		iu.setSingleton(bd.isSingleton());
 		iu.setId(bd.getSymbolicName());
@@ -490,6 +498,10 @@ public class P2Utils {
 		ArrayList providedCapabilities = new ArrayList();
 		providedCapabilities.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, bd.getSymbolicName(), Version.fromOSGiVersion(bd.getVersion())));
 		providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getSymbolicName(), Version.fromOSGiVersion(bd.getVersion())));
+		// Eclipse source bundles get an extra provided capability
+		if (isSource) {
+			providedCapabilities.add(MetadataFactory.createProvidedCapability(NAMESPACE_ECLIPSE_TYPE, TYPE_ECLIPSE_SOURCE, Version.parseVersion("1.0.0"))); //$NON-NLS-1$
+		}
 
 		// Process the export package
 		ExportPackageDescription exports[] = bd.getExportPackages();

@@ -39,12 +39,12 @@ public class EditBundleContainerWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		if (fContainer instanceof DirectoryBundleContainer) {
+		if (fContainer instanceof FeatureBundleContainer) {
+			fPage = new EditFeatureContainerPage(fContainer);
+		} else if (fContainer instanceof DirectoryBundleContainer) {
 			fPage = new EditDirectoryContainerPage(fContainer);
 		} else if (fContainer instanceof ProfileBundleContainer) {
 			fPage = new EditProfileContainerPage(fContainer);
-		} else if (fContainer instanceof FeatureBundleContainer) {
-			fPage = new EditFeatureContainerPage(fContainer);
 		}
 		if (fPage != null) {
 			addPage(fPage);

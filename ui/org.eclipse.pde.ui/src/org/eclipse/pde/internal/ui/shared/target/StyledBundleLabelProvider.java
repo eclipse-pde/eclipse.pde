@@ -84,46 +84,32 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		} else if (element instanceof IPath) {
 			styledString.append(((IPath) element).removeFirstSegments(1).toString());
 		} else if (element instanceof FeatureBundleContainer) {
-			// Support feature bundle containers?
-//			FeatureBundleContainer container = (FeatureBundleContainer) element;
-//			styledString.append(container.getFeatureId());
-//			String version = container.getFeatureVersion();
-//			if (version != null) {
-//				styledString.append(' ');
-//				styledString.append('[', StyledString.QUALIFIER_STYLER);
-//				styledString.append(version, StyledString.QUALIFIER_STYLER);
-//				styledString.append(']', StyledString.QUALIFIER_STYLER);
-//			}
-//			if (fAppendResolvedVariables) {
-//				appendLocation(styledString, container, true);
-//			}
-//			appendLocation(styledString, container, false);
-//			appendIncludedBundles(styledString, container);
+			FeatureBundleContainer container = (FeatureBundleContainer) element;
+
+			styledString.append(container.getFeatureId());
+			String version = container.getFeatureVersion();
+			if (version != null) {
+				styledString.append(' ');
+				styledString.append('[', StyledString.QUALIFIER_STYLER);
+				styledString.append(version, StyledString.QUALIFIER_STYLER);
+				styledString.append(']', StyledString.QUALIFIER_STYLER);
+			}
+			try {
+				String location = container.getLocation(false);
+				styledString.append(' ').append(location);
+			} catch (CoreException e) {
+			}
 		} else if (element instanceof DirectoryBundleContainer) {
 			DirectoryBundleContainer container = (DirectoryBundleContainer) element;
-			try {
-				styledString.append(container.getLocation(false));
-			} catch (CoreException e) {
-			}
-			if (fAppendResolvedVariables) {
-				appendLocation(styledString, container, true);
-			}
+			appendLocation(styledString, container);
 		} else if (element instanceof ProfileBundleContainer) {
 			ProfileBundleContainer container = (ProfileBundleContainer) element;
-			try {
-				styledString.append(container.getLocation(false));
-			} catch (CoreException e) {
-				// TODO:
-			}
-			if (fAppendResolvedVariables) {
-				appendLocation(styledString, container, true);
-			}
+			appendLocation(styledString, container);
 		} else if (element instanceof IUBundleContainer) {
 			styledString.append("Repository Container");
 		} else if (element instanceof IInstallableUnit) {
 			IInstallableUnit iu = (IInstallableUnit) element;
 			String name = iu.getProperty(IInstallableUnit.PROP_NAME);
-			// TODO Quick hack to handle generated IUs that don't have proper names set
 			if (name == null || name.startsWith("%")) { //$NON-NLS-1$
 				name = iu.getId();
 			}
@@ -163,11 +149,17 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @param container container to append
 	 * @param resolved whether to resolve the location
 	 */
-	private void appendLocation(StyledString styledString, AbstractLocalBundleContainer container, boolean resolved) {
+	private void appendLocation(StyledString styledString, AbstractLocalBundleContainer container) {
 		try {
-			String location = container.getLocation(resolved);
-			styledString.append(" - ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-			styledString.append(location, StyledString.DECORATIONS_STYLER);
+			String location = container.getLocation(false);
+			styledString.append(location);
+			if (fAppendResolvedVariables) {
+				String resolveLocation = container.getLocation(true);
+				if (!location.equals(resolveLocation)) {
+					styledString.append(' ').append(resolveLocation, StyledString.DECORATIONS_STYLER);
+				}
+			}
+
 		} catch (CoreException e) {
 		}
 	}
