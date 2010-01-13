@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -104,7 +104,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 		createButtons(container);
 
-		createComputationsOption(container, 2);
+		Composite optionsComp = SWTFactory.createComposite(container, 1, 2, GridData.FILL_HORIZONTAL, 5, 0);
+		createComputationsOption(optionsComp);
 
 		fAddFragmentsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -163,7 +164,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		fTablePart.getControl().setLayoutData(gd);
 
 		CheckboxTableViewer viewer = fTablePart.getTableViewer();
-		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		viewer.setLabelProvider(new PluginImportLabelProvider());
 		viewer.setContentProvider(new PluginContentProvider());
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		viewer.setInput(PDEPlugin.getWorkspace().getRoot());

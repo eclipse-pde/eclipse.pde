@@ -15,8 +15,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.ConfigurationAreaBlock;
-import org.eclipse.pde.internal.ui.launcher.ConfigurationTemplateBlock;
+import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -38,6 +37,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 
 	private ConfigurationAreaBlock fConfigurationArea;
 	private ConfigurationTemplateBlock fTemplateArea;
+	private SoftwareInstallBlock fSoftwareInstallArea;
 	private Image fImage;
 	private boolean fJUnitConfig;
 
@@ -59,6 +59,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fImage = PDEPluginImages.DESC_SETTINGS_OBJ.createImage();
 		fConfigurationArea = new ConfigurationAreaBlock(this);
 		fTemplateArea = new ConfigurationTemplateBlock(this);
+		fSoftwareInstallArea = new SoftwareInstallBlock(this);
 		fJUnitConfig = isJUnitConfig;
 	}
 
@@ -73,6 +74,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 
 		fConfigurationArea.createControl(container);
 		fTemplateArea.createControl(container);
+		fSoftwareInstallArea.createControl(container);
 
 		Dialog.applyDialogFont(container);
 		setControl(container);
@@ -85,6 +87,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fConfigurationArea.setDefaults(configuration, fJUnitConfig);
 		fTemplateArea.setDefaults(configuration);
+		fSoftwareInstallArea.setDefaults(configuration);
 	}
 
 	/* (non-Javadoc)
@@ -94,6 +97,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		try {
 			fConfigurationArea.initializeFrom(configuration);
 			fTemplateArea.initializeFrom(configuration);
+			fSoftwareInstallArea.initializeFrom(configuration);
 		} catch (CoreException e) {
 		}
 	}
@@ -105,6 +109,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fConfigurationArea.performApply(configuration);
 		fTemplateArea.performApply(configuration);
+		fSoftwareInstallArea.performApply(configuration);
 	}
 
 	/*
@@ -142,6 +147,9 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		String error = fConfigurationArea.validate();
 		if (error == null)
 			error = fTemplateArea.validate();
+		if (error == null) {
+			error = fSoftwareInstallArea.validate();
+		}
 		setErrorMessage(error);
 	}
 

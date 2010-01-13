@@ -12,7 +12,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.util.Dictionary;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -199,6 +199,26 @@ public class MinimalState {
 
 	public StateDelta resolveState(boolean incremental) {
 		return internalResolveState(incremental);
+	}
+
+	/**
+	 * Resolves the state incrementally based on the given bundle names.
+	 *  
+	 * @param symbolicNames
+	 * @return state delta
+	 */
+	public StateDelta resolveState(String[] symbolicNames) {
+		if (initializePlatformProperties()) {
+			return fState.resolve(false);
+		}
+		List bundles = new ArrayList();
+		for (int i = 0; i < symbolicNames.length; i++) {
+			BundleDescription[] descriptions = fState.getBundles(symbolicNames[i]);
+			for (int j = 0; j < descriptions.length; j++) {
+				bundles.add(descriptions[j]);
+			}
+		}
+		return fState.resolve((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
 	}
 
 	private synchronized StateDelta internalResolveState(boolean incremental) {

@@ -237,6 +237,18 @@ public class PDECoreMessages extends NLS {
 	public static String BuildErrorReporter_dirsMustEndSlash;
 	public static String BuildErrorReporter_classpathEntryMissing1;
 
+	public static String BuildErrorReporter_CompilercomplianceLevel;
+
+	public static String BuildErrorReporter_DisallowIdentifiers;
+
+	public static String BuildErrorReporter_GeneratedClassFilesCompatibility;
+
+	public static String BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken;
+
+	public static String BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry;
+
+	public static String BuildErrorReporter_SourceCompatibility;
+
 	public static String ExportWizard_badDirectory;
 
 	public static String FeatureExportJob_taskName;
@@ -279,6 +291,14 @@ public class PDECoreMessages extends NLS {
 	public static String XMLTextChangeListener_editNames_removeNode;
 
 	public static String SearchablePluginsManager_createProjectTaskName;
+
+	public static String SourceEntryErrorReporter_DifferentTargetLibrary;
+	public static String SourceEntryErrorReporter_DupeOutputFolder;
+	public static String SourceEntryErrorReporter_DupeSourceFolder;
+	public static String SourceEntryErrorReporter_ExtraOutputFolder;
+	public static String SourceEntryErrorReporter_InvalidOutputFolder;
+	public static String SourceEntryErrorReporter_InvalidSourceFolder;
+	public static String SourceEntryErrorReporter_MissingOutputEntry;
 
 	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
 

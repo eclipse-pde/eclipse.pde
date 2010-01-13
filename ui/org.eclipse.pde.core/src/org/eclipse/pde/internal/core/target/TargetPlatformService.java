@@ -252,6 +252,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getWorkspaceTargetDefinition()
 	 */
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
+		// If the plug-in registry has not been initialized we may not have a target set, getting the start forces the init
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		if (!manager.isInitialized()) {
+			manager.getExternalModelManager();
+		}
+
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
 		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
@@ -440,11 +446,22 @@ public class TargetPlatformService implements ITargetPlatformService {
 			// restrictions on container
 			IPluginModelBase[] models = PluginRegistry.getExternalModels();
 			ArrayList list = new ArrayList(models.length);
+			Set disabledIDs = new HashSet();
+			for (int i = 0; i < models.length; i++) {
+				if (!models[i].isEnabled()) {
+					disabledIDs.add(models[i].getPluginBase().getId());
+				}
+			}
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].isEnabled()) {
 					String id = models[i].getPluginBase().getId();
 					if (id != null) {
-						list.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+						if (disabledIDs.contains(id)) {
+							// include version info since some versions are disabled
+							list.add(new BundleInfo(id, models[i].getPluginBase().getVersion(), null, BundleInfo.NO_LEVEL, false));
+						} else {
+							list.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+						}
 					}
 				}
 			}

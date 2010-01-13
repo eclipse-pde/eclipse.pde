@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
-
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -32,6 +27,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -39,6 +36,7 @@ import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.FilterableCheck
 import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotifier;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -82,7 +80,6 @@ public abstract class AbstractPluginBlock {
 	private Label fCounter;
 
 	private LaunchValidationOperation fOperation;
-	private PluginStatusDialog fDialog;
 
 	private Button fValidateButton;
 
@@ -916,19 +913,15 @@ public abstract class AbstractPluginBlock {
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
-		if (fDialog == null) {
-			if (fOperation.hasErrors()) {
-				fDialog = new PluginStatusDialog(getShell(), SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
-				fDialog.setInput(fOperation.getInput());
-				fDialog.open();
-				fDialog = null;
-			} else if (fOperation.isEmpty()) {
-				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
-			} else {
-				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
-			}
+		if (fOperation.hasErrors()) {
+			PluginStatusDialog dialog = new PluginStatusDialog(getShell(), SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
+			dialog.setInput(fOperation.getInput());
+			dialog.open();
+			dialog = null;
+		} else if (fOperation.isEmpty()) {
+			MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
 		} else {
-			fDialog.refresh(fOperation.getInput());
+			MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
 		}
 	}
 

@@ -67,4 +67,37 @@ public class NameVersionDescriptor {
 		buf.append(fVersion);
 		return buf.toString();
 	}
+
+	/**
+	 * Creates a descriptor from a portable string.
+	 * 
+	 * @param portable generated from {@link #toPortableString()}
+	 * @return descriptor
+	 */
+	public static NameVersionDescriptor fromPortableString(String portable) {
+		int index = portable.indexOf('@');
+		if (index > 0) {
+			String name = portable.substring(0, index);
+			String ver = null;
+			index++;
+			if (index < portable.length()) {
+				ver = portable.substring(index);
+			}
+			return new NameVersionDescriptor(name, ver);
+		}
+		return new NameVersionDescriptor(portable, null);
+	}
+
+	/**
+	 * Returns a portable form for this descriptor.
+	 * 
+	 * @return portable form
+	 */
+	public String toPortableString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append(fId);
+		buf.append('@');
+		buf.append(fVersion);
+		return buf.toString();
+	}
 }

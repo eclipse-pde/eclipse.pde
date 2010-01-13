@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class CompilerFlags {
 	public static final String P_NO_REQUIRED_ATT = "compilers.p.no-required-att"; //$NON-NLS-1$
 	public static final String P_NOT_EXTERNALIZED = "compilers.p.not-externalized-att"; //$NON-NLS-1$
 	public static final String P_BUILD = "compilers.p.build"; //$NON-NLS-1$
+	public static final String P_BUILD_MISSING_OUTPUT = "compilers.p.build.missing.output"; //$NON-NLS-1$
 	public static final String P_INCOMPATIBLE_ENV = "compilers.incompatible-environment"; //$NON-NLS-1$
 	public static final String P_MISSING_EXPORT_PKGS = "compilers.p.missing-packages"; //$NON-NLS-1$
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$

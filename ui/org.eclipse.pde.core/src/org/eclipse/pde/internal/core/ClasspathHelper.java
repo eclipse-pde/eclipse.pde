@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 public class ClasspathHelper {
 
 	private static final String DOT = "."; //$NON-NLS-1$
+	private static final String FRAGMENT_ANNOTATION = "@fragment@"; //$NON-NLS-1$
 
 	public static String getDevEntriesProperties(String fileName, boolean checkExcluded) {
 		File file = new File(fileName);
@@ -311,7 +312,7 @@ public class ClasspathHelper {
 					}
 					IPath[] paths = findLibrary(libName, project, classpathMap, build);
 					if (paths.length > 0)
-						return paths;
+						return postfixFragmentAnnotation(paths);
 
 				} catch (JavaModelException e) {
 					continue;
@@ -322,11 +323,22 @@ public class ClasspathHelper {
 				if (file.isDirectory()) {
 					file = new File(file, libName);
 					if (file.exists())
-						return new IPath[] {new Path(file.getPath())};
+						// Postfix fragment annotation for fragment path (fix bug 294211)
+						return new IPath[] {new Path(file.getPath() + FRAGMENT_ANNOTATION)};
 				}
 			}
 		}
 		return new IPath[0];
+	}
+
+	/*
+	 * Postfixes the fragment annotation for the paths that we know come
+	 * from fragments.  This is needed to fix bug 294211.
+	 */
+	private static IPath[] postfixFragmentAnnotation(IPath[] paths) {
+		for (int i = 0; i < paths.length; i++)
+			paths[i] = new Path(paths[i].toString() + FRAGMENT_ANNOTATION);
+		return paths;
 	}
 
 	private static void addPath(ArrayList result, IProject project, IPath path) {

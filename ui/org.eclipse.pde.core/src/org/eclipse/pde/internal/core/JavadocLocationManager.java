@@ -32,9 +32,9 @@ public class JavadocLocationManager {
 		if (file.isDirectory()) {
 			File doc = new File(file, "doc"); //$NON-NLS-1$
 			if (new File(doc, "package-list").exists()) //$NON-NLS-1$
-				return doc.getAbsolutePath();
+				return "file:/" + doc.getAbsolutePath(); //$NON-NLS-1$
 		} else if (CoreUtility.jarContainsResource(file, "doc/package-list", false)) { //$NON-NLS-1$
-			return file.getAbsolutePath() + "!/doc"; //$NON-NLS-1$
+			return "jar:file:/" + file.getAbsolutePath() + "!/doc"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return getEntry(model);
 	}

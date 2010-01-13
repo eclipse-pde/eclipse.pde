@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class PDEMarkerFactory {
 	public static final int B_ADDDITION = 0x2003;
 	public static final int B_SOURCE_ADDITION = 0x2004;
 	public static final int B_REMOVAL = 0x2005;
+	public static final int B_REPLACE = 0x2006;
 
 	// plugin.xml fixes
 	public static final int P_ILLEGAL_XML_NODE = 0x3001;
@@ -72,11 +73,12 @@ public class PDEMarkerFactory {
 	public static final String CAT_DEPRECATION = "deprecation"; //$NON-NLS-1$
 	public static final String CAT_EE = "ee"; //$NON-NLS-1$
 	public static final String CAT_OTHER = ""; //$NON-NLS-1$
+	public static final String CAT_ID = "categoryId"; //$NON-NLS-1$
 
 	public IMarker createMarker(IFile file, int id, String category) throws CoreException {
 		IMarker marker = file.createMarker(MARKER_ID);
 		marker.setAttribute("id", id); //$NON-NLS-1$
-		marker.setAttribute("categoryId", category); //$NON-NLS-1$
+		marker.setAttribute(CAT_ID, category);
 		return marker;
 	}
 

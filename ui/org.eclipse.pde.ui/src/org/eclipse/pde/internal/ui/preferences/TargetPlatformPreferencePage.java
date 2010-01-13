@@ -616,7 +616,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public void init(IWorkbench workbench) {
 		// ensures default targets are created when page is opened (if not created yet)
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		manager.getExternalModelManager();
+		if (!manager.isInitialized()) {
+			manager.getExternalModelManager();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -773,14 +775,18 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 							if (pref.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH)) {
 								AddToJavaSearchJob.synchWithTarget(fActiveTarget);
 							}
+							// Ignore the qualifier when comparing (otherwise N builds always newer than I builds)
 							Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
+							platformOsgiVersion = new Version(platformOsgiVersion.getMajor(), platformOsgiVersion.getMinor(), platformOsgiVersion.getMicro());
 							IResolvedBundle[] bundles;
 							bundles = fActiveTarget.getAllBundles();
 							if (bundles != null) {
 								for (int index = 0; index < bundles.length; index++) {
 									BundleInfo bundleInfo = bundles[index].getBundleInfo();
 									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(bundleInfo.getSymbolicName())) {
+										// Ignore the qualifier when comparing (otherwise N builds always newer than I builds)
 										Version bundleVersion = Version.parseVersion(bundleInfo.getVersion());
+										bundleVersion = new Version(bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro());
 										if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
 											Display.getDefault().syncExec(new Runnable() {
 												public void run() {

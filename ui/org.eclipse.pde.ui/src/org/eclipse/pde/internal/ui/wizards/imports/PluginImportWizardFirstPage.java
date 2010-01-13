@@ -214,8 +214,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			});
 			String[] names = new String[targetDefinitions.size()];
 			for (int i = 0; i < targetDefinitions.size(); i++) {
-				String name = ((ITargetDefinition) targetDefinitions.get(i)).getName();
-				names[i] = name == null ? "" : name; //$NON-NLS-1$
+				ITargetDefinition currentTarget = (ITargetDefinition) targetDefinitions.get(i);
+				names[i] = currentTarget.getName();
+				if (names[i] == null || names[i].trim().length() == 0) {
+					names[i] = currentTarget.getHandle().toString();
+				}
 			}
 			targetDefinitionCombo.setItems(names);
 		}
@@ -254,6 +257,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		});
 		targetDefinitionCombo = SWTFactory.createCombo(composite, SWT.DROP_DOWN | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, null);
+		targetDefinitionCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				validateDropLocation();
+			}
+		});
+
 		openTargetPrefsButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_goToTarget, null);
 		openTargetPrefsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

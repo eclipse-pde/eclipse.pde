@@ -17,11 +17,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
@@ -34,6 +32,9 @@ import org.osgi.framework.ServiceReference;
  * @since 3.5 
  */
 public class LocalTargetDefinitionTests extends AbstractTargetTest {
+	
+	public static final NameVersionDescriptor MULTI_VERSION_LOW_DESCRIPTION = new NameVersionDescriptor("a.typical.bundle", "1.0.0.200907071058");
+	public static final NameVersionDescriptor MULTI_VERSION_HIGH_DESCRIPTION = new NameVersionDescriptor("a.typical.bundle", "1.1.0.200907071100");
 	
 	public static Test suite() {
 		return new TestSuite(LocalTargetDefinitionTests.class);
@@ -534,39 +535,27 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception 
 	 */
 	public void testFeatureBundleContainer() throws Exception {
+		// extract the feature
+		IPath location = extractModifiedFeatures();
+		
+		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", null);
+		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
 		IResolvedBundle[] bundles = container.getBundles();
 		
-		Set expected = new HashSet();
+		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt");
-		expected.add("org.eclipse.ant.launching");
-		expected.add("org.eclipse.ant.ui");
-		expected.add("org.eclipse.jdt.apt.core");
-		expected.add("org.eclipse.jdt.apt.ui");
-		expected.add("org.eclipse.jdt.apt.pluggable.core");
-		expected.add("org.eclipse.jdt.compiler.apt");
-		expected.add("org.eclipse.jdt.compiler.tool");
-		expected.add("org.eclipse.jdt.core");
-		expected.add("org.eclipse.jdt.core.manipulation");
-		expected.add("org.eclipse.jdt.debug.ui");
-		expected.add("org.eclipse.jdt.debug");
-		expected.add("org.eclipse.jdt.junit");
-		expected.add("org.eclipse.jdt.junit.core");
-		expected.add("org.eclipse.jdt.junit.runtime");
-		expected.add("org.eclipse.jdt.junit4.runtime");
 		expected.add("org.eclipse.jdt.launching");
-		expected.add("org.eclipse.jdt.ui");
+		// 2 versions of JUnit
+		expected.add("org.junit");
 		expected.add("org.junit");
 		expected.add("org.junit4");
-		expected.add("org.eclipse.jdt.doc.user");
-		expected.add("org.hamcrest.core");
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx");
-			expected.add("org.eclipse.jdt.launching.ui.macosx");
 		}
-		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
+		
+		assertEquals("Wrong number of bundles in test JDT feature", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			expected.remove(bundles[i].getBundleInfo().getSymbolicName());
 		}
@@ -576,7 +565,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
-		
 		
 		// should be no source bundles
 		for (int i = 0; i < bundles.length; i++) {
@@ -591,43 +579,29 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception 
 	 */
 	public void testMacOSFeatureBundleContainer() throws Exception {
+		// extract the feature
+		IPath location = extractModifiedFeatures();
+		
 		ITargetDefinition definition = getNewTarget();
 		definition.setOS(Platform.OS_MACOSX);
-		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", null);
+		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
 		IResolvedBundle[] bundles = container.getBundles();
 		
-		Set expected = new HashSet();
+		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt");
-		expected.add("org.eclipse.ant.launching");
-		expected.add("org.eclipse.ant.ui");
-		expected.add("org.eclipse.jdt.apt.core");
-		expected.add("org.eclipse.jdt.apt.ui");
-		expected.add("org.eclipse.jdt.apt.pluggable.core");
-		expected.add("org.eclipse.jdt.compiler.apt");
-		expected.add("org.eclipse.jdt.compiler.tool");
-		expected.add("org.eclipse.jdt.core");
-		expected.add("org.eclipse.jdt.core.manipulation");
-		expected.add("org.eclipse.jdt.debug.ui");
-		expected.add("org.eclipse.jdt.debug");
-		expected.add("org.eclipse.jdt.junit");
-		expected.add("org.eclipse.jdt.junit.core");
-		expected.add("org.eclipse.jdt.junit.runtime");
-		expected.add("org.eclipse.jdt.junit4.runtime");
 		expected.add("org.eclipse.jdt.launching");
-		expected.add("org.eclipse.jdt.ui");
+		// 2 versions of JUnit
+		expected.add("org.junit");
 		expected.add("org.junit");
 		expected.add("org.junit4");
-		expected.add("org.eclipse.jdt.doc.user");
 		expected.add("org.eclipse.jdt.launching.macosx");
-		expected.add("org.eclipse.jdt.launching.ui.macosx");
-		expected.add("org.hamcrest.core");
+		
 		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
 			expected.remove(symbolicName);
-			if (symbolicName.equals("org.eclipse.jdt.launching.macosx") ||
-					symbolicName.equals("org.eclipse.jdt.launching.ui.macosx")) {
+			if (symbolicName.equals("org.eclipse.jdt.launching.macosx")) {
 				// the bundle should be missing unless on Mac
 				IStatus status = bundles[i].getStatus();
 				if (Platform.getOS().equals(Platform.OS_MACOSX)) {
@@ -659,11 +633,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testRestrictedFeatureBundleContainer() throws Exception {
+		// extract the feature
+		IPath location = extractModifiedFeatures();
+		
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", null);
+		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt", null);
 		BundleInfo[] restrictions = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+				new BundleInfo("org.eclipse.jdt", null, null, BundleInfo.NO_LEVEL, false),
+				new BundleInfo("org.junit", "3.8.2.v20090203-1005", null, BundleInfo.NO_LEVEL, false)
 		};
 		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
@@ -684,38 +661,25 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception 
 	 */
 	public void testSourceFeatureBundleContainer() throws Exception {
+		// extract the feature
+		IPath location = extractModifiedFeatures();
+		
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt.source", null);
+		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt.source", null);
 		container.resolve(definition, null);
 		IResolvedBundle[] bundles = container.getBundles();
-		
-		Set expected = new HashSet();
+	
+		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt.source");
-		expected.add("org.eclipse.ant.launching.source");
-		expected.add("org.eclipse.ant.ui.source");
-		expected.add("org.eclipse.jdt.apt.core.source");
-		expected.add("org.eclipse.jdt.apt.ui.source");
-		expected.add("org.eclipse.jdt.apt.pluggable.core.source");
-		expected.add("org.eclipse.jdt.compiler.apt.source");
-		expected.add("org.eclipse.jdt.compiler.tool.source");
-		expected.add("org.eclipse.jdt.core.source");
-		expected.add("org.eclipse.jdt.core.manipulation.source");
-		expected.add("org.eclipse.jdt.debug.ui.source");
-		expected.add("org.eclipse.jdt.debug.source");
-		expected.add("org.eclipse.jdt.junit.source");
-		expected.add("org.eclipse.jdt.junit.core.source");
-		expected.add("org.eclipse.jdt.junit.runtime.source");
-		expected.add("org.eclipse.jdt.junit4.runtime.source");
 		expected.add("org.eclipse.jdt.launching.source");
-		expected.add("org.eclipse.jdt.ui.source");
+		// There are two versions of junit available, each with source
 		expected.add("org.junit.source");
-		expected.add("org.junit4.source");
-		expected.add("org.hamcrest.core.source");
+		expected.add("org.junit.source");
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
-			expected.add("org.eclipse.jdt.launching.ui.macosx.source");
 		}
-		assertEquals("Wrong number of bundles", expected.size() + 1, bundles.length);
+		
+		assertEquals("Wrong number of bundles", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			if (bundles[i].getBundleInfo().getSymbolicName().equals("org.eclipse.jdt.doc.isv")) {
 				assertFalse("Should not be a source bundle", bundles[i].isSourceBundle());
@@ -747,7 +711,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			
 			setTargetPlatform(target);
 			
-			Set expected = new HashSet();
+			List expected = new ArrayList();
 			expected.add("org.eclipse.jdt");
 			expected.add("org.eclipse.ant.launching");
 			expected.add("org.eclipse.ant.ui");
@@ -766,6 +730,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			expected.add("org.eclipse.jdt.junit4.runtime");
 			expected.add("org.eclipse.jdt.launching");
 			expected.add("org.eclipse.jdt.ui");
+			// 2 versions of JUnit
+			expected.add("org.junit");
 			expected.add("org.junit");
 			expected.add("org.junit4");
 			expected.add("org.eclipse.jdt.doc.user");
@@ -934,7 +900,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 			// Check that new launch configs will be prepopulated from target
 			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
-			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} ".concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
+			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog ".concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
 		
 		} finally {
 			getTargetService().deleteTarget(definition.getHandle());
@@ -943,4 +909,91 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 	}
 	
+	/**
+	 * Tests that a single (lower) version of a bundle can be included in the target platform.
+	 * 
+	 * @throws Exception
+	 */
+	public void testLowerVersionOfBundle() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_LOW_DESCRIPTION});
+	}
+	
+	/**
+	 * Tests that a single (higher) version of a bundle can be included in the target platform.
+	 * 
+	 * @throws Exception
+	 */
+	public void testHigherVersionOfBundle() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_HIGH_DESCRIPTION});
+	}
+	
+	/**
+	 * Tests all versions of a bundle can be excluded.
+	 * 
+	 * @throws Exception
+	 */
+	public void testNoVersionsOfBundle() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[0]);
+	}
+	
+	/**
+	 * Tests all versions of a bundle can be included.
+	 * 
+	 * @throws Exception
+	 */
+	public void testAllVersionsOfBundle() throws Exception {
+		doIncludeVersions(null);
+	}
+	
+	/**
+	 * Tests all versions of a bundle can be included.
+	 * 
+	 * @throws Exception
+	 */
+	public void testAllVersionsOfBundleExplicit() throws Exception {
+		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_LOW_DESCRIPTION, MULTI_VERSION_HIGH_DESCRIPTION});
+	}
+	
+	protected void doIncludeVersions(NameVersionDescriptor[] descriptions) throws Exception {
+		String bsn = MULTI_VERSION_LOW_DESCRIPTION.getId();
+		
+		IPath extras = extractMultiVersionPlugins();
+		ITargetDefinition target = getNewTarget();
+		IBundleContainer container = getTargetService().newDirectoryContainer(extras.toOSString());
+		BundleInfo[] infos = null;
+		if (descriptions != null) {
+			infos = new BundleInfo[descriptions.length];
+			for (int i = 0; i < infos.length; i++) {
+				infos[i] = new BundleInfo(descriptions[i].getId(), descriptions[i].getVersion(), null, 0, false);
+			}
+		}
+		container.setIncludedBundles(infos);
+		target.setBundleContainers(new IBundleContainer[]{container});
+		try {
+			getTargetService().saveTargetDefinition(target);
+			setTargetPlatform(target);
+			IPluginModelBase[] models = PluginRegistry.getExternalModels();
+			Set enabled = new HashSet();
+			for (int i = 0; i < models.length; i++) {
+				IPluginModelBase pm = models[i];
+				if (pm.getBundleDescription().getSymbolicName().equals(bsn)) {
+					NameVersionDescriptor desc = new NameVersionDescriptor(pm.getPluginBase().getId(), pm.getPluginBase().getVersion());
+					if (pm.isEnabled()) {
+						enabled.add(desc);
+					}
+				}
+			}
+			if (descriptions == null) {
+				
+			} else {
+				assertEquals("Wrong number of enabled bundles", descriptions.length, enabled.size());
+				for (int i = 0; i < descriptions.length; i++) {
+					assertTrue("Missing bundle", enabled.contains(descriptions[i]));
+				}
+			}
+		} finally {
+			getTargetService().deleteTarget(target.getHandle());
+			resetTargetPlatform();
+		}
+	}
 }

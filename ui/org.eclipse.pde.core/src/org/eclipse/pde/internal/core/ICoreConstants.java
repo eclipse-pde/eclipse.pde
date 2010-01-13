@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,10 @@ public interface ICoreConstants {
 	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
 	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
 	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
+	/**
+	 * @since 3.6 - Bug 282708: [target] issues with two versions of the same bundle 
+	 */
+	String CHECKED_VERSION_PLUGINS = "checkedVersionPlugins"; //$NON-NLS-1$
 
 	// Target Environment
 	String OS = "org.eclipse.pde.ui.os"; //$NON-NLS-1$
@@ -76,6 +80,7 @@ public interface ICoreConstants {
 	public final static String TARGET33 = "3.3"; //$NON-NLS-1$
 	public final static String TARGET34 = "3.4"; //$NON-NLS-1$
 	public final static String TARGET35 = "3.5"; //$NON-NLS-1$
+	public final static String TARGET36 = "3.6"; //$NON-NLS-1$
 
 	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
 

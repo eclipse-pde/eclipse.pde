@@ -70,6 +70,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsProcessor_rootMessage;
 
+	public static String PDECompilersConfigurationBlock_0;
+
 	public static String PDECompilersConfigurationBlock_general;
 	public static String PDECompilersConfigurationBlock_versioning;
 	public static String PDECompilersConfigurationBlock_references;
@@ -1242,6 +1244,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginSelectionDialog_title;
 	public static String PluginSelectionDialog_message;
+
 	public static String PluginImportOperation_could_not_delete_project;
 
 	public static String PluginContentPage_appQuestion;
@@ -1297,7 +1300,6 @@ public class PDEUIMessages extends NLS {
 	public static String ImportWizard_DetailedPage_filterDesc;
 	public static String ImportWizard_DetailedPage_search;
 
-	public static String ImportWizard_operation_creating;
 	public static String ImportWizard_operation_multiProblem;
 	public static String ImportWizard_operation_importingSource;
 
@@ -2051,6 +2053,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OverviewPage_fExtensionContent;
 
+	public static String OverwriteProjectsSelectionDialog_0;
+
 	public static String BaseBlock_dirSelection;
 
 	public static String BaseBlock_dirChoose;
@@ -2256,9 +2260,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeExportPackageResolution_Label;
 
-	public static String PluginImportOperation_executionEnvironment;
-
 	public static String PluginImportOperation_Importing_plugin;
+
+	public static String PluginImportOperation_OverwritePluginProjects;
 
 	public static String PluginImportOperation_Set_up_classpaths;
 
@@ -2642,6 +2646,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditorContributor_externStringsActionName;
 
+	public static String MultiFixResolution_FixAll;
+
 	public static String SplashSection_progressBar;
 	public static String SplashSection_progressX;
 	public static String SplashSection_progressWidth;
@@ -2677,6 +2683,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ProductInfoSection_features;
 
+	public static String ProfileBlock_0;
+
+	public static String ProfileBlock_1;
+
 	public static String ImportPackageSection_goToPackage;
 
 	public static String ExportPackageSection_findReferences;
@@ -2684,6 +2694,8 @@ public class PDEUIMessages extends NLS {
 	public static String RemoveBuildEntryResolution_removeEntry;
 
 	public static String RemoveBuildEntryResolution_removeToken;
+
+	public static String ReplaceBuildEntryResolution_replaceToken;
 
 	public static String AddBuildEntryResolution_add;
 
@@ -2700,6 +2712,18 @@ public class PDEUIMessages extends NLS {
 	public static String DependencyManagementSection_jobName;
 
 	public static String DescriptionSection_nameLabel;
+
+	public static String DuplicatePluginResolutionDialog_deselectAll;
+
+	public static String DuplicatePluginResolutionDialog_message;
+
+	public static String DuplicatePluginResolutionDialog_projectName;
+
+	public static String DuplicatePluginResolutionDialog_selectAll;
+
+	public static String DuplicatePluginResolutionDialog_symbolicName;
+
+	public static String DuplicatePluginResolutionDialog_version;
 
 	public static String OrganizeManifestsOperation_additionalDeps;
 

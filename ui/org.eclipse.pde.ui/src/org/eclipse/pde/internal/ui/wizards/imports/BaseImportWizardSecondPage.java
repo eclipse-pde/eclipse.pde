@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -21,8 +20,7 @@ import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -52,7 +50,6 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	public BaseImportWizardSecondPage(String pageName, PluginImportWizardFirstPage page) {
 		super(pageName);
 		fPage1 = page;
-		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		PDECore.getDefault().getModelManager().getExternalModelManager().addModelProviderListener(this);
 	}
 
@@ -73,40 +70,26 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		table.setLayoutData(gd);
 
 		fImportListViewer = new TableViewer(table);
-		fImportListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fImportListViewer.setLabelProvider(new PluginImportLabelProvider());
 		fImportListViewer.setContentProvider(new ContentProvider());
 		fImportListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 		fImportListViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		return container;
 	}
 
-	protected Composite createComputationsOption(Composite parent, int span) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(GridLayoutFactory.swtDefaults().margins(5, 0).create());
-		GridData gd = new GridData();
-		gd.horizontalSpan = span;
-		composite.setLayoutData(gd);
-
-		fAddFragmentsButton = new Button(composite, SWT.CHECK);
-		fAddFragmentsButton.setText(PDEUIMessages.ImportWizard_SecondPage_addFragments);
-		fAddFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	protected void createComputationsOption(Composite parent) {
+		fAddFragmentsButton = SWTFactory.createCheckButton(parent, PDEUIMessages.ImportWizard_SecondPage_addFragments, null, true, 1);
 		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
 			fAddFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));
 		else
 			fAddFragmentsButton.setSelection(true);
 
 		if (!PDEPlugin.getWorkspace().isAutoBuilding()) {
-			fAutoBuildButton = new Button(composite, SWT.CHECK);
-			fAutoBuildButton.setText(PDEUIMessages.BaseImportWizardSecondPage_autobuild);
-			fAutoBuildButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			fAutoBuildButton.setSelection(getDialogSettings().getBoolean(SETTINGS_AUTOBUILD));
+			fAutoBuildButton = SWTFactory.createCheckButton(parent, PDEUIMessages.BaseImportWizardSecondPage_autobuild, null, getDialogSettings().getBoolean(SETTINGS_AUTOBUILD), 1);
 		}
-		return composite;
-
 	}
 
 	public void dispose() {
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		PDECore.getDefault().getModelManager().getExternalModelManager().removeModelProviderListener(this);
 	}
 

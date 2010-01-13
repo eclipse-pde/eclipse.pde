@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.*;
-import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
-
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IResource;
@@ -36,6 +33,9 @@ import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.PDESourcePathProvider;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class LaunchAction extends Action {
@@ -142,8 +142,14 @@ public class LaunchAction extends Action {
 	}
 
 	private String getVMArguments(String os) {
+		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialVMArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
+		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
+		if (userArgs.length() > 0) {
+			buffer.append(" "); //$NON-NLS-1$
+			buffer.append(userArgs);
+		}
+		return buffer.toString();
 	}
 
 	private String getJREContainer(String os) {
@@ -281,7 +287,7 @@ public class LaunchAction extends Action {
 
 	private String getComputedName(String prefix) {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		return lm.generateUniqueLaunchConfigurationNameFrom(prefix);
+		return lm.generateLaunchConfigurationName(prefix);
 	}
 
 	private ILaunchConfiguration[] getLaunchConfigurations() throws CoreException {

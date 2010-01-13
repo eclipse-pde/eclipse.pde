@@ -20,10 +20,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
@@ -40,7 +37,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.wizards.datatransfer.*;
 import org.osgi.framework.BundleException;
 
@@ -60,8 +57,6 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	private IPluginModelBase[] fModels;
 	private int fImportType;
-	private ImportQuery fReplaceQuery;
-	private ImportQuery fExecutionQuery;
 	private Hashtable fProjectClasspaths = new Hashtable();
 	private boolean fForceAutobuild;
 
@@ -85,8 +80,6 @@ public class PluginImportOperation extends WorkspaceJob {
 		super(PDEUIMessages.ImportWizard_title);
 		fModels = models;
 		fImportType = importType;
-		fReplaceQuery = new ImportQuery();
-		fExecutionQuery = new ImportQuery();
 		fForceAutobuild = forceAutobuild;
 	}
 
@@ -116,8 +109,14 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
-			monitor.beginTask(PDEUIMessages.ImportWizard_operation_creating, fModels.length + 1);
+
+			monitor.beginTask("", fModels.length + 5); //$NON-NLS-1$
 			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.ImportWizard_operation_multiProblem, null);
+
+			deleteConflictingProjects(new SubProgressMonitor(monitor, 2));
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 
 			for (int i = 0; i < fModels.length; i++) {
 				monitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, fModels[i].getPluginBase().getId()));
@@ -128,7 +127,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				}
 				if (monitor.isCanceled()) {
 					try {
-						setClasspaths(new SubProgressMonitor(monitor, 1));
+						setClasspaths(new SubProgressMonitor(monitor, 3));
 					} catch (JavaModelException e) {
 						/* Do nothing as we are already cancelled */
 					}
@@ -144,6 +143,92 @@ public class PluginImportOperation extends WorkspaceJob {
 			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild)
 				runBuildJob();
 			return multiStatus;
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * If there are existing projects in the workspace with the same sybmolic name, open a dialog
+	 * asking the user if they would like to delete those projects.  The projects are deleted before
+	 * the import continues so the individual imports can do a simple search for an allowed plug-in name.
+	 * 
+	 * 
+	 */
+	private void deleteConflictingProjects(IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 5); //$NON-NLS-1$
+		try {
+			IPluginModelBase[] workspacePlugins = PluginRegistry.getWorkspaceModels();
+			HashMap workspacePluginMap = new HashMap();
+			for (int i = 0; i < workspacePlugins.length; i++) {
+				IPluginModelBase plugin = workspacePlugins[i];
+				String symbolicName = plugin.getBundleDescription().getSymbolicName();
+				ArrayList pluginsWithSameSymbolicName = (ArrayList) workspacePluginMap.get(symbolicName);
+				if (pluginsWithSameSymbolicName == null) {
+					pluginsWithSameSymbolicName = new ArrayList();
+				}
+				pluginsWithSameSymbolicName.add(plugin);
+				workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
+			}
+			monitor.worked(1);
+
+			final ArrayList conflictingPlugins = new ArrayList();
+			for (int i = 0; i < fModels.length; i++) {
+				String symbolicName = fModels[i].getBundleDescription().getSymbolicName();
+				ArrayList plugins = (ArrayList) workspacePluginMap.get(symbolicName);
+				if (plugins == null || plugins.size() == 0) {
+					continue;
+				}
+				if (!conflictingPlugins.containsAll(plugins)) {
+					conflictingPlugins.addAll(plugins);
+				}
+			}
+			monitor.worked(1);
+
+			final ArrayList overwriteProjectList = new ArrayList();
+			if (conflictingPlugins.size() > 0) {
+
+				UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_OverwritePluginProjects) {
+
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						OverwriteProjectsSelectionDialog dialog = new OverwriteProjectsSelectionDialog(getDisplay().getActiveShell(), conflictingPlugins);
+						dialog.setBlockOnOpen(true);
+						if (dialog.open() == Window.OK) {
+							overwriteProjectList.addAll(Arrays.asList(dialog.getResult()));
+							return Status.OK_STATUS;
+						}
+						return Status.CANCEL_STATUS;
+					}
+				};
+
+				try {
+					job.schedule();
+					job.join();
+				} catch (InterruptedException e1) {
+				}
+
+				if (job.getResult() == null || !job.getResult().isOK()) {
+					monitor.setCanceled(true);
+					return;
+				}
+				monitor.worked(1);
+
+				//delete the selected projects
+				for (int i = 0; i < overwriteProjectList.size(); i++) {
+					IPluginModelBase plugin = (IPluginModelBase) overwriteProjectList.get(i);
+					monitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, plugin.getPluginBase().getId()));
+					IProject project = plugin.getUnderlyingResource().getProject();
+					if (RepositoryProvider.isShared(project))
+						RepositoryProvider.unmap(project);
+					if (!safeDeleteCheck(project, monitor)) {
+						throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
+					}
+					project.delete(true, true, monitor);
+				}
+				monitor.worked(2);
+			} else {
+				monitor.worked(3);
+			}
 		} finally {
 			monitor.done();
 		}
@@ -181,11 +266,6 @@ public class PluginImportOperation extends WorkspaceJob {
 		try {
 			monitor.beginTask("", 5); //$NON-NLS-1$
 
-			// Test is the required execution environment is supported
-			if (!testExecutionEnvironment(model)) {
-				return;
-			}
-
 			// Create the project or ask to overwrite if project exists
 			IProject project = createProject(model, new SubProgressMonitor(monitor, 1));
 			if (project == null) {
@@ -193,6 +273,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			// Target Weaving: if we are importing plug-ins in the runtime workbench from the host workbench, import everything as-is and return
+			// Target weaving will also break things when importing from a non-default target because the dev.properties changes the libraries to 'bin/' see bug 294005
 			if (Platform.inDevelopmentMode()) {
 				File location = new File(model.getInstallLocation());
 				if (location.isDirectory()) {
@@ -335,14 +416,22 @@ public class PluginImportOperation extends WorkspaceJob {
 			// Extract the binary plug-in (for non-class files)
 			// Use the package locations map to put files that belong in the package directory structure into the proper source directory
 			if (isJARd(model)) {
-				Map collected = new HashMap();
-				ZipFileStructureProvider provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
-				PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
-				for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
-					IPath currentDestination = (IPath) iterator.next();
-					IPath destination = project.getFullPath();
-					destination = destination.append(currentDestination);
-					PluginImportHelper.importContent(provider.getRoot(), destination, provider, (List) collected.get(currentDestination), new NullProgressMonitor());
+				ZipFile zip = null;
+				try {
+					zip = new ZipFile(new File(model.getInstallLocation()));
+					ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
+					Map collected = new HashMap();
+					PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
+					for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
+						IPath currentDestination = (IPath) iterator.next();
+						IPath destination = project.getFullPath();
+						destination = destination.append(currentDestination);
+						PluginImportHelper.importContent(provider.getRoot(), destination, provider, (List) collected.get(currentDestination), new NullProgressMonitor());
+					}
+				} finally {
+					if (zip != null) {
+						zip.close();
+					}
 				}
 				monitor.worked(1);
 			} else {
@@ -391,21 +480,22 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask("", 2); //$NON-NLS-1$
 			IProject project = findProject(model.getPluginBase().getId());
 			if (project.exists() || new File(project.getParent().getLocation().toFile(), project.getName()).exists()) {
-				// Query the user to see if we should overwrite
-				switch (fReplaceQuery.doQuery(NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()))) {
-					case IDialogConstants.CANCEL_ID :
-						throw new OperationCanceledException();
-					case IDialogConstants.NO_ID :
-						return null;
+
+				project = PDEPlugin.getWorkspace().getRoot().getProject(model.getPluginBase().getId());
+				if (project.exists()) {
+					File installLocation = new File(model.getInstallLocation());
+					String projectName = installLocation.getName();
+					int jarIndex = projectName.toLowerCase().lastIndexOf(".jar"); //$NON-NLS-1$
+					if (jarIndex >= 0) {
+						projectName = projectName.substring(0, jarIndex);
+					}
+					project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
+					int index = 0;
+					while (project.exists() == true) {
+						index++;
+						project = PDEPlugin.getWorkspace().getRoot().getProject(projectName + '_' + index);
+					}
 				}
-				if (RepositoryProvider.isShared(project))
-					RepositoryProvider.unmap(project);
-				if (!project.exists())
-					project.create(new SubProgressMonitor(monitor, 1));
-				if (!safeDeleteCheck(project, monitor)) {
-					throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
-				}
-				project.delete(true, true, monitor);
 			}
 
 			project.create(monitor);
@@ -424,8 +514,9 @@ public class PluginImportOperation extends WorkspaceJob {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
-			if (resource != null)
+			if (resource != null && resource.exists()) {
 				return resource.getProject();
+			}
 		}
 		return PDEPlugin.getWorkspace().getRoot().getProject(id);
 	}
@@ -464,29 +555,19 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return true if source was found for at least one library, false otherwise
 	 */
 	private boolean canFindSource(IPluginModelBase model) {
-		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-
-		// Check for a source bundle
-		if (manager.hasBundleManifestLocation(model.getPluginBase())) {
+		// Check the manager(s) for source
+		if (getSourceManager(model) != null) {
 			return true;
 		}
 
-		// Check for an old style source plug-in
-		String[] libraries = getLibraryNames(model);
-		for (int i = 0; i < libraries.length; i++) {
-			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-			IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
-			if (srcPath != null) {
-				return true;
-			}
-		}
-
 		// Check for source inside the binary plug-in
+		ZipFile zip = null;
 		try {
 			IImportStructureProvider provider;
 			Object root;
 			if (isJARd(model)) {
-				provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
+				zip = new ZipFile(new File(model.getInstallLocation()));
+				provider = new ZipFileStructureProvider(zip);
 				root = ((ZipFileStructureProvider) provider).getRoot();
 			} else {
 				provider = FileSystemStructureProvider.INSTANCE;
@@ -501,40 +582,65 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 		} catch (IOException e) {
 			// Do nothing, any other problems will be caught during binary import
+		} finally {
+			if (zip != null) {
+				try {
+					zip.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 
 		return false;
 	}
 
 	/**
-	 * Tests whether the required execution environment of the given plugin is supported by
-	 * the current known JREs.  If not, ask the user whether to continue.
-	 * @param model the plug-in model to test
-	 * @return true is the import should continue, false if the plug-in should be skipped
-	 * @throws OperationCanceledException if the user chooses to cancel the operation
+	 * Should be used inside this class rather than PDEPlugin.getSourceLocationManager as it checks if the alternate
+	 * source manager has source for the given plug-in.  The alternate source manager is set if we are importing from
+	 * a location other than the active target platform.  In that case we want to use source from the import location
+	 * if available.  If this method returns <code>null</code> no seperate source feature/bundle could be found.  There
+	 * may still be source stored internally in the plug-in.
+	 * 
+	 * @return the most relevant source manager than contains source for the plug-in or <code>null</code> if no separate source could be found
 	 */
-	private boolean testExecutionEnvironment(IPluginModelBase model) throws OperationCanceledException {
-		BundleDescription desc = model.getBundleDescription();
-		if (desc != null) {
-			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			String[] envs = desc.getExecutionEnvironments();
-			boolean found = false;
-			for (int i = 0; i < envs.length; i++) {
-				if (manager.getEnvironment(envs[i]) != null) {
-					found = true;
-					break;
-				}
+	private SourceLocationManager getSourceManager(IPluginModelBase model) {
+		// Check the alternate source manager first
+		if (fAlternateSource != null) {
+			// Check for a source bundle
+			if (fAlternateSource.hasBundleManifestLocation(model.getPluginBase())) {
+				return fAlternateSource;
 			}
-			if (envs.length > 0 && !found) {
-				switch (fExecutionQuery.doQuery(NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, model.getPluginBase().getId(), envs[0]))) {
-					case IDialogConstants.CANCEL_ID :
-						throw new OperationCanceledException();
-					case IDialogConstants.NO_ID :
-						return false;
+
+			// Check for an old style source plug-in
+			String[] libraries = getLibraryNames(model);
+			for (int i = 0; i < libraries.length; i++) {
+				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+				IPath srcPath = fAlternateSource.findSourcePath(model.getPluginBase(), new Path(zipName));
+				if (srcPath != null) {
+					return fAlternateSource;
 				}
 			}
 		}
-		return true;
+
+		// Check the pde default source manager second
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+
+		// Check for a source bundle
+		if (manager.hasBundleManifestLocation(model.getPluginBase())) {
+			return manager;
+		}
+
+		// Check for an old style source plug-in
+		String[] libraries = getLibraryNames(model);
+		for (int i = 0; i < libraries.length; i++) {
+			String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+			IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+			if (srcPath != null) {
+				return manager;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -596,26 +702,24 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
 			Map sourceMap = new HashMap(libraries.length);
-			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-			for (int i = 0; i < libraries.length; i++) {
-				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-				IPluginBase pluginBase = model.getPluginBase();
-				// check default locations
-				IPath srcPath = manager.findSourcePath(pluginBase, new Path(zipName));
-				// check alternate locations
-				if (srcPath == null && fAlternateSource != null) {
-					srcPath = fAlternateSource.findSourcePath(pluginBase, new Path(zipName));
-				}
-				if (srcPath != null) {
-					zipName = srcPath.lastSegment();
-					IPath dstPath = new Path(zipName);
-					sourceMap.put(libraries[i], dstPath);
-					if (project.findMember(dstPath) == null) {
-						if (mode == IMPORT_BINARY) {
-							PluginImportHelper.copyArchive(new File(srcPath.toOSString()), project.getFile(dstPath), new SubProgressMonitor(monitor, 1));
-						} else if (mode == IMPORT_BINARY_WITH_LINKS) {
-							IFile dstFile = project.getFile(dstPath);
-							dstFile.createLink(srcPath, IResource.NONE, new SubProgressMonitor(monitor, 1));
+			SourceLocationManager manager = getSourceManager(model);
+			if (manager != null) {
+				for (int i = 0; i < libraries.length; i++) {
+					String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+					IPluginBase pluginBase = model.getPluginBase();
+					// check default locations
+					IPath srcPath = manager.findSourcePath(pluginBase, new Path(zipName));
+					if (srcPath != null) {
+						zipName = srcPath.lastSegment();
+						IPath dstPath = new Path(zipName);
+						sourceMap.put(libraries[i], dstPath);
+						if (project.findMember(dstPath) == null) {
+							if (mode == IMPORT_BINARY) {
+								PluginImportHelper.copyArchive(new File(srcPath.toOSString()), project.getFile(dstPath), new SubProgressMonitor(monitor, 1));
+							} else if (mode == IMPORT_BINARY_WITH_LINKS) {
+								IFile dstFile = project.getFile(dstPath);
+								dstFile.createLink(srcPath, IResource.NONE, new SubProgressMonitor(monitor, 1));
+							}
 						}
 					}
 				}
@@ -643,64 +747,67 @@ public class PluginImportOperation extends WorkspaceJob {
 			String[] libraries = getLibraryNames(model);
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
-			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+			SourceLocationManager manager = getSourceManager(model);
+			if (manager != null) {
 
-			// Check if we have new style individual source bundles
-			if (manager.hasBundleManifestLocation(model.getPluginBase())) {
-				File srcFile = manager.findSourcePlugin(model.getPluginBase());
-				Set sourceRoots = manager.findSourceRoots(model.getPluginBase());
-				for (int i = 0; i < libraries.length; i++) {
-					if (libraries[i].equals(DEFAULT_LIBRARY_NAME)) {
-						// Need to pull out any java source that is not in another source root
-						IResource destination = project.getFolder(DEFAULT_SOURCE_DIR);
-						if (!destination.exists()) {
-							List excludeFolders = new ArrayList(sourceRoots.size());
-							for (Iterator iterator = sourceRoots.iterator(); iterator.hasNext();) {
-								String root = (String) iterator.next();
-								if (!root.equals(DEFAULT_LIBRARY_NAME)) {
-									excludeFolders.add(new Path(root));
+				// Check if we have new style individual source bundles
+				if (manager.hasBundleManifestLocation(model.getPluginBase())) {
+					File srcFile = manager.findSourcePlugin(model.getPluginBase());
+					Set sourceRoots = manager.findSourceRoots(model.getPluginBase());
+					for (int i = 0; i < libraries.length; i++) {
+						if (libraries[i].equals(DEFAULT_LIBRARY_NAME)) {
+							// Need to pull out any java source that is not in another source root
+							IResource destination = project.getFolder(DEFAULT_SOURCE_DIR);
+							if (!destination.exists()) {
+								List excludeFolders = new ArrayList(sourceRoots.size());
+								for (Iterator iterator = sourceRoots.iterator(); iterator.hasNext();) {
+									String root = (String) iterator.next();
+									if (!root.equals(DEFAULT_LIBRARY_NAME)) {
+										excludeFolders.add(new Path(root));
+									}
 								}
+								Set collectedPackages = new HashSet();
+								PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders, destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
+								addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+								addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
+
 							}
-							Set collectedPackages = new HashSet();
-							PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders, destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
-							addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-							addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
-
+						} else if (sourceRoots.contains(getSourceDirName(libraries[i]))) {
+							IPath sourceDir = new Path(getSourceDirName(libraries[i]));
+							if (!project.getFolder(sourceDir).exists()) {
+								Set collectedPackages = new HashSet();
+								PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
+								addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
+								addPackageEntries(collectedPackages, sourceDir, packageLocations);
+							}
 						}
-					} else if (sourceRoots.contains(getSourceDirName(libraries[i]))) {
-						IPath sourceDir = new Path(getSourceDirName(libraries[i]));
-						if (!project.getFolder(sourceDir).exists()) {
+					}
+					return true;
+				}
+
+				// Old style, zips in folders, determine the source zip name/location and extract it to the project
+				boolean sourceFound = false;
+				for (int i = 0; i < libraries.length; i++) {
+					String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
+					IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+					if (srcPath != null) {
+						sourceFound = true;
+						IPath dstPath = new Path(getSourceDirName(libraries[i]));
+						IResource destination = project.getFolder(dstPath);
+						if (!destination.exists()) {
 							Set collectedPackages = new HashSet();
-							PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
-							addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
-							addPackageEntries(collectedPackages, sourceDir, packageLocations);
+							PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
+							addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
+							addPackageEntries(collectedPackages, dstPath, packageLocations);
 						}
 					}
 				}
-				return true;
+				return sourceFound;
 			}
-
-			// Old style, zips in folders, determine the source zip name/location and extract it to the project
-			boolean sourceFound = false;
-			for (int i = 0; i < libraries.length; i++) {
-				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
-				IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
-				if (srcPath != null) {
-					sourceFound = true;
-					IPath dstPath = new Path(getSourceDirName(libraries[i]));
-					IResource destination = project.getFolder(dstPath);
-					if (!destination.exists()) {
-						Set collectedPackages = new HashSet();
-						PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
-						addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
-						addPackageEntries(collectedPackages, dstPath, packageLocations);
-					}
-				}
-			}
-			return sourceFound;
 		} finally {
 			monitor.done();
 		}
+		return false;
 	}
 
 	/**
@@ -720,24 +827,37 @@ public class PluginImportOperation extends WorkspaceJob {
 	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations) throws CoreException, ZipException, IOException {
 		IImportStructureProvider provider;
 		Object root;
-		if (isJARd(model)) {
-			provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
-			root = ((ZipFileStructureProvider) provider).getRoot();
-		} else {
-			provider = FileSystemStructureProvider.INSTANCE;
-			root = new File(model.getInstallLocation());
-		}
+		IPath prefixPath;
 		IPath defaultSourcePath = new Path(DEFAULT_SOURCE_DIR);
-		ArrayList collected = new ArrayList();
-		PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
-		if (collected.size() > 0) {
-			Set packages = new HashSet();
-			PluginImportHelper.collectJavaPackages(provider, collected, defaultSourcePath, packages);
-			addPackageEntries(packages, defaultSourcePath, packageLocations);
-			addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-			return true;
+		ZipFile zip = null;
+		try {
+			if (isJARd(model)) {
+				zip = new ZipFile(new File(model.getInstallLocation()));
+				provider = new ZipFileStructureProvider(zip);
+				root = ((ZipFileStructureProvider) provider).getRoot();
+				prefixPath = defaultSourcePath;
+			} else {
+				provider = FileSystemStructureProvider.INSTANCE;
+				File rootFile = new File(model.getInstallLocation());
+				root = rootFile;
+				prefixPath = new Path(rootFile.getPath()).append(defaultSourcePath);
+			}
+
+			ArrayList collected = new ArrayList();
+			PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
+			if (collected.size() > 0) {
+				Set packages = new HashSet();
+				PluginImportHelper.collectJavaPackages(provider, collected, prefixPath, packages);
+				addPackageEntries(packages, defaultSourcePath, packageLocations);
+				addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+				return true;
+			}
+			return false;
+		} finally {
+			if (zip != null) {
+				zip.close();
+			}
 		}
-		return false;
 	}
 
 	/**
@@ -774,23 +894,34 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @throws CoreException is there is a problem importing the files
 	 */
 	private void importAdditionalSourceFiles(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
-		File sourceLocation = PDECore.getDefault().getSourceLocationManager().findSourcePlugin(model.getPluginBase());
-		if (sourceLocation != null) {
-			if (sourceLocation.isFile()) {
-				ArrayList collected = new ArrayList();
-				ZipFileStructureProvider provider = null;
-				try {
-					provider = new ZipFileStructureProvider(new ZipFile(sourceLocation));
-				} catch (IOException e) {
-					IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
-					throw new CoreException(status);
+		SourceLocationManager manager = getSourceManager(model);
+		if (manager != null) {
+			File sourceLocation = manager.findSourcePlugin(model.getPluginBase());
+			if (sourceLocation != null) {
+				if (sourceLocation.isFile()) {
+					ZipFile zip = null;
+					try {
+						zip = new ZipFile(sourceLocation);
+						ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
+						ArrayList collected = new ArrayList();
+						PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
+						PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
+					} catch (IOException e) {
+						IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+						throw new CoreException(status);
+					} finally {
+						if (zip != null) {
+							try {
+								zip.close();
+							} catch (IOException e) {
+							}
+						}
+					}
+				} else {
+					ArrayList collected = new ArrayList();
+					PluginImportHelper.collectNonJavaNonBuildFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
+					PluginImportHelper.importContent(sourceLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, monitor);
 				}
-				PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
-				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
-			} else {
-				ArrayList collected = new ArrayList();
-				PluginImportHelper.collectNonJavaNonBuildFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
-				PluginImportHelper.importContent(sourceLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, monitor);
 			}
 		}
 	}
@@ -805,16 +936,24 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private void importRequiredPluginFiles(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		if (isJARd(model)) {
-			ArrayList collected = new ArrayList();
-			ZipFileStructureProvider provider = null;
+			ZipFile zip = null;
 			try {
-				provider = new ZipFileStructureProvider(new ZipFile(new File(model.getInstallLocation())));
+				zip = new ZipFile(new File(model.getInstallLocation()));
+				ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
+				ArrayList collected = new ArrayList();
+				PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
+				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 			} catch (IOException e) {
 				IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 				throw new CoreException(status);
+			} finally {
+				if (zip != null) {
+					try {
+						zip.close();
+					} catch (IOException e) {
+					}
+				}
 			}
-			PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
-			PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 		} else {
 			ArrayList collected = new ArrayList();
 			File file = new File(model.getInstallLocation());
@@ -968,6 +1107,10 @@ public class PluginImportOperation extends WorkspaceJob {
 	/**
 	 * Gets the list of libraries from the model and returns an array of their expanded
 	 * names.  Will add the default library name if no libraries are specified.
+	 * 
+	 * <p>If run in dev mode (target workbench), and the plug-in is in the host workspace
+	 * the library names will be replaced with 'bin/'.  See bug 294005.</p>
+	 * 
 	 * @param model
 	 * @return list of library names
 	 */
@@ -1001,47 +1144,6 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private boolean isJARd(IPluginModelBase model) {
 		return new File(model.getInstallLocation()).isFile();
-	}
-
-	private static class ImportQuery {
-		// If 0, ask the user in a dialog, if -1 users has chosen no to all, if +1 user has chosen yes to all
-		private int fCreateDialog = 0;
-
-		/**
-		 * @return returns one of IDialogConstants.YES_ID, IDialogConstants.NO_ID, IDialogConstants.CANCEL_ID
-		 */
-		public int doQuery(final String message) {
-			if (fCreateDialog > 0) {
-				return IDialogConstants.YES_ID;
-			}
-			if (fCreateDialog < 0) {
-				return IDialogConstants.NO_ID;
-			}
-
-			final int[] result = {IDialogConstants.CANCEL_ID};
-
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					MessageDialog dialog = new MessageDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), PDEUIMessages.ImportWizard_messages_title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
-					result[0] = dialog.open();
-				}
-			});
-
-			switch (result[0]) {
-				case 0 :
-					return IDialogConstants.YES_ID;
-				case 1 :
-					fCreateDialog = +1;
-					return IDialogConstants.YES_ID;
-				case 2 :
-					return IDialogConstants.NO_ID;
-				case 3 :
-					fCreateDialog = -1;
-					return IDialogConstants.NO_ID;
-				default :
-					return IDialogConstants.CANCEL_ID;
-			}
-		}
 	}
 
 }

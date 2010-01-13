@@ -10,21 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-
-import java.util.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.core.runtime.Platform;
 
 import java.io.*;
 import java.net.URL;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
@@ -83,6 +78,48 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		doUnZip(location,"/tests/targets/classic-plugins.zip");
 		return location.append("plugins");
+	}
+	
+	/**
+	 * Extracts the modified jdt features archive, if not already done, and returns a path to the
+	 * root directory containing the features and plug-ins
+	 * 
+	 * @return path to the root directory
+	 * @throws Exception
+	 */
+	protected IPath extractModifiedFeatures() throws Exception {
+		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath location = stateLocation.append("modified-jdt-features");
+		if (location.toFile().exists()) {
+			return location;
+		}
+		doUnZip(location,"/tests/targets/modified-jdt-features.zip");
+		// If we are not on the mac, delete the mac launching bundle (in a standard non Mac build, the plug-in wouldn't exist)
+		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
+			File macBundle = location.append("plugins").append("org.eclipse.jdt.launching.macosx_3.2.0.v20090527.jar").toFile();
+			if (macBundle.exists()){
+				assertTrue("Unable to delete test mac launching bundle",macBundle.delete());
+			}
+		}
+		return location;
+	}	
+	
+	
+	/**
+	 * Extracts the multiple versions plug-ins archive, if not already done, and returns a path to the
+	 * root directory containing the plug-ins.
+	 * 
+	 * @return path to the directory containing the bundles
+	 * @throws Exception
+	 */
+	protected IPath extractMultiVersionPlugins() throws Exception {
+		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath location = stateLocation.append("multi-versions");
+		if (location.toFile().exists()) {
+			return location;
+		}
+		doUnZip(location,"/tests/targets/multi-versions.zip");
+		return location;
 	}	
 
 	/**
