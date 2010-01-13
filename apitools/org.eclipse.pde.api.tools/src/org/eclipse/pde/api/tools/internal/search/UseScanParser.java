@@ -190,10 +190,10 @@ public class UseScanParser {
 		try {
 			SAXParser parser = getParser();
 			for (int i = 0; i < referees.length; i++) {
-				localmonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {referees[i].getName()}));
 				origins = getDirectories(referees[i]);
 				origins = sort(origins); // sort to visit in determined order
 				for (int j = 0; j < origins.length; j++) {
+					localmonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {origins[j].getName()}));
 					xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
 						public boolean accept(File pathname) {
 							return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
@@ -203,7 +203,6 @@ public class UseScanParser {
 						xmlfiles = sort(xmlfiles); // sort to visit in determined order
 						for (int k = 0; k < xmlfiles.length; k++) {
 							try {
-								localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_parsing_xml_file_0, xmlfiles[k].getName()));
 								ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
 								parser.parse(xmlfiles[k], handler);
 							} 

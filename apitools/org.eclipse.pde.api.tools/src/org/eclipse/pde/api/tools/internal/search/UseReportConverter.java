@@ -59,6 +59,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
@@ -273,13 +274,6 @@ public class UseReportConverter extends HTMLConvertor {
 							this.currentreport.counts.total_illegal_type_count++;
 							break;
 						}
-						default: {
-							this.currentmember.counts.total_other_type_count++;
-							this.currenttype.counts.total_other_type_count++;
-							this.currentreferee.counts.total_other_type_count++;
-							this.currentreport.counts.total_other_type_count++;
-							break;
-						}
 					}
 					break;
 				}
@@ -320,13 +314,6 @@ public class UseReportConverter extends HTMLConvertor {
 							this.currentreport.counts.total_illegal_method_count++;
 							break;
 						}
-						default: {
-							this.currentmember.counts.total_other_method_count++;
-							this.currenttype.counts.total_other_method_count++;
-							this.currentreferee.counts.total_other_method_count++;
-							this.currentreport.counts.total_other_method_count++;
-							break;
-						}
 					}
 					break;
 				}
@@ -365,13 +352,6 @@ public class UseReportConverter extends HTMLConvertor {
 							this.currenttype.counts.total_illegal_field_count++;
 							this.currentreferee.counts.total_illegal_field_count++;
 							this.currentreport.counts.total_illegal_field_count++;
-							break;
-						}
-						default: {
-							this.currentmember.counts.total_other_field_count++;
-							this.currenttype.counts.total_other_field_count++;
-							this.currentreferee.counts.total_other_field_count++;
-							this.currentreport.counts.total_other_field_count++;
 							break;
 						}
 					}
@@ -472,27 +452,21 @@ public class UseReportConverter extends HTMLConvertor {
 		int total_permissable_field_count = 0;
 		int total_fragment_permissible_field_count = 0;
 		int total_illegal_field_count = 0;
-		int total_other_field_count = 0;
 		int total_api_method_count = 0;
 		int total_private_method_count = 0;
 		int total_permissable_method_count = 0;
 		int total_fragment_permissible_method_count = 0;
 		int total_illegal_method_count = 0;
-		int total_other_method_count = 0;
 		int total_api_type_count = 0;
 		int total_private_type_count = 0;
 		int total_permissable_type_count = 0;
 		int total_fragment_permissible_type_count = 0;
 		int total_illegal_type_count = 0;
-		int total_other_type_count = 0;
 		
 		public int getTotalRefCount() {
 			return total_api_field_count +
 					total_api_method_count +
 					total_api_type_count +
-					total_other_field_count +
-					total_other_method_count +
-					total_other_type_count +
 					total_private_field_count +
 					total_private_method_count +
 					total_private_type_count +
@@ -513,10 +487,6 @@ public class UseReportConverter extends HTMLConvertor {
 		
 		public int getTotalInternalRefCount() {
 			return total_private_field_count + total_private_method_count + total_private_type_count;
-		}
-		
-		public int getTotalOtherRefCount() {
-			return total_other_field_count + total_other_method_count + total_other_type_count;
 		}
 		
 		public int getTotalPermissableRefCount() {
@@ -568,16 +538,25 @@ public class UseReportConverter extends HTMLConvertor {
 	private static final String DEFAULT_XSLT = "/references.xsl"; //$NON-NLS-1$
 	/**
 	 * Colour white for normal / permissible references
+	 * Possibility: #C0E0C0
 	 */
 	static final String NORMAL_REFS_COLOUR = "#FFFFFF"; //$NON-NLS-1$
 	/**
 	 * Colour red for internal references
+	 * Old colour: #E0A0A0
 	 */
-	static final String INTERNAL_REFS_COLOUR = "#E0A0A0"; //$NON-NLS-1$
+	static final String INTERNAL_REFS_COLOUR = "#F2C3C3"; //$NON-NLS-1$
 	/**
-	 * Colour light blue for illegal references
+	 * Colour gray for illegal references
+	 * @since 1.1
 	 */
 	static final String ILLEGAL_REFS_COLOUR = "#E0E0E0";  //$NON-NLS-1$
+	/**
+	 * Colour gold for the references table header.
+	 * Old colour: #CC9933
+	 * @since 1.1
+	 */
+	static final String REFERENCES_TABLE_HEADER_COLOUR = "#E0C040"; //$NON-NLS-1$
 	/**
 	 * Style HTML bits for a page that shows references
 	 */
@@ -663,7 +642,7 @@ public class UseReportConverter extends HTMLConvertor {
 		if (this.htmlLocation == null) {
 			return;
 		}
-		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseReportConverter_preparing_report_metadata, 8);
+		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseReportConverter_preparing_report_metadata, 11);
 		try {
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_html_root);
 			Util.updateMonitor(localmonitor, 1);
@@ -960,6 +939,10 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			
 			File file = new File(this.reportsRoot, "not_searched.xml"); //$NON-NLS-1$
+			if(!file.exists()) {
+				//try <root>/xml in case a raw reports root was specified
+				file = new File(this.reportsRoot+File.separator+"xml", "not_searched.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			TreeSet sorted = new TreeSet(Util.componentsorter);
 			if (file.exists()) {
 				String[] missingBundles = getMissingBundles(file); 
@@ -982,7 +965,7 @@ public class UseReportConverter extends HTMLConvertor {
 			else {
 				buffer.append(OPEN_P).append(getMissingBundlesHeader()).append(CLOSE_P); 
 				buffer.append("<table border=\"1\" width=\"50%\">\n"); //$NON-NLS-1$
-				buffer.append(OPEN_TR).append("<td bgcolor=\"#CC9933\" width=\"36%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_required_bundles).append(CLOSE_B).append(CLOSE_TD).append(CLOSE_TR); //$NON-NLS-1$ 
+				buffer.append(OPEN_TR).append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"36%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_required_bundles).append(CLOSE_B).append(CLOSE_TD).append(CLOSE_TR); //$NON-NLS-1$ //$NON-NLS-2$ 
 			}
 			String value = null;
 			for (Iterator iter = sorted.iterator(); iter.hasNext();) {
@@ -1024,6 +1007,10 @@ public class UseReportConverter extends HTMLConvertor {
 				originhtml.createNewFile();
 			}
 			File xml = new File(this.reportsRoot, filename+XML_EXTENSION); 
+			if(!xml.exists()) {
+				//try <root>/xml in case a raw report root is specified
+				xml = new File(this.reportsRoot+File.separator+"xml", filename+XML_EXTENSION); //$NON-NLS-1$
+			}
 			InputStream defaultXsltInputStream = UseReportConverter.class.getResourceAsStream(getNotSearchedXSLPath()); 
 			Source xslt = null;
 			if (defaultXsltInputStream != null) {
@@ -1087,7 +1074,7 @@ public class UseReportConverter extends HTMLConvertor {
 			if(additional != null) {
 				buffer.append(additional);
 			}
-			buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_referenced_type));
+			buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_referenced_type, false));
 			CountGroup counts = null;
 			String link = null;
 			Entry entry = null;
@@ -1106,7 +1093,7 @@ public class UseReportConverter extends HTMLConvertor {
 					typefile.createNewFile();
 				}
 				link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
-				buffer.append(getReferenceTableEntry(counts, link, fqname));
+				buffer.append(getReferenceTableEntry(counts, link, fqname, false));
 				writeTypePage(map, type, typefile, fqname);
 			}
 			buffer.append(CLOSE_TABLE); 
@@ -1114,11 +1101,11 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_referencing_bundles).append(CLOSE_H4);
 			buffer.append(OPEN_P).append(NLS.bind(SearchMessages.UseReportConverter_following_bundles_have_refs, report.name)).append(CLOSE_P);
 			buffer.append("<a name=\"bundles\">").append(CLOSE_A); //$NON-NLS-1$
-			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
+			buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_TR); 
-			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"70%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_bundle).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
-			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"14%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_version).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
-			buffer.append("\t<td bgcolor=\"#CC9933\" width=\"36%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_count).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
+			buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"50%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_bundle).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"20%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_version).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"10%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_count).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append(CLOSE_TR);
 			Collections.sort(referees, compare);
 			IComponentDescriptor comp = null;
@@ -1126,7 +1113,7 @@ public class UseReportConverter extends HTMLConvertor {
 				type = (Type) referees.get(i);
 				comp = (IComponentDescriptor) type.desc;
 				buffer.append("<tr bgcolor=\"").append(getRowColour(counts)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
-				buffer.append("\t").append(OPEN_TD).append(comp.getId()).append(CLOSE_TD); //$NON-NLS-1$
+				buffer.append("\t").append(OPEN_TD).append(OPEN_B).append(comp.getId()).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append("\t").append(OPEN_TD).append(comp.getVersion()).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append("\t<td align=\"center\">").append(type.counts.getTotalRefCount()).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append(CLOSE_TR);
@@ -1220,7 +1207,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
 			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_TR); 
-			buffer.append("<td bgcolor=\"#CC9933\">").append(OPEN_B).append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B).append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 			buffer.append(CLOSE_TR); 
 			Entry entry = null;
 			IElementDescriptor desc = null;
@@ -1310,7 +1297,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("<tr align=\"left\"> \n"); //$NON-NLS-1$
 			buffer.append("<td colspan=\"3\" bgcolor=\"#CCCCCC\">").append(OPEN_B).append(entry.getKey()).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 			buffer.append(CLOSE_TR);
-			buffer.append("<tr bgcolor=\"#CC9933\">"); //$NON-NLS-1$
+			buffer.append("<tr bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append("<td align=\"left\" width=\"92%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_location).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
 			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_line_number).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
 			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_kind).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
@@ -1444,7 +1431,8 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			if(sortedreports.size() > 0) {
 				buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
-				buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_bundle));
+				buffer.append(getColourLegend());
+				buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_bundle, true));
 				if(sortedreports.size() > 0) {
 					Report report = null;
 					File refereehtml = null;
@@ -1454,7 +1442,7 @@ public class UseReportConverter extends HTMLConvertor {
 						if(report != null) {
 							refereehtml = new File(this.reportsRoot, report.name+File.separator+"index.html"); //$NON-NLS-1$
 							link = extractLinkFrom(this.reportsRoot, refereehtml.getAbsolutePath());
-							buffer.append(getReferenceTableEntry(report.counts, link, report.name));
+							buffer.append(getReferenceTableEntry(report.counts, link, report.name, true));
 						}
 					}
 					buffer.append(CLOSE_TABLE); 
@@ -1478,6 +1466,28 @@ public class UseReportConverter extends HTMLConvertor {
 				writer.close();
 			}
 		}
+	}
+	
+	/**
+	 * Returns a table describing what all of the colours mean in the reports
+	 * @return a colour legend table
+	 * @since 1.1
+	 */
+	protected String getColourLegend() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(OPEN_P);
+		buffer.append("<table width=\"20%\" border=\"1\">"); //$NON-NLS-1$
+		buffer.append(OPEN_TR);
+		buffer.append("<td width=\"25px\" bgcolor=\"").append(INTERNAL_REFS_COLOUR).append("\">\n").append("&nbsp;").append(CLOSE_TD);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		buffer.append("<td width=\"82%\">").append(SearchMessages.UseReportConverter_marks_internal_references).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append(CLOSE_TR);
+		buffer.append(OPEN_TR);
+		buffer.append("<td width=\"25px\" bgcolor=\"").append(ILLEGAL_REFS_COLOUR).append("\">\n").append("&nbsp;").append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		buffer.append("<td width=\"82%\">").append(SearchMessages.UseReportConverter_marks_illegal_use_references).append(CLOSE_TD); //$NON-NLS-1$
+		buffer.append(CLOSE_TR);
+		buffer.append(CLOSE_TABLE);
+		buffer.append(CLOSE_P);
+		return buffer.toString();
 	}
 	
 	/**
@@ -1621,6 +1631,11 @@ public class UseReportConverter extends HTMLConvertor {
 			File xml = null;
 			try {
 				xml = new File(this.reportsRoot, "meta"+XML_EXTENSION);  //$NON-NLS-1$
+				if(!xml.exists()) {
+					//try looking in the default 'xml' directory as a raw report root
+					//might have been specified
+					xml = new File(this.reportsRoot+File.separator+"xml", "meta"+XML_EXTENSION);  //$NON-NLS-1$//$NON-NLS-2$
+				}
 				if(xml.exists()) {
 					String xmlstr = Util.getFileContentAsString(xml);
 					Element doc = Util.parseDocument(xmlstr);
@@ -1719,58 +1734,98 @@ public class UseReportConverter extends HTMLConvertor {
 	 * Where the first column contains the linked item and the following five columns are 
 	 * API, Internal, Permissible, Fragment-Permissible and Other reference counts respectively
 	 * @param columnname
+	 * @param includeversion
 	 * @return the default references table header
 	 */
-	String getReferencesTableHeader(String columnname) {
+	String getReferencesTableHeader(String columnname, boolean includeversion) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_references).append(CLOSE_H4);
-		buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
+		buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
 		buffer.append(OPEN_TR); 
-		buffer.append("\t<td bgcolor=\"#CC9933\" width=\"30%\">").append(OPEN_B).append(columnname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"30%\">").append(OPEN_B).append(columnname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$
+		if(includeversion) {
+			//version header
+			buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"20%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append(SearchMessages.UseReportConverter_version_column_description).append("\"\">"); //$NON-NLS-1$
+			buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_version).append(CLOSE_B).append(CLOSE_TD);
+		}
+		//API header
+		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(SearchMessages.UseReportConverter_api_ref_description).append("\"\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_api_references).append(CLOSE_B).append(CLOSE_TD); 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		//Internal header
+		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(SearchMessages.UseReportConverter_internal_ref_description).append("\">"); //$NON-NLS-1$
-		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_internal_references).append(CLOSE_B).append(CLOSE_TD); 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_internal_references).append(CLOSE_B).append(CLOSE_TD);
+		//Permissible header
+		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(SearchMessages.UseReportConverter_permissible_ref_description).append("\">"); //$NON-NLS-1$
-		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_internal_permissible_references).append(CLOSE_B).append(CLOSE_TD); 
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_internal_permissible_references).append(CLOSE_B).append(CLOSE_TD);
+		//fragment permissible header
+		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(SearchMessages.UseReportConverter_fragment_ref_description).append("\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_fragment_permissible_references).append(CLOSE_B).append(CLOSE_TD);
 		//illegal use header
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
+		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(SearchMessages.UseReportConverter_illegal_ref_description).append("\">");  //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_illegal).append(CLOSE_B).append(CLOSE_TD);  
-		buffer.append("\t<td bgcolor=\"#CC9933\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$
-		buffer.append(SearchMessages.UseReportConverter_other_ref_description).append("\">"); //$NON-NLS-1$
-		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_other_references).append(CLOSE_B).append(CLOSE_TD);  
-		buffer.append(CLOSE_TR); 
 		return buffer.toString();
 	}
 	
 	/**
 	 * Returns the HTML markup for one entry in the default references table.
 	 * Where the first column contains the linked item and the following five columns are 
-	 * API, Internal, Permissible, Fragment-Permissible and Other reference counts respectively
+	 * Version, API, Internal, Permissible, Fragment-Permissible reference counts respectively
 	 * @param counts
 	 * @param link
 	 * @param linktext
+	 * @param includeversion
 	 * @return a single reference table entry
 	 */
-	String getReferenceTableEntry(CountGroup counts, String link, String linktext) {
+	String getReferenceTableEntry(CountGroup counts, String link, String linktext, boolean includeversion) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<tr bgcolor=\"").append(getRowColour(counts)).append("\">\n");  //$NON-NLS-1$//$NON-NLS-2$
-		buffer.append("\t<td><a href=\"").append(link).append("\">").append(linktext).append("</a>").append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		buffer.append("\t<td><b><a href=\"").append(link).append("\">").append(getBundleOnlyName(linktext)).append("</a>").append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if(includeversion) {
+			buffer.append("\t<td align=\"left\">").append(getVersion(linktext)).append(CLOSE_TD); //$NON-NLS-1$
+		}
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalApiRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalInternalRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalPermissableRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalFragmentPermissibleRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append("\t<td align=\"center\">").append(counts.getTotalIllegalRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
-		buffer.append("\t<td align=\"center\">").append(counts.getTotalOtherRefCount()).append(CLOSE_TD); //$NON-NLS-1$ 
 		buffer.append(CLOSE_TR); 
 		return buffer.toString();
+	}
+	
+	String getBundleOnlyName(String text) {
+		int idx = text.indexOf('(');
+		if(idx > -1) {
+			return text.substring(0, idx-1);
+		}
+		return text;
+	}
+	
+	/**
+	 * Returns the version string from the text (if any)
+	 * @param text
+	 * @return
+	 * @since 1.1
+	 */
+	String getVersion(String text) {
+		int idx = text.indexOf('(');
+		if(idx > -1) {
+			int idx2 = text.indexOf(')', idx);
+			String version = text.substring(idx+1, idx2-1);
+			try {
+				Version ver = new Version(version);
+				return ver.toString();
+			}
+			catch(IllegalArgumentException iae) {
+				//do nothing, not a valid version
+			}
+		}
+		return "-"; //$NON-NLS-1$
 	}
 	
 	/**

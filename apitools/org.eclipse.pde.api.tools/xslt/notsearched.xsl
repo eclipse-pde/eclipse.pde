@@ -64,7 +64,7 @@
 				</p>
 				<div align="left" class="main">
 					<table border="1" width="60%">
-						<tr bgcolor="#CC9933">
+						<tr bgcolor="#E0C040">
 							<td><b>Skipped Bundles</b></td>
 						</tr>
 						<xsl:for-each select="components/component">

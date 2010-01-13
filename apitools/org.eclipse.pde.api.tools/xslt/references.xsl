@@ -63,7 +63,7 @@
 		</p>
 		<div align="left" class="main">
 			<table border="1" width="90%">
-				<tr bgcolor="#CC9933">
+				<tr bgcolor="#E0C040">
 					<td><b>Reference Details</b></td>
 				</tr>
 				<xsl:for-each select="references/target">

@@ -89,14 +89,14 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_internal_references;
 	public static String UseReportConverter_line_number;
 	public static String UseReportConverter_list_of_all_refing_bundles;
+	public static String UseReportConverter_marks_illegal_use_references;
+	public static String UseReportConverter_marks_internal_references;
 	public static String UseReportConverter_member;
 	public static String UseReportConverter_missing_bundles_prevented_scan;
 	public static String UseReportConverter_missing_required;
 	public static String UseReportConverter_no_reported_usage;
 	public static String UseReportConverter_no_required_missing;
 	public static String UseReportConverter_none;
-	public static String UseReportConverter_other_ref_description;
-	public static String UseReportConverter_other_references;
 	public static String UseReportConverter_parsing_use_scan;
 	public static String UseReportConverter_permissible_ref_description;
 	public static String UseReportConverter_reference_count;
@@ -117,10 +117,10 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_usage_details;
 	public static String UseReportConverter_use_scan_info;
 	public static String UseReportConverter_version;
+	public static String UseReportConverter_version_column_description;
 	public static String UseReportConvertor_additional_infos_section;
 	public static String UseScanParser_analyzing_references;
 	public static String UseScanParser_parsing;
-	public static String UseScanParser_parsing_xml_file_0;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
