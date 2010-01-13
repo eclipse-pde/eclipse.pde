@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,14 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
-import org.eclipse.equinox.internal.provisional.p2.ui.actions.PropertyDialogAction;
-import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.*;
-import org.eclipse.equinox.internal.provisional.p2.ui.policy.*;
+import org.eclipse.equinox.internal.p2.ui.ProvUI;
+import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
+import org.eclipse.equinox.internal.p2.ui.dialogs.*;
+import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.ui.Policy;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
@@ -87,6 +89,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fIncludeRequiredButton;
 	private Button fAllPlatformsButton;
 	private Text fDetailsText;
+	private ProvisioningUI profileUI;
 
 	/**
 	 * Constructor for creating a new container
@@ -98,6 +101,11 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		setMessage(Messages.EditIUContainerPage_6);
 		fTarget = definition;
 		fProfile = profile;
+		ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
+		// TODO we use the service session from the self profile.  In the future we may want
+		// to set up our own services for the profile (separate repo managers, etc).
+		// We use our own new policy so we don't bash the SDK's settings.
+		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), profile.getProfileId(), new Policy());
 	}
 
 	/**
@@ -166,9 +174,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createRepositoryComboArea(Composite parent) {
-		Policy policy = new Policy();
-		policy.setRepositoryManipulator(new ColocatedRepositoryManipulator(policy, null));
-		fRepoSelector = new RepositorySelectionGroup(getContainer(), parent, policy, fQueryContext);
+		profileUI.getPolicy().setRepositoryPreferencePageId(null);
+		fRepoSelector = new RepositorySelectionGroup(profileUI, getContainer(), parent, fQueryContext);
 		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
 			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
 				fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
@@ -191,7 +198,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createAvailableIUArea(Composite parent) {
-		fAvailableIUGroup = new AvailableIUGroup(parent);
+		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent);
 		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
@@ -309,7 +316,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * Creates a default query context to setup the available IU Group
 	 */
 	private void createQueryContext() {
-		fQueryContext = Policy.getDefault().getQueryContext();
+		fQueryContext = ProvUI.getQueryContext(ProvisioningUI.getDefaultUI().getPolicy());
 		fQueryContext.setInstalledProfileId(fProfile.getProfileId());
 		fQueryContext.showAlreadyInstalled();
 	}
@@ -334,11 +341,11 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs();
 		if (selected.length == 1) {
 			StringBuffer result = new StringBuffer();
-			String description = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_DESCRIPTION);
+			String description = selected[0].getProperty(IInstallableUnit.PROP_DESCRIPTION, null);
 			if (description != null) {
 				result.append(description);
 			} else {
-				String name = IUPropertyUtils.getIUProperty(selected[0], IInstallableUnit.PROP_NAME);
+				String name = selected[0].getProperty(IInstallableUnit.PROP_NAME, null);
 				if (name != null)
 					result.append(name);
 				else

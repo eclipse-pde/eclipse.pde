@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,21 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.equinox.p2.metadata.Version;
+
 import java.io.File;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IFileArtifactRepository;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.director.*;
-import org.eclipse.equinox.internal.provisional.p2.engine.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.repository.IRepositoryManager;
+import org.eclipse.equinox.internal.p2.engine.PhaseSet;
+import org.eclipse.equinox.internal.provisional.p2.director.IPlanner;
+import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.engine.*;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.*;
+import org.eclipse.equinox.p2.repository.IRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -81,29 +88,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * </p>
 	 */
 	private boolean fIncludeMultipleEnvironments = false;
-
-	/**
-	 * Query for bundles in a profile. Every IU that ends up being installed as a bundle
-	 * provides a capability in the name space "osgi.bundle".
-	 */
-	class BundleQuery extends MatchQuery {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.internal.provisional.p2.query.MatchQuery#isMatch(java.lang.Object)
-		 */
-		public boolean isMatch(Object candidate) {
-			if (candidate instanceof IInstallableUnit) {
-				IInstallableUnit unit = (IInstallableUnit) candidate;
-				IProvidedCapability[] provided = unit.getProvidedCapabilities();
-				for (int i = 0; i < provided.length; i++) {
-					if (provided[i].getNamespace().equals("osgi.bundle")) { //$NON-NLS-1$
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-	}
 
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
@@ -218,12 +202,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
-		ProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 10));
+		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 10));
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
-		ProvisioningPlan installerPlan = plan.getInstallerPlan();
+		IProvisioningPlan installerPlan = plan.getInstallerPlan();
 		if (installerPlan != null) {
 			// this plan requires an update to the installer first, log the fact and attempt
 			// to continue, we don't want to update the running SDK while provisioning a target
@@ -245,7 +229,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 		allOps.add(new PropertyOperand(AbstractTargetHandle.PROP_PROVISION_MODE, null, TargetDefinitionPersistenceHelper.MODE_PLANNER));
 		allOps.add(new PropertyOperand(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, null, Boolean.toString(false)));
-		IStatus result = engine.perform(profile, phases, (Operand[]) allOps.toArray(new Operand[allOps.size()]), context, new SubProgressMonitor(subMonitor, 140));
+		plan = new ProvisioningPlan(profile, (Operand[]) allOps.toArray(new Operand[allOps.size()]), context);
+		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -263,9 +248,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// query for bundles
-		BundleQuery query = new BundleQuery();
-		Collector collector = new Collector();
-		slice.query(query, collector, new SubProgressMonitor(subMonitor, 10));
+		OSGiBundleQuery query = new OSGiBundleQuery();
+		IQueryResult queryResult = slice.query(query, new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -273,13 +257,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
-		Iterator iterator = collector.iterator();
+		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			IArtifactKey[] artifacts = unit.getArtifacts();
-			for (int i = 0; i < artifacts.length; i++) {
-				IArtifactKey key = artifacts[i];
-				File file = repo.getArtifactFile(key);
+			Collection/*<IArtifactKey*/artifacts = unit.getArtifacts();
+			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+				File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
 				if (file == null) {
 					// TODO: missing bundle
 				} else {
@@ -354,15 +337,15 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		IProgressMonitor loadMonitor = new SubProgressMonitor(subMonitor, 10);
 		loadMonitor.beginTask(null, repoCount * 10);
-		IMetadataRepository[] metadataRepos = new IMetadataRepository[repoCount];
+		List metadataRepos = new ArrayList(repoCount);
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (int i = 0; i < repoCount; ++i)
-			metadataRepos[i] = manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10));
+			metadataRepos.add(manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10)));
 		loadMonitor.done();
 
 		IQueryable allMetadata;
 		if (repoCount == 1) {
-			allMetadata = metadataRepos[0];
+			allMetadata = (IQueryable) metadataRepos.get(0);
 		} else {
 			allMetadata = new CompoundQueryable(metadataRepos);
 		}
@@ -380,14 +363,15 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-		Collector collector = slice.query(InstallableUnitQuery.ANY, new Collector(), new SubProgressMonitor(subMonitor, 10));
+		IQueryResult queryResult = slice.query(InstallableUnitQuery.ANY, new SubProgressMonitor(subMonitor, 10));
 
-		if (subMonitor.isCanceled() || collector.isEmpty()) {
+		if (subMonitor.isCanceled() || queryResult.isEmpty()) {
 			return new IResolvedBundle[0];
 		}
 
-		ArrayList operands = new ArrayList(collector.size());
-		Iterator itor = collector.iterator();
+		Set querySet = queryResult.unmodifiableSet();
+		ArrayList operands = new ArrayList(querySet.size());
+		Iterator itor = querySet.iterator();
 		while (itor.hasNext()) {
 			operands.add(new InstallableUnitOperand(null, (IInstallableUnit) itor.next()));
 		}
@@ -403,7 +387,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		IEngine engine = getEngine();
 		ProvisioningContext context = new ProvisioningContext(repositories);
 		context.setArtifactRepositories(repositories);
-		IStatus result = engine.perform(profile, phases, (Operand[]) operands.toArray(new Operand[operands.size()]), context, new SubProgressMonitor(subMonitor, 140));
+		ProvisioningPlan plan = new ProvisioningPlan(profile, (Operand[]) operands.toArray(new Operand[operands.size()]), context);
+		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -421,7 +406,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// query for bundles
-		collector = slice.query(new BundleQuery(), new Collector(), new SubProgressMonitor(subMonitor, 10));
+		queryResult = slice.query(new OSGiBundleQuery(), new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -429,13 +414,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
-		Iterator iterator = collector.iterator();
+		Iterator iterator = queryResult.iterator();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			IArtifactKey[] artifacts = unit.getArtifacts();
-			for (int i = 0; i < artifacts.length; i++) {
-				IArtifactKey key = artifacts[i];
-				File file = repo.getArtifactFile(key);
+			Collection/*<IArtifactKey>*/artifacts = unit.getArtifacts();
+			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+				File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
 				if (file == null) {
 					// TODO: missing bundle
 				} else {
@@ -486,24 +470,24 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			fUnits = new IInstallableUnit[fIds.length];
 			for (int i = 0; i < fIds.length; i++) {
 				InstallableUnitQuery query = new InstallableUnitQuery(fIds[i], fVersions[i]);
-				Collector collector = profile.query(query, new Collector(), null);
-				if (collector.isEmpty()) {
+				IQueryResult queryResult = profile.query(query, null);
+				if (queryResult.isEmpty()) {
 					// try repositories
 					URI[] repositories = resolveRepositories();
 					for (int j = 0; j < repositories.length; j++) {
 						IMetadataRepository repository = getRepository(repositories[j]);
-						collector = repository.query(query, new Collector(), null);
-						if (!collector.isEmpty()) {
+						queryResult = repository.query(query, null);
+						if (!queryResult.isEmpty()) {
 							break;
 						}
 					}
 				}
-				if (collector.isEmpty()) {
+				if (queryResult.isEmpty()) {
 					// not found
 					fUnits = null;
 					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
 				}
-				fUnits[i] = (IInstallableUnit) collector.iterator().next();
+				fUnits[i] = (IInstallableUnit) queryResult.iterator().next();
 			}
 		}
 		return fUnits;

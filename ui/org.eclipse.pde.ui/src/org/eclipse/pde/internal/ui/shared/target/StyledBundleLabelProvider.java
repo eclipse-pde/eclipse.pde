@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.ui.shared.target;
 import com.ibm.icu.text.MessageFormat;
 import java.net.URI;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.metadata.TranslationSupport;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.ui.IUPropertyUtils;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.target.*;
@@ -37,6 +37,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	private boolean fShowVersion = true;
 	private boolean fAppendResolvedVariables = false;
+	private TranslationSupport fTranslations;
 
 	/**
 	 * Creates a label provider.
@@ -49,6 +50,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fShowVersion = showVersion;
 		fAppendResolvedVariables = appendResolvedVariables;
+		fTranslations = TranslationSupport.getInstance();
 	}
 
 	/* (non-Javadoc)
@@ -135,7 +137,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			appendIncludedBundles(styledString, container);
 		} else if (element instanceof IInstallableUnit) {
 			IInstallableUnit iu = (IInstallableUnit) element;
-			String name = IUPropertyUtils.getIUProperty(iu, IInstallableUnit.PROP_NAME);
+			String name = fTranslations.getIUProperty(iu, IInstallableUnit.PROP_NAME);
 			if (name == null) {
 				name = iu.getId();
 			}

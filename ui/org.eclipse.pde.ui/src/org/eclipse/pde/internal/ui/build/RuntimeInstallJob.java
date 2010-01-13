@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2009 IBM Corporation and others.
+ *  Copyright (c) 2008, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,22 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.VersionRange;
+
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.provisional.p2.core.*;
-import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
-import org.eclipse.equinox.internal.provisional.p2.director.ProvisioningPlan;
-import org.eclipse.equinox.internal.provisional.p2.engine.*;
+import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
-import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.operations.*;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.MatchQuery;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
@@ -41,6 +47,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class RuntimeInstallJob extends Job {
 
 	private FeatureExportInfo fInfo;
+	private ProvisioningUI ui;
 
 	/**
 	 * Creates a new job that will install exported plug-ins.  For a 
@@ -54,6 +61,9 @@ public class RuntimeInstallJob extends Job {
 	public RuntimeInstallJob(String jobName, FeatureExportInfo info) {
 		super(jobName);
 		fInfo = info;
+		// This provisioning UI manages the currently running profile.
+		ui = ProvisioningUI.getDefaultUI();
+		ui.manageJob(this, ProvisioningJob.RESTART_OR_APPLY);
 	}
 
 	/**
@@ -75,15 +85,16 @@ public class RuntimeInstallJob extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
+			ProvisioningSession session = ui.getSession();
 			monitor.beginTask(PDEUIMessages.RuntimeInstallJob_Job_name_installing, 12 + (2 * fInfo.items.length));
 
 			// p2 needs to know about the generated repos
 			URI destination = new File(fInfo.destinationDirectory).toURI();
-			ProvisioningUtil.loadArtifactRepository(destination, new SubProgressMonitor(monitor, 1));
+			ui.loadArtifactRepository(destination, false, new SubProgressMonitor(monitor, 1));
 
-			IMetadataRepository metaRepo = ProvisioningUtil.loadMetadataRepository(destination, new SubProgressMonitor(monitor, 1));
+			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, new SubProgressMonitor(monitor, 1));
 
-			IProfile profile = ProvisioningUtil.getProfile(IProfileRegistry.SELF);
+			IProfile profile = session.getProfileRegistry().getProfile(IProfileRegistry.SELF);
 			if (profile == null) {
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
@@ -114,22 +125,22 @@ public class RuntimeInstallJob extends Job {
 				version = QualifierReplacer.replaceQualifierInVersion(version, id, null, null);
 
 				// Check if the right version exists in the new meta repo
-				Version newVersion = new Version(version);
-				Collector queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), new Collector(), monitor);
-				if (queryMatches.size() == 0) {
+				Version newVersion = Version.parseVersion(version);
+				IQueryResult queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
+				if (queryMatches.isEmpty()) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
 
-				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
+				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
 
 				// Find out if the profile already has that iu installed												
-				queryMatches = profile.query(new InstallableUnitQuery(id), new Collector(), new SubProgressMonitor(monitor, 0));
-				if (queryMatches.size() == 0) {
+				queryMatches = profile.query(new InstallableUnitQuery(id), new SubProgressMonitor(monitor, 0));
+				if (queryMatches.isEmpty()) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
-					Version existingVersion = ((IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0]).getVersion();
+					Version existingVersion = ((IInstallableUnit) queryMatches.iterator().next()).getVersion();
 					toInstall.add(createInstallableUnitPatch(id, newVersion, existingVersion, profile, monitor));
 				}
 				monitor.worked(2);
@@ -137,20 +148,14 @@ public class RuntimeInstallJob extends Job {
 			}
 
 			if (toInstall.size() > 0) {
-				MultiStatus accumulatedStatus = new MultiStatus(PDEPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
-				ProfileChangeRequest request = InstallAction.computeProfileChangeRequest((IInstallableUnit[]) toInstall.toArray(new IInstallableUnit[toInstall.size()]), IProfileRegistry.SELF, accumulatedStatus, monitor);
-				if (request == null || accumulatedStatus.getSeverity() == IStatus.CANCEL || !(accumulatedStatus.isOK() || accumulatedStatus.getSeverity() == IStatus.INFO)) {
-					return accumulatedStatus;
-				}
-
-				ProvisioningPlan thePlan = ProvisioningUtil.getProvisioningPlan(request, new ProvisioningContext(new URI[] {destination}), new SubProgressMonitor(monitor, 5));
-				IStatus status = thePlan.getStatus();
+				InstallOperation operation = ui.getInstallOperation((IInstallableUnit[]) toInstall.toArray(new IInstallableUnit[toInstall.size()]), new URI[] {destination});
+				operation.resolveModal(new SubProgressMonitor(monitor, 5));
+				IStatus status = operation.getResolutionResult();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {
 					return status;
 				}
-
-				status = ProvisioningUtil.performProvisioningPlan(thePlan, new DefaultPhaseSet(), profile, new SubProgressMonitor(monitor, 5));
-
+				ProvisioningJob job = operation.getProvisioningJob(null);
+				status = job.runModal(new SubProgressMonitor(monitor, 5));
 				return status;
 			}
 
@@ -182,28 +187,29 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setId(id + ".patch"); //$NON-NLS-1$
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_NAME, NLS.bind(PDEUIMessages.RuntimeInstallJob_installPatchName, id));
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_DESCRIPTION, PDEUIMessages.RuntimeInstallJob_installPatchDescription);
-		Version patchVersion = new Version("1.0.0." + QualifierReplacer.getDateQualifier()); //$NON-NLS-1$
+		Version patchVersion = Version.createOSGi(1, 0, 0, QualifierReplacer.getDateQualifier());
 		iuPatchDescription.setVersion(patchVersion);
-		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(new Version(0, 0, 0), true, patchVersion, false), 0, null));
+		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(Version.createOSGi(0, 0, 0), true, patchVersion, false), 0, null));
 
 		ArrayList list = new ArrayList(1);
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
 		iuPatchDescription.addProvidedCapabilities(list);
 
-		IRequiredCapability applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
-		IRequiredCapability newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
+		IRequirement applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
+		IRequirement newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new IRequirementChange[] {MetadataFactory.createRequirementChange(applyTo, newValue)});
 
-		iuPatchDescription.setApplicabilityScope(new IRequiredCapability[0][0]);
+		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		Collector queryMatches = profile.query(new MatchQuery() {
+		IQueryResult queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					IRequiredCapability[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
-					for (int i = 0; i < reqs.length; i++) {
-						if (reqs[i].getName().equals(id)) {
-							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqs[i].getRange())) {
+					Collection/*<IRequirement>*/reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
+						IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
+						if (reqCap.getName().equals(id)) {
+							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqCap.getRange())) {
 								return true;
 							}
 						}
@@ -211,13 +217,13 @@ public class RuntimeInstallJob extends Job {
 				}
 				return false;
 			}
-		}, new Collector(), monitor);
+		}, monitor);
 		if (!queryMatches.isEmpty()) {
-			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
+			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
 		}
 
-		iuPatchDescription.setProperty(IInstallableUnit.PROP_TYPE_PATCH, Boolean.TRUE.toString());
+		iuPatchDescription.setProperty(InstallableUnitDescription.PROP_TYPE_PATCH, Boolean.TRUE.toString());
 
 		return MetadataFactory.createInstallableUnitPatch(iuPatchDescription);
 	}

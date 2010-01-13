@@ -11,20 +11,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.VersionRange;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.p2.engine.*;
+import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.director.PlannerHelper;
-import org.eclipse.equinox.internal.provisional.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.VersionRange;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
+import org.eclipse.equinox.p2.engine.*;
+import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -320,14 +325,23 @@ public class P2Utils {
 	 * @param p2DataArea data area where the profile registry is
 	 * @return whether the profile exists
 	 */
-	public static boolean profileExists(String profileID, File p2DataArea) {
-		// Create a custom registry that checks the profile in the proper location
-		File engineArea = new File(p2DataArea, EngineActivator.ID);
-		File registryArea = new File(engineArea, SimpleProfileRegistry.DEFAULT_STORAGE_DIR);
-		registryArea.mkdirs();
-		SimpleProfileRegistry customRegistry = new SimpleProfileRegistry(registryArea);
+	public static boolean profileExists(String profileID, File p2DataArea) throws CoreException {
+		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		if (provider == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
 
-		return customRegistry.containsProfile(profileID);
+		IProvisioningAgent agent = provider.createAgent(p2DataArea.toURI());
+		if (agent == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		if (agent == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		return registry.containsProfile(profileID);
 	}
 
 	/**
@@ -337,27 +351,40 @@ public class P2Utils {
 	 * 
 	 * @param profileID the ID to be used when creating the profile, if a profile with the same name exists, it will be overwritten
 	 * @param p2DataArea the directory which contains p2 data including the profile registry, if the directory path doesn't exist it will be created
-	 * @param bundles the collection of bundles to create metadata for and add to the profile
+	 * @param bundles the collection of IPluginModelBase objects representing bundles to create metadata for and add to the profile
 	 * 
 	 * @throws CoreException if the profile cannot be generated
 	 */
 	public static void createProfile(String profileID, File p2DataArea, Collection bundles) throws CoreException {
-		// TODO Could avoid using internal p2 code if multiple instances of the p2 servers could be run on the same vm (being looked at in 3.6)
+		// Acquire the required p2 services, creating an agent in the target p2 metadata area
+		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		if (provider == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
 
-		// Create a custom registry that stores the profile in the proper location
-		File engineArea = new File(p2DataArea, EngineActivator.ID);
-		File registryArea = new File(engineArea, SimpleProfileRegistry.DEFAULT_STORAGE_DIR);
-		registryArea.mkdirs();
-		SimpleProfileRegistry customRegistry = new SimpleProfileRegistry(registryArea);
+		IProvisioningAgent agent = provider.createAgent(p2DataArea.toURI());
+		if (agent == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+		if (agent == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
+		if (engine == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
 
 		// Delete any previous profiles with the same ID
-		customRegistry.removeProfile(profileID);
+		registry.removeProfile(profileID);
 
 		// Create the profile
 		IProfile profile = null;
 		Properties props = new Properties();
-		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
-		profile = customRegistry.addProfile(profileID, props);
+//		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
+		profile = registry.addProfile(profileID, props);
 
 		// Create metadata for the bundles
 		Collection ius = new ArrayList(bundles.size());
@@ -379,13 +406,13 @@ public class P2Utils {
 		// Add the metadata to the profile
 		ProvisioningContext context = new ProvisioningContext();
 		PhaseSet phaseSet = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_COLLECT | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
-		File profileDataDirectory = customRegistry.getProfileDataDirectory(profile.getProfileId());
-		EngineSession session = new EngineSession(profile, profileDataDirectory, context);
-		IStatus status = phaseSet.perform(new ActionManager(), session, profile, operands, context, new NullProgressMonitor());
+		ProvisioningPlan plan = new ProvisioningPlan(profile, operands, context);
+		IStatus status = engine.perform(plan, phaseSet, new NullProgressMonitor());
 
 		if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
 			throw new CoreException(status);
 		}
+
 	}
 
 	/**
@@ -425,7 +452,7 @@ public class P2Utils {
 			boolean isOptional = importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC) || importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_OPTIONAL);
 			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_JAVA_PACKAGE, importPackageName, versionRange, null, isOptional, false));
 		}
-		iu.setRequiredCapabilities((IRequiredCapability[]) reqsDeps.toArray(new IRequiredCapability[reqsDeps.size()]));
+		iu.setRequiredCapabilities((IRequirement[]) reqsDeps.toArray(new IRequirement[reqsDeps.size()]));
 
 		// Create set of provided capabilities
 		ArrayList providedCapabilities = new ArrayList();

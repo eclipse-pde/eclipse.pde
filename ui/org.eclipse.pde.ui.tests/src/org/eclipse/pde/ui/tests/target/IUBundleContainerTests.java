@@ -19,11 +19,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -72,24 +72,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @param repository repository
 	 * @return installable unit
 	 */
-	protected IInstallableUnit getUnit(final String id, IMetadataRepository repository) {
-		class IUQuery extends MatchQuery {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.equinox.internal.provisional.p2.query.MatchQuery#isMatch(java.lang.Object)
-			 */
-			public boolean isMatch(Object candidate) {
-				if (candidate instanceof IInstallableUnit) {
-					IInstallableUnit unit = (IInstallableUnit) candidate;
-					if (unit.getId().equals(id)) {
-						return true;
-					}
-				}
-				return false;
-			}
-		}
-		
-		Collector result = repository.query(new IUQuery(), new Collector(), null);
+	protected IInstallableUnit getUnit(String id, IMetadataRepository repository) {
+		IQueryResult result = repository.query(new InstallableUnitQuery(id),  null);
 		IInstallableUnit[] units  = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
 		if (units.length == 1) {
 			return units[0];

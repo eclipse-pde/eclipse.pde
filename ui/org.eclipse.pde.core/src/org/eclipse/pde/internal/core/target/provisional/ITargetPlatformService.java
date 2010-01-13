@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+
 import java.net.URI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 
 /**
  * A service to manage target platform definitions available to the workspace.

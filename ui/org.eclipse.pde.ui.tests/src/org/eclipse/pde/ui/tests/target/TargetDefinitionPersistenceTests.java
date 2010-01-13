@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+
 import java.net.URI;
 
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 
 import java.io.*;
 import java.net.*;
