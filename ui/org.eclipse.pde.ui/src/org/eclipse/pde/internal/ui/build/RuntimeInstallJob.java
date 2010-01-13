@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2009 IBM Corporation and others.
+ *  Copyright (c) 2008, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,25 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.VersionRange;
+
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
 import org.eclipse.equinox.internal.provisional.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
+import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.IRequirement;
-import org.eclipse.equinox.p2.metadata.query.IQueryResult;
+import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.operations.*;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.MatchQuery;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.osgi.util.NLS;
@@ -126,20 +127,20 @@ public class RuntimeInstallJob extends Job {
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
 				IQueryResult queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
-				if (queryMatches.size() == 0) {
+				if (queryMatches.isEmpty()) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
 
-				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
+				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
 
 				// Find out if the profile already has that iu installed												
 				queryMatches = profile.query(new InstallableUnitQuery(id), new SubProgressMonitor(monitor, 0));
-				if (queryMatches.size() == 0) {
+				if (queryMatches.isEmpty()) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
-					Version existingVersion = ((IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0]).getVersion();
+					Version existingVersion = ((IInstallableUnit) queryMatches.iterator().next()).getVersion();
 					toInstall.add(createInstallableUnitPatch(id, newVersion, existingVersion, profile, monitor));
 				}
 				monitor.worked(2);
@@ -204,9 +205,9 @@ public class RuntimeInstallJob extends Job {
 		IQueryResult queryMatches = profile.query(new MatchQuery() {
 			public boolean isMatch(Object candidate) {
 				if (candidate instanceof IInstallableUnit) {
-					IRequirement[] reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
-					for (int i = 0; i < reqs.length; i++) {
-						IRequiredCapability reqCap = (IRequiredCapability) reqs[i];
+					Collection/*<IRequirement>*/reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
+					for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
+						IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 						if (reqCap.getName().equals(id)) {
 							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqCap.getRange())) {
 								return true;
@@ -218,7 +219,7 @@ public class RuntimeInstallJob extends Job {
 			}
 		}, monitor);
 		if (!queryMatches.isEmpty()) {
-			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.toArray(IInstallableUnit.class)[0];
+			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
 		}
 

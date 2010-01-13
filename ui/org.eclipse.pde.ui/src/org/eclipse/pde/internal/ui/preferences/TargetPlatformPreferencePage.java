@@ -818,7 +818,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 							if (units != null) {
 								for (int index = 0; index < units.length; index++) {
 									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(units[index].getId())) {
-										Version osgiUnitVersion = org.eclipse.equinox.internal.provisional.p2.metadata.Version.toOSGiVersion(units[index].getVersion());
+										Version osgiUnitVersion = org.eclipse.equinox.p2.metadata.Version.toOSGiVersion(units[index].getVersion());
 										if (platformOsgiVersion.compareTo(osgiUnitVersion) < 0) {
 											Display.getDefault().syncExec(new Runnable() {
 												public void run() {
