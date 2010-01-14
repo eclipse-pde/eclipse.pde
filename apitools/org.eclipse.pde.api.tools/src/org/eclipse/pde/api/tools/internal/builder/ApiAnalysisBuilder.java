@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.JavaModelManager;
@@ -602,6 +603,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		IResource resource = currentproject.findMember(new Path(resourcePath));
 		if(resource == null) {
+			//might be re-exported try to look it up
+			IJavaProject jp = JavaCore.create(currentproject);
+			try {
+				IType type = jp.findType(problem.getTypeName());
+				if(type != null) {
+					return type.getResource();
+				}
+			}
+			catch(JavaModelException jme) {
+				//do nothing
+			}
 			return null;
 		}
 		if(!resource.isAccessible()) {

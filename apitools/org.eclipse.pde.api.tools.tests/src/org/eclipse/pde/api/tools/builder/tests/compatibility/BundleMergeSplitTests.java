@@ -11,8 +11,6 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 import junit.framework.Test;
 
@@ -117,44 +115,6 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		}
 		super.tearDown();
 		getEnv().setRevert(false);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#assertProblems(org.eclipse.pde.api.tools.builder.tests.ApiProblem[])
-	 */
-	@Override
-	protected void assertProblems(ApiProblem[] problems) {
-		super.assertProblems(problems);
-		int[] expectedProblemIds = getExpectedProblemIds();
-		int length = problems.length;
-		if (expectedProblemIds.length != length) {
-			for (int i = 0; i < length; i++) {
-				System.err.println(problems[i]);
-			}
-		}
-		assertEquals("Wrong number of problems", expectedProblemIds.length, length);
-		String[][] args = getExpectedMessageArgs();
-		if (args != null) {
-			// compare messages
-			Set<String> set = new HashSet<String>();
-			for (int i = 0; i < length; i++) {
-				set.add(problems[i].getMessage());
-			}
-			for (int i = 0; i < expectedProblemIds.length; i++) {
-				String[] messageArgs = args[i];
-				int messageId = ApiProblemFactory.getProblemMessageId(expectedProblemIds[i]);
-				String message = ApiProblemFactory.getLocalizedMessage(messageId, messageArgs);
-				assertTrue("Missing expected problem: " + message, set.remove(message));
-			}
-		} else {
-			// compare id's
-			Set<Integer> set = new HashSet<Integer>();
-			for (int i = 0; i < length; i++) {
-				set.add(new Integer(problems[i].getProblemId()));
-			}
-			for (int i = 0; i < expectedProblemIds.length; i++) {
-				assertTrue("Missing expected problem: " + expectedProblemIds[i], set.remove(new Integer(expectedProblemIds[i])));
-			}
-		}
 	}
 	
 	/**
@@ -338,23 +298,37 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 						IDelta.REMOVED,
 						IDelta.REEXPORTED_API_TYPE),
 				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_COMPATIBILITY,
+						IElementDescriptor.TYPE,
+						IDelta.REMOVED,
+						IDelta.API_TYPE),
+				ApiProblemFactory.createProblemId(
+						IApiProblem.CATEGORY_VERSION,
+						IElementDescriptor.RESOURCE,
+						IApiProblem.MAJOR_VERSION_CHANGE,
+						IApiProblem.NO_FLAGS),
+				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_VERSION,
 						IElementDescriptor.RESOURCE,
 						IApiProblem.MAJOR_VERSION_CHANGE,
 						IApiProblem.NO_FLAGS)
 		};
 		setExpectedProblemIds(ids);
-		String[][] args = new String[2][];
+		String[][] args = new String[4][];
 		args[0] = new String[]{"d.e.f.ClassD", "a.b.c_1.0.0"};
-		args[1] = new String[]{"1.0.0", "1.0.0"};
+		args[1] = new String[]{"d.e.f.ClassD", "a.b.c.core_1.0.0"};
+		args[2] = new String[]{"1.0.0", "1.0.0"};
+		args[3] = new String[]{"1.0.0", "1.0.0"};
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
 	private void performMergeSplit() throws CoreException {
 		fullBuild();
 		expectingNoJDTProblems();
-		IPath manifestPath = new Path("a.b.c").append("META-INF").append("MANIFEST.MF");
-		ApiProblem[] problems = getEnv().getProblemsFor(manifestPath, null);
+		//problems are now reported on the types from the fragment
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=289640
+		/*IPath manifestPath = new Path("a.b.c").append("META-INF").append("MANIFEST.MF");*/
+		ApiProblem[] problems = getEnv().getProblems();/*For(manifestPath, null);*/
 		assertProblems(problems);
 	}
 	private void setupTest(String testName) throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -569,7 +569,9 @@ public final class Util {
 			if (apiComponent != null) {
 				try {
 					IApiTypeRoot classFile = apiComponent.findTypeRoot(typeName);
-					if (classFile != null) return classFile;
+					if (classFile != null) {
+						return classFile;
+					}
 				} catch (CoreException e) {
 					// ignore
 				}
@@ -2150,50 +2152,28 @@ public final class Util {
 
 	/**
 	 * Returns the {@link IResource} to create markers on when building. If the {@link IType} is <code>null</code>
-	 * or the type cannot be located (does not exist) than the MANIFEST.MF will be returned.
+	 * or the type cannot be located (does not exist) than the MANIFEST.MF will be returned. <code>null</code> can be 
+	 * returned in the case that the project does not have a manifest file.
 	 * @param project the project to look in for the {@link IResource}
 	 * @param type the type we are looking for the resource for, or <code>null</code>
-	 * @return the {@link IResource} associated with the given {@link IType} or the MANIFEST.MF file
+	 * @return the {@link IResource} associated with the given {@link IType} or the MANIFEST.MF file, or <code>null</code> if the project does
+	 * not have a manifest
 	 */
 	public static IResource getResource(IProject project, IType type) {
-		IResource resource = null;
 		try {
-			if (type == null) {
-				IResource manifestFile = Util.getManifestFile(project);
-				if (manifestFile == null) {
-					// Cannot retrieve the manifest.mf file
-					return null;
-				}
-				resource = manifestFile;
-			} else {
+			if (type != null) {
 				ICompilationUnit unit = type.getCompilationUnit();
 				if (unit != null) {
-					resource = unit.getCorrespondingResource();
-					if (resource == null) {
-						return null;
+					IResource resource = unit.getCorrespondingResource();
+					if (resource != null && resource.exists()) {
+						return resource;
 					}
-					if (project.findMember(resource.getProjectRelativePath()) == null) {
-						resource = null;
-						IResource manifestFile = Util.getManifestFile(project);
-						if (manifestFile == null) {
-							// Cannot retrieve the manifest.mf file
-							return null;
-						}
-						resource = manifestFile;
-					}
-				} else {
-					IResource manifestFile = Util.getManifestFile(project);
-					if (manifestFile == null) {
-						// Cannot retrieve the manifest.mf file
-						return null;
-					}
-					resource = manifestFile;
 				}
 			}
 		} catch (JavaModelException e) {
 			ApiPlugin.log(e);
 		}
-		return resource;
+		return getManifestFile(project);
 	}
 
 	/**
