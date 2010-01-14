@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,6 +122,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
+		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
 		for (int i = 0; i < pluginPaths.length; i++) {
 			URL url = pluginPaths[i];
@@ -247,6 +248,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
+		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
 		for (int i = 0; i < pluginPaths.length; i++) {
 			URL url = pluginPaths[i];
@@ -273,6 +275,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
+		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
 		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
 		for (int i = 0; i < pluginPaths.length; i++) {
 			URL url = pluginPaths[i];

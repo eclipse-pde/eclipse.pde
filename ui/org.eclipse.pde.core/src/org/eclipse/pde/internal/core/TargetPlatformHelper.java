@@ -390,6 +390,30 @@ public class TargetPlatformHelper {
 	}
 
 	/**
+	 * Reverse engineer the target version based on a schema version.
+	 * If <code>null</code> is* passed as the version, the current target platform's
+	 * version is used (result of getTargetVersion()).
+	 * @param schemaVersion the schema version being targeted or <code>null</code>
+	 * @return a compatible target version
+	 */
+	public static String getTargetVersionForSchemaVersion(String schemaVersion) {
+		if (schemaVersion == null) {
+			return getTargetVersionString();
+		}
+		// In 3.4 the schemas changed the spelling of appInfo to appinfo to be w3c compliant, see bug 213255.
+		if (schemaVersion.equals(ICoreConstants.TARGET30)) {
+			// 3.0 schema version was good up to 3.1
+			return ICoreConstants.TARGET31;
+		}
+		if (schemaVersion.equals(ICoreConstants.TARGET32)) {
+			// 3.2 schema version was good for 3.2 and 3.3
+			return ICoreConstants.TARGET33;
+		}
+		// otherwise, compatible with latest version
+		return getTargetVersionString();
+	}
+
+	/**
 	 * Gets the schema version to use for the current target platform
 	 * @return String schema version for the current target platform
 	 */
