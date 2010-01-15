@@ -36,9 +36,13 @@ public class P2Tests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
+		String os = "macosx"; //*/= Platform.getOS();
+		String ws = "cocoa"; //*/= Platform.getWS();
+		String arch = "x86"; //*/= Platform.getOSArch();
+
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/test/test.product");
-		properties.put("configs", Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch());
+		properties.put("configs", os + ',' + ws + ',' + arch);
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 
@@ -53,8 +57,8 @@ public class P2Tests extends P2TestCase {
 
 		runProductBuild(buildFolder);
 
-		String p2Config = Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch();
-		String launcherConfig = Platform.getOS().equals("macosx") ? Platform.getWS() + '.' + Platform.getOS() : p2Config;
+		String p2Config = ws + '.' + os + '.' + arch;
+		String launcherConfig = os.equals("macosx") ? ws + '.' + os : p2Config;
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
 
@@ -108,15 +112,18 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
 		properties.put("p2.repo", "file:" + buildFolder.getFolder("repo").getLocation().toOSString());
 		properties.put("p2.director.iu", "test.product");
-		properties.put("os", Platform.getOS());
-		properties.put("ws", Platform.getWS());
-		properties.put("arch", Platform.getOSArch());
+		properties.put("os", os);
+		properties.put("ws", ws);
+		properties.put("arch", arch);
 		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
 
-		assertResourceFile(installFolder, "test.ini");
+		IFile iniFile = os.equals("macosx") ? installFolder.getFile("test.app/Contents/MacOS/test.ini") : installFolder.getFile("test.ini");
+		assertLogContainsLine(iniFile, "-startup");
+		assertLogContainsLine(iniFile, "--launcher.library");
+		assertLogContainsLine(iniFile, "-foo");
 	}
 
 	public void testBug237096() throws Exception {

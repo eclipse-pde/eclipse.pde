@@ -18,6 +18,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.*;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.publisher.eclipse.IConfigAdvice;
 import org.eclipse.equinox.p2.publisher.eclipse.IExecutableAdvice;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
@@ -53,6 +54,14 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 	private File getLauncher(File root) {
 		if (launcherName == null)
 			launcherName = "eclipse"; //$NON-NLS-1$
+		if (configSpec.indexOf(Constants.OS_MACOSX) > 0) {
+			File launcher = new File(root, launcherName + ".app/Contents/MacOS/" + launcherName); //$NON-NLS-1$
+			if (!launcher.exists()) {
+				//try upcase first letter
+				return new File(root, Character.toUpperCase(launcherName.charAt(0)) + launcherName.substring(1) + ".app/Contents/MacOS/" + launcherName); //$NON-NLS-1$
+			}
+			return launcher;
+		}
 		if (configSpec.indexOf("win32") > 0) //$NON-NLS-1$
 			return new File(root, launcherName + ".exe"); //$NON-NLS-1$
 		return new File(root, launcherName);
