@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ package org.eclipse.pde.api.tools.tests.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -32,34 +32,12 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModelFactory;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundleFragmentModel;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.core.project.Factory;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
-import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
-import org.eclipse.pde.internal.ui.wizards.plugin.AbstractFieldData;
-import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.IFragmentFieldData;
-import org.eclipse.pde.ui.IPluginFieldData;
-import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 /**
  * Util class for a variety of project related operations
@@ -67,39 +45,6 @@ import org.osgi.framework.Constants;
  * @since 1.0.0
  */
 public class ProjectUtils {
-	
-	/**
-	 * Class for testing field data for a testing plugin project
-	 */
-	static class TestFieldData implements IFieldData {
-		String pname = null;
-		String srcfolder = null;
-		String binfolder = null;
-		
-		/**
-		 * Constructor
-		 * @param pname
-		 * @param src
-		 * @param bin
-		 */
-		protected TestFieldData(String pname, String src, String bin) {
-			this.pname = pname;
-			this.srcfolder = src;
-			this.binfolder = bin;
-		}
-		
-		public String getId() {return pname;}
-		public String getLibraryName() {return null;}
-		public String getName() {return pname;}
-		public String getOutputFolderName() {return binfolder;}
-		public String getProvider() {return "ibm";}
-		public String getSourceFolderName() {return srcfolder;}
-		public String getVersion() {return "1.0.0";}
-		public boolean hasBundleStructure() {return true;}
-		public boolean isLegacy() {return false;}
-		public boolean isSimple() {return false;}
-		public String getTargetVersion() {return "3.4";}
-	}
 	
 	/**
 	 * Constant representing the name of the output directory for a project.
@@ -114,10 +59,10 @@ public class ProjectUtils {
 	public static final String SRC_FOLDER = "src";
 	
 	/**
-	 * Crate a plugin project with the given name
+	 * Crate a plug-in project with the given name
 	 * @param projectName
 	 * @param additionalNatures
-	 * @return a new plugin project
+	 * @return a new plug-in project
 	 * @throws CoreException
 	 */
 	public static IJavaProject createPluginProject(String projectName, String[] additionalNatures) throws CoreException {
@@ -128,16 +73,24 @@ public class ProjectUtils {
 				//need to always set this one first, in case others depend on it, like API tooling does
 				natures.add(0, PDE.PLUGIN_NATURE);
 			}
+			if (!natures.contains(JavaCore.NATURE_ID)) {
+				natures.add(0, JavaCore.NATURE_ID);
+			}
 			resolvednatures = (String[]) natures.toArray(new String[natures.size()]);
 		}
-		IJavaProject project = createJavaProject(projectName, resolvednatures);
-		IProject proj = project.getProject();
-		//create a manifest file
-		IFieldData data = new TestFieldData(projectName, SRC_FOLDER, BIN_FOLDER);
-		createManifest(proj, data);
-		//create a build.properties file for the project
-		createBuildPropertiesFile(proj, data);
-		return project;
+		
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		IBundleProjectDescription description = Factory.getDescription(project);
+		IBundleClasspathEntry entry = Factory.newBundleClasspathEntry(new Path(SRC_FOLDER), new Path(BIN_FOLDER), null);
+		description.setSymbolicName(projectName);
+		description.setBundleClassath(new IBundleClasspathEntry[]{entry});
+		description.setNatureIds(resolvednatures);
+		description.setBundleVendor("ibm");
+		description.setTargetVersion(IBundleProjectDescription.VERSION_3_4);
+		description.setEqunioxHeaders(true);
+		description.setBundleVersion(new Version("1.0.0"));
+		description.apply(null);		
+		return JavaCore.create(project);
 	}
 	
 	/**
@@ -321,150 +274,6 @@ public class ProjectUtils {
 	}
 	
 	/**
-	 * Creates a build.properties file for the given project
-	 * @param project
-	 * @throws CoreException
-	 */
-	public static void createBuildPropertiesFile(IProject project, final IFieldData data) throws CoreException {
-		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
-		if (!file.exists()) {
-			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
-			IBuildModelFactory factory = model.getFactory();
-		
-			// BIN.INCLUDES
-			IBuildEntry binEntry = factory.createEntry(IBuildEntry.BIN_INCLUDES);
-			fillBinIncludes(project, data, binEntry);
-			createSourceOutputBuildEntries(model, data, factory);
-			model.getBuild().add(binEntry);
-			model.save();
-		}
-	}
-	
-	/**
-	 * Creates the source output build entries for the given model / factory
-	 * @param model
-	 * @param data
-	 * @param factory
-	 * @throws CoreException
-	 */
-	public static void createSourceOutputBuildEntries(WorkspaceBuildModel model, final IFieldData data, IBuildModelFactory factory) throws CoreException {
-		String srcFolder = data.getSourceFolderName();
-		if (!data.isSimple() && srcFolder != null) {
-			String libraryName = data.getLibraryName();
-			if (libraryName == null) {
-				libraryName = "."; //$NON-NLS-1$
-			}
-			// SOURCE.<LIBRARY_NAME>
-			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX+ libraryName);
-			if (srcFolder.length() > 0) {
-				entry.addToken(new Path(srcFolder).addTrailingSeparator().toString());
-			}
-			else {
-				entry.addToken("."); //$NON-NLS-1$
-			}
-			model.getBuild().add(entry);
-
-			// OUTPUT.<LIBRARY_NAME>
-			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + libraryName);
-			String outputFolder = data.getOutputFolderName().trim();
-			if (outputFolder.length() > 0) {
-				entry.addToken(new Path(outputFolder).addTrailingSeparator().toString());
-			}
-			else {
-				entry.addToken("."); //$NON-NLS-1$
-			}
-			model.getBuild().add(entry);
-		}
-	}
-	
-	/**
-	 * Fills in the listing of bin-includes for the build.properties file of the given project
-	 * @param project
-	 * @param binEntry
-	 * @throws CoreException
-	 */
-	private static void fillBinIncludes(IProject project, final IFieldData data, IBuildEntry binEntry) throws CoreException {
-		if (!data.hasBundleStructure()) {
-			binEntry.addToken(data instanceof IFragmentFieldData ? "fragment.xml" : "plugin.xml");
-		}
-		if (data.hasBundleStructure()) {
-			binEntry.addToken("META-INF/"); //$NON-NLS-1$
-		}
-		if (!data.isSimple()) {
-			String libraryName = data.getLibraryName();
-			binEntry.addToken(libraryName == null ? "." : libraryName); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Creates a new manifest.mf file for the given project
-	 * @param project
-	 * @throws CoreException
-	 */
-	public static void createManifest(IProject project, final IFieldData data) throws CoreException {
-		WorkspacePluginModelBase base = null;
-		if (data.hasBundleStructure()) {
-			if (data instanceof IFragmentFieldData) {
-				base = new WorkspaceBundleFragmentModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), 
-						project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
-			} else {
-
-				base = new WorkspaceBundlePluginModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), 
-						project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
-			}
-		} else {
-			if (data instanceof IFragmentFieldData) {
-				base = new WorkspaceFragmentModel(project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), false);
-			} else {
-				base = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), false);
-			}
-		}
-		IPluginBase pluginBase = base.getPluginBase();
-		String targetVersion = ((TestFieldData) data).getTargetVersion();
-		pluginBase.setSchemaVersion(Double.parseDouble(targetVersion) < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
-		pluginBase.setId(data.getId());
-		pluginBase.setVersion(data.getVersion());
-		pluginBase.setName(data.getName());
-		pluginBase.setProviderName(data.getProvider());
-		if (base instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase)base);
-			((IBundlePluginBase)bmodel.getPluginBase()).setTargetVersion(targetVersion);
-			bmodel.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
-		}
-		if (pluginBase instanceof IFragment) {
-			IFragment fragment = (IFragment) pluginBase;
-			IFragmentFieldData fdata = (IFragmentFieldData) data;
-			fragment.setPluginId(fdata.getPluginId());
-			fragment.setPluginVersion(fdata.getPluginVersion());
-			fragment.setRule(fdata.getMatch());
-		} 
-		if (!data.isSimple()) {
-			setPluginLibraries(base, data);
-		}
-		// add Bundle Specific fields if applicable
-		if (pluginBase instanceof BundlePluginBase) {
-			IBundle bundle = ((BundlePluginBase)pluginBase).getBundle();
-			if (data instanceof AbstractFieldData) {
-				// Set required EE
-				String exeEnvironment = ((AbstractFieldData)data).getExecutionEnvironment();
-				if(exeEnvironment != null) {
-					bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, exeEnvironment);
-				}
-			} 
-			if (data instanceof IPluginFieldData && ((IPluginFieldData)data).doGenerateClass()) {
-				if (targetVersion.equals("3.1")) //$NON-NLS-1$
-					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
-				else 
-					bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
-			}
-		} 
-		if(base != null) {
-			base.save();
-		}
-		
-	}
-	
-	/**
 	 * Removes the given package from the exported packages header, if it exists.
 	 * 
 	 * This method is not safe to use in a headless manner.
@@ -472,48 +281,21 @@ public class ProjectUtils {
 	 * @param project the project to remove the package from
 	 * @param packagename the name of the package to remove from the export package header
 	 */
-	public static void removeExportedPackage(IProject project, String packagename) {
-		IBundle bundle = getBundle(project);
-		if(bundle == null) {
-			return;
-		}
-		try {
-			ExportPackageHeader header = getExportedPackageHeader(bundle);
-			Object removed = header.removePackage(packagename);
-			if(removed != null) {
-				bundle.setHeader(Constants.EXPORT_PACKAGE, header.getValue());
-			}
-		}
-		finally {
-			WorkspaceBundleModel model = (WorkspaceBundleModel) bundle.getModel();
-			if(model.isDirty()) {
-				model.save();
-				if(!model.isInSync()) {
-					model.load();
+	public static void removeExportedPackage(IProject project, String packagename) throws CoreException {
+		IBundleProjectDescription description = Factory.getDescription(project);
+		IPackageExportDescription[] exports = description.getPackageExports();
+		if (exports != null) {
+			List list = new ArrayList();
+			for (int i = 0; i < exports.length; i++) {
+				if (!packagename.equals(exports[i].getName())) {
+					list.add(exports[i]);
 				}
 			}
+			if (list.size() < exports.length) {
+				description.setPackageExports((IPackageExportDescription[]) list.toArray(new IPackageExportDescription[list.size()]));
+				description.apply(null);
+			}
 		}
-	}
-	
-	/**
-	 * Returns the {@link IBundle} for the given {@link IProject} if one exists. Otherwise <code>null</code> is returned.
-	 * 
-	 * This method is not safe to use in a headless manner.
-	 * 
-	 * @param project the project to get the {@link IBundle} for
-	 * @return the {@link IBundle} for the given project or <code>null</code> if one cannot be created
-	 */
-	public static IBundle getBundle(IProject project) {
-		IFile manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-		if(manifest == null || !manifest.exists()) {
-			return null;
-		}
-		WorkspacePluginModelBase plugin = new WorkspaceBundlePluginModel(manifest, project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
-		IPluginBase pluginBase = plugin.getPluginBase();
-		if (pluginBase instanceof BundlePluginBase) {
-			return ((BundlePluginBase)pluginBase).getBundle();
-		}
-		return null;
 	}
 	
 	/**
@@ -532,73 +314,28 @@ public class ProjectUtils {
 			//do no work
 			return;
 		}
-		IFile manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-		if(manifest == null || !manifest.exists()) {
-			createManifest(project, new TestFieldData(project.getName(), SRC_FOLDER, BIN_FOLDER));
-			manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-		}
-		IBundle bundle = getBundle(project);
-		if (bundle != null) {
-			ExportPackageObject pack = null;
-			try {
-				ExportPackageHeader header = getExportedPackageHeader(bundle);
-				if(header != null) {
-					pack = header.addPackage(packagename);
-					if(internal != pack.isInternal()) {
-						pack.setInternal(internal);
-					}
-					if(friends != null) {
-						for(int i = 0; i < friends.length; i++) {
-							if(friends[i] != null) {
-								pack.addFriend(new PackageFriend(pack, friends[i]));
-							}
-						}
-					}
-					bundle.setHeader(Constants.EXPORT_PACKAGE, header.getValue());
-				}
-			}
-			finally {
-				WorkspaceBundleModel model = (WorkspaceBundleModel) bundle.getModel();
-				if(model.isDirty()) {
-					model.save();
-					if(!model.isInSync()) {
-						model.load();
-					}
-				}
+		IBundleProjectDescription description = Factory.getDescription(project);
+		IPackageExportDescription[] exports = description.getPackageExports();
+		List list = new ArrayList();
+		if (exports != null) {
+			for (int i = 0; i < exports.length; i++) {
+				list.add(exports[i]);
 			}
 		}
+		list.add(Factory.newPackageExport(packagename, null, !internal, friends));
+		description.setPackageExports((IPackageExportDescription[]) list.toArray(new IPackageExportDescription[list.size()]));
+		description.apply(null);
 	}
 	
 	/**
-	 * Returns the {@link ExportPackageHeader} for the given {@link IBundle}.
-	 * @param bundle the bundle to get the header from
-	 * @return new {@link ExportPackageHeader} for the given {@link IBundle}
+	 * Returns the {@link IPackageExportDescription}s for the given project or <code>null</code>
+	 * if none.
+	 * 
+	 * @param project the proejct
+	 * @return the {@link IPackageExportDescription}s for the given project or <code>null</code>
 	 */
-	public static ExportPackageHeader getExportedPackageHeader(IBundle bundle) {
-		IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-		BundleModelFactory factory = new BundleModelFactory(bundle.getModel());
-		String value = "";
-		if(header != null && header.getValue() != null) {
-			value = header.getValue();
-		}
-		return (ExportPackageHeader) factory.createHeader(Constants.EXPORT_PACKAGE, value);
-	}
-	
-	/**
-	 * Sets the library information from the field data into the model; creates a new library if needed
-	 * @param model
-	 * @throws CoreException
-	 */
-	public static void setPluginLibraries(WorkspacePluginModelBase model, final IFieldData data) throws CoreException {
-		String libraryName = data.getLibraryName();
-		if (libraryName == null && !data.hasBundleStructure()) {
-			libraryName = "."; //$NON-NLS-1$
-		}
-		if (libraryName != null) {
-			IPluginLibrary library = model.getPluginFactory().createLibrary();
-			library.setName(libraryName);
-			library.setExported(!data.hasBundleStructure());
-			model.getPluginBase().add(library);
-		}
+	public static IPackageExportDescription[] getExportedPackages(IProject project) throws CoreException {
+		IBundleProjectDescription description = Factory.getDescription(project);
+		return description.getPackageExports();
 	}
 }

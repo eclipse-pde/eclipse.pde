@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.io.File;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -29,11 +30,9 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 
 /**
  * Creates the {@link IJavaProject} used for testing in the target workspace
@@ -178,152 +177,119 @@ public class ProjectCreationTests extends AbstractApiTest {
 		}
 		return jproject;
 	}
+	
+	/**
+	 * Finds the specified package export.
+	 * 
+	 * @param exports export descriptions to search
+	 * @param packageName what to search for
+	 * @return package export description or <code>null</code>
+	 */
+	private IPackageExportDescription getExport(IPackageExportDescription[] exports, String packageName) {
+		if (exports != null) {
+			for (int i = 0; i < exports.length; i++) {
+				IPackageExportDescription export = exports[i];
+				if (export.getName().equals(packageName)) {
+					return export;
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Asserts the common values of an exported package object
-	 * @param pack the package object to assert
+	 * @param export the package description to test
 	 * @param internalstate the desired state of the 'internal' directive
 	 * @param friendcount the desired friend count
 	 */
-	private void assertExportedPackage(ExportPackageObject pack, boolean internalstate, int friendcount) {
-		String packagename = pack.getName();
-		assertTrue("the package "+packagename+" must be in the header", pack != null);
-		assertTrue("the package "+packagename+" must not be internal", pack.isInternal() == internalstate);
-		assertTrue("the package "+packagename+" must not have any friends", pack.getFriends().length == friendcount);
+	private void assertExportedPackage(IPackageExportDescription export, boolean internalstate, int friendcount) {
+		String packagename = export.getName();
+		assertTrue("the package "+packagename+" must not be internal", export.isApi() == !internalstate);
+		if (friendcount == 0) {
+			assertNull("the package should not have any friends", export.getFriends());
+		} else {
+			assertEquals("the package "+packagename+" must not have friends", friendcount, export.getFriends().length);
+		}
 	}
 
 	/**
 	 * Tests adding an exported package to a plugin project
 	 */
-	public void testAddRawExportedPackage() {
-		try {
-			String packagename = "org.eclipse.apitools.test";
-			IJavaProject jproject = createPluginProject("test_plugin_project");
-			IProject project = jproject.getProject();
-			ProjectUtils.addExportedPackage(project, packagename, false, null);
-			IBundle bundle = ProjectUtils.getBundle(project);
-			assertNotNull("the bundle must not be null for the project", bundle);
-			ExportPackageHeader header = ProjectUtils.getExportedPackageHeader(bundle);
-			String value = header.getValue();
-			assertNotNull("The export package header value must not be null", value);
-			assertExportedPackage(header.getPackage(packagename), false, 0);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+	public void testAddRawExportedPackage() throws CoreException {
+		String packagename = "org.eclipse.apitools.test";
+		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IProject project = jproject.getProject();
+		ProjectUtils.addExportedPackage(project, packagename, false, null);
+		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
+		assertExportedPackage(getExport(exports, packagename), false, 0);
 	}
 
 	/**
 	 * Tests adding an exported package that has the x-internal directive set
 	 */
-	public void testAddInternalExportedPackage() {
-		try {
-			String packagename = "org.eclipse.apitools.test.internal";
-			IJavaProject jproject = createPluginProject("test_plugin_project");
-			IProject project = jproject.getProject();
-			ProjectUtils.addExportedPackage(project, packagename, true, null);
-			IBundle bundle = ProjectUtils.getBundle(project);
-			assertNotNull("the bundle must not be null for the project", bundle);
-			ExportPackageHeader header = ProjectUtils.getExportedPackageHeader(bundle);
-			String value = header.getValue();
-			assertNotNull("The export package header value must not be null", value);
-			assertExportedPackage(header.getPackage(packagename), true, 0);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+	public void testAddInternalExportedPackage() throws CoreException {
+		String packagename = "org.eclipse.apitools.test.internal";
+		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IProject project = jproject.getProject();
+		ProjectUtils.addExportedPackage(project, packagename, true, null);
+		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
+		assertExportedPackage(getExport(exports, packagename), true, 0);
 	}
 
 	/**
 	 * Tests adding an exported package with 4 friends (x-friends directive)
 	 */
-	public void testAddExternalPackageWithFriends() {
-		try {
-			String packagename = "org.eclipse.apitools.test.4friends";
-			IJavaProject jproject = createPluginProject("test_plugin_project");
-			IProject project = jproject.getProject();
-			ProjectUtils.addExportedPackage(project, packagename, false, new String[] {"F1", "F2", "F3", "F4"});
-			IBundle bundle = ProjectUtils.getBundle(project);
-			assertNotNull("the bundle must not be null for the project", bundle);
-			ExportPackageHeader header = ProjectUtils.getExportedPackageHeader(bundle);
-			String value = header.getValue();
-			assertNotNull("The export package header value must not be null", value);
-			assertExportedPackage(header.getPackage(packagename), true, 4);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+	public void testAddExternalPackageWithFriends() throws CoreException {
+		String packagename = "org.eclipse.apitools.test.4friends";
+		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IProject project = jproject.getProject();
+		ProjectUtils.addExportedPackage(project, packagename, false, new String[] {"F1", "F2", "F3", "F4"});
+		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
+		assertExportedPackage(getExport(exports, packagename), true, 4);
 	}
 
 	/**
 	 * Tests adding more than one exported package
 	 */
-	public void testAddMultipleExportedPackages() {
-		try {
-			IJavaProject jproject = createPluginProject("test_plugin_project");
-			IProject project = jproject.getProject();
-			ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.friends", false, new String[] {"F1", "F2", "F3", "F4"});
-			ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.internal", true, null);
-			IBundle bundle = ProjectUtils.getBundle(project);
-			assertNotNull("the bundle must not be null for the project", bundle);
-			ExportPackageHeader header = ProjectUtils.getExportedPackageHeader(bundle);
-			String value = header.getValue();
-			assertNotNull("The export package header value must not be null", value);
-			assertExportedPackage(header.getPackage("org.eclipse.apitools.test.multi.friends"), true, 4);
-			assertExportedPackage(header.getPackage("org.eclipse.apitools.test.multi.internal"), true, 0);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+	public void testAddMultipleExportedPackages() throws CoreException {
+		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IProject project = jproject.getProject();
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.friends", false, new String[] {"F1", "F2", "F3", "F4"});
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.internal", true, null);
+		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
+		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.multi.friends"), true, 4);
+		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.multi.internal"), true, 0);
 	}
 
 	/**
 	 * Tests removing an exported package 
 	 */
-	public void testRemoveExistingExportedPackage() {
-		try {
-			IJavaProject jproject = createPluginProject("test_plugin_project");
-			IProject project = jproject.getProject();
-			ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove1", false, new String[] {"F1"});
-			ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove2", true, null);
-			IBundle bundle = ProjectUtils.getBundle(project);
-			assertNotNull("the bundle must not be null for the project", bundle);
-			ExportPackageHeader header = ProjectUtils.getExportedPackageHeader(bundle);
-			String value = header.getValue();
-			assertNotNull("The export package header value must not be null", value);
-			assertExportedPackage(header.getPackage("org.eclipse.apitools.test.remove1"), true, 1);
-			assertExportedPackage(header.getPackage("org.eclipse.apitools.test.remove2"), true, 0);
-			ProjectUtils.removeExportedPackage(project, "org.eclipse.apitools.test.remove1");
-			bundle = ProjectUtils.getBundle(project);
-			header = ProjectUtils.getExportedPackageHeader(bundle);
-			assertNull("the package should have been removed from the header", header.getPackage("org.eclipse.apitools.test.remove1"));
-			assertExportedPackage(header.getPackage("org.eclipse.apitools.test.remove2"), true, 0);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+	public void testRemoveExistingExportedPackage() throws CoreException {
+		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IProject project = jproject.getProject();
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove1", false, new String[] {"F1"});
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove2", true, null);
+		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
+		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.remove1"), true, 1);
+		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.remove2"), true, 0);
+		ProjectUtils.removeExportedPackage(project, "org.eclipse.apitools.test.remove1");
+		exports = ProjectUtils.getExportedPackages(project);
+		assertNull("the package should have been removed from the header", getExport(exports, "org.eclipse.apitools.test.remove1"));
+		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.remove2"), true, 0);
 	}
 
 	/**
 	 * Tests trying to remove a package that does not exist in the header
 	 */
-	public void testRemoveNonExistingExportedPackage() {
-		try {
-			IJavaProject jproject = createPluginProject("test_plugin_project");
-			IProject project = jproject.getProject();
-			ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.removeA", false, new String[] {"F1"});
-			IBundle bundle = ProjectUtils.getBundle(project);
-			assertNotNull("the bundle must not be null for the project", bundle);
-			ExportPackageHeader header = ProjectUtils.getExportedPackageHeader(bundle);
-			String value = header.getValue();
-			assertNotNull("The export package header value must not be null", value);
-			assertExportedPackage(header.getPackage("org.eclipse.apitools.test.removeA"), true, 1);
-			ProjectUtils.removeExportedPackage(project, "org.eclipse.apitools.test.dont.exist");
-			assertExportedPackage(header.getPackage("org.eclipse.apitools.test.removeA"), true, 1);
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+	public void testRemoveNonExistingExportedPackage() throws CoreException {
+		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IProject project = jproject.getProject();
+		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.removeA", false, new String[] {"F1"});
+		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
+		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.removeA"), true, 1);
+		ProjectUtils.removeExportedPackage(project, "org.eclipse.apitools.test.dont.exist");
+		assertExportedPackage(getExport(exports, "org.eclipse.apitools.test.removeA"), true, 1);
 	}
 
 	/**
