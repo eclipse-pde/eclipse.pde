@@ -118,7 +118,10 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 	 * Deletes the spelling annotations marked for XML Tags
 	 */
 	private void deleteNonstringSpellingAnnotations(Iterator iter) {
-		AbstractDocument document = (AbstractDocument) getDocument();
+		if (!(getDocument() instanceof IDocumentExtension3)) { //can not proceed otherwise
+			return;
+		}
+		IDocumentExtension3 document = (IDocumentExtension3) getDocument();
 		IDocumentPartitioner docPartitioner = document.getDocumentPartitioner(XMLStringPartitionScanner.XML_STRING);
 		IDocumentPartitioner pdeXMLPartitioner = document.getDocumentPartitioner(XMLDocumentSetupParticpant.XML_PARTITIONING);
 		IAnnotationModel model = getAnnotationModel();

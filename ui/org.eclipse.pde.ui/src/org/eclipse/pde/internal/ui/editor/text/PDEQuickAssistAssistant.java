@@ -241,7 +241,6 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 				}
 			}
-			Collections.sort(list);
 			return (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);
 		}
 	}
