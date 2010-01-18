@@ -84,11 +84,19 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
 	 */
 	public boolean acceptComponent(IApiComponent component) {
-		if(!component.isSystemComponent() && fComponentIds.contains(component.getSymbolicName())) {
-			if(includesIllegalUse()) {
-				fAnalyzer.buildProblemDetectors(component, ProblemDetectorBuilder.K_USE, null);
-			}
+		if(fComponentIds.contains(component.getSymbolicName())) {
 			return true;
+		}
+		try {
+			if(!component.isSystemComponent() && getScope().encloses(component)) {
+				if(includesIllegalUse()) {
+					fAnalyzer.buildProblemDetectors(component, ProblemDetectorBuilder.K_USE, null);
+				}
+				return true;
+			}
+		}
+		catch(CoreException ce) {
+			//do nothing, return false
 		}
 		return false;
 	}
@@ -153,14 +161,16 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				if(isIllegalUse(reference) || (includesAPI() && includesInternal())) {
 					return true;
 				}
-				IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
-				if(annots != null) {
-					int vis = annots.getVisibility();
-					if(VisibilityModifiers.isAPI(vis) && includesAPI()) {
-						return true;
-					}
-					else if(VisibilityModifiers.isPrivate(vis) && includesInternal()) {
-						return true;
+				if(fComponentIds.contains(component.getSymbolicName())) {
+					IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
+					if(annots != null) {
+						int vis = annots.getVisibility();
+						if(VisibilityModifiers.isAPI(vis) && includesAPI()) {
+							return true;
+						}
+						else if(VisibilityModifiers.isPrivate(vis) && includesInternal()) {
+							return true;
+						}
 					}
 				}
 			}
