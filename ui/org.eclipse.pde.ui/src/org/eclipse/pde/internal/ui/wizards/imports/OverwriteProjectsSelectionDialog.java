@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -223,7 +223,11 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		gd.widthHint = 400;
 		tableComposite.setLayoutData(gd);
 
-		setMessage(PDEUIMessages.DuplicatePluginResolutionDialog_message);
+		if (fPluginProjectList != null && fPluginProjectList.size() == 1) {
+			setMessage(PDEUIMessages.DuplicatePluginResolutionDialog_messageSingular);
+		} else {
+			setMessage(PDEUIMessages.DuplicatePluginResolutionDialog_message);
+		}
 		SWTFactory.createWrapLabel(tableComposite, getMessage(), 1, 400);
 		SWTFactory.createVerticalSpacer(tableComposite, 1);
 		SWTFactory.createLabel(tableComposite, PDEUIMessages.OverwriteProjectsSelectionDialog_0, 1);
