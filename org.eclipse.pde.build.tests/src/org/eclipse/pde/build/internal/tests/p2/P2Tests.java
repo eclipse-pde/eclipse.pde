@@ -36,9 +36,9 @@ public class P2Tests extends P2TestCase {
 		File delta = Utils.findDeltaPack();
 		assertNotNull(delta);
 
-		String os = "macosx"; //*/= Platform.getOS();
-		String ws = "cocoa"; //*/= Platform.getWS();
-		String arch = "x86"; //*/= Platform.getOSArch();
+		String os = Platform.getOS();
+		String ws = Platform.getWS();
+		String arch = Platform.getOSArch();
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/test/test.product");
