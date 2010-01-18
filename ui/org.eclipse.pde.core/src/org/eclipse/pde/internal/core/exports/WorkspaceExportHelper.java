@@ -175,10 +175,12 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 					IFeaturePlugin[] plugins = feature.getFeature().getPlugins();
 					for (int j = 0; j < plugins.length; j++) {
 						IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(plugins[j].getId());
-						IPath installLocation = new Path(plugin.getInstallLocation());
-						IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
-						if (project.exists()) {
-							projects.add(project);
+						if (plugin != null) {
+							IPath installLocation = new Path(plugin.getInstallLocation());
+							IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
+							if (project.exists()) {
+								projects.add(project);
+							}
 						}
 					}
 
