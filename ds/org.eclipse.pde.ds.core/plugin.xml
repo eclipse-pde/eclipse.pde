@@ -13,7 +13,7 @@
                class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
             <parameter
                   name="element"
-                  value="{http://www.osgi.org/xmlns/scr/v1.1.0}component">
+                  value="component">
             </parameter>
          </describer>
       </content-type>
