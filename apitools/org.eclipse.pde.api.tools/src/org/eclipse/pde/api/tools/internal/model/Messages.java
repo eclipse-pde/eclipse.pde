@@ -20,6 +20,7 @@ public class Messages extends NLS {
 	public static String ApiType_3;
 	public static String ApiScope_0;
 	public static String BundleApiComponent_baseline_disposed;
+	public static String BundleComponent_failed_to_lookup_fragment;
 	
 	static {
 		// initialize resource bundle

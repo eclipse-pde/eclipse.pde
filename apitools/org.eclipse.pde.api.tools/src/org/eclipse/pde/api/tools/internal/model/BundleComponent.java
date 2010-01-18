@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -362,7 +362,15 @@ public class BundleComponent extends Component {
 				continue;
 			}
 			component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
-			descriptions.add(component.getApiDescription());
+			if(component != null) {
+				descriptions.add(component.getApiDescription());
+			}
+			else {
+				ApiPlugin.log(new Status(
+						IStatus.WARNING, 
+						ApiPlugin.PLUGIN_ID,
+						NLS.bind(Messages.BundleComponent_failed_to_lookup_fragment, fragments[i].getSymbolicName())));
+			}
 		}
 		return new CompositeApiDescription((IApiDescription[]) descriptions.toArray(new IApiDescription[descriptions.size()]));
 	}
