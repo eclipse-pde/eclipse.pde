@@ -194,20 +194,6 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getMissingUnits(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public InstallableUnitDescription[] getMissingUnits(IProgressMonitor monitor) {
-		if (isResolved()) {
-			return new InstallableUnitDescription[0];
-
-			// TODO Problems here
-//			Collection missing = fResolver.calculateMissingIUs(monitor);
-//			return (BundleInfo[]) missing.toArray(new BundleInfo[missing.size()]);
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isProvisioned()
 	 */
 	public boolean isProvisioned() {
@@ -256,28 +242,6 @@ public class TargetDefinition implements ITargetDefinition {
 		if (isProvisioned()) {
 			return fProvisioner.getProvisionedBundles();
 		}
-		return null;
-	}
-
-	/**
-	 * Non-API method to get the set of provisioned bundles that are source bundles.
-	 * Used by the import operation.  Will return <code>null</code> if this target
-	 * has not been successfully provisionined.
-	 * 
-	 * @return list of source bundles in this target or <code>null</code>
-	 */
-	public BundleInfo[] getProvisionedSourceBundles() {
-		if (isProvisioned()) {
-			return fProvisioner.getSourceBundles();
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getProvisionedFeatures()
-	 */
-	public BundleInfo[] getProvisionedFeatures() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -422,6 +386,20 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public ITargetHandle getHandle() {
 		return fHandle;
+	}
+
+	/**
+	 * Non-API method to get the set of provisioned bundles that are source bundles.
+	 * Used by the import operation.  Will return <code>null</code> if this target
+	 * has not been successfully provisionined.
+	 * 
+	 * @return list of source bundles in this target or <code>null</code>
+	 */
+	public BundleInfo[] getProvisionedSourceBundles() {
+		if (isProvisioned()) {
+			return fProvisioner.getSourceBundles();
+		}
+		return null;
 	}
 
 	/**
@@ -654,6 +632,12 @@ public class TargetDefinition implements ITargetDefinition {
 				buf.append("\n\t").append(fContainers.toString()); //$NON-NLS-1$
 			}
 		}
+		if (fRepos.length > 0) {
+			buf.append("\nRepos: "); //$NON-NLS-1$
+			for (int i = 0; i < fRepos.length; i++) {
+				buf.append(URIUtil.toUnencodedString(fRepos[i]));
+			}
+		}
 		buf.append("\nEnv: ").append(fOS).append("/").append(fWS).append("/").append(fArch).append("/").append(fNL); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		buf.append("\nJRE: ").append(fJREContainer); //$NON-NLS-1$
 		buf.append("\nArgs: ").append(fProgramArgs).append("/").append(fVMArgs); //$NON-NLS-1$ //$NON-NLS-2$
@@ -661,5 +645,4 @@ public class TargetDefinition implements ITargetDefinition {
 		buf.append("\nHandle: ").append(fHandle.toString()); //$NON-NLS-1$
 		return buf.toString();
 	}
-
 }

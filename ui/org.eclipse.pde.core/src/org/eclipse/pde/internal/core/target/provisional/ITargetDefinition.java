@@ -116,13 +116,6 @@ public interface ITargetDefinition {
 	public IInstallableUnit getResolvedUnit(InstallableUnitDescription unit);
 
 	/**
-	 * TODO 
-	 * @param monitor
-	 * @return
-	 */
-	public InstallableUnitDescription[] getMissingUnits(IProgressMonitor monitor);
-
-	/**
 	 * Returns whether this target definition is in a provisioned state.  A target that is in a provisioned
 	 * state has bundles and features on disk which can be added to the PDE State.  If a problem occurred 
 	 * while provisioning the target it will not be considered provisioned.
@@ -147,8 +140,6 @@ public interface ITargetDefinition {
 	public IStatus provision(IProgressMonitor monitor);
 
 	/**
-	 * TODO Consider moving this API to a method on ITargetService that provides a "restored target"
-	 * 
 	 * Checks if a profile backing this target exists and if so, uses it to provision this target.  This
 	 * method can be called without calling {@link #resolve(IProgressMonitor)}.  If no profile exists,
 	 * there is a problem reading the profile or if one or more of the provisioned bundles do not exist
@@ -180,16 +171,6 @@ public interface ITargetDefinition {
 	 * @return list of bundles in this target or <code>null</code>
 	 */
 	public BundleInfo[] getProvisionedBundles();
-
-	/**
-	 * Returns a list of {@link BundleInfo} objects describing the physical locations of the fetaures
-	 * in this target.  Will return <code>null</code> if this target was not successfully provisioned.
-	 * 
-	 * TODO This method is not currently supported
-	 * 
-	 * @return list of features in this target or <code>null</code>
-	 */
-	public BundleInfo[] getProvisionedFeatures();
 
 	/**
 	 * Returns the list of bundle containers in this target.  The list may be empty.
