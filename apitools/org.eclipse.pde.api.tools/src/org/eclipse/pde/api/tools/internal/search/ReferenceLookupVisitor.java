@@ -111,17 +111,26 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	public boolean visitMember(IMemberDescriptor referencedMember) {
 		targetMember = referencedMember;
 		switch (targetMember.getElementType()) {
-		case IElementDescriptor.TYPE:
-			targetType = (IReferenceTypeDescriptor)targetMember;
-			break;
-		case IElementDescriptor.METHOD:
-		case IElementDescriptor.FIELD:
-			targetType = targetMember.getEnclosingType();
-			break;
+			case IElementDescriptor.TYPE: {
+				targetType = (IReferenceTypeDescriptor)targetMember;
+				break;
+			}
+			case IElementDescriptor.METHOD:
+			case IElementDescriptor.FIELD: {
+				targetType = targetMember.getEnclosingType();
+				break;
+			}
 		}
 		currType = null;
 		try {
-			IApiTypeRoot typeRoot = currComponent.findTypeRoot(targetType.getQualifiedName());
+			IApiTypeRoot typeRoot = null;
+			IApiComponent[] comps = currComponent.getBaseline().resolvePackage(currComponent, targetType.getPackage().getName());
+			for (int i = 0; i < comps.length; i++) {
+				typeRoot = comps[i].findTypeRoot(targetType.getQualifiedName());
+				if(typeRoot != null) {
+					break;
+				}
+			}
 			if (typeRoot != null) {
 				currType = typeRoot.getStructure();
 			}
