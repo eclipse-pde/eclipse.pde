@@ -13,16 +13,16 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.operations.IStatusCodes;
 import org.eclipse.equinox.internal.p2.ui.dialogs.AddRepositoryDialog;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.target.TargetUtils;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -248,14 +248,25 @@ public class TargetReposGroup {
 	}
 
 	private void handleAdd() {
-		IProvisioningAgent agent = TargetUtils.getProvisioningAgent(fTarget);
-		String profileID = TargetUtils.getProfileID(fTarget);
-		ProvisioningUI provUI = new ProvisioningUI(new ProvisioningSession(agent), profileID, new Policy());
+		IProvisioningAgent agent = null;
+		ProvisioningUI provUI = null;
+		try {
+			agent = TargetPlatformService.getProvisioningAgent();
+			String profileID = TargetPlatformService.getProfileID(fTarget);
+			provUI = new ProvisioningUI(new ProvisioningSession(agent), profileID, new Policy());
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+			// If we cannot load the proper agent, we can still use the SDK default to continue
+			ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
+			provUI = new ProvisioningUI(selfProvisioningUI.getSession(), IProfileRegistry.SELF, new Policy());
+		}
 		AddRepositoryDialog dialog = new AddRepositoryDialog(fTableViewer.getControl().getShell(), provUI) {
 			protected IStatus validateRepositoryURL(boolean contactRepositories) {
 				// Override validation to prevent checking for duplicates.  The repo manager know about other repos outside of this target
 				IStatus isValid = super.validateRepositoryURL(contactRepositories);
 				if (!isValid.isOK() && isValid.getCode() == IStatusCodes.INVALID_REPOSITORY_LOCATION) {
+					setOkEnablement(true);
+					updateStatus(Status.OK_STATUS);
 					return Status.OK_STATUS;
 				}
 				return isValid;
@@ -269,6 +280,10 @@ public class TargetReposGroup {
 			updateInput();
 			fTableViewer.setSelection(new StructuredSelection(location));
 		}
+		if (agent != null) {
+			agent.stop();
+		}
+
 	}
 
 	private void handleRemove() {

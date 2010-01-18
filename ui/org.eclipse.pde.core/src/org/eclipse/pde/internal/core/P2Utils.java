@@ -77,6 +77,23 @@ public class P2Utils {
 		}
 	};
 
+	public static final MatchQuery SOURCE_QUERY = new MatchQuery() {
+		public boolean isMatch(Object candidate) {
+			if (candidate instanceof IInstallableUnit) {
+				Collection provided = ((IInstallableUnit) candidate).getProvidedCapabilities();
+				for (Iterator iterator = provided.iterator(); iterator.hasNext();) {
+					IProvidedCapability current = (IProvidedCapability) iterator.next();
+					if (current.getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+						if (current.getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+	};
+
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the
 	 * specified location, or <code>null</code> if none. The "bundles.info" file

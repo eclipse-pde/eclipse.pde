@@ -15,7 +15,12 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -29,6 +34,11 @@ import org.eclipse.pde.internal.core.target.provisional.*;
  * @since 3.5
  */
 public class TargetPlatformService implements ITargetPlatformService {
+
+	/**
+	 * p2 data area for all targets
+	 */
+	private static final String AGENT_LOCATION = PDECore.getDefault().getStateLocation().append("p2").toOSString(); //$NON-NLS-1$
 
 	/**
 	 * Service instance
@@ -275,6 +285,13 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	public IBundleContainer newFeatureContainer(String home, String id, String version) {
 		return new FeatureBundleContainer(home, id, version);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 */
+	public IBundleContainer newIUContainer(InstallableUnitDescription[] descriptions) {
+		return new IUBundleContainer(descriptions);
 	}
 
 	/* (non-Javadoc)
@@ -600,61 +617,102 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	}
 
-	/**
-	 * Deletes any profiles associated with target definitions that no longer exist
-	 * and returns a list of profile identifiers that were deleted.
-	 */
-	public List cleanOrphanedTargetDefinitionProfiles() throws CoreException {
-		// TODO New API
-		return null;
-//		List list = new ArrayList();
-//		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-//		if (registry != null) {
-//			IProfile[] profiles = registry.getProfiles();
-//			for (int i = 0; i < profiles.length; i++) {
-//				IProfile profile = profiles[i];
-//				String id = profile.getProfileId();
-//				if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-//					String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
-//					AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
-//					if (!target.exists()) {
-//						target.deleteProfile();
-//						list.add(id);
-//					}
-//				}
-//			}
-//		}
-//		return list;
-	}
-
-	/**
-	 * Performs garbage collection based on remaining profiles. Should be called to avoid
-	 * having PDE's bundle pool area grow unbounded.
-	 */
-	public void garbageCollect() {
-		// TODO New API
-//		IProfileRegistry registry = (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
-//		if (registry != null) {
-//			IProfile[] profiles = registry.getProfiles();
-//			if (profiles.length > 0) {
-//				IProfile profile = null;
-//				for (int i = 0; i < profiles.length; i++) {
-//					if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-//						profile = profiles[i];
-//						break;
-//					}
-//				}
-//				if (profile != null) {
-//					new GarbageCollector().runGC(profile);
-//				}
-//			}
-//		}
-	}
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#garbageCollect()
 	 */
-	public IBundleContainer newIUContainer(InstallableUnitDescription[] descriptions) {
-		return new IUBundleContainer(descriptions);
+	public List garbageCollect() {
+		List removedProfiles = new ArrayList();
+		try {
+			IProvisioningAgent agent = getProvisioningAgent();
+			IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+			if (registry != null) {
+
+				// Remove any unused profiles
+				IProfile[] profiles = registry.getProfiles();
+				for (int i = 0; i < profiles.length; i++) {
+					IProfile profile = profiles[i];
+					String id = profile.getProfileId();
+					if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+						String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
+						try {
+							AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
+							if (!target.exists()) {
+								target.deleteProfile();
+								removedProfiles.add(id);
+							}
+						} catch (CoreException e) {
+							// Skip over any unavailable targets
+						}
+					}
+				}
+
+				// Run the p2 garbage collector
+				profiles = registry.getProfiles();
+				if (profiles.length > 0) {
+					IProfile profile = null;
+					for (int i = 0; i < profiles.length; i++) {
+						if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+							profile = profiles[i];
+							break;
+						}
+					}
+					if (profile != null) {
+						new GarbageCollector().runGC(profile);
+					}
+				}
+			}
+			agent.stop();
+		} catch (CoreException e) {
+			// Ignore profiles that can't be GC'd 
+		}
+		return removedProfiles;
 	}
+
+	/**
+	 * Non-API method to obtain the provisioning agent for managing target's p2 data.  Callers are responsible 
+	 * for stopping the agent by calling {@link IProvisioningAgent#stop()} when they are done working
+	 * with it.
+	 * 
+	 * @return provisioning agent
+	 * @throws CoreException if there is a problem creating the agent
+	 */
+	public static IProvisioningAgent getProvisioningAgent() throws CoreException {
+		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		if (provider == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+		return provider.createAgent(new File(AGENT_LOCATION).toURI());
+	}
+
+	/**
+	 * Non-API method to obtain the profile ID associated with the given target
+	 * definition.  The profile may or may not exist in the profile registry.
+	 * 
+	 * @param target the target to get a profile ID for
+	 * @return String ID of the profile associated with the target
+	 * @throws CoreException if there is a problem determining the profile ID
+	 */
+	public static String getProfileID(ITargetDefinition target) throws CoreException {
+		AbstractTargetHandle handle = ((AbstractTargetHandle) target.getHandle());
+		return handle.getProfileId();
+	}
+
+	/**
+	 * Non-API method to obtain the temporary directory where the given target
+	 * should store its generated repositories.  The directory may not exist.
+	 * 
+	 * @param target the target to get repository location for
+	 * @return path to the temp repository location
+	 * @throws CoreException if there is a problem determining the repository location
+	 */
+	public static IPath getRepositoryLocation(ITargetDefinition target) throws CoreException {
+		AbstractTargetHandle handle = ((AbstractTargetHandle) target.getHandle());
+		return handle.getRepositoryLocation();
+	}
+
+	/**
+	 * Non-API constant for the location of the bundle pool to be used for target profiles
+	 */
+	public static final String BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".bundle_pool").toOSString(); //$NON-NLS-1$
+
 }

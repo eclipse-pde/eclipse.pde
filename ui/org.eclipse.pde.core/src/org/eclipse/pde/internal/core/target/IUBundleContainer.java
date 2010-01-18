@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 
 /**
@@ -39,10 +38,10 @@ public class IUBundleContainer implements IBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		return new IMetadataRepository[0];
+	public IRepository[] generateRepositories(IProvisioningAgent agent, IPath targetRepositories, IProgressMonitor monitor) throws CoreException {
+		return new IRepository[0];
 	}
 
 	/* (non-Javadoc)

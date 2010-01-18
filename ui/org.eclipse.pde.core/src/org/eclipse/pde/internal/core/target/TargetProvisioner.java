@@ -2,9 +2,11 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
+import org.eclipse.equinox.internal.p2.touchpoint.eclipse.AggregatedBundleRepository;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -12,9 +14,7 @@ import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.repository.IRepository;
-import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
-import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -28,15 +28,15 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
  */
 public class TargetProvisioner {
 
+	private static final String PROP_CACHE_EXTENSIONS = "org.eclipse.equinox.p2.cache.extensions"; //$NON-NLS-1$
+//	private static final String PROP_ARTIFACT_REPOS = "artifact_repositories";
+	private static final String REPO_DELIMITER = "|"; //$NON-NLS-1$
+
 	private ITargetDefinition fTarget;
 	private TargetResolver fResolver;
 	private MultiStatus fStatus;
-
 	private IProfile fProfile;
-	/**
-	 * TODO Hack to allow bundle pool to be used as only repository
-	 */
-	private IFileArtifactRepository fArtifactRepo;
+	private AggregatedBundleRepository fArtifactRepo;
 
 	TargetProvisioner(ITargetDefinition target, TargetResolver resolver) {
 		fTarget = target;
@@ -51,9 +51,11 @@ public class TargetProvisioner {
 		SubMonitor subMon = SubMonitor.convert(monitor, "Provisioning bundles in target platform", 100);
 		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems occurred while provisioning plug-ins in the target platform", null);
 
-		IProvisioningAgent agent = TargetUtils.getProvisioningAgent(fTarget);
-		if (agent == null) {
-			fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		IProvisioningAgent agent;
+		try {
+			agent = TargetPlatformService.getProvisioningAgent();
+		} catch (CoreException e) {
+			fStatus.add(e.getStatus());
 			return fStatus;
 		}
 
@@ -75,19 +77,32 @@ public class TargetProvisioner {
 				return fStatus;
 			}
 
-			fProfile = null;
-			String profileName = TargetUtils.getProfileID(fTarget);
+			String profileName = null;
+			try {
+				profileName = TargetPlatformService.getProfileID(fTarget);
+			} catch (CoreException e) {
+				fStatus.add(e.getStatus());
+				return fStatus;
+			}
 
 			// Delete any previous profiles with the same ID
 			registry.removeProfile(profileName);
 
 			// Create the profile
 			Properties props = new Properties();
-			props.put(IProfile.PROP_CACHE, TargetUtils.getSharedBundlePool(fTarget));
-			//		properties.put(IProfile.PROP_INSTALL_FOLDER, AbstractTargetHandle.INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
-			//		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
-			//		// set up environment & NL properly so OS specific fragments are down loaded/installed
-			//		properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
+			props.put(IProfile.PROP_CACHE, TargetPlatformService.BUNDLE_POOL);
+
+			// Save the artifact repositories to the profile so we can load them after a restart
+			StringBuffer buffer = new StringBuffer();
+			for (Iterator iterator = fResolver.getArtifactRepositories().iterator(); iterator.hasNext();) {
+				IArtifactRepository currentRepo = (IArtifactRepository) iterator.next();
+				if (buffer.length() > 0) {
+					buffer.append(REPO_DELIMITER);
+				}
+				buffer.append(currentRepo.getLocation().toString());
+			}
+			props.put(PROP_CACHE_EXTENSIONS, buffer.toString());
+
 			try {
 				fProfile = registry.addProfile(profileName, props);
 			} catch (ProvisionException e) {
@@ -100,25 +115,22 @@ public class TargetProvisioner {
 				return Status.CANCEL_STATUS;
 			}
 
-			// Create the provisioning context
-			Set repos = new HashSet();
-			for (Iterator iterator = fResolver.getResolvedRepositories().iterator(); iterator.hasNext();) {
-				IRepository currentRepo = (IRepository) iterator.next();
-				if (currentRepo instanceof IMetadataRepository) {
-					repos.add(currentRepo.getLocation());
-				}
+			// Create the provisioning context with metadata and artifact repositories
+			Set metaRepos = new HashSet();
+			for (Iterator iterator = fResolver.getMetadataRepositories().iterator(); iterator.hasNext();) {
+				IMetadataRepository currentRepo = (IMetadataRepository) iterator.next();
+				metaRepos.add(currentRepo.getLocation());
 			}
-			ProvisioningContext context = new ProvisioningContext((URI[]) repos.toArray(new URI[repos.size()]));
-
-			// TODO Hack to add artifact repository, no need to load it here
-			try {
-				fArtifactRepo = getBundlePool(agent, fProfile);
-			} catch (CoreException e) {
-				fStatus.add(e.getStatus());
-				return fStatus;
+			ProvisioningContext context = new ProvisioningContext((URI[]) metaRepos.toArray(new URI[metaRepos.size()]));
+			Set artifactRepos = new HashSet();
+			for (Iterator iterator = fResolver.getArtifactRepositories().iterator(); iterator.hasNext();) {
+				IArtifactRepository currentRepo = (IArtifactRepository) iterator.next();
+				artifactRepos.add(currentRepo.getLocation());
 			}
-
-			context.setArtifactRepositories(new URI[] {fArtifactRepo.getLocation()});
+			// If we don't have any artifact repos, try to use anything the manager knows about
+			if (artifactRepos.size() > 0) {
+				context.setArtifactRepositories((URI[]) artifactRepos.toArray(new URI[artifactRepos.size()]));
+			}
 
 			subMon.worked(5);
 
@@ -169,7 +181,13 @@ public class TargetProvisioner {
 		fProfile = null;
 		SubMonitor subMon = SubMonitor.convert(monitor, "Loading previous target profile", 50);
 
-		IProvisioningAgent agent = TargetUtils.getProvisioningAgent(fTarget);
+		IProvisioningAgent agent;
+		try {
+			agent = TargetPlatformService.getProvisioningAgent();
+		} catch (CoreException e) {
+			fStatus.add(e.getStatus());
+			return fStatus;
+		}
 
 		try {
 			if (agent == null) {
@@ -183,7 +201,14 @@ public class TargetProvisioner {
 				return fStatus;
 			}
 
-			String profileName = TargetUtils.getProfileID(fTarget);
+			String profileName = null;
+			try {
+				profileName = TargetPlatformService.getProfileID(fTarget);
+			} catch (CoreException e) {
+				fStatus.add(e.getStatus());
+				return fStatus;
+			}
+
 			fProfile = registry.getProfile(profileName);
 
 			if (fProfile == null) {
@@ -203,59 +228,96 @@ public class TargetProvisioner {
 
 	public BundleInfo[] getProvisionedBundles() {
 		if (fProfile != null) {
-
-			List bundleInfos = new ArrayList();
-			IQueryResult result = fProfile.query(P2Utils.BUNDLE_QUERY, null);
-			for (Iterator iterator = result.iterator(); iterator.hasNext();) {
-				IInstallableUnit unit = (IInstallableUnit) iterator.next();
-				Collection artifacts = unit.getArtifacts();
-				if (!artifacts.isEmpty()) {
-					IArtifactKey key = (IArtifactKey) artifacts.iterator().next();
-					URI location = null;
-					// TODO Hack for testing
-					if (fArtifactRepo != null) {
-						File file = fArtifactRepo.getArtifactFile(key);
+			try {
+				IFileArtifactRepository bundlePool = getBundlePoolRepo();
+				List bundleInfos = new ArrayList();
+				IQueryResult result = fProfile.query(P2Utils.BUNDLE_QUERY, null);
+				for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+					IInstallableUnit unit = (IInstallableUnit) iterator.next();
+					Collection artifacts = unit.getArtifacts();
+					if (!artifacts.isEmpty()) {
+						IArtifactKey key = (IArtifactKey) artifacts.iterator().next();
+						URI location = null;
+						File file = bundlePool.getArtifactFile(key);
 						if (file != null && file.exists()) {
 							location = file.toURI();
+							BundleInfo newBundle = new BundleInfo(unit.getId(), unit.getVersion().toString(), location, BundleInfo.NO_LEVEL, false);
+							bundleInfos.add(newBundle);
 						}
 					}
-					BundleInfo newBundle = new BundleInfo(unit.getId(), unit.getVersion().toString(), location, BundleInfo.NO_LEVEL, false);
-					bundleInfos.add(newBundle);
-
 				}
-
+				return (BundleInfo[]) bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
+			} catch (CoreException e) {
+				PDECore.log(e);
 			}
-			return (BundleInfo[]) bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
 		}
 		return new BundleInfo[0];
 	}
 
-	/**
-	 * Returns the local bundle pool (repository) where bundles are stored for the
-	 * given profile.
-	 * 
-	 * @param profile profile bundles are stored
-	 * @return local file artifact repository
-	 * @throws CoreException
-	 */
-	private IFileArtifactRepository getBundlePool(IProvisioningAgent agent, IProfile profile) throws CoreException {
-		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
-		if (manager == null) {
-			// TODO Handle broken service
-//			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
-			return null;
-		}
-
-		String path = profile.getProperty(IProfile.PROP_CACHE);
-		if (path != null) {
-			URI uri = new File(path).toURI();
+	public BundleInfo[] getSourceBundles() {
+		if (fProfile != null) {
 			try {
-				return (IFileArtifactRepository) manager.loadRepository(uri, null);
-			} catch (ProvisionException e) {
-				//the repository doesn't exist, so fall through and create a new one
+				IFileArtifactRepository bundlePool = getBundlePoolRepo();
+				List bundleInfos = new ArrayList();
+				IQueryResult result = fProfile.query(P2Utils.SOURCE_QUERY, null);
+				for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+					IInstallableUnit unit = (IInstallableUnit) iterator.next();
+					Collection artifacts = unit.getArtifacts();
+					if (!artifacts.isEmpty()) {
+						IArtifactKey key = (IArtifactKey) artifacts.iterator().next();
+						URI location = null;
+						File file = bundlePool.getArtifactFile(key);
+						if (file != null && file.exists()) {
+							location = file.toURI();
+							BundleInfo newBundle = new BundleInfo(unit.getId(), unit.getVersion().toString(), location, BundleInfo.NO_LEVEL, false);
+							bundleInfos.add(newBundle);
+						}
+					}
+				}
+				return (BundleInfo[]) bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
+			} catch (CoreException e) {
+				PDECore.log(e);
 			}
 		}
-		return null;
+		return new BundleInfo[0];
 	}
 
+	private IFileArtifactRepository getBundlePoolRepo() throws CoreException {
+		if (fArtifactRepo != null) {
+			return fArtifactRepo;
+		}
+
+		if (fProfile == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Target profile unavailable"));
+		}
+
+		IProvisioningAgent agent = TargetPlatformService.getProvisioningAgent();
+
+		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+		if (manager == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		List repos = new ArrayList();
+		String repoProperty = fProfile.getProperty(PROP_CACHE_EXTENSIONS);
+		if (repoProperty != null) {
+			String[] repoLocations = repoProperty.split("\\" + REPO_DELIMITER); //$NON-NLS-1$
+			for (int i = 0; i < repoLocations.length; i++) {
+				try {
+					URI currentLocation = new URI(repoLocations[i]);
+					if (URIUtil.isFileURI(currentLocation)) {
+						repos.add(manager.loadRepository(currentLocation, null));
+					}
+				} catch (URISyntaxException e) {
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Problems parsing saved repository information", e));
+				}
+			}
+		}
+		URI bundlePool = new File(TargetPlatformService.BUNDLE_POOL).toURI();
+		repos.add(manager.loadRepository(bundlePool, null));
+
+		fArtifactRepo = new AggregatedBundleRepository(repos);
+		agent.stop();
+		return fArtifactRepo;
+	}
 }

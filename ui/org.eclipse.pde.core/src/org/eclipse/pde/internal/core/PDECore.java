@@ -298,12 +298,6 @@ public class PDECore extends Plugin {
 	}
 
 	public void stop(BundleContext context) throws CoreException {
-
-		ITargetPlatformService tps = (ITargetPlatformService) acquireService(ITargetPlatformService.class.getName());
-		if (tps instanceof TargetPlatformService) {
-			((TargetPlatformService) tps).cleanOrphanedTargetDefinitionProfiles();
-		}
-
 		if (fPreferenceManager != null) {
 			fPreferenceManager.savePluginPreferences();
 		}

@@ -185,6 +185,8 @@ public interface ITargetDefinition {
 	 * Returns a list of {@link BundleInfo} objects describing the physical locations of the fetaures
 	 * in this target.  Will return <code>null</code> if this target was not successfully provisioned.
 	 * 
+	 * TODO This method is not currently supported
+	 * 
 	 * @return list of features in this target or <code>null</code>
 	 */
 	public BundleInfo[] getProvisionedFeatures();
@@ -205,17 +207,17 @@ public interface ITargetDefinition {
 	public void setBundleContainers(IBundleContainer[] locations);
 
 	/**
-	 * Returns a list of metadata repository locations known to this target.  This list will not include any repositories generated
-	 * for bundle containers.
+	 * Returns a list of repository locations known to this target.  This list will not include any repositories generated
+	 * for bundle containers.  Locations may be a metadata repository, an artifact repository or both.
 	 * 
-	 * @return list of metadata respository locations, possibly empty
+	 * @return list of repository locations, possibly empty
 	 */
 	public URI[] getRepositories();
 
 	/**
-	 * Sets the list of metadata repository locations that this target can look for metadata in.
+	 * Sets the list of repository locations that this target can look for metadata and artifacts in.
 	 * 
-	 * @param repos list of metadata locations, <code>null<c/ode> arguments will be treated the same as an empty array.
+	 * @param repos list of locations, <code>null<c/ode> arguments will be treated the same as an empty array.
 	 */
 	public void setRepositories(URI[] repos);
 

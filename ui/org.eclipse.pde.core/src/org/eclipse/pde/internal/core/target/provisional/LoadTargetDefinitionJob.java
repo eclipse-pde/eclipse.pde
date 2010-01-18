@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
+import org.eclipse.pde.internal.core.target.Messages;
+
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -112,7 +114,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 			SubMonitor subMon = SubMonitor.convert(monitor, "", 200); //$NON-NLS-1$
 
-			subMon.subTask("Load environment settings");
+			subMon.subTask(Messages.LoadTargetDefinitionJob_loadEnvironmentSettings);
 			loadEnvironment(preferences, subMon.newChild(10));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -133,14 +135,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				return Status.CANCEL_STATUS;
 			}
 
-			subMon.subTask("Load target plug-ins");
+			subMon.subTask(Messages.LoadTargetDefinitionJob_loadTargetPlugins);
 			loadPlugins(preferences, subMon.newChild(100));
-			if (monitor.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
-
-			subMon.subTask("Set additional preferences");
-			loadAdditionalPreferences(preferences);
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -275,7 +271,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 
 			// Create models for the provisioned bundles
-			URL[] urls = TargetUtils.getPluginPaths(fTarget);
+			URL[] urls = TargetPlatformHelper.getPluginPaths(fTarget);
 			PDEState state = new PDEState(urls, true, subMon.newChild(25));
 			if (subMon.isCanceled()) {
 				return;
@@ -291,10 +287,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				return;
 			}
 
-			// For backwards compatibility, continue to set the target home location and additional locations
+			// For backwards compatibility, continue to set the target home location, additional locations, and realization (profile vs directory) settings
 			IBundleContainer[] containers = fTarget.getBundleContainers();
 			String home = null;
 			Set additional = new HashSet();
+			boolean profile = false;
 			for (int i = 0; i < containers.length; i++) {
 				if (containers[i] instanceof AbstractLocalBundleContainer) {
 					String location = ((AbstractLocalBundleContainer) containers[i]).getLocation(true);
@@ -303,6 +300,9 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 					} else {
 						additional.add(location);
 					}
+				}
+				if (!profile && containers[i] instanceof ProfileBundleContainer) {
+					profile = true;
 				}
 			}
 			if (home == null) {
@@ -316,8 +316,16 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				}
 			}
 
+			pref.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, profile);
 			pref.setValue(ICoreConstants.PLATFORM_PATH, home);
 			pref.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, additionalBuf.toString());
+
+			// Save the new workspace target handle
+			String memento = fTarget.getHandle().getMemento();
+			if (fNone) {
+				memento = ICoreConstants.NO_TARGET;
+			}
+			pref.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
 
 			// Use the TargetPlatformResetJob to update the platform
 			Job job = new TargetPlatformResetJob(state);
@@ -333,146 +341,4 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			monitor.done();
 		}
 	}
-
-	/**
-	 * Sets the TARGET_PROFILE preference which stores the ID of the target profile used 
-	 * (if based on an target extension) or the workspace location of the file that
-	 * was used. For now we just clear it.
-	 * <p>
-	 * Sets the WORKSPACE_TARGET_HANDLE.
-	 * </p>
-	 * @param pref
-	 */
-	private void loadAdditionalPreferences(PDEPreferencesManager pref) throws CoreException {
-		pref.setValue(ICoreConstants.TARGET_PROFILE, ""); //$NON-NLS-1$
-		String memento = fTarget.getHandle().getMemento();
-		if (fNone) {
-			memento = ICoreConstants.NO_TARGET;
-		}
-		pref.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
-		IBundleContainer[] containers = fTarget.getBundleContainers();
-		boolean profile = false;
-		if (containers != null && containers.length > 0) {
-			profile = containers[0] instanceof ProfileBundleContainer;
-		}
-		pref.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, profile);
-	}
-
-//	/**
-//	 * Returns a list of additional locations of bundles.
-//	 * 
-//	 * @return additional bundle locations
-//	 */
-//	private List getAdditionalLocs() throws CoreException {
-//		ArrayList additional = new ArrayList();
-//		// secondary containers are considered additional
-//		IBundleContainer[] containers = fTarget.getBundleContainers();
-//		if (containers != null && containers.length > 1) {
-//			for (int i = 1; i < containers.length; i++) {
-//				additional.add(((AbstractBundleContainer) containers[i]).getLocation(true));
-//			}
-//		}
-//		return additional;
-//	}
-
-//	private void handleReload(String targetLocation, List additionalLocations, PDEPreferencesManager pref, IProgressMonitor monitor) throws CoreException {
-//		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_reloadTaskName, 100);
-//		try {
-//			// Provision the target
-//			IStatus result = fTarget.provision(subMon.newChild(50));
-//			if (!(result.getSeverity() == IStatus.OK || result.getSeverity() == IStatus.WARNING)) {
-//				throw new CoreException(result);
-//			}
-//
-//			// Compute excluded bundles (preference stores the disabled/missing bundles)
-//			HashSet missing = new HashSet();
-//			IInstallableUnit[] availableUnits = fTarget.getAvailableUnits();
-//
-//			// If not everything is included, calculate missing by removing all bundles that were included
-//			if (fTarget.getIncluded() != null) {
-//				for (int i = 0; i < availableUnits.length; i++) {
-//					// Only include osgi bundles
-//					IProvidedCapability[] provided = availableUnits[i].getProvidedCapabilities();
-//					for (int j = 0; j < provided.length; j++) {
-//						if (provided[j].getNamespace().equals("osgi.bundle")) { //$NON-NLS-1$
-//							missing.add(availableUnits[i].getId());
-//						}
-//					}
-//				}
-//
-//				IInstallableUnit[] includedUnits = fTarget.getAvailableUnits();
-//				for (int i = 0; i < includedUnits.length; i++) {
-//					// Only include osgi bundles
-//					IProvidedCapability[] provided = includedUnits[i].getProvidedCapabilities();
-//					for (int j = 0; j < provided.length; j++) {
-//						if (provided[j].getNamespace().equals("osgi.bundle")) { //$NON-NLS-1$
-//							missing.remove(includedUnits[i].getId());
-//							break;
-//						}
-//					}
-//				}
-//			}
-//
-//			// Set the checked preference
-//			if (missing.size() == availableUnits.length) {
-//				pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
-//			} else if (missing.size() == 0) {
-//				pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-//			} else {
-//				StringBuffer missingString = new StringBuffer();
-//				Iterator iterator = missing.iterator();
-//				missingString.append((String) iterator.next());
-//				while (iterator.hasNext()) {
-//					missingString.append(' ').append((String) iterator.next());
-//				}
-//				pref.setValue(ICoreConstants.CHECKED_PLUGINS, missingString.toString());
-//			}
-//
-//			// Collect all provisioned bundles
-//			URL[] bundles = fTarget.getProvisionedBundles();
-//			PDEState state = new PDEState(bundles, true, new SubProgressMonitor(monitor, 45));
-//			IPluginModelBase[] models = state.getTargetModels();
-//
-//			// saved POOLED_BUNDLES
-//			if (pooled.isEmpty()) {
-//				if (considerPool) {
-//					// all pooled bundles are excluded
-//					pref.setValue(ICoreConstants.POOLED_BUNDLES, ICoreConstants.VALUE_SAVED_NONE);
-//				} else {
-//					// nothing in the pool
-//					pref.setValue(ICoreConstants.POOLED_BUNDLES, ""); //$NON-NLS-1$
-//				}
-//			} else {
-//				StringBuffer buf = new StringBuffer();
-//				Iterator iterator2 = pooled.iterator();
-//				while (iterator2.hasNext()) {
-//					NameVersionDescriptor desc = (NameVersionDescriptor) iterator2.next();
-//					buf.append(desc.getId());
-//					buf.append(',');
-//					String version = desc.getVersion();
-//					if (version == null) {
-//						buf.append(ICoreConstants.VALUE_SAVED_NONE); // indicates null version
-//					} else {
-//						buf.append(version);
-//					}
-//					if (iterator2.hasNext()) {
-//						buf.append(',');
-//					}
-//				}
-//				pref.setValue(ICoreConstants.POOLED_BUNDLES, buf.toString());
-//			}
-//
-//			Job job = new TargetPlatformResetJob(state);
-//			job.schedule();
-//			try {
-//				job.join();
-//			} catch (InterruptedException e) {
-//			}
-//		} finally {
-//			if (monitor != null) {
-//				monitor.done();
-//			}
-//			subMon.done();
-//		}
-//	}
 }

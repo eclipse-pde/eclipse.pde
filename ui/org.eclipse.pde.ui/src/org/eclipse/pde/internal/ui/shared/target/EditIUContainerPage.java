@@ -12,14 +12,14 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.ui.Policy;
@@ -31,7 +31,7 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.TargetUtils;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
@@ -87,9 +87,16 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		super("AddP2Container"); //$NON-NLS-1$
 		setTitle(Messages.EditIUContainerPage_5);
 		setMessage(Messages.EditIUContainerPage_6);
-		fAgent = TargetUtils.getProvisioningAgent(definition);
-		String profileID = TargetUtils.getProfileID(definition);
-		fProfileUI = new ProvisioningUI(new ProvisioningSession(fAgent), profileID, new Policy());
+		try {
+			fAgent = TargetPlatformService.getProvisioningAgent();
+			String profileID = TargetPlatformService.getProfileID(definition);
+			fProfileUI = new ProvisioningUI(new ProvisioningSession(fAgent), profileID, new Policy());
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+			// If we cannot load the proper agent, we can still use the SDK default to continue
+			ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
+			fProfileUI = new ProvisioningUI(selfProvisioningUI.getSession(), IProfileRegistry.SELF, new Policy());
+		}
 	}
 
 	/* (non-Javadoc)

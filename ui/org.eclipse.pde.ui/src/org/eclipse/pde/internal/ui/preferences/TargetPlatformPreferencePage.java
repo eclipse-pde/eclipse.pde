@@ -271,20 +271,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 
-		// add the targets
-		ITargetPlatformService service = getTargetService();
-		if (service != null) {
-			ITargetHandle[] targets = service.getTargets(null);
-			for (int i = 0; i < targets.length; i++) {
-				try {
-					fTargets.add(targets[i].getTargetDefinition());
-				} catch (CoreException e) {
-					setErrorMessage(e.getMessage());
-				}
-			}
-			fTableViewer.setInput(fTargets);
-		}
-
 		fTableViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				String name1 = ((TargetDefinition) e1).getName();
@@ -396,35 +382,54 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		gd.heightHint = 50;
 		fDetails.getControl().setLayoutData(gd);
 
+		// Initialize the contents
+		ITargetPlatformService service = getTargetService();
 		if (service != null) {
+			// Get the active target
+			// Note 
 			try {
 				fPrevious = service.getWorkspaceTargetHandle();
-				Iterator iterator = fTargets.iterator();
-				while (iterator.hasNext()) {
-					ITargetDefinition target = (ITargetDefinition) iterator.next();
-					if (target.getHandle().equals(fPrevious)) {
-						fActiveTarget = target;
-						fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
-						fTableViewer.setSelection(new StructuredSelection(fActiveTarget), true);
-						fTableViewer.refresh(target);
-						break;
-					}
-				}
-				if (fPrevious != null && !fPrevious.exists()) {
-					setMessage(PDEUIMessages.TargetPlatformPreferencePage2_23, IStatus.WARNING);
-					fWarningComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-					Label warningImage = SWTFactory.createLabel(fWarningComp, "", 1); //$NON-NLS-1$
-					gd = new GridData();
-					gd.verticalAlignment = SWT.TOP;
-					warningImage.setLayoutData(gd);
-					warningImage.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
-					SWTFactory.createWrapLabel(fWarningComp, PDEUIMessages.TargetPlatformPreferencePage2_24, 1);
-					fWarningComp.moveAbove(tableComposite);
+				fActiveTarget = service.getActiveTarget();
+				if (fActiveTarget != null) {
+					fTargets.add(fActiveTarget);
 				}
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 				setErrorMessage(PDEUIMessages.TargetPlatformPreferencePage2_23);
 			}
+
+			// Add all the other targets
+			ITargetHandle[] targets = service.getTargets(null);
+			for (int i = 0; i < targets.length; i++) {
+				if (!targets[i].equals(fPrevious)) {
+					try {
+						fTargets.add(targets[i].getTargetDefinition());
+					} catch (CoreException e) {
+						setErrorMessage(e.getMessage());
+					}
+				}
+			}
+
+			// Update selection based on active target
+			fTableViewer.setInput(fTargets);
+			if (fActiveTarget != null) {
+				fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
+				fTableViewer.setSelection(new StructuredSelection(fActiveTarget), true);
+			}
+
+			// Warn if the previous target definition wasn't persisted
+			if (fPrevious != null && !fPrevious.exists()) {
+				setMessage(PDEUIMessages.TargetPlatformPreferencePage2_23, IStatus.WARNING);
+				fWarningComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+				Label warningImage = SWTFactory.createLabel(fWarningComp, "", 1); //$NON-NLS-1$
+				gd = new GridData();
+				gd.verticalAlignment = SWT.TOP;
+				warningImage.setLayoutData(gd);
+				warningImage.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
+				SWTFactory.createWrapLabel(fWarningComp, PDEUIMessages.TargetPlatformPreferencePage2_24, 1);
+				fWarningComp.moveAbove(tableComposite);
+			}
+			// Warn if no target has been set
 			if (getMessage() == null && fActiveTarget == null) {
 				setMessage(PDEUIMessages.TargetPlatformPreferencePage2_22, IMessageProvider.INFORMATION);
 			}

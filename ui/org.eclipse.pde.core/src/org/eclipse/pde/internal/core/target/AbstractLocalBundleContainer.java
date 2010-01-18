@@ -9,8 +9,12 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactDescriptor;
+import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
@@ -21,9 +25,16 @@ import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.osgi.framework.*;
 
 /**
- * TODO Doc and verify need for abstract class
+ * Abstract base for bundle containers that provide bundles from the local file system.  Because
+ * they are local they can provide a location and likely need to generate metadata.
+ * 
+ * @see DirectoryBundleContainer
+ * @see ProfileBundleContainer
+ * @see FeatureBundleContainer
  */
 public abstract class AbstractLocalBundleContainer implements IBundleContainer {
+
+	private static final String BUNDLE_ARTIFACT_CLASSIFIER = "osgi.bundle"; //$NON-NLS-1$
 
 	/**
 	 * The Java VM Arguments specified by this bundle container 
@@ -95,7 +106,7 @@ public abstract class AbstractLocalBundleContainer implements IBundleContainer {
 		return fVMArgs;
 	}
 
-	protected IInstallableUnit[] generateMetadataForFiles(File[] files, IProgressMonitor monitor) {
+	protected IInstallableUnit[] generateMetadata(File[] files, IProgressMonitor monitor) {
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		StateObjectFactory stateFactory = Platform.getPlatformAdmin().getFactory();
@@ -155,6 +166,56 @@ public abstract class AbstractLocalBundleContainer implements IBundleContainer {
 		System.arraycopy(ius, 0, allIus, 0, ius.length);
 		System.arraycopy(sourceIus, 0, allIus, ius.length, sourceIus.length);
 		return allIus;
+	}
+
+	protected IArtifactDescriptor[] generateArtifactDescriptors(File[] files, IProgressMonitor monitor) {
+		// TODO This could be optimized by combining with generateMetadata
+
+		SubMonitor subMon = SubMonitor.convert(monitor, 50);
+
+		List descriptors = new ArrayList();
+
+		SubMonitor loopProgress = subMon.newChild(50).setWorkRemaining(files.length);
+		for (int i = 0; i < files.length; i++) {
+			if (subMon.isCanceled()) {
+				return new IArtifactDescriptor[0];
+			}
+			try {
+				Map manifest = loadManifest(files[i]);
+				String header = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+				if (header != null) {
+					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header);
+					if (elements != null) {
+						String name = elements[0].getValue();
+						if (name != null) {
+							header = (String) manifest.get(Constants.BUNDLE_VERSION);
+							elements = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, header);
+							if (elements != null) {
+								String version = elements[0].getValue();
+								if (version != null) {
+									ArtifactKey key = new ArtifactKey(BUNDLE_ARTIFACT_CLASSIFIER, name, Version.parseVersion(version));
+									SimpleArtifactDescriptor descriptor = new SimpleArtifactDescriptor(key);
+									descriptor.setRepositoryProperty(SimpleArtifactDescriptor.ARTIFACT_REFERENCE, files[i].toURI().toString());
+									descriptors.add(descriptor);
+								}
+							}
+						}
+					}
+				}
+			} catch (BundleException e) {
+				// ignore invalid bundles
+			} catch (CoreException e) {
+				// ignore invalid bundles
+			}
+			loopProgress.worked(1);
+		}
+
+		if (subMon.isCanceled()) {
+			return new IArtifactDescriptor[0];
+		}
+
+		subMon.done();
+		return (IArtifactDescriptor[]) descriptors.toArray(new IArtifactDescriptor[descriptors.size()]);
 	}
 
 	/**

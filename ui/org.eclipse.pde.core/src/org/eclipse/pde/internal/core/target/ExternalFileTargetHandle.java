@@ -61,6 +61,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	 */
 	void delete() throws CoreException {
 		// We can not delete a file lying outside the workspace
+		deleteProfile();
 	}
 
 	/* (non-Javadoc)

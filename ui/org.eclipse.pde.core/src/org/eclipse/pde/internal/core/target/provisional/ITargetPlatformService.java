@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.target.provisional;
 
 import java.net.URI;
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
@@ -220,5 +221,14 @@ public interface ITargetPlatformService {
 	 * 	file or loading the target definition
 	 */
 	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException;
+
+	/**
+	 * Deletes any profiles associated with target definitions that no longer exist.  Performs
+	 * garbage collection on the PDE bundle pool based the the remaining profiles.  Should be called
+	 * to avoid the bundle pool growing unbounded.
+	 * 
+	 * @return a list of {@link String} profile IDs that were deleted
+	 */
+	public List garbageCollect();
 
 }

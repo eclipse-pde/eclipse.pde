@@ -526,7 +526,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		return TargetUtils.getPluginPaths(definition);
+		return TargetPlatformHelper.getPluginPaths(definition);
 	}
 
 	/**

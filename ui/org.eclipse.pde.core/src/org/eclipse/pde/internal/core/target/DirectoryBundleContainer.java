@@ -12,16 +12,17 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.net.URI;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Properties;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepositoryFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
-import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
+import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
@@ -46,7 +47,12 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 	/**
 	 * Cached, loaded metadata repository holding metadata for this container
 	 */
-	private IMetadataRepository fRepo;
+	private IMetadataRepository fMetaRepo;
+
+	/**
+	 * Cached, loaded artifact repository hodling artifacts for this container
+	 */
+	private IArtifactRepository fArtifactRepo;
 
 	/**
 	 * Constructs a directory bundle container at the given location.
@@ -68,12 +74,23 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#generateRepositories(org.eclipse.equinox.p2.core.IProvisioningAgent, org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+	public IRepository[] generateRepositories(IProvisioningAgent agent, IPath targetRepositories, IProgressMonitor monitor) throws CoreException {
 		// The repository is cached in the object instance, to rescan the object must be recreated
-		if (fRepo != null) {
-			return new IMetadataRepository[] {fRepo};
+		if (fMetaRepo != null && fArtifactRepo != null) {
+			return new IRepository[] {fMetaRepo, fArtifactRepo};
+		}
+
+		// Get the repository services from the agent
+		IMetadataRepositoryManager repoManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		if (repoManager == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+		if (artifactManager == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		SubMonitor subMon = SubMonitor.convert(monitor, "Create repository for " + getLocation(false), 100);
@@ -88,61 +105,52 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		File site = getSite(dir);
 		File[] files = site.listFiles();
 
-		IInstallableUnit[] ius = generateMetadataForFiles(files, subMon.newChild(80));
+		// Create metadata		
+		IInstallableUnit[] ius = generateMetadata(files, subMon.newChild(40));
 		if (subMon.isCanceled()) {
-			return new IMetadataRepository[0];
+			return new IRepository[0];
 		}
 
-		// Create the repository and add the units to it
-		IMetadataRepositoryManager repoManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-		if (repoManager == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
-		}
+		URI repoLocation = new File(targetRepositories.toOSString()).toURI();
 
-		// Create the repository, if it already exists, update its contents
-		// TODO We shouldn't create the repository in the directory as we may not have write access
-		URI repoLocation = getSite(getDirectory()).toURI();
+		// Create the metadata repository, if it already exists, update its contents
 		IStatus repoStatus = repoManager.validateRepositoryLocation(repoLocation, subMon.newChild(5));
-		IMetadataRepository repo;
+		IMetadataRepository metaRepo;
 		if (repoStatus.isOK()) {
-			repo = repoManager.loadRepository(repoLocation, subMon.newChild(5));
-			repo.removeAll();
-			repo.addInstallableUnits(ius);
+			metaRepo = repoManager.loadRepository(repoLocation, subMon.newChild(5));
+			metaRepo.removeAll();
+			metaRepo.addInstallableUnits(ius);
 		} else {
-			repo = repoManager.createRepository(repoLocation, "Directory Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
+			metaRepo = repoManager.createRepository(repoLocation, "Generated Directory Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
 			subMon.worked(5);
-			repo.addInstallableUnits(ius);
+			metaRepo.addInstallableUnits(ius);
 		}
-		subMon.worked(10);
+		// Remove the location from the manager so it doesn't show up elsewhere in the UI
+		repoManager.removeRepository(repoLocation);
+		fMetaRepo = metaRepo;
+
+		// Create the artifact descriptors
+		IArtifactDescriptor[] artifacts = generateArtifactDescriptors(files, subMon.newChild(40));
+		if (subMon.isCanceled()) {
+			return new IRepository[0];
+		}
+
+		// Create the artifact repository, update it if it already exists
+		IArtifactRepository artifactRepo = null;
+		try {
+			artifactRepo = artifactManager.loadRepository(repoLocation, subMon.newChild(5));
+			artifactRepo.removeAll();
+		} catch (ProvisionException e) {
+			artifactRepo = artifactManager.createRepository(repoLocation, "Generated Directory Repository", IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
+		}
+		artifactRepo.addDescriptors(artifacts);
+		subMon.worked(5);
+		// Remove the location from the manager so it doesn't show up elsewhere in the UI
+		artifactManager.removeRepository(repoLocation);
+		fArtifactRepo = artifactRepo;
+
 		subMon.done();
-		fRepo = repo;
-		return new IMetadataRepository[] {repo};
-	}
-
-	public IFileArtifactRepository generateArtifactRepository() throws CoreException {
-		// Ensure that the metadata has been generated
-		if (fRepo == null) {
-			return null;
-		}
-
-//		URI repoLocation = getSite(getDirectory()).toURI();
-//		IStatus repoStatus = manager.validateRepositoryLocation(repoLocation, subMon.newChild(5));
-//		IMetadataRepository repo;
-//		if (repoStatus.isOK()) {
-//			repo = repoManager.loadRepository(repoLocation, subMon.newChild(5));
-//			repo.removeAll();
-//			repo.addInstallableUnits(ius);
-//		} else {
-//			repo = repoManager.createRepository(repoLocation, "Directory Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
-//			subMon.worked(5);
-//			repo.addInstallableUnits(ius);
-//		}
-
-		// Create the artifact repository.  This will fail if a repository already exists here
-		SimpleArtifactRepositoryFactory factory = new SimpleArtifactRepositoryFactory();
-		URI repoLocation = getSite(getDirectory()).toURI();
-		IFileArtifactRepository artifactRepository = (IFileArtifactRepository) factory.create(repoLocation, "Sample Artifact Repository", IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, Collections.EMPTY_MAP);
-		return artifactRepository;
+		return new IRepository[] {metaRepo, artifactRepo};
 	}
 
 	/* (non-Javadoc)
@@ -150,12 +158,12 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 	 */
 	public InstallableUnitDescription[] getRootIUs() throws CoreException {
 		// Ensure that the metadata has been generated
-		if (fRepo == null) {
+		if (fMetaRepo == null) {
 			return null;
 		}
 
 		// Collect all installable units in the repository
-		IQueryResult result = fRepo.query(InstallableUnitQuery.ANY, null);
+		IQueryResult result = fMetaRepo.query(InstallableUnitQuery.ANY, null);
 
 		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.unmodifiableSet().size()];
 		int i = 0;

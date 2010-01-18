@@ -173,6 +173,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_3, file.getName())));
 			}
 		}
+		deleteProfile();
 	}
 
 	/* (non-Javadoc)

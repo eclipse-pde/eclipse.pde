@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.IRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 
 /**
@@ -25,22 +28,27 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 public interface IBundleContainer {
 
 	/**
-	 * Returns repositories containing metadata for the bundles in this bundle container.  The metadata repositories must be loaded
-	 * using the provided provisioning agent.  A bundle container will use this method to provide repositories if it needs to generate
-	 * metadata or if existing metadata may change locations.  Containers with metadata in a static location should set the repository 
-	 * location on the target itself, see {@link ITargetDefinition#setRepositories(java.net.URI[])}.  A progress monitor is provided
-	 * for long running operations.
+	 * Generates and returns the {@link IMetadataRepository} and {@link IArtifactRepository} for the bundles in this
+	 * container.  The repositories should be created in the provided location which is unique to this container but
+	 * may not be identical each time {@link #generateRepositories(IProvisioningAgent, IPath, IProgressMonitor)} is 
+	 * called.  The location will be deleted if the target definition is deleted.  The repositories should be 
+	 * created or loaded using the {@link IRepositoryManager} and {@link IArtifactRepositoryManager} services from 
+	 * the given {@link IProvisioningAgent}, however they should also be removed using 
+	 * {@link IRepositoryManager#removeRepository(java.net.URI)}.  If this container uses static repositories that do 
+	 * not need to be generated, this method should return an empty array and the repository locations added directly 
+	 * to the target using {@link ITargetDefinition#setRepositories(java.net.URI[])}.
 	 * <p>
 	 * The generated repositories may be cached for the life of the bundle container.
 	 * </p>
 	 * @param agent provisioning agent that should be used to create or load the repositories
+	 * @param targetRepositories path describing a folder where a target's generated repositories can be saved
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	    to call done() on the given monitor. Accepts null, indicating that no progress should be
 	    reported and that the operation cannot be cancelled.
 	 * @return a list of repositories, possibly empty
 	 * @throws CoreException if there is a problem generating a repository
 	 */
-	public IMetadataRepository[] generateRepositories(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException;
+	public IRepository[] generateRepositories(IProvisioningAgent agent, IPath targetRepositories, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Return descriptions of the root installable units that this bundle container will provide to the target.  This method may 

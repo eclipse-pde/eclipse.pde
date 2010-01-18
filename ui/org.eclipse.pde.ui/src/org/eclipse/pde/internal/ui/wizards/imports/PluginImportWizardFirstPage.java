@@ -12,11 +12,11 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -25,6 +25,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
@@ -519,34 +520,35 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void resolveTargetDefinition(final ITargetDefinition target) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				monitor.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
-				SubProgressMonitor pm = new SubProgressMonitor(monitor, 50);
-				target.resolve(pm);
-				pm.done();
-				if (monitor.isCanceled()) {
+				SubMonitor subMon = SubMonitor.convert(monitor, PDEUIMessages.PluginImportWizardFirstPage_1, 100);
+
+				// Provision the target to get the bundles
+				target.provision(subMon.newChild(45));
+				if (subMon.isCanceled()) {
+					canceled = true;
 					return;
 				}
-				IResolvedBundle[] bundles = target.getBundles();
-				Map sourceMap = new HashMap();
-				URL[] all = new URL[bundles.length];
-				for (int i = 0; i < bundles.length; i++) {
-					IResolvedBundle bundle = bundles[i];
-					try {
-						if (bundle.getStatus().isOK()) {
-							all[i] = new File(bundle.getBundleInfo().getLocation()).toURL();
-							if (bundle.isSourceBundle()) {
-								sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
-							}
-						}
-					} catch (MalformedURLException e) {
-						setErrorMessage(e.getMessage());
-						monitor.setCanceled(true);
-						return;
-					}
+				if (target.getProvisionStatus().getSeverity() == IStatus.ERROR) {
+					setErrorMessage(target.getProvisionStatus().getMessage());
+					canceled = true;
+					monitor.setCanceled(true);
+					return;
 				}
-				pm = new SubProgressMonitor(monitor, 50);
-				state = new PDEState(all, false, pm);
+
+				// Create a state with all of the models
+				URL[] allBundles = TargetPlatformHelper.getPluginPaths(target);
+				subMon.worked(5);
+				state = new PDEState(allBundles, false, subMon.newChild(45));
 				models = state.getTargetModels();
+				if (subMon.isCanceled()) {
+					canceled = true;
+					return;
+				}
+
+				// Collect source locations
+				// TODO Support old school source features
+				BundleInfo[] sourceBundles = ((TargetDefinition) target).getProvisionedSourceBundles();
+
 				List sourceModels = new ArrayList();
 				List sourceBundles = new ArrayList();
 				for (int i = 0; i < models.length; i++) {
@@ -558,8 +560,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					}
 				}
 				alternateSource = new AlternateSourceLocations((IPluginModelBase[]) sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), (IResolvedBundle[]) sourceBundles.toArray(new IResolvedBundle[sourceBundles.size()]));
-				pm.done();
-				canceled = monitor.isCanceled();
+
+				if (subMon.isCanceled()) {
+					canceled = true;
+					return;
+				}
+				subMon.done();
 				monitor.done();
 			}
 		};

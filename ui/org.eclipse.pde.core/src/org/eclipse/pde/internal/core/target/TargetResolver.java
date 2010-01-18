@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.core.target;
 
+import java.io.File;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -12,6 +13,8 @@ import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
@@ -33,6 +36,7 @@ public class TargetResolver {
 
 	private MultiStatus fStatus;
 	private List fMetaRepos;
+	private List fArtifactRepos;
 	private List fRootIUs;
 	private Collection fAvailableIUs;
 
@@ -51,14 +55,18 @@ public class TargetResolver {
 	public IStatus resolve(IProgressMonitor monitor) {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.TargetDefinition_1, 80);
 		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.AbstractBundleContainer_0, null);
-		IProvisioningAgent agent = TargetUtils.getProvisioningAgent(fTarget);
-		if (agent == null) {
-			fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+
+		IProvisioningAgent agent;
+		try {
+			agent = TargetPlatformService.getProvisioningAgent();
+		} catch (CoreException e) {
+			fStatus.add(e.getStatus());
 			return fStatus;
 		}
 
 		try {
 			fMetaRepos = new ArrayList();
+			fArtifactRepos = new ArrayList();
 			fRootIUs = new ArrayList();
 			fAvailableIUs = new ArrayList();
 
@@ -88,7 +96,10 @@ public class TargetResolver {
 			subMon.subTask(Messages.TargetResolver_findPluginSetTask);
 			result = collectRootIUs(subMon.newChild(10));
 			if (!result.isOK()) {
-				fStatus.add(result);
+				// If one or more locations had problems loading, don't show warnings for empty locations
+				if (fStatus.getSeverity() != IStatus.ERROR || result.getSeverity() != IStatus.WARNING) {
+					fStatus.add(result);
+				}
 			}
 			if (subMon.isCanceled()) {
 				fStatus.add(Status.CANCEL_STATUS);
@@ -116,15 +127,25 @@ public class TargetResolver {
 		return fStatus;
 	}
 
-	private IStatus generateRepos(IProvisioningAgent agent, IProgressMonitor monitor) {
+	private IStatus generateRepos(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
+		// Clear temp repo location if it exists
+		IPath repoPath = TargetPlatformService.getRepositoryLocation(fTarget);
+		File repoLocation = new File(repoPath.toOSString());
+		delete(repoLocation);
+
+		// Ask each bundle container to generate its repositories
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetResolver_problemsReadingLocal, null);
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
 			try {
-				IRepository[] currentRepos = containers[i].generateRepositories(agent, subMon.newChild(1));
+				IRepository[] currentRepos = containers[i].generateRepositories(agent, repoPath.append(Integer.toString(i)), subMon.newChild(1));
 				for (int j = 0; j < currentRepos.length; j++) {
-					fMetaRepos.add(currentRepos[j]);
+					if (currentRepos[j] instanceof IMetadataRepository) {
+						fMetaRepos.add(currentRepos[j]);
+					} else if (currentRepos[j] instanceof IArtifactRepository) {
+						fArtifactRepos.add(currentRepos[j]);
+					}
 				}
 			} catch (CoreException e) {
 				repoStatus.add(e.getStatus());
@@ -136,19 +157,46 @@ public class TargetResolver {
 		return repoStatus;
 	}
 
+	/**
+	 * Recursively deletes folder and files.
+	 * 
+	 * @param folder
+	 */
+	private void delete(File folder) {
+		if (folder.isFile()) {
+			folder.delete();
+		} else if (folder.isDirectory()) {
+			File[] files = folder.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				File file = files[i];
+				if (file.isDirectory()) {
+					delete(file);
+				}
+				file.delete();
+			}
+			folder.delete();
+		}
+	}
+
 	private IStatus loadExplicitRepos(IProvisioningAgent agent, IProgressMonitor monitor) throws CoreException {
-		IMetadataRepositoryManager registry = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-		if (registry == null) {
+		IMetadataRepositoryManager metaManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		if (metaManager == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+		}
+
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+		if (artifactManager == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		MultiStatus result = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetResolver_unableToLoadRepositories, null);
 
 		URI[] explicit = fTarget.getRepositories();
-		SubMonitor subMon = SubMonitor.convert(monitor, explicit.length * 3);
+		SubMonitor subMon = SubMonitor.convert(monitor, explicit.length * 4);
 		for (int i = 0; i < explicit.length; i++) {
 			try {
-				fMetaRepos.add(registry.loadRepository(explicit[i], subMon.newChild(3)));
+				fMetaRepos.add(metaManager.loadRepository(explicit[i], subMon.newChild(2)));
+				fArtifactRepos.add(artifactManager.loadRepository(explicit[i], subMon.newChild(2)));
 			} catch (ProvisionException e) {
 				result.add(e.getStatus());
 			}
@@ -172,7 +220,7 @@ public class TargetResolver {
 				for (int j = 0; j < currentIUs.length; j++) {
 					fRootIUs.add(currentIUs[j]);
 				}
-			} else if (containers[i] instanceof AbstractLocalBundleContainer) {
+			} else if (containers[i] instanceof AbstractLocalBundleContainer && !(containers[i] instanceof FeatureBundleContainer)) {
 				resultCollector.add(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetResolver_noPluginsFound, ((AbstractLocalBundleContainer) containers[i]).getLocation(true))));
 			}
 			subMon.worked(1);
@@ -251,10 +299,17 @@ public class TargetResolver {
 	}
 
 	/**
-	 * @return List of IMetadataRepositories that were loaded during the resolve
+	 * @return List of {@link IMetadataRepository} that were loaded during the resolve
 	 */
-	public List getResolvedRepositories() {
+	public List getMetadataRepositories() {
 		return fMetaRepos;
+	}
+
+	/**
+	 * @return List of {@link IArtifactRepository} that were loaded during the resolve
+	 */
+	public List getArtifactRepositories() {
+		return fArtifactRepos;
 	}
 
 	public Collection calculateIncludedIUs() {

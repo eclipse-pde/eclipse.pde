@@ -13,8 +13,10 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -23,10 +25,14 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.*;
 
+/**
+ * Collection of static convenience methods for working with the target platform 
+ */
 public class TargetPlatformHelper {
 
 	public static final String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
@@ -515,5 +521,33 @@ public class TargetPlatformHelper {
 			}
 		}
 		return result.toString();
+	}
+
+	/**
+	 * Collects the set of URL plug-in paths representing the content of the target definition.  The
+	 * target must be both resolved and provisioned or this method will return an empty array.
+	 * 
+	 * @param definition definition to get plug-ins from
+	 * @return list of URL locations of plug-ins, possibly empty
+	 */
+	public static URL[] getPluginPaths(ITargetDefinition definition) {
+		if (!definition.isProvisioned()) {
+			return new URL[0];
+		}
+
+		// Create models for the provisioned bundles
+		BundleInfo[] bundles = definition.getProvisionedBundles();
+		List bundleLocations = new ArrayList(bundles.length);
+		for (int i = 0; i < bundles.length; i++) {
+			try {
+				URI location = bundles[i].getLocation();
+				if (location != null) {
+					bundleLocations.add(new URL(URIUtil.toUnencodedString(location)));
+				}
+			} catch (MalformedURLException e) {
+				// Ignore invalid urls, UI should see and handle them
+			}
+		}
+		return (URL[]) bundleLocations.toArray(new URL[bundleLocations.size()]);
 	}
 }

@@ -70,6 +70,10 @@ public interface ICoreConstants {
 	 * @deprecated This preference is not set or read anywhere in PDE
 	 */
 	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
+	/**
+	 * @deprecated This preference is not set or read anywhere in PDE
+	 */
+	public static final String TARGET_PROFILE = "target.profile"; //$NON-NLS-1$
 
 	// TODO The following target preferences should be deprecated as they can be obtained directly from the target using ITargetPlatformService
 
@@ -125,7 +129,6 @@ public interface ICoreConstants {
 	public static final String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
 	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
 	public static final String RESOLVE_WITH_REQUIRE_BUNDLE = "resolve.requirebundle"; //$NON-NLS-1$
-	public static final String TARGET_PROFILE = "target.profile"; //$NON-NLS-1$
 
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
 	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$

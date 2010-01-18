@@ -77,8 +77,8 @@ public class FeatureBundleContainer extends DirectoryBundleContainer {
 
 	public InstallableUnitDescription[] getRootIUs() throws CoreException {
 		InstallableUnitDescription[] allUnits = super.getRootIUs();
-		if (allUnits.length == 0) {
-			return allUnits;
+		if (allUnits == null || allUnits.length == 0) {
+			return new InstallableUnitDescription[0];
 		}
 
 		IFeatureModel model = null;
