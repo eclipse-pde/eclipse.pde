@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,16 +142,49 @@ public final class Signatures {
 	}	
 	
 	/**
+	 * Returns the signature of the method qualified with the given type with the type names qualified (if specified)
+	 * and the return type appended, in the format of a content assist proposal.<br><br>
+	 * For example:
+	 * <code>x.y.z.Clazz.mymethod() : Object</code>
+	 * @param method the descriptor to get a formatted signature for
+	 * @param qualifiedparams
+	 * @param includereturn if the return type should be returned
+	 * @return the given type qualified signature of the given method
+	 * @throws CoreException if a lookup to the parent type of the given method fails
+	 */
+	public static String getQualifiedMethodSignature(IMethodDescriptor method, boolean qualifiedparams, boolean includereturn) throws CoreException {
+		StringBuffer buffer = new StringBuffer();
+		IReferenceTypeDescriptor type = method.getEnclosingType();
+		if(type != null) {
+			buffer.append(getQualifiedTypeSignature(type)).append('.');
+		}
+		String methodsig = method.getSignature();
+		String methodname = getMethodName(method);
+		buffer.append(Signature.toString(methodsig, methodname, null, qualifiedparams, false).replace('/', '.'));
+		if(includereturn) {
+			buffer.append(" : "); //$NON-NLS-1$
+			buffer.append(Signature.toString(Signature.getReturnType(methodsig)).replace('/', '.'));
+		}
+		return buffer.toString();
+	}	
+	
+	/**
 	 * Returns the de-qualified method signature
 	 * @param method
+	 * @param includereturn
 	 * @return the de-qualified method signature
 	 * @throws CoreException
 	 */
-	public static String getMethodSignature(IMethodDescriptor method) throws CoreException {
+	public static String getMethodSignature(IMethodDescriptor method, boolean includereturn) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
 		String methodsig = method.getSignature();
 		String methodname = getMethodName(method);
-		buffer.append(Signature.toString(dequalifySignature(methodsig), methodname, null, false, false));
+		String dqsig = dequalifySignature(methodsig);
+		buffer.append(Signature.toString(dqsig, methodname, null, false, false));
+		if(includereturn) {
+			buffer.append(" : "); //$NON-NLS-1$
+			buffer.append(Signature.toString(Signature.getReturnType(dqsig)).replace('/', '.'));
+		}
 		return buffer.toString();
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.model.ApiField;
 import org.eclipse.pde.api.tools.internal.model.ApiMethod;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
@@ -130,6 +131,21 @@ public class SignaturesTests extends TestCase {
 		assertEquals("Wrong qualified method signature returned", "x.y.z.Parent3<T, E>.Parent3()", Signatures.getQualifiedMethodSignature(method));
 		method = type.addMethod("m2", "(I[Ljava.lang.String;J)Ljava.util.List;", null, Flags.AccPublic, null);
 		assertEquals("Wrong qualified method signature returned", "x.y.z.Parent3<T, E>.m2(int, String[], long)", Signatures.getQualifiedMethodSignature(method));
+	}
+	
+	/**
+	 * Tests the {@link Signatures#getQualifiedMethodSignature(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor, boolean)} method
+	 * @throws Exception
+	 */
+	public void testGetQialifiedMethodSignature2() throws Exception {
+		ApiType type = new ApiType(null, "x.y.z.Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null);
+		ApiMethod method = type.addMethod("m1", "()V;", null, Flags.AccPublic, null);
+		assertEquals("Wrong qualified method signature returned", "x.y.z.Parent.m1() : void", Signatures.getQualifiedMethodSignature((IMethodDescriptor) method.getHandle(), false, true));
+		method = type.addMethod("m2", "(I[Ljava.lang.String;J)Ljava.util.List;", null, Flags.AccPublic, null);
+		assertEquals("Wrong qualified method signature returned", "x.y.z.Parent.m2(int, String[], long) : java.util.List", Signatures.getQualifiedMethodSignature((IMethodDescriptor) method.getHandle(), false, true));
+		type = new ApiType(null, "x.y.z.Parent2", "Lx.y.z.Parent2;", "<T:Ljava/lang/Object;>", Flags.AccPublic, null, null);
+		method = type.addMethod("<init>", "()V;", null, Flags.AccPublic, null);
+		assertEquals("Wrong qualified method signature returned", "x.y.z.Parent2.Parent2() : void", Signatures.getQualifiedMethodSignature((IMethodDescriptor) method.getHandle(), false, true));
 	}
 	
 	/**

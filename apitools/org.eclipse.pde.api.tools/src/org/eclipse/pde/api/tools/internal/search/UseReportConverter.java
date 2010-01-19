@@ -1202,10 +1202,9 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_H3).append(getTypeHeader(typename)).append(CLOSE_H3); 
 			buffer.append(getTypeCountSummary(typename, type.counts, map.size()));
 			buffer.append(OPEN_H4).append(getTypeDetailsHeader()).append(CLOSE_H4); 
-			buffer.append("<table width=\"50%\" border=\"1\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_P).append(getTypeDetails()).append(CLOSE_P); 
 			buffer.append("<div align=\"left\" class=\"main\">"); //$NON-NLS-1$
-			buffer.append("<table border=\"1\" width=\"70%\">\n"); //$NON-NLS-1$
+			buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
 			buffer.append(OPEN_TR); 
 			buffer.append("<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">").append(OPEN_B).append(SearchMessages.UseReportConverter_member).append("</b></td>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 			buffer.append(CLOSE_TR); 
@@ -1219,10 +1218,13 @@ public class UseReportConverter extends HTMLConvertor {
 				buffer.append(OPEN_TR); 
 				buffer.append("<td align=\"left\">\n"); //$NON-NLS-1$
 				buffer.append(OPEN_B); 
-				buffer.append("<a href=\"javascript:void(0)\" class=\"typeslnk\" onclick=\"expand(this)\">\n"); //$NON-NLS-1$
-				buffer.append("<span>[+] </span>").append(getDisplayName(desc, false)).append("\n");  //$NON-NLS-1$//$NON-NLS-2$
+				buffer.append("<a href=\"javascript:void(0)\" class=\"typeslnk\" onclick=\"expand(this)\" title=\""); //$NON-NLS-1$
+				buffer.append(getDisplayName(desc, true, true)).append("\">\n"); //$NON-NLS-1$
+				buffer.append("<span>[+] </span>").append(getDisplayName(desc, true, false)).append("\n");  //$NON-NLS-1$//$NON-NLS-2$
 				buffer.append(CLOSE_A).append(CLOSE_B);
+				buffer.append("<div colspan=\"6\" class=\"types\">\n"); //$NON-NLS-1$
 				buffer.append(getReferencesTable(mem)).append("\n"); //$NON-NLS-1$
+				buffer.append(CLOSE_DIV); 
 				buffer.append(CLOSE_TR); 
 			}
 			buffer.append(CLOSE_TABLE);
@@ -1288,7 +1290,6 @@ public class UseReportConverter extends HTMLConvertor {
 	String getReferencesTable(Member member) {
 		StringBuffer buffer = new StringBuffer();
 		Entry entry = null;
-		buffer.append("<div colspan=\"6\" class=\"types\">\n"); //$NON-NLS-1$
 		buffer.append("<table width=\"100%\" border=\"0\">\n"); //$NON-NLS-1$
 		ArrayList refs = null;
 		Reference ref = null;
@@ -1307,7 +1308,7 @@ public class UseReportConverter extends HTMLConvertor {
 			for (Iterator iter2 = refs.iterator(); iter2.hasNext();) {
 				ref = (Reference) iter2.next();
 				try {
-					String name = getDisplayName(ref.desc, true);
+					String name = getDisplayName(ref.desc, false, true);
 					buffer.append(OPEN_TR);
 					buffer.append(OPEN_TD).append(name).append(CLOSE_TD); 
 					buffer.append("<td align=\"center\">").append(ref.line).append(CLOSE_TD); //$NON-NLS-1$ 
@@ -1320,18 +1321,19 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 		buffer.append(CLOSE_TABLE); 
-		buffer.append(CLOSE_DIV); 
+		
 		return buffer.toString();
 	}
 	
 	/**
 	 * Returns the name to display for the given {@link IElementDescriptor} which can be qualified or not
 	 * @param desc
+	 * @param qualifiedparams
 	 * @param qualified
 	 * @return the (un)-qualified name to display for the given {@link IElementDescriptor}
 	 * @throws CoreException
 	 */
-	String getDisplayName(IElementDescriptor desc, boolean qualified) throws CoreException {
+	String getDisplayName(IElementDescriptor desc, boolean qualifiedparams, boolean qualified) throws CoreException {
 		String displayname = null;
 		switch(desc.getElementType()) {
 			case IElementDescriptor.TYPE: {
@@ -1342,10 +1344,10 @@ public class UseReportConverter extends HTMLConvertor {
 			case IElementDescriptor.METHOD: {
 				IMethodDescriptor method = (IMethodDescriptor)desc;
 				if(qualified) {
-					displayname = Signatures.getQualifiedMethodSignature(method);
+					displayname = Signatures.getQualifiedMethodSignature(method, qualifiedparams, qualifiedparams);
 				}
 				else {
-					displayname = Signatures.getMethodSignature(method);
+					displayname = Signatures.getMethodSignature(method, qualifiedparams);
 				}
 				break;
 			}
