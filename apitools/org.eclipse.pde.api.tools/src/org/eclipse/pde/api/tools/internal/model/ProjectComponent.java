@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -43,9 +44,11 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.project.Factory;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.osgi.framework.BundleException;
 
 /**
@@ -210,9 +213,11 @@ public class ProjectComponent extends BundleComponent {
 		fPathToOutputContainers = new HashMap(4);
 		fOutputLocationToContainer = new HashMap(4);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
-			IBuildModel bmodel = fModel.getBuildModel();
-			if (bmodel != null) {
-				IBuild build = bmodel.getBuild();
+			IFile prop = fProject.getProject().getFile("build.properties"); //$NON-NLS-1$
+			IBundleProjectDescription desc = Factory.getDescription(fProject.getProject());
+			if (prop.exists()) {
+				WorkspaceBuildModel properties = new WorkspaceBuildModel(prop);
+				IBuild build = properties.getBuild();
 				IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
 				if (entry != null) {
 					String[] tokens = entry.getTokens();
