@@ -1816,7 +1816,7 @@ public class UseReportConverter extends HTMLConvertor {
 		int idx = text.indexOf('(');
 		if(idx > -1) {
 			int idx2 = text.indexOf(')', idx);
-			String version = text.substring(idx+1, idx2-1);
+			String version = text.substring(idx+1, idx2);
 			try {
 				Version ver = new Version(version);
 				return ver.toString();

@@ -77,7 +77,7 @@ public class UseScanParser {
 				if (version.startsWith("(")) { //$NON-NLS-1$
 					version = version.substring(1);
 					if (version.endsWith(")")) { //$NON-NLS-1$
-						version = version.substring(0,version.length() - 2);
+						version = version.substring(0,version.length() - 1);
 					}
 				}
 				return new String[]{id, version};
