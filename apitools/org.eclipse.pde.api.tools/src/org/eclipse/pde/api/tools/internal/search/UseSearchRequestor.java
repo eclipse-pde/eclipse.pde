@@ -60,6 +60,10 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	private String[] jarPatterns = null;
 
+	/**
+	 * The default {@link ReferenceAnalyzer} for detecting illegal API use
+	 * @see #includesIllegalUse()
+	 */
 	ReferenceAnalyzer fAnalyzer = null;
 	
 	/**
@@ -84,9 +88,6 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
 	 */
 	public boolean acceptComponent(IApiComponent component) {
-		if(fComponentIds.contains(component.getSymbolicName())) {
-			return true;
-		}
 		try {
 			if(!component.isSystemComponent() && getScope().encloses(component)) {
 				if(includesIllegalUse()) {
@@ -155,22 +156,20 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 			IApiMember member = reference.getResolvedReference();
 			if(member != null) {
 				IApiComponent component = member.getApiComponent();
-				if(component.equals(reference.getMember().getApiComponent())) {
+				if(!fComponentIds.contains(component.getSymbolicName()) || component.equals(reference.getMember().getApiComponent())) {
 					return false;
 				}
 				if(isIllegalUse(reference) || (includesAPI() && includesInternal())) {
 					return true;
 				}
-				if(fComponentIds.contains(component.getSymbolicName())) {
-					IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
-					if(annots != null) {
-						int vis = annots.getVisibility();
-						if(VisibilityModifiers.isAPI(vis) && includesAPI()) {
-							return true;
-						}
-						else if(VisibilityModifiers.isPrivate(vis) && includesInternal()) {
-							return true;
-						}
+				IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
+				if(annots != null) {
+					int vis = annots.getVisibility();
+					if(VisibilityModifiers.isAPI(vis) && includesAPI()) {
+						return true;
+					}
+					else if(VisibilityModifiers.isPrivate(vis) && includesInternal()) {
+						return true;
 					}
 				}
 			}
