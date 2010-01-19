@@ -46,8 +46,6 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.project.Factory;
-import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.osgi.framework.BundleException;
 
@@ -214,7 +212,6 @@ public class ProjectComponent extends BundleComponent {
 		fOutputLocationToContainer = new HashMap(4);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
 			IFile prop = fProject.getProject().getFile("build.properties"); //$NON-NLS-1$
-			IBundleProjectDescription desc = Factory.getDescription(fProject.getProject());
 			if (prop.exists()) {
 				WorkspaceBuildModel properties = new WorkspaceBuildModel(prop);
 				IBuild build = properties.getBuild();
