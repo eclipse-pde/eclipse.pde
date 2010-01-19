@@ -289,13 +289,7 @@ public final class ApiSearchEngine {
 		if(scope == null) {
 			return;
 		}
-		fRequestorContext = SearchMessages.ApiSearchEngine_api_internal;
-		if(requestor.includesAPI() && !requestor.includesInternal()) {
-			fRequestorContext = SearchMessages.ApiSearchEngine_api;
-		}
-		if(requestor.includesInternal() && !requestor.includesAPI()) {
-			fRequestorContext = SearchMessages.ApiSearchEngine_internal;
-		}
+		fRequestorContext = computeContext(requestor);
 		IApiElement[] scopeelements = scope.getApiElements();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 
 				MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, new String[] {fRequestorContext}), scopeelements.length*2+1);
@@ -340,5 +334,40 @@ public final class ApiSearchEngine {
 		finally {
 			localmonitor.done();
 		}
+	}
+	
+	/**
+	 * Computes the process context (label)
+	 * @param requestor
+	 * @return the label describing the process for the progress monitor
+	 */
+	String computeContext(IApiSearchRequestor requestor) {
+		String context = SearchMessages.ApiSearchEngine_api_internal;
+		if(requestor.includesAPI()) {
+			if(requestor.includesInternal()) {
+				if(requestor.includesIllegalUse()) {
+					return context; 
+				}
+				else {
+					context = SearchMessages.ApiSearchEngine_api_and_internal;
+				}
+			}
+			else if(!requestor.includesIllegalUse()){
+				context = SearchMessages.ApiSearchEngine_api;
+			}
+			else {
+				context = SearchMessages.ApiSearchEngine_api_and_illegal;
+			}
+		} else if(requestor.includesInternal()) {
+			if(requestor.includesIllegalUse()) {
+				context = SearchMessages.ApiSearchEngine_internal_and_illegal;
+			}
+			else {
+				context = SearchMessages.ApiSearchEngine_internal;
+			}
+		} else if(requestor.includesIllegalUse()) {
+			context = SearchMessages.ApiSearchEngine_illegal;
+		}
+		return context;
 	}
 }

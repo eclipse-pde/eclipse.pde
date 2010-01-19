@@ -19,9 +19,13 @@ public class SearchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.search.searchmessages"; //$NON-NLS-1$
 	public static String ApiSearchEngine_anonymous_type;
 	public static String ApiSearchEngine_api;
+	public static String ApiSearchEngine_api_and_illegal;
+	public static String ApiSearchEngine_api_and_internal;
 	public static String ApiSearchEngine_api_internal;
 	public static String ApiSearchEngine_extracting_refs_from;
+	public static String ApiSearchEngine_illegal;
 	public static String ApiSearchEngine_internal;
+	public static String ApiSearchEngine_internal_and_illegal;
 	public static String ApiSearchEngine_searching_for_use_from;
 	public static String ApiSearchEngine_searching_project;
 	public static String ApiSearchEngine_searching_projects;

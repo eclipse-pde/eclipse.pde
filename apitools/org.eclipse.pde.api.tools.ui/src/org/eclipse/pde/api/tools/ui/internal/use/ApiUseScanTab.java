@@ -645,7 +645,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			setErrorMessage(Messages.ApiUseScanTab_enter_report_location);
 			return false;
 		}
-		if(!this.considerapi.getSelection() && !this.considerinternal.getSelection()) {
+		if(!this.considerapi.getSelection() && !this.considerinternal.getSelection() && !this.consideruse.getSelection()) {
 			setErrorMessage(Messages.ApiUseScanTab_must_search_something);
 			return false;
 		}
