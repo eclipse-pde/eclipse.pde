@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.core.target.provisional;
 import java.net.URI;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A service to manage target platform definitions available to the workspace.
@@ -160,12 +160,13 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Creates and returns a bundle container that contains all installable units described
-	 * by the given installable unit descriptions.
+	 * by the given name version descriptors.  Both the id and version must be set on the 
+	 * descriptors.
 	 * 
-	 * @param descriptions list of descriptions representing the root installable units in the container
+	 * @param descriptions list of descriptors for the root installable units in the container
 	 * @return bundle container
 	 */
-	public IBundleContainer newIUContainer(InstallableUnitDescription[] descriptions);
+	public IBundleContainer newIUContainer(NameVersionDescriptor[] units);
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles referenced by
@@ -179,28 +180,6 @@ public interface ITargetPlatformService {
 	 * @return bundle container
 	 */
 	public IBundleContainer newFeatureContainer(String home, String featureId, String version);
-
-	/**
-	 * Returns a status describing whether the given target definition is synchronized with
-	 * workspace's target platform state. It is possible that bundles could have been added/removed
-	 * from the underlying bundle container storage making the current target platform state out of
-	 * synch with the contents of the a definition. The given target definition must already be 
-	 * resolved or this method will return <code>null</code>.
-	 * <p>
-	 * An <code>OK</code> status is returned when in synch. A multi-status is returned
-	 * when there are synchronization issues. <code>Null</code> is returned if the target
-	 * has not been resolved. Each status contains one of the following codes
-	 * and the name of the associated bundle as a message:
-	 * <ul>
-	 * <li>STATUS_MISSING_FROM_STATE</li>
-	 * <li>STATUS_MISSING_FROM_TARGET_DEFINITION</li>
-	 * </ul>
-	 * </p>
-	 * @param target resolved target definition to compare with target platform state
-	 * @return status describing whether the target is in synch with target platform state
-	 * @throws CoreException if comparison fails
-	 */
-	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException;
 
 	/**
 	 * Copies all attributes from one target definition to another.

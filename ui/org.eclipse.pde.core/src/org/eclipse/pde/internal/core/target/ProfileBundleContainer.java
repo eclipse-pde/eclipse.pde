@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.equinox.internal.p2.engine.ProfileMetadataRepository;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -30,6 +29,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 
 /**
  * A bundle container representing an installed profile.
@@ -164,7 +164,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 			profileName = configProps.getProperty(PROP_PROFILE);
 		}
 		subMon.setWorkRemaining(135);
-		if (monitor.isCanceled()) {
+		if (subMon.isCanceled()) {
 			return new IMetadataRepository[0];
 		}
 
@@ -198,7 +198,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 			}
 		}
 		subMon.setWorkRemaining(110);
-		if (monitor.isCanceled()) {
+		if (subMon.isCanceled()) {
 			return new IRepository[0];
 		}
 
@@ -231,7 +231,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 			files = (File[]) fileList.toArray(new File[fileList.size()]);
 		}
 		subMon.worked(10);
-		if (monitor.isCanceled()) {
+		if (subMon.isCanceled()) {
 			return new IMetadataRepository[0];
 		}
 
@@ -240,7 +240,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 			files = org.eclipse.pde.internal.build.site.PluginPathFinder.getPaths(home, false, false);
 		}
 		subMon.worked(10);
-		if (monitor.isCanceled()) {
+		if (subMon.isCanceled()) {
 			return new IMetadataRepository[0];
 		}
 
@@ -249,7 +249,7 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 			files = readDirectory(new File(home));
 		}
 		subMon.worked(10);
-		if (monitor.isCanceled()) {
+		if (subMon.isCanceled()) {
 			return new IMetadataRepository[0];
 		}
 
@@ -305,7 +305,10 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 		return new IRepository[] {metaRepo, artifactRepo};
 	}
 
-	public InstallableUnitDescription[] getRootIUs() throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs()
+	 */
+	public NameVersionDescriptor[] getRootIUs() throws CoreException {
 		if (fMetaRepo == null) {
 			return null;
 		}
@@ -313,13 +316,11 @@ public class ProfileBundleContainer extends AbstractLocalBundleContainer {
 		// Collect all installable units in the repository
 		IQueryResult result = fMetaRepo.query(P2Utils.BUNDLE_QUERY, null);
 
-		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.unmodifiableSet().size()];
+		NameVersionDescriptor[] descriptions = new NameVersionDescriptor[result.unmodifiableSet().size()];
 		int i = 0;
 		for (Iterator iterator = result.iterator(); iterator.hasNext();) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			descriptions[i] = new InstallableUnitDescription();
-			descriptions[i].setId(unit.getId());
-			descriptions[i].setVersion(unit.getVersion());
+			descriptions[i] = new NameVersionDescriptor(unit.getId(), unit.getVersion().toString());
 			i++;
 		}
 

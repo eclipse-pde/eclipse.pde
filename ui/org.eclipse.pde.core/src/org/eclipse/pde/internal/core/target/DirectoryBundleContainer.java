@@ -15,7 +15,6 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -30,6 +29,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 
 /**
  * A directory of bundles.
@@ -156,7 +156,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs()
 	 */
-	public InstallableUnitDescription[] getRootIUs() throws CoreException {
+	public NameVersionDescriptor[] getRootIUs() throws CoreException {
 		// Ensure that the metadata has been generated
 		if (fMetaRepo == null) {
 			return null;
@@ -165,13 +165,11 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 		// Collect all installable units in the repository
 		IQueryResult result = fMetaRepo.query(InstallableUnitQuery.ANY, null);
 
-		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[result.unmodifiableSet().size()];
+		NameVersionDescriptor[] descriptions = new NameVersionDescriptor[result.unmodifiableSet().size()];
 		int i = 0;
 		for (Iterator iterator = result.iterator(); iterator.hasNext();) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			descriptions[i] = new InstallableUnitDescription();
-			descriptions[i].setId(unit.getId());
-			descriptions[i].setVersion(unit.getVersion());
+			descriptions[i] = new NameVersionDescriptor(unit.getId(), unit.getVersion().toString());
 			i++;
 		}
 

@@ -18,7 +18,6 @@ import javax.xml.transform.TransformerException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -58,17 +57,17 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Set of BundleInfo objects that will be used as implicit dependencies
 	 */
-	private InstallableUnitDescription[] fImplicit;
+	private NameVersionDescriptor[] fImplicit;
 
 	/**
-	 * Set of InstallableUnitDescription descriptions to be included in the target
+	 * Set of NameVersionDescriptor descriptions to be included in the target
 	 */
-	private InstallableUnitDescription[] fIncluded;
+	private NameVersionDescriptor[] fIncluded;
 
 	/**
-	 * Set of InstallableUnitDescription descriptions that are optionally included in the target 
+	 * Set of NameVersionDescriptor descriptions that are optionally included in the target 
 	 */
-	private InstallableUnitDescription[] fOptional;
+	private NameVersionDescriptor[] fOptional;
 
 	/**
 	 * Handle that controls the persistence of this target
@@ -184,9 +183,9 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedUnit(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedUnit(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor)
 	 */
-	public IInstallableUnit getResolvedUnit(InstallableUnitDescription unit) {
+	public IInstallableUnit getResolvedUnit(NameVersionDescriptor unit) {
 		if (isResolved()) {
 			return fResolver.getUnit(unit);
 		}
@@ -248,14 +247,14 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getIncluded()
 	 */
-	public InstallableUnitDescription[] getIncluded() {
+	public NameVersionDescriptor[] getIncluded() {
 		return fIncluded;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setIncluded(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setIncluded(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor[])
 	 */
-	public void setIncluded(InstallableUnitDescription[] included) {
+	public void setIncluded(NameVersionDescriptor[] included) {
 		// We are no longer provisioned
 		fProvisioner = null;
 		fIncluded = included;
@@ -264,14 +263,14 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getOptional()
 	 */
-	public InstallableUnitDescription[] getOptional() {
+	public NameVersionDescriptor[] getOptional() {
 		return fOptional;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOptional(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOptional(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor[])
 	 */
-	public void setOptional(InstallableUnitDescription[] optional) {
+	public void setOptional(NameVersionDescriptor[] optional) {
 		// No longer provisioned
 		fProvisioner = null;
 		fOptional = optional;
@@ -463,14 +462,14 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getImplicitDependencies()
 	 */
-	public InstallableUnitDescription[] getImplicitDependencies() {
+	public NameVersionDescriptor[] getImplicitDependencies() {
 		return fImplicit;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor[])
 	 */
-	public void setImplicitDependencies(InstallableUnitDescription[] bundles) {
+	public void setImplicitDependencies(NameVersionDescriptor[] bundles) {
 		if (bundles != null && bundles.length == 0) {
 			bundles = null;
 		}
@@ -632,7 +631,7 @@ public class TargetDefinition implements ITargetDefinition {
 				buf.append("\n\t").append(fContainers.toString()); //$NON-NLS-1$
 			}
 		}
-		if (fRepos.length > 0) {
+		if (fRepos != null && fRepos.length > 0) {
 			buf.append("\nRepos: "); //$NON-NLS-1$
 			for (int i = 0; i < fRepos.length; i++) {
 				buf.append(URIUtil.toUnencodedString(fRepos[i]));

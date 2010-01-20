@@ -13,15 +13,13 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
+import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
  * A container of the bundles contained in a feature.
@@ -75,10 +73,13 @@ public class FeatureBundleContainer extends DirectoryBundleContainer {
 		return fVersion;
 	}
 
-	public InstallableUnitDescription[] getRootIUs() throws CoreException {
-		InstallableUnitDescription[] allUnits = super.getRootIUs();
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.DirectoryBundleContainer#getRootIUs()
+	 */
+	public NameVersionDescriptor[] getRootIUs() throws CoreException {
+		NameVersionDescriptor[] allUnits = super.getRootIUs();
 		if (allUnits == null || allUnits.length == 0) {
-			return new InstallableUnitDescription[0];
+			return new NameVersionDescriptor[0];
 		}
 
 		IFeatureModel model = null;
@@ -116,13 +117,13 @@ public class FeatureBundleContainer extends DirectoryBundleContainer {
 				String unitID = allUnits[i].getId();
 				if (includedPlugins.containsKey(unitID)) {
 					String pluginVersion = (String) includedPlugins.get(unitID);
-					if (pluginVersion == null || Version.create(pluginVersion).equals(allUnits[i].getVersion())) {
+					if (pluginVersion == null || Version.parseVersion(pluginVersion).equals(Version.parseVersion(allUnits[i].getVersion()))) {
 						featureUnits.add(allUnits[i]);
 					}
 				}
 			}
 
-			return (InstallableUnitDescription[]) featureUnits.toArray(new InstallableUnitDescription[featureUnits.size()]);
+			return (NameVersionDescriptor[]) featureUnits.toArray(new NameVersionDescriptor[featureUnits.size()]);
 
 		} finally {
 			if (model != null) {
@@ -212,6 +213,10 @@ public class FeatureBundleContainer extends DirectoryBundleContainer {
 			// Ignore during toString()
 		}
 		return buf.toString();
+	}
+
+	public String[] getVMArguments() {
+		return null;
 	}
 
 }

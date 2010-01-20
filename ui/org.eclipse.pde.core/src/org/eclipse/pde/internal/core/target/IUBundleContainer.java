@@ -11,10 +11,10 @@
 package org.eclipse.pde.internal.core.target;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 
 /**
  * A bundle container that references IU's in one or more repositories.
@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
  */
 public class IUBundleContainer implements IBundleContainer {
 
-	private InstallableUnitDescription[] fDescriptions;
+	private NameVersionDescriptor[] fDescriptions;
 
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
@@ -33,7 +33,7 @@ public class IUBundleContainer implements IBundleContainer {
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> if
 	 *   default set
 	 */
-	public IUBundleContainer(InstallableUnitDescription[] descriptions) {
+	public IUBundleContainer(NameVersionDescriptor[] descriptions) {
 		fDescriptions = descriptions;
 	}
 
@@ -47,7 +47,7 @@ public class IUBundleContainer implements IBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRootIUs()
 	 */
-	public InstallableUnitDescription[] getRootIUs() throws CoreException {
+	public NameVersionDescriptor[] getRootIUs() throws CoreException {
 		return fDescriptions;
 	}
 

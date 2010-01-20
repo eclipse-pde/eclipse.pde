@@ -129,7 +129,7 @@ public abstract class AbstractLocalBundleContainer implements IBundleContainer {
 						if (name != null) {
 							Hashtable dictionary = new Hashtable(manifest.size());
 							dictionary.putAll(manifest);
-							BundleDescription bd = stateFactory.createBundleDescription(state, (Dictionary) manifest, (files[i].toURL()).toExternalForm(), (long) i);
+							BundleDescription bd = stateFactory.createBundleDescription(state, dictionary, (files[i].toURL()).toExternalForm(), i);
 							if ((String) manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE) != null) {
 								sourceDescriptions.add(bd);
 							} else {

@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import org.eclipse.pde.internal.core.target.Messages;
-
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -53,9 +50,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * schedules the operation as a user job.
 	 * 
 	 * @param target target definition or <code>null</code> if none
+	 * @return the scheduled job
 	 */
-	public static void load(ITargetDefinition target) {
-		load(target, null);
+	public static LoadTargetDefinitionJob load(ITargetDefinition target) {
+		return load(target, null);
 	}
 
 	/**
@@ -68,15 +66,17 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * 
 	 * @param target target definition or <code>null</code> if none
 	 * @param listener job change listener that will be added to the created job
+	 * @return the scheduled job
 	 */
-	public static void load(ITargetDefinition target, IJobChangeListener listener) {
+	public static LoadTargetDefinitionJob load(ITargetDefinition target, IJobChangeListener listener) {
 		Job.getJobManager().cancel(JOB_FAMILY_ID);
-		Job job = new LoadTargetDefinitionJob(target);
+		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
 		job.setUser(true);
 		if (listener != null) {
 			job.addJobChangeListener(listener);
 		}
 		job.schedule();
+		return job;
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param monitor progress monitor
 	 */
 	private void loadImplicitPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) {
-		InstallableUnitDescription[] infos = fTarget.getImplicitDependencies();
+		NameVersionDescriptor[] infos = fTarget.getImplicitDependencies();
 		if (infos != null) {
 			monitor.beginTask(Messages.LoadTargetOperation_implicitPluginsTaskName, infos.length + 1);
 			StringBuffer buffer = new StringBuffer();

@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.target.provisional;
 import java.net.URI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.environment.Constants;
@@ -98,7 +97,7 @@ public interface ITargetDefinition {
 
 	/**
 	 * Returns a filtered list of installable units.  Takes the list of available units in the target {@link #getAvailableUnits()} 
-	 * and filters anything not set to be included in this target {@link #setIncluded(InstallableUnitDescription[])}.
+	 * and filters anything not set to be included in this target {@link #setIncluded(NameVersionDescriptor[])}.
 	 * If the list of included units is set to <code>null</code> this methods returns the same value as {@link #getAvailableUnits()}.
 	 * If this target has not been resolved, this method returns <code>null</code>.
 	 * 
@@ -107,13 +106,13 @@ public interface ITargetDefinition {
 	public IInstallableUnit[] getIncludedUnits();
 
 	/**
-	 * Returns an installable unit in this target with the same ID and version as the given InstallableUnitDescription.
+	 * Returns an installable unit in this target with the same ID and version as the given {@link NameVersionDescriptor}.
 	 * Returns <code>null</code> if this target has not been resolved or if no equivalent installable unit could be found.
 	 * 
 	 * @param unit installable unit description to look up an installable unit for
 	 * @return an equivalent installable unit or <code>null</code>
 	 */
-	public IInstallableUnit getResolvedUnit(InstallableUnitDescription unit);
+	public IInstallableUnit getResolvedUnit(NameVersionDescriptor unit);
 
 	/**
 	 * Returns whether this target definition is in a provisioned state.  A target that is in a provisioned
@@ -203,48 +202,48 @@ public interface ITargetDefinition {
 	public void setRepositories(URI[] repos);
 
 	/**
-	 * Returns the list of installable unit descriptions that will determine which installable units are to be included in the provisioned
-	 * target.  The returned descriptions will have an id and may have a version.  If the target is set to include all bundles
+	 * Returns the list of descriptors that will determine which installable units are to be included in the provisioned
+	 * target.  The returned descriptors will have an id and may have a version.  If the target is set to include all units
 	 * (no filtering is being done), this method will return <code>null</code>.
 	 * 
 	 * @see #getIncludedUnits()
-	 * @return list of installable unit descriptions or <code>null</code>
+	 * @return list of name version descriptors or <code>null</code>
 	 */
-	public InstallableUnitDescription[] getIncluded();
+	public NameVersionDescriptor[] getIncluded();
 
 	/**
-	 * Sets the list of installable unit descriptions used to filter the installable units that will be provisioned by this target.
+	 * Sets the list of descriptors used to filter the installable units that will be provisioned by this target.
 	 * To include all IUs in the target, pass <code>null</code> as the argument.  The unit descriptions passed to this method must
-	 * have an ID set.  They may have a version set.  Any other settings will be ignored.
+	 * have an ID set, but the version may be <code>null</code> to include any version of that unit.
 	 * 
 	 * @see #getIncludedUnits()
 	 * @param included list of units to include in the target or <code>null</code> to include all units
 	 */
-	public void setIncluded(InstallableUnitDescription[] included);
+	public void setIncluded(NameVersionDescriptor[] included);
 
 	/**
-	 * Returns the list of installable unit descriptions that will determine which installable units are to be optionally included in the provisioned
+	 * Returns the list of descriptors that will determine which installable units are to be optionally included in the provisioned
 	 * target.  The returned descriptions will have an id and may have a version.  If the target is not considering any optional inclusions
 	 * this method will return <code>null</code>.
 	 * <p>
 	 * Optional inclusions are not supported in the user interface.  {@link #getIncluded()} should be used instead.
 	 * </p>
 	 * @see #getIncludedUnits()
-	 * @return list of installable unit descriptions or <code>null</code>
+	 * @return list of name version descriptors or <code>null</code>
 	 */
-	public InstallableUnitDescription[] getOptional();
+	public NameVersionDescriptor[] getOptional();
 
 	/**
-	 * Sets the list of installable unit descriptions used to optionally include installable units in the provisioned target
-	 * To not consider optional inclusions, pass <code>null</code> as the argument.  The unit descriptions passed to this method must
-	 * have an ID set.  They may have a version set.  Any other settings will be ignored.
+	 * Sets the list of descriptors used to optionally include installable units in the provisioned target
+	 * To not consider optional inclusions, pass <code>null</code> as the argument.  The descriptors passed to this method must
+	 * have an ID set, but the version may be <code>null</code> to optionally include any version of the unit.
 	 * <p>
 	 * Optional inclusions are not supported in the user interface.  {@link #setIncluded()} should be used instead.
 	 * </p>
 	 * @see #getIncludedUnits()
-	 * @param included list of units descriptions or <code>null</code>
+	 * @param included list of name version descriptors or <code>null</code>
 	 */
-	public void setOptional(InstallableUnitDescription[] optional);
+	public void setOptional(NameVersionDescriptor[] optional);
 
 	/**
 	 * Sets the JRE that this target definition should be built against, or <code>null</code>
@@ -371,21 +370,24 @@ public interface ITargetDefinition {
 	public void setVMArguments(String args);
 
 	/**
-	 * Sets implicit dependencies for this target. Bundles in this collection are always
-	 * considered by PDE when computing plug-in dependencies. Only symbolic names need to
-	 * be specified in the given bundle descriptions. 
-	 * 
+	 * Sets implicit dependencies for this target.  The plug-ins described by this list
+	 * are always considered by PDE when computing plug-in dependencies.  To set there to
+	 * be no implicit dependencies in this target, pass <code>null</code>.
+	 * <p>
+	 * Only the id of the bundles are currently considered in finding implicit dependencies.
+	 * Any version settings are ignored.
+	 * </p>
 	 * @param bundles implicit dependencies or <code>null</code> if none
 	 */
-	public void setImplicitDependencies(InstallableUnitDescription[] bundles);
+	public void setImplicitDependencies(NameVersionDescriptor[] bundleNames);
 
 	/**
 	 * Returns the implicit dependencies set on this target or <code>null</code> if none.
-	 * Note that this does not resolve the actual bundles used as implicit dependencies - see
-	 * {@link #resolveImplicitDependencies(IProgressMonitor)} for resolution.
+	 * The plug-ins described by this list are always considered by PDE when computing plug-in
+	 * dependencies.
 	 * 
 	 * @return implicit dependencies or <code>null</code>
 	 */
-	public InstallableUnitDescription[] getImplicitDependencies();
+	public NameVersionDescriptor[] getImplicitDependencies();
 
 }

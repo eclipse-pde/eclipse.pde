@@ -20,8 +20,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -186,7 +184,36 @@ public class TargetDefinitionPersistenceHelper {
 	
 	** Example 3.6 XML **
 
-	TODO Provide example
+	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+	<?pde version="3.6"?>
+	
+	<target name="Everything">
+	<locations>
+	<location path="${eclipse_home}" type="Directory"/>
+	<location path="/home/cwindatt/Eclipse/Eclipse 3.5 Update" type="Profile"/>
+	<location id="org.eclipse.pde" path="${eclipse_home}" type="Feature"/>
+	<location type="InstallableUnit">
+	<unit id="org.eclipse.cvs.feature.group" version="1.1.101.R35x_v20090811-7E79FEd9KKF5H2YDWFLLBL01A16"/>
+	</location>
+	</locations>
+	<repositories>
+	<repository location="http://download.eclipse.org/releases/galileo"/>
+	</repositories>
+	<includeBundles>
+	<plugin id="org.apache.commons.codec.source" version="1.3.0.v20080530-1600"/>
+	<plugin id="org.apache.commons.codec" version="1.3.0.v20080530-1600"/>
+	<plugin id="org.apache.commons.el.source" version="1.0.0.v200806031608"/>
+	<plugin id="org.apache.commons.el" version="1.0.0.v200806031608"/>
+	<plugin id="org.apache.commons.httpclient.source" version="3.1.0.v20080605-1935"/>
+	<plugin id="org.apache.commons.httpclient" version="3.1.0.v20080605-1935"/>
+	</includeBundles>
+	<optionalBundles>
+	<plugin id="org.apache.ant" version="1.7.1.v20090120-1145"/>
+	</optionalBundles>
+	<implicitDependencies>
+	<plugin id="com.ibm.icu" version="0.0.0"/>
+	</implicitDependencies>
+	</target>
 	
 	 */
 
@@ -234,14 +261,14 @@ public class TargetDefinitionPersistenceHelper {
 			rootElement.appendChild(reposElement);
 		}
 
-		InstallableUnitDescription[] includedBundles = definition.getIncluded();
+		NameVersionDescriptor[] includedBundles = definition.getIncluded();
 		if (includedBundles != null) {
 			Element included = doc.createElement(INCLUDE_BUNDLES);
 			serializeBundles(doc, included, includedBundles);
 			rootElement.appendChild(included);
 		}
 
-		InstallableUnitDescription[] optionalBundles = definition.getIncluded();
+		NameVersionDescriptor[] optionalBundles = definition.getOptional();
 		if (optionalBundles != null) {
 			Element optional = doc.createElement(OPTIONAL_BUNDLES);
 			serializeBundles(doc, optional, optionalBundles);
@@ -295,7 +322,7 @@ public class TargetDefinitionPersistenceHelper {
 			rootElement.appendChild(argElement);
 		}
 
-		InstallableUnitDescription[] implicitDependencies = definition.getImplicitDependencies();
+		NameVersionDescriptor[] implicitDependencies = definition.getImplicitDependencies();
 		if (implicitDependencies != null && implicitDependencies.length > 0) {
 			Element implicit = doc.createElement(IMPLICIT);
 			for (int i = 0; i < implicitDependencies.length; i++) {
@@ -387,12 +414,10 @@ public class TargetDefinitionPersistenceHelper {
 					URI[] uris = deserializeRepositories(element);
 					definition.setRepositories(uris);
 				} else if (nodeName.equalsIgnoreCase(INCLUDE_BUNDLES)) {
-					// TODO Does not handle cases where everything was purposely excluded
-					InstallableUnitDescription[] included = deserializeBundles(element);
+					NameVersionDescriptor[] included = deserializeBundles(element);
 					definition.setIncluded(included);
 				} else if (nodeName.equalsIgnoreCase(OPTIONAL_BUNDLES)) {
-					// TODO Does not handle cases where everything was purposely excluded
-					InstallableUnitDescription[] optional = deserializeBundles(element);
+					NameVersionDescriptor[] optional = deserializeBundles(element);
 					definition.setOptional(optional);
 				} else if (nodeName.equalsIgnoreCase(ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
@@ -476,31 +501,24 @@ public class TargetDefinitionPersistenceHelper {
 							Element currentElement = (Element) entry;
 							if (currentElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
 								String version = currentElement.getAttribute(ATTR_VERSION);
-								InstallableUnitDescription bundle = new InstallableUnitDescription();
-								bundle.setId(currentElement.getAttribute(ATTR_ID));
-								if (version.length() > 0) {
-									bundle.setVersion(Version.parseVersion(version));
-								}
+								NameVersionDescriptor bundle = version.length() > 0 ? new NameVersionDescriptor(currentElement.getAttribute(ATTR_ID), version) : new NameVersionDescriptor(currentElement.getAttribute(ATTR_ID));
 								implicit.add(bundle);
 							}
 						}
 					}
-					definition.setImplicitDependencies((InstallableUnitDescription[]) implicit.toArray(new InstallableUnitDescription[implicit.size()]));
+					definition.setImplicitDependencies((NameVersionDescriptor[]) implicit.toArray(new NameVersionDescriptor[implicit.size()]));
 				}
 			}
 		}
 		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
 
-		// TODO We are not handling targets that have purposely excluded everything
-		// TODO We are not handling iu bundle containers that used the default repo set
 		if (included35.size() > 0) {
-			definition.setIncluded((InstallableUnitDescription[]) included35.toArray(new InstallableUnitDescription[included35.size()]));
+			definition.setIncluded((NameVersionDescriptor[]) included35.toArray(new NameVersionDescriptor[included35.size()]));
 		}
 		if (optional35.size() > 0) {
-			definition.setOptional((InstallableUnitDescription[]) optional35.toArray(new InstallableUnitDescription[optional35.size()]));
+			definition.setOptional((NameVersionDescriptor[]) optional35.toArray(new NameVersionDescriptor[optional35.size()]));
 		}
 		if (repositores35.size() > 0) {
-			// TODO Test
 			URI[] repos = definition.getRepositories();
 			URI[] newRepos = new URI[repos.length + repositores35.size()];
 			repositores35.toArray(newRepos);
@@ -535,24 +553,24 @@ public class TargetDefinitionPersistenceHelper {
 		} else if (location instanceof IUBundleContainer) {
 			locationElement.setAttribute(ATTR_LOCATION_TYPE, TYPE_REPOSITORY);
 			IUBundleContainer iubc = (IUBundleContainer) location;
-			InstallableUnitDescription[] descriptions = iubc.getRootIUs();
+			NameVersionDescriptor[] descriptions = iubc.getRootIUs();
 			for (int i = 0; i < descriptions.length; i++) {
 				Element unit = doc.createElement(INSTALLABLE_UNIT);
 				unit.setAttribute(ATTR_ID, descriptions[i].getId());
-				unit.setAttribute(ATTR_VERSION, descriptions[i].getVersion().toString());
+				unit.setAttribute(ATTR_VERSION, descriptions[i].getVersion());
 				locationElement.appendChild(unit);
 			}
 		}
 		return locationElement;
 	}
 
-	private static void serializeBundles(Document doc, Element parent, InstallableUnitDescription[] units) {
+	private static void serializeBundles(Document doc, Element parent, NameVersionDescriptor[] units) {
 		for (int i = 0; i < units.length; i++) {
 			Element includedBundle = doc.createElement(PLUGIN);
 			includedBundle.setAttribute(ATTR_ID, units[i].getId());
-			Version version = units[i].getVersion();
+			String version = units[i].getVersion();
 			if (version != null) {
-				includedBundle.setAttribute(ATTR_VERSION, version.toString());
+				includedBundle.setAttribute(ATTR_VERSION, version);
 			}
 			parent.appendChild(includedBundle);
 		}
@@ -606,9 +624,7 @@ public class TargetDefinitionPersistenceHelper {
 						if (id.length() > 0) {
 							String version = element.getAttribute(ATTR_VERSION);
 							if (version.length() > 0) {
-								InstallableUnitDescription description = new InstallableUnitDescription();
-								description.setId(id);
-								description.setVersion(Version.create(version));
+								NameVersionDescriptor description = new NameVersionDescriptor(id, version);
 								descriptions.add(description);
 							}
 						}
@@ -624,7 +640,7 @@ public class TargetDefinitionPersistenceHelper {
 				}
 			}
 
-			container = new IUBundleContainer((InstallableUnitDescription[]) descriptions.toArray(new InstallableUnitDescription[descriptions.size()]));
+			container = new IUBundleContainer((NameVersionDescriptor[]) descriptions.toArray(new NameVersionDescriptor[descriptions.size()]));
 		}
 
 		NodeList list = location.getChildNodes();
@@ -633,12 +649,12 @@ public class TargetDefinitionPersistenceHelper {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				if (element.getNodeName().equalsIgnoreCase(INCLUDE_BUNDLES)) {
-					InstallableUnitDescription[] oldIncluded = deserializeBundles(element);
+					NameVersionDescriptor[] oldIncluded = deserializeBundles(element);
 					for (int j = 0; j < oldIncluded.length; j++) {
 						included.add(oldIncluded[j]);
 					}
 				} else if (element.getNodeName().equalsIgnoreCase(OPTIONAL_BUNDLES)) {
-					InstallableUnitDescription[] oldOptional = deserializeBundles(element);
+					NameVersionDescriptor[] oldOptional = deserializeBundles(element);
 					for (int j = 0; j < oldOptional.length; j++) {
 						optional.add(oldOptional[j]);
 					}
@@ -649,7 +665,7 @@ public class TargetDefinitionPersistenceHelper {
 		return container;
 	}
 
-	private static InstallableUnitDescription[] deserializeBundles(Element parentElement) {
+	private static NameVersionDescriptor[] deserializeBundles(Element parentElement) {
 		NodeList nodes = parentElement.getChildNodes();
 		List bundles = new ArrayList(nodes.getLength());
 		for (int j = 0; j < nodes.getLength(); ++j) {
@@ -659,16 +675,12 @@ public class TargetDefinitionPersistenceHelper {
 				if (includeElement.getNodeName().equalsIgnoreCase(PLUGIN)) {
 					String id = includeElement.getAttribute(ATTR_ID);
 					String version = includeElement.getAttribute(ATTR_VERSION);
-					InstallableUnitDescription description = new InstallableUnitDescription();
-					description.setId(id);
-					if (version.length() > 0) {
-						description.setVersion(Version.parseVersion(version));
-					}
+					NameVersionDescriptor description = version.length() > 0 ? new NameVersionDescriptor(id, version) : new NameVersionDescriptor(id);
 					bundles.add(description);
 				}
 			}
 		}
-		return (InstallableUnitDescription[]) bundles.toArray(new InstallableUnitDescription[bundles.size()]);
+		return (NameVersionDescriptor[]) bundles.toArray(new NameVersionDescriptor[bundles.size()]);
 	}
 
 	private static URI[] deserializeRepositories(Element parentElement) {
@@ -716,8 +728,7 @@ public class TargetDefinitionPersistenceHelper {
 							String id = plugin.getAttribute(ATTR_ID);
 							boolean isOptional = plugin.getAttribute(ATTR_OPTIONAL).equalsIgnoreCase(Boolean.toString(true));
 							if (id.length() > 0) {
-								InstallableUnitDescription bundle = new InstallableUnitDescription();
-								bundle.setId(id);
+								NameVersionDescriptor bundle = new NameVersionDescriptor(id);
 								if (isOptional) {
 									optional.add(bundle);
 								} else {

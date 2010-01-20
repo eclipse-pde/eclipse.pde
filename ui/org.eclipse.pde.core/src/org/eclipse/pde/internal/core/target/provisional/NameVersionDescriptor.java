@@ -8,15 +8,31 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.target;
+package org.eclipse.pde.internal.core.target.provisional;
 
 /**
- * Describes something with a name and version.
+ * Describes something with a name and version.  When used as a restriction
+ * in a target definition the id is always required.  If a version is set
+ * it will be used, if it is <code>null</code> it will be ignored.
+ * 
+ * @see ITargetDefinition
  */
 public class NameVersionDescriptor {
 
 	private String fId;
 	private String fVersion;
+
+	/**
+	 * Constructs a new descriptor.  Equivalent to calling
+	 * {@link #NameVersionDescriptor(String, String)} with
+	 * a <code>null</code> version argument.
+	 * 
+	 * @param id name identifier
+	 */
+	public NameVersionDescriptor(String id) {
+		fId = id;
+		fVersion = null;
+	}
 
 	/**
 	 * Constructs a descriptor.
@@ -63,8 +79,10 @@ public class NameVersionDescriptor {
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append(fId);
-		buf.append('_');
-		buf.append(fVersion);
+		if (fVersion != null) {
+			buf.append('_');
+			buf.append(fVersion);
+		}
 		return buf.toString();
 	}
 }

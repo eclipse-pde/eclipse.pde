@@ -16,7 +16,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.engine.IProfile;
@@ -288,10 +287,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor[])
 	 */
-	public IBundleContainer newIUContainer(InstallableUnitDescription[] descriptions) {
-		return new IUBundleContainer(descriptions);
+	public IBundleContainer newIUContainer(NameVersionDescriptor[] units) {
+		return new IUBundleContainer(units);
 	}
 
 	/* (non-Javadoc)
@@ -390,12 +389,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		if (value.length() > 0) {
 			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			InstallableUnitDescription[] plugins = new InstallableUnitDescription[tokenizer.countTokens()];
+			NameVersionDescriptor[] plugins = new NameVersionDescriptor[tokenizer.countTokens()];
 			int i = 0;
 			while (tokenizer.hasMoreTokens()) {
 				String id = tokenizer.nextToken();
-				plugins[i] = new InstallableUnitDescription();
-				plugins[i].setId(id);
+				plugins[i] = new NameVersionDescriptor(id);
 				i++;
 			}
 			target.setImplicitDependencies(plugins);
@@ -480,14 +478,13 @@ public class TargetPlatformService implements ITargetPlatformService {
 				if (models[i].isEnabled()) {
 					String id = models[i].getPluginBase().getId();
 					if (id != null) {
-						InstallableUnitDescription include = new InstallableUnitDescription();
-						include.setId(id);
+						NameVersionDescriptor include = new NameVersionDescriptor(id);
 						list.add(include);
 					}
 				}
 			}
 			if (list.size() > 0) {
-				target.setIncluded((InstallableUnitDescription[]) list.toArray(new InstallableUnitDescription[list.size()]));
+				target.setIncluded((NameVersionDescriptor[]) list.toArray(new NameVersionDescriptor[list.size()]));
 			}
 		}
 	}
@@ -552,69 +549,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setVMArguments(arguments.toString().trim());
 
 		return target;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#compareWithTargetPlatform(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
-	 */
-	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException {
-		if (!target.isResolved()) {
-			return null;
-		}
-
-		// TODO New API
-		return null;
-
-//		// Get the current models from the target platform
-//		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
-//		Set allLocations = new HashSet(models.length);
-//		Map stateLocations = new HashMap(models.length);
-//		for (int i = 0; i < models.length; i++) {
-//			IPluginModelBase base = models[i];
-//			allLocations.add(base.getInstallLocation());
-//			stateLocations.put(base.getInstallLocation(), base);
-//		}
-//
-//		// Compare the platform bundles against the definition ones and collect any missing bundles
-//		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
-//		IResolvedBundle[] bundles = target.getAllBundles();
-//		Set alreadyConsidered = new HashSet(bundles.length);
-//		for (int i = 0; i < bundles.length; i++) {
-//			IResolvedBundle bundle = bundles[i];
-//			BundleInfo info = bundle.getBundleInfo();
-//			File file = URIUtil.toFile(info.getLocation());
-//			String location = file.getAbsolutePath();
-//			stateLocations.remove(location);
-//			NameVersionDescriptor desc = new NameVersionDescriptor(info.getSymbolicName(), info.getVersion());
-//			if (!alreadyConsidered.contains(desc)) {
-//				alreadyConsidered.add(desc);
-//				// ignore duplicates (symbolic name & version)
-//				if (!allLocations.contains(location)) {
-//					// it's not in the state... if it's not really in the target either (missing) this
-//					// is not an error
-//					IStatus status = bundle.getStatus();
-//					if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
-//						// its in the target, missing in the state
-//						IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
-//						multi.add(s);
-//					}
-//				}
-//			}
-//		}
-//
-//		// Anything left over is in the state and not the target (have been removed from the target)
-//		Iterator iterator = stateLocations.values().iterator();
-//		while (iterator.hasNext()) {
-//			IPluginModelBase model = (IPluginModelBase) iterator.next();
-//			IStatus status = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, model.getPluginBase().getId(), null);
-//			multi.add(status);
-//		}
-//
-//		if (multi.isOK()) {
-//			return Status.OK_STATUS;
-//		}
-//		return multi;
-
 	}
 
 	/* (non-Javadoc)

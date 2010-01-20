@@ -5,7 +5,6 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -20,8 +19,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
  * Helper class for TargetDefinition to encapsulate code for resolving a target.
@@ -215,7 +213,7 @@ public class TargetResolver {
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		SubMonitor subMon = SubMonitor.convert(monitor, containers.length);
 		for (int i = 0; i < containers.length; i++) {
-			InstallableUnitDescription[] currentIUs = containers[i].getRootIUs();
+			NameVersionDescriptor[] currentIUs = containers[i].getRootIUs();
 			if (currentIUs != null && currentIUs.length > 0) {
 				for (int j = 0; j < currentIUs.length; j++) {
 					fRootIUs.add(currentIUs[j]);
@@ -253,15 +251,16 @@ public class TargetResolver {
 		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetResolver_problemsCollectingPluginSet, null);
 
 		// Get the list of root IUs as actual installable units
-		InstallableUnitDescription[] rootDescriptions = (InstallableUnitDescription[]) fRootIUs.toArray(new InstallableUnitDescription[fRootIUs.size()]);
+		NameVersionDescriptor[] rootDescriptions = (NameVersionDescriptor[]) fRootIUs.toArray(new NameVersionDescriptor[fRootIUs.size()]);
 		List rootUnits = new ArrayList();
 		for (int i = 0; i < rootDescriptions.length; i++) {
-			InstallableUnitQuery query = new InstallableUnitQuery(rootDescriptions[i].getId(), rootDescriptions[i].getVersion());
+			InstallableUnitQuery query = new InstallableUnitQuery(rootDescriptions[i].getId(), Version.parseVersion(rootDescriptions[i].getVersion()));
 			IQueryResult result = allRepos.query(query, null);
 			if (result.isEmpty()) {
 				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetResolver_couldNotFindUnit, new String[] {rootDescriptions[i].getId(), rootDescriptions[i].getVersion().toString()})));
+			} else {
+				rootUnits.add(result.iterator().next());
 			}
-			rootUnits.add(result.iterator().next());
 		}
 		subMon.worked(10);
 
@@ -269,12 +268,20 @@ public class TargetResolver {
 		PermissiveSlicer slicer = null;
 		Properties props = new Properties();
 		// TODO How to handle platform specific installable units
-//		props.setProperty("osgi.os", fTarget.getOS() != null ? fTarget.getOS() : Platform.getOS()); //$NON-NLS-1$
-//		props.setProperty("osgi.ws", fTarget.getWS() != null ? fTarget.getWS() : Platform.getWS()); //$NON-NLS-1$
-//		props.setProperty("osgi.arch", fTarget.getArch() != null ? fTarget.getArch() : Platform.getOSArch()); //$NON-NLS-1$
-//		props.setProperty("osgi.nl", fTarget.getNL() != null ? fTarget.getNL() : Platform.getNL()); //$NON-NLS-1$
 		slicer = new PermissiveSlicer(allRepos, props, true, false, true, true, false);
 		subMon.worked(10);
+
+//		Old way of doing things
+//		if (getIncludeAllEnvironments()) {
+//			slicer = new PermissiveSlicer(allMetadata, new Properties(), true, false, true, true, false);
+//		} else {
+//			Properties props = new Properties();
+//			props.setProperty("osgi.os", definition.getOS() != null ? definition.getOS() : Platform.getOS()); //$NON-NLS-1$
+//			props.setProperty("osgi.ws", definition.getWS() != null ? definition.getWS() : Platform.getWS()); //$NON-NLS-1$
+//			props.setProperty("osgi.arch", definition.getArch() != null ? definition.getArch() : Platform.getOSArch()); //$NON-NLS-1$
+//			props.setProperty("osgi.nl", definition.getNL() != null ? definition.getNL() : Platform.getNL()); //$NON-NLS-1$
+//			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
+//		}
 
 		// Run the slicer and collect units from the result
 		IQueryable slice = slicer.slice((IInstallableUnit[]) rootUnits.toArray(new IInstallableUnit[rootUnits.size()]), subMon.newChild(30));
@@ -313,8 +320,8 @@ public class TargetResolver {
 	}
 
 	public Collection calculateIncludedIUs() {
-		InstallableUnitDescription[] included = fTarget.getIncluded();
-		InstallableUnitDescription[] optional = fTarget.getOptional();
+		NameVersionDescriptor[] included = fTarget.getIncluded();
+		NameVersionDescriptor[] optional = fTarget.getOptional();
 		if (included == null && optional == null) {
 			return fAvailableIUs;
 		}
@@ -338,7 +345,7 @@ public class TargetResolver {
 			includedIUs.addAll(fAvailableIUs);
 		} else {
 			for (int i = 0; i < included.length; i++) {
-				InstallableUnitDescription include = included[i];
+				NameVersionDescriptor include = included[i];
 				IInstallableUnit bestUnit = determineBestUnit(bundleMap, include);
 				if (bestUnit != null) {
 					includedIUs.add(bestUnit);
@@ -349,7 +356,7 @@ public class TargetResolver {
 		// Add optional bundles
 		if (optional != null) {
 			for (int i = 0; i < optional.length; i++) {
-				InstallableUnitDescription option = optional[i];
+				NameVersionDescriptor option = optional[i];
 				IInstallableUnit bestUnit = determineBestUnit(bundleMap, option);
 				if (bestUnit != null && !includedIUs.contains(bestUnit)) {
 					includedIUs.add(bestUnit);
@@ -360,7 +367,7 @@ public class TargetResolver {
 		return includedIUs;
 	}
 
-	public IInstallableUnit getUnit(InstallableUnitDescription unit) {
+	public IInstallableUnit getUnit(NameVersionDescriptor unit) {
 		// Combine the repositories into a single queryable object
 		IQueryable allRepos;
 		if (fMetaRepos.size() == 1) {
@@ -370,7 +377,7 @@ public class TargetResolver {
 		}
 
 		// Look for the requested unit
-		InstallableUnitQuery query = new InstallableUnitQuery(unit.getId(), unit.getVersion());
+		InstallableUnitQuery query = unit.getVersion() == null ? new InstallableUnitQuery(unit.getId()) : new InstallableUnitQuery(unit.getId(), Version.parseVersion(unit.getVersion()));
 		IQueryResult result = allRepos.query(query, null);
 		if (!result.isEmpty()) {
 			return (IInstallableUnit) result.iterator().next();
@@ -378,7 +385,7 @@ public class TargetResolver {
 		return null;
 	}
 
-	private static IInstallableUnit determineBestUnit(Map unitMap, InstallableUnitDescription info) {
+	private static IInstallableUnit determineBestUnit(Map unitMap, NameVersionDescriptor info) {
 		List list = (List) unitMap.get(info.getId());
 		if (list != null) {
 			// If there is a version set, select the specific version if available, select newest otherwise 
@@ -386,7 +393,8 @@ public class TargetResolver {
 				Iterator iterator = list.iterator();
 				while (iterator.hasNext()) {
 					IInstallableUnit unit = (IInstallableUnit) iterator.next();
-					if (info.getVersion().equals(unit.getVersion())) {
+					Version infoVersion = Version.parseVersion(info.getVersion());
+					if (infoVersion.equals(unit.getVersion())) {
 						return unit;
 					}
 				}

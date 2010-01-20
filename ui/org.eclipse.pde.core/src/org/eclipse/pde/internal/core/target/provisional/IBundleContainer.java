@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.target.provisional;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.repository.IRepository;
 import org.eclipse.equinox.p2.repository.IRepositoryManager;
@@ -51,15 +50,15 @@ public interface IBundleContainer {
 	public IRepository[] generateRepositories(IProvisioningAgent agent, IPath targetRepositories, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Return descriptions of the root installable units that this bundle container will provide to the target.  This method may 
+	 * Return descriptors for the root installable units that this bundle container will provide to the target.  This method may 
 	 * return <code>null</code> if {@link #generateRepositories(IProvisioningAgent, IProgressMonitor)} has not been called previously.
-	 * The descriptions will contain both an ID and a version.  The root installable units along with their dependencies will be added
+	 * The descriptors will contain both an ID and a version.  The root installable units along with their dependencies will be added
 	 * to the target during the {@link ITargetDefinition#resolve(IProgressMonitor)} operation.
 	 *  
-	 * @return list of installable unit descriptions, possibly empty, or <code>null</code> if {@link #generateRepositories(IProvisioningAgent, IProgressMonitor)} has not been called
+	 * @return list of name version descriptors, possibly empty, or <code>null</code> if {@link #generateRepositories(IProvisioningAgent, IProgressMonitor)} has not been called
 	 * @throws CoreException if there is a problem creating the descriptions
 	 */
-	public InstallableUnitDescription[] getRootIUs() throws CoreException;
+	public NameVersionDescriptor[] getRootIUs() throws CoreException;
 
 	/**
 	 * Returns VM Arguments that are specified in the bundle container or <code>null</code> if none.
