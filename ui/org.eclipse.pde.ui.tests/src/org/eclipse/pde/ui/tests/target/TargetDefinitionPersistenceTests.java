@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.net.URI;
-
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-
 import java.io.*;
 import java.net.*;
 import java.util.HashSet;
@@ -22,7 +18,6 @@ import junit.framework.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.target.*;
@@ -59,14 +54,18 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	}
 	
 	/**
-	 * Returns the resolved location of the specified bundle container.
+	 * Returns the resolved location of the specified bundle container.  Will return
+	 * <code>null</code> if the given container is not an {@link AbstractLocalBundleContainer}
 	 * 
 	 * @param container bundle container
 	 * @return resolved location
 	 * @throws CoreException 
 	 */
 	protected String getResolvedLocation(IBundleContainer container) throws CoreException {
-		return ((AbstractBundleContainer)container).getLocation(true);
+		if (container instanceof AbstractLocalBundleContainer){
+			return ((AbstractLocalBundleContainer)container).getLocation(true);
+		}
+		return null;
 	}
 	
 	/**
@@ -210,6 +209,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	
 	
 	protected void initComplexDefiniton(ITargetDefinition definition) throws URISyntaxException {
+		// Environment Settings		
 		definition.setName("name");
 		definition.setOS("os");
 		definition.setWS("ws");
@@ -218,12 +218,6 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		definition.setProgramArguments("program\nargs");
 		definition.setVMArguments("vm\nargs");
 		definition.setJREContainer(JavaRuntime.newDefaultJREContainerPath());
-		
-		BundleInfo[] implicit = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
-		};		
-		definition.setImplicitDependencies(implicit);
 		
 		// Directory container
 		IBundleContainer dirContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
@@ -238,31 +232,23 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		IBundleContainer featureContainer = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
 		// Profile container restricted to just two bundles
 		IBundleContainer restrictedProfileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		BundleInfo[] restrictions = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
-		};
-		restrictedProfileContainer.setIncludedBundles(restrictions);
-		// Add some optional bundles
-		BundleInfo[] optional = new BundleInfo[]{
-				new BundleInfo("org.eclipse.debug.examples.core", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.debug.examples.ui", null, null, BundleInfo.NO_LEVEL, false)
-		};
-		restrictedProfileContainer.setOptionalBundles(optional);
 		// Profile container restrict to zero bundles
 		IBundleContainer emptyProfileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		BundleInfo[] completeRestrictions = new BundleInfo[0];
-		emptyProfileContainer.setIncludedBundles(completeRestrictions);
+		// Site container
+		NameVersionDescriptor[] units = new NameVersionDescriptor[]{new NameVersionDescriptor("unit1","1.0"),new NameVersionDescriptor("unit2","2.0")};
+		IUBundleContainer siteContainer = (IUBundleContainer)getTargetService().newIUContainer(units);
 		
-		// Site bundle containers with different settings
-		IUBundleContainer siteContainer = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[]{}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")});
-		siteContainer.setIncludeAllRequired(false, null);
-		siteContainer.setIncludeAllEnvironments(true, null);
-		IUBundleContainer siteContainer2 = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1","unit2"},new String[]{"1.0", "2.0"}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")});
-		siteContainer2.setIncludeAllRequired(true, null);
-		siteContainer2.setIncludeAllEnvironments(false, null);
+		definition.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer, emptyProfileContainer, siteContainer});
 		
-		definition.setBundleContainers(new IBundleContainer[]{dirContainer, profileContainer, featureContainer, restrictedProfileContainer, emptyProfileContainer, siteContainer, siteContainer2});
+		// Add some locations 
+		definition.setRepositories(new URI[]{new URI("TESTURI"), new URI("TESTURI2")});
+		
+		// Set some restrictions
+		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("org.eclipse.jdt.launching"), new NameVersionDescriptor("org.eclipse.jdt.debug")});
+		definition.setOptional(new NameVersionDescriptor[]{new NameVersionDescriptor("org.eclipse.debug.examples.core"), new NameVersionDescriptor("org.eclipse.debug.examples.ui")});
+		
+		// Add some implicit dependencies
+		definition.setImplicitDependencies(new NameVersionDescriptor[]{new NameVersionDescriptor("org.eclipse.jdt.launching"),new NameVersionDescriptor("org.eclipse.jdt.debug")});
 	}
 	
 	/**
@@ -369,11 +355,11 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("-Dfoo=\"bar\"", target.getVMArguments());
 		assertEquals(JavaRuntime.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")), target.getJREContainer());
 		
-		BundleInfo[] infos = target.getImplicitDependencies();
+		NameVersionDescriptor[] infos = target.getImplicitDependencies();
 		assertEquals("Wrong number of implicit dependencies", 2, infos.length);
 		Set set = new HashSet();
 		for (int i = 0; i < infos.length; i++) {
-			set.add(infos[i].getSymbolicName());
+			set.add(infos[i].getId());
 		}
 		assertTrue("Missing ", set.remove("org.eclipse.jdt.debug"));
 		assertTrue("Missing ", set.remove("org.eclipse.debug.core"));
@@ -469,13 +455,13 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getJREContainer());
 		assertNull(target.getImplicitDependencies());
 		
-		BundleInfo[] restrictions = new BundleInfo[]{
-			new BundleInfo("org.eclipse.debug.core", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.jdt.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false)
-		};
+		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.debug.core"),
+				new NameVersionDescriptor("org.eclipse.debug.ui"),
+				new NameVersionDescriptor("org.eclipse.jdt.debug"),
+				new NameVersionDescriptor("org.eclipse.jdt.debug.ui"),
+				new NameVersionDescriptor("org.eclipse.jdt.launching")
+			};
 		
 		IBundleContainer[] containers = target.getBundleContainers();
 		assertEquals("Wrong number of bundles", 3, containers.length);
@@ -488,18 +474,11 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
 				new Path(getResolvedLocation(containers[2])));
 		
-		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
-			BundleInfo[] actual = container.getIncludedBundles();
-			if (container instanceof FeatureBundleContainer) {
-				assertNull(actual);
-			} else {
-				assertNotNull(actual);
-				assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
-				for (int j = 0; j < actual.length; j++) {
-					assertEquals("Wrong restriction", restrictions[j], actual[j]);
-				}
-			}
+		NameVersionDescriptor[] actual = target.getIncluded();
+		assertNotNull(actual);
+		assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
+		for (int j = 0; j < actual.length; j++) {
+			assertEquals("Wrong restriction", restrictions[j], actual[j]);
 		}
 	}		
 	
@@ -522,12 +501,12 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertNull(target.getJREContainer());
 		assertNull(target.getImplicitDependencies());
 		
-		BundleInfo[] restrictions = new BundleInfo[]{
-			new BundleInfo("org.eclipse.debug.core", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.jdt.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
-			new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false)
+		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
+			new NameVersionDescriptor("org.eclipse.debug.core"),
+			new NameVersionDescriptor("org.eclipse.debug.ui"),
+			new NameVersionDescriptor("org.eclipse.jdt.debug"),
+			new NameVersionDescriptor("org.eclipse.jdt.debug.ui"),
+			new NameVersionDescriptor("org.eclipse.jdt.launching")
 		};
 		
 		IBundleContainer[] containers = target.getBundleContainers();
@@ -541,18 +520,11 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
 				new Path(getResolvedLocation(containers[2])));
 		
-		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
-			BundleInfo[] actual = container.getIncludedBundles();
-			if (container instanceof FeatureBundleContainer) {
-				assertNull(actual);
-			} else {
-				assertNotNull(actual);
-				assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
-				for (int j = 0; j < actual.length; j++) {
-					assertEquals("Wrong restriction", restrictions[j], actual[j]);
-				}
-			}
+		NameVersionDescriptor[] actual = target.getIncluded();
+		assertNotNull(actual);
+		assertEquals("Wrong number of restrictions", restrictions.length, actual.length);
+		for (int j = 0; j < actual.length; j++) {
+			assertEquals("Wrong restriction", restrictions[j], actual[j]);
 		}
 	}			
 	
@@ -583,36 +555,30 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 				new Path(getResolvedLocation(containers[0])));
 		assertEquals("Wrong feature location", "org.eclipse.jdt", ((FeatureBundleContainer)containers[1]).getFeatureId());
 		
-		BundleInfo[] included = new BundleInfo[]{
-				new BundleInfo("org.eclipse.debug.core", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug.ui", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false)
-			};
-		BundleInfo[] optional = new BundleInfo[]{
-				new BundleInfo("org.eclipse.debug.examples.core", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.debug.examples.ui", null, null, BundleInfo.NO_LEVEL, false)
+		NameVersionDescriptor[] included = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.debug.core"),
+				new NameVersionDescriptor("org.eclipse.debug.ui"),
+				new NameVersionDescriptor("org.eclipse.jdt.debug"),
+				new NameVersionDescriptor("org.eclipse.jdt.debug.ui"),
+				new NameVersionDescriptor("org.eclipse.jdt.launching")
 			};
 		
-		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
-			BundleInfo[] actual = container.getIncludedBundles();
-			if (container instanceof FeatureBundleContainer) {
-				assertNull(actual);
-			} else {
-				assertNotNull(actual);
-				assertEquals("Wrong number of inclusions", included.length, actual.length);
-				for (int j = 0; j < actual.length; j++) {
-					assertEquals("Wrong restriction", included[j], actual[j]);
-				}
-				actual = container.getOptionalBundles();
-				assertNotNull(actual);
-				assertEquals("Wrong number of optionals", optional.length, actual.length);
-				for (int j = 0; j < actual.length; j++) {
-					assertEquals("Wrong restriction", optional[j], actual[j]);
-				}
-			}
+		NameVersionDescriptor[] optional = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.debug.examples.core"),
+				new NameVersionDescriptor("org.eclipse.debug.examples.ui"),
+			};
+		
+		NameVersionDescriptor[] actual = target.getIncluded();
+		assertNotNull(actual);
+		assertEquals("Wrong number of inclusions", included.length, actual.length);
+		for (int j = 0; j < actual.length; j++) {
+			assertEquals("Wrong restriction", included[j], actual[j]);
+		}
+		actual = target.getOptional();
+		assertNotNull(actual);
+		assertEquals("Wrong number of optionals", optional.length, actual.length);
+		for (int j = 0; j < actual.length; j++) {
+			assertEquals("Wrong restriction", optional[j], actual[j]);
 		}
 	}
 	
@@ -630,9 +596,9 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
 				new Path(getResolvedLocation(containers[0])));
 		
-		target.resolve(null);
+		target.provision(null);
 		
-		assertTrue("Should have resolved bundles", target.getBundles().length > 0);
+		assertTrue("Should have resolved bundles", target.getProvisionedBundles().length > 0);
 		
 	}
 	
@@ -646,12 +612,13 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("eclipse-serverside");
 		IBundleContainer[] containers = target.getBundleContainers();
 		assertEquals(6, containers.length);
-		validateTypeAndLocation((AbstractBundleContainer) containers[0], ProfileBundleContainer.class, "${resource_loc:/target-platforms/eclipse-equinox-SDK-3.5M5/eclipse}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[1], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-3.5M5-delta-pack/eclipse}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[2], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-pde-headless-3.5M5}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[3], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-test-framework-3.5M5/eclipse}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[4], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-core-plugins-3.5M5}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[5], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/3rdparty-bundles}");
+		assertNull(target.getIncluded());
+		validateTypeAndLocation((AbstractLocalBundleContainer) containers[0], ProfileBundleContainer.class, "${resource_loc:/target-platforms/eclipse-equinox-SDK-3.5M5/eclipse}");
+		validateTypeAndLocation((AbstractLocalBundleContainer) containers[1], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-3.5M5-delta-pack/eclipse}");
+		validateTypeAndLocation((AbstractLocalBundleContainer) containers[2], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-pde-headless-3.5M5}");
+		validateTypeAndLocation((AbstractLocalBundleContainer) containers[3], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-test-framework-3.5M5/eclipse}");
+		validateTypeAndLocation((AbstractLocalBundleContainer) containers[4], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-core-plugins-3.5M5}");
+		validateTypeAndLocation((AbstractLocalBundleContainer) containers[5], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/3rdparty-bundles}");
 	}	
 	
 	/**
@@ -662,9 +629,8 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	 * @param rawLocation its unresolved location
 	 * @throws CoreException if something goes wrong
 	 */
-	protected void validateTypeAndLocation(AbstractBundleContainer container, Class clazz, String rawLocation) throws CoreException {
+	protected void validateTypeAndLocation(AbstractLocalBundleContainer container, Class clazz, String rawLocation) throws CoreException {
 		assertTrue(clazz.isInstance(container));
 		assertEquals(rawLocation, container.getLocation(false));
-		assertNull(container.getIncludedBundles());
 	}
 }

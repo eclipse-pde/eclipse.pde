@@ -19,11 +19,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -36,7 +36,24 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	
 	public static Test suite() {
 		return new TestSuite(IUBundleContainerTests.class);
-	}	
+	}
+	
+	/**
+	 * Creates an IU bundle container with the specified IUs from the test repository.
+	 * 
+	 * @param unitIds identifiers of IU's to add to the container
+	 * @return bundle container
+	 * @throws Exception
+	 */
+	protected IUBundleContainer createContainer(String[] unitIds) throws Exception {
+		IMetadataRepository repository = getRepository();
+		NameVersionDescriptor[] newUnits = new NameVersionDescriptor[unitIds.length];
+		for (int i = 0; i < unitIds.length; i++) {
+			IInstallableUnit unit = getUnit(unitIds[i], repository);
+			newUnits[i] = new NameVersionDescriptor(unit.getId(),unit.getVersion().toString());
+		}
+		return (IUBundleContainer) getTargetService().newIUContainer(newUnits);
+	}
 	
 	/**
 	 * Returns the metadata repository at the specified location.
@@ -45,10 +62,10 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return metadata repository at the specified location
 	 * @throws Exception
 	 */
-	protected IMetadataRepository getRepository(URI uri) throws Exception {
+	protected IMetadataRepository getRepository() throws Exception {
 		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) PDECore.getDefault().acquireService(IMetadataRepositoryManager.class.getName());
 		assertNotNull("Missing metadata repository manager", manager);
-		IMetadataRepository repo = manager.loadRepository(uri, null);
+		IMetadataRepository repo = manager.loadRepository(getURI(), null);
 		return repo;
 	}
 
@@ -59,7 +76,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return URI
 	 * @throws Exception
 	 */
-	protected URI getURI(String relativePath) throws Exception {
+	protected URI getURI() throws Exception {
+		String relativePath = "/tests/sites/site.a.b";
 		URL url = MacroPlugin.getBundleContext().getBundle().getEntry(relativePath);
 		Path path = new Path(new File(FileLocator.toFileURL(url).getFile()).getAbsolutePath());
 		return URIUtil.toURI(path);
@@ -73,7 +91,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return installable unit
 	 */
 	protected IInstallableUnit getUnit(String id, IMetadataRepository repository) {
-		Collector result = repository.query(new InstallableUnitQuery(id), new Collector(), null);
+		IQueryResult result = repository.query(new InstallableUnitQuery(id),  null);
 		IInstallableUnit[] units  = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
 		if (units.length == 1) {
 			return units[0];
@@ -151,8 +169,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 */
 	public void testContentEqualNull() throws Exception {		
 		ITargetPlatformService service = getTargetService();
-		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
-		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
+		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new NameVersionDescriptor[]{new NameVersionDescriptor("bundle.a1","1.0.0"),new NameVersionDescriptor("bundle.a2","1.0.0")});
+		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new NameVersionDescriptor[]{new NameVersionDescriptor("bundle.a1","1.0.0"),new NameVersionDescriptor("bundle.a2","1.0.0")});
 		assertTrue("Contents should be equivalent", c3.isContentEqual(c4));
 	}
 	
@@ -163,8 +181,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 */
 	public void testContentNotEqualNull() throws Exception {		
 		ITargetPlatformService service = getTargetService();
-		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
-		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.b1", "bundle.b2"}, new String[]{"1.0.0", "1.0.0"}, null);
+		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new NameVersionDescriptor[]{new NameVersionDescriptor("bundle.a1","1.0.0"),new NameVersionDescriptor("bundle.a2","1.0.0")});
+		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new NameVersionDescriptor[]{new NameVersionDescriptor("bundle.b1","1.0.0"),new NameVersionDescriptor("bundle.b2","1.0.0")});
 		assertFalse("Contents should not be equivalent", c3.isContentEqual(c4));
 	}	
 	
@@ -177,21 +195,26 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected void doResolutionTest(String[] unitIds, String[] bundleIds) throws Exception {
-		IUBundleContainer container = createContainer(unitIds);
-		ITargetDefinition target = getTargetService().newTarget();
-		target.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllBundleInfos(target);
-		Set names = collectAllSymbolicNames(infos);
-		assertEquals(bundleIds.length, infos.size());
-		
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		try {
+			IUBundleContainer container = createContainer(unitIds);
+			ITargetDefinition target = getTargetService().newTarget();
+			target.setRepositories(new URI[]{getURI()});
+			target.setBundleContainers(new IBundleContainer[]{container});
+			Set names = collectAllSymbolicNames(target);
+			assertEquals(bundleIds.length, names.size());
+			
+			for (int i = 0; i < bundleIds.length; i++) {
+				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			}
+			TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+			List profiles = targetService.garbageCollect();
+			assertEquals(1, profiles.size());
+			String id = (String) profiles.get(0);
+			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+		} finally {
+			// Garbage collect in case an assertion failed to avoid cascading failures
+			getTargetService().garbageCollect();
 		}
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(1, profiles.size());
-		String id = (String) profiles.get(0);
-		assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
 	}	
 	
 	/**
@@ -203,60 +226,36 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected void doPersistanceTest(String[] unitIds, String[] bundleIds) throws Exception {
-		IUBundleContainer container = createContainer(unitIds);
-		ITargetDefinition target = getTargetService().newTarget();
-		target.setBundleContainers(new IBundleContainer[]{container});
-	
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		TargetDefinitionPersistenceHelper.persistXML(target, outputStream);
-		ITargetDefinition definitionB = getTargetService().newTarget();
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
-		assertTrue("Target content not equal",((TargetDefinition)target).isContentEqual(definitionB));
+		try {
+			IUBundleContainer container = createContainer(unitIds);
+			ITargetDefinition target = getTargetService().newTarget();
+			target.setBundleContainers(new IBundleContainer[]{container});
+			target.setRepositories(new URI[]{getURI()});
 		
-		// resolve the restored target and ensure bundles are correct
-		List infos = getAllBundleInfos(definitionB);
-		Set names = collectAllSymbolicNames(infos);
-		assertEquals(bundleIds.length, infos.size());
-		
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			TargetDefinitionPersistenceHelper.persistXML(target, outputStream);
+			ITargetDefinition definitionB = getTargetService().newTarget();
+			ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+			TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
+			assertTrue("Target content not equal",((TargetDefinition)target).isContentEqual(definitionB));
+			
+			// provision the restored target and ensure bundles are correct
+			Set names = collectAllSymbolicNames(definitionB);
+			assertEquals(bundleIds.length, names.size());
+			
+			for (int i = 0; i < bundleIds.length; i++) {
+				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			}
+			TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+			List profiles = targetService.garbageCollect();
+			assertEquals(1, profiles.size());
+			String id = (String) profiles.get(0);
+			assertTrue("Unexpected profile GC'd", id.endsWith(definitionB.getHandle().getMemento()));
+		} finally {
+			// Garbage collect in case an assertion failed to avoid cascading failures
+			getTargetService().garbageCollect();
 		}
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(1, profiles.size());
-		String id = (String) profiles.get(0);
-		assertTrue("Unexpected profile GC'd", id.endsWith(definitionB.getHandle().getMemento()));
 	}	
-	
-	/**
-	 * Creates an IU bundle container with the specified IUs from the test repository.
-	 * 
-	 * @param unitIds identifiers of IU's to add to the container
-	 * @return bundle container
-	 * @throws Exception
-	 */
-	protected IUBundleContainer createContainer(String[] unitIds) throws Exception {
-		URI uri = getURI("/tests/sites/site.a.b");
-		IMetadataRepository repository = getRepository(uri);
-		IInstallableUnit[] units = new IInstallableUnit[unitIds.length];
-		for (int i = 0; i < unitIds.length; i++) {
-			units[i] = getUnit(unitIds[i], repository);
-		}
-		return createContainer(units, new URI[]{uri});
-	}
-	
-	/**
-	 * Creates and returns an new IU bundle container with the specified IU's and repositories.
-	 * 
-	 * @param units IU's
-	 * @param repositories locations of repositories
-	 * @return IU bundle container
-	 * @throws Exception
-	 */
-	protected IUBundleContainer createContainer(IInstallableUnit[] units, URI[] repositories) throws Exception {
-		return (IUBundleContainer) getTargetService().newIUContainer(units, repositories);
-	}
 	
 	/**
 	 * Tests that a target definition with IU containers can be serialized to xml, then deserialized without
@@ -286,33 +285,38 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testAddIUs() throws Exception {
-		IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
-		ITargetDefinition target = getTargetService().newTarget();
-		target.setBundleContainers(new IUBundleContainer[]{c1});
-		IStatus resolve = target.resolve(null);
-		assertTrue(resolve.isOK());
-		
-		getTargetService().saveTargetDefinition(target);
-		ITargetHandle handle = target.getHandle();
-		// get new unresolved copy of the target
-		target = handle.getTargetDefinition();
-		IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
-		target.setBundleContainers(new IUBundleContainer[]{c2});
-		
-		List infos = getAllBundleInfos(target);
-		Set names = collectAllSymbolicNames(infos);
-		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
-		assertEquals(bundleIds.length, infos.size());
-		
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		try {
+			IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
+			ITargetDefinition target = getTargetService().newTarget();
+			target.setBundleContainers(new IUBundleContainer[]{c1});
+			target.setRepositories(new URI[]{getURI()});
+			IStatus resolve = target.resolve(null);
+			assertTrue(resolve.isOK());
+			
+			getTargetService().saveTargetDefinition(target);
+			ITargetHandle handle = target.getHandle();
+			// get new unresolved copy of the target
+			target = handle.getTargetDefinition();
+			IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
+			target.setBundleContainers(new IUBundleContainer[]{c2});
+			
+			Set names = collectAllSymbolicNames(target);
+			String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
+			assertEquals(bundleIds.length, names.size());
+			
+			for (int i = 0; i < bundleIds.length; i++) {
+				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			}
+			
+			getTargetService().deleteTarget(target.getHandle());
+			
+			TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+			List profiles = targetService.garbageCollect();
+			assertEquals(0, profiles.size());
+		} finally {
+			// Garbage collect in case an assertion failed to avoid cascading failures
+			getTargetService().garbageCollect();
 		}
-		
-		getTargetService().deleteTarget(target.getHandle());
-		
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(0, profiles.size());
 	}
 	
 	/**
@@ -321,33 +325,38 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testRemoveIUs() throws Exception {
-		IUBundleContainer c1 = createContainer(new String[]{"feature.b.feature.group"});
-		ITargetDefinition target = getTargetService().newTarget();
-		target.setBundleContainers(new IUBundleContainer[]{c1});
-		IStatus resolve = target.resolve(null);
-		assertTrue(resolve.isOK());
-		
-		getTargetService().saveTargetDefinition(target);
-		ITargetHandle handle = target.getHandle();
-		// get new unresolved copy of the target
-		target = handle.getTargetDefinition();
-		IUBundleContainer c2 = createContainer(new String[]{"feature.a.feature.group"});
-		target.setBundleContainers(new IUBundleContainer[]{c2});
-		
-		List infos = getAllBundleInfos(target);
-		Set names = collectAllSymbolicNames(infos);
-		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
-		assertEquals(bundleIds.length, infos.size());
-		
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+		try {
+			IUBundleContainer c1 = createContainer(new String[]{"feature.b.feature.group"});
+			ITargetDefinition target = getTargetService().newTarget();
+			target.setBundleContainers(new IUBundleContainer[]{c1});
+			target.setRepositories(new URI[]{getURI()});
+			IStatus resolve = target.resolve(null);
+			assertTrue(resolve.isOK());
+			
+			getTargetService().saveTargetDefinition(target);
+			ITargetHandle handle = target.getHandle();
+			// get new unresolved copy of the target
+			target = handle.getTargetDefinition();
+			IUBundleContainer c2 = createContainer(new String[]{"feature.a.feature.group"});
+			target.setBundleContainers(new IUBundleContainer[]{c2});
+			
+			Set names = collectAllSymbolicNames(target);
+			String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
+			assertEquals(bundleIds.length, names.size());
+			
+			for (int i = 0; i < bundleIds.length; i++) {
+				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			}
+			
+			getTargetService().deleteTarget(target.getHandle());
+			
+			TargetPlatformService targetService = (TargetPlatformService) getTargetService();
+			List profiles = targetService.garbageCollect();
+			assertEquals(0, profiles.size());
+		} finally {
+			// Garbage collect in case an assertion failed to avoid cascading failures
+			getTargetService().garbageCollect();
 		}
-		
-		getTargetService().deleteTarget(target.getHandle());
-		
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(0, profiles.size());
 	}	
 	
 	/**
@@ -356,33 +365,28 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testOverlappingIUContainers() throws Exception {
-		IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
-		IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
-		ITargetDefinition target = getTargetService().newTarget();
-		target.setBundleContainers(new IUBundleContainer[]{c1, c2});
-		IStatus resolve = target.resolve(null);
-		assertTrue(resolve.isOK());
-				
-		List infos = getBundleInfos(c1);
-		Set names = collectAllSymbolicNames(infos);
-		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
-		assertEquals(bundleIds.length, infos.size());
+		try{
+			TargetPlatformService targetService = (TargetPlatformService) getTargetService();
 		
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
+			IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
+			
+			ITargetDefinition target = targetService.newTarget();
+			target.setRepositories(new URI[]{getURI()});
+			target.setBundleContainers(new IUBundleContainer[]{c1, c2});
+			
+			Set names = collectAllSymbolicNames(target);
+			String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
+			assertEquals(bundleIds.length, names.size());
+			for (int i = 0; i < bundleIds.length; i++) {
+				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			}
+			
+			List profiles = targetService.garbageCollect();
+			assertEquals(1, profiles.size());
+		} finally {
+			// Garbage collect in case an assertion failed to avoid cascading failures
+			getTargetService().garbageCollect();
 		}
-		
-		infos = getBundleInfos(c2);
-		names = collectAllSymbolicNames(infos);
-		bundleIds = new String[]{"bundle.b1", "bundle.b2", "bundle.b3"};
-		assertEquals(bundleIds.length, infos.size());
-		
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
-		}
-		
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(1, profiles.size());
 	}	
 }

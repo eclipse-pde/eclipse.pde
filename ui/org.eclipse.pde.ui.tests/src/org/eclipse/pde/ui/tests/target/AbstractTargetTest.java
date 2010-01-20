@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import java.util.HashSet;
+import java.util.Set;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -94,6 +102,47 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		doUnZip(location,"/tests/targets/eclipse-nbm.zip");
 		return location.append("plugins");
+	}
+	
+	/**
+	 * Extracts the modified jdt features archive, if not already done, and returns a path to the
+	 * root directory containing the features and plug-ins
+	 * 
+	 * @return path to the root directory
+	 * @throws Exception
+	 */
+	protected IPath extractModifiedFeatures() throws Exception {
+		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath location = stateLocation.append("modified-jdt-features");
+		if (location.toFile().exists()) {
+			return location;
+		}
+		doUnZip(location,"/tests/targets/modified-jdt-features.zip");
+		// If we are not on the mac, delete the mac launching bundle (in a standard non Mac build, the plug-in wouldn't exist)
+		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
+			File macBundle = location.append("plugins").append("org.eclipse.jdt.launching.macosx_3.2.0.v20090527.jar").toFile();
+			if (macBundle.exists()){
+				assertTrue("Unable to delete test mac launching bundle",macBundle.delete());
+			}
+		}
+		return location;
+	}	
+	
+	/**
+	 * Extracts the multiple versions plug-ins archive, if not already done, and returns a path to the
+	 * root directory containing the plug-ins.
+	 * 
+	 * @return path to the directory containing the bundles
+	 * @throws Exception
+	 */
+	protected IPath extractMultiVersionPlugins() throws Exception {
+		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath location = stateLocation.append("multi-versions");
+		if (location.toFile().exists()) {
+			return location;
+		}
+		doUnZip(location,"/tests/targets/multi-versions.zip");
+		return location;
 	}	
 	
 	/**
@@ -118,7 +167,7 @@ public abstract class AbstractTargetTest extends TestCase {
 				File file = entryPath.toFile();
 				file.createNewFile();
 				InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
-				byte[] bytes = LocalTargetDefinitionTests.getInputStreamAsByteArray(inputStream, -1);
+				byte[] bytes = getInputStreamAsByteArray(inputStream, -1);
 				inputStream.close();
 				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
 				outputStream.write(bytes);
@@ -127,7 +176,58 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		zipFile.close();
 		return parent;
+	}
+	
+	/**
+	 * Returns the given input stream as a byte array
+	 * @param stream the stream to get as a byte array
+	 * @param length the length to read from the stream or -1 for unknown
+	 * @return the given input stream as a byte array
+	 * @throws IOException
+	 */
+	private byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
+		byte[] contents;
+		if (length == -1) {
+			contents = new byte[0];
+			int contentsLength = 0;
+			int amountRead = -1;
+			do {
+				// read at least 8K
+				int amountRequested = Math.max(stream.available(), 8192);
+				// resize contents if needed
+				if (contentsLength + amountRequested > contents.length) {
+					System.arraycopy(contents,
+							0,
+							contents = new byte[contentsLength + amountRequested],
+							0,
+							contentsLength);
+				}
+				// read as many bytes as possible
+				amountRead = stream.read(contents, contentsLength, amountRequested);
+				if (amountRead > 0) {
+					// remember length of contents
+					contentsLength += amountRead;
+				}
+			} while (amountRead != -1);
+			// resize contents if necessary
+			if (contentsLength < contents.length) {
+				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
+			}
+		} else {
+			contents = new byte[length];
+			int len = 0;
+			int readSize = 0;
+			while ((readSize != -1) && (len != length)) {
+				// See PR 1FMS89U
+				// We record first the read size. In this case length is the actual
+				// read size.
+				len += readSize;
+				readSize = stream.read(contents, len, length - len);
+			}
+		}
+		return contents;
 	}	
+	
 	
 	/**
 	 * Recursively deletes the directory and files within.
@@ -190,12 +290,11 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @throws CoreException 
 	 */
 	protected void setTargetPlatform(ITargetDefinition target) throws CoreException {
-		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
-		job.schedule();
+		LoadTargetDefinitionJob job = LoadTargetDefinitionJob.load(target);
 		try {
 			job.join();
 		} catch (InterruptedException e) {
-			assertFalse("Target platform reset interrupted", true);
+			fail("Target platform reset interrupted");
 		}
 		ITargetHandle handle = null;
 		if (target != null) {
@@ -203,55 +302,56 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		assertEquals("Wrong target platform handle preference setting", handle, getTargetService().getWorkspaceTargetHandle());		
 	}
-
+	
 	/**
-	 * Collects all bundle symbolic names into a set.
-	 * 
-	 * @param infos bundles
-	 * @return bundle symbolic names
+	 * Provisions the target (if not already done), collects all bundle infos for the given target
 	 */
-	protected Set collectAllSymbolicNames(List infos) {
-		Set set = new HashSet(infos.size());
-		Iterator iterator = infos.iterator();
-		while (iterator.hasNext()) {
-			BundleInfo info = (BundleInfo) iterator.next();
-			set.add(info.getSymbolicName());
+	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
+		if (!target.isProvisioned()) {
+			IStatus result = target.provision(null);
+			assertTrue("Problem provisioning: " + result,result.isOK());
 		}
-		return set;
+		List result = new ArrayList();
+		BundleInfo[] bundles = target.getProvisionedBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			result.add(bundles[i]);
+		}
+		return result;
 	}
 
 	/**
-	 * Retrieves all bundles (source and code) in the given target definition
-	 * returning them as a list of BundleInfos.
-	 * 
-	 * @param target target definition
-	 * @return all BundleInfos
+	 * Provisions the target (if not already done), collects all provisioned bundles and returns a set of all symbolic names for the provisioned bundles
 	 */
-//	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
-//		if (!target.isResolved()) {
-//			target.resolve(null);
-//		}
-//		IResolvedBundle[] bundles = target.getBundles();
-//		List list = new ArrayList(bundles.length);
-//		for (int i = 0; i < bundles.length; i++) {
-//			list.add(bundles[i].getBundleInfo());
-//		}
-//		return list;
-//	}		
+	protected Set collectAllSymbolicNames(ITargetDefinition target) {
+		if (!target.isProvisioned()){
+			IStatus result = target.provision(null);
+			assertTrue("Problem provisioning: " + result,result.isOK());
+		}
+		Set result = new HashSet();
+		BundleInfo[] infos = target.getProvisionedBundles();
+		for (int i = 0; i < infos.length; i++) {
+			result.add(infos[i].getSymbolicName());
+		}
+		return result;
+	}
 	
 	/**
-	 * Returns a list of bundles included in the given container.
+	 * Retrieves all bundles (source and code) in the given target definition
+	 * returning them as a set of URLs.
 	 * 
-	 * @param container bundle container
-	 * @return included bundles
-	 * @throws Exception
+	 * @param target target definition
+	 * @return all bundle URLs
 	 */
-//	protected List getBundleInfos(IBundleContainer container) throws Exception {
-//		IResolvedBundle[] bundles = container.getBundles();
-//		List list = new ArrayList(bundles.length);
-//		for (int i = 0; i < bundles.length; i++) {
-//			list.add(bundles[i].getBundleInfo());
-//		}
-//		return list;
-//	}
+	protected Set getAllBundleURLs(ITargetDefinition target) throws Exception {
+		if (!target.isProvisioned()){
+			IStatus result = target.provision(null);
+			assertTrue("Problem provisioning: " + result,result.isOK());
+		}
+		URL[] urls = TargetPlatformHelper.getPluginPaths(target);
+		Set result = new HashSet();
+		for (int i = 0; i < urls.length; i++) {
+			result.add(urls[i]);
+		}
+		return result;
+	}
 }
