@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -636,9 +636,7 @@ public class TargetContentsGroup {
 				if (!((ITreeContentProvider) fTree.getContentProvider()).hasChildren(checked[i])) {
 					if (checked[i] instanceof IInstallableUnit) {
 						IInstallableUnit unit = (IInstallableUnit) checked[i];
-						InstallableUnitDescription unitDescription = new InstallableUnitDescription();
-						unitDescription.setId(unit.getId());
-						unitDescription.setVersion(unit.getVersion());
+						NameVersionDescriptor unitDescription = new NameVersionDescriptor(unit.getId(), unit.getVersion().toString());
 						leafChecked.add(unitDescription);
 					}
 				}
@@ -647,7 +645,7 @@ public class TargetContentsGroup {
 				// Everything is included
 				fTargetDefinition.setIncluded(null);
 			} else {
-				fTargetDefinition.setIncluded((InstallableUnitDescription[]) leafChecked.toArray(new InstallableUnitDescription[leafChecked.size()]));
+				fTargetDefinition.setIncluded((NameVersionDescriptor[]) leafChecked.toArray(new NameVersionDescriptor[leafChecked.size()]));
 			}
 		}
 

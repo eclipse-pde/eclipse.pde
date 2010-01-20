@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -27,6 +26,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -640,20 +640,20 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			public Object[] getElements(Object inputElement) {
 				ITargetDefinition target = getTargetDefinition();
 				if (target != null) {
-					InstallableUnitDescription[] bundles = target.getImplicitDependencies();
+					NameVersionDescriptor[] bundles = target.getImplicitDependencies();
 					if (bundles != null) {
 						return bundles;
 					}
 				}
-				return new InstallableUnitDescription[0];
+				return new NameVersionDescriptor[0];
 			}
 		});
 		fElementViewer.setLabelProvider(new StyledBundleLabelProvider(false, false));
 		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				InstallableUnitDescription bundle1 = (InstallableUnitDescription) e1;
-				InstallableUnitDescription bundle2 = (InstallableUnitDescription) e2;
+				NameVersionDescriptor bundle1 = (NameVersionDescriptor) e1;
+				NameVersionDescriptor bundle2 = (NameVersionDescriptor) e2;
 				return super.compare(viewer, bundle1.getId(), bundle2.getId());
 			}
 		});
@@ -724,17 +724,16 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			ArrayList pluginsToAdd = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
 				IInstallableUnit desc = ((IInstallableUnit) models[i]);
-				InstallableUnitDescription description = new InstallableUnitDescription();
-				description.setId(desc.getId());
+				NameVersionDescriptor description = new NameVersionDescriptor(desc.getId());
 				pluginsToAdd.add(description);
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
-			InstallableUnitDescription[] currentBundles = getTargetDefinition().getImplicitDependencies();
+			NameVersionDescriptor[] currentBundles = getTargetDefinition().getImplicitDependencies();
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTargetDefinition().setImplicitDependencies((InstallableUnitDescription[]) allDependencies.toArray(new InstallableUnitDescription[allDependencies.size()]));
+			getTargetDefinition().setImplicitDependencies((NameVersionDescriptor[]) allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}
@@ -745,7 +744,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * @return list of possible dependencies
 	 */
 	protected IInstallableUnit[] getValidBundles() throws CoreException {
-		InstallableUnitDescription[] current = getTargetDefinition().getImplicitDependencies();
+		NameVersionDescriptor[] current = getTargetDefinition().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
@@ -780,11 +779,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Object[] removeBundles = ((IStructuredSelection) fElementViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
 			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof InstallableUnitDescription) {
+				if (removeBundles[i] instanceof NameVersionDescriptor) {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTargetDefinition().setImplicitDependencies((InstallableUnitDescription[]) bundles.toArray((new InstallableUnitDescription[bundles.size()])));
+			getTargetDefinition().setImplicitDependencies((NameVersionDescriptor[]) bundles.toArray((new NameVersionDescriptor[bundles.size()])));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}

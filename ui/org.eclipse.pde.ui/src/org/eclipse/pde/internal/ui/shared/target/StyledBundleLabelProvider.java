@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -22,6 +21,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
@@ -75,8 +75,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		StyledString styledString = new StyledString();
 		if (element instanceof BundleInfo) {
 			appendBundleInfo(styledString, ((BundleInfo) element).getSymbolicName(), ((BundleInfo) element).getVersion());
-		} else if (element instanceof InstallableUnitDescription) {
-			appendBundleInfo(styledString, ((InstallableUnitDescription) element).getId(), ((InstallableUnitDescription) element).getVersion().toString());
+		} else if (element instanceof NameVersionDescriptor) {
+			appendBundleInfo(styledString, ((NameVersionDescriptor) element).getId(), ((NameVersionDescriptor) element).getVersion());
 		} else if (element instanceof InstallableUnitWrapper) {
 			return getStyledString(((InstallableUnitWrapper) element).getBestUnit());
 		} else if (element instanceof IStatus) {
@@ -175,8 +175,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
 		} else if (element instanceof InstallableUnitWrapper) {
 			return getImage(((InstallableUnitWrapper) element).getBestUnit());
-		} else if (element instanceof InstallableUnitDescription) {
-			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
+		} else if (element instanceof NameVersionDescriptor) {
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
 		} else if (element instanceof IStatus) {
 			int severity = ((IStatus) element).getSeverity();
 			if (severity == IStatus.WARNING || severity == IStatus.INFO) {

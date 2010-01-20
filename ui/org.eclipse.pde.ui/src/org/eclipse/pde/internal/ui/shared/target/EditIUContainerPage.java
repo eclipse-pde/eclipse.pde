@@ -17,7 +17,6 @@ import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -108,11 +107,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.EditIUContainerPage_9));
 		}
 		IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
-		InstallableUnitDescription[] descriptions = new InstallableUnitDescription[units.length];
+		NameVersionDescriptor[] descriptions = new NameVersionDescriptor[units.length];
 		for (int i = 0; i < units.length; i++) {
-			descriptions[i] = new InstallableUnitDescription();
-			descriptions[i].setId(units[i].getId());
-			descriptions[i].setVersion(units[i].getVersion());
+			descriptions[i] = new NameVersionDescriptor(units[i].getId(), units[i].getVersion().toString());
 		}
 		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(descriptions);
 		return container;

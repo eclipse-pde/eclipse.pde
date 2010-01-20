@@ -1,9 +1,9 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 
 /**
  * Wraps the installable unit descriptions provided by IUBundleContainer.  If a resolved target is available
@@ -11,7 +11,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
  * can provide better information for the label providers than the installable unit description can.  Has a 
  * pointer to its parent container so the wrapper can be be interacted with in tables and trees
  * 
- * @see InstallableUnitDescription
+ * @see NameVersionDescriptor
  * @see IInstallableUnit
  * @see TargetLocationsGroup
  * @see IUBundleContainer
@@ -20,13 +20,13 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
  */
 public class InstallableUnitWrapper {
 
-	private InstallableUnitDescription fDescription;
+	private NameVersionDescriptor fDescription;
 	// TODO Is caching this in the object actually beneficial?
 	private IInstallableUnit fUnit;
 	private ITargetDefinition fTarget;
 	private IUBundleContainer fContainer;
 
-	public InstallableUnitWrapper(InstallableUnitDescription description, IUBundleContainer container, ITargetDefinition target) {
+	public InstallableUnitWrapper(NameVersionDescriptor description, IUBundleContainer container, ITargetDefinition target) {
 		fDescription = description;
 		fTarget = target;
 		fContainer = container;

@@ -13,13 +13,12 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
@@ -108,9 +107,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fViewer = new TableViewer(table);
 		fViewer.setContentProvider(new DefaultTableProvider() {
 			public Object[] getElements(Object inputElement) {
-				InstallableUnitDescription[] bundles = getTarget().getImplicitDependencies();
+				NameVersionDescriptor[] bundles = getTarget().getImplicitDependencies();
 				if (bundles == null) {
-					return new InstallableUnitDescription[0];
+					return new NameVersionDescriptor[0];
 				}
 				return bundles;
 			}
@@ -118,9 +117,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				BundleInfo bundle1 = (BundleInfo) e1;
-				BundleInfo bundle2 = (BundleInfo) e2;
-				return super.compare(viewer, bundle1.getSymbolicName(), bundle2.getSymbolicName());
+				NameVersionDescriptor bundle1 = (NameVersionDescriptor) e1;
+				NameVersionDescriptor bundle2 = (NameVersionDescriptor) e2;
+				return super.compare(viewer, bundle1.getId(), bundle2.getId());
 			}
 		});
 		fViewer.setInput(getTarget());
@@ -132,7 +131,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				Object object = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				ManifestEditor.openPluginEditor(((BundleInfo) object).getSymbolicName());
+				ManifestEditor.openPluginEditor(((NameVersionDescriptor) object).getId());
 			}
 		});
 	}
@@ -206,16 +205,15 @@ public class ImplicitDependenciesSection extends SectionPart {
 			Object[] models = dialog.getResult();
 			ArrayList pluginsToAdd = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
-				BundleInfo selected = ((BundleInfo) models[i]);
-				pluginsToAdd.add(new BundleInfo(selected.getSymbolicName(), null, null, BundleInfo.NO_LEVEL, false));
+				pluginsToAdd.add(models[i]);
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
-			InstallableUnitDescription[] currentBundles = getTarget().getImplicitDependencies();
+			NameVersionDescriptor[] currentBundles = getTarget().getImplicitDependencies();
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTarget().setImplicitDependencies((InstallableUnitDescription[]) allDependencies.toArray(new InstallableUnitDescription[allDependencies.size()]));
+			getTarget().setImplicitDependencies((NameVersionDescriptor[]) allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
 			markDirty();
 			refresh();
 		}
@@ -225,8 +223,8 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 * Gets a list of all the bundles that can be added as implicit dependencies
 	 * @return list of possible dependencies
 	 */
-	protected BundleInfo[] getValidBundles() throws CoreException {
-		InstallableUnitDescription[] current = getTarget().getImplicitDependencies();
+	protected NameVersionDescriptor[] getValidBundles() throws CoreException {
+		NameVersionDescriptor[] current = getTarget().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
@@ -241,13 +239,12 @@ public class ImplicitDependenciesSection extends SectionPart {
 		}
 		for (int i = 0; i < allTargetBundles.length; i++) {
 			if (!currentBundles.contains(allTargetBundles[i].getId())) {
-				InstallableUnitDescription newImplicit = new InstallableUnitDescription();
-				newImplicit.setId(allTargetBundles[i].getId());
+				NameVersionDescriptor newImplicit = new NameVersionDescriptor(allTargetBundles[i].getId());
 				targetBundles.add(newImplicit);
 			}
 		}
 
-		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
+		return (NameVersionDescriptor[]) targetBundles.toArray(new NameVersionDescriptor[targetBundles.size()]);
 	}
 
 	private void handleRemove() {
@@ -256,11 +253,11 @@ public class ImplicitDependenciesSection extends SectionPart {
 		Object[] removeBundles = ((IStructuredSelection) fViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
 			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof InstallableUnitDescription) {
+				if (removeBundles[i] instanceof NameVersionDescriptor) {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTarget().setImplicitDependencies((InstallableUnitDescription[]) bundles.toArray((new InstallableUnitDescription[bundles.size()])));
+			getTarget().setImplicitDependencies((NameVersionDescriptor[]) bundles.toArray((new NameVersionDescriptor[bundles.size()])));
 			markDirty();
 			refresh();
 		}

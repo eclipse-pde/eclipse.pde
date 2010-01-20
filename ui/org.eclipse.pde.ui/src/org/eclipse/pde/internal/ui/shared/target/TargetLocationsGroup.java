@@ -13,13 +13,11 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
@@ -325,7 +323,7 @@ public class TargetLocationsGroup {
 					IUBundleContainer container = ((InstallableUnitWrapper) currentSelection).getContainer();
 					newContainers.remove(container);
 					// If there are other root IUs in the container, add a new container without the given IU
-					InstallableUnitDescription[] oldIUs = null;
+					NameVersionDescriptor[] oldIUs = null;
 					try {
 						oldIUs = container.getRootIUs();
 					} catch (CoreException e) {
@@ -338,7 +336,7 @@ public class TargetLocationsGroup {
 								newIUs.add(currentSelection);
 							}
 						}
-						newContainers.add(new IUBundleContainer((InstallableUnitDescription[]) newIUs.toArray(new InstallableUnitDescription[newIUs.size()])));
+						newContainers.add(new IUBundleContainer((NameVersionDescriptor[]) newIUs.toArray(new NameVersionDescriptor[newIUs.size()])));
 					}
 				}
 			}
@@ -426,7 +424,7 @@ public class TargetLocationsGroup {
 				for (int i = 0; i < containers.length; i++) {
 					if (containers[i] instanceof IUBundleContainer) {
 						try {
-							InstallableUnitDescription[] descriptions = ((IUBundleContainer) containers[i]).getRootIUs();
+							NameVersionDescriptor[] descriptions = ((IUBundleContainer) containers[i]).getRootIUs();
 							if (descriptions != null && descriptions.length > 0) {
 								for (int j = 0; j < descriptions.length; j++) {
 									children.add(new InstallableUnitWrapper(descriptions[j], ((IUBundleContainer) containers[i]), fTarget));

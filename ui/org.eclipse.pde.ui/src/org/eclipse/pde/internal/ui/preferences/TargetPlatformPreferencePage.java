@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -356,7 +355,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					for (int i = 0; i < containers.length; i++) {
 						if (containers[i] instanceof IUBundleContainer) {
 							try {
-								InstallableUnitDescription[] descriptions = ((IUBundleContainer) containers[i]).getRootIUs();
+								NameVersionDescriptor[] descriptions = ((IUBundleContainer) containers[i]).getRootIUs();
 								if (descriptions != null && descriptions.length > 0) {
 									for (int j = 0; j < descriptions.length; j++) {
 										children.add(descriptions[j]);
@@ -726,7 +725,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					load = true;
 				} else {
 					ITargetDefinition original = fPrevious.getTargetDefinition();
-					// TODO: should just check for structural changes
 					if (((TargetDefinition) original).isContentEquivalent(fActiveTarget)) {
 						load = false;
 					} else {
