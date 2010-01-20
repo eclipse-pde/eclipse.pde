@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.project;
 
 import java.net.URI;
 import java.util.*;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -41,6 +42,7 @@ import org.osgi.framework.*;
 public class BundleProjectDescription implements IBundleProjectDescription {
 
 	private IProject fProject;
+	private IPath fRoot;
 	private String fSymbolicName;
 	private String fBundleName;
 	private String fBundleVendor;
@@ -61,6 +63,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private IPackageExportDescription[] fExports;
 	private IPath[] fBinIncludes;
 	private WorkspacePluginModelBase fModel;
+	private IBundleProjectService fService;
 
 	private static final String[] EQUINOX_HEADERS = new String[] {ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY, ICoreConstants.ECLIPSE_LAZYSTART};
 
@@ -78,12 +81,28 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	}
 
 	/**
+	 * Returns the bundle project service.
+	 * 
+	 * @return bundle project service
+	 */
+	IBundleProjectService getBundleProjectService() {
+		if (fService == null) {
+			fService = (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+		}
+		return fService;
+	}
+
+	/**
 	 * Initialize settings from the given project.
 	 * 
 	 * @param project project
 	 * @exception CoreException if unable to initialize
 	 */
 	private void initiaize(IProject project) throws CoreException {
+		IContainer root = PDEProject.getBundleRoot(project);
+		if (root != project) {
+			setBundleRoot(root.getProjectRelativePath());
+		}
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (model != null) {
 			IPluginBase base = model.getPluginBase();
@@ -115,9 +134,9 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 					} catch (BundleException e) {
 						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
 					}
-					setHost(Factory.newHost(frag.getPluginId(), getRange(elements[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE))));
+					setHost(getBundleProjectService().newHost(frag.getPluginId(), getRange(elements[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE))));
 				} else {
-					setHost(Factory.newHost(frag.getPluginId(), getRange(frag.getPluginVersion())));
+					setHost(getBundleProjectService().newHost(frag.getPluginId(), getRange(frag.getPluginVersion())));
 				}
 			}
 			if (base instanceof BundlePluginBase) {
@@ -147,8 +166,10 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						while (iterator.hasNext()) {
 							String libName = (String) iterator.next();
 							IBundleClasspathEntry[] entries = getClasspathEntries(project, build, libName);
-							for (int i = 0; i < entries.length; i++) {
-								collect.add(entries[i]);
+							if (entries != null) {
+								for (int i = 0; i < entries.length; i++) {
+									collect.add(entries[i]);
+								}
 							}
 						}
 						classpath = (IBundleClasspathEntry[]) collect.toArray(new IBundleClasspathEntry[collect.size()]);
@@ -175,7 +196,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						IPackageImportDescription[] imports = new IPackageImportDescription[packages.length];
 						for (int i = 0; i < packages.length; i++) {
 							ImportPackageObject pkg = packages[i];
-							imports[i] = Factory.newPackageImport(pkg.getName(), getRange(pkg.getVersion()), pkg.isOptional());
+							imports[i] = getBundleProjectService().newPackageImport(pkg.getName(), getRange(pkg.getVersion()), pkg.isOptional());
 						}
 						setPackageImports(imports);
 					}
@@ -195,7 +216,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 									friends[j] = pfs[j].getName();
 								}
 							}
-							exports[i] = Factory.newPackageExport(exp.getName(), getVersion(exp.getVersion()), !exp.isInternal(), friends);
+							exports[i] = getBundleProjectService().newPackageExport(exp.getName(), getVersion(exp.getVersion()), !exp.isInternal(), friends);
 						}
 						setPackageExports(exports);
 					}
@@ -207,7 +228,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						IRequiredBundleDescription[] req = new IRequiredBundleDescription[bundles.length];
 						for (int i = 0; i < bundles.length; i++) {
 							RequireBundleObject rb = bundles[i];
-							req[i] = Factory.newRequiredBundle(rb.getId(), getRange(rb.getVersion()), rb.isOptional(), rb.isReexported());
+							req[i] = getBundleProjectService().newRequiredBundle(rb.getId(), getRange(rb.getVersion()), rb.isOptional(), rb.isReexported());
 						}
 						setRequiredBundles(req);
 					}
@@ -268,7 +289,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				entry = build.getEntry(IBuildEntry.OUTPUT_PREFIX + libraryName);
 				if (entry == null) {
 					// no source or class file folder
-					return new IBundleClasspathEntry[] {Factory.newBundleClasspathEntry(null, null, new Path(libraryName))};
+					return new IBundleClasspathEntry[] {getBundleProjectService().newBundleClasspathEntry(null, null, new Path(libraryName))};
 				}
 				// base the entries on class file folders
 				return getClasspathEntries(project, entry, true);
@@ -303,24 +324,26 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				IPath path = new Path(tokens[i]);
 				IBundleClasspathEntry spec = null;
 				if (binary) {
-					spec = Factory.newBundleClasspathEntry(null, path, lib);
+					spec = getBundleProjectService().newBundleClasspathEntry(null, path, lib);
 				} else {
 					IJavaProject jp = JavaCore.create(project);
-					IClasspathEntry[] rawClasspath = jp.getRawClasspath();
 					IPath output = null;
-					for (int j = 0; j < rawClasspath.length; j++) {
-						IClasspathEntry cpe = rawClasspath[j];
-						if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-							if (cpe.getPath().removeFirstSegments(1).equals(path)) {
-								output = cpe.getOutputLocation();
-								if (output != null) {
-									output = output.removeFirstSegments(1);
+					if (jp.exists()) {
+						IClasspathEntry[] rawClasspath = jp.getRawClasspath();
+						for (int j = 0; j < rawClasspath.length; j++) {
+							IClasspathEntry cpe = rawClasspath[j];
+							if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+								if (cpe.getPath().removeFirstSegments(1).equals(path)) {
+									output = cpe.getOutputLocation();
+									if (output != null) {
+										output = output.removeFirstSegments(1);
+									}
+									break;
 								}
-								break;
 							}
 						}
 					}
-					spec = Factory.newBundleClasspathEntry(path, output, lib);
+					spec = getBundleProjectService().newBundleClasspathEntry(path, output, lib);
 				}
 				bces[i] = spec;
 			}
@@ -378,6 +401,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		ProjectModifyOperation operation = new ProjectModifyOperation();
 		operation.execute(monitor, this);
 		fModel = operation.getModel();
+		fService = null;
 	}
 
 	/**
@@ -660,6 +684,20 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 */
 	public IPath[] getBinIncludes() {
 		return fBinIncludes;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleRoot(org.eclipse.core.runtime.IPath)
+	 */
+	public void setBundleRoot(IPath path) {
+		fRoot = path;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getBundleRoot()
+	 */
+	public IPath getBundleRoot() {
+		return fRoot;
 	}
 
 }

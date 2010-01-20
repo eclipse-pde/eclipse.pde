@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -241,7 +242,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		try {
 			IBuildModel buildModel = model.getBuildModel();
 			if (buildModel == null) {
-				IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties"); //$NON-NLS-1$
+				IFile buildFile = PDEProject.getBuildProperties(model.getUnderlyingResource().getProject());
 				if (buildFile.exists()) {
 					buildModel = new WorkspaceBuildModel(buildFile);
 					buildModel.load();

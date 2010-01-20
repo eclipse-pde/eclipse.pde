@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,7 +155,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	protected String[] getPaths() {
 		String[] paths = super.getPaths();
 		String[] all = new String[paths.length + 1];
-		all[0] = fFeatureLocation + File.separator + "feature.xml"; //$NON-NLS-1$
+		all[0] = fFeatureLocation + File.separator + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR;
 		System.arraycopy(paths, 0, all, 1, paths.length);
 		return all;
 	}
@@ -230,7 +230,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 				}
 			}
 		}
-		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
+		save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), properties, "Build Configuration"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

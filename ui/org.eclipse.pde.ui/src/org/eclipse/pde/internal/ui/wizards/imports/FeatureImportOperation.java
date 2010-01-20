@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
@@ -226,7 +227,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	}
 
 	private void createBuildProperties(IProject project) {
-		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile file = PDEProject.getBuildProperties(project);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$

@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -39,7 +40,7 @@ public class PluginManifestChange {
 
 			try {
 				PluginModelBase model;
-				if ("fragment.xml".equals(file.getName())) //$NON-NLS-1$
+				if (ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR.equals(file.getName()))
 					model = new FragmentModel(document, false);
 				else
 					model = new PluginModel(document, false);

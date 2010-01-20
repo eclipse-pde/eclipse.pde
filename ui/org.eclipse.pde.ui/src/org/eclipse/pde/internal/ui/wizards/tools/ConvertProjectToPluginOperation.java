@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -105,16 +106,16 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		loadClasspathEntries(projectToConvert, monitor);
 		loadLibraryName(projectToConvert);
 
-		createManifestFile(projectToConvert.getFile(PDEModelUtility.F_MANIFEST_FP), monitor);
+		createManifestFile(PDEProject.getManifest(projectToConvert), monitor);
 
-		IFile buildFile = projectToConvert.getFile(PDEModelUtility.F_BUILD);
+		IFile buildFile = PDEProject.getBuildProperties(projectToConvert);
 		if (!buildFile.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
 			IBuild build = model.getBuild(true);
 			IBuildEntry entry = model.getFactory().createEntry(IBuildEntry.BIN_INCLUDES);
-			if (projectToConvert.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists())
+			if (PDEProject.getPluginXml(projectToConvert).exists())
 				entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-			if (projectToConvert.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())
+			if (PDEProject.getManifest(projectToConvert).exists())
 				entry.addToken(ICoreConstants.MANIFEST_FOLDER_NAME);
 			for (int i = 0; i < fLibEntries.length; i++) {
 				entry.addToken(fLibEntries[i]);
@@ -191,7 +192,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 	}
 
 	private void organizeExports(final IProject project) {
-		PDEModelUtility.modifyModel(new ModelModification(project.getFile(PDEModelUtility.F_MANIFEST_FP)) {
+		PDEModelUtility.modifyModel(new ModelModification(PDEProject.getManifest(project)) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))
 					return;

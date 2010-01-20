@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -52,9 +53,6 @@ public class NLSFragmentGenerator {
 	private static final String JAVA_EXTENSION = ".java"; //$NON-NLS-1$
 	private static final String PROPERTIES_EXTENSION = ".properties"; //$NON-NLS-1$
 	private static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
-
-	private static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
-	private static final String BUILD_PROPERTIES = "build.properties"; //$NON-NLS-1$
 
 	private static final String BIN = "/bin/"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -92,7 +90,7 @@ public class NLSFragmentGenerator {
 			add(new AbstractFilter(false) {
 				public boolean matches(Object object) {
 					String path = object.toString();
-					return path.indexOf(BIN) != -1 || path.endsWith(SLASH) || path.endsWith(PLUGIN_XML);
+					return path.indexOf(BIN) != -1 || path.endsWith(SLASH) || path.endsWith(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 				}
 			});
 
@@ -110,7 +108,7 @@ public class NLSFragmentGenerator {
 			add(new AbstractFilter(false) {
 				public boolean matches(Object object) {
 					String path = object.toString();
-					return path.indexOf(BIN) != -1 || path.endsWith(BUILD_PROPERTIES);
+					return path.indexOf(BIN) != -1 || path.endsWith(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 				}
 			});
 

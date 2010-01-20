@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
-import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
@@ -55,7 +55,7 @@ public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
 					proj = ((IFile) element).getProject();
 				else if (element instanceof IProject)
 					proj = (IProject) element;
-				if (proj != null && proj.exists(ICoreConstants.MANIFEST_PATH))
+				if (proj != null && PDEProject.getManifest(proj).exists())
 					projects.add(proj);
 			}
 			if (projects.size() > 0) {

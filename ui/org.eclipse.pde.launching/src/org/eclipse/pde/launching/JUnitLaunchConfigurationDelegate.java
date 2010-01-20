@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 250340
  *******************************************************************************/
 package org.eclipse.pde.launching;
-
 
 import java.io.File;
 import java.util.*;
@@ -149,7 +148,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
-			String path = getConfigurationDirectory(configuration).getPath() + IPath.SEPARATOR + ".options"; //$NON-NLS-1$
+			String path = getConfigurationDirectory(configuration).getPath() + IPath.SEPARATOR + ICoreConstants.OPTIONS_FILENAME;
 			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, path));
 		}
 

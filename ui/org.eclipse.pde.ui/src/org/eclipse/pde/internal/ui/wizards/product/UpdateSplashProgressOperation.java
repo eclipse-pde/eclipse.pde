@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007,2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.text.build.PropertiesTextChangeListener;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
@@ -476,7 +476,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		pluginCustomModel.save();
 
 		// add the file to build.properties
-		IFile buildProps = fProject.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		IFile buildProps = PDEProject.getBuildProperties(fProject);
 		if (buildProps.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
 			model.load();

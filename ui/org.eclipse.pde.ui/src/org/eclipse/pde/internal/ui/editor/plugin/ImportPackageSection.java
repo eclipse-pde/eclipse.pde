@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.*;
@@ -513,7 +514,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				// add un-exported packages in workspace non-binary plug-ins
 				IResource resource = models[i].getUnderlyingResource();
 				IProject project = resource != null ? resource.getProject() : null;
-				if (project == null || !project.hasNature(JavaCore.NATURE_ID) || WorkspaceModelManager.isBinaryProject(project) || !project.exists(ICoreConstants.MANIFEST_PATH))
+				if (project == null || !project.hasNature(JavaCore.NATURE_ID) || WorkspaceModelManager.isBinaryProject(project) || !PDEProject.getManifest(project).exists())
 					continue;
 				IJavaProject jp = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();

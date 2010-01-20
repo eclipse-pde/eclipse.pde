@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.build.BaseBuildAction;
 import org.eclipse.swt.SWT;
@@ -75,7 +76,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 					File file = new File(installLocation, "build.xml"); //$NON-NLS-1$
 					if (file.exists()) {
 						try {
-							IFile buildFile = underlyingResource.getProject().getFile("build.properties"); //$NON-NLS-1$
+							IFile buildFile = PDEProject.getBuildProperties(underlyingResource.getProject());
 							IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
 							buildModel.load();
 							if (buildModel != null) {

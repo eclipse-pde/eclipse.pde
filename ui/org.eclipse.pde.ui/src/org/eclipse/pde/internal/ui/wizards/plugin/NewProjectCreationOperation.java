@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -90,7 +91,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private void createBuildPropertiesFile(IProject project) throws CoreException {
-		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		IFile file = PDEProject.getBuildProperties(project);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildModelFactory factory = model.getFactory();
@@ -133,17 +134,20 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private void createManifest(IProject project) throws CoreException {
+		IFile fragmentXml = PDEProject.getFragmentXml(project);
+		IFile pluginXml = PDEProject.getPluginXml(project);
 		if (fData.hasBundleStructure()) {
+			IFile manifest = PDEProject.getManifest(project);
 			if (fData instanceof IFragmentFieldData) {
-				fModel = new WorkspaceBundleFragmentModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
+				fModel = new WorkspaceBundleFragmentModel(manifest, fragmentXml);
 			} else {
-				fModel = new WorkspaceBundlePluginModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
+				fModel = new WorkspaceBundlePluginModel(manifest, pluginXml);
 			}
 		} else {
 			if (fData instanceof IFragmentFieldData) {
-				fModel = new WorkspaceFragmentModel(project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), false);
+				fModel = new WorkspaceFragmentModel(fragmentXml, false);
 			} else {
-				fModel = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), false);
+				fModel = new WorkspacePluginModel(pluginXml, false);
 			}
 		}
 		IPluginBase pluginBase = fModel.getPluginBase();

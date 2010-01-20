@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.Build;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.converter.PluginConverterParser.PluginInfo;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.*;
 
 public class PluginConverter {
@@ -40,8 +41,6 @@ public class PluginConverter {
 	static public final byte MANIFEST_TYPE_FRAGMENT = 0x04;
 	/** bundle manifest type jared bundle */
 	static public final byte MANIFEST_TYPE_JAR = 0x08;
-
-	public static final String OSGI_BUNDLE_MANIFEST = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 
 	private static final String SEMICOLON = "; "; //$NON-NLS-1$
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
@@ -60,12 +59,10 @@ public class PluginConverter {
 	private static final String MANIFEST_VERSION = "Manifest-Version"; //$NON-NLS-1$
 	private static final String PLUGIN_PROPERTIES_FILENAME = "plugin"; //$NON-NLS-1$
 	private static PluginConverter instance;
-	static public final String FRAGMENT_MANIFEST = "fragment.xml"; //$NON-NLS-1$
 	static public final String GENERATED_FROM = "Generated-from"; //$NON-NLS-1$
 	static public final String MANIFEST_TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
 	protected static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	protected static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$
-	static public final String PLUGIN_MANIFEST = "plugin.xml"; //$NON-NLS-1$
 	private static final String COMPATIBILITY_ACTIVATOR = "org.eclipse.core.internal.compatibility.PluginActivator"; //$NON-NLS-1$
 	private static final String SOURCE_PREFIX = "source."; //$NON-NLS-1$
 
@@ -119,7 +116,7 @@ public class PluginConverter {
 			//this can't happen since we are building the urls ourselves from a file
 		}
 		try {
-			xmlFileLocation = new URL(baseURL, PLUGIN_MANIFEST);
+			xmlFileLocation = new URL(baseURL, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 			stream = xmlFileLocation.openStream();
 			manifestType |= MANIFEST_TYPE_PLUGIN;
 			return xmlFileLocation;
@@ -136,7 +133,7 @@ public class PluginConverter {
 			}
 		}
 		try {
-			xmlFileLocation = new URL(baseURL, FRAGMENT_MANIFEST);
+			xmlFileLocation = new URL(baseURL, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 			stream = xmlFileLocation.openStream();
 			manifestType |= MANIFEST_TYPE_FRAGMENT;
 			return xmlFileLocation;
@@ -376,7 +373,7 @@ public class PluginConverter {
 	}
 
 	public Set getExports(IProject proj, Map libs) {
-		IFile buildProperties = proj.getFile("build.properties"); //$NON-NLS-1$
+		IFile buildProperties = PDEProject.getBuildProperties(proj);
 		IBuild build = null;
 		if (buildProperties != null) {
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProperties);
@@ -511,11 +508,11 @@ public class PluginConverter {
 		if ((manifestType & MANIFEST_TYPE_JAR) != 0)
 			return pluginLocation.lastModified();
 		else if ((manifestType & MANIFEST_TYPE_PLUGIN) != 0)
-			return new File(pluginLocation, PLUGIN_MANIFEST).lastModified();
+			return new File(pluginLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).lastModified();
 		else if ((manifestType & MANIFEST_TYPE_FRAGMENT) != 0)
-			return new File(pluginLocation, FRAGMENT_MANIFEST).lastModified();
+			return new File(pluginLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR).lastModified();
 		else if ((manifestType & MANIFEST_TYPE_BUNDLE) != 0)
-			return new File(pluginLocation, OSGI_BUNDLE_MANIFEST).lastModified();
+			return new File(pluginLocation, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).lastModified();
 		return -1;
 	}
 

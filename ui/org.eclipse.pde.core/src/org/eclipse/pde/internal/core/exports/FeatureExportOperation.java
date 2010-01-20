@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.*;
@@ -93,7 +94,7 @@ public class FeatureExportOperation extends Job {
 				model.setInstallLocation(fFeatureLocation);
 				InputStream stream = null;
 
-				stream = new BufferedInputStream(new FileInputStream(new File(fFeatureLocation + File.separator + "feature.xml"))); //$NON-NLS-1$
+				stream = new BufferedInputStream(new FileInputStream(new File(fFeatureLocation + File.separator + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)));
 				model.load(stream, true);
 				if (stream != null) {
 					stream.close();
@@ -736,7 +737,7 @@ public class FeatureExportOperation extends Job {
 
 	protected boolean isCustomBuild(IModel model) throws CoreException {
 		IBuildModel buildModel = null;
-		IFile buildFile = model.getUnderlyingResource().getProject().getFile("build.properties"); //$NON-NLS-1$
+		IFile buildFile = PDEProject.getBuildProperties(model.getUnderlyingResource().getProject());
 		if (buildFile.exists()) {
 			buildModel = new WorkspaceBuildModel(buildFile);
 			buildModel.load();
@@ -900,8 +901,8 @@ public class FeatureExportOperation extends Job {
 			if (!file.exists() || !file.isDirectory())
 				file.mkdirs();
 
-			save(new File(file, "build.properties"), prop, "Marker File"); //$NON-NLS-1$ //$NON-NLS-2$
-			XMLPrintHandler.writeFile(doc, new File(file, "feature.xml")); //$NON-NLS-1$
+			save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), prop, "Marker File"); //$NON-NLS-1$ 
+			XMLPrintHandler.writeFile(doc, new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR));
 		} catch (DOMException e1) {
 		} catch (FactoryConfigurationError e1) {
 		} catch (ParserConfigurationException e1) {
@@ -1066,7 +1067,7 @@ public class FeatureExportOperation extends Job {
 					}
 				}
 			}
-			XMLPrintHandler.writeFile(doc, new File(file, "feature.xml")); //$NON-NLS-1$
+			XMLPrintHandler.writeFile(doc, new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR));
 		} catch (DOMException e1) {
 		} catch (FactoryConfigurationError e1) {
 		} catch (ParserConfigurationException e1) {

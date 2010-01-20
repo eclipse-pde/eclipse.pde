@@ -44,7 +44,8 @@ public interface IBundleClasspathEntry {
 	 * Java project's default build path output folder. When a {@link #getSourcePath()} is
 	 * not specified, the binary path specifies a folder of class files.
 	 * </p>
-	 * @return class file folder, archive or <code>null</code> to indicate default build path output folder
+	 * @return project relative class file folder, archive or <code>null</code> to indicate
+	 *  default build path output folder
 	 */
 	public IPath getBinaryPath();
 

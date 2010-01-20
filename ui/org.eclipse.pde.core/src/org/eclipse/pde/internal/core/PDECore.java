@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
+import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
@@ -148,6 +150,11 @@ public class PDECore extends Plugin {
 	 * Target platform service.
 	 */
 	private ServiceRegistration fTargetPlatformService;
+
+	/**
+	 * Bundle project service.
+	 */
+	private ServiceRegistration fBundleProjectService;
 
 	public PDECore() {
 		inst = this;
@@ -287,6 +294,7 @@ public class PDECore extends Plugin {
 		fFeatureRebuilder.start();
 
 		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable());
+		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable());
 
 		// for now we need to start this bundle to ensure required services
 		// are present when we need them (like IProfileRegistry)
@@ -341,6 +349,10 @@ public class PDECore extends Plugin {
 		if (fTargetPlatformService != null) {
 			fTargetPlatformService.unregister();
 			fTargetPlatformService = null;
+		}
+		if (fBundleProjectService != null) {
+			fBundleProjectService.unregister();
+			fBundleProjectService = null;
 		}
 
 		fServiceTracker.close();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
-import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
@@ -167,7 +166,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 				return new IResolvedBundle[0];
 			}
 			File location = resolveFeatureLocation();
-			File manifest = new File(location, "feature.xml"); //$NON-NLS-1$
+			File manifest = new File(location, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_2, fId)));
 			}

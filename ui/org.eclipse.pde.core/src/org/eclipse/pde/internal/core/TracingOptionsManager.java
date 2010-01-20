@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -97,10 +97,10 @@ public class TracingOptionsManager {
 		ZipFile jarFile = null;
 		try {
 			if (pluginLocation.isDirectory())
-				return new File(pluginLocation, ".options").exists(); //$NON-NLS-1$
+				return new File(pluginLocation, ICoreConstants.OPTIONS_FILENAME).exists();
 
 			jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
-			ZipEntry manifestEntry = jarFile.getEntry(".options"); //$NON-NLS-1$
+			ZipEntry manifestEntry = jarFile.getEntry(ICoreConstants.OPTIONS_FILENAME);
 			if (manifestEntry != null) {
 				stream = jarFile.getInputStream(manifestEntry);
 			}
@@ -166,12 +166,12 @@ public class TracingOptionsManager {
 		ZipFile jarFile = null;
 		try {
 			if (pluginLocation.isDirectory()) {
-				File file = new File(pluginLocation, ".options"); //$NON-NLS-1$
+				File file = new File(pluginLocation, ICoreConstants.OPTIONS_FILENAME);
 				if (file.exists())
 					stream = new FileInputStream(file);
 			} else {
 				jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(".options"); //$NON-NLS-1$
+				ZipEntry manifestEntry = jarFile.getEntry(ICoreConstants.OPTIONS_FILENAME);
 				if (manifestEntry != null) {
 					stream = jarFile.getInputStream(manifestEntry);
 				}

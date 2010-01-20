@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -54,12 +55,7 @@ import org.osgi.framework.Constants;
  */
 public class PDEModelUtility {
 
-	public static final String F_MANIFEST = "MANIFEST.MF"; //$NON-NLS-1$
-	public static final String F_MANIFEST_FP = "META-INF/" + F_MANIFEST; //$NON-NLS-1$
-	public static final String F_PLUGIN = "plugin.xml"; //$NON-NLS-1$
-	public static final String F_FRAGMENT = "fragment.xml"; //$NON-NLS-1$
 	public static final String F_PROPERTIES = ".properties"; //$NON-NLS-1$
-	public static final String F_BUILD = "build" + F_PROPERTIES; //$NON-NLS-1$
 
 	// bundle / xml various Object[] indices
 	private static final int F_Bi = 0; // the manifest.mf-related object will always be 1st
@@ -405,10 +401,8 @@ public class PDEModelUtility {
 			return;
 		// mark a plugin.xml or a fragment.xml as PLUGIN2 type so they will be compared
 		// with the PluginContentMergeViewer
-		String textType = name.equals("plugin.xml") || //$NON-NLS-1$
-				name.equals("fragment.xml") ? //$NON-NLS-1$
-		"PLUGIN2" //$NON-NLS-1$
-				: file.getFileExtension(); 
+		String textType = name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) ? "PLUGIN2" //$NON-NLS-1$
+				: file.getFileExtension();
 		// if the file extension is null, the setTextType method will use type "txt", so no null guard needed
 		change.setTextType(textType);
 	}
@@ -438,9 +432,9 @@ public class PDEModelUtility {
 	private static PDEFormEditor getOpenEditor(ModelModification modification) {
 		IProject project = modification.getFile().getProject();
 		String name = modification.getFile().getName();
-		if (name.equals(F_PLUGIN) || name.equals(F_FRAGMENT) || name.equals(F_MANIFEST)) {
+		if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.MANIFEST_FILENAME)) {
 			return getOpenManifestEditor(project);
-		} else if (name.equals(F_BUILD)) {
+		} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			PDEFormEditor openEditor = getOpenBuildPropertiesEditor(project);
 			if (openEditor == null)
 				openEditor = getOpenManifestEditor(project);
@@ -454,11 +448,11 @@ public class PDEModelUtility {
 			return null;
 		String name = modification.getFile().getName();
 		IBaseModel model = null;
-		if (name.equals(F_PLUGIN) || name.equals(F_FRAGMENT)) {
+		if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			model = openEditor.getAggregateModel();
 			if (model instanceof IBundlePluginModelBase)
 				model = ((IBundlePluginModelBase) model).getExtensionsModel();
-		} else if (name.equals(F_BUILD)) {
+		} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			if (openEditor instanceof BuildEditor) {
 				model = openEditor.getAggregateModel();
 			} else if (openEditor instanceof ManifestEditor) {
@@ -466,7 +460,7 @@ public class PDEModelUtility {
 				if (page instanceof BuildSourcePage)
 					model = ((BuildSourcePage) page).getInputContext().getModel();
 			}
-		} else if (name.equals(F_MANIFEST)) {
+		} else if (name.equals(ICoreConstants.MANIFEST_FILENAME)) {
 			model = openEditor.getAggregateModel();
 			if (model instanceof IBundlePluginModelBase)
 				return model;
@@ -477,9 +471,9 @@ public class PDEModelUtility {
 	}
 
 	private static IModelTextChangeListener createListener(String filename, IDocument doc, boolean generateEditNames) {
-		if (filename.equals(F_PLUGIN) || filename.equals(F_FRAGMENT))
+		if (filename.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || filename.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
 			return new XMLTextChangeListener(doc, generateEditNames);
-		else if (filename.equals(F_MANIFEST))
+		else if (filename.equals(ICoreConstants.MANIFEST_FILENAME))
 			return new BundleTextChangeListener(doc, generateEditNames);
 		else if (filename.endsWith(F_PROPERTIES))
 			return new PropertiesTextChangeListener(doc, generateEditNames);
@@ -489,11 +483,11 @@ public class PDEModelUtility {
 	private static AbstractEditingModel prepareAbstractEditingModel(IFile file, IDocument doc, boolean generateEditNames) {
 		AbstractEditingModel model;
 		String filename = file.getName();
-		if (filename.equals(F_MANIFEST))
+		if (filename.equals(ICoreConstants.MANIFEST_FILENAME))
 			model = new BundleModel(doc, true);
-		else if (filename.equals(F_FRAGMENT))
+		else if (filename.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
 			model = new FragmentModel(doc, true);
-		else if (filename.equals(F_PLUGIN))
+		else if (filename.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR))
 			model = new PluginModel(doc, true);
 		else if (filename.endsWith(F_PROPERTIES))
 			model = new BuildModel(doc, true);

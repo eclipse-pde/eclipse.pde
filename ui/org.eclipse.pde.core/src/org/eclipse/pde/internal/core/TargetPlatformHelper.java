@@ -482,7 +482,7 @@ public class TargetPlatformHelper {
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
 			if (location != null)
-				list.add(location + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
+				list.add(location + IPath.SEPARATOR + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 		}
 		return (String[]) list.toArray(new String[list.size()]);
 	}

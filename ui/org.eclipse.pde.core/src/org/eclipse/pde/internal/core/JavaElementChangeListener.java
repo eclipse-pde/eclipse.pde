@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,28 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Properties;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.ElementChangedEvent;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IElementChangedListener;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaElementDelta;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class JavaElementChangeListener implements IElementChangedListener {
 
@@ -120,7 +107,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 
 	private boolean isInterestingProject(IJavaProject jProject) {
 		IProject project = jProject.getProject();
-		return WorkspaceModelManager.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project) && !project.exists(ICoreConstants.MANIFEST_PATH);
+		return WorkspaceModelManager.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project) && !PDEProject.getManifest(project).exists();
 	}
 
 	private void updateTable(IJavaElement element) {

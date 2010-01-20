@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class PDEState extends MinimalState {
@@ -261,21 +262,23 @@ public class PDEState extends MinimalState {
 		IProject project = PDECore.getWorkspace().getRoot().getProject(projectName);
 		if (!project.exists())
 			return null;
-		if (project.exists(ICoreConstants.MANIFEST_PATH)) {
+		IFile manifest = PDEProject.getManifest(project);
+		IFile pluginXml = PDEProject.getPluginXml(project);
+		IFile fragmentXml = PDEProject.getFragmentXml(project);
+		if (manifest.exists()) {
 			BundlePluginModelBase model = null;
 			if (desc.getHost() == null)
 				model = new BundlePluginModel();
 			else
 				model = new BundleFragmentModel();
 			model.setEnabled(true);
-			WorkspaceBundleModel bundle = new WorkspaceBundleModel(project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
+			WorkspaceBundleModel bundle = new WorkspaceBundleModel(manifest);
 			bundle.load(desc, this);
 			model.setBundleDescription(desc);
 			model.setBundleModel(bundle);
 			bundle.setEditable(false);
 
-			String filename = (desc.getHost() == null) ? ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR : ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR;
-			IFile file = project.getFile(filename);
+			IFile file = (desc.getHost() == null) ? pluginXml : fragmentXml;
 			if (file.exists()) {
 				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
 				extensions.setEditable(false);
@@ -288,9 +291,9 @@ public class PDEState extends MinimalState {
 
 		WorkspacePluginModelBase model = null;
 		if (desc.getHost() == null)
-			model = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), true);
+			model = new WorkspacePluginModel(pluginXml, true);
 		else
-			model = new WorkspaceFragmentModel(project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), true);
+			model = new WorkspaceFragmentModel(fragmentXml, true);
 		model.load(desc, this);
 		model.setBundleDescription(desc);
 		return model;

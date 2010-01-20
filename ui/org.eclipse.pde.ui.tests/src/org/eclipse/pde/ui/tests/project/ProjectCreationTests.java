@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.pde.core.project.IBundleProjectService;
+
+import org.eclipse.pde.internal.core.PDECore;
+
+import org.eclipse.pde.internal.core.ICoreConstants;
+
 import java.io.*;
 import java.net.URL;
 import junit.framework.*;
@@ -29,7 +35,15 @@ import org.osgi.framework.Version;
  */
 public class ProjectCreationTests extends TestCase {
 	
-	private static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY = Factory.newBundleClasspathEntry(null, null, new Path(".")); 
+	protected static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY; 
+	
+	static {
+		DEFAULT_BUNDLE_CLASSPATH_ENTRY = getBundleProjectService().newBundleClasspathEntry(null, null, new Path("."));
+	}
+	
+	public static IBundleProjectService getBundleProjectService() {
+		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+	}
 
 	public static Test suite() {
 		return new TestSuite(ProjectCreationTests.class);
@@ -47,7 +61,7 @@ public class ProjectCreationTests extends TestCase {
 		name = "test." + name;
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		assertFalse("Project should not exist", proj.exists());
-		IBundleProjectDescription description = Factory.getDescription(proj);
+		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
 		description.setSymbolicName(proj.getName());
 		return description;
 	}
@@ -62,7 +76,7 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.apply(null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -101,11 +115,12 @@ public class ProjectCreationTests extends TestCase {
 	public void testFragment() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IHostDescription host = Factory.newHost("some.host", null);
+		IBundleProjectService service = getBundleProjectService();
+		IHostDescription host = service.newHost("some.host", null);
 		description.setHost(host);
 		description.apply(null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -145,13 +160,14 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setBundleVersion(new Version("1.2.2"));
-		IHostDescription host = Factory.newHost("some.host", new VersionRange(new Version("1.0.0"), true, new Version("2.0.0"), false));
+		IBundleProjectService service = getBundleProjectService();
+		IHostDescription host = service.newHost("some.host", new VersionRange(new Version("1.0.0"), true, new Version("2.0.0"), false));
 		description.setHost(host);
-		IBundleClasspathEntry e1 = Factory.newBundleClasspathEntry(new Path("frag"), new Path("bin"), new Path("frag.jar"));
+		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"), new Path("frag.jar"));
 		description.setBundleClassath(new IBundleClasspathEntry[]{e1});
 		description.apply(null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -190,13 +206,14 @@ public class ProjectCreationTests extends TestCase {
 	public void testTwoSourceFoldersOneJar() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IBundleClasspathEntry e1 = Factory.newBundleClasspathEntry(new Path("src1"), null, new Path("the.jar"));
-		IBundleClasspathEntry e2 = Factory.newBundleClasspathEntry(new Path("src2"), null, new Path("the.jar"));
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("the.jar"));
+		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), null, new Path("the.jar"));
 		description.setBundleClassath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -236,13 +253,14 @@ public class ProjectCreationTests extends TestCase {
 	public void testTwoSourceFoldersTwoJars() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IBundleClasspathEntry e1 = Factory.newBundleClasspathEntry(new Path("src1"), null, new Path("."));
-		IBundleClasspathEntry e2 = Factory.newBundleClasspathEntry(new Path("src2"), new Path("bin2"), new Path("two.jar"));
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("."));
+		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), new Path("bin2"), new Path("two.jar"));
 		description.setBundleClassath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -283,8 +301,8 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.setSingleton(true);
 		description.apply(null);
-		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectService service = getBundleProjectService();
+		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
@@ -324,16 +342,17 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.setSingleton(true);
 		IPath src = new Path("src");
-		IBundleClasspathEntry spec = Factory.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
 		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
-		IPackageExportDescription ex0 = Factory.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
-		IPackageExportDescription ex1 = Factory.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = Factory.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
-		IPackageExportDescription ex3 = Factory.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
+		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
+		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
+		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
 		description.apply(null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
@@ -379,18 +398,19 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.setSingleton(true);
 		IPath src = new Path("src");
-		IBundleClasspathEntry spec = Factory.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
 		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
 		description.apply(null);
 		
 		// modify
-		IBundleProjectDescription modify = Factory.getDescription(project);
-		IHostDescription host = Factory.newHost("host." + project.getName(), new VersionRange("[1.0.0,2.0.0)"));
+		IBundleProjectDescription modify = service.getDescription(project);
+		IHostDescription host = service.newHost("host." + project.getName(), new VersionRange("[1.0.0,2.0.0)"));
 		modify.setHost(host);
 		modify.apply(null);
 		
 		// validate
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
@@ -431,27 +451,28 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.setSingleton(true);
 		IPath src = new Path("src");
-		IBundleClasspathEntry spec = Factory.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
 		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
-		description.setBinIncludes(new IPath[]{new Path("plugin.xml")});
+		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setEqunioxHeaders(true);
 		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
-		IRequiredBundleDescription rb1 = Factory.newRequiredBundle(
+		IRequiredBundleDescription rb1 = service.newRequiredBundle(
 				"org.eclipse.core.resources",
 				new VersionRange(new Version(3,5,0), true, new Version(4,0,0), false),
 				true, false);
-		IRequiredBundleDescription rb2 = Factory.newRequiredBundle("org.eclipse.core.variables", null, false, false);
+		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", null, false, false);
 		description.setRequiredBundles(new IRequiredBundleDescription[]{rb1, rb2});
-		IPackageImportDescription pi1 = Factory.newPackageImport("com.ibm.icu.text", null, false);
+		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
 		description.setPackageImports(new IPackageImportDescription[]{pi1});
 		description.apply(null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes", new Path("plugin.xml"), binIncludes[0]);
+		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Bundle-Classpath should be specified", classpath);
 		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
@@ -496,31 +517,32 @@ public class ProjectCreationTests extends TestCase {
 	public void testModifyBundle() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IPackageExportDescription ex0 = Factory.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
-		IPackageExportDescription ex1 = Factory.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = Factory.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
-		IPackageExportDescription ex3 = Factory.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
+		IBundleProjectService service = getBundleProjectService();
+		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
+		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
+		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
 		description.apply(null);
 		
 		// modify the project
-		IBundleProjectDescription modify = Factory.getDescription(project);
+		IBundleProjectDescription modify = service.getDescription(project);
 		IPath src = new Path("src");
-		IBundleClasspathEntry spec = Factory.newBundleClasspathEntry(src, null, new Path("a.jar"));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("a.jar"));
 		modify.setBundleClassath(new IBundleClasspathEntry[] {spec});
-		IPackageExportDescription ex4 = Factory.newPackageExport("x.y.z.interal", null, false, new String[]{"zz.top"});
+		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false, new String[]{"zz.top"});
 		modify.setPackageExports(new IPackageExportDescription[]{ex0, ex2, ex4, ex3}); // remove, add, re-order
-		modify.setBinIncludes(new IPath[]{new Path("plugin.xml")});
+		modify.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		modify.setActivator("org.eclipse.foo.Activator");
 		modify.apply(null);
 		
 		// verify attributes
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertEquals("Should be no activator", "org.eclipse.foo.Activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes entry", new Path("plugin.xml"), binIncludes[0]);
+		assertEquals("Wrong bin.includes entry", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Wrong Bundle-Classpath", classpath);
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
@@ -561,17 +583,18 @@ public class ProjectCreationTests extends TestCase {
 	public void testFragToBundle() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IHostDescription host = Factory.newHost("some.host", null);
+		IBundleProjectService service = getBundleProjectService();
+		IHostDescription host = service.newHost("some.host", null);
 		description.setHost(host);
 		description.apply(null);
 		
 		//modify to a bundle
-		IBundleProjectDescription modify = Factory.getDescription(project);
+		IBundleProjectDescription modify = service.getDescription(project);
 		modify.setHost(null);
 		modify.apply(null);
 		
 		// validate
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -610,11 +633,12 @@ public class ProjectCreationTests extends TestCase {
 	public void testJarsAsBundle() throws CoreException, IOException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IBundleClasspathEntry one = Factory.newBundleClasspathEntry(null, null, new Path("one.jar"));
-		IBundleClasspathEntry two = Factory.newBundleClasspathEntry(null, null, new Path("lib/two.jar"));
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, null, new Path("one.jar"));
+		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, null, new Path("lib/two.jar"));
 		description.setBundleClassath(new IBundleClasspathEntry[]{one, two});
-		IPackageExportDescription exp1 = Factory.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
-		IPackageExportDescription exp2 = Factory.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
 		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
 		description.setBundleVersion(new Version("1.0.0"));
 		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
@@ -623,7 +647,7 @@ public class ProjectCreationTests extends TestCase {
 		createBogusJar(project.getFile("one.jar"));
 		createBogusJar(project.getFile(new Path("lib/two.jar")));
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -691,11 +715,12 @@ public class ProjectCreationTests extends TestCase {
 	public void testClassFolders() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IBundleClasspathEntry one = Factory.newBundleClasspathEntry(null, new Path("bin1"), new Path("one.jar"));
-		IBundleClasspathEntry two = Factory.newBundleClasspathEntry(null, new Path("bin2"), new Path("two.jar"));
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, new Path("bin1"), new Path("one.jar"));
+		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, new Path("bin2"), new Path("two.jar"));
 		description.setBundleClassath(new IBundleClasspathEntry[]{one, two});
-		IPackageExportDescription exp1 = Factory.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
-		IPackageExportDescription exp2 = Factory.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
 		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
 		description.setBundleVersion(new Version("1.0.0"));
 		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
@@ -704,7 +729,7 @@ public class ProjectCreationTests extends TestCase {
 		project.getFolder("bin1").create(false, true, null);
 		project.getFolder("bin2").create(false, true, null);
 		
-		IBundleProjectDescription d2 = Factory.getDescription(project);
+		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
 		IPath[] binIncludes = d2.getBinIncludes();

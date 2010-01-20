@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,13 @@
 package org.eclipse.pde.internal.core.build;
 
 import java.io.PrintWriter;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import org.eclipse.core.runtime.CoreException;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public class BuildEntry extends BuildObject implements IBuildEntry {
@@ -48,10 +49,12 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 	}
 
 	void processEntry(String value) {
+		IPath rootPath = getRootPath();
 		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			token = token.trim();
+			token = fromRelative(token, rootPath);
 			tokens.add(token);
 		}
 	}
@@ -85,12 +88,73 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		PropertiesUtil.writeKeyValuePair(indent, name, tokens.elements(), writer);
+		Enumeration elements = tokens.elements();
+		IPath rootPath = getRootPath();
+		if (rootPath != null) {
+			// translation required for source. and output. entries
+			Vector vector = new Vector();
+			while (elements.hasMoreElements()) {
+				String e = (String) elements.nextElement();
+				vector.add(toRelative(e, rootPath));
+			}
+			elements = vector.elements();
+		}
+		PropertiesUtil.writeKeyValuePair(indent, name, elements, writer);
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);
 		}
+	}
+
+	/**
+	 * Returns the path that this entries tokens are relative to, or <code>null</code> if none.
+	 * 
+	 * @return relative root path, or <code>null</code>
+	 */
+	IPath getRootPath() {
+		if (name.startsWith(IBuildEntry.JAR_PREFIX) || name.startsWith(IBuildEntry.OUTPUT_PREFIX)) {
+			IResource resource = getModel().getUnderlyingResource();
+			if (resource != null) {
+				IProject project = resource.getProject();
+				if (project != null) {
+					IContainer root = PDEProject.getBundleRoot(project);
+					if (root != null && !root.equals(project)) {
+						// translation required for source. and output. entries
+						return root.getProjectRelativePath();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Makes the token a bundle root relative path
+	 * 
+	 * @param token token
+	 * @param root bundle root path or <code>null</code>
+	 * @return bundle relative token
+	 */
+	String toRelative(String token, IPath root) {
+		if (root == null) {
+			return token;
+		}
+		return (new Path(token)).makeRelativeTo(root).toPortableString();
+	}
+
+	/**
+	 * Makes the token a project relative path
+	 * 
+	 * @param token token
+	 * @param root bundle root path or <code>null</code>
+	 * @return project relative token
+	 */
+	String fromRelative(String token, IPath root) {
+		if (root == null) {
+			return token;
+		}
+		return root.append(new Path(token)).toPortableString();
 	}
 }

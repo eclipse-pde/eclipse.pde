@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,8 +18,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.converter.PDEPluginConverter;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.text.edits.*;
 
 public class CreateManifestOperation implements IRunnableWithProgress {
@@ -49,8 +51,8 @@ public class CreateManifestOperation implements IRunnableWithProgress {
 
 	private void trimOldManifest() throws BadLocationException, CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		String filename = fModel.isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
-		IFile file = fModel.getUnderlyingResource().getProject().getFile(filename);
+		IProject project = fModel.getUnderlyingResource().getProject();
+		IFile file = fModel.isFragmentModel() ? PDEProject.getFragmentXml(project) : PDEProject.getPluginXml(project);
 		try {
 			manager.connect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE);

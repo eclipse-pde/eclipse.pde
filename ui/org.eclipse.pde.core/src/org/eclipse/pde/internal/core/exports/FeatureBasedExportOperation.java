@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
@@ -78,7 +77,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 	protected String[] getPaths() {
 		String[] paths = super.getPaths();
 		String[] all = new String[paths.length + 1];
-		all[0] = fFeatureLocation + File.separator + "feature.xml"; //$NON-NLS-1$
+		all[0] = fFeatureLocation + File.separator + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR;
 		System.arraycopy(paths, 0, all, 1, paths.length);
 		return all;
 	}
@@ -119,6 +118,6 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 				}
 			}
 		}
-		save(new File(file, "build.properties"), prop, "Marker File"); //$NON-NLS-1$ //$NON-NLS-2$
+		save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), prop, "Marker File"); //$NON-NLS-1$
 	}
 }

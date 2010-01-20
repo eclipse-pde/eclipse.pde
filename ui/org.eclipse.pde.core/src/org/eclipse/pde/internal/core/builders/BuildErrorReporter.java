@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -42,7 +43,7 @@ import org.osgi.framework.Constants;
 public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants {
 
 	private static final String DEF_SOURCE_ENTRY = PROPERTY_SOURCE_PREFIX + '.';
-	private static final String[] RESERVED_NAMES = new String[] {"meta-inf", "osgi-inf", "build.properties", "plugin.xml", "plugin.properties"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	private static final String[] RESERVED_NAMES = new String[] {"meta-inf", "osgi-inf", ICoreConstants.BUILD_FILENAME_DESCRIPTOR, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, "plugin.properties"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private static final String JAVAC_WARNINGS_ENTRY = PROPERTY_JAVAC_WARNINGS_PREFIX + '.';
 	private static final String ASSERT_IDENTIFIER = "assertIdentifier"; //$NON-NLS-1$
 	private static final String ENUM_IDENTIFIER = "enumIdentifier"; //$NON-NLS-1$
@@ -405,15 +406,15 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	private void validateBinIncludes(IBuildEntry binIncludes) {
 		// make sure we have a manifest entry
-		if (fProject.exists(ICoreConstants.MANIFEST_PATH)) {
+		if (PDEProject.getManifest(fProject).exists()) {
 			validateBinIncludes(binIncludes, ICoreConstants.MANIFEST_FOLDER_NAME);
 		}
 
 		// if we have an OSGI_INF/ directory, let's do some validation
-		if (fProject.exists(ICoreConstants.OSGI_INF_PATH)) {
+		IFolder OSGinf = PDEProject.getOSGiInf(fProject);
+		if (OSGinf.exists()) {
 			try {
-				IFolder folder = fProject.getFolder(ICoreConstants.OSGI_INF_PATH);
-				if (folder.members().length > 0) { // only validate if we have something in it
+				if (OSGinf.members().length > 0) { // only validate if we have something in it
 					validateBinIncludes(binIncludes, ICoreConstants.OSGI_INF_FOLDER_NAME);
 				}
 			} catch (CoreException e) { // do nothing
@@ -421,12 +422,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 
 		// make sure if we're a fragment, we have a fragment.xml entry
-		if (fProject.exists(ICoreConstants.FRAGMENT_PATH)) {
+		if (PDEProject.getFragmentXml(fProject).exists()) {
 			validateBinIncludes(binIncludes, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 		}
 
-		// make sure if we're a plugin, we have a plugin.xml entry
-		if (fProject.exists(ICoreConstants.PLUGIN_PATH)) {
+		// make sure if we're a plug-in, we have a plugin.xml entry
+		if (PDEProject.getPluginXml(fProject).exists()) {
 			validateBinIncludes(binIncludes, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		}
 
@@ -710,7 +711,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (startsWithAntVariable(token))
 				// skip '${x}' variables
 				continue;
-			IResource member = fProject.findMember(token);
+			IResource member = PDEProject.getBundleRoot(fProject).findMember(token);
 			String message = null;
 			int fixId = PDEMarkerFactory.NO_RESOLUTION;
 			if (member == null) {

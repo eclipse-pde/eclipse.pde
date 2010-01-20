@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
@@ -32,6 +31,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -402,7 +402,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask("", 4); //$NON-NLS-1$
 
 			// Extract the source, track build entries and package locations
-			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
+			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(PDEProject.getBuildProperties(project));
 			Map packageLocations = new HashMap(); // maps package path to a src folder 
 			boolean sourceFound = extractSourceFolders(project, model, buildModel, packageLocations, new SubProgressMonitor(monitor, 1));
 			// If no source was found previously, check if there was a source folder (src) inside the binary plug-in
@@ -1033,7 +1033,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @param base
 	 */
 	private void modifyBundleClasspathHeader(IProject project, IPluginModelBase base) {
-		IFile file = project.getFile(JarFile.MANIFEST_NAME);
+		IFile file = PDEProject.getManifest(project);
 		if (file.exists()) {
 			WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
 			IBundle bundle = bmodel.getBundle();
@@ -1078,7 +1078,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		// If the build.properties file has a default source folder we need a java nature
-		IFile buildProperties = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile buildProperties = PDEProject.getBuildProperties(project);
 		if (buildProperties.exists()) {
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProperties);
 			buildModel.load();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.text.bundle.*;
@@ -188,8 +189,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		IExtensions ext = modelBase.getExtensions();
 		if (ext.getExtensionPoints().length > 0 || ext.getExtensions().length > 0)
 			return null;
-		String name = (modelBase instanceof IBundleFragmentModel) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
-		IFile pluginFile = project.getFile(name);
+		IFile pluginFile = (modelBase instanceof IBundleFragmentModel) ? PDEProject.getFragmentXml(project) : PDEProject.getPluginXml(project);
 		return new DeleteResourceChange(pluginFile.getFullPath(), true);
 	}
 

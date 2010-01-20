@@ -181,7 +181,7 @@ public interface IBundleProjectDescription {
 	/**
 	 * Sets the value of the Bundle-Localization header for the described bundle.
 	 * 
-	 * @param path bundle relative path or <code>null</code>
+	 * @param path bundle root relative path or <code>null</code>
 	 */
 	public void setLocalization(IPath path);
 
@@ -405,7 +405,7 @@ public interface IBundleProjectDescription {
 	 * Bundle-Classpath will be included. This sets any additional entries that 
 	 * are to be included.
 	 * </p>
-	 * @param paths project relative paths of files and folders to include
+	 * @param paths bundle root relative paths of files and folders to include
 	 *  or <code>null</code> if none
 	 */
 	public void setBinIncludes(IPath[] paths);
@@ -418,8 +418,37 @@ public interface IBundleProjectDescription {
 	 * Bundle-Classpath will be included. This returns any additional entries that 
 	 * are to be included.
 	 * </p>
-	 * @return files and folders on the <code>bin.includes</code> entry or <code>null</code>
+	 * @return bundle root relative paths of files and folders on the <code>bin.includes</code>
+	 * 	entry or <code>null</code>
 	 */
 	public IPath[] getBinIncludes();
+
+	/**
+	 * Sets the location within the project where the root of the bundle and its associated
+	 * artifacts will reside, or <code>null</code> to indicate the default bundle root location
+	 * should be used (project folder).
+	 * <p>
+	 * This has no effect on existing projects.  This method is intended for use on descriptions
+	 * for new projects. To modify the bundle root of an existing project use
+	 * {@link Factory#setBundleRoot(IProject, IPath)}.
+	 * </p>
+	 * <p>
+	 * The bundle root is the folder containing the <code>META-INF/</code> folder. When a project
+	 * does not yet exist, bundle files will be created relative to the bundle root. When a project
+	 * already exists and the bundle root location is modified, existing bundle artifacts at the old
+	 * root are not moved or modified. Instead, the modify operation will update any existing bundle
+	 * files at the new root location, or create them if not yet present.
+	 * </p>
+	 * @param path project relative path to bundle root artifacts in the project or <code>null</code>
+	 */
+	public void setBundleRoot(IPath path);
+
+	/**
+	 * Returns the location within the project that is the root of the bundle related
+	 * artifacts, or <code>null</code> to indicate the default location (project folder).
+	 * 
+	 * @return project relative bundle root path or <code>null</code>
+	 */
+	public IPath getBundleRoot();
 
 }

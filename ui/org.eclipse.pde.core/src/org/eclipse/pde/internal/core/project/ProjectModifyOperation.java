@@ -50,7 +50,9 @@ public class ProjectModifyOperation {
 	public void execute(IProgressMonitor monitor, IBundleProjectDescription description) throws CoreException {
 		// retrieve current description of the project to detect differences
 		IProject project = description.getProject();
-		IBundleProjectDescription before = Factory.getDescription(project);
+		IBundleProjectService service = (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+		IBundleProjectDescription before = service.getDescription(project);
+		boolean considerRoot = !project.exists();
 		String taskName = null;
 		if (project.exists()) {
 			taskName = Messages.ProjectModifyOperation_0;
@@ -65,7 +67,18 @@ public class ProjectModifyOperation {
 			}
 		}
 		SubMonitor sub = SubMonitor.convert(monitor, taskName, 6);
+		// create and open project
 		createProject(description);
+		// set bundle root for new projects
+		if (considerRoot) {
+			IFolder folder = null;
+			IPath root = description.getBundleRoot();
+			if (root != null && !root.isEmpty()) {
+				folder = project.getFolder(root);
+				CoreUtility.createFolder(folder);
+			}
+			PDEProject.setBundleRoot(project, folder);
+		}
 		sub.worked(1);
 		configureNatures(description);
 		sub.worked(1);
@@ -286,11 +299,11 @@ public class ProjectModifyOperation {
 	 */
 	private void configureManifest(IBundleProjectDescription description, IBundleProjectDescription before) throws CoreException {
 		IProject project = description.getProject();
-		IFile manifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		IFile manifest = PDEProject.getManifest(project);
 		if (description.getHost() == null) {
-			fModel = new WorkspaceBundlePluginModel(manifest, project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
+			fModel = new WorkspaceBundlePluginModel(manifest, PDEProject.getPluginXml(project));
 		} else {
-			fModel = new WorkspaceBundleFragmentModel(manifest, project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
+			fModel = new WorkspaceBundleFragmentModel(manifest, PDEProject.getFragmentXml(project));
 		}
 
 		IPluginBase pluginBase = fModel.getPluginBase();
@@ -585,7 +598,7 @@ public class ProjectModifyOperation {
 
 	private void configureBuildPropertiesFile(IBundleProjectDescription description, IBundleProjectDescription before) throws CoreException {
 		IProject project = description.getProject();
-		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		IFile file = PDEProject.getBuildProperties(project);
 		WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 		IBuildModelFactory factory = model.getFactory();
 

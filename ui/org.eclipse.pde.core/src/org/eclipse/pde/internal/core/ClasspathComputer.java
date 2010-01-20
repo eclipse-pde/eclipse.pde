@@ -24,6 +24,7 @@ import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.team.core.RepositoryProvider;
 
@@ -140,7 +141,7 @@ public class ClasspathComputer {
 	}
 
 	protected static IBuild getBuild(IProject project) throws CoreException {
-		IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile buildFile = PDEProject.getBuildProperties(project);
 		IBuildModel buildModel = null;
 		if (buildFile.exists()) {
 			buildModel = new WorkspaceBuildModel(buildFile);

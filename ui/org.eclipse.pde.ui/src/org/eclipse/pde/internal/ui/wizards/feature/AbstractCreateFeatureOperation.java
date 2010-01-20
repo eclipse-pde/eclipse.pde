@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,10 +20,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
@@ -73,7 +75,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		} else {
 			fProject.create(monitor);
 			fProject.open(monitor);
-			file = fProject.getFile("feature.xml"); //$NON-NLS-1$
+			file = PDEProject.getFeatureXml(fProject);
 			monitor.worked(3);
 		}
 		if (file.exists())
@@ -105,11 +107,11 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 	}
 
 	protected void createBuildProperties() throws CoreException {
-		IFile file = fProject.getFile("build.properties"); //$NON-NLS-1$
+		IFile file = PDEProject.getBuildProperties(fProject);
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
-			ientry.addToken("feature.xml"); //$NON-NLS-1$
+			ientry.addToken(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			String library = fFeatureData.library;
 			if (library != null) {
 				String source = fFeatureData.getSourceFolderName();
@@ -138,7 +140,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 	}
 
 	protected IFile createFeature() throws CoreException {
-		IFile file = fProject.getFile("feature.xml"); //$NON-NLS-1$
+		IFile file = PDEProject.getFeatureXml(fProject);
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel();
 		model.setFile(file);
 		IFeature feature = model.getFeature();

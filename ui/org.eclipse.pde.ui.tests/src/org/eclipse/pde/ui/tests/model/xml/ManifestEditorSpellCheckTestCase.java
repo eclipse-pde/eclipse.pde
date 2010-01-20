@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import org.eclipse.pde.internal.core.ICoreConstants;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -63,7 +65,7 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 	public void testNoSpellingAnnotation(){
 
 		try {
-			createAndOpenFile("plugin.xml", fDocument.get());
+			createAndOpenFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, fDocument.get());
 		} catch (CoreException e) {
 			fail(e.getMessage());
 			e.printStackTrace();

@@ -32,10 +32,11 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.pde.core.project.Factory;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.framework.Version;
 
@@ -57,6 +58,10 @@ public class ProjectUtils {
 	 * Value is: <code>src</code>
 	 */
 	public static final String SRC_FOLDER = "src";
+	
+	public static IBundleProjectService getBundleProjectService() {
+		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
+	}
 	
 	/**
 	 * Crate a plug-in project with the given name
@@ -80,8 +85,9 @@ public class ProjectUtils {
 		}
 		
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		IBundleProjectDescription description = Factory.getDescription(project);
-		IBundleClasspathEntry entry = Factory.newBundleClasspathEntry(new Path(SRC_FOLDER), new Path(BIN_FOLDER), null);
+		IBundleProjectService service = getBundleProjectService();
+		IBundleProjectDescription description = service.getDescription(project);
+		IBundleClasspathEntry entry = service.newBundleClasspathEntry(new Path(SRC_FOLDER), new Path(BIN_FOLDER), null);
 		description.setSymbolicName(projectName);
 		description.setBundleClassath(new IBundleClasspathEntry[]{entry});
 		description.setNatureIds(resolvednatures);
@@ -282,7 +288,7 @@ public class ProjectUtils {
 	 * @param packagename the name of the package to remove from the export package header
 	 */
 	public static void removeExportedPackage(IProject project, String packagename) throws CoreException {
-		IBundleProjectDescription description = Factory.getDescription(project);
+		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
 		IPackageExportDescription[] exports = description.getPackageExports();
 		if (exports != null) {
 			List list = new ArrayList();
@@ -314,7 +320,8 @@ public class ProjectUtils {
 			//do no work
 			return;
 		}
-		IBundleProjectDescription description = Factory.getDescription(project);
+		IBundleProjectService service = getBundleProjectService();
+		IBundleProjectDescription description = service.getDescription(project);
 		IPackageExportDescription[] exports = description.getPackageExports();
 		List list = new ArrayList();
 		if (exports != null) {
@@ -322,7 +329,7 @@ public class ProjectUtils {
 				list.add(exports[i]);
 			}
 		}
-		list.add(Factory.newPackageExport(packagename, null, !internal, friends));
+		list.add(service.newPackageExport(packagename, null, !internal, friends));
 		description.setPackageExports((IPackageExportDescription[]) list.toArray(new IPackageExportDescription[list.size()]));
 		description.apply(null);
 	}
@@ -335,7 +342,7 @@ public class ProjectUtils {
 	 * @return the {@link IPackageExportDescription}s for the given project or <code>null</code>
 	 */
 	public static IPackageExportDescription[] getExportedPackages(IProject project) throws CoreException {
-		IBundleProjectDescription description = Factory.getDescription(project);
+		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
 		return description.getPackageExports();
 	}
 }

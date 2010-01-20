@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class ClasspathHelper {
 
@@ -249,7 +250,7 @@ public class ClasspathHelper {
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals(PDECore.getDefault().getModelManager().getSystemBundleId()), false);
-				IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+				IFile file = PDEProject.getBuildProperties(project);
 				boolean searchBuild = file.exists();
 				if (searchBuild) {
 					WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
@@ -304,7 +305,7 @@ public class ClasspathHelper {
 				try {
 					IProject project = frags[i].getUnderlyingResource().getProject();
 					Map classpathMap = getClasspathMap(project, checkExcluded, false, true);
-					IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+					IFile file = PDEProject.getBuildProperties(project);
 					IBuild build = null;
 					if (file.exists()) {
 						WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);

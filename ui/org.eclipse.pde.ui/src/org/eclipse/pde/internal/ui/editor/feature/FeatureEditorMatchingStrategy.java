@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,13 +12,11 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.ResourceUtil;
 
 public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
-
-	private static final String BP = "build.properties"; //$NON-NLS-1$
-	private static final String FX = "feature.xml"; //$NON-NLS-1$
 
 	public boolean matches(IEditorReference editorRef, IEditorInput input) {
 		if (!(input instanceof IFileEditorInput))
@@ -34,13 +32,13 @@ public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
 				return false;
 			// build.properties matches with editors that have a feature.xml file
 			// as their input and that feature.xml is at the root
-			if (inputFile.getName().equals(FX)) {
-				if (currInputFile.getName().equals(BP))
-					return inputFile.getProjectRelativePath().toString().equals(FX);
+			if (inputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
+				if (currInputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR))
+					return inputFile.getProjectRelativePath().toString().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				return inputFile.equals(currInputFile);
-			} else if (inputFile.getName().equals(BP)) {
-				if (currInputFile.getName().equals(FX))
-					return currInputFile.getProjectRelativePath().toString().equals(FX);
+			} else if (inputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
+				if (currInputFile.getName().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR))
+					return currInputFile.getProjectRelativePath().toString().equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				return inputFile.equals(currInputFile);
 			}
 			return false;

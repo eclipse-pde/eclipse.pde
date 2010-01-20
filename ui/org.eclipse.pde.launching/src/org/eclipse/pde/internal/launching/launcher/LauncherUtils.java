@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
@@ -198,9 +199,9 @@ public class LauncherUtils {
 					}
 				}
 			}
-			String[] otherFiles = {ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR, ICoreConstants.BUILD_FILENAME_DESCRIPTOR};
+			IFile[] otherFiles = new IFile[] {PDEProject.getManifest(project), PDEProject.getBuildProperties(project)};
 			for (int i = 0; i < otherFiles.length; i++) {
-				IResource file = project.getFile(otherFiles[i]);
+				IFile file = otherFiles[i];
 				if (file != null) {
 					long fileTimeStamp = file.getRawLocation().toFile().lastModified();
 					if (timeStamp < fileTimeStamp)

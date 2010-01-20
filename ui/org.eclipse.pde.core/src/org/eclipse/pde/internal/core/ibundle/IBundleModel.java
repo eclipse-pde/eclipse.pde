@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 
 /**
- * This model is created from the "META-INF/MANIFEST.MF" file that represents
+ * This model is created from the <code>META-INF/MANIFEST.MF</code> file that represents
  * the plug-in manifest in Eclipse 3.0 OSGi format.
  * <p>
  * If this model is editable, isEditable() will return true and the model

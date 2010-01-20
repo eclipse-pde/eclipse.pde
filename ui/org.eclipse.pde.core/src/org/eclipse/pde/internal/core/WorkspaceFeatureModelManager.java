@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,14 +11,11 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.HashMap;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 
@@ -27,8 +24,9 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 	}
 
 	protected void createModel(IProject project, boolean notify) {
-		if (project.exists(ICoreConstants.FEATURE_PATH)) {
-			WorkspaceFeatureModel model = new WorkspaceFeatureModel(project.getFile(ICoreConstants.FEATURE_PATH));
+		IFile featureXml = PDEProject.getFeatureXml(project);
+		if (featureXml.exists()) {
+			WorkspaceFeatureModel model = new WorkspaceFeatureModel(featureXml);
 			loadModel(model, false);
 			if (fModels == null)
 				fModels = new HashMap();
@@ -40,8 +38,9 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 
 	protected void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
-		if (file.getProjectRelativePath().equals(ICoreConstants.FEATURE_PATH)) {
-			IProject project = file.getProject();
+		IProject project = file.getProject();
+		IFile featureXml = PDEProject.getFeatureXml(project);
+		if (file.equals(featureXml)) {
 			Object model = getModel(project);
 			int kind = delta.getKind();
 			if (kind == IResourceDelta.REMOVED && model != null) {

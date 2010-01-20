@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.ltk.core.refactoring.participants.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public abstract class PDERenameParticipant extends RenameParticipant implements ISharableParticipant {
 
@@ -44,13 +44,12 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		addBundleManifestChange(result, pm);
 		if (updateBuildProperties())
 			addBuildPropertiesChange(result, pm);
-		addChange(result, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, pm);
-		addChange(result, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR, pm);
+		addChange(result, PDEProject.getPluginXml(fProject), pm);
+		addChange(result, PDEProject.getFragmentXml(fProject), pm);
 		return (result.getChildren().length == 0) ? null : result;
 	}
 
-	private void addChange(CompositeChange result, String filename, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile(filename);
+	private void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
 			if (change != null)
@@ -67,7 +66,7 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 	}
 
 	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
-		addBundleManifestChange(fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), result, pm);
+		addBundleManifestChange(PDEProject.getManifest(fProject), result, pm);
 	}
 
 	protected void addBundleManifestChange(IFile file, CompositeChange result, IProgressMonitor pm) throws CoreException {
@@ -79,7 +78,7 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 	}
 
 	protected void addBuildPropertiesChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		IFile file = PDEProject.getBuildProperties(fProject);
 		if (file.exists()) {
 			Change change = BuildPropertiesChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
 			if (change != null)

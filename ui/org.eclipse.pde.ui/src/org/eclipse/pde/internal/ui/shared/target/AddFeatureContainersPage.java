@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -253,7 +253,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		for (int i = 0; i < dirs.length; i++) {
 			File dir = dirs[i];
 			if (dir.isDirectory()) {
-				File manifest = new File(dir, "feature.xml"); //$NON-NLS-1$
+				File manifest = new File(dir, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 				if (manifest.exists()) {
 					IStatus status = doLoadFeature(dir, manifest, result);
 					if (status != null)

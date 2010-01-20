@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.Bundle;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
@@ -98,8 +99,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				if (resource.isDerived())
 					return false;
 				if (resource.getType() == IResource.FILE) {
+					IFile file = (IFile) resource;
+					IProject project = file.getProject();
 					String name = resource.getName();
-					IPath path = resource.getProjectRelativePath();
 					if (isLocalizationFile(resource)) {
 						type |= MANIFEST | EXTENSIONS;
 						if (DEBUG) {
@@ -107,21 +109,21 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
-					} else if (path.equals(ICoreConstants.MANIFEST_PATH)) {
+					} else if (file.equals(PDEProject.getManifest(project))) {
 						type |= MANIFEST | EXTENSIONS | BUILD;
 						if (DEBUG) {
 							System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
-					} else if (name.endsWith(".exsd") || path.equals(ICoreConstants.PLUGIN_PATH) || path.equals(ICoreConstants.FRAGMENT_PATH)) { //$NON-NLS-1$
+					} else if (name.endsWith(".exsd") || file.equals(PDEProject.getPluginXml(project)) || file.equals(PDEProject.getFragmentXml(project))) { //$NON-NLS-1$
 						type |= EXTENSIONS;
 						if (DEBUG) {
 							System.out.print("Needs to rebuild extensions in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
-					} else if (path.equals(ICoreConstants.BUILD_PROPERTIES_PATH)) {
+					} else if (file.equals(PDEProject.getBuildProperties(project))) {
 						type |= BUILD;
 						if (DEBUG) {
 							System.out.print("Needs to rebuild build.properties in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -225,14 +227,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 		if ((type & MANIFEST | EXTENSIONS) != 0) {
 			IProject project = getProject();
-			IFile file = project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+			IFile file = PDEProject.getPluginXml(project);
 			if (!file.exists())
-				file = project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+				file = PDEProject.getFragmentXml(project);
 
 			if (file.exists()) {
 				validateFiles(file, type, monitor);
 			} else if ((type & MANIFEST) != 0) {
-				IFile manifestFile = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+				IFile manifestFile = PDEProject.getManifest(project);
 				if (manifestFile.exists())
 					validateManifestFile(manifestFile, new SubProgressMonitor(monitor, 1));
 			}
@@ -288,7 +290,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		String message = NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 
-		IFile bundleManifest = file.getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		IFile bundleManifest = PDEProject.getManifest(getProject());
 		XMLErrorReporter reporter = null;
 		BundleErrorReporter bundleReporter = null;
 		if (bundleManifest.exists()) {
@@ -297,9 +299,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if ((type & MANIFEST) != 0)
 				bundleReporter = new BundleErrorReporter(bundleManifest);
 		} else if ((type & MANIFEST) != 0 || (type & EXTENSIONS) != 0) {
-			if (file.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)) {
+			if (file.equals(PDEProject.getPluginXml(getProject()))) {
 				reporter = new PluginErrorReporter(file);
-			} else if (file.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
+			} else if (file.equals(PDEProject.getFragmentXml(getProject()))) {
 				reporter = new FragmentErrorReporter(file);
 			}
 		}
@@ -319,7 +321,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (monitor.isCanceled())
 			return;
 		IProject project = getProject();
-		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		IFile file = PDEProject.getBuildProperties(project);
 		if (file.exists()) {
 			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
 			BuildErrorReporter ber = new BuildErrorReporter(file);
@@ -329,7 +331,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	// Will place a marker on the project if the build.properties does not exist
 	private void validateBuildPropertiesExists(IProject project) {
-		IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		IFile file = PDEProject.getBuildProperties(project);
 		if (!file.exists()) {
 			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
 			if (severity == CompilerFlags.IGNORE)
@@ -346,14 +348,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	// Will place a marker on either the project (if META-INF exist but not a MANIFEST.MF) or on the MANIFEST.MF file with incorrect casing.
 	private void validateManifestCasing(IProject project) {
-		IFolder manifestFolder = project.getFolder("META-INF"); //$NON-NLS-1$
+		IFolder manifestFolder = PDEProject.getMetaInf(project);
 		if (manifestFolder.exists()) {
 			try {
 				manifestFolder.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ONE);
 			} catch (CoreException e1) {
 			}
 			// exit if the proper casing exists (should be majority of the time)
-			if (manifestFolder.getFile("MANIFEST.MF").exists()) //$NON-NLS-1$
+			if (PDEProject.getManifest(project).exists())
 				return;
 
 			IPath location = manifestFolder.getLocation();
@@ -389,7 +391,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	class ManifestFilter implements FilenameFilter {
 
 		public boolean accept(File dir, String name) {
-			return (name.equalsIgnoreCase("MANIFEST.MF")); //$NON-NLS-1$
+			return (name.equalsIgnoreCase(ICoreConstants.MANIFEST_FILENAME));
 		}
 	}
 
@@ -402,14 +404,14 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			// clean problem markers on the project
 			cleanProblems(getProject(), IResource.DEPTH_ZERO);
 			// clean the manifest directory (since errors can be created on manifest files with incorrect casing)
-			IFile manifestFile = getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+			IFile manifestFile = PDEProject.getManifest(getProject());
 			cleanProblems(manifestFile.getParent(), IResource.DEPTH_ONE);
 			// clean plug-in XML file
-			cleanProblems(getProject().getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), IResource.DEPTH_ZERO);
+			cleanProblems(PDEProject.getPluginXml(getProject()), IResource.DEPTH_ZERO);
 			// clean fragment XML file
-			cleanProblems(getProject().getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), IResource.DEPTH_ZERO);
+			cleanProblems(PDEProject.getFragmentXml(getProject()), IResource.DEPTH_ZERO);
 			// clean build properties
-			cleanProblems(getProject().getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR), IResource.DEPTH_ZERO);
+			cleanProblems(PDEProject.getBuildProperties(getProject()), IResource.DEPTH_ZERO);
 			localmonitor.worked(1);
 		} finally {
 			localmonitor.done();

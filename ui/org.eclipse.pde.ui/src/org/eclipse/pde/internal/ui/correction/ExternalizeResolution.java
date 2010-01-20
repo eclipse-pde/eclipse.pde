@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,9 +20,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -99,8 +101,8 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		IFile file = ((IFile) marker.getResource());
 		ModelModification modification = null;
 		// if file we are externalizing is not manifest, try to pass manifest in if it exists
-		if (!file.getName().equals(PDEModelUtility.F_MANIFEST)) {
-			IFile manifest = file.getProject().getFile(PDEModelUtility.F_MANIFEST_FP);
+		if (!file.getName().equals(ICoreConstants.MANIFEST_FILENAME)) {
+			IFile manifest = PDEProject.getManifest(file.getProject());
 			if (manifest.exists()) {
 				modification = new ModelModification(manifest, file) {
 					protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
