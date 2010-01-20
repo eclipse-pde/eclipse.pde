@@ -12,10 +12,9 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.BundleManifestSourceLocationManager;
+import org.eclipse.pde.internal.core.SourceLocationManager;
 
 /**
  * Used to locate source when performing an import that is *not* from the active
@@ -31,14 +30,14 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	/**
 	 * Resolved bundles corresponding to models
 	 */
-	private IInstallableUnit[] bundles;
+//	private IInstallableUnit[] bundles;
 
 	/**
 	 * List of source locations that reference root folders containing
 	 * sub-folders of source directories. This is the old-style source
 	 * plug-in.
 	 */
-	private List oldSourceRoots;
+//	private List oldSourceRoots;
 
 	/**
 	 * Constructs alternate source locations on the given plug-ins.
@@ -46,9 +45,8 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * @param plugins models to consider as source locations
 	 * @param rbs corresponding resolved bundles
 	 */
-	public AlternateSourceLocations(IPluginModelBase[] plugins, IInstallableUnit[] units) {
+	public AlternateSourceLocations(IPluginModelBase[] plugins) {
 		models = plugins;
-		bundles = units;
 	}
 
 	/**
@@ -71,15 +69,16 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * 	extension point
 	 */
 	public List getExtensionLocations() {
-		if (oldSourceRoots == null) {
-			oldSourceRoots = new ArrayList();
-			for (int i = 0; i < bundles.length; i++) {
-				String path = ((ResolvedBundle) bundles[i]).getSourcePath();
-				if (path != null) {
-					oldSourceRoots.add(new SourceLocation(new Path(models[i].getInstallLocation()).append(path)));
-				}
-			}
-		}
-		return oldSourceRoots;
+		return new ArrayList();
+//		if (oldSourceRoots == null) {
+//			oldSourceRoots = new ArrayList();
+//			for (int i = 0; i < bundles.length; i++) {
+//				String path = ((ResolvedBundle) bundles[i]).getSourcePath();
+//				if (path != null) {
+//					oldSourceRoots.add(new SourceLocation(new Path(models[i].getInstallLocation()).append(path)));
+//				}
+//			}
+//		}
+//		return oldSourceRoots;
 	}
 }

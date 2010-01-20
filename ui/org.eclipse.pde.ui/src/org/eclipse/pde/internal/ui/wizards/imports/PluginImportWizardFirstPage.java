@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -25,7 +24,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
@@ -36,7 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.osgi.framework.Version;
 
 /**
  * The first page of the import plug-ins wizard
@@ -547,19 +544,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 				// Collect source locations
 				// TODO Support old school source features
-				BundleInfo[] sourceBundles = ((TargetDefinition) target).getProvisionedSourceBundles();
-
-				List sourceModels = new ArrayList();
-				List sourceBundles = new ArrayList();
-				for (int i = 0; i < models.length; i++) {
-					IPluginBase base = models[i].getPluginBase();
-					IResolvedBundle bundle = (IResolvedBundle) sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
-					if (bundle != null) {
-						sourceModels.add(models[i]);
-						sourceBundles.add(bundle);
-					}
-				}
-				alternateSource = new AlternateSourceLocations((IPluginModelBase[]) sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), (IResolvedBundle[]) sourceBundles.toArray(new IResolvedBundle[sourceBundles.size()]));
+				alternateSource = new AlternateSourceLocations(models);
 
 				if (subMon.isCanceled()) {
 					canceled = true;
