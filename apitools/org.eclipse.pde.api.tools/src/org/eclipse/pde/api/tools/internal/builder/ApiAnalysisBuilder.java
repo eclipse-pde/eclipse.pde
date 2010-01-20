@@ -50,7 +50,6 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
-import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -139,6 +138,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		cleanupUsageMarkers(resource);
 		cleanupCompatibilityMarkers(resource);
 		cleanupUnsupportedTagMarkers(resource);
+		cleanupFatalMarkers(resource);
 	}
 	
 	/**
@@ -185,6 +185,20 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			if (resource != null && resource.isAccessible()) {
 				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			}
+		} catch(CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
+	
+	/**
+	 * cleans up only fatal problem markers from the given {@link IResource}
+	 * @param resource
+	 */
+	void cleanupFatalMarkers(IResource resource) {
+		try {
+			if (resource != null && resource.isAccessible()) {
+				resource.deleteMarkers(IApiMarkerConstants.FATAL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			}
 		} catch(CoreException e) {
 			ApiPlugin.log(e.getStatus());
@@ -382,16 +396,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	boolean hasFatalProblems(IProject project) throws CoreException {
 		IMarker[] problems = project.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		if(problems.length > 0) {
-			IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(
+			cleanupMarkers(project);
+			IApiProblem problem = ApiProblemFactory.newFatalProblem(
 					Path.EMPTY.toString(), 
 					new String[] {project.getName()}, 
-					null, 
-					null, 
-					IElementDescriptor.RESOURCE, 
 					IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
 			createMarkerForProblem(
-					IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION, 
-					IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER, 
+					IApiProblem.CATEGORY_FATAL_PROBLEM, 
+					IApiMarkerConstants.FATAL_PROBLEM_MARKER, 
 					problem);
 			return true;
 		}

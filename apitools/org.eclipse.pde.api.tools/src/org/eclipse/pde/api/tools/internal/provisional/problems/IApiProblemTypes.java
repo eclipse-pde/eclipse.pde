@@ -181,6 +181,10 @@ public interface IApiProblemTypes {
 	 * @since 1.1
 	 */
 	public static final String AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS = "automatically_removed_unused_problem_filters"; //$NON-NLS-1$
+	/**
+	 * @since 1.1
+	 */
+	public static final String FATAL_PROBLEMS = "fatal_problems"; //$NON-NLS-1$
 	
 	// Version numbering problems
 	public static final String MISSING_SINCE_TAG = "missing_since_tag"; //$NON-NLS-1$

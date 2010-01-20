@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -147,6 +148,18 @@ public class ApiProblemFactory {
 	public static IApiProblem newApiComponentResolutionProblem(String resourcepath, String[] messageargs, String[] argumentids, Object[] arguments, int element, int kind) {
 		int id = createProblemId(IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, null, messageargs, argumentids, arguments, -1, -1, -1, id);
+	}
+	/**
+	 * Creates a new fatal {@link IApiProblem}
+	 * @param resourcepath the path to the resource this problem was found in
+	 * @param messageargs listing of arguments to pass in to the localized message.
+	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param kind the kind
+	 * @return a new {@link IApiProblem} for API usage
+	 */
+	public static IApiProblem newFatalProblem(String resourcepath, String[] messageargs, int kind) {
+		int id = createProblemId(IApiProblem.CATEGORY_FATAL_PROBLEM, IElementDescriptor.RESOURCE, kind, IApiProblem.NO_FLAGS);
+		return newApiProblem(resourcepath, null, messageargs, null, null, -1, -1, -1, id);
 	}
 	/**
 	 * Creates a new since tag {@link IApiProblem}
@@ -561,8 +574,14 @@ public class ApiProblemFactory {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				switch(kind) {
 					case IApiProblem.API_COMPONENT_RESOLUTION: return 99;
+				}
+				break;
+			}
+			case IApiProblem.CATEGORY_FATAL_PROBLEM: {
+				switch(kind) {
 					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM: return 31;
 				}
+				break;
 			}
 		}
 		return 0;
@@ -578,10 +597,14 @@ public class ApiProblemFactory {
 	 */
 	public static String getProblemSeverityId(IApiProblem problem) {
 		switch(problem.getCategory()) {
+			case IApiProblem.CATEGORY_FATAL_PROBLEM: {
+				switch(problem.getKind()) {
+					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM: return IApiProblemTypes.FATAL_PROBLEMS;
+				}
+				break;	
+			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 				switch(problem.getKind()) {
-					//TODO this could be its own setting
-					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM:
 					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
 				}
 				break;
@@ -633,60 +656,5 @@ public class ApiProblemFactory {
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Returns the problem kind from the given preference key.
-	 * 
-	 * @see IApiProblemTypes for a listing of all preference keys
-	 * @param prefkey
-	 * @return the corresponding kind for the given preference key, or 0 if the pref key is unknown
-	 */
-	public static int getProblemKindFromPref(String prefkey) {
-		if(IApiProblemTypes.ILLEGAL_EXTEND.equals(prefkey)) {
-			return IApiProblem.ILLEGAL_EXTEND;
-		}
-		if(IApiProblemTypes.ILLEGAL_IMPLEMENT.equals(prefkey)) {
-			return IApiProblem.ILLEGAL_IMPLEMENT;
-		}
-		if(IApiProblemTypes.ILLEGAL_INSTANTIATE.equals(prefkey)) {
-			return IApiProblem.ILLEGAL_INSTANTIATE;
-		}
-		if(IApiProblemTypes.ILLEGAL_REFERENCE.equals(prefkey)) {
-			return IApiProblem.ILLEGAL_REFERENCE;
-		}
-		if(IApiProblemTypes.ILLEGAL_OVERRIDE.equals(prefkey)) {
-			return IApiProblem.ILLEGAL_OVERRIDE;
-		}
-		if(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES.equals(prefkey)) {
-			return IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
-		}
-		if(IApiProblemTypes.UNUSED_PROBLEM_FILTERS.equals(prefkey)) {
-			return IApiProblem.UNUSED_PROBLEM_FILTERS;
-		}
-		if(IApiProblemTypes.MISSING_SINCE_TAG.equals(prefkey)) {
-			return IApiProblem.SINCE_TAG_MISSING;
-		}
-		if(IApiProblemTypes.MALFORMED_SINCE_TAG.equals(prefkey)) {
-			return IApiProblem.SINCE_TAG_MALFORMED;
-		}
-		if(IApiProblemTypes.INVALID_SINCE_TAG_VERSION.equals(prefkey)) {
-			return IApiProblem.SINCE_TAG_INVALID;
-		}
-		if(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT.equals(prefkey)) {
-			return IApiProblem.API_COMPONENT_RESOLUTION;
-		}
-		if(prefkey != null) {
-			if(prefkey.indexOf("ADDED") > -1) { //$NON-NLS-1$
-				return IDelta.ADDED;
-			}
-			if(prefkey.indexOf("CHANGED") > -1) { //$NON-NLS-1$
-				return IDelta.CHANGED;
-			}
-			if(prefkey.indexOf("REMOVED") > -1) { //$NON-NLS-1$
-				return IDelta.REMOVED;
-			}
-		}
-		return 0;
 	}
 }

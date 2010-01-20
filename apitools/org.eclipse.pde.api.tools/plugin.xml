@@ -49,6 +49,23 @@
     <attribute name="apiMarkerID"/>
  </extension>
  <extension
+       id="org.eclipse.pde.api.tools.fatal_problem"
+       name="%markerFatalProblem.name"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+    <persistent
+          value="true">
+    </persistent>
+    <attribute
+          name="kind">
+    </attribute>
+    <attribute
+          name="apiMarkerID">
+    </attribute>
+ </extension>
+ <extension
        id="org.eclipse.pde.api.tools.version_numbering"
        name="%markerVersionNumbering.name"
        point="org.eclipse.core.resources.markers">
@@ -111,6 +128,49 @@
 	<!-- ================================================================== -->
 	<!-- Extension: API preferences                                         -->
 	<!-- ================================================================== -->
+ <extension
+       id="org.eclipse.pde.api.tools.unused_filters"
+       name="%markerUnusedFilters.name"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+    <super
+          type="org.eclipse.core.resources.textmarker">
+    </super>
+    <persistent
+          value="true">
+    </persistent>
+    <attribute
+          name="kind">
+    </attribute>
+    <attribute
+          name="apiMarkerID">
+    </attribute>
+ </extension>
+ <extension
+       id="org.eclipse.pde.api.tools.unsupported_tags"
+       name="%markerUnsupportedTags.name"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+    <super
+          type="org.eclipse.core.resources.textmarker">
+    </super>
+    <persistent
+          value="true">
+    </persistent>
+    <attribute
+          name="flags">
+    </attribute>
+    <attribute
+          name="kind">
+    </attribute>
+    <attribute
+          name="apiMarkerID">
+    </attribute>
+ </extension>
  <extension
        point="org.eclipse.core.runtime.preferences">
     <initializer
@@ -176,53 +236,10 @@
 
  </extension>
  <extension
-       id="org.eclipse.pde.api.tools.unsupported_tags"
-       name="%markerUnsupportedTags.name"
-       point="org.eclipse.core.resources.markers">
-    <super
-          type="org.eclipse.core.resources.problemmarker">
-    </super>
-    <super
-          type="org.eclipse.core.resources.textmarker">
-    </super>
-    <persistent
-          value="true">
-    </persistent>
-    <attribute
-          name="flags">
-    </attribute>
-    <attribute
-          name="kind">
-    </attribute>
-    <attribute
-          name="apiMarkerID">
-    </attribute>
- </extension>
- <extension
        point="org.eclipse.team.core.fileTypes">
     <fileTypes
           extension="api_filters"
           type="text">
     </fileTypes>
- </extension>
- <extension
-       id="org.eclipse.pde.api.tools.unused_filters"
-       name="%markerUnusedFilters.name"
-       point="org.eclipse.core.resources.markers">
-    <super
-          type="org.eclipse.core.resources.problemmarker">
-    </super>
-    <super
-          type="org.eclipse.core.resources.textmarker">
-    </super>
-    <persistent
-          value="true">
-    </persistent>
-    <attribute
-          name="kind">
-    </attribute>
-    <attribute
-          name="apiMarkerID">
-    </attribute>
  </extension>
 </plugin>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional.problems;
 
 
 /**
- * Describes a given api problem.
+ * Describes a given API problem.
  * 
  * @since 1.0.0
  * @noimplement This interface is not intended to be implemented by clients.
@@ -25,7 +25,7 @@ public interface IApiProblem {
 	public static final int CATEGORY_COMPATIBILITY = 0x10000000;
 	
 	/**
-	 * Constant representing the api usage problem category
+	 * Constant representing the API usage problem category
 	 */
 	public static final int CATEGORY_USAGE = 0x20000000;
 	
@@ -40,7 +40,7 @@ public interface IApiProblem {
 	public static final int CATEGORY_SINCETAGS = 0x40000000;
 	
 	/**
-	 * Constant representing the api profile problem category
+	 * Constant representing the API profile problem category
 	 */
 	public static final int CATEGORY_API_BASELINE = 0x50000000;
 	
@@ -48,6 +48,11 @@ public interface IApiProblem {
 	 * Constant representing the API component resolution problem category
 	 */
 	public static final int CATEGORY_API_COMPONENT_RESOLUTION = 0x60000000;
+	/**
+	 * Constant representing a fatal problem i.e. a fatal JDT problem has been detected
+	 * @since 1.1
+	 */
+	public static final int CATEGORY_FATAL_PROBLEM = 0x70000000;
 	/**
 	 * Constant representing the offset of the message key portion of the id bit mask.
 	 */
@@ -86,6 +91,7 @@ public interface IApiProblem {
 	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_SINCETAGS
 	 */
 	public static final int SINCE_TAG_INVALID = 1;
 
@@ -95,6 +101,7 @@ public interface IApiProblem {
 	 * Value is: <code>2</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_SINCETAGS
 	 */
 	public static final int SINCE_TAG_MALFORMED = 2;
 
@@ -104,6 +111,7 @@ public interface IApiProblem {
 	 * Value is: <code>3</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_SINCETAGS
 	 */
 	public static final int SINCE_TAG_MISSING = 3;
 
@@ -113,6 +121,7 @@ public interface IApiProblem {
 	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
 	 */
 	public static final int MAJOR_VERSION_CHANGE = 1;
 
@@ -122,6 +131,7 @@ public interface IApiProblem {
 	 * Value is: <code>2</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
 	 */
 	public static final int MINOR_VERSION_CHANGE = 2;
 	
@@ -131,6 +141,7 @@ public interface IApiProblem {
 	 * Value is: <code>3</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
 	 */
 	public static final int MAJOR_VERSION_CHANGE_NO_BREAKAGE = 3;
 	
@@ -140,26 +151,29 @@ public interface IApiProblem {
 	 * Value is: <code>4</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
 	 */
 	public static final int MINOR_VERSION_CHANGE_NO_NEW_API = 4;
 	
 	/**
 	 * Constant representing the value of the major version change {@link IApiProblem} kind as a
-	 * consequence of a major version change in a reexported bundle.
+	 * consequence of a major version change in a re-exported bundle.
 	 * <br>
 	 * Value is: <code>5</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
 	 */
 	public static final int REEXPORTED_MAJOR_VERSION_CHANGE = 5;
 
 	/**
 	 * Constant representing the value of the minor version change {@link IApiProblem} kind as a
-	 * consequence of a minor version change in a reexported bundle..
+	 * consequence of a minor version change in a re-exported bundle..
 	 * <br>
 	 * Value is: <code>6</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
 	 */
 	public static final int REEXPORTED_MINOR_VERSION_CHANGE = 6;
 
@@ -169,6 +183,7 @@ public interface IApiProblem {
 	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int ILLEGAL_EXTEND = 1;
 	
@@ -178,6 +193,7 @@ public interface IApiProblem {
 	 * Value is: <code>2</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int ILLEGAL_INSTANTIATE = 2;
 	
@@ -187,6 +203,7 @@ public interface IApiProblem {
 	 * Value is: <code>3</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int ILLEGAL_REFERENCE = 3;
 	
@@ -196,6 +213,7 @@ public interface IApiProblem {
 	 * Value is: <code>4</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int ILLEGAL_IMPLEMENT = 4;
 	
@@ -205,6 +223,7 @@ public interface IApiProblem {
 	 * Value is: <code>5</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int ILLEGAL_OVERRIDE = 5;
 	
@@ -214,6 +233,7 @@ public interface IApiProblem {
 	 * Value is: <code>6</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int API_LEAK = 6;
 	
@@ -223,6 +243,7 @@ public interface IApiProblem {
 	 * Value is: <code>7</code>
 	 * 
 	 *  @see #getKind()
+	 *  @see #CATEGORY_USAGE
 	 */
 	public static final int UNSUPPORTED_TAG_USE = 7;
 	
@@ -232,6 +253,7 @@ public interface IApiProblem {
 	 * Value is: <code>8</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int DUPLICATE_TAG_USE = 8;
 	
@@ -241,6 +263,7 @@ public interface IApiProblem {
 	 * Value is: <code>9</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = 9;
 	/**
@@ -249,6 +272,7 @@ public interface IApiProblem {
 	 * Value is:<code>10</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int UNUSED_PROBLEM_FILTERS = 10;
 	/**
@@ -257,6 +281,7 @@ public interface IApiProblem {
 	 * Value is: <code>1</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int LEAK_EXTENDS = 1;
 	
@@ -266,6 +291,7 @@ public interface IApiProblem {
 	 * Value is: <code>2</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int LEAK_IMPLEMENTS = 2;
 	
@@ -275,6 +301,7 @@ public interface IApiProblem {
 	 * Value is: <code>3</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int LEAK_FIELD = 3;
 	
@@ -284,6 +311,7 @@ public interface IApiProblem {
 	 * Value is: <code>4</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int LEAK_RETURN_TYPE = 4;
 	
@@ -293,6 +321,7 @@ public interface IApiProblem {
 	 * Value is: <code>5</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int LEAK_METHOD_PARAMETER = 5;	
 	
@@ -302,6 +331,7 @@ public interface IApiProblem {
 	 * Value is: <code>6</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int LEAK_CONSTRUCTOR_PARAMETER = 6;
 	
@@ -311,6 +341,7 @@ public interface IApiProblem {
 	 * Value is: <code>7</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int CONSTRUCTOR_METHOD = 7;
 	
@@ -320,6 +351,7 @@ public interface IApiProblem {
 	 * Value is: <code>8</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int METHOD = 8;
 
@@ -329,6 +361,7 @@ public interface IApiProblem {
 	 * Value is: <code>9</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int FIELD = 9;
 	
@@ -338,6 +371,7 @@ public interface IApiProblem {
 	 * Value is: <code>10</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int LOCAL_TYPE = 10;
 	
@@ -347,6 +381,7 @@ public interface IApiProblem {
 	 * Value is: <code>11</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int ANONYMOUS_TYPE = 11;
 	
@@ -356,6 +391,7 @@ public interface IApiProblem {
 	 * Value is: <code>10</code>
 	 * 
 	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
 	 */
 	public static final int INDIRECT_REFERENCE = 10;
 
@@ -365,6 +401,7 @@ public interface IApiProblem {
 	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_API_BASELINE
 	 */
 	public static final int API_BASELINE_MISSING = 1;
 
@@ -374,16 +411,18 @@ public interface IApiProblem {
 	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_API_COMPONENT_RESOLUTION
 	 */
 	public static final int API_COMPONENT_RESOLUTION = 1;
 	/**
 	 * Constant representing the value of a workspace baseline resolution {@link IApiProblem} kind.
 	 * <br>
-	 * Value is: <code>2</code>
+	 * Value is: <code>1</code>
 	 * 
 	 * @see #getKind()
+	 * @see #CATEGORY_FATAL_PROBLEM
 	 */
-	public static final int FATAL_JDT_BUILDPATH_PROBLEM = 2;
+	public static final int FATAL_JDT_BUILDPATH_PROBLEM = 1;
 	/**
 	 * Returns the severity of the problem. See the severity constants defined in
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.ApiPlugin} class.

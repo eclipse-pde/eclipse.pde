@@ -235,6 +235,9 @@
          <markerTypeReference
                id="org.eclipse.pde.api.tools.unused_filters">
          </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.pde.api.tools.fatal_problem">
+         </markerTypeReference>
       </markerTypeCategory>
    </extension>
     <extension
@@ -267,6 +270,10 @@
        <markerAttributeGrouping
              defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
              markerType="org.eclipse.pde.api.tools.unused_filters">
+       </markerAttributeGrouping>
+       <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.fatal_problem">
        </markerAttributeGrouping>
     </extension>
    <extension

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,25 +79,15 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that we can get the correct kind from the preference key
+	 * Tests the new {@link ApiProblemFactory#newFatalProblem(String, String[], int)} method
+	 * @since 1.1
 	 */
-	public void testGetKindFromPref() {
-		int kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ILLEGAL_OVERRIDE);
-		assertTrue("the kind should be illegal override", kind == IApiProblem.ILLEGAL_OVERRIDE);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ILLEGAL_EXTEND);
-		assertTrue("the kind should be illegal extend", kind == IApiProblem.ILLEGAL_EXTEND);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ILLEGAL_REFERENCE);
-		assertTrue("the kind should be illegal reference", kind == IApiProblem.ILLEGAL_REFERENCE);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ILLEGAL_IMPLEMENT);
-		assertTrue("the kind should be illegal implement", kind == IApiProblem.ILLEGAL_IMPLEMENT);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ILLEGAL_INSTANTIATE);
-		assertTrue("the kind should be illegal instantiate", kind == IApiProblem.ILLEGAL_INSTANTIATE);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.ANNOTATION_CHANGED_TYPE_CONVERSION);
-		assertTrue("the kind should be CHANGED", kind == IDelta.CHANGED);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.TYPE_PARAMETER_ADDED_CLASS_BOUND);
-		assertTrue("the kind should be ADDED", kind == IDelta.ADDED);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND);
-		assertTrue("the kind should be REMOVED", kind == IDelta.REMOVED);
+	public void testCreateFatalProblem() {
+		IApiProblem problem = ApiProblemFactory.newFatalProblem(null, null, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
+		assertNotNull("a new problem should have been created with null attributes", problem);
+		assertTrue("The category must be CATEGORY_FATAL_PROBLEM", ApiProblemFactory.getProblemCategory(problem.getId()) == IApiProblem.CATEGORY_FATAL_PROBLEM);
+		assertTrue("The element kind must be RESOURCE", ApiProblemFactory.getProblemElementKind(problem.getId()) == IElementDescriptor.RESOURCE);
+		assertTrue("The element kind must be FATAL_JDT_BUILDPATH_PROBLEM", ApiProblemFactory.getProblemKind(problem.getId()) == IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
 	}
 	
 	/**
@@ -228,6 +218,8 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		assertEquals("The returned id should be 103", 103, id);
 		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION, -1, IApiProblem.API_COMPONENT_RESOLUTION, -1);
 		assertEquals("The returned id should be 99", 99, id);
+		id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_FATAL_PROBLEM, -1, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM, -1);
+		assertEquals("The returned id should be 31", 31, id);
 	}
 	
 	/**
@@ -248,25 +240,5 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		assertEquals("the problem id should be: "+IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiProblemFactory.getProblemSeverityId(problem));
 		problem = ApiProblemFactory.newApiUsageProblem(null, null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, 0);
 		assertNull("the id must be null", ApiProblemFactory.getProblemSeverityId(problem));
-	}
-	
-	/**
-	 * Tests the {@link ApiProblemFactory#getProblemKindFromPref(String)} method
-	 */
-	public void testGetProblemKindFromPref() {
-		int kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES);
-		assertEquals("the kind should be: "+IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, kind);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.UNUSED_PROBLEM_FILTERS);
-		assertEquals("the kind should be: "+IApiProblem.UNUSED_PROBLEM_FILTERS, IApiProblem.UNUSED_PROBLEM_FILTERS, kind);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.MISSING_SINCE_TAG);
-		assertEquals("the kind should be: "+IApiProblem.SINCE_TAG_MISSING, IApiProblem.SINCE_TAG_MISSING, kind);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.MALFORMED_SINCE_TAG);
-		assertEquals("the kind should be: "+IApiProblem.SINCE_TAG_MALFORMED, IApiProblem.SINCE_TAG_MALFORMED, kind);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.INVALID_SINCE_TAG_VERSION);
-		assertEquals("the kind should be: "+IApiProblem.SINCE_TAG_INVALID, IApiProblem.SINCE_TAG_INVALID, kind);
-		kind = ApiProblemFactory.getProblemKindFromPref(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
-		assertEquals("the kind should be: "+IApiProblem.API_COMPONENT_RESOLUTION, IApiProblem.API_COMPONENT_RESOLUTION, kind);
-		kind = ApiProblemFactory.getProblemKindFromPref("test");
-		assertEquals("the kind should be 0", 0, kind);
 	}
 }
