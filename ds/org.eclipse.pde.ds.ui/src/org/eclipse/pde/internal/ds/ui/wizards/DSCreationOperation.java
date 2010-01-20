@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2010 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Code 9 Corporation - initial API and implementation
  *     Chris Aniszczyk <caniszczyk@gmail.com>
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     IBM - ongoing maintenance
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.wizards;
 
@@ -28,11 +29,11 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.build.IBuildModelFactory;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -110,13 +111,13 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	private void writeBuildProperties(final IProject project,
 			SubProgressMonitor monitor) {
 
-		PDEModelUtility.modifyModel(new ModelModification(project
-				.getFile(PDEModelUtility.F_BUILD)) {
+		PDEModelUtility.modifyModel(new ModelModification(PDEProject
+				.getBuildProperties(project)) {
 			protected void modifyModel(IBaseModel model,
 					IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBuildModel))
 					return;
-				IFile file = project.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+				IFile file = PDEProject.getBuildProperties(project);
 				if (file.exists()) {
 					WorkspaceBuildModel wbm = new WorkspaceBuildModel(file);
 					wbm.load();

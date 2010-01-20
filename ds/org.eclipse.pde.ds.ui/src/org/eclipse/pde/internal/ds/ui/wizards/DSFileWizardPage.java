@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2010 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Code 9 Corporation - initial API and implementation
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
  *     Simon Archer <sarcher@us.ibm.com> - bug 248519
+ *     IBM - ongoing maintenance
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.wizards;
 
@@ -33,11 +34,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ds.ui.Activator;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ds.ui.SWTUtil;
 import org.eclipse.pde.internal.ds.ui.SharedImages;
-import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -127,7 +128,8 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		try {
 			if (project.hasNature(PDE.PLUGIN_NATURE)) {
 				WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(
-						project.getFile(PDEModelUtility.F_MANIFEST_FP), null);
+						PDEProject.getManifest(project),
+						null);
 				model.load();
 				String header = model.getBundleModel().getBundle().getHeader(
 						Constants.BUNDLE_SYMBOLICNAME);
