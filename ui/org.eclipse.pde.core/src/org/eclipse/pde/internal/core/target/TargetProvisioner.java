@@ -48,8 +48,8 @@ public class TargetProvisioner {
 	}
 
 	public IStatus provision(IProgressMonitor monitor) {
-		SubMonitor subMon = SubMonitor.convert(monitor, "Provisioning bundles in target platform", 100);
-		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems occurred while provisioning plug-ins in the target platform", null);
+		SubMonitor subMon = SubMonitor.convert(monitor, PDECoreMessages.TargetProvisioner_provisioningTask, 100);
+		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, PDECoreMessages.TargetProvisioner_problemsProvisioning, null);
 
 		IProvisioningAgent agent;
 		try {
@@ -73,7 +73,7 @@ public class TargetProvisioner {
 			}
 
 			if (fResolver.getStatus() == null || !fResolver.getStatus().isOK()) {
-				fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "The target has not been resolved"));
+				fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetProvisioner_targetNotResolved));
 				return fStatus;
 			}
 
@@ -173,13 +173,17 @@ public class TargetProvisioner {
 		}
 
 		subMon.done();
+		if (fStatus.isOK()) {
+			// Return the general ok status instead of the multistatus with a message
+			return Status.OK_STATUS;
+		}
 		return fStatus;
 	}
 
 	public IStatus provisionExisting(IProgressMonitor monitor) {
-		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems occurred while provisioning plug-ins in the target platform", null);
+		fStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, PDECoreMessages.TargetProvisioner_problemsProvisioning, null);
 		fProfile = null;
-		SubMonitor subMon = SubMonitor.convert(monitor, "Loading previous target profile", 50);
+		SubMonitor subMon = SubMonitor.convert(monitor, PDECoreMessages.TargetProvisioner_loadingPreviousProfileTask, 50);
 
 		IProvisioningAgent agent;
 		try {
@@ -212,7 +216,7 @@ public class TargetProvisioner {
 			fProfile = registry.getProfile(profileName);
 
 			if (fProfile == null) {
-				fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Could not find a profile to restore from.  Use the Target Platform Preference Page to reload."));
+				fStatus.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetProvisioner_couldNotFindProfile));
 				return fStatus;
 			}
 
@@ -316,7 +320,7 @@ public class TargetProvisioner {
 		}
 
 		if (fProfile == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Target profile unavailable"));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetProvisioner_targetProfileUnavailable));
 		}
 
 		IProvisioningAgent agent = TargetPlatformService.getProvisioningAgent();
@@ -337,7 +341,7 @@ public class TargetProvisioner {
 						repos.add(manager.loadRepository(currentLocation, null));
 					}
 				} catch (URISyntaxException e) {
-					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Problems parsing saved repository information", e));
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetProvisioner_problemsParsingRepository, e));
 				}
 			}
 		}

@@ -122,6 +122,10 @@ public class TargetResolver {
 			agent.stop();
 		}
 		subMon.done();
+		if (fStatus.isOK()) {
+			// Return the general ok status instead of the multistatus with a message
+			return Status.OK_STATUS;
+		}
 		return fStatus;
 	}
 

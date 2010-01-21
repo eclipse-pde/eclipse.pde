@@ -269,6 +269,20 @@ public class PDECoreMessages extends NLS {
 
 	public static String TargetPlatformResetJob_resetTarget;
 
+	public static String TargetProvisioner_couldNotFindProfile;
+
+	public static String TargetProvisioner_loadingPreviousProfileTask;
+
+	public static String TargetProvisioner_problemsParsingRepository;
+
+	public static String TargetProvisioner_problemsProvisioning;
+
+	public static String TargetProvisioner_provisioningTask;
+
+	public static String TargetProvisioner_targetNotResolved;
+
+	public static String TargetProvisioner_targetProfileUnavailable;
+
 	public static String XMLErrorReporter_ExternalEntityResolution;
 
 	public static String ExtensionsErrorReporter_InvalidSchema;
