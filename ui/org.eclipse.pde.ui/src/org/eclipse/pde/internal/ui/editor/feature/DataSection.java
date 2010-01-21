@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.FeatureData;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -168,7 +169,7 @@ public class DataSection extends TableSection {
 	}
 
 	private boolean canAdd(IFeatureModel model, String path) {
-		if ("feature.xml".equals(path)) //$NON-NLS-1$
+		if (ICoreConstants.FEATURE_FILENAME_DESCRIPTOR.equals(path))
 			return false;
 		IFeatureData[] data = model.getFeature().getData();
 		for (int i = 0; i < data.length; i++) {

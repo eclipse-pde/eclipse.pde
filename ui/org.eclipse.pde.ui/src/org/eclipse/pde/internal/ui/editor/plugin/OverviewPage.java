@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -209,7 +210,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			if (!getPDEEditor().hasInputContext(BuildInputContext.CONTEXT_ID)) {
 				if (!MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_buildTitle, PDEUIMessages.OverviewPage_buildQuestion))
 					return;
-				IFile file = getPDEEditor().getCommonProject().getFile("build.properties"); //$NON-NLS-1$
+				IFile file = PDEProject.getBuildProperties(getPDEEditor().getCommonProject());
 				WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 				model.save();
 				IEditorInput in = new FileEditorInput(file);

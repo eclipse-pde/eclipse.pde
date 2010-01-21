@@ -22,7 +22,6 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class PluginModelManager implements IModelProviderListener {
@@ -123,6 +122,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
+		Set addedBSNs = new HashSet();
 		// Adds to the master table and the state newly created plug-ins in the workspace
 		// (ie. new plug-in project or a closed project that has just been re-opened).
 		// Also, if the target location changes, we add all plug-ins from the new target
@@ -131,8 +131,10 @@ public class PluginModelManager implements IModelProviderListener {
 			for (int i = 0; i < added.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) added[i];
 				String id = model.getPluginBase().getId();
-				if (id != null)
+				if (id != null) {
 					handleAdd(id, model, delta);
+					addedBSNs.add(id);
+				}
 			}
 		}
 
@@ -160,7 +162,21 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fState != null) {
 			// if the target location has not changed, incrementally re-resolve the state after processing all the add/remove/modify changes
 			// Otherwise, the state is in a good resolved state
-			StateDelta stateDelta = (e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 ? null : fState.resolveState((e.getEventTypes() & IModelProviderEvent.ENVIRONMENT_CHANGED) != 0 ? false : true);
+			StateDelta stateDelta = null;
+			if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) == 0) {
+				if ((e.getEventTypes() & IModelProviderEvent.ENVIRONMENT_CHANGED) != 0) {
+					// environment has changed, do complete resolution
+					stateDelta = fState.resolveState(false);
+				} else {
+					if (addedBSNs.isEmpty()) {
+						// resolve incrementally
+						stateDelta = fState.resolveState(true);
+					} else {
+						// resolve based on added bundles, in case there are multiple versions of the added bundles
+						stateDelta = fState.resolveState((String[]) addedBSNs.toArray(new String[addedBSNs.size()]));
+					}
+				}
+			}
 			// trigger a classpath update for all workspace plug-ins affected by the
 			// processed batch of changes
 			updateAffectedEntries(stateDelta);
@@ -374,9 +390,6 @@ public class PluginModelManager implements IModelProviderListener {
 		// Cannot assign to fEntries here - will create a race condition with isInitialized()
 		Map entries = Collections.synchronizedMap(new TreeMap());
 
-		// Create a default target if one does not exist
-		initDefaultTargetPlatformDefinition();
-
 		// Get the external plug-ins from the target, resolving and provisioning it if necessary
 		URL[] externalURLs = getExternalPlugins();
 
@@ -430,78 +443,12 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
-	 * Sets active target definition handle if not yet set. If an existing target
-	 * definition corresponds to workspace target settings, it is selected as the
-	 * active target. If there are no targets that correspond to workspace settings
-	 * a new definition is created. 
-	 */
-	private synchronized void initDefaultTargetPlatformDefinition() {
-		// Access the preference directly.  If the user has explicitly set there to be no target platform we don't want to create one.
-		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-		if (service != null) {
-			String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
-			if (memento.equals("")) { //$NON-NLS-1$
-				// no workspace target handle set, check if any targets are equivalent to current settings
-				ITargetHandle[] targets = service.getTargets(null);
-				TargetPlatformService ts = (TargetPlatformService) service;
-				// create target platform from current workspace settings
-				TargetDefinition curr = (TargetDefinition) ts.newTarget();
-				ITargetHandle wsHandle = null;
-				try {
-					ts.loadTargetDefinitionFromPreferences(curr);
-					for (int i = 0; i < targets.length; i++) {
-						if (curr.isContentEquivalent(targets[i].getTargetDefinition())) {
-							wsHandle = targets[i];
-							break;
-						}
-					}
-					if (wsHandle == null) {
-						// restore settings from preferences
-						ITargetDefinition def = ts.newDefaultTargetDefinition();
-						String defVMargs = def.getVMArguments();
-						if (curr.getVMArguments() == null) {
-							// previous to 3.5, default VM arguments were null instead of matching the host's
-							// so compare to null VM arguments
-							def.setVMArguments(null);
-						}
-						if (curr.isContentEquivalent(def)) {
-							// Target is equivalent to the default settings, just add it as active
-							curr.setName(Messages.TargetPlatformService_7);
-							curr.setVMArguments(defVMargs); // restore default VM arguments
-						} else {
-							// Custom target settings, add as new target platform and add default as well
-							curr.setName(PDECoreMessages.PluginModelManager_0);
-
-							boolean defaultExists = false;
-							for (int i = 0; i < targets.length; i++) {
-								if (((TargetDefinition) def).isContentEquivalent(targets[i].getTargetDefinition())) {
-									defaultExists = true;
-									break;
-								}
-							}
-							if (!defaultExists) {
-								ts.saveTargetDefinition(def);
-							}
-						}
-						ts.saveTargetDefinition(curr);
-						wsHandle = curr.getHandle();
-					}
-					PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, wsHandle.getMemento());
-				} catch (CoreException e) {
-					PDECore.log(e);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Get the bundle locations from the target, resolving and provisioning the target if necessary.
 	 */
 	private URL[] getExternalPlugins() {
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (service == null) {
-			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Could not obtain Target Platform Service"));
+			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_CouldNotObtainTargetService));
 			return new URL[0];
 		}
 
@@ -993,6 +940,21 @@ public class PluginModelManager implements IModelProviderListener {
 
 	public void removeExtensionDeltaListener(IExtensionDeltaListener listener) {
 		fWorkspaceManager.removeExtensionDeltaListener(listener);
+	}
+
+	/**
+	 * Called when the bundle root for a project is changed.
+	 * 
+	 * @param project
+	 */
+	public void bundleRootChanged(IProject project) {
+		fWorkspaceManager.removeModel(project);
+		if (fWorkspaceManager.isInterestingProject(project)) {
+			fWorkspaceManager.createModel(project, false);
+			Object model = fWorkspaceManager.getModel(project);
+			fWorkspaceManager.addChange(model, IModelProviderEvent.MODELS_CHANGED);
+		}
+		fWorkspaceManager.processModelChanges();
 	}
 
 }

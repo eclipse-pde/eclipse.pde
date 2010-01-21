@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core.build;
 import java.io.*;
 import java.net.URL;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class ExternalBuildModel extends BuildModel {
@@ -41,7 +42,7 @@ public class ExternalBuildModel extends BuildModel {
 			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
 				url = new URL("jar:file:" + file.getAbsolutePath() + "!/build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				url = new URL("file:" + file.getAbsolutePath() + IPath.SEPARATOR + "build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
+				url = new URL("file:" + file.getAbsolutePath() + IPath.SEPARATOR + ICoreConstants.BUILD_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			}
 			stream = url.openStream();
 			load(stream, false);
@@ -65,7 +66,7 @@ public class ExternalBuildModel extends BuildModel {
 
 	private File getLocalFile() {
 		File file = new File(getInstallLocation());
-		return (file.isFile()) ? file : new File(file, "build.properties"); //$NON-NLS-1$
+		return (file.isFile()) ? file : new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 	}
 
 	public boolean isInSync() {

@@ -30,6 +30,8 @@ import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfigurat
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class BuildSourcePage extends KeyValueSourcePage {
 	class BuildOutlineContentProvider extends DefaultContentProvider implements ITreeContentProvider {
@@ -148,7 +150,9 @@ public class BuildSourcePage extends KeyValueSourcePage {
 
 	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
 		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
-		this.setPreferenceStore(store);
-		return new BuildSourceViewerConfiguration(colorManager, store, this);
+		IPreferenceStore generalTextStore = EditorsUI.getPreferenceStore();
+		IPreferenceStore combinedStore = new ChainedPreferenceStore(new IPreferenceStore[] {store, generalTextStore});
+		this.setPreferenceStore(combinedStore);
+		return new BuildSourceViewerConfiguration(colorManager, combinedStore, this);
 	}
 }

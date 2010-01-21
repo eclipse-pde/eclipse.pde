@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,7 +133,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		});
 
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET35, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET36, ICoreConstants.TARGET35, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
 		fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
 
 		fOSGIButton = createButton(group, SWT.RADIO, 1, 30);

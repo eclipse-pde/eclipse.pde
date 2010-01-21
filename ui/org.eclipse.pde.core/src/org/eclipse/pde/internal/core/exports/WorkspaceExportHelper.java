@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 /**
  * Helper class for the various export operation classes, making it easier to export using workspace
@@ -106,7 +107,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 		IProject[] projects = getExportedWorkspaceProjects(exportedItems);
 		Map result = new HashMap(projects.length);
 		for (int i = 0; i < projects.length; i++) {
-			IFile buildFile = projects[i].getFile("build.properties"); //$NON-NLS-1$
+			IFile buildFile = PDEProject.getBuildProperties(projects[i]);
 			if (buildFile.exists()) {
 				IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
 				buildModel.load();
@@ -175,10 +176,12 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 					IFeaturePlugin[] plugins = feature.getFeature().getPlugins();
 					for (int j = 0; j < plugins.length; j++) {
 						IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(plugins[j].getId());
-						IPath installLocation = new Path(plugin.getInstallLocation());
-						IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
-						if (project.exists()) {
-							projects.add(project);
+						if (plugin != null) {
+							IPath installLocation = new Path(plugin.getInstallLocation());
+							IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
+							if (project.exists()) {
+								projects.add(project);
+							}
 						}
 					}
 

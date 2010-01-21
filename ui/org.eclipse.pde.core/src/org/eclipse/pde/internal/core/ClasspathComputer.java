@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.team.core.RepositoryProvider;
 
@@ -140,7 +141,7 @@ public class ClasspathComputer {
 	}
 
 	protected static IBuild getBuild(IProject project) throws CoreException {
-		IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile buildFile = PDEProject.getBuildProperties(project);
 		IBuildModel buildModel = null;
 		if (buildFile.exists()) {
 			buildModel = new WorkspaceBuildModel(buildFile);
@@ -201,7 +202,7 @@ public class ClasspathComputer {
 	 * for the specified execution environment. Overrides any existing settings.
 	 *  
 	 * @param project project to set compiler compliance options for
-	 * @param eeId execution environment identifier
+	 * @param eeId execution environment identifier or <code>null</code>
 	 */
 	public static void setComplianceOptions(IJavaProject project, String eeId) {
 		setComplianceOptions(project, eeId, true);
@@ -337,7 +338,7 @@ public class ClasspathComputer {
 
 	/**
 	 * Returns a classpath container entry for the given execution environment.
-	 * @param ee id of the execution environment
+	 * @param ee id of the execution environment or <code>null</code>
 	 * @return classpath container entry
 	 */
 	public static IClasspathEntry createJREEntry(String ee) {
@@ -346,7 +347,7 @@ public class ClasspathComputer {
 
 	/**
 	 * Returns the JRE container path for the execution environment with the given id.
-	 * @param ee execution environment id
+	 * @param ee execution environment id or <code>null</code>
 	 * @return JRE container path for the execution environment
 	 */
 	private static IPath getEEPath(String ee) {

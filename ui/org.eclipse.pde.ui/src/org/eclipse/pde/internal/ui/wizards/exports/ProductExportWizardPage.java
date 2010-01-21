@@ -43,6 +43,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private Button fMultiPlatform;
 	private Button fExportMetadata;
 	private Button fAllowBinaryCycles;
+	private boolean fPageInitialized = false;
 
 	public ProductExportWizardPage(IStructuredSelection selection) {
 		super("productExport"); //$NON-NLS-1$
@@ -70,6 +71,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		Dialog.applyDialogFont(container);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.PRODUCT_EXPORT_WIZARD);
+		fPageInitialized = true;
 	}
 
 	private void createConfigurationSection(Composite parent) {
@@ -183,7 +185,10 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		String error = fConfigurationGroup.validate();
 		if (error == null)
 			error = fExportGroup.validate();
-		setErrorMessage(error);
+		if (fPageInitialized)
+			setErrorMessage(error);
+		else
+			setMessage(error);
 		setPageComplete(error == null);
 	}
 

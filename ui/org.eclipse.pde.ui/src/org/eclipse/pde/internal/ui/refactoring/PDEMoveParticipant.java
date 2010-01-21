@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,11 +12,12 @@ package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.ltk.core.refactoring.participants.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public abstract class PDEMoveParticipant extends MoveParticipant implements ISharableParticipant {
 
@@ -36,15 +37,15 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 		CompositeChange result = new CompositeChange(getName());
 		addChange(result, pm);
 		if (isInterestingForExtensions()) {
-			addChange(result, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, pm);
-			addChange(result, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR, pm);
+			addChange(result, PDEProject.getPluginXml(fProject), pm);
+			addChange(result, PDEProject.getFragmentXml(fProject), pm);
 		}
 		return (result.getChildren().length == 0) ? null : result;
 	}
 
 	protected abstract boolean isInterestingForExtensions();
 
-	protected void addChange(CompositeChange result, String filename, IProgressMonitor pm) throws CoreException {
+	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 	}
 
 	// add main change (whether to Manifest or build.properties)

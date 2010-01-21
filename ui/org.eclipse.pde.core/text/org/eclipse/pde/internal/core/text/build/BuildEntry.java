@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,13 @@ package org.eclipse.pde.internal.core.text.build;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
@@ -155,8 +157,11 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	public void processEntry(String value) {
 		StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
+		IPath root = getRootPath();
 		while (stok.hasMoreTokens()) {
-			fTokens.add(stok.nextToken().trim());
+			String token = stok.nextToken().trim();
+			token = fromRelative(token, root);
+			fTokens.add(token);
 		}
 	}
 
@@ -168,8 +173,11 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		buffer.append(PropertiesUtil.createWritableName(fName));
 		buffer.append(" = "); //$NON-NLS-1$
 		int indentLength = fName.length() + 3;
+		IPath rootPath = getRootPath();
 		for (int i = 0; i < fTokens.size(); i++) {
-			buffer.append(PropertiesUtil.createEscapedValue(fTokens.get(i).toString()));
+			String token = fTokens.get(i).toString();
+			token = toRelative(token, rootPath);
+			buffer.append(PropertiesUtil.createEscapedValue(token));
 			if (i < fTokens.size() - 1) {
 				buffer.append(",\\"); //$NON-NLS-1$
 				buffer.append(fLineDelimiter);
@@ -270,6 +278,56 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		fTokens.add(position, token);
 		// Fire event
 		getModel().fireModelObjectChanged(this, getName(), null, token);
+	}
+
+	/**
+	 * Returns the path that this entries tokens are relative to, or <code>null</code> if none.
+	 * 
+	 * @return relative root path, or <code>null</code>
+	 */
+	IPath getRootPath() {
+		if (fName.startsWith(IBuildEntry.JAR_PREFIX) || fName.startsWith(IBuildEntry.OUTPUT_PREFIX)) {
+			IResource resource = getModel().getUnderlyingResource();
+			if (resource != null) {
+				IProject project = resource.getProject();
+				if (project != null) {
+					IContainer root = PDEProject.getBundleRoot(project);
+					if (root != null && !root.equals(project)) {
+						// translation required for source. and output. entries
+						return root.getProjectRelativePath();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Makes the token a bundle root relative path
+	 * 
+	 * @param token token
+	 * @param root bundle root path
+	 * @return bundle relative token
+	 */
+	String toRelative(String token, IPath root) {
+		if (root == null) {
+			return token;
+		}
+		return (new Path(token)).makeRelativeTo(root).toPortableString();
+	}
+
+	/**
+	 * Makes the token a project relative path
+	 * 
+	 * @param token token
+	 * @param root bundle root path
+	 * @return project relative token
+	 */
+	String fromRelative(String token, IPath root) {
+		if (root == null) {
+			return token;
+		}
+		return root.append(new Path(token)).toPortableString();
 	}
 
 }

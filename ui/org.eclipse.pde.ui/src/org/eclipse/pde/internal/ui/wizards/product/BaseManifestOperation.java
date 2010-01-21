@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -46,12 +47,11 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 	protected IFile getFile() {
 		IPluginModelBase model = PluginRegistry.findModel(fPluginId);
 		IProject project = model.getUnderlyingResource().getProject();
-		String filename = model instanceof IFragmentModel ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
-		return project.getFile(filename);
+		return model instanceof IFragmentModel ? PDEProject.getFragmentXml(project) : PDEProject.getPluginXml(project);
 	}
 
 	protected IPluginModelBase getModel(IFile file) {
-		if ("plugin.xml".equals(file.getName())) //$NON-NLS-1$
+		if (ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equals(file.getName()))
 			return new WorkspacePluginModel(file, false);
 		return new WorkspaceFragmentModel(file, false);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class SrcSection extends BuildContentsSection implements IModelChangedLis
 
 	protected void handleBuildCheckStateChange(boolean wasTopParentChecked) {
 		IResource resource = fParentResource;
-		String resourceName = fParentResource.getFullPath().removeFirstSegments(1).toString();
+		String resourceName = fParentResource.getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath()).toPortableString();
 		IBuild build = fBuildModel.getBuild();
 		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
 		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_EXCLUDES);

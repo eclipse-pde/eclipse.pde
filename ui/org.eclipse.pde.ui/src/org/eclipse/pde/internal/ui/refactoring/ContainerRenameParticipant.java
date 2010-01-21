@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,9 +19,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -62,7 +62,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 	}
 
 	protected Change createManifestChange(IProgressMonitor monitor) throws CoreException {
-		IFile manifest = fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		IFile manifest = PDEProject.getManifest(fProject);
 		if (manifest.exists()) {
 			monitor.beginTask("", 4); //$NON-NLS-1$
 			try {
@@ -90,7 +90,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
 						IProject newProject = ((IWorkspaceRoot) manifest.getProject().getParent()).getProject(newText);
 
-						MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR), manifest); //$NON-NLS-1$
+						MovedTextFileChange change = new MovedTextFileChange("", PDEProject.getManifest(newProject), manifest); //$NON-NLS-1$
 						MultiTextEdit edit = new MultiTextEdit();
 						edit.addChildren(listener.getTextOperations());
 						change.setEdit(edit);

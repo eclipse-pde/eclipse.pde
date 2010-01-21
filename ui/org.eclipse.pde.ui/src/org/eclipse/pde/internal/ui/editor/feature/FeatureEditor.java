@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
@@ -68,7 +69,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 				if (resource != null)
 					input = new FileEditorInput((IFile) resource);
 				else {
-					File file = new File(model.getInstallLocation(), "feature.xml"); //$NON-NLS-1$
+					File file = new File(model.getInstallLocation(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 					IFileStore store = EFS.getStore(file.toURI());
 					input = new FileStoreEditorInput(store);
 				}
@@ -94,10 +95,10 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		IFile featureFile = null;
 
 		String name = file.getName().toLowerCase(Locale.ENGLISH);
-		if (name.equals("feature.xml")) { //$NON-NLS-1$
+		if (name.equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 			featureFile = file;
-			buildFile = project.getFile("build.properties"); //$NON-NLS-1$
-		} else if (name.equals("build.properties")) { //$NON-NLS-1$
+			buildFile = PDEProject.getBuildProperties(project);
+		} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			buildFile = file;
 			featureFile = createFeatureFile(project);
 		}
@@ -123,13 +124,13 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		if (fInputContextManager == null)
 			return;
 		String name = file.getName();
-		if (name.equalsIgnoreCase("feature.xml")) { //$NON-NLS-1$
+		if (name.equalsIgnoreCase(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 			/*
 			 * IEditorInput in = new FileEditorInput(file);
 			 * inputContextManager.putContext(in, new FeatureInputContext(this,
 			 * in, false));
 			 */
-		} else if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
+		} else if (name.equalsIgnoreCase(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
 				fInputContextManager.putContext(in, new BuildInputContext(this, in, false));
@@ -163,11 +164,11 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		File buildFile = null;
 		File featureFile = null;
 		String name = file.getName().toLowerCase(Locale.ENGLISH);
-		if (name.equals("feature.xml")) { //$NON-NLS-1$
+		if (name.equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 			featureFile = file;
 			File dir = file.getParentFile();
-			buildFile = new File(dir, "build.properties"); //$NON-NLS-1$
-		} else if (name.equals("build.properties")) { //$NON-NLS-1$
+			buildFile = new File(dir, ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			buildFile = file;
 			File dir = file.getParentFile();
 			featureFile = createFeatureFile(dir);
@@ -189,20 +190,19 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	}
 
 	private File createFeatureFile(File dir) {
-		File pluginFile = new File(dir, "plugin.xml"); //$NON-NLS-1$
+		File pluginFile = new File(dir, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		return pluginFile;
 	}
 
 	private IFile createFeatureFile(IProject project) {
-		IFile featureFile = project.getFile(ICoreConstants.FEATURE_PATH);
-		return featureFile;
+		return PDEProject.getFeatureXml(project);
 	}
 
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		String name = input.getName().toLowerCase(Locale.ENGLISH);
-		if (name.equals("build.properties")) { //$NON-NLS-1$
+		if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			manager.putContext(input, new BuildInputContext(this, input, true));
-		} else if (name.startsWith("feature.xml")) { //$NON-NLS-1$
+		} else if (name.startsWith(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 			manager.putContext(input, new FeatureInputContext(this, input, true));
 		}
 	}
@@ -343,7 +343,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 
 	public void showEditorInput(IEditorInput editorInput) {
 		String name = editorInput.getName();
-		if (name.equals("feature.xml")) { //$NON-NLS-1$
+		if (name.equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {
 			setActivePage(0);
 		} else {
 			setActivePage(getPageCount() - 3);

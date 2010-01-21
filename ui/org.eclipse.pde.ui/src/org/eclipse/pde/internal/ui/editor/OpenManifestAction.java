@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
@@ -67,11 +67,11 @@ public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
 						Iterator it = projects.iterator();
 						while (it.hasNext()) {
 							IProject project = (IProject) it.next();
-							IFile file = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+							IFile file = PDEProject.getManifest(project);
 							if (file == null || !file.exists())
-								file = project.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+								file = PDEProject.getPluginXml(project);
 							if (file == null || !file.exists())
-								file = project.getFile(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+								file = PDEProject.getFragmentXml(project);
 							if (file == null || !file.exists())
 								MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, NLS.bind(PDEUIMessages.OpenManifestsAction_cannotFind, project.getName()));
 							else

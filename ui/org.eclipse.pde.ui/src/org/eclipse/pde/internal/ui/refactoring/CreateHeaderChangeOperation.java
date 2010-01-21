@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.*;
@@ -45,7 +45,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 			if (res == null)
 				return;
 			IProject proj = res.getProject();
-			IFile file = proj.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+			IFile file = PDEProject.getManifest(proj);
 			if (file.exists())
 				fChange = updateBundleHeader(file, monitor);
 		} finally {

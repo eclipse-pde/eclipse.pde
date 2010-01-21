@@ -59,7 +59,8 @@ public interface ITargetPlatformService {
 	 * TODO Consider removing in favour of {@link #getActiveTarget()}
 	 * 
 	 * Returns a handle to the target definition that corresponds to the active target platform
-	 * or <code>null</code> if none.
+	 * or <code>null</code> if none. If the plug-in registry has not been initialized, this method
+	 * will initialize it so the workspace target can be set.
 	 * 
 	 * @return handle to workspace target platform or <code>null</code> if none
 	 * @exception CoreException if an error occurs generating the handle

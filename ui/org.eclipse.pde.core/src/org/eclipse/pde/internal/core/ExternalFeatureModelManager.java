@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
 		Map uniqueFeatures = new HashMap();
 		for (int i = 0; i < featurePaths.length; i++) {
-			File manifest = new File(featurePaths[i].getFile(), "feature.xml"); //$NON-NLS-1$
+			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
 				monitor.worked(1);
 				continue;

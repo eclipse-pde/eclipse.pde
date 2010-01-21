@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -168,15 +169,15 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		boolean fragment = false;
 
 		String name = file.getName().toLowerCase(Locale.ENGLISH);
-		if (name.equals("manifest.mf")) { //$NON-NLS-1$
+		if (name.equals(ICoreConstants.MANIFEST_FILENAME_LOWER_CASE)) {
 			if (container instanceof IFolder)
 				container = container.getParent();
 			manifestFile = file;
 			buildFile = container.getFile(ICoreConstants.BUILD_PROPERTIES_PATH);
 			pluginFile = createPluginFile(container);
-		} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			pluginFile = file;
-			fragment = name.equals("fragment.xml"); //$NON-NLS-1$
+			fragment = name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 			buildFile = container.getFile(ICoreConstants.BUILD_PROPERTIES_PATH);
 			manifestFile = container.getFile(ICoreConstants.MANIFEST_PATH);
 		}
@@ -213,22 +214,22 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		if (fInputContextManager == null)
 			return;
 		String name = file.getName();
-		if (name.equalsIgnoreCase("MANIFEST.MF")) { //$NON-NLS-1$
+		if (name.equalsIgnoreCase(ICoreConstants.MANIFEST_FILENAME)) {
 			if (!fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
 				fInputContextManager.putContext(in, new BundleInputContext(this, in, false));
 			}
-		} else if (name.equalsIgnoreCase("plugin.xml")) { //$NON-NLS-1$
+		} else if (name.equalsIgnoreCase(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)) {
 			if (!fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
 				fInputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
 			}
-		} else if (name.equalsIgnoreCase("fragment.xml")) { //$NON-NLS-1$
+		} else if (name.equalsIgnoreCase(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			if (!fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
 				fInputContextManager.putContext(in, new PluginInputContext(this, in, false, true));
 			}
-		} else if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
+		} else if (name.equalsIgnoreCase(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
 				fInputContextManager.putContext(in, new BuildInputContext(this, in, false));
@@ -240,13 +241,15 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
 			return;
 		IProject project = fInputContextManager.getCommonProject();
-		String name = (fInputContextManager.getAggregateModel() instanceof IFragmentModel) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
-		IFile file = project.getFile(name);
-		WorkspacePluginModelBase model;
-		if (name.equals("fragment.xml")) //$NON-NLS-1$
+		WorkspacePluginModelBase model = null;
+		IFile file = null;
+		if (fInputContextManager.getAggregateModel() instanceof IFragmentModel) {
+			file = PDEProject.getFragmentXml(project);
 			model = new WorkspaceFragmentModel(file, false);
-		else
+		} else {
+			file = PDEProject.getPluginXml(project);
 			model = new WorkspacePluginModel(file, false);
+		}
 
 		IPluginBase pluginBase = model.getPluginBase(true);
 		try {
@@ -257,7 +260,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		IEditorInput in = new FileEditorInput(file);
 		fInputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
 
-		updateBuildProperties(name);
+		updateBuildProperties(file.getName());
 	}
 
 	private void updateBuildProperties(String filename) {
@@ -323,17 +326,17 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		File buildFile = null;
 		File pluginFile = null;
 		String name = file.getName().toLowerCase(Locale.ENGLISH);
-		if (name.equals("manifest.mf")) { //$NON-NLS-1$
+		if (name.equals(ICoreConstants.MANIFEST_FILENAME_LOWER_CASE)) {
 			manifestFile = file;
 			File dir = file.getParentFile().getParentFile();
-			buildFile = new File(dir, "build.properties"); //$NON-NLS-1$
+			buildFile = new File(dir, ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 			pluginFile = createPluginFile(dir);
-		} else if (name.equals("build.properties")) { //$NON-NLS-1$
+		} else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			buildFile = file;
 			File dir = file.getParentFile();
 			pluginFile = createPluginFile(dir);
 			manifestFile = new File(dir, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-		} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			pluginFile = file;
 			File dir = file.getParentFile();
 			buildFile = new File(dir, ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
@@ -348,7 +351,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			if (pluginFile.exists()) {
 				IFileStore store = EFS.getStore(pluginFile.toURI());
 				IEditorInput in = new FileStoreEditorInput(store);
-				manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, name.equals("fragment.xml"))); //$NON-NLS-1$
+				manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)));
 			}
 			if (buildFile.exists()) {
 				IFileStore store = EFS.getStore(buildFile.toURI());
@@ -381,13 +384,13 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 
 		String name = input.getName().toLowerCase(Locale.ENGLISH);
-		if (name.startsWith("manifest.mf")) { //$NON-NLS-1$
+		if (name.startsWith(ICoreConstants.MANIFEST_FILENAME_LOWER_CASE)) {
 			manager.putContext(input, new BundleInputContext(this, input, true));
-		} else if (name.startsWith("build.properties")) { //$NON-NLS-1$
+		} else if (name.startsWith(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			manager.putContext(input, new BuildInputContext(this, input, true));
-		} else if (name.startsWith("plugin.xml")) { //$NON-NLS-1$
+		} else if (name.startsWith(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)) {
 			manager.putContext(input, new PluginInputContext(this, input, true, false));
-		} else if (name.startsWith("fragment.xml")) { //$NON-NLS-1$
+		} else if (name.startsWith(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			manager.putContext(input, new PluginInputContext(this, input, true, true));
 		}
 	}
@@ -401,20 +404,20 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 			if (zip.getEntry(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals("MANIFEST.MF"))); //$NON-NLS-1$
+				manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals(ICoreConstants.MANIFEST_FILENAME)));
 			}
 
 			if (zip.getEntry(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("plugin.xml"), false)); //$NON-NLS-1$
+				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), false));
 			} else if (zip.getEntry(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals("fragment.xml"), true)); //$NON-NLS-1$
+				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), true));
 			}
 
 			if (zip.getEntry(ICoreConstants.BUILD_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.BUILD_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals("build.properties"))); //$NON-NLS-1$
+				manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)));
 			}
 		} finally {
 			try {
@@ -616,11 +619,11 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		InputContext context = null;
 		if (object instanceof IFile) {
 			String name = ((IFile) object).getName();
-			if (name.equals("plugin.xml") || name.equals("fragment.xml")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
 				context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
-			else if (name.equals("MANIFEST.MF")) //$NON-NLS-1$
+			else if (name.equals(ICoreConstants.MANIFEST_FILENAME))
 				context = fInputContextManager.findContext(BundleInputContext.CONTEXT_ID);
-			else if (name.equals("build.properties")) //$NON-NLS-1$
+			else if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR))
 				context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
 		} else if (object instanceof IBuildObject) {
 			context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
@@ -640,10 +643,10 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	public void showEditorInput(IEditorInput editorInput) {
 		String name = editorInput.getName();
 		String id = getActivePageInstance().getId();
-		if (name.equals("build.properties")) { //$NON-NLS-1$
+		if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			if (!BuildInputContext.CONTEXT_ID.equals(id))
 				setActivePage(SHOW_SOURCE ? BuildInputContext.CONTEXT_ID : BuildPage.PAGE_ID);
-		} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			if (!PluginInputContext.CONTEXT_ID.equals(id)) {
 				if (SHOW_SOURCE) {
 					setActivePage(PluginInputContext.CONTEXT_ID);

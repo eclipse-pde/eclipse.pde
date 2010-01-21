@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.Locale;
-
 import org.eclipse.core.runtime.PlatformObject;
 
 public class FileAdapter extends PlatformObject {
@@ -33,7 +32,7 @@ public class FileAdapter extends PlatformObject {
 
 	public boolean isManifest() {
 		String fileName = fFile.getName();
-		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml") || fileName.equalsIgnoreCase("manifest.mf")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return (fileName.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || fileName.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) || fileName.equalsIgnoreCase(ICoreConstants.MANIFEST_FILENAME));
 	}
 
 	public boolean isSchema() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,8 +17,8 @@ import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.ltk.core.refactoring.participants.*;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -109,7 +109,7 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		IResource res = base.getUnderlyingResource();
 		if (res != null) {
 			IProject proj = res.getProject();
-			IFile file = proj.getFile(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+			IFile file = PDEProject.getPluginXml(proj);
 			if (file.exists())
 				return file;
 		}

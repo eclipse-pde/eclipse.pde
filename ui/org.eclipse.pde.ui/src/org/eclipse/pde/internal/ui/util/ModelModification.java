@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 /**
  * ModelModification class used my the PDEModelUtility
@@ -54,12 +56,12 @@ public abstract class ModelModification {
 	 * @param project
 	 */
 	public ModelModification(IProject project) {
-		IFile xml = project.getFile(PDEModelUtility.F_PLUGIN);
+		IFile xml = PDEProject.getPluginXml(project);
 		if (!xml.exists())
-			xml = project.getFile(PDEModelUtility.F_FRAGMENT);
+			xml = PDEProject.getFragmentXml(project);
 		if (!xml.exists())
 			xml = null;
-		IFile manifest = project.getFile(PDEModelUtility.F_MANIFEST_FP);
+		IFile manifest = PDEProject.getManifest(project);
 		if (!manifest.exists() && xml != null)
 			singleFileModification(xml);
 		else if (manifest.exists())
@@ -74,7 +76,7 @@ public abstract class ModelModification {
 			fModelFile = fXMLFile;
 		else if (fPropertiesFile != null)
 			fModelFile = fPropertiesFile;
-		fIsBundleModel = file.getName().equals(PDEModelUtility.F_MANIFEST);
+		fIsBundleModel = file.getName().equals(ICoreConstants.MANIFEST_FILENAME);
 	}
 
 	private void createFullBundleModification(IFile bundleFile, IFile xmlFile) {
@@ -90,9 +92,9 @@ public abstract class ModelModification {
 		if (file == null)
 			return;
 		String name = file.getName();
-		if (name.equals(PDEModelUtility.F_MANIFEST))
+		if (name.equals(ICoreConstants.MANIFEST_FILENAME))
 			fManifestFile = file;
-		else if (name.equals(PDEModelUtility.F_PLUGIN) || name.equals(PDEModelUtility.F_FRAGMENT))
+		else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
 			fXMLFile = file;
 		else if (name.endsWith(PDEModelUtility.F_PROPERTIES))
 			fPropertiesFile = file;

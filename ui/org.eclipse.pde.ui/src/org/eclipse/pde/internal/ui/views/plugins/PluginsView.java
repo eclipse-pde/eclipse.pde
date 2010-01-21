@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -502,9 +502,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		String fileName = adapter.getFile().getName();
 		String lcFileName = fileName.toLowerCase(Locale.ENGLISH);
 		ImageDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(fileName);
-		if (lcFileName.equals("plugin.xml") //$NON-NLS-1$
-				|| lcFileName.equals("fragment.xml") //$NON-NLS-1$
-				|| lcFileName.equals("manifest.mf")) { //$NON-NLS-1$
+		if (lcFileName.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || lcFileName.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) || lcFileName.equals(ICoreConstants.MANIFEST_FILENAME_LOWER_CASE)) {
 			fOpenManifestAction.setImageDescriptor(desc);
 			manager.add(fOpenManifestAction);
 			manager.add(new Separator());

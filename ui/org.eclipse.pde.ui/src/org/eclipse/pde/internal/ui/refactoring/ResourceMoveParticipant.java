@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 
@@ -39,8 +39,7 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 		return false;
 	}
 
-	protected void addChange(CompositeChange result, String filename, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile(filename);
+	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
 			if (change != null)
@@ -60,13 +59,13 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 	}
 
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+		IFile file = PDEProject.getBuildProperties(fProject);
 		if (file.exists()) {
 			Change change = BuildPropertiesChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
 			if (change != null)
 				result.add(change);
 		}
-		file = fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		file = PDEProject.getManifest(fProject);
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
 			if (change != null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.*;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
@@ -53,8 +53,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		return false;
 	}
 
-	protected void addChange(CompositeChange result, String filename, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile(filename);
+	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
 			if (change != null)
@@ -74,7 +73,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 	}
 
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
-		IFile file = fProject.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		IFile file = PDEProject.getManifest(fProject);
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), pm);
 			if (change != null)

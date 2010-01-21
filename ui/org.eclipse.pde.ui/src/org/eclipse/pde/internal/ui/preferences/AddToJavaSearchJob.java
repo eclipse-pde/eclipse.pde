@@ -31,21 +31,29 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class AddToJavaSearchJob extends WorkspaceJob {
 
 	private static final String JOB_FAMILY_ID = "AddToJavaSearchJob"; //$NON-NLS-1$
-	private static IPluginModelBase[] fBundles;
-	private static boolean fAdd;
-	private static ITargetDefinition fTargetDefinition;
+
+	private IPluginModelBase[] fBundles;
+	private boolean fAdd;
+	private ITargetDefinition fTargetDefinition;
 
 	/**
 	 * Adds/Removes the target bundles to/from Java search
 	 * 
 	 * @param target	The target definition whose bundles are to be added/removed.
-	 * @param add		<code>true</code> for adding and <code>false></code> for removing.
 	 */
 	public static void synchWithTarget(ITargetDefinition target) {
-		fTargetDefinition = target;
-		fAdd = true;
-		fBundles = null;
-		scheduleJob();
+		Job.getJobManager().cancel(JOB_FAMILY_ID);
+		AddToJavaSearchJob job = new AddToJavaSearchJob(target);
+		job.schedule();
+	}
+
+	/**
+	 * Removes all bundles from Java search
+	 */
+	public static void clearAll() {
+		Job.getJobManager().cancel(JOB_FAMILY_ID);
+		AddToJavaSearchJob job = new AddToJavaSearchJob(null, false);
+		job.schedule();
 	}
 
 	/**
@@ -55,23 +63,38 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	 * @param add		<code>true</code> to add, <code>false></code> to remove
 	 */
 	public static void changeBundles(IPluginModelBase[] bundles, boolean add) {
-		Assert.isNotNull(bundles);
-		fBundles = bundles;
-		fAdd = add;
-		scheduleJob();
-	}
-
-	/**
-	 * Cancels any other similar jobs and starts a new job
-	 */
-	private static void scheduleJob() {
 		Job.getJobManager().cancel(JOB_FAMILY_ID);
-		AddToJavaSearchJob job = new AddToJavaSearchJob(PDEUIMessages.AddToJavaSearchJob_0);
+		AddToJavaSearchJob job = new AddToJavaSearchJob(bundles, add);
 		job.schedule();
 	}
 
-	private AddToJavaSearchJob(String name) {
-		super(name);
+	/**
+	 * Updates the contents of the java search scope setting its contents to the
+	 * contents of the given target definition.
+	 * 
+	 * @param target target to update search scope with
+	 */
+	private AddToJavaSearchJob(ITargetDefinition target) {
+		super(PDEUIMessages.AddToJavaSearchJob_0);
+		fTargetDefinition = target;
+		fAdd = true;
+		fBundles = null;
+	}
+
+	/**
+	 * Updates the contents of the java search scope with the given set of bundles.
+	 * Adds them to the scope if add to <code>true</code> otherwise they are removed.
+	 * Calling this method with bundles being null and add being <code>false</code>
+	 * will clear the java search scope.
+	 * 
+	 * @param bundles set of bundles to add or remove
+	 * @param add whether to add or remove the bundles
+	 */
+	private AddToJavaSearchJob(IPluginModelBase[] bundles, boolean add) {
+		super(PDEUIMessages.AddToJavaSearchJob_0);
+		fTargetDefinition = null;
+		fBundles = bundles;
+		fAdd = add;
 	}
 
 	/* (non-Javadoc)
@@ -126,7 +149,11 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 			if (fAdd) {
 				manager.addToJavaSearch(fBundles);
 			} else {
-				manager.removeFromJavaSearch(fBundles);
+				if (fBundles != null) {
+					manager.removeFromJavaSearch(fBundles);
+				} else {
+					manager.removeAllFromJavaSearch();
+				}
 			}
 			subMon.worked(25);
 

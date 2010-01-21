@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewBinaryDependenciesOperation;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -81,9 +82,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			if (resources[j] instanceof IFile) {
 				if (".project".equals(resources[j].getName()) //$NON-NLS-1$
 						|| ".classpath".equals(resources[j] //$NON-NLS-1$
-								.getName()) || "plugin.xml".equals(resources[j] //$NON-NLS-1$
-								.getName()) || "build.properties".equals(resources[j] //$NON-NLS-1$
-								.getName())) {
+								.getName()) || ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equals(resources[j].getName()) || ICoreConstants.BUILD_FILENAME_DESCRIPTOR.equals(resources[j].getName())) {
 					continue;
 				}
 				// resource at the root, export root
@@ -149,7 +148,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 		if (requiredProjects.size() <= 0)
 			return;
-		IFile file = javaProject.getProject().getFile(ICoreConstants.MANIFEST_PATH);
+		IFile file = PDEProject.getManifest(javaProject.getProject());
 		try {
 			// TODO format manifest
 			Manifest manifest = new Manifest(file.getContents());
@@ -185,10 +184,10 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		IProject other = workspaceRoot.getProject(entry.getPath().segment(0));
 		if (!PDE.hasPluginNature(other))
 			return false;
-		if (other.findMember(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) != null)
+		if (PDEProject.getFragmentXml(other).exists())
 			return false;
 		try {
-			InputStream is = other.getFile(ICoreConstants.MANIFEST_PATH).getContents();
+			InputStream is = PDEProject.getManifest(other).getContents();
 			try {
 				Manifest mf = new Manifest(is);
 				if (mf.getMainAttributes().getValue(Constants.FRAGMENT_HOST) != null)
@@ -275,7 +274,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 
 		// delete manifest.mf imported from libraries
-		IFile importedManifest = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		IFile importedManifest = PDEProject.getManifest(project);
 		if (importedManifest.exists()) {
 			importedManifest.delete(true, false, monitor);
 			if (!fData.hasBundleStructure()) {

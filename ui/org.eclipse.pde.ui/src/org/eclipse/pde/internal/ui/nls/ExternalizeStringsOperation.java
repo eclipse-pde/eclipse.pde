@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,10 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -69,7 +71,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 					addBundleLocalization(change, monitor, pluginChange);
 
 				// Update build.properties file (if exists & not already done)
-				IFile buildProps = changeFile.getFile().getProject().getFile(PDEModelUtility.F_BUILD);
+				IFile buildProps = PDEProject.getBuildProperties(changeFile.getFile().getProject());
 				if (buildProps != null && buildProps.exists() && !fFileChanges.containsKey(buildProps)) {
 					getChangeForBuild(buildProps, monitor, pluginChange, change.getBundleLocalization());
 				}
@@ -132,9 +134,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		change.setEdit(edit);
 		// mark a plugin.xml or a fragment.xml as PLUGIN2 type so they will be compared
 		// with the PluginContentMergeViewer
-		String textType = file.getName().equals("plugin.xml") || //$NON-NLS-1$
-				file.getName().equals("fragment.xml") ? //$NON-NLS-1$
-		"PLUGIN2" //$NON-NLS-1$
+		String textType = file.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || file.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) ? "PLUGIN2" //$NON-NLS-1$
 				: file.getFileExtension();
 		change.setTextType(textType);
 		parentChange.add(change);
@@ -166,7 +166,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
 	private void addBundleLocalization(ModelChange change, IProgressMonitor mon, CompositeChange parent) {
 		IPluginModelBase base = change.getParentModel();
-		IFile manifest = base.getUnderlyingResource().getProject().getFile(PDEModelUtility.F_MANIFEST_FP);
+		IFile manifest = PDEProject.getManifest(base.getUnderlyingResource().getProject());
 		// if the edit for this manifest file is in the HashMap, then we must have added
 		// the localization already since it is checked first (this must be the second or subsequent
 		// change to the manifest for this plug-in)

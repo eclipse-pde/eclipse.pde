@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
@@ -119,7 +120,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		if (file != null) {
 			IPath path = new Path(object.getModel().getInstallLocation());
 			IPath filePath = null;
-			if ("MANIFEST.MF".equals(file.getName())) //$NON-NLS-1$
+			if (ICoreConstants.MANIFEST_FILENAME.equals(file.getName()))
 				filePath = new Path(file.getParentFile().getParent());
 			else if (file.getName().endsWith("jar")) { //$NON-NLS-1$
 				filePath = new Path(file.getPath());

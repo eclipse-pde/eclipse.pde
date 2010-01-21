@@ -19,6 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
@@ -124,12 +125,17 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		boolean synchJavaSearch = fAddToJavaSearch.getSelection();
 		if (store.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH) != synchJavaSearch) {
 			store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, synchJavaSearch);
-			if (synchJavaSearch) {
-				try {
-					AddToJavaSearchJob.synchWithTarget(TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition());
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
+			try {
+				if (synchJavaSearch) {
+					ITargetHandle target = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
+					if (target != null) {
+						AddToJavaSearchJob.synchWithTarget(target.getTargetDefinition());
+					}
+				} else {
+					AddToJavaSearchJob.clearAll();
 				}
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
 			}
 		}
 

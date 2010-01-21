@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
-
-import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
+import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
 import org.eclipse.pde.ui.tests.model.bundle.AllBundleModelTests;
 import org.eclipse.pde.ui.tests.model.xml.AllXMLModelTests;
 import org.eclipse.pde.ui.tests.nls.AllNLSTests;
+import org.eclipse.pde.ui.tests.preferences.AllPreferenceTests;
+import org.eclipse.pde.ui.tests.project.BundleRootTests;
+import org.eclipse.pde.ui.tests.project.ProjectCreationTests;
 import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
 import org.eclipse.pde.ui.tests.target.AllTargetTests;
+import org.eclipse.pde.ui.tests.views.log.AllLogViewTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
 
 public class AllPDETests {
@@ -39,6 +40,9 @@ public class AllPDETests {
 		suite.addTest(AllPDERuntimeTests.suite());
 		suite.addTest(ExportBundleTests.suite());
 		suite.addTest(AllLauncherTests.suite());
+		suite.addTest(AllLogViewTests.suite());
+		suite.addTest(ProjectCreationTests.suite());
+		suite.addTest(BundleRootTests.suite());
 		return suite;
 	}
 

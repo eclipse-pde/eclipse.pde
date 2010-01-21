@@ -660,7 +660,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public void init(IWorkbench workbench) {
 		// ensures default targets are created when page is opened (if not created yet)
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		manager.getExternalModelManager();
+		if (!manager.isInitialized()) {
+			manager.getExternalModelManager();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -816,13 +818,18 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 							if (pref.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH)) {
 								AddToJavaSearchJob.synchWithTarget(fActiveTarget);
 							}
+
+							// Ignore the qualifier when comparing (otherwise N builds always newer than I builds)
 							Version platformOsgiVersion = Platform.getBundle(ORG_ECLIPSE_OSGI).getVersion();
+							platformOsgiVersion = new Version(platformOsgiVersion.getMajor(), platformOsgiVersion.getMinor(), platformOsgiVersion.getMicro());
 							IInstallableUnit[] units = fActiveTarget.getIncludedUnits();
 							if (units != null) {
 								for (int index = 0; index < units.length; index++) {
 									if (ORG_ECLIPSE_OSGI.equalsIgnoreCase(units[index].getId())) {
-										Version osgiUnitVersion = org.eclipse.equinox.p2.metadata.Version.toOSGiVersion(units[index].getVersion());
-										if (platformOsgiVersion.compareTo(osgiUnitVersion) < 0) {
+										// Ignore the qualifier when comparing (otherwise N builds always newer than I builds)
+										Version bundleVersion = org.eclipse.equinox.p2.metadata.Version.toOSGiVersion(units[index].getVersion());
+										bundleVersion = new Version(bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro());
+										if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
 											Display.getDefault().syncExec(new Runnable() {
 												public void run() {
 													MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
@@ -36,7 +36,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		IResource res = fInfo.getBase().getUnderlyingResource();
 		if (res == null)
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_externalBundleError);
-		else if (!res.getProject().getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR).exists())
+		else if (!PDEProject.getManifest(res.getProject()).exists())
 			status.addFatalError(PDEUIMessages.RenamePluginProcessor_noManifestError);
 		if (fInfo.isRenameProject()) {
 			String newName = fInfo.getNewValue();

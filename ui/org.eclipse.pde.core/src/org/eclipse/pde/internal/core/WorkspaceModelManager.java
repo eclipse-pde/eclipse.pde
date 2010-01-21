@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,39 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.ListIterator;
-import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
+import java.io.*;
+import java.util.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.team.core.RepositoryProvider;
 
 public abstract class WorkspaceModelManager extends AbstractModelManager implements IResourceChangeListener, IResourceDeltaVisitor {
 
 	public static boolean isPluginProject(IProject project) {
 		if (project.isOpen())
-			return project.exists(ICoreConstants.MANIFEST_PATH) || project.exists(ICoreConstants.PLUGIN_PATH) || project.exists(ICoreConstants.FRAGMENT_PATH);
+			return PDEProject.getManifest(project).exists() || PDEProject.getPluginXml(project).exists() || PDEProject.getFragmentXml(project).exists();
 		return false;
 	}
 
 	public static boolean isFeatureProject(IProject project) {
-		return project.isOpen() && project.exists(ICoreConstants.FEATURE_PATH);
+		return project.isOpen() && PDEProject.getFeatureXml(project).exists();
 	}
 
 	public static boolean isBinaryProject(IProject project) {

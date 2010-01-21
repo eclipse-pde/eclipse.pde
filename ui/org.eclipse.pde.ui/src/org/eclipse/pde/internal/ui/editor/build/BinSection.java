@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class BinSection extends BuildContentsSection implements IModelChangedLis
 
 	protected void handleBuildCheckStateChange(boolean wasTopParentChecked) {
 		IResource resource = fParentResource;
-		String resourceName = fParentResource.getProjectRelativePath().toString();
+		String resourceName = fParentResource.getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath()).toPortableString();
 		IBuild build = fBuildModel.getBuild();
 		IBuildEntry includes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
 		IBuildEntry excludes = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
@@ -89,7 +89,7 @@ public class BinSection extends BuildContentsSection implements IModelChangedLis
 					if (event.getNewValue().equals(".")) //$NON-NLS-1$
 						return;
 					// adding token
-					IFile file = fProject.getFile(new Path(event.getNewValue().toString()));
+					IFile file = fBundleRoot.getFile(new Path(event.getNewValue().toString()));
 					if (!file.exists())
 						return;
 					fParentResource = fOriginalResource = file;
@@ -98,7 +98,7 @@ public class BinSection extends BuildContentsSection implements IModelChangedLis
 					if (event.getOldValue().equals(".")) //$NON-NLS-1$
 						return;
 					// removing token
-					IFile file = fProject.getFile(new Path(event.getOldValue().toString()));
+					IFile file = fBundleRoot.getFile(new Path(event.getOldValue().toString()));
 					if (!file.exists())
 						return;
 					fParentResource = fOriginalResource = file;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class ManifestUtils {
 
@@ -74,7 +75,7 @@ public class ManifestUtils {
 	}
 
 	public final static IBuild getBuild(IProject project) {
-		IFile buildProps = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile buildProps = PDEProject.getBuildProperties(project);
 		if (buildProps.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
 			if (model != null)

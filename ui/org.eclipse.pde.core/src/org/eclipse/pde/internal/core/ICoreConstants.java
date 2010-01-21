@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.util.Locale;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Constants;
@@ -110,6 +111,15 @@ public interface ICoreConstants {
 
 	/** Constant for the string <code>META-INF/MANIFEST.MF</code> */
 	public final static String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+
+	/** Constant for the string <code>MANIFEST.MF</code> */
+	public final static String MANIFEST_FILENAME = "MANIFEST.MF"; //$NON-NLS-1$
+
+	/** Constant for the string <code>.options</code> */
+	public final static String OPTIONS_FILENAME = ".options"; //$NON-NLS-1$
+
+	/** Constant for the string <code>manifest.mf</code> */
+	public final static String MANIFEST_FILENAME_LOWER_CASE = MANIFEST_FILENAME.toLowerCase(Locale.ENGLISH);
 
 	/** Constant for the string <code>build.properties</code> */
 	public final static String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$

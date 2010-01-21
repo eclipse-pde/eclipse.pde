@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.*;
 import org.osgi.framework.*;
@@ -170,7 +171,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IPluginBase base = fModel.getPluginBase();
 		// must check the existence of plugin.xml file instead of using IPluginBase because if the bundle is not a singleton,
 		// it won't be registered with the extension registry and will always return 0 when querying extensions/extension points
-		boolean hasExtensions = base != null && fProject.findMember(ICoreConstants.PLUGIN_PATH) != null;
+		boolean hasExtensions = base != null && PDEProject.getPluginXml(fProject).exists();
 
 		if (hasExtensions) {
 			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
@@ -218,7 +219,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private void validateFragmentHost() {
 		IHeader header = getHeader(Constants.FRAGMENT_HOST);
 		if (header == null) {
-			if (isCheckNoRequiredAttr() && fProject.getFile("fragment.xml").exists()) { //$NON-NLS-1$
+			if (isCheckNoRequiredAttr() && PDEProject.getFragmentXml(fProject).exists()) {
 				report(PDECoreMessages.BundleErrorReporter_HostNeeded, 1, CompilerFlags.P_NO_REQUIRED_ATT, PDEMarkerFactory.CAT_FATAL);
 			}
 			return;
@@ -1085,7 +1086,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			location = new String();
 		}
 
-		IResource res = fProject.findMember(location);
+		IResource res = PDEProject.getBundleRoot(fProject).findMember(location);
 		if (res == null || !(res instanceof IContainer)) {
 			report(PDECoreMessages.BundleErrorReporter_localization_folder_not_exist, header.getLineNumber() + 1, CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
 			return;

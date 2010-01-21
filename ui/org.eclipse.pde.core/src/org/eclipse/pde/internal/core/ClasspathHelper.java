@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,12 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class ClasspathHelper {
 
 	private static final String DOT = "."; //$NON-NLS-1$
+	private static final String FRAGMENT_ANNOTATION = "@fragment@"; //$NON-NLS-1$
 
 	public static String getDevEntriesProperties(String fileName, boolean checkExcluded) {
 		File file = new File(fileName);
@@ -248,7 +250,7 @@ public class ClasspathHelper {
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals(PDECore.getDefault().getModelManager().getSystemBundleId()), false);
-				IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+				IFile file = PDEProject.getBuildProperties(project);
 				boolean searchBuild = file.exists();
 				if (searchBuild) {
 					WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
@@ -303,7 +305,7 @@ public class ClasspathHelper {
 				try {
 					IProject project = frags[i].getUnderlyingResource().getProject();
 					Map classpathMap = getClasspathMap(project, checkExcluded, false, true);
-					IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+					IFile file = PDEProject.getBuildProperties(project);
 					IBuild build = null;
 					if (file.exists()) {
 						WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
@@ -311,7 +313,7 @@ public class ClasspathHelper {
 					}
 					IPath[] paths = findLibrary(libName, project, classpathMap, build);
 					if (paths.length > 0)
-						return paths;
+						return postfixFragmentAnnotation(paths);
 
 				} catch (JavaModelException e) {
 					continue;
@@ -322,11 +324,22 @@ public class ClasspathHelper {
 				if (file.isDirectory()) {
 					file = new File(file, libName);
 					if (file.exists())
-						return new IPath[] {new Path(file.getPath())};
+						// Postfix fragment annotation for fragment path (fix bug 294211)
+						return new IPath[] {new Path(file.getPath() + FRAGMENT_ANNOTATION)};
 				}
 			}
 		}
 		return new IPath[0];
+	}
+
+	/*
+	 * Postfixes the fragment annotation for the paths that we know come
+	 * from fragments.  This is needed to fix bug 294211.
+	 */
+	private static IPath[] postfixFragmentAnnotation(IPath[] paths) {
+		for (int i = 0; i < paths.length; i++)
+			paths[i] = new Path(paths[i].toString() + FRAGMENT_ANNOTATION);
+		return paths;
 	}
 
 	private static void addPath(ArrayList result, IProject project, IPath path) {

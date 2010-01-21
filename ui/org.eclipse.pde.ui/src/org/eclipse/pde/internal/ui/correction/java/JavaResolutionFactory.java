@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.ModelModification;
@@ -185,11 +185,10 @@ public class JavaResolutionFactory {
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getModifiedElement()
 		 */
 		public Object getModifiedElement() {
-			IPath[] paths = new IPath[] {ICoreConstants.MANIFEST_PATH, ICoreConstants.PLUGIN_PATH};
-			for (int i = 0; i < paths.length; i++) {
-				IFile file = getProject().getFile(ICoreConstants.MANIFEST_PATH);
-				if (file.exists())
-					return file;
+			IFile[] files = new IFile[] {PDEProject.getManifest(getProject()), PDEProject.getPluginXml(getProject())};
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].exists())
+					return files[i];
 			}
 			return super.getModifiedElement();
 		}
@@ -272,7 +271,7 @@ public class JavaResolutionFactory {
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getModifiedElement()
 		 */
 		public Object getModifiedElement() {
-			IFile file = getProject().getFile(ICoreConstants.MANIFEST_PATH);
+			IFile file = PDEProject.getManifest(getProject());
 			if (file.exists())
 				return file;
 			return super.getModifiedElement();
@@ -331,7 +330,7 @@ public class JavaResolutionFactory {
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getModifiedElement()
 		 */
 		public Object getModifiedElement() {
-			IFile file = getProject().getFile(ICoreConstants.MANIFEST_PATH);
+			IFile file = PDEProject.getManifest(getProject());
 			if (file.exists())
 				return file;
 			return super.getModifiedElement();

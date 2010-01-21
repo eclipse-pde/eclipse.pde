@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -315,7 +315,7 @@ public class TargetPlatformHelper {
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
 		if (model == null)
-			return ICoreConstants.TARGET35;
+			return ICoreConstants.TARGET36;
 
 		String version = model.getPluginBase().getVersion();
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
@@ -332,8 +332,10 @@ public class TargetPlatformHelper {
 				return ICoreConstants.TARGET33;
 			if (major == 3 && minor == 4)
 				return ICoreConstants.TARGET34;
+			if (major == 3 && minor == 5)
+				return ICoreConstants.TARGET35;
 		}
-		return ICoreConstants.TARGET35;
+		return ICoreConstants.TARGET36;
 	}
 
 	public static double getHostVersion() {
@@ -341,7 +343,7 @@ public class TargetPlatformHelper {
 		Bundle bundle = context.getBundle(0);
 		String version = (String) bundle.getHeaders().get(Constants.BUNDLE_VERSION);
 		if (version == null)
-			return Double.parseDouble(ICoreConstants.TARGET35);
+			return Double.parseDouble(ICoreConstants.TARGET36);
 
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
 			Version vid = new Version(version);
@@ -357,8 +359,10 @@ public class TargetPlatformHelper {
 				return Double.parseDouble(ICoreConstants.TARGET33);
 			if (major == 3 && minor == 4)
 				return Double.parseDouble(ICoreConstants.TARGET34);
+			if (major == 3 && minor == 5)
+				return Double.parseDouble(ICoreConstants.TARGET35);
 		}
-		return Double.parseDouble(ICoreConstants.TARGET35);
+		return Double.parseDouble(ICoreConstants.TARGET36);
 	}
 
 	public static double getTargetVersion() {
@@ -389,6 +393,30 @@ public class TargetPlatformHelper {
 			schemaVersion = ICoreConstants.TARGET32;
 		}
 		return schemaVersion;
+	}
+
+	/**
+	 * Reverse engineer the target version based on a schema version.
+	 * If <code>null</code> is* passed as the version, the current target platform's
+	 * version is used (result of getTargetVersion()).
+	 * @param schemaVersion the schema version being targeted or <code>null</code>
+	 * @return a compatible target version
+	 */
+	public static String getTargetVersionForSchemaVersion(String schemaVersion) {
+		if (schemaVersion == null) {
+			return getTargetVersionString();
+		}
+		// In 3.4 the schemas changed the spelling of appInfo to appinfo to be w3c compliant, see bug 213255.
+		if (schemaVersion.equals(ICoreConstants.TARGET30)) {
+			// 3.0 schema version was good up to 3.1
+			return ICoreConstants.TARGET31;
+		}
+		if (schemaVersion.equals(ICoreConstants.TARGET32)) {
+			// 3.2 schema version was good for 3.2 and 3.3
+			return ICoreConstants.TARGET33;
+		}
+		// otherwise, compatible with latest version
+		return getTargetVersionString();
 	}
 
 	/**
@@ -460,7 +488,7 @@ public class TargetPlatformHelper {
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
 			if (location != null)
-				list.add(location + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
+				list.add(location + IPath.SEPARATOR + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 		}
 		return (String[]) list.toArray(new String[list.size()]);
 	}

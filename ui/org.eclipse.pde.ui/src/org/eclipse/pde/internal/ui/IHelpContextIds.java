@@ -76,6 +76,7 @@ public interface IHelpContextIds {
 	public static final String PLUGIN_IMPORT_FIRST_PAGE = PREFIX + "plugin_import_first_page"; //$NON-NLS-1$
 	public static final String PLUGIN_IMPORT_SECOND_PAGE = PREFIX + "plugin_import_second_page"; //$NON-NLS-1$
 	public static final String PLUGIN_IMPORT_EXPRESS_PAGE = PREFIX + "plugin_import_express_page"; //$NON-NLS-1$
+	public static final String PLUGIN_IMPORT_OVERWRITE_DIALOG = PREFIX + "plugin_import_overwrite_dialog"; //$NON-NLS-1$
 
 	public static final String FEATURE_IMPORT_FIRST_PAGE = PREFIX + "feature_import_first_page"; //$NON-NLS-1$
 	public static final String FEATURE_IMPORT_SECOND_PAGE = PREFIX + "feature_import_second_page"; //$NON-NLS-1$

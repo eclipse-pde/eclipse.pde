@@ -35,6 +35,11 @@ import org.eclipse.pde.internal.core.target.provisional.*;
 public class TargetPlatformService implements ITargetPlatformService {
 
 	/**
+	 * Non-API constant for the location of the bundle pool to be used for target profiles
+	 */
+	public static final String BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".bundle_pool").toOSString(); //$NON-NLS-1$
+
+	/**
 	 * p2 data area for all targets
 	 */
 	private static final String AGENT_LOCATION = PDECore.getDefault().getStateLocation().append("p2").toOSString(); //$NON-NLS-1$
@@ -111,6 +116,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+
+		if (memento.equals("")) { //$NON-NLS-1$
+			initDefaultTargetPlatformDefinition();
+		}
+
 		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
 			return getTarget(memento);
 		}
@@ -645,8 +655,65 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/**
-	 * Non-API constant for the location of the bundle pool to be used for target profiles
+	 * Sets active target definition handle if not yet set. If an existing target
+	 * definition corresponds to workspace target settings, it is selected as the
+	 * active target. If there are no targets that correspond to workspace settings
+	 * a new definition is created. 
 	 */
-	public static final String BUNDLE_POOL = PDECore.getDefault().getStateLocation().append(".bundle_pool").toOSString(); //$NON-NLS-1$
+	private void initDefaultTargetPlatformDefinition() {
+		// Access the preference directly.  If the user has explicitly set there to be no target platform we don't want to create one.
+		String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+		if (memento.equals("")) { //$NON-NLS-1$
+			// no workspace target handle set, check if any targets are equivalent to current settings
+			ITargetHandle[] targets = getTargets(null);
+			// create target platform from current workspace settings
+			TargetDefinition curr = (TargetDefinition) newTarget();
+			ITargetHandle wsHandle = null;
+			try {
+				loadTargetDefinitionFromPreferences(curr);
+				for (int i = 0; i < targets.length; i++) {
+					if (curr.isContentEquivalent(targets[i].getTargetDefinition())) {
+						wsHandle = targets[i];
+						break;
+					}
+				}
+				if (wsHandle == null) {
+					// restore settings from preferences
+					ITargetDefinition def = newDefaultTargetDefinition();
+					String defVMargs = def.getVMArguments();
+					if (curr.getVMArguments() == null) {
+						// previous to 3.5, default VM arguments were null instead of matching the host's
+						// so compare to null VM arguments
+						def.setVMArguments(null);
+					}
+					if (curr.isContentEquivalent(def)) {
+						// Target is equivalent to the default settings, just add it as active
+						curr.setName(Messages.TargetPlatformService_7);
+						curr.setVMArguments(defVMargs); // restore default VM arguments
+					} else {
+						// Custom target settings, add as new target platform and add default as well
+						curr.setName(PDECoreMessages.PluginModelManager_0);
+
+						boolean defaultExists = false;
+						for (int i = 0; i < targets.length; i++) {
+							if (((TargetDefinition) def).isContentEquivalent(targets[i].getTargetDefinition())) {
+								defaultExists = true;
+								break;
+							}
+						}
+						if (!defaultExists) {
+							saveTargetDefinition(def);
+						}
+					}
+					saveTargetDefinition(curr);
+					wsHandle = curr.getHandle();
+				}
+				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, wsHandle.getMemento());
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
+		}
+	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
@@ -339,7 +340,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		InputContext context = getPage().getPDEEditor().getContextManager().findContext(BuildInputContext.CONTEXT_ID);
 		if (context == null) {
 			if (createIfMissing) {
-				IFile buildFile = getPage().getPDEEditor().getCommonProject().getFile("build.properties"); //$NON-NLS-1$
+				IFile buildFile = PDEProject.getBuildProperties(getPage().getPDEEditor().getCommonProject());
 				try {
 					buildFile.create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
 				} catch (CoreException e) {

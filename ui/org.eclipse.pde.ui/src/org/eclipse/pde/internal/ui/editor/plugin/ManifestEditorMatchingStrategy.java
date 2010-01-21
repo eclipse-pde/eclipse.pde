@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 
 				// If a MANIFEST.MF file is being opened, make sure we return a positive match
 				// only if it is colocated with the plugin.xml/fragment.xml file already open
-				if (inputFile.getName().equals("MANIFEST.MF")) { //$NON-NLS-1$
+				if (inputFile.getName().equals(ICoreConstants.MANIFEST_FILENAME)) {
 					IContainer parent = inputFile.getParent();
 					return parent instanceof IFolder && parent.getName().equals("META-INF") //$NON-NLS-1$
 							&& parent.getParent().equals(editorFile.getParent());
@@ -42,7 +42,7 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 
 				// if a plugin.xml/fragment.xml is being opened, make sure we return a positive match
 				// only if the editor that is open is associated with a colocated MANIFEST.MF
-				if (inputFile.getName().equals("plugin.xml") || inputFile.getName().equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (inputFile.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || inputFile.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 					IContainer parent = inputFile.getParent();
 					IFile file = parent.getFile(ICoreConstants.MANIFEST_PATH);
 					return file.exists() && editorFile.equals(file);
@@ -50,10 +50,10 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 
 				// if a build.properties is being opened, only return a positive match
 				// if an editor is already open on a sibling plugin.xml/fragment.xml or a META-INF/MANIFEST.MF
-				if (inputFile.getName().equals("build.properties")) { //$NON-NLS-1$ 
+				if (inputFile.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 					IContainer parent = inputFile.getParent();
 					if (parent.equals(editorFile.getParent())) {
-						return editorFile.getName().equals("plugin.xml") || editorFile.getName().equals("fragment.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+						return editorFile.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || editorFile.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 					}
 					IFile file = parent.getFile(ICoreConstants.MANIFEST_PATH);
 					return file.exists() && editorFile.equals(file);

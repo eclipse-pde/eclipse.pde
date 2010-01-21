@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.converter.PluginConverter;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.PluginImport;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -113,7 +114,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 
 	protected final IBuild getBuild() {
-		IFile buildProps = fProject.getFile("build.properties"); //$NON-NLS-1$
+		IFile buildProps = PDEProject.getBuildProperties(fProject);
 		if (buildProps != null) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
 			if (model != null)
@@ -347,7 +348,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			} else
 				addRequireBundles(plugins, pbase, build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES));
 			try {
-				build.write("", new PrintWriter(new FileOutputStream(fProject.getFile("build.properties").getFullPath().toFile()))); //$NON-NLS-1$ //$NON-NLS-2$
+				build.write("", new PrintWriter(new FileOutputStream(PDEProject.getBuildProperties(fProject).getFullPath().toFile()))); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (FileNotFoundException e) {
 			}
 		} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,14 +13,14 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -37,7 +37,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 
 	protected CheckboxTreeViewer fTreeViewer;
 	private boolean fDoRefresh = false;
-	protected IProject fProject;
+	protected IContainer fBundleRoot;
 	protected IBuildModel fBuildModel;
 	protected IResource fOriginalResource, fParentResource;
 	protected boolean isChecked;
@@ -45,9 +45,9 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 	public class TreeContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IProject) {
+			if (parent instanceof IContainer) {
 				try {
-					return ((IProject) parent).members();
+					return ((IContainer) parent).members();
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -143,7 +143,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 		Composite container = createClientContainer(section, 2, toolkit);
 		fBuildModel = getBuildModel();
 		if (fBuildModel.getUnderlyingResource() != null)
-			fProject = fBuildModel.getUnderlyingResource().getProject();
+			fBundleRoot = PDEProject.getBundleRoot(fBuildModel.getUnderlyingResource().getProject());
 
 		fTreeViewer = new CheckboxTreeViewer(toolkit.createTree(container, SWT.CHECK));
 		fTreeViewer.setContentProvider(new TreeContentProvider());
@@ -196,7 +196,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 
 	protected IResource handleAllUnselected(IResource resource, String name) {
 		IResource parent = resource.getParent();
-		if (parent == resource.getProject()) {
+		if (parent.equals(fBundleRoot)) {
 			return resource;
 		}
 		try {
@@ -259,7 +259,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 							return;
 						Vector fileExt = new Vector();
 						String[] inclTokens, exclTokens = new String[0];
-						if (fProject == null || includes == null)
+						if (fBundleRoot == null || includes == null)
 							return;
 						inclTokens = includes.getTokens();
 						if (excludes != null)
@@ -276,7 +276,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 							if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								// ignore - should be root directory
 							} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource.length() - 1) {
-								IFolder folder = fProject.getFolder(resource);
+								IFolder folder = fBundleRoot.getFolder(new Path(resource));
 								if (!folder.exists())
 									continue;
 								fTreeViewer.setSubtreeChecked(folder, isIncluded);
@@ -289,7 +289,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 								if (isIncluded)
 									fileExt.add(resource.substring(2));
 							} else {
-								IFile file = fProject.getFile(resource);
+								IFile file = fBundleRoot.getFile(new Path(resource));
 								if (!file.exists())
 									continue;
 								fTreeViewer.setChecked(file, isIncluded);
@@ -303,7 +303,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 						if (fileExt.size() == 0)
 							return;
 						try {
-							IResource[] members = fProject.members();
+							IResource[] members = fBundleRoot.members();
 							for (int i = 0; i < members.length; i++) {
 								if (!(members[i] instanceof IFolder) && (fileExt.contains(members[i].getFileExtension()))) {
 									fTreeViewer.setChecked(members[i], includes.contains("*." //$NON-NLS-1$
@@ -369,7 +369,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 				if (includes.contains(resourceName))
 					includes.removeToken(resourceName);
 				if (includes.contains("*." + resource.getFileExtension())) { //$NON-NLS-1$
-					IResource[] members = fProject.members();
+					IResource[] members = fBundleRoot.members();
 					for (int i = 0; i < members.length; i++) {
 						if (!(members[i] instanceof IFolder) && !members[i].getName().equals(resource.getName()) && (resource.getFileExtension().equals(members[i].getFileExtension()))) {
 							includes.addToken(members[i].getName());
@@ -379,7 +379,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 								&& libraries.length != 0) {
 							for (int j = 0; j < libraries.length; j++) {
 								String libName = libraries[j].getName().substring(7);
-								IPath path = fProject.getFile(libName).getProjectRelativePath();
+								IPath path = fBundleRoot.getFile(new Path(libName)).getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath());
 								if (path.segmentCount() == 1 && !includes.contains(libName) && !libName.equals(resource.getName()))
 									includes.addToken(libName);
 							}
@@ -416,7 +416,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 	public void initialize() {
 		if (fTreeViewer.getInput() == null) {
 			fTreeViewer.setUseHashlookup(true);
-			fTreeViewer.setInput(fProject);
+			fTreeViewer.setInput(fBundleRoot);
 		}
 		fBuildModel.addModelChangedListener(this);
 	}

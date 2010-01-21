@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -157,9 +157,9 @@ public class ConvertSchemaToHTML extends Task {
 
 		ExternalPluginModelBase model = null;
 		try {
-			if (file.getName().toLowerCase(Locale.ENGLISH).equals("fragment.xml")) //$NON-NLS-1$
+			if (file.getName().toLowerCase(Locale.ENGLISH).equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
 				model = new ExternalFragmentModel();
-			else if (file.getName().toLowerCase(Locale.ENGLISH).equals("plugin.xml")) //$NON-NLS-1$
+			else if (file.getName().toLowerCase(Locale.ENGLISH).equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR))
 				model = new ExternalPluginModel();
 			else {
 				System.out.println(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ 

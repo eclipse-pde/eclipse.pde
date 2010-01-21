@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -27,6 +28,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
@@ -55,8 +57,11 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	protected void createModel(IProject project, boolean notify) {
 		IPluginModelBase model = null;
-		if (project.exists(ICoreConstants.MANIFEST_PATH)) {
-			WorkspaceBundleModel bmodel = new WorkspaceBundleModel(project.getFile(ICoreConstants.MANIFEST_PATH));
+		IFile manifest = PDEProject.getManifest(project);
+		IFile pluginXml = PDEProject.getPluginXml(project);
+		IFile fragmentXml = PDEProject.getFragmentXml(project);
+		if (manifest.exists()) {
+			WorkspaceBundleModel bmodel = new WorkspaceBundleModel(manifest);
 			loadModel(bmodel, false);
 			if (bmodel.isFragmentModel())
 				model = new BundleFragmentModel();
@@ -66,7 +71,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			bmodel.setEditable(false);
 			((IBundlePluginModelBase) model).setBundleModel(bmodel);
 
-			IFile efile = project.getFile(bmodel.isFragmentModel() ? ICoreConstants.FRAGMENT_PATH : ICoreConstants.PLUGIN_PATH);
+			IFile efile = bmodel.isFragmentModel() ? fragmentXml : pluginXml;
 			if (efile.exists()) {
 				WorkspaceExtensionsModel extModel = new WorkspaceExtensionsModel(efile);
 				extModel.setEditable(false);
@@ -75,15 +80,15 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				extModel.setBundleModel((IBundlePluginModelBase) model);
 			}
 
-		} else if (project.exists(ICoreConstants.PLUGIN_PATH)) {
-			model = new WorkspacePluginModel(project.getFile(ICoreConstants.PLUGIN_PATH), true);
+		} else if (pluginXml.exists()) {
+			model = new WorkspacePluginModel(pluginXml, true);
 			loadModel(model, false);
-		} else if (project.exists(ICoreConstants.FRAGMENT_PATH)) {
-			model = new WorkspaceFragmentModel(project.getFile(ICoreConstants.FRAGMENT_PATH), true);
+		} else if (fragmentXml.exists()) {
+			model = new WorkspaceFragmentModel(fragmentXml, true);
 			loadModel(model, false);
 		}
 
-		if (project.getFile(".options").exists()) //$NON-NLS-1$
+		if (PDEProject.getOptionsFile(project).exists())
 			PDECore.getDefault().getTracingOptionsManager().reset();
 
 		if (model != null) {
@@ -100,14 +105,15 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	protected void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
+		IProject project = file.getProject();
 		String filename = file.getName();
-		if (filename.equals(".options")) { //$NON-NLS-1$
+		if (file.equals(PDEProject.getOptionsFile(project))) {
 			PDECore.getDefault().getTracingOptionsManager().reset();
 		} else if (filename.endsWith(".properties")) { //$NON-NLS-1$
 			// change in build.properties should trigger a Classpath Update
 			// we therefore fire a notification
 			//TODO this is inefficient.  we could do better.
-			if (filename.equals("build.properties")) { //$NON-NLS-1$
+			if (file.equals(PDEProject.getBuildProperties(project))) {
 				Object model = getModel(file.getProject());
 				if (model != null)
 					addChange(model, IModelProviderEvent.MODELS_CHANGED);
@@ -127,10 +133,9 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		} else if (filename.endsWith(".exsd")) { //$NON-NLS-1$
 			handleEclipseSchemaDelta(file, delta);
 		} else {
-			IPath path = file.getProjectRelativePath();
-			if (path.equals(ICoreConstants.PLUGIN_PATH) || path.equals(ICoreConstants.FRAGMENT_PATH)) {
+			if (file.equals(PDEProject.getPluginXml(project)) || file.equals(PDEProject.getFragmentXml(project))) {
 				handleExtensionFileDelta(file, delta);
-			} else if (path.equals(ICoreConstants.MANIFEST_PATH)) {
+			} else if (file.equals(PDEProject.getManifest(project))) {
 				handleBundleManifestDelta(file, delta);
 			}
 		}
@@ -313,7 +318,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	protected Object removeModel(IProject project) {
 		Object model = super.removeModel(project);
-		if (model != null && project.exists(new Path(".options"))) //$NON-NLS-1$
+		if (model != null && PDEProject.getOptionsFile(project).exists())
 			PDECore.getDefault().getTracingOptionsManager().reset();
 		if (model instanceof IPluginModelBase) {
 			// PluginModelManager will remove IPluginModelBase form ModelEntry before triggering IModelChangedEvent
@@ -384,8 +389,12 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * 
 	 */
 	protected boolean isInterestingFolder(IFolder folder) {
+		IContainer root = PDEProject.getBundleRoot(folder.getProject());
+		if (folder.getProjectRelativePath().isPrefixOf(root.getProjectRelativePath())) {
+			return true;
+		}
 		String folderName = folder.getName();
-		if (("META-INF".equals(folderName) || "OSGI-INF".equals(folderName) || "schema".equals(folderName)) && folder.getParent() instanceof IProject) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (("META-INF".equals(folderName) || "OSGI-INF".equals(folderName) || "schema".equals(folderName)) && folder.getParent().equals(root)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return true;
 		}
 		if ("OSGI-INF/l10n".equals(folder.getProjectRelativePath().toString())) { //$NON-NLS-1$

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.core; singleton:=true
-Bundle-Version: 3.5.100.qualifier
+Bundle-Version: 3.6.0.qualifier
 Bundle-Activator: org.eclipse.pde.internal.core.PDECore
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
@@ -10,6 +10,7 @@ Export-Package:
  org.eclipse.pde.core,
  org.eclipse.pde.core.build,
  org.eclipse.pde.core.plugin,
+ org.eclipse.pde.core.project,
  org.eclipse.pde.internal.core;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.runtime,org.eclipse.pde.launching",
  org.eclipse.pde.internal.core.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.builders;x-friends:="org.eclipse.pde.ui",
@@ -26,6 +27,7 @@ Export-Package:
  org.eclipse.pde.internal.core.natures;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.plugin;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.product;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.project;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.launching",
  org.eclipse.pde.internal.core.schema;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.search;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.site;x-friends:="org.eclipse.pde.ui",

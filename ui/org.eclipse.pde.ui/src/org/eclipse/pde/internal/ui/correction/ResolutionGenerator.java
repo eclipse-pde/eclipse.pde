@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.ArrayList;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
@@ -77,11 +79,13 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY :
 				return new IMarkerResolution[] {new AppendSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_ADDDITION :
-				return new IMarkerResolution[] {new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
+				return getBuildEntryAdditionResolutions(marker);
 			case PDEMarkerFactory.B_SOURCE_ADDITION :
 				return new IMarkerResolution[] {new AddSourceBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.B_REMOVAL :
 				return new IMarkerResolution[] {new RemoveBuildEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
+			case PDEMarkerFactory.B_REPLACE :
+				return new IMarkerResolution[] {new ReplaceBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.P_ILLEGAL_XML_NODE :
 				return new IMarkerResolution[] {new RemoveNodeXMLResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
 			case PDEMarkerFactory.P_UNTRANSLATED_NODE :
@@ -100,6 +104,23 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new RemoveLazyLoadingDirectiveResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART))}; //$NON-NLS-1$
 		}
 		return NO_RESOLUTIONS;
+	}
+
+	private IMarkerResolution[] getBuildEntryAdditionResolutions(IMarker marker) {
+		ArrayList resolutions = new ArrayList(2);
+		resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker));
+		try {
+			String markerCategory = (String) marker.getAttribute(PDEMarkerFactory.CAT_ID);
+			IMarker[] relatedMarkers = marker.getResource().findMarkers(marker.getType(), true, IResource.DEPTH_INFINITE);
+			for (int i = 0; i < relatedMarkers.length; i++) {
+				if (markerCategory.equals(relatedMarkers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && !marker.equals(relatedMarkers[i])) {
+					resolutions.add(new MultiFixResolution(marker));
+					break;
+				}
+			}
+		} catch (CoreException e) {
+		}
+		return (IMarkerResolution[]) resolutions.toArray(new IMarkerResolution[resolutions.size()]);
 	}
 
 	private IMarkerResolution[] getRemoveInternalDirectiveResolution(IMarker marker) {

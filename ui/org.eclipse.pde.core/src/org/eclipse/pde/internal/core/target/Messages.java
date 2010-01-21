@@ -28,6 +28,7 @@ public class Messages extends NLS {
 	public static String FeatureBundleContainer_4;
 	public static String FeatureBundleContainer_5;
 	public static String IUBundleContainer_0;
+	public static String DirectoryBundleContainer_createRepoTask;
 	public static String LoadTargetDefinitionJob_0;
 	public static String LoadTargetDefinitionJob_loadEnvironmentSettings;
 	public static String LoadTargetDefinitionJob_loadTargetPlugins;

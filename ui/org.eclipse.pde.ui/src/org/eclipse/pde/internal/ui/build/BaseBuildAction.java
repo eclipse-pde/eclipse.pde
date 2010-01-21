@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.exports.BuildUtilities;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -114,7 +115,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate {
 		// Force the build if autobuild is off
 		IProject project = file.getProject();
 		if (!project.getWorkspace().isAutoBuilding()) {
-			String builderID = "feature.xml".equals(file.getName()) ? PDE.FEATURE_BUILDER_ID : PDE.MANIFEST_BUILDER_ID; //$NON-NLS-1$
+			String builderID = ICoreConstants.FEATURE_FILENAME_DESCRIPTOR.equals(file.getName()) ? PDE.FEATURE_BUILDER_ID : PDE.MANIFEST_BUILDER_ID;
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, builderID, null, monitor);
 		}
 

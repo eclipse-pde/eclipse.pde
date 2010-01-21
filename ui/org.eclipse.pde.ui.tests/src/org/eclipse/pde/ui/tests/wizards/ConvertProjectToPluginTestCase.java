@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,18 +12,14 @@
 package org.eclipse.pde.ui.tests.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectToPluginOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.ui.PlatformUI;
@@ -58,8 +54,8 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		convertProject(project);
 
 		assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
-		assertTrue(project.getFile(ICoreConstants.MANIFEST_PATH).exists());
-		assertTrue(project.getFile(ICoreConstants.BUILD_PROPERTIES_PATH).exists());
+		assertTrue(PDEProject.getManifest(project).exists());
+		assertTrue(PDEProject.getBuildProperties(project).exists());
 	}
 
 	/**
@@ -87,8 +83,8 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
-			assertTrue(project.getFile(ICoreConstants.MANIFEST_PATH).exists());
-			assertTrue(project.getFile(ICoreConstants.BUILD_PROPERTIES_PATH).exists());
+			assertTrue(PDEProject.getManifest(project).exists());
+			assertTrue(PDEProject.getBuildProperties(project).exists());
 		}
 	}
 

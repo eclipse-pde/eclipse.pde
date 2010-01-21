@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mohammed Mostafa <mmostafa@ca.ibm.com> - bug 296522
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
@@ -36,7 +37,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	private Image fRenameImage;
 	private Image fRemoveImage;
 
-	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4 {
+	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4, Comparable {
 
 		Position fPosition;
 		IMarkerResolution fResolution;
@@ -107,6 +108,33 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			return true;
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (!(obj instanceof PDECompletionProposal)) {
+				return false;
+			}
+			PDECompletionProposal proposal = (PDECompletionProposal) obj;
+			return proposal.fPosition.equals(fPosition) && proposal.fResolution.equals(fResolution);
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		public int compareTo(Object arg0) {
+			if (!(arg0 instanceof PDECompletionProposal))
+				return -1;
+			PDECompletionProposal obj = (PDECompletionProposal) arg0;
+			if (getDisplayString() != null) {
+				if (obj.getDisplayString() != null) {
+					return getDisplayString().compareTo(obj.getDisplayString());
+				}
+				return 0;
+			}
+			return -1;
+		}
+
 	}
 
 	class PDEQuickAssistProcessor implements IQuickAssistProcessor {
@@ -119,31 +147,46 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public boolean canFix(Annotation annotation) {
-			if (!(annotation instanceof SimpleMarkerAnnotation))
-				return false;
-
-			ArrayList resolutions = new ArrayList(5);
-
-			// grab the local resolutions first
-			IMarker marker = ((SimpleMarkerAnnotation) annotation).getMarker();
-			IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
-			resolutions.addAll(Arrays.asList(localResolutions));
-
-			// grab the contributed resolutions
-			IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
-			for (int i = 0; i < contributedResolutions.length; i++) {
-				IMarkerResolution resolution = contributedResolutions[i];
-				// only add contributed marker resolutions if they don't come from PDE
-				if (!(resolution instanceof AbstractPDEMarkerResolution))
-					resolutions.add(contributedResolutions[i]);
+			boolean bRetVal = false;
+			if (annotation instanceof SimpleMarkerAnnotation) {
+				// check local resolutions first
+				IMarker marker = ((SimpleMarkerAnnotation) annotation).getMarker();
+				IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
+				if (localResolutions.length > 0) {
+					bRetVal = true;
+				}
+				// check the contributed resolutions if needed
+				if (!bRetVal) {
+					IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
+					if (contributedResolutions.length > 0) {
+						bRetVal = true;
+					}
+				}
 			}
+			return bRetVal;
 
-			boolean canFix = resolutions.size() > 0;
-			if (canFix)
-				if (!fResMap.containsKey(marker))
+		}
+
+		private void populateDataModelForAnnotation(SimpleMarkerAnnotation annotation) {
+			// grab the local resolutions first
+			IMarker marker = annotation.getMarker();
+			if (!fResMap.containsKey(marker)) {
+				ArrayList resolutions = new ArrayList(5);
+				IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
+				resolutions.addAll(Arrays.asList(localResolutions));
+
+				// grab the contributed resolutions
+				IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
+				for (int i = 0; i < contributedResolutions.length; i++) {
+					IMarkerResolution resolution = contributedResolutions[i];
+					// only add contributed marker resolutions if they don't come from PDE
+					if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(contributedResolutions[i]))
+						resolutions.add(contributedResolutions[i]);
+				}
+				if (resolutions.size() > 0) {
 					fResMap.put(marker, resolutions.toArray(new IMarkerResolution[resolutions.size()]));
-
-			return canFix;
+				}
+			}
 		}
 
 		public boolean canAssist(IQuickAssistInvocationContext invocationContext) {
@@ -173,6 +216,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				}
 
 				SimpleMarkerAnnotation annotation = (SimpleMarkerAnnotation) key;
+				populateDataModelForAnnotation(annotation);
 				IMarker marker = annotation.getMarker();
 
 				IMarkerResolution[] mapping = (IMarkerResolution[]) fResMap.get(marker);
@@ -186,7 +230,10 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 						int end = doc.getLineLength(line) + start - delimLength;
 						if (offset >= start && offset <= end) {
 							for (int i = 0; i < mapping.length; i++) {
-								list.add(new PDECompletionProposal(mapping[i], pos, marker));
+								PDECompletionProposal proposal = new PDECompletionProposal(mapping[i], pos, marker);
+								if (!list.contains(proposal)) {
+									list.add(proposal);
+								}
 							}
 						}
 					} catch (BadLocationException e) {
