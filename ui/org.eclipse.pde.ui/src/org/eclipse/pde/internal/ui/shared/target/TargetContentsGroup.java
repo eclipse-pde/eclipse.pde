@@ -34,7 +34,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
@@ -49,8 +48,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public class TargetContentsGroup {
 
-	private FilteredCheckboxTree fFilteredTree;
-	private ContainerCheckedTreeViewer fTree;
+	private CachedContainerCheckedTreeViewer fTree;
 	private MenuManager fMenuManager;
 	private Button fSelectButton;
 	private Button fDeselectButton;
@@ -156,13 +154,13 @@ public class TargetContentsGroup {
 
 	private void createTreeViewer(Composite parent, FormToolkit toolkit) {
 		TreeContentProvider contentProvider = new TreeContentProvider();
-		fFilteredTree = new FilteredCheckboxTree(parent, contentProvider, toolkit);
-		fFilteredTree.getPatternFilter().setIncludeLeadingWildcard(true);
+		FilteredCheckboxTree filteredTree = new FilteredCheckboxTree(parent, contentProvider, toolkit);
+		filteredTree.getPatternFilter().setIncludeLeadingWildcard(true);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 300;
-		fFilteredTree.setLayoutData(data);
+		filteredTree.setLayoutData(data);
 
-		fTree = fFilteredTree.getCheckboxTreeViewer();
+		fTree = filteredTree.getCheckboxTreeViewer();
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(contentProvider);
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
@@ -170,8 +168,9 @@ public class TargetContentsGroup {
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()) {
 					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-					fFilteredTree.setChecked(selection.getFirstElement(), !fTree.getChecked(selection.getFirstElement()));
+					fTree.setChecked(selection.getFirstElement(), !fTree.getChecked(selection.getFirstElement()));
 					saveCheckState();
+					updateButtons();
 				}
 			}
 		});
@@ -183,63 +182,10 @@ public class TargetContentsGroup {
 		fTree.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				saveCheckState();
+				updateButtons();
 			}
 		});
-		fTree.setSorter(new ViewerSorter() {
-//			public int compare(Viewer viewer, Object e1, Object e2) {
-//				if (e1 instanceof IInstallableUnit && e2 instanceof IInstallableUnit) {
-//					// Put non bundle IUs ahead of bundle IUs
-//					IProvidedCapability[] provided = ((IInstallableUnit) e1).getProvidedCapabilities();
-//					boolean isBundle = false;
-//					for (int j = 0; j < provided.length; j++) {
-//						if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
-//							if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
-//								isBundle = true;
-//								break;
-//							}
-//						}
-//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
-//							isBundle = true;
-//							break;
-//						}
-//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_FRAGMENT)) {
-//							isBundle = true;
-//							break;
-//						}
-//					}
-//
-//					provided = ((IInstallableUnit) e2).getProvidedCapabilities();
-//					boolean isBundle2 = false;
-//					for (int j = 0; j < provided.length; j++) {
-//						if (provided[j].getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
-//							if (provided[j].getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
-//								isBundle2 = true;
-//								break;
-//							}
-//						}
-//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
-//							isBundle2 = true;
-//							break;
-//						}
-//						if (provided[j].getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_FRAGMENT)) {
-//							isBundle2 = true;
-//							break;
-//						}
-//					}
-//
-//					if (!isBundle && isBundle2) {
-//						return -1;
-//					}
-//
-//					if (isBundle && isBundle2) {
-//						return 1;
-//					}
-//
-//					return super.compare(viewer, ((IInstallableUnit) e1).getId(), ((IInstallableUnit) e2).getId());
-//				}
-//				return super.compare(viewer, e1, e2);
-//			}
-		});
+		fTree.setSorter(new ViewerSorter());
 		fMenuManager = new MenuManager();
 		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
 			public void run() {
@@ -369,7 +315,7 @@ public class TargetContentsGroup {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
 					for (int i = 0; i < selected.length; i++) {
-						fFilteredTree.setChecked(selected[i], true);
+						fTree.setChecked(selected[i], true);
 					}
 					saveCheckState();
 					updateButtons();
@@ -382,7 +328,7 @@ public class TargetContentsGroup {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
 					for (int i = 0; i < selected.length; i++) {
-						fFilteredTree.setChecked(selected[i], false);
+						fTree.setChecked(selected[i], false);
 					}
 					saveCheckState();
 					updateButtons();
@@ -393,25 +339,8 @@ public class TargetContentsGroup {
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fTree.setAllChecked(true);
-				fFilteredTree.saveCheckState();
 				saveCheckState();
 				updateButtons();
-
-//				// The following code can be used to select everything (including things that are not visible
-//				Object[] selected = null;
-//				if (fGrouping == GROUP_BY_NONE) {
-//					selected = fTargetDefinition.getAvailableUnits();
-//				} else {
-//					Object[] expanded = fTree.getExpandedElements();
-//					fTree.expandAll();
-//					selected = fTree.getVisibleExpandedElements();
-//					// TODO Check that the check state can be changed after resetting the expanded elements
-//					fTree.setExpandedElements(expanded);
-//				}
-//				if (selected != null && selected.length > 0) {
-//					fFilteredTree.setCheckedElements(selected);
-//					saveCheckState();
-//				}
 
 			}
 		});
@@ -419,7 +348,6 @@ public class TargetContentsGroup {
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fTree.setAllChecked(false);
-				fFilteredTree.saveCheckState();
 				saveCheckState();
 				updateButtons();
 			}
@@ -428,12 +356,11 @@ public class TargetContentsGroup {
 		fShowPluginsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fShowPluginsButton.getSelection()) {
-					fFilteredTree.saveCheckState();
 					fTree.addFilter(fPluginFilter);
 				} else {
 					fTree.removeFilter(fPluginFilter);
 					fTree.expandAll();
-					fFilteredTree.restoreCheckState();
+					fTree.restoreLeafCheckState();
 				}
 				updateButtons();
 			}
@@ -446,12 +373,11 @@ public class TargetContentsGroup {
 		fShowSourceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fShowSourceButton.getSelection()) {
-					fFilteredTree.saveCheckState();
 					fTree.addFilter(fSourceFilter);
 				} else {
 					fTree.removeFilter(fSourceFilter);
 					fTree.expandAll();
-					fFilteredTree.restoreCheckState();
+					fTree.restoreLeafCheckState();
 				}
 				updateButtons();
 			}
@@ -533,7 +459,7 @@ public class TargetContentsGroup {
 
 		// TODO
 		if (fTargetDefinition != null) {
-			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fFilteredTree.getCheckedLeafNodeCount()), Integer.toString(fItemCount)}));
+			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(fItemCount)}));
 		} else {
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}
@@ -581,7 +507,6 @@ public class TargetContentsGroup {
 		fTree.expandAll();
 		IInstallableUnit[] included = fTargetDefinition.getIncludedUnits();
 		fTree.setCheckedElements(included);
-		fFilteredTree.saveCheckState();
 
 		setEnabled(true);
 	}
@@ -675,36 +600,21 @@ public class TargetContentsGroup {
 			if (element instanceof Collection) {
 				return ((Collection) element).size() > 0;
 			}
-//			if (fGrouping == GROUP_BY_NONE || element instanceof IResolvedBundle) {
-//				return false;
-//			}
-//			if (element instanceof IBundleContainer || element instanceof IPath) {
-//				return getBundleChildren(element).size() > 0;
-//			}
 			return false;
 		}
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
 
-				return ((ITargetDefinition) inputElement).getAvailableUnits();
+//				return ((ITargetDefinition) inputElement).getAvailableUnits();
 
-				// Temporary code to test nesting in the tree
-//				Collection[] lists = new Collection[] {new ArrayList(), new ArrayList(), new ArrayList()};
-//				IInstallableUnit[] units = ((ITargetDefinition) inputElement).getAvailableUnits();
-//				for (int i = 0; i < units.length; i++) {
-//					lists[i % 3].add(units[i]);
-//				}
-//				return lists;
-
-				// TODO Support grouping?
-//				if (fGrouping == GROUP_BY_NONE) {
-//					return fAllBundles.toArray();
-//				} else if (fGrouping == GROUP_BY_CONTAINER) {
-//					return fContainerBundles.keySet().toArray();
-//				} else {
-//					return fFileBundles.keySet().toArray();
-//				}
+				// TODO Temporary code to test nesting in the tree
+				Collection[] lists = new Collection[] {new ArrayList(), new ArrayList(), new ArrayList()};
+				IInstallableUnit[] units = ((ITargetDefinition) inputElement).getAvailableUnits();
+				for (int i = 0; i < units.length; i++) {
+					lists[i % 3].add(units[i]);
+				}
+				return lists;
 			}
 			return new Object[] {inputElement};
 		}
