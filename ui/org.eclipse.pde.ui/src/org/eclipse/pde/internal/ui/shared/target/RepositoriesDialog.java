@@ -56,7 +56,7 @@ public class RepositoriesDialog extends TrayDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Target Repositories");
+		newShell.setText(Messages.RepositoriesDialog_TargetRepositoriesTitle);
 		// TODO Add help context
 //		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, getHelpContextId());
 	}

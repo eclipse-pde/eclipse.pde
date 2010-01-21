@@ -128,7 +128,7 @@ public class TargetLocationsGroup {
 		fAddButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_0, SWT.PUSH);
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
-		fShowReposButton = toolkit.createButton(buttonComp, "Edit Repositories...", SWT.PUSH);
+		fShowReposButton = toolkit.createButton(buttonComp, Messages.TargetLocationsGroup_EditRepos, SWT.PUSH);
 
 		initializeTreeViewer(atree);
 		initializeButtons();
@@ -166,7 +166,7 @@ public class TargetLocationsGroup {
 		fAddButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_0, null);
 		fEditButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_1, null);
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
-		fShowReposButton = SWTFactory.createPushButton(buttonComp, "Show Repositories...", null);
+		fShowReposButton = SWTFactory.createPushButton(buttonComp, Messages.TargetLocationsGroup_EditRepos, null);
 
 		initializeTreeViewer(atree);
 		initializeButtons();

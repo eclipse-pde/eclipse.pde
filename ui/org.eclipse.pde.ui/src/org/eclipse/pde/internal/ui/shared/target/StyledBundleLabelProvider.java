@@ -106,7 +106,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			ProfileBundleContainer container = (ProfileBundleContainer) element;
 			appendLocation(styledString, container);
 		} else if (element instanceof IUBundleContainer) {
-			styledString.append("Repository Container");
+			styledString.append(Messages.StyledBundleLabelProvider_RemoteRepository);
 		} else if (element instanceof IInstallableUnit) {
 			IInstallableUnit iu = (IInstallableUnit) element;
 			String name = iu.getProperty(IInstallableUnit.PROP_NAME);
