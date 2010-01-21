@@ -196,7 +196,12 @@ public class TargetCreationPage extends WizardSelectionPage {
 		ITargetPlatformService service = getTargetService();
 		if (service instanceof TargetPlatformService) {
 			TargetPlatformService ts = (TargetPlatformService) service;
-			ts.loadTargetDefinitionFromPreferences(definition);
+			ITargetDefinition active = ts.getActiveTarget();
+			if (active != null) {
+				ts.copyTargetDefinition(active, definition);
+			} else {
+				ts.loadTargetDefinitionFromPreferences(definition);
+			}
 		}
 	}
 
