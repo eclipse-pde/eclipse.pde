@@ -185,7 +185,7 @@ public class ApiUseScanJob extends Job {
 				localmonitor.setWorkRemaining(10);
 			}
 			if(isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
-				localmonitor.setTaskName("Generating HTML reports");
+				localmonitor.setTaskName(Messages.ApiUseScanJob_generating_html_reports);
 				String htmlPath = rootpath.append("html").toOSString(); //$NON-NLS-1$
 				performReportCreation(
 						isSpecified(ApiUseLaunchDelegate.CLEAN_HTML),

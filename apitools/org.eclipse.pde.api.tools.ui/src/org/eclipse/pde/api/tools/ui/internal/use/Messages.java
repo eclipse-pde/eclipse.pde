@@ -37,6 +37,7 @@ public class Messages extends NLS {
 	public static String ApiUseScanJob_deleteing_file;
 	public static String ApiUseScanJob_deleting_old_reports;
 	public static String ApiUseScanJob_deleting_root_folder;
+	public static String ApiUseScanJob_generating_html_reports;
 	public static String ApiUseScanJob_intall_dir_does_no_exist;
 	public static String ApiUseScanJob_missing_xml_loc;
 	public static String ApiUseScanJob_no_bundles;

@@ -459,7 +459,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.considerapi.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES, configuration));
 			this.considerinternal.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, configuration));
 			this.consideruse.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE, configuration));
-			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
+			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, IApiToolsConstants.EMPTY_STRING)); 
 			this.cleanreportlocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_XML, configuration));
 			boolean enabled = isSpecified(ApiUseLaunchDelegate.CREATE_HTML, configuration);
 			this.createhtml.setSelection(enabled);
@@ -467,9 +467,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.cleanhtmllocation.setEnabled(enabled);
 			this.openreport.setSelection(isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT, configuration));
 			this.cleanhtmllocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_HTML, configuration));
-			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
-			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
-			this.description.setText(configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, IApiToolsConstants.EMPTY_STRING)); //$NON-NLS-1$
+			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, IApiToolsConstants.EMPTY_STRING)); 
+			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, IApiToolsConstants.EMPTY_STRING)); 
+			this.description.setText(configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, IApiToolsConstants.EMPTY_STRING)); 
 			updateTarget();
 		} catch (CoreException e) {
 			setErrorMessage(e.getStatus().getMessage());
