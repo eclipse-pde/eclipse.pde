@@ -282,6 +282,34 @@ public class TargetProvisioner {
 		return new BundleInfo[0];
 	}
 
+	public BundleInfo[] getNonSourceBundles() {
+		if (fProfile != null) {
+			try {
+				IFileArtifactRepository bundlePool = getBundlePoolRepo();
+				List bundleInfos = new ArrayList();
+				IQueryResult result = fProfile.query(P2Utils.SOURCE_QUERY, null);
+				for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+					IInstallableUnit unit = (IInstallableUnit) iterator.next();
+					Collection artifacts = unit.getArtifacts();
+					if (!artifacts.isEmpty()) {
+						IArtifactKey key = (IArtifactKey) artifacts.iterator().next();
+						URI location = null;
+						File file = bundlePool.getArtifactFile(key);
+						if (file != null && file.exists()) {
+							location = file.toURI();
+							BundleInfo newBundle = new BundleInfo(unit.getId(), unit.getVersion().toString(), location, BundleInfo.NO_LEVEL, false);
+							bundleInfos.add(newBundle);
+						}
+					}
+				}
+				return (BundleInfo[]) bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
+		}
+		return new BundleInfo[0];
+	}
+
 	private IFileArtifactRepository getBundlePoolRepo() throws CoreException {
 		if (fArtifactRepo != null) {
 			return fArtifactRepo;

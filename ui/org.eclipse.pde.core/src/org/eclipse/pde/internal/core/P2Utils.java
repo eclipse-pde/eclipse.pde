@@ -76,6 +76,11 @@ public class P2Utils {
 		}
 	};
 
+	/**
+	 * Query that returns any installable unit that is a source bundle.  This query assumes
+	 * that any unit with an Eclipse source capability is a source bundle.  It does not
+	 * check to see if the unit is an osgi bundle.
+	 */
 	public static final MatchQuery SOURCE_QUERY = new MatchQuery() {
 		public boolean isMatch(Object candidate) {
 			if (candidate instanceof IInstallableUnit) {
@@ -88,6 +93,31 @@ public class P2Utils {
 						}
 					}
 				}
+			}
+			return false;
+		}
+	};
+
+	/**
+	 * Query that returns any installable unit that is a osgi bundle, but not a source bundle
+	 */
+	public static final MatchQuery NON_SOURCE_QUERY = new MatchQuery() {
+		public boolean isMatch(Object candidate) {
+			if (candidate instanceof IInstallableUnit) {
+				boolean isBundle = false;
+				Collection provided = ((IInstallableUnit) candidate).getProvidedCapabilities();
+				for (Iterator iterator = provided.iterator(); iterator.hasNext();) {
+					IProvidedCapability current = (IProvidedCapability) iterator.next();
+					if (current.getNamespace().equals(P2Utils.NAMESPACE_ECLIPSE_TYPE)) {
+						if (current.getName().equals(P2Utils.TYPE_ECLIPSE_SOURCE)) {
+							return false;
+						}
+						if (current.getNamespace().equals(P2Utils.CAPABILITY_NS_OSGI_BUNDLE)) {
+							isBundle = true;
+						}
+					}
+				}
+				return isBundle;
 			}
 			return false;
 		}

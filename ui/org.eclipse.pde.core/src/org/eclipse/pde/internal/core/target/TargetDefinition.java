@@ -394,13 +394,27 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Non-API method to get the set of provisioned bundles that are source bundles.
 	 * Used by the import operation.  Will return <code>null</code> if this target
-	 * has not been successfully provisionined.
+	 * has not been successfully provisioned.
 	 * 
 	 * @return list of source bundles in this target or <code>null</code>
 	 */
 	public BundleInfo[] getProvisionedSourceBundles() {
 		if (isProvisioned()) {
 			return fProvisioner.getSourceBundles();
+		}
+		return null;
+	}
+
+	/**
+	 * Non-API method to get the set of provisioned bundles that are NOT source bundles.
+	 * Used by api tooling.  Will return <code>null</code> if this target
+	 * has not been successfully provisioned.
+	 * 
+	 * @return list of non-source bundles in this target or <code>null</code>
+	 */
+	public BundleInfo[] getProvisionedNonSourceBundles() {
+		if (isProvisioned()) {
+			return fProvisioner.getNonSourceBundles();
 		}
 		return null;
 	}
