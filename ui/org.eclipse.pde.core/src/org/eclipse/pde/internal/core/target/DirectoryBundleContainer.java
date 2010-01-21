@@ -93,7 +93,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
-		SubMonitor subMon = SubMonitor.convert(monitor, "Create repository for " + getLocation(false), 100);
+		SubMonitor subMon = SubMonitor.convert(monitor, NLS.bind(Messages.DirectoryBundleContainer_createRepoTask, getLocation(false)), 100);
 
 		File dir = getDirectory();
 		if (!dir.isDirectory()) {
@@ -121,7 +121,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 			metaRepo.removeAll();
 			metaRepo.addInstallableUnits(ius);
 		} else {
-			metaRepo = repoManager.createRepository(repoLocation, "Generated Directory Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
+			metaRepo = repoManager.createRepository(repoLocation, "Generated Directory Repository", IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties()); //$NON-NLS-1$
 			subMon.worked(5);
 			metaRepo.addInstallableUnits(ius);
 		}
@@ -141,7 +141,7 @@ public class DirectoryBundleContainer extends AbstractLocalBundleContainer {
 			artifactRepo = artifactManager.loadRepository(repoLocation, subMon.newChild(5));
 			artifactRepo.removeAll();
 		} catch (ProvisionException e) {
-			artifactRepo = artifactManager.createRepository(repoLocation, "Generated Directory Repository", IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties());
+			artifactRepo = artifactManager.createRepository(repoLocation, "Generated Directory Repository", IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, new Properties()); //$NON-NLS-1$
 		}
 		artifactRepo.addDescriptors(artifacts);
 		subMon.worked(5);
