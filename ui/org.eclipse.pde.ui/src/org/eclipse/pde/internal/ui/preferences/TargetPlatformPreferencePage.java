@@ -787,7 +787,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			if (def.getHandle().exists()) {
 				try {
 					ITargetDefinition original = def.getHandle().getTargetDefinition();
-					if (((TargetDefinition) original).isContentEquivalent(def)) {
+					// Check if there have been any changes to the target at all
+					if (((TargetDefinition) original).isContentEqual(def)) {
 						save = false;
 					}
 				} catch (CoreException e) {

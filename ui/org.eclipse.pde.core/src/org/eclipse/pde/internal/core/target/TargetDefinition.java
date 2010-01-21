@@ -212,7 +212,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#provisionExisting(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus provisionExisting(IProgressMonitor monitor) {
-		SubMonitor subMon = SubMonitor.convert(monitor, "Provisioning target from existing profile", 50);
+		SubMonitor subMon = SubMonitor.convert(monitor, Messages.TargetDefinition_provisionExistingTask, 50);
 		fProvisioner = new TargetProvisioner(this, fResolver);
 		return fProvisioner.provisionExisting(subMon);
 	}
@@ -495,8 +495,45 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
+	 * Returns whether the content of this definition is equals to the content of the
+	 * specified definition.  This method is used to determine if a target should
+	 * be saved.
+	 * 
+	 * @param definition
+	 * @return whether the content of this definition is equivalent to the content of the
+	 * specified definition
+	 */
+	public boolean isContentEqual(ITargetDefinition definition) {
+		if (isNullOrEqual(getName(), definition.getName())) {
+			// Environment settings
+			if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS())) {
+				// Arguments (check for exact argument matches, including ordering)
+				if (isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
+					// Containers
+					if (areContainersEqual(getBundleContainers(), definition.getBundleContainers())) {
+						// Explicit repos
+						if (areEqual(getRepositories(), definition.getRepositories())) {
+							// Included
+							if (areEqual(getIncluded(), definition.getIncluded())) {
+								// Optional
+								if (areEqual(getOptional(), definition.getOptional())) {
+									// Implicit
+									if (areEqual(getImplicitDependencies(), definition.getImplicitDependencies())) {
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Returns whether the content of this definition is equivalent to the content of the
-	 * specified definition (excluding name/description).
+	 * specified definition (excluding name, order of arguments doesn't matter).
 	 * 
 	 * @param definition
 	 * @return whether the content of this definition is equivalent to the content of the
@@ -504,18 +541,21 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public boolean isContentEquivalent(ITargetDefinition definition) {
 		// Environment settings
-		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
-			// Containers
-			if (areContainersEqual(getBundleContainers(), definition.getBundleContainers())) {
-				// Explicit repos
-				if (areEqual(getRepositories(), definition.getRepositories())) {
-					// Included
-					if (areEqual(getIncluded(), definition.getIncluded())) {
-						// Optional
-						if (areEqual(getOptional(), definition.getOptional())) {
-							// Implicit
-							if (areEqual(getImplicitDependencies(), definition.getImplicitDependencies())) {
-								return true;
+		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS())) {
+			// Arguments (check for equivalent arguments, not exact ordering)
+			if (isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
+				// Containers
+				if (areContainersEqual(getBundleContainers(), definition.getBundleContainers())) {
+					// Explicit repos
+					if (areEqual(getRepositories(), definition.getRepositories())) {
+						// Included
+						if (areEqual(getIncluded(), definition.getIncluded())) {
+							// Optional
+							if (areEqual(getOptional(), definition.getOptional())) {
+								// Implicit
+								if (areEqual(getImplicitDependencies(), definition.getImplicitDependencies())) {
+									return true;
+								}
 							}
 						}
 					}

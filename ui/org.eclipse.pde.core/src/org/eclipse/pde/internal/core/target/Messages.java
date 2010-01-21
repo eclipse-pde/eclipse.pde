@@ -49,6 +49,7 @@ public class Messages extends NLS {
 	public static String TargetDefinition_0;
 	public static String TargetDefinition_1;
 	public static String TargetDefinition_3;
+	public static String TargetDefinition_provisionExistingTask;
 	public static String TargetDefinitionPersistenceHelper_0;
 	public static String TargetDefinitionPersistenceHelper_1;
 	public static String TargetPlatformService_0;
