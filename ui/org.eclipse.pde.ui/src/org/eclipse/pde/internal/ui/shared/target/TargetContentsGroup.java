@@ -189,7 +189,6 @@ public class TargetContentsGroup {
 		fMenuManager = new MenuManager();
 		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
 			public void run() {
-				// TODO Menu not appearing
 				fTree.collapseAll();
 			}
 		});
@@ -301,7 +300,6 @@ public class TargetContentsGroup {
 			fGroupCombo.select(0);
 		}
 
-		// TODO Don't allow different grouping for now.
 		fGroupLabel.setVisible(false);
 		if (fGroupCombo != null) {
 			fGroupCombo.setVisible(false);
@@ -457,7 +455,6 @@ public class TargetContentsGroup {
 		fSelectAllButton.setEnabled(fTargetDefinition != null);
 		fDeselectAllButton.setEnabled(fTargetDefinition != null);
 
-		// TODO
 		if (fTargetDefinition != null) {
 			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(fItemCount)}));
 		} else {
@@ -605,16 +602,7 @@ public class TargetContentsGroup {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
-
-//				return ((ITargetDefinition) inputElement).getAvailableUnits();
-
-				// TODO Temporary code to test nesting in the tree
-				Collection[] lists = new Collection[] {new ArrayList(), new ArrayList(), new ArrayList()};
-				IInstallableUnit[] units = ((ITargetDefinition) inputElement).getAvailableUnits();
-				for (int i = 0; i < units.length; i++) {
-					lists[i % 3].add(units[i]);
-				}
-				return lists;
+				return ((ITargetDefinition) inputElement).getAvailableUnits();
 			}
 			return new Object[] {inputElement};
 		}
