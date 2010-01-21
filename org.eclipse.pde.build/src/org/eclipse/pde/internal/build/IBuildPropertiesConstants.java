@@ -94,6 +94,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_PUBLISH_ARTIFACTS = "p2.publish.artifacts"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_CATEGORY_SITE = "p2.category.site"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_CATEGORY_DEFINITION = "p2.category.definition"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_CATEGORY_VERSION = "p2.category.version"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_CATEGORY_PREFIX = "p2.category.prefix"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_NAME = "p2.root.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ROOT_VERSION = "p2.root.version"; //$NON-NLS-1$

@@ -27,6 +27,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 	private URI siteXML = null;
 	private URI categoryXML = null;
 	private String siteQualifier = ""; //$NON-NLS-1$
+	private String categoryVersion = null;
 
 	public void execute() throws BuildException {
 		File[] f = getLocations(features);
@@ -37,10 +38,18 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 			application.addAction(new FeaturesAction(f));
 		if (b.length > 0)
 			application.addAction(new BundlesAction(b));
-		if (siteXML != null)
-			application.addAction(new SiteXMLAction(siteXML, siteQualifier));
-		if (categoryXML != null)
-			application.addAction(new CategoryXMLAction(categoryXML, siteQualifier));
+		if (siteXML != null) {
+			SiteXMLAction action = new SiteXMLAction(siteXML, siteQualifier);
+			if (categoryVersion != null)
+				action.setCategoryVersion(categoryVersion);
+			application.addAction(action);
+		}
+		if (categoryXML != null) {
+			CategoryXMLAction action = new CategoryXMLAction(categoryXML, siteQualifier);
+			if (categoryVersion != null)
+				action.setCategoryVersion(categoryVersion);
+			application.addAction(action);
+		}
 
 		try {
 			application.run(getPublisherInfo());
@@ -91,6 +100,11 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 				throw new IllegalArgumentException("Category description location (" + value + ") must be a URL."); //$NON-NLS-1$//$NON-NLS-2$
 			}
 		}
+	}
+
+	public void setCategoryVersion(String version) {
+		if (version != null && !version.startsWith(ANT_PREFIX))
+			categoryVersion = version;
 	}
 
 	public void setSite(String value) {
