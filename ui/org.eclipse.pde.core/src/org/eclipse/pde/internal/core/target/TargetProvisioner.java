@@ -291,7 +291,7 @@ public class TargetProvisioner {
 			try {
 				IFileArtifactRepository bundlePool = getBundlePoolRepo();
 				List bundleInfos = new ArrayList();
-				IQueryResult result = fProfile.query(P2Utils.SOURCE_QUERY, null);
+				IQueryResult result = fProfile.query(P2Utils.NON_SOURCE_QUERY, null);
 				for (Iterator iterator = result.iterator(); iterator.hasNext();) {
 					IInstallableUnit unit = (IInstallableUnit) iterator.next();
 					Collection artifacts = unit.getArtifacts();
