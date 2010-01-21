@@ -37,7 +37,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	}
 	
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
-		assertTrue("Target content not equal",((TargetDefinition)targetA).isContentEqual(targetB));
+		assertTrue("Target content not equal",((TargetDefinition)targetA).isContentEquivalent(targetB));
 	}
 	
 	/**

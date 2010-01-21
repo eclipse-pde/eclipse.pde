@@ -237,7 +237,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			ITargetDefinition definitionB = getTargetService().newTarget();
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 			TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
-			assertTrue("Target content not equal",((TargetDefinition)target).isContentEqual(definitionB));
+			assertTrue("Target content not equal",((TargetDefinition)target).isContentEquivalent(definitionB));
 			
 			// provision the restored target and ensure bundles are correct
 			Set names = collectAllSymbolicNames(definitionB);

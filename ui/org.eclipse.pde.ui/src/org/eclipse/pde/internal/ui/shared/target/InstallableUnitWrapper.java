@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 
@@ -43,7 +44,7 @@ public class InstallableUnitWrapper {
 		}
 		// If the target is resolved, try to get the actual unit
 		if (fTarget.isResolved()) {
-			fUnit = fTarget.getResolvedUnit(fDescription);
+			fUnit = ((TargetDefinition) fTarget).getResolvedUnit(fDescription);
 			if (fUnit != null) {
 				return fUnit;
 			}

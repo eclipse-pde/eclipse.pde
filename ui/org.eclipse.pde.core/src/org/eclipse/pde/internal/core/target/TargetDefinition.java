@@ -183,16 +183,6 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getResolvedUnit(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor)
-	 */
-	public IInstallableUnit getResolvedUnit(NameVersionDescriptor unit) {
-		if (isResolved()) {
-			return fResolver.getUnit(unit);
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isProvisioned()
 	 */
 	public boolean isProvisioned() {
@@ -388,6 +378,20 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
+	 * Non-API method that returns an installable unit in this target with the same ID and version as the given {@link NameVersionDescriptor}.
+	 * Returns <code>null</code> if this target has not been resolved or if no equivalent installable unit could be found.
+	 * 
+	 * @param unit installable unit description to look up an installable unit for
+	 * @return an equivalent installable unit or <code>null</code>
+	 */
+	public IInstallableUnit getResolvedUnit(NameVersionDescriptor unit) {
+		if (isResolved()) {
+			return fResolver.getUnit(unit);
+		}
+		return null;
+	}
+
+	/**
 	 * Non-API method to get the set of provisioned bundles that are source bundles.
 	 * Used by the import operation.  Will return <code>null</code> if this target
 	 * has not been successfully provisionined.
@@ -491,35 +495,6 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
-	 * Returns whether the content of this definition is equal to the content of the specified definition.
-	 * 
-	 * @param definition
-	 * @return whether the content of this definition is equal to the content of the specified definition
-	 */
-	public boolean isContentEqual(ITargetDefinition definition) {
-		// Environment settings
-		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
-			// Containers
-			if (areContainersEqual(getBundleContainers(), definition.getBundleContainers())) {
-				// Explicit repos
-				if (areEqual(getRepositories(), definition.getRepositories())) {
-					// Included
-					if (areEqual(getIncluded(), definition.getIncluded())) {
-						// Optional
-						if (areEqual(getOptional(), definition.getOptional())) {
-							// Implicit
-							if (areEqual(getImplicitDependencies(), definition.getImplicitDependencies())) {
-								return true;
-							}
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Returns whether the content of this definition is equivalent to the content of the
 	 * specified definition (excluding name/description).
 	 * 
@@ -528,7 +503,6 @@ public class TargetDefinition implements ITargetDefinition {
 	 * specified definition
 	 */
 	public boolean isContentEquivalent(ITargetDefinition definition) {
-		// TODO Should there be a different between isContentEqual and isContentEquivalent? Currently only different is parsing of the arguments
 		// Environment settings
 		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
 			// Containers

@@ -106,15 +106,6 @@ public interface ITargetDefinition {
 	public IInstallableUnit[] getIncludedUnits();
 
 	/**
-	 * Returns an installable unit in this target with the same ID and version as the given {@link NameVersionDescriptor}.
-	 * Returns <code>null</code> if this target has not been resolved or if no equivalent installable unit could be found.
-	 * 
-	 * @param unit installable unit description to look up an installable unit for
-	 * @return an equivalent installable unit or <code>null</code>
-	 */
-	public IInstallableUnit getResolvedUnit(NameVersionDescriptor unit);
-
-	/**
 	 * Returns whether this target definition is in a provisioned state.  A target that is in a provisioned
 	 * state has bundles and features on disk which can be added to the PDE State.  If a problem occurred 
 	 * while provisioning the target it will not be considered provisioned.
