@@ -223,15 +223,17 @@ public class LaunchAction extends Action {
 
 	private String getTemplateConfigIni(String os) {
 		IConfigurationFileInfo info = fProduct.getConfigurationFileInfo();
-		String path = info.getPath(os);
-		if (path == null) // if we can't find an os path, let's try the normal one
-			path = info.getPath(null);
-		if (info != null && path != null) {
-			String expandedPath = getExpandedPath(path);
-			if (expandedPath != null) {
-				File file = new File(expandedPath);
-				if (file.exists() && file.isFile())
-					return file.getAbsolutePath();
+		if (info != null) {
+			String path = info.getPath(os);
+			if (path == null) // if we can't find an os path, let's try the normal one
+				path = info.getPath(null);
+			if (info != null && path != null) {
+				String expandedPath = getExpandedPath(path);
+				if (expandedPath != null) {
+					File file = new File(expandedPath);
+					if (file.exists() && file.isFile())
+						return file.getAbsolutePath();
+				}
 			}
 		}
 		return null;
