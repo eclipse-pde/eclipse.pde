@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,8 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class SourceEntryErrorReporter extends BuildErrorReporter {
 
-	public SourceEntryErrorReporter(IFile file, int buildSeverity) {
+	public SourceEntryErrorReporter(IFile file) {
 		super(file);
-		fBuildSeverity = buildSeverity;
 	}
 
 	class ProjectFolder {
@@ -132,8 +131,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	}
 
-	HashMap fSourceFolderMap = new HashMap(4);
-	HashMap fOutputFolderMap = new HashMap(4);
+	private HashMap fSourceFolderMap = new HashMap(4);
+	private HashMap fOutputFolderMap = new HashMap(4);
 
 	public void initialize(ArrayList sourceEntries, ArrayList outputEntries, IClasspathEntry[] cpes, IProject project) {
 
@@ -238,7 +237,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, outputPath.toString());
 						else
 							message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_InvalidOutputFolder, outputPath.toString());
-						prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_OTHER);
+						prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
 					}
 				}
 			} else {
@@ -268,19 +267,19 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 								for (int k = 0; k < srcFolder.getLibs().size(); k++) {
 									String libName = (String) srcFolder.getLibs().get(k);
 									String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DifferentTargetLibrary, erringSrcFolders);
-									prepareError(PROPERTY_SOURCE_PREFIX + libName, srcFolder.getToken(), message, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
+									prepareError(PROPERTY_SOURCE_PREFIX + libName, srcFolder.getToken(), message, PDEMarkerFactory.NO_RESOLUTION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
 								}
 							}
 					}
 				}
 				for (int i = 0; i < outputFolderLibs.size(); i++) {
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_ExtraOutputFolder, outputFolder.getPath().toString(), PROPERTY_SOURCE_PREFIX + outputFolderLibs.get(i));
-					prepareError(PROPERTY_OUTPUT_PREFIX + outputFolderLibs.get(i), outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_OTHER);
+					prepareError(PROPERTY_OUTPUT_PREFIX + outputFolderLibs.get(i), outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
 
 				if (outputFolder.getDupeLibName() != null) {
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DupeOutputFolder, outputPath.toString(), PROPERTY_OUTPUT_PREFIX + outputFolder.getDupeLibName());
-					prepareError(PROPERTY_OUTPUT_PREFIX + outputFolder.getDupeLibName(), outputFolder.getToken(), message, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
+					prepareError(PROPERTY_OUTPUT_PREFIX + outputFolder.getDupeLibName(), outputFolder.getToken(), message, PDEMarkerFactory.NO_RESOLUTION, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
 			}
 		}
@@ -315,7 +314,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				ArrayList srcLibs = sourceFolder.getLibs();
 				for (int i = 0; i < srcLibs.size(); i++) {
 					String libName = (String) srcLibs.get(i);
-					prepareError(PROPERTY_SOURCE_PREFIX + libName, sourceFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, PDEMarkerFactory.CAT_OTHER);
+					prepareError(PROPERTY_SOURCE_PREFIX + libName, sourceFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
 			} else {
 				if (outputFolder.getLibs().size() == 0 && sourceFolder.getLibs().size() == 1) {
@@ -338,7 +337,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 				if (sourceFolder.getDupeLibName() != null) {
 					String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DupeSourceFolder, sourcePath.toString(), PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName());
-					prepareError(PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName(), sourceFolder.getToken(), message, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
+					prepareError(PROPERTY_SOURCE_PREFIX + sourceFolder.getDupeLibName(), sourceFolder.getToken(), message, PDEMarkerFactory.NO_RESOLUTION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
 			}
 		}
@@ -347,7 +346,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			String libName = (String) iter.next();
 			MissingOutputEntry errorEntry = (MissingOutputEntry) missingOutputEntryErrors.get(libName);
 			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.get(errorEntry.fSsrcFolders), PROPERTY_OUTPUT_PREFIX + libName);
-			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.get(errorEntry.fOutputFolders), message, PDEMarkerFactory.B_ADDDITION, CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_MISSING_OUTPUT), PDEMarkerFactory.CAT_OTHER);
+			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.get(errorEntry.fOutputFolders), message, PDEMarkerFactory.B_ADDDITION, fMissingOutputLibSeverity, PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 

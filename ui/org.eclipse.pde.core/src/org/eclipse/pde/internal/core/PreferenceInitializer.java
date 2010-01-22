@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putInt(CompilerFlags.P_NOT_EXTERNALIZED, CompilerFlags.IGNORE);
 		prefs.putInt(CompilerFlags.P_BUILD, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_BUILD_MISSING_OUTPUT, CompilerFlags.IGNORE);
+		prefs.putInt(CompilerFlags.P_BUILD_SOURCE_LIBRARY, CompilerFlags.WARNING);
+		prefs.putInt(CompilerFlags.P_BUILD_OUTPUT_LIBRARY, CompilerFlags.WARNING);
+		prefs.putInt(CompilerFlags.P_BUILD_SRC_INCLUDES, CompilerFlags.WARNING);
+		prefs.putInt(CompilerFlags.P_BUILD_BIN_INCLUDES, CompilerFlags.WARNING);
+		prefs.putInt(CompilerFlags.P_BUILD_JAVA_COMPLIANCE, CompilerFlags.WARNING);
+
 		prefs.putInt(CompilerFlags.P_INCOMPATIBLE_ENV, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_MISSING_EXPORT_PKGS, CompilerFlags.IGNORE);
 

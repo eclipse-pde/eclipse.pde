@@ -71,6 +71,11 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeManifestsProcessor_rootMessage;
 
 	public static String PDECompilersConfigurationBlock_0;
+	public static String PDECompilersConfigurationBlock_1;
+	public static String PDECompilersConfigurationBlock_2;
+	public static String PDECompilersConfigurationBlock_3;
+	public static String PDECompilersConfigurationBlock_4;
+	public static String PDECompilersConfigurationBlock_5;
 
 	public static String PDECompilersConfigurationBlock_general;
 	public static String PDECompilersConfigurationBlock_versioning;
@@ -79,6 +84,7 @@ public class PDEUIMessages extends NLS {
 	public static String PDECompilersConfigurationBlock_settings_changed;
 	public static String PDECompilersConfigurationBlock_settings_changed_all;
 	public static String PDECompilersConfigurationBlock_usage;
+	public static String PDECompilersConfigurationBlock_build;
 
 	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
 
