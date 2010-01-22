@@ -50,13 +50,16 @@ public abstract class BaseValidator extends TestCase {
 		projectsLocation = projectsLocation.setDevice(null).removeFirstSegments(1);
 		File[] zipFiles = projectsLocation.toFile().listFiles();
 		for (int i = 0; i < zipFiles.length; i++) {
-			IProject project = findProject(zipFiles[i].getName().substring(0, zipFiles[i].getName().lastIndexOf('.')));
-			if (project.exists()) {
-				project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-				project.delete(true, new NullProgressMonitor());
+			int index = zipFiles[i].getName().lastIndexOf('.');
+			if (index > 0) { // look out for "CVS" files in the workspace
+				IProject project = findProject(zipFiles[i].getName().substring(0, index));
+				if (project.exists()) {
+					project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+					project.delete(true, new NullProgressMonitor());
+				}
+				project.create(new NullProgressMonitor());
+				doUnZip(MacroPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/" + zipFiles[i].getName());
 			}
-			project.create(new NullProgressMonitor());
-			doUnZip(MacroPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/" + zipFiles[i].getName());
 		}
 	}
 

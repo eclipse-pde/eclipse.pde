@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
+import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
@@ -43,6 +45,7 @@ public class AllPDETests {
 		suite.addTest(AllLogViewTests.suite());
 		suite.addTest(ProjectCreationTests.suite());
 		suite.addTest(BundleRootTests.suite());
+		suite.addTest(AllValidatorTests.suite());
 		return suite;
 	}
 

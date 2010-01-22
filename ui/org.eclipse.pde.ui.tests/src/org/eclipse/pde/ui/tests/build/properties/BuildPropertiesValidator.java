@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
-import org.eclipse.jdt.core.JavaCore;
-
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.PropertyResourceBundle;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import java.io.FileInputStream;
-import java.util.PropertyResourceBundle;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class BuildPropertiesValidator extends BaseValidator {
 
@@ -38,61 +39,12 @@ public class BuildPropertiesValidator extends BaseValidator {
 		fOneTimeSetupComplete = true;
 	}
 
-	public void testBuildPropertiesOne() {
-		try {
-			IProject project = findProject("org.eclipse.pde.tests.build.properties.one");
-			project.open(new NullProgressMonitor());
-			setPreferences(project, CompilerFlags.ERROR);
-			for (int i = 1; i <= 4; i++) {
-				if (buildProject(project, i)) {
-					IResource buildProperty = project.findMember("build.properties");
-					PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
-
-					verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
-					verifyQuickFixes(buildProperty, expectedValues);
-				} else {
-					fail("Could not build the project '" + project.getName() + "'");
-				}
-			}
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-	}
-
-	public void testBuildPropertiesTwo() {
-		try {
-			IProject project = findProject("org.eclipse.pde.tests.build.properties.two");
-			project.open(new NullProgressMonitor());
-			setPreferences(project, CompilerFlags.WARNING);
-			setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
-			setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.3");
-			setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
-
-			if (buildProject(project, 1)) {
-				IResource buildProperty = project.findMember("build.properties");
-				PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
-
-				verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.WARNING);
-				verifyQuickFixes(buildProperty, expectedValues);
-			} else {
-				fail("Could not build the project '" + project.getName() + "'");
-			}
-
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-	}
-
-	public void testBuildPropertiesTwo_JreCompliance() {
-		try {
-			IProject project = findProject("org.eclipse.pde.tests.build.properties.two");
-			project.open(new NullProgressMonitor());
-			setPreferences(project, CompilerFlags.ERROR);
-			setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
-			setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.2");
-			setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
-
-			if (buildProject(project, 2)) {
+	public void testBuildPropertiesOne() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.one");
+		project.open(new NullProgressMonitor());
+		setPreferences(project, CompilerFlags.ERROR);
+		for (int i = 1; i <= 4; i++) {
+			if (buildProject(project, i)) {
 				IResource buildProperty = project.findMember("build.properties");
 				PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
 
@@ -101,8 +53,44 @@ public class BuildPropertiesValidator extends BaseValidator {
 			} else {
 				fail("Could not build the project '" + project.getName() + "'");
 			}
-		} catch (Exception e) {
-			fail(e.getMessage());
+		}
+	}
+
+	public void testBuildPropertiesTwo() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.two");
+		project.open(new NullProgressMonitor());
+		setPreferences(project, CompilerFlags.WARNING);
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.3");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
+
+		if (buildProject(project, 1)) {
+			IResource buildProperty = project.findMember("build.properties");
+			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+
+			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.WARNING);
+			verifyQuickFixes(buildProperty, expectedValues);
+		} else {
+			fail("Could not build the project '" + project.getName() + "'");
+		}
+	}
+
+	public void testBuildPropertiesTwo_JreCompliance() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.two");
+		project.open(new NullProgressMonitor());
+		setPreferences(project, CompilerFlags.ERROR);
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.2");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
+
+		if (buildProject(project, 2)) {
+			IResource buildProperty = project.findMember("build.properties");
+			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+
+			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
+			verifyQuickFixes(buildProperty, expectedValues);
+		} else {
+			fail("Could not build the project '" + project.getName() + "'");
 		}
 	}
 }
