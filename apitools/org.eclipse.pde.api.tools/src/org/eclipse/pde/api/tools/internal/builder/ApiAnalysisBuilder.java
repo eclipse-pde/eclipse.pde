@@ -407,6 +407,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					problem);
 			return true;
 		}
+		cleanupFatalMarkers(project);
 		return false;
 	}
 	
