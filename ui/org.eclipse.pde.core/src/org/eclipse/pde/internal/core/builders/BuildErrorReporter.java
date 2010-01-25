@@ -236,7 +236,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys, build);
 		validateBinIncludes(binIncludes);
-		validateExecutionEnvironment(javacSource, javacTarget, javacWarnings, jreCompilationProfile);
+		try {
+			validateExecutionEnvironment(javacSource, javacTarget, javacWarnings, jreCompilationProfile);
+		} catch (CoreException e) {
+		}
 		//validateDefaultEncoding(sourceEntries, encodingEntries);
 	}
 
@@ -267,7 +270,21 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @param javacWarningsEntry
 	 * @param jreCompilationProfileEntry
 	 */
-	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry, IBuildEntry javacWarningsEntry, IBuildEntry jreCompilationProfileEntry) {
+	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry, IBuildEntry javacWarningsEntry, IBuildEntry jreCompilationProfileEntry) throws CoreException {
+		// if there is no source to compile, don't worry about compiler settings
+		IJavaProject project = JavaCore.create(fProject);
+		IClasspathEntry[] classpath = project.getRawClasspath();
+		boolean source = false;
+		for (int i = 0; i < classpath.length; i++) {
+			IClasspathEntry cpe = classpath[i];
+			if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				source = true;
+			}
+		}
+		if (!source) {
+			return;
+		}
+
 		ProjectScope projectContext = new ProjectScope(fProject);
 		IEclipsePreferences node = projectContext.getNode(JavaCore.PLUGIN_ID);
 		String projectComplianceLevel = node.get(JavaCore.COMPILER_COMPLIANCE, ""); //$NON-NLS-1$
