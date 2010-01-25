@@ -20,7 +20,7 @@ public class AllValidatorTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing build.properties validations"); //$NON-NLS-1$
-		suite.addTest(BuildPropertiesValidator.suite());
+		suite.addTest(BuildPropertiesValidationTest.suite());
 		return suite;
 	}
 

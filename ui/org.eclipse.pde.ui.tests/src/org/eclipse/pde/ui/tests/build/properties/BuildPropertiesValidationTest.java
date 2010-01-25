@@ -23,11 +23,17 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class BuildPropertiesValidator extends BaseValidator {
-
+/**
+ * Tests that the builder for build.properties files generates the correct problems and quickfixes.
+ * 
+ * @since 3.6
+ * @see AbstractBuildValidationTest
+ *
+ */
+public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 	
 	public static Test suite() {
-		return new TestSuite(BuildPropertiesValidator.class);
+		return new TestSuite(BuildPropertiesValidationTest.class);
 	}
 
 	private static boolean fOneTimeSetupComplete = false;

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
+import java.io.File;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.core.resources.IMarker;
@@ -37,7 +41,15 @@ import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.ui.IMarkerResolution;
 import org.osgi.service.prefs.BackingStoreException;
 
-public abstract class BaseValidator extends TestCase {
+/**
+ * Abstract test case for tests that check the build.properties builder and its associated quickfixes.
+ * 
+ * Extracts the necessary build.properties testing files and deletes them on teardown.
+ * 
+ * @since 3.6
+ * @see BuildPropertiesValidationTest
+ */
+public abstract class AbstractBuildValidationTest extends TestCase {
 
 	private static final String MARKER = "marker";
 	private int fBuildPropIndex;
@@ -46,9 +58,10 @@ public abstract class BaseValidator extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		IPath projectsLocation = new Path(MacroPlugin.getDefault().getBundle().getLocation() + "/tests/build.properties");
-		projectsLocation = projectsLocation.setDevice(null).removeFirstSegments(1);
-		File[] zipFiles = projectsLocation.toFile().listFiles();
+		URL location = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties");
+		File projectFile = new File(FileLocator.toFileURL(location).getFile());
+		assertTrue("Could not find test zip files at " + projectFile,projectFile.isDirectory());
+		File[] zipFiles = projectFile.listFiles();
 		for (int i = 0; i < zipFiles.length; i++) {
 			int index = zipFiles[i].getName().lastIndexOf('.');
 			if (index > 0) { // look out for "CVS" files in the workspace

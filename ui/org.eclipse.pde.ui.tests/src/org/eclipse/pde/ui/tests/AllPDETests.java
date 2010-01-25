@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
@@ -32,6 +30,10 @@ public class AllPDETests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
+		
+		// Removed for M5 due to problems running on linux
+//		suite.addTest(AllValidatorTests.suite());
+		
 		suite.addTest(AllTargetTests.suite());
 		suite.addTest(AllNewProjectTests.suite());
 		suite.addTest(AllPreferenceTests.suite());
@@ -45,7 +47,6 @@ public class AllPDETests {
 		suite.addTest(AllLogViewTests.suite());
 		suite.addTest(ProjectCreationTests.suite());
 		suite.addTest(BundleRootTests.suite());
-		suite.addTest(AllValidatorTests.suite());
 		return suite;
 	}
 
