@@ -225,8 +225,14 @@ public abstract class BaseValidator extends TestCase {
 		fBuildPropIndex = index;
 		IResource buildProp = project.findMember("build.properties");
 		if (index > 0) {
-			if (buildProp != null && buildProp.exists())
-				buildProp.delete(true, new NullProgressMonitor());				
+			int attempts = 0;
+			while (buildProp != null && buildProp.exists() && attempts < 10) {
+				try {
+					buildProp.delete(true, new NullProgressMonitor());
+				} catch (CoreException e) {
+					attempts++;
+				}
+			}
 			buildProp = project.findMember("build.properties" + index);
 			if (buildProp == null) {
 				fail("build.properties" + index + "is missing. Can not build the project '" + project.getName() + "'");
