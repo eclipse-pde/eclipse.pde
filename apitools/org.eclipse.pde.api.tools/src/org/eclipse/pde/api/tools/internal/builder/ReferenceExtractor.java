@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -306,6 +306,9 @@ public class ReferenceExtractor extends ClassAdapter {
 				Reference reference = ReferenceExtractor.this.addFieldReference(Type.getObjectType(owner), name, refType);
 				if (reference != null) {
 					this.linePositionTracker.addLocation(reference);
+					if(refType == IReference.REF_GETFIELD || refType == IReference.REF_PUTFIELD) {
+						ReferenceExtractor.this.fieldtracker.addField(reference);
+					}
 				}
 			}
 		}
@@ -400,6 +403,9 @@ public class ReferenceExtractor extends ClassAdapter {
 				Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, name, desc, kind);
 				if (reference != null) {
 					this.linePositionTracker.addLocation(reference);
+					if(kind == IReference.REF_STATICMETHOD) {
+						ReferenceExtractor.this.fieldtracker.addAccessor(reference);
+					}
 				}
 			}
 			this.stringLiteral = null;
@@ -573,7 +579,72 @@ public class ReferenceExtractor extends ClassAdapter {
 		
 		
 	}
-
+	
+	/**
+	 * @since 1.1
+	 */
+	static class FieldTracker {
+		HashMap accessors = new HashMap();
+		ArrayList fields = new ArrayList();
+		ReferenceExtractor extractor = null;
+		/**
+		 * Constructor
+		 */
+		public FieldTracker(ReferenceExtractor extractor) {
+			this.extractor = extractor;
+		}
+		
+		/**
+		 * Add a field to be tracked
+		 * @param field
+		 */
+		public void addField(Reference ref) {
+			if(ref != null) {
+				fields.add(ref);
+			}
+		}
+		/**
+		 * Add an accessor to be tracked
+		 * @param accessor
+		 */
+		public void addAccessor(Reference ref) {
+			if(ref != null) {
+				String key = ref.getReferencedMemberName();
+				List refs = (List) accessors.get(key);
+				if(refs == null) {
+					refs = new ArrayList();
+					accessors.put(key, refs);
+				}
+				refs.add(ref);
+			}
+			
+		}
+		/**
+		 * Resolve any synthetic field access to their accessor
+		 */
+		public void resolveSyntheticFields() {
+			Reference accessor = null, field = null;
+			List refs = null;
+			for (int i = 0; i < fields.size(); i++) {
+				field = (Reference) fields.get(i);
+				refs = (List) accessors.get(field.getMember().getName());
+				if(refs != null) {
+					for (Iterator iter = refs.iterator(); iter.hasNext();) {
+						accessor = (Reference) iter.next();
+						Reference refer = Reference.fieldReference(accessor.getMember(), 
+								field.getReferencedTypeName(), 
+								field.getReferencedMemberName(),
+								field.getReferenceKind());
+						refer.setLineNumber(accessor.getLineNumber());
+						this.extractor.collector.add(refer);
+					}
+					//we resolved it, remove it
+					this.extractor.collector.remove(field);
+				}
+			}
+		}
+	}
+	
 	static class LinePositionTracker {
 		List labelsAndLocations;
 		SortedSet lineInfos;
@@ -748,7 +819,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * The list we collect references in. Entries in the list are
 	 * of the type {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference}
 	 */
-	private Set collector = null;
+	Set collector = null;
 	
 	/**
 	 * The full internal name of the class we are extracting references from
@@ -758,7 +829,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	/**
 	 * Current type being visited.
 	 */
-	private IApiType fType;
+	IApiType fType;
 
 	/**
 	 * Stack of members being visited. When a member is entered its
@@ -789,6 +860,12 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * Bit mask of {@link ReferenceModifiers} to extract.
 	 */
 	private int fReferenceKinds = 0;
+	
+	/**
+	 * Track synthetic field / accessor
+	 * @since 1.1
+	 */
+	FieldTracker fieldtracker = null;
 
 	/**
 	 * Bit mask that determines if we need to visit members
@@ -820,9 +897,26 @@ public class ReferenceExtractor extends ClassAdapter {
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
-		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) > 0; 
+		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) > 0;
+		fieldtracker = new FieldTracker(this);
 	}
 
+	/**
+	 * Constructor
+	 * @param type
+	 * @param collector
+	 * @param referenceKinds
+	 * @param tracker
+	 */
+	protected ReferenceExtractor(IApiType type, Set collector, int referenceKinds, FieldTracker tracker) {
+		super(new ClassNode());
+		fType = type;
+		this.collector = collector;
+		fReferenceKinds = referenceKinds;
+		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) > 0;
+		fieldtracker = tracker;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -853,7 +947,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		}
 		return !(this.classname.equals(owner) || this.classname.startsWith(owner) || "<clinit>".equals(owner) || "this".equals(owner)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
+	
 	/**
 	 * Returns whether the specified reference should be
 	 * considered when extracting references. Configured by setting on whether
@@ -863,7 +957,8 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * @return whether to include the reference
 	 */
 	protected boolean consider(Reference ref) {
-		if ((ref.getReferenceKind() & fReferenceKinds) == 0) {
+		int kind = ref.getReferenceKind();
+		if ((kind & fReferenceKinds) == 0) {
 			return false;
 		}
 		if (this.fIncludeLocalRefs) {
@@ -871,7 +966,8 @@ public class ReferenceExtractor extends ClassAdapter {
 		}
 		// don't consider references to anonymous types or elements in them
 		String referencedTypeName = ref.getReferencedTypeName();
-		if (ref.getReferenceKind() == IReference.REF_VIRTUALMETHOD || ref.getReferenceKind() == IReference.REF_OVERRIDE) {
+		if (kind == IReference.REF_VIRTUALMETHOD || kind == IReference.REF_OVERRIDE ||
+				kind == IReference.REF_GETFIELD || kind == IReference.REF_PUTFIELD) {
 			return true;
 		}
 		if (referencedTypeName.startsWith(fType.getName())) {
@@ -1075,6 +1171,9 @@ public class ReferenceExtractor extends ClassAdapter {
 				System.out.println("ending visit of type: ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		if(!this.fType.isMemberType()) {
+			fieldtracker.resolveSyntheticFields();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1103,6 +1202,9 @@ public class ReferenceExtractor extends ClassAdapter {
 				} else {
 					this.addTypeReference(Type.getType(desc), IReference.REF_FIELDDECL);
 				}
+			}
+			else {
+				fieldtracker.addField(addTypeReference(Type.getType(desc), IReference.REF_FIELDDECL));
 			}
 			this.exitMember();
 		}
@@ -1157,7 +1259,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 */
 	private Set processInnerClass(IApiType type, int refkinds) throws CoreException {
 		HashSet refs = new HashSet();
-		ReferenceExtractor extractor = new ReferenceExtractor(type, refs, refkinds);
+		ReferenceExtractor extractor = new ReferenceExtractor(type, refs, refkinds, this.fieldtracker);
 		ClassReader reader = new ClassReader(((AbstractApiTypeRoot)type.getTypeRoot()).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return refs;
@@ -1202,23 +1304,25 @@ public class ReferenceExtractor extends ClassAdapter {
 						Reference.methodReference(method, superTypeName, method.getName(), method.getSignature(), IReference.REF_OVERRIDE));
 				}
 			}
-			if((access & Opcodes.ACC_SYNTHETIC) == 0 && !"<clinit>".equals(name)) { //$NON-NLS-1$
+			if(!"<clinit>".equals(name)) { //$NON-NLS-1$
 				int argumentcount = 0;
-				if(signature != null) {
-					this.processSignature(name, signature, IReference.REF_PARAMETERIZED_METHODDECL, METHOD);
-					argumentcount = this.signaturevisitor.argumentcount;
-				}
-				else {
-					Type[] arguments = Type.getArgumentTypes(desc);
-					for(int i = 0; i < arguments.length; i++) {
-						Type type = arguments[i];
-						this.addTypeReference(type, IReference.REF_PARAMETER);
-						argumentcount += type.getSize();
+				if((access & Opcodes.ACC_SYNTHETIC) == 0) {
+					if(signature != null) {
+						this.processSignature(name, signature, IReference.REF_PARAMETERIZED_METHODDECL, METHOD);
+						argumentcount = this.signaturevisitor.argumentcount;
 					}
-					this.addTypeReference(Type.getReturnType(desc), IReference.REF_RETURNTYPE);
-					if(exceptions != null) {
-						for(int i = 0; i < exceptions.length; i++) {
-							this.addTypeReference(Type.getObjectType(exceptions[i]), IReference.REF_THROWS);
+					else {
+						Type[] arguments = Type.getArgumentTypes(desc);
+						for(int i = 0; i < arguments.length; i++) {
+							Type type = arguments[i];
+							this.addTypeReference(type, IReference.REF_PARAMETER);
+							argumentcount += type.getSize();
+						}
+						this.addTypeReference(Type.getReturnType(desc), IReference.REF_RETURNTYPE);
+						if(exceptions != null) {
+							for(int i = 0; i < exceptions.length; i++) {
+								this.addTypeReference(Type.getObjectType(exceptions[i]), IReference.REF_THROWS);
+							}
 						}
 					}
 				}

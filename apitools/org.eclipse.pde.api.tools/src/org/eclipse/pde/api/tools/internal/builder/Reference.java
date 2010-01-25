@@ -21,6 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -261,7 +262,7 @@ public class Reference implements IReference {
 						fResolved = type;
 						break;
 					case IReference.T_FIELD_REFERENCE:
-						fResolved = type.getField(getReferencedMemberName());
+						resolveField(type, getReferencedMemberName());
 						break;
 					case IReference.T_METHOD_REFERENCE:
 						resolveVirtualMethod(type, getReferencedMemberName(), getReferencedSignature());
@@ -290,13 +291,33 @@ public class Reference implements IReference {
 			case IReference.T_TYPE_REFERENCE:
 				return true;
 			case IReference.T_FIELD_REFERENCE:
-				return type.getField(getReferencedMemberName()) != null;
+				return resolveField(type, getReferencedMemberName());
 			case IReference.T_METHOD_REFERENCE:
 				return resolveVirtualMethod0(sourceComponent, type, getReferencedMemberName(), getReferencedSignature());
 			}
 		}
 		return false;
 	}	
+	/**
+	 * Resolves the field in the parent class hierarchy
+	 * @param type the initial type to search
+	 * @param fieldame the name of the field
+	 * @return true if the field resolved
+	 * @throws CoreException
+	 * @since 1.1
+	 */
+	private boolean resolveField(IApiType type, String fieldame) throws CoreException {
+		IApiField field = type.getField(fieldame);
+		if(field != null) {
+			fResolved = field;
+			return true;
+		}
+		IApiType superT = type.getSuperclass();
+		if (superT != null) {
+			return resolveField(superT, fieldame);
+		}
+		return false;
+	}
 	/**
 	 * Resolves a virtual method and returns whether the method lookup was successful.
 	 * We need to resolve the actual type that implements the method - i.e. do the virtual
@@ -424,6 +445,7 @@ public class Reference implements IReference {
 		buf.append("From: "); //$NON-NLS-1$
 		IApiMember member = getMember();
 		buf.append(member.getHandle().toString());
+		buf.append(" [line: ").append(getLineNumber()).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getResolvedReference() == null) {
 			buf.append("\nUnresolved To: "); //$NON-NLS-1$
 			buf.append(getReferencedTypeName());
