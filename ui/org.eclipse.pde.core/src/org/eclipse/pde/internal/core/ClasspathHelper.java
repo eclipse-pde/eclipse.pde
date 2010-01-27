@@ -347,11 +347,14 @@ public class ClasspathHelper {
 		if (path.isAbsolute())
 			resultPath = path;
 		else if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
-			path = path.removeFirstSegments(1);
+			IContainer bundleRoot = PDEProject.getBundleRoot(project);
+			IPath rootPath = bundleRoot.getFullPath();
+			// make path relative to bundle root
+			path = path.makeRelativeTo(rootPath);
 			if (path.segmentCount() == 0)
 				resultPath = new Path(DOT);
 			else {
-				IResource resource = project.findMember(path);
+				IResource resource = bundleRoot.findMember(path);
 				if (resource != null)
 					resultPath = path;
 			}
