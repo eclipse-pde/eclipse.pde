@@ -13,8 +13,9 @@ package org.eclipse.pde.internal.core.project;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.*;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -207,9 +208,20 @@ public class PDEProject {
 		return getBundleRoot(project).getFolder(path);
 	}
 
-	// TODO: schema folder?
+	/**
+	 * Returns the bundle localization file for the specified bundle project.
+	 * The file may or may not exist.
+	 * 
+	 * @param project
+	 * @return bunlde localization file which may or may not exist
+	 */
+	public static IFile getLocalizationFile(IProject project) {
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		String localization = PDEManager.getBundleLocalization(model);
+		return getBundleRelativeFile(project, new Path(localization + ".properties")); //$NON-NLS-1$
+	}
 
-	// TODO: localization file
+	// TODO: schema folder?
 
 	// TODO: plugin_customization.ini ?
 

@@ -119,14 +119,8 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 					addChange(model, IModelProviderEvent.MODELS_CHANGED);
 			} else {
 				// reset bundle resource if localization file has changed.
-				IPluginModelBase model = getPluginModel(file.getProject());
-				String localization = null;
-				if (model instanceof IBundlePluginModelBase) {
-					localization = ((IBundlePluginModelBase) model).getBundleLocalization();
-				} else if (model != null) {
-					localization = "plugin"; //$NON-NLS-1$
-				}
-				if (localization != null && file.getProjectRelativePath().toString().startsWith(localization)) {
+				if (file.equals(PDEProject.getLocalizationFile(file.getProject()))) {
+					IPluginModelBase model = getPluginModel(file.getProject());
 					((AbstractNLModel) model).resetNLResourceHelper();
 				}
 			}

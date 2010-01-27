@@ -15,11 +15,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class ModelChange {
 
@@ -94,8 +94,7 @@ public class ModelChange {
 	}
 
 	public IFile getPropertiesFile() {
-		IProject project = fParent.getUnderlyingResource().getProject();
-		return project.getFile(getBundleLocalization() + LOCALIZATION_FILE_SUFFIX);
+		return PDEProject.getLocalizationFile(fParent.getUnderlyingResource().getProject());
 	}
 
 	public Properties getProperties() {

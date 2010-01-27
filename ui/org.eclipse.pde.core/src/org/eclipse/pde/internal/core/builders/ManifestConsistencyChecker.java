@@ -17,10 +17,7 @@ import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.Bundle;
 
@@ -146,16 +143,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private boolean isLocalizationFile(IResource file) {
-		IPluginModelBase model = PluginRegistry.findModel(getProject());
-		String localization = null;
-		if (model instanceof IBundlePluginModelBase) {
-			localization = ((IBundlePluginModelBase) model).getBundleLocalization();
-		} else {
-			localization = "plugin"; //$NON-NLS-1$
-		}
-		if (localization != null)
-			return file.getProjectRelativePath().equals(new Path(localization + ".properties")); //$NON-NLS-1$
-		return false;
+		return file.equals(PDEProject.getLocalizationFile(getProject()));
 	}
 
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {

@@ -48,9 +48,8 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 			String localization = PDEManager.getBundleLocalization(model);
 			if (localization == null)
 				addLocalization(model, localization = "plugin"); //$NON-NLS-1$
-			localization += ModelChange.LOCALIZATION_FILE_SUFFIX;
 			IProject project = model.getUnderlyingResource().getProject();
-			IFile file = project.getFile(localization);
+			IFile file = PDEProject.getLocalizationFile(project);
 			checkPropertiesFile(file);
 			try {
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
