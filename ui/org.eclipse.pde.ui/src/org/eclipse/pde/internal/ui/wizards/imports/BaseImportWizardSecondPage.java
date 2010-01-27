@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.osgi.framework.Version;
 
 public abstract class BaseImportWizardSecondPage extends WizardPage implements IModelProviderListener {
 
@@ -117,13 +118,41 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		return fPage1.isRefreshNeeded();
 	}
 
-	private IPluginModelBase findModel(String id) {
+	/**
+	 * Find the model that best matches the given string id and version.  If there is a
+	 * bundle that matches the name and version it returns.  If there is a bundle with the
+	 * correct name but no matching version, the highest version available will be returned.
+	 * If no match could be found this method returns <code>null</code>
+	 * 
+	 * @param id id of the bundle to find
+	 * @param version version of the bundle to find, may be <code>null</code>
+	 * @return the best matching bundle or <code>null</code>
+	 */
+	private IPluginModelBase findModel(String id, String version) {
+		// Look for a matching version, if one cannot be found, take the highest version
+		IPluginModelBase bestMatch = null;
 		for (int i = 0; i < fModels.length; i++) {
 			String modelId = fModels[i].getPluginBase().getId();
-			if (modelId != null && modelId.equals(id))
-				return fModels[i];
+			if (modelId != null && modelId.equals(id)) {
+				String modelVersion = fModels[i].getPluginBase().getVersion();
+				if (modelVersion != null && modelVersion.equals(version)) {
+					// Strict version match, return this model
+					return fModels[i];
+				}
+				if (bestMatch == null || bestMatch.getPluginBase().getVersion() == null || version == null) {
+					// No good match yet, use current model
+					bestMatch = fModels[i];
+				} else {
+					// At least one good match, use highest version
+					Version bestVersion = Version.parseVersion(bestMatch.getPluginBase().getVersion());
+					Version currentVersion = Version.parseVersion(version);
+					if (bestVersion.compareTo(currentVersion) < 0) {
+						bestMatch = fModels[i];
+					}
+				}
+			}
 		}
-		return null;
+		return bestMatch;
 	}
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
@@ -163,7 +192,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		IPluginImport[] required = model.getPluginBase().getImports();
 		if (required.length > 0) {
 			for (int i = 0; i < required.length; i++) {
-				IPluginModelBase found = findModel(required[i].getId());
+				IPluginModelBase found = findModel(required[i].getId(), required[i].getVersion());
 				if (found != null) {
 					addPluginAndDependencies(found, selected, addFragments);
 				}
@@ -178,7 +207,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 				}
 			} else {
 				IFragment fragment = ((IFragmentModel) model).getFragment();
-				IPluginModelBase found = findModel(fragment.getPluginId());
+				IPluginModelBase found = findModel(fragment.getPluginId(), fragment.getVersion());
 				if (found != null) {
 					addPluginAndDependencies(found, selected, addFragments);
 				}
