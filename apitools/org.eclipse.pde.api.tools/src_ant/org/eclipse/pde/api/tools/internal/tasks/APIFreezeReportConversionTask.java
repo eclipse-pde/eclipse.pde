@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class APIFreezeReportConversionTask extends Task {
 		private boolean debug;
 		private int flags;
 		private String key;
+		private String kind;
 		private Map map;
 		private String typename;
 		private int elementType;
@@ -62,11 +63,12 @@ public class APIFreezeReportConversionTask extends Task {
 			throws SAXException {
 			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				Entry entry = new Entry(
-						flags,
-						elementType,
-						key,
-						typename,
-						this.arguments);
+						this.flags,
+						this.elementType,
+						this.key,
+						this.typename,
+						this.arguments,
+						this.kind);
 				Object object = this.map.get(this.componentID);
 				if (object != null) {
 					((List) object).add(entry);
@@ -96,7 +98,7 @@ public class APIFreezeReportConversionTask extends Task {
 		public void startElement(String uri, String localName,
 				String name, Attributes attributes) throws SAXException {
 			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
-				if (debug) {
+				if (this.debug) {
 					System.out.println("name : " + name); //$NON-NLS-1$
 					/*<delta
 					 *  compatible="true"
@@ -115,16 +117,18 @@ public class APIFreezeReportConversionTask extends Task {
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE);
 					printAttribute(attributes, IApiXmlConstants.ATTR_FLAGS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_KEY);
+					printAttribute(attributes, IApiXmlConstants.ATTR_KIND);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_NEW_MODIFIERS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_OLD_MODIFIERS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_RESTRICTIONS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				}
-				componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
-				flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
-				elementType = Util.getDeltaElementTypeValue(attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE));
-				typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
-				key = attributes.getValue(IApiXmlConstants.ATTR_KEY);
+				this.componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
+				this.flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
+				this.elementType = Util.getDeltaElementTypeValue(attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE));
+				this.typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
+				this.key = attributes.getValue(IApiXmlConstants.ATTR_KEY);
+				this.kind = attributes.getValue(IApiXmlConstants.ATTR_KIND);
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
 				if (this.argumentsList == null) {
 					this.argumentsList = new ArrayList();
@@ -142,19 +146,26 @@ public class APIFreezeReportConversionTask extends Task {
 		int elementType;
 		String key;
 		String typeName;
+		String kind;
+
+		private static final String ADDED = "ADDED"; //$NON-NLS-1$
+		private static final String REMOVED = "REMOVED"; //$NON-NLS-1$
 
 		public Entry(
 				int flags,
 				int elementType,
 				String key,
 				String typeName,
-				String[] arguments) {
+				String[] arguments,
+				String kind) {
 			this.flags = flags;
 			this.key = key.replace('/', '.');
 			if (typeName != null) {
 				this.typeName = typeName.replace('/', '.');
 			}
 			this.arguments = arguments;
+			this.kind = kind;
+			this.elementType = elementType;
 		}
 		
 		public String getDisplayString() {
@@ -168,7 +179,7 @@ public class APIFreezeReportConversionTask extends Task {
 					case IDelta.METHOD :
 					case IDelta.METHOD_WITH_DEFAULT_VALUE :
 					case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-						int indexOf = key.indexOf('(');
+						int indexOf = this.key.indexOf('(');
 						if (indexOf == -1) {
 							return null;
 						}
@@ -253,6 +264,11 @@ public class APIFreezeReportConversionTask extends Task {
 								this.arguments));
 						break;
 				}
+			}
+			if (ADDED.equals(this.kind)) {
+				buffer.append(Messages.AddedElement);
+			} else if (REMOVED.equals(this.kind)) {
+				buffer.append(Messages.RemovedElement);
 			}
 			return String.valueOf(buffer);
 		}

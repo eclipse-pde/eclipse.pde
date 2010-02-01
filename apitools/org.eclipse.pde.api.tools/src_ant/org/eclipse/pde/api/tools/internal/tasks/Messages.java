@@ -89,6 +89,9 @@ public class Messages extends NLS {
 	public static String ApiUseTask_missing_report_location;
 	public static String ApiUseTask_search_engine_problem;
 	public static String UseTask_no_scan_both_types_not_searched_for;
+	
+	public static String AddedElement;
+	public static String RemovedElement;
 
 	static {
 		// initialize resource bundle
