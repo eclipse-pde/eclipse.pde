@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,7 +282,8 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 
 		// description:  Content (Element)
 		fBlockEvents = true;
-		fContentViewer.getDocument().set(fItem.getDescription().getContent());
+		String content = fItem.getDescription().getContent();
+		fContentViewer.getDocument().set(content == null ? "" : content);
 		fBlockEvents = false;
 		fContentViewer.getViewer().setEditable(editable);
 	}
