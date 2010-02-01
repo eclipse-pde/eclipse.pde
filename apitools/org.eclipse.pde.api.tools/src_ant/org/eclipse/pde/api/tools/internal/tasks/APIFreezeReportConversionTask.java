@@ -265,12 +265,15 @@ public class APIFreezeReportConversionTask extends Task {
 						break;
 				}
 			}
-			if (ADDED.equals(this.kind)) {
-				buffer.append(Messages.AddedElement);
-			} else if (REMOVED.equals(this.kind)) {
-				buffer.append(Messages.RemovedElement);
-			}
 			return String.valueOf(buffer);
+		}
+		public String getDisplayKind() {
+			if (ADDED.equals(this.kind)) {
+				return Messages.AddedElement;
+			} else if (REMOVED.equals(this.kind)) {
+				return Messages.RemovedElement;
+			}
+			return Messages.ChangedElement;
 		}
 	}
 	boolean debug;
@@ -342,7 +345,7 @@ public class APIFreezeReportConversionTask extends Task {
 		dumpFooter(buffer);
 	}
 	private void dumpEntry(StringBuffer buffer, Entry entry) {
-		buffer.append(NLS.bind(Messages.deltaReportTask_entry, entry.getDisplayString()));
+		buffer.append(NLS.bind(Messages.deltaReportTask_entry, entry.getDisplayKind(), entry.getDisplayString()));
 	}
 	private void dumpEntryForComponent(StringBuffer buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deltaReportTask_componentEntry, componentID));

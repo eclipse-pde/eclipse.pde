@@ -92,6 +92,7 @@ public class Messages extends NLS {
 	
 	public static String AddedElement;
 	public static String RemovedElement;
+	public static String ChangedElement;
 
 	static {
 		// initialize resource bundle
