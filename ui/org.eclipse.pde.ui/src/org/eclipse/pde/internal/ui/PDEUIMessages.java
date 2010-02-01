@@ -62,6 +62,26 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsProcessor_errorMessage;
 
+	public static String FeatureBlock_addRequiedBundles;
+
+	public static String FeatureBlock_addRequiredFeatues;
+
+	public static String FeatureBlock_features;
+
+	public static String FeatureBlock_location;
+
+	public static String FeatureBlock_showSelected;
+
+	public static String FeatureBlock_external;
+
+	public static String FeatureBlock_useExternalFeatures;
+
+	public static String FeatureBlock_useWorkspaceFeatures;
+
+	public static String FeatureBlock_version;
+
+	public static String FeatureBlock_workspace;
+
 	public static String FeatureEditor_exportTooltip;
 
 	public static String JavaArgumentsTab_addVMArgs;
@@ -220,6 +240,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsTab_allPlugins;
 
 	public static String PluginsTab_featureMode;
+
+	public static String PluginsTab_customFeatureMode;
 
 	public static String PluginsTab_launchWith;
 

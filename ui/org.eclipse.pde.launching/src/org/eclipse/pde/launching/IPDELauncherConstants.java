@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -401,4 +401,12 @@ public interface IPDELauncherConstants {
 	 * @since 3.6
 	 */
 	String GENERATE_PROFILE = "generateProfile"; //$NON-NLS-1$
+
+	String SELECTED_FEATURES = "selected_features"; //$NON-NLS-1$
+
+	String USE_CUSTOM_FEATURES = "useCustomFeatures"; //$NON-NLS-1$
+
+	String LOCATION_WORKSPACE = "Workspace"; //$NON-NLS-1$
+
+	String LOCATION_EXTERNAL = "Target"; //$NON-NLS-1$
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,27 +11,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.IPDEConstants;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class BundleLauncherHelper {
 
@@ -69,6 +60,48 @@ public class BundleLauncherHelper {
 				}
 				return map;
 			}
+		}
+
+		if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true)) {
+			HashMap featurelocationMap = BundleLauncherHelper.getFeatureLocationMap(configuration);
+			FeatureModelManager fmm = new FeatureModelManager();
+			ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
+
+			IFeatureModel[] wrkspcModels = fmm.getWorkspaceModels();
+			HashMap wrkspcFeaturesMap = new HashMap();
+			for (int i = 0; i < wrkspcModels.length; i++) {
+				wrkspcFeaturesMap.put(wrkspcModels[i].getFeature().getId(), wrkspcModels[i].getFeature());
+			}
+
+			efmm.startup();
+			IFeatureModel[] extrnlModels = efmm.getModels();
+			HashMap extrnlFeaturesMap = new HashMap();
+			for (int i = 0; i < extrnlModels.length; i++) {
+				extrnlFeaturesMap.put(extrnlModels[i].getFeature().getId(), extrnlModels[i].getFeature());
+			}
+			efmm.shutdown();
+
+			for (Iterator iterator = featurelocationMap.keySet().iterator(); iterator.hasNext();) {
+				String id = (String) iterator.next();
+				String location = (String) featurelocationMap.get(id);
+				IFeature feature = null;
+				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
+					feature = (IFeature) wrkspcFeaturesMap.get(id);
+				} else if (IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
+					feature = (IFeature) extrnlFeaturesMap.get(id);
+				}
+				if (feature == null)
+					continue;
+				IFeaturePlugin[] featurePlugins = feature.getPlugins();
+				for (int i = 0; i < featurePlugins.length; i++) {
+					FeaturePlugin plugin = (FeaturePlugin) featurePlugins[i];
+					if (plugin.getPluginBase() == null)
+						continue;
+					addBundleToMap(map, plugin.getPluginBase().getPluginModel(), "default:default"); //$NON-NLS-1$
+				}
+			}
+
+			return map;
 		}
 
 		String workspace = osgi == false ? IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.WORKSPACE_BUNDLES;
@@ -319,6 +352,34 @@ public class BundleLauncherHelper {
 
 		if (save && (value != null || value2 != null || upgrade))
 			wc.doSave();
+	}
+
+	public static HashMap getFeatureLocationMap(ILaunchConfiguration config) throws CoreException {
+		HashMap featureLocationMap = new HashMap();
+		String value = config.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, ""); //$NON-NLS-1$
+		if (value.length() != 0) {
+			String[] features = value.split(";"); //$NON-NLS-1$
+			if (features != null && features.length > 0) {
+				for (int i = 0; i < features.length; i++) {
+					String[] attributes = features[i].split(":"); //$NON-NLS-1$
+					featureLocationMap.put(attributes[0], attributes[2]);
+				}
+			}
+		}
+		return featureLocationMap;
+	}
+
+	public static String writeFeatureEntry(String id, String version, String location) {
+		StringBuffer buffer = new StringBuffer();
+
+		buffer.append(id);
+		buffer.append(':');
+		buffer.append(version);
+		buffer.append(':');
+		buffer.append(location);
+		buffer.append(';');
+
+		return buffer.toString();
 	}
 
 }

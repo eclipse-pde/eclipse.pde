@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.PluginBlock;
+import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -42,7 +41,7 @@ public class PluginsTab extends AbstractLauncherTab {
 
 	private boolean fShowFeatures = true;
 	private Combo fSelectionCombo;
-	private PluginBlock fPluginBlock;
+	private BlockAdapter fPluginBlock;
 	private Combo fDefaultAutoStart;
 	private Spinner fDefaultStartLevel;
 	private Listener fListener;
@@ -50,11 +49,13 @@ public class PluginsTab extends AbstractLauncherTab {
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int CUSTOM_SELECTION = 1;
 	private static final int FEATURE_SELECTION = 2;
+	private static final int CUSTOM_FEATURE_SELECTION = 3;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
 			int index = fSelectionCombo.getSelectionIndex();
 			try {
+				fPluginBlock.setActiveBlock(index);
 				fPluginBlock.initialize(index == CUSTOM_SELECTION);
 			} catch (CoreException ex) {
 				PDEPlugin.log(ex);
@@ -86,7 +87,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	public PluginsTab(boolean showFeatures) {
 		fShowFeatures = showFeatures;
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
-		fPluginBlock = new PluginBlock(this);
+		fPluginBlock = new BlockAdapter(new PluginBlock(this), new FeatureBlock(this));
 		fListener = new Listener();
 	}
 
@@ -111,7 +112,7 @@ public class PluginsTab extends AbstractLauncherTab {
 
 		SWTFactory.createLabel(buttonComp, PDEUIMessages.PluginsTab_launchWith, 1);
 
-		fSelectionCombo = SWTFactory.createCombo(buttonComp, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_featureMode});
+		fSelectionCombo = SWTFactory.createCombo(buttonComp, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_featureMode, PDEUIMessages.PluginsTab_customFeatureMode});
 		fSelectionCombo.select(0);
 		fSelectionCombo.addSelectionListener(fListener);
 
@@ -136,7 +137,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Composite blockComposite = SWTFactory.createComposite(composite, 7, 1, GridData.FILL_BOTH, 0, 0);
+		Composite blockComposite = SWTFactory.createComposite(composite, 1, 1, GridData.FILL_BOTH);
 		fPluginBlock.createControl(blockComposite, 7, 10);
 
 		setControl(composite);
@@ -153,10 +154,13 @@ public class PluginsTab extends AbstractLauncherTab {
 			int index = DEFAULT_SELECTION;
 			if (fShowFeatures && configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
 				index = FEATURE_SELECTION;
+			} else if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
+				index = CUSTOM_FEATURE_SELECTION;
 			} else if (!configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				index = CUSTOM_SELECTION;
 			}
 			fSelectionCombo.setText(fSelectionCombo.getItem(index));
+			fPluginBlock.setActiveBlock(index);
 			boolean custom = fSelectionCombo.getSelectionIndex() == CUSTOM_SELECTION;
 			fPluginBlock.initializeFrom(configuration, custom);
 			boolean auto = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
@@ -176,6 +180,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 		if (fShowFeatures)
 			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, false);
+		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		fPluginBlock.setDefaults(configuration);
 	}
 
@@ -188,6 +193,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, index == DEFAULT_SELECTION);
 		if (fShowFeatures)
 			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, index == FEATURE_SELECTION);
+		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, index == CUSTOM_FEATURE_SELECTION);
 		fPluginBlock.performApply(configuration);
 		// clear default values for auto-start and start-level if default
 		String autoText = fDefaultAutoStart.getText();

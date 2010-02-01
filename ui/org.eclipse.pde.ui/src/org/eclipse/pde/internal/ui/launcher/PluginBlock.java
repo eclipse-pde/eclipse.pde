@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.*;
-import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
-
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -24,6 +20,9 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 
 public class PluginBlock extends AbstractPluginBlock {
 
@@ -87,8 +86,8 @@ public class PluginBlock extends AbstractPluginBlock {
 		if (fLaunchConfig != null) {
 			fInitDefaultCheckState = enable && !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS) && !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
 			fTab.updateLaunchConfigurationDialog();
+			initializeFrom(fLaunchConfig, enable);
 		}
-		initializeFrom(fLaunchConfig, enable);
 	}
 
 	/*
