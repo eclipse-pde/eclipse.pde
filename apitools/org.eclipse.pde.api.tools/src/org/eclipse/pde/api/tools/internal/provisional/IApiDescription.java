@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,5 +155,16 @@ public interface IApiDescription {
 	 * @param monitor
 	 */
 	public void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor);
+	
+	/**
+	 * Traverses this given element contained in this description, if present.
+	 * 
+	 * @param visitor visitor
+	 * @param element element to visit
+	 * @param monitor progress monitor or <code>null</code>
+	 * @return whether the element was visited - <code>true</code> if present and
+	 *  <code>false</code> if not present
+	 */
+	public boolean accept(ApiDescriptionVisitor visitor, IElementDescriptor element, IProgressMonitor monitor);
 	
 }

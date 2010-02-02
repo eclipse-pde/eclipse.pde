@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -298,6 +298,18 @@ public class ApiDescription implements IApiDescription {
 			ManifestNode node = (ManifestNode) childrenMap.get(element);
 			visitNode(visitor, node);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean accept(ApiDescriptionVisitor visitor, IElementDescriptor element, IProgressMonitor monitor) {
+		ManifestNode node = findNode(element, false);
+		if (node != null) {
+			visitNode(visitor, node);
+			return true;
+		}
+		return false;
 	}
 	
 	/**

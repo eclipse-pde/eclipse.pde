@@ -178,8 +178,92 @@ public class IncrementalBuildTests extends PerformanceTest {
 				"test1",
 				DEBUG_CORE, 
 				DEBUG_CORE+".Launch",
-				problems);
+				problems, 500);
 	}
+	
+	/**
+	 * Incremental build for structural change to an API type.
+	 * 
+	 * @throws Exception
+	 */
+	public void _testApiStructuralChange() throws Exception {
+		deployIncrementalPerformanceTest(
+				"Incremental - API Structural Change",
+				"api-struc-change",
+				"org.eclipse.core.jobs",
+				"org.eclipse.core.runtime.jobs.Job",
+				new int[0], 550);
+	}
+	
+	/**
+	 * Incremental build for non-structural change to an API type.
+	 * 
+	 * @throws Exception
+	 */
+	public void _testApiNonStructuralChange() throws Exception {
+		deployIncrementalPerformanceTest(
+				"Incremental - API Non-Structural Change",
+				"api-non-struc-change",
+				"org.eclipse.core.resources",
+				"org.eclipse.core.resources.ResourcesPlugin",
+				new int[0], 500);
+	}
+	
+	/**
+	 * Incremental build for an API description change to an API type.
+	 * 
+	 * @throws Exception
+	 */
+	public void _testApiDescriptionChange() throws Exception {
+		deployIncrementalPerformanceTest(
+				"Incremental - API Description Change",
+				"api-desc-change",
+				"org.eclipse.core.resources",
+				"org.eclipse.core.resources.IResource",
+				new int[0], 500);
+	}
+	
+	/**
+	 * Incremental build for structural change to an internal type.
+	 * 
+	 * @throws Exception
+	 */
+	public void _testInternalStructuralChange() throws Exception {
+		deployIncrementalPerformanceTest(
+				"Incremental - Internal Structural Change",
+				"non-api-struc-change",
+				"org.eclipse.core.resources",
+				"org.eclipse.core.internal.resources.Resource",
+				new int[0], 500);
+	}
+	
+	/**
+	 * Incremental build for non-structural change to an internal type.
+	 * 
+	 * @throws Exception
+	 */
+	public void _testInternalNonStructuralChange() throws Exception {
+		deployIncrementalPerformanceTest(
+				"Incremental - Internal Non-Structural Change",
+				"non-api-non-struc-change",
+				"org.eclipse.core.resources",
+				"org.eclipse.core.internal.resources.File",
+				new int[0], 600);
+	}
+	
+	/**
+	 * Incremental build for an API description change to an internal type.
+	 * 
+	 * @throws Exception
+	 */
+	public void _testInternalDescriptionChange() throws Exception {
+		deployIncrementalPerformanceTest(
+				"Incremental - Internal Description Change",
+				"non-api-desc-change",
+				"org.eclipse.core.jobs",
+				"org.eclipse.core.internal.jobs.InternalJob",
+				new int[0], 500);
+	}	
 	
 	/**
 	 * Tests the incremental build performance for a single 
@@ -202,7 +286,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 				"test2",
 				DEBUG_CORE, 
 				DEBUG_CORE+".model.IDebugElement",
-				problems);
+				problems, 500);
 	}
 	
 	/**
@@ -226,7 +310,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 				"test3",
 				DEBUG_CORE, 
 				DEBUG_CORE+".DebugException",
-				problems);
+				problems, 500);
 	}
 	
 	/**
@@ -250,7 +334,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 				"test4",
 				DEBUG_CORE, 
 				DEBUG_CORE+".model.DebugElement",
-				problems);
+				problems, 500);
 	}
 	
 	/**
@@ -274,7 +358,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 				"test5",
 				DEBUG_CORE, 
 				DEBUG_CORE+".model.Breakpoint",
-				problems);
+				problems, 500);
 	}
 	
 	/**
@@ -307,7 +391,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 				"test6",
 				DEBUG_CORE, 
 				DEBUG_CORE+".model.RuntimeProcess",
-				problems);
+				problems, 500);
 	}
 	
 	/**
@@ -333,7 +417,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 	 * 
 	 * @throws Exception if something bad happens, or if unexpected problems are found after a build
 	 */
-	protected void deployIncrementalPerformanceTest(String summary, String testname, String projectname, String typename, int[] problemids) throws Exception {
+	protected void deployIncrementalPerformanceTest(String summary, String testname, String projectname, String typename, int[] problemids, int iterations) throws Exception {
 		tagAsSummary(summary, Dimension.ELAPSED_PROCESS);
 		
 		//WARM-UP, must do full build with Java build to get the state
@@ -349,7 +433,7 @@ public class IncrementalBuildTests extends PerformanceTest {
 		IProject proj = getEnv().getWorkspace().getRoot().getProject(projectname);
 		IType type = JavaCore.create(proj).findType(typename);
 		IPath file = type.getPath();
-		for(int i = 0; i < 500; i++) {
+		for(int i = 0; i < iterations; i++) {
 			startMeasuring();
 			updateWorkspaceFile(proj, file, getUpdateFilePath(testname, file.lastSegment()));
 			stopMeasuring();

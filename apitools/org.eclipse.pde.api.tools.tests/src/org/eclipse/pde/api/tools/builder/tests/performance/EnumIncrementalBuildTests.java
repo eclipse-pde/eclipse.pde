@@ -92,7 +92,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 				"test7", 
 				JAVA_5_PERF, 
 				"api.TestEnum", 
-				problemids);
+				problemids, 500);
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 				"test8", 
 				JAVA_5_PERF, 
 				"api.TestEnum", 
-				problemids);
+				problemids, 500);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 				"test9",
 				JAVA_5_PERF, 
 				"api.TestEnum", 
-				problemids);
+				problemids, 500);
 	}
 	
 	/**
@@ -159,7 +159,7 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 				"test10", 
 				JAVA_5_PERF, 
 				"api.TestEnum", 
-				problemids);
+				problemids, 500);
 	}
 	
 	/**
@@ -187,6 +187,6 @@ public class EnumIncrementalBuildTests extends IncrementalBuildTests {
 				"test11", 
 				JAVA_5_PERF, 
 				"api.TestEnum", 
-				problemids);
+				problemids, 500);
 	}
 }

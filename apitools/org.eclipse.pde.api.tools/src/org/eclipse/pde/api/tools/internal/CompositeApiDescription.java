@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,18 @@ public class CompositeApiDescription implements IApiDescription {
 		for (int i = 0; i < fDescriptions.length; i++) {
 			fDescriptions[i].accept(visitor, monitor);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean accept(ApiDescriptionVisitor visitor, IElementDescriptor element, IProgressMonitor monitor) {
+		for (int i = 0; i < fDescriptions.length; i++) {
+			if (fDescriptions[i].accept(visitor, element, monitor)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

@@ -229,15 +229,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				//compatibility checks
 				if(reference != null) {
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getSymbolicName(), baseline.getName()}));
-					if(bcontext.hasChangedTypes()) {
+					if(bcontext.hasTypes()) {
 						String[] changedtypes = bcontext.getStructurallyChangedTypes();
-						for(int i = 0; i < changedtypes.length; i++) {
-							if(changedtypes[i] == null) {
-								continue;
-							}
-							checkCompatibility(changedtypes[i], reference, component, localMonitor.newChild(1));
-							Util.updateMonitor(localMonitor);
-						}
+						checkCompatibility(changedtypes, reference, component, localMonitor);
 					} else {
 						// store re-exported bundle into the build state
 						checkCompatibility(reference, component, localMonitor.newChild(1));
@@ -279,6 +273,24 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 
 	/**
+	 * Checks the compatibility of each type.
+	 * 
+	 * @param changedtypes type names, may have <code>null</code> entries
+	 * @param reference API component in the reference baseline
+	 * @param component API component being checked for compatibility
+	 * @param localMonitor
+	 * @throws CoreException
+	 */
+	private void checkCompatibility(String[] changedtypes, IApiComponent reference, IApiComponent component, SubMonitor localMonitor) throws CoreException {
+		for(int i = 0; i < changedtypes.length; i++) {
+			if(changedtypes[i] == null) {
+				continue;
+			}
+			checkCompatibility(changedtypes[i], reference, component, localMonitor.newChild(1));
+			Util.updateMonitor(localMonitor);
+		}
+	}
+	/**
 	 * Checks for unused API problem filters
 	 * @param context the current build context
 	 * @param reference
@@ -318,7 +330,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						createUnusedApiFilterProblems(filters);
 					}
 				}
-				types = context.getDependentTypes();
+				types = context.getStructuralDependentTypes();
 				for (int i = 0; i < types.length; i++) {
 					if(types[i] == null) {
 						continue;
@@ -866,18 +878,24 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			return;
 		} 
-		IApiTypeContainer scope = getSearchScope(component, null);
+		IApiTypeContainer scope = null;
 		if(context.hasTypes()) {
-			String[] deptypes = context.getDependentTypes();
+			String[] deptypes = null;
+			int size = 0;
+			if (context.hasDescriptionDependents()) {
+				// only check dependents if there were description changes
+				deptypes = context.getDescriptionDependentTypes();
+				size += deptypes.length;
+			}
 			String[] structtypes = context.getStructurallyChangedTypes();
-			//TODO do any special processing here to prune types prior
-			//to doing the scan
-			HashSet typenames = new HashSet(deptypes.length + structtypes.length);
-			for (int i = 0; i < deptypes.length; i++) {
-				if(deptypes[i] == null) {
-					continue;
+			HashSet typenames = new HashSet(size + structtypes.length); // TODO: better sizing
+			if (deptypes != null) {
+				for (int i = 0; i < deptypes.length; i++) {
+					if(deptypes[i] == null) {
+						continue;
+					}
+					typenames.add(deptypes[i]);
 				}
-				typenames.add(deptypes[i]);
 			}
 			for (int i = 0; i < structtypes.length; i++) {
 				if(structtypes[i] == null) {
@@ -885,7 +903,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 				typenames.add(structtypes[i]);
 			}
+			if (typenames.isEmpty()) {
+				// nothing to analyze
+				monitor.done();
+				return;
+			}
 			scope = getSearchScope(component, (String[]) typenames.toArray(new String[typenames.size()]));
+		} else {
+			scope = getSearchScope(component, null); // entire component
 		}
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getSymbolicName()}), 2);
 		ReferenceAnalyzer analyzer = new ReferenceAnalyzer();

@@ -64,7 +64,7 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 				"test12", 
 				JAVA_5_PERF, 
 				"api.TestAnnot", 
-				problemids);
+				problemids, 500);
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 				"test13", 
 				JAVA_5_PERF, 
 				"api.TestAnnot", 
-				problemids);
+				problemids, 500);
 	}
 	
 	/**
@@ -115,6 +115,6 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 				"test14", 
 				JAVA_5_PERF, 
 				"api.TestAnnot", 
-				problemids);
+				problemids, 500);
 	}
 }

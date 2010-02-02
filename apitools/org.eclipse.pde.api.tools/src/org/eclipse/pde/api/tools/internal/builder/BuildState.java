@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.CRC32;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +34,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -49,12 +53,13 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class BuildState {
 	private static final IDelta[] EMPTY_DELTAS = new IDelta[0];
 	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
-	private static final int VERSION = 0x10;
+	private static final int VERSION = 0x20;
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
 	private String[] reexportedComponents;
 	private Set apiToolingDependentProjects;
+	private long buildpathCRC = -1L;
 	
 	/**
 	 * Constructor
@@ -86,6 +91,7 @@ public class BuildState {
 		if (in.readBoolean()) {
 			// continue to read
 			BuildState state = new BuildState();
+			state.buildpathCRC = in.readLong();
 			int numberOfCompatibleDeltas = in.readInt();
 			// read all compatible deltas
 			for (int i = 0; i < numberOfCompatibleDeltas; i++) {
@@ -123,6 +129,7 @@ public class BuildState {
 		out.writeUTF("STATE"); //$NON-NLS-1$
 		out.writeInt(VERSION);
 		out.writeBoolean(true);
+		out.writeLong(state.buildpathCRC);
 		IDelta[] compatibleChangesDeltas = state.getCompatibleChanges();
 		int length = compatibleChangesDeltas.length;
 		out.writeInt(length);
@@ -338,6 +345,25 @@ public class BuildState {
 	public Set getApiToolingDependentProjects() {
 		return this.apiToolingDependentProjects == null ? Collections.EMPTY_SET : this.apiToolingDependentProjects;
 	}
+	
+	/**
+	 * Returns a CRC32 code of the project's build path or -1 if unknown.
+	 * 
+	 * @return CRC32 code of the project's build path or -1
+	 */
+	public long getBuildPathCRC() {
+		return buildpathCRC;
+	}
+	
+	/**
+	 * Sets the build path CRC for this project's resolved build path.
+	 * 
+	 * @param crc32 crc32 code
+	 */
+	public void setBuildPathCRC(long crc32) {
+		buildpathCRC = crc32;
+	}
+	
 	/**
 	 * Return the last built state for the given project, or null if none
 	 */
@@ -464,5 +490,26 @@ public class BuildState {
 			t = System.currentTimeMillis() - t;
 			System.out.println(NLS.bind(BuilderMessages.build_saveStateComplete, String.valueOf(t))); 
 		}
+	}
+	
+	/**
+	 * Computes and returns a CRC of the projects resolved build path, or -1 if unknown.
+	 * 
+	 * @param project project
+	 * @return build path CRC or -1
+	 */
+	public static long computeBuildPathCRC(IProject project) {
+		IJavaProject jp = JavaCore.create(project);
+		try {
+			IClasspathEntry[] classpath = jp.getResolvedClasspath(true);
+			CRC32 crc32 = new CRC32();
+			for (int i = 0; i < classpath.length; i++) {
+				IClasspathEntry entry = classpath[i];
+				crc32.update(entry.getPath().toPortableString().getBytes());
+			}
+			return crc32.getValue();
+		} catch (JavaModelException e) {
+		}
+		return -1L;
 	}
 }

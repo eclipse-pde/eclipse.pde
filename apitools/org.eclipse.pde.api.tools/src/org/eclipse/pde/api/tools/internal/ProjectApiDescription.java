@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.pde.api.tools.internal.builder.BuildStamps;
 import org.eclipse.pde.api.tools.internal.model.BundleComponent;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
@@ -166,7 +167,7 @@ public class ProjectApiDescription extends ApiDescription {
 	class TypeNode extends ManifestNode {
 		
 		long fTimeStamp = -1L;
-		
+		long fBuildStamp = -1L;
 		private boolean fRefreshing = false;
 		
 		IType fType;
@@ -185,6 +186,7 @@ public class ProjectApiDescription extends ApiDescription {
 			fType = type;
 			if (parent instanceof TypeNode) {
 				fTimeStamp = ((TypeNode)parent).fTimeStamp;
+				fBuildStamp = ((TypeNode)parent).fBuildStamp;
 			}
 		}
 
@@ -227,11 +229,18 @@ public class ProjectApiDescription extends ApiDescription {
 						if (resource != null && resource.exists()) {
 							long stamp = resource.getModificationStamp();
 							if (stamp != fTimeStamp) {
+								// compute current CRC
+								CRCVisitor visitor = new CRCVisitor();
+								visitType(this, visitor);
+								long crc = visitor.getValue();
 								if(DEBUG) {
 									StringBuffer buffer = new StringBuffer();
 									buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
 									buffer.append(this);
 									buffer.append(" tag scanning the new type"); //$NON-NLS-1$
+									buffer.append(" (CRC "); //$NON-NLS-1$
+									buffer.append(crc);
+									buffer.append(')');
 									System.out.println(buffer.toString());
 								}
 								modified();
@@ -243,6 +252,23 @@ public class ProjectApiDescription extends ApiDescription {
 										getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
 								} catch (CoreException e) {
 									ApiPlugin.log(e.getStatus());
+								}
+								// see if the description changed
+								visitor = new CRCVisitor();
+								visitType(this, visitor);
+								long crc2 = visitor.getValue();
+								if (crc != crc2) {
+									// update relative build time stamp
+									fBuildStamp = BuildStamps.getBuildStamp(resource.getProject());
+									if(DEBUG) {
+										StringBuffer buffer = new StringBuffer();
+										buffer.append("CRC changed for type manifest node: "); //$NON-NLS-1$
+										buffer.append(this);
+										buffer.append(" (CRC "); //$NON-NLS-1$
+										buffer.append(crc2);
+										buffer.append(')');
+										System.out.println(buffer.toString());
+									}
 								}
 							}
 						} else {
@@ -382,15 +408,19 @@ public class ProjectApiDescription extends ApiDescription {
 		IElementDescriptor element = getElementDescriptor(type);
 		ManifestNode typeNode = findNode(element, false);
 		if (typeNode != null) {
-			IApiAnnotations annotations = resolveAnnotations(typeNode, element);
-			if (visitor.visitElement(element, annotations)) {
-				// children
-				if (typeNode.children != null) {
-					visitChildren(visitor, typeNode.children, null);
-				}
-			}
-			visitor.endVisitElement(element, annotations);
+			visitType(typeNode, visitor);
 		}
+	}
+	
+	void visitType(ManifestNode node, ApiDescriptionVisitor visitor) {
+		IApiAnnotations annotations = resolveAnnotations(node, node.element);
+		if (visitor.visitElement(node.element, annotations)) {
+			// children
+			if (node.children != null) {
+				visitChildren(visitor, node.children, null);
+			}
+		}
+		visitor.endVisitElement(node.element, annotations);
 	}
 	
 	/* (non-Javadoc)
@@ -725,4 +755,20 @@ public class ProjectApiDescription extends ApiDescription {
 		}
 		return component;
 	}
+	
+	/**
+	 * Resolves annotations based on inheritance for the given node and element.
+	 * 
+	 * @param node manifest node
+	 * @param element the element annotations are being resolved for
+	 * @return annotations
+	 */
+	protected IApiAnnotations resolveAnnotations(ManifestNode node, IElementDescriptor element) {
+		IApiAnnotations ann = super.resolveAnnotations(node, element);
+		if (node instanceof TypeNode) {
+			return new TypeAnnotations(ann, ((TypeNode)node).fBuildStamp);
+		}
+		return ann;
+		
+	}	
 }

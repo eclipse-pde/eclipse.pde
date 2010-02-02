@@ -228,6 +228,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (shouldAbort(this.currentproject)) {
 			return NO_PROJECTS;
 		}
+		// update build time stamp
+		BuildStamps.incBuildStamp(this.currentproject);
 		if (DEBUG) {
 			System.out.println("\nApiAnalysis builder - Starting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -346,6 +348,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						this.buildstate.addApiToolingDependentProject(project.getName());
 					}
 				}
+				this.buildstate.setBuildPathCRC(BuildState.computeBuildPathCRC(this.currentproject));
 				BuildState.saveBuiltState(this.currentproject, this.buildstate);
 				this.buildstate = null;
 				Util.updateMonitor(monitor, 0);
