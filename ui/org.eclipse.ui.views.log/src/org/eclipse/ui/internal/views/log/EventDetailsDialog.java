@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.io.*;
-import java.text.*;
+import java.text.Collator;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
