@@ -93,7 +93,8 @@ public class ProjectUtils {
 		description.setNatureIds(resolvednatures);
 		description.setBundleVendor("ibm");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_4);
-		description.setEqunioxHeaders(true);
+		description.setExtensionRegistry(true);
+		description.setEquniox(true);
 		description.setBundleVersion(new Version("1.0.0"));
 		description.apply(null);		
 		return JavaCore.create(project);

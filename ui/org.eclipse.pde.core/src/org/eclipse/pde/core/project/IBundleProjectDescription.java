@@ -303,17 +303,21 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Sets the version of Eclipse the described bundle is to targeted for.
-	 * This effects the generation of Equinox specific headers.
+	 * This effects the values generated for Equinox specific headers.
+	 * Has no effect when {@link #isEquinox()} is <code>false</code>.
+	 * When {@link #isEquinox()} is <code>true</code>, and a target version
+	 * is unspecified, the newest available target version of Eclipse is
+	 * used.
 	 * 
-	 * @param version one of the version constant values defined by this class
-	 * @see #setEqunioxHeaders(boolean)
+	 * @param version one of the version constant values defined by this class or <code>null</code>
+	 * @see #setEquniox(boolean)
 	 */
 	public void setTargetVersion(String version);
 
 	/**
 	 * Returns the version of Eclipse the described bundle is targeted for, or <code>null</code>
 	 * if unspecified. When unspecified, the project is targeted to the newest available
-	 * version of Eclipse.
+	 * version of Eclipse when {@link #isEquinox()} is <code>true</code>.
 	 * 
 	 * @return target version or <code>null</code>
 	 */
@@ -338,15 +342,33 @@ public interface IBundleProjectDescription {
 	 * @param equinox 
 	 * @see #getTargetVersion()
 	 */
-	public void setEqunioxHeaders(boolean equinox);
+	public void setEquniox(boolean equinox);
 
 	/**
 	 * Returns whether the described bundle is targeted for the Equinox OSGi framework.
-	 * Effects the Equinox headers added to the manifest.
+	 * Effects the Equinox headers generated in the manifest.
 	 * 
 	 * @return whether the described bundle is targeted for the Equinox OSGi framework
 	 */
-	public boolean isEquinoxHeaders();
+	public boolean isEquinox();
+
+	/**
+	 * Sets whether this bundle supports extension points and extensions via 
+	 * {@link IExtensionRegistry} support. By default, this value is <code>false</code>
+	 * for new projects.
+	 * 
+	 * @param supportExtensions whether extension points and extensions are supported
+	 */
+	public void setExtensionRegistry(boolean supportExtensions);
+
+	/**
+	 * Returns whether this bundle supports extension points and extensions via 
+	 * {@link IExtensionRegistry} support. By default, this value is <code>false</code>
+	 * for new projects.
+	 * 
+	 * @return whether extension points and extensions are supported
+	 */
+	public boolean isExtensionRegistry();
 
 	/**
 	 * Sets the value of the Require-Bundle header for the described bundle.

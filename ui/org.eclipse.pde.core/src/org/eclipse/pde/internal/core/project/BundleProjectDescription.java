@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.core.project;
 
 import java.net.URI;
 import java.util.*;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
@@ -58,14 +58,13 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private String fActivator = null;
 	private String fTargetVersion;
 	private boolean fIsEquinox = false;
+	private boolean fIsExtensionRegistry = false;
 	private IRequiredBundleDescription[] fRequiredBundles;
 	private IPackageImportDescription[] fImports;
 	private IPackageExportDescription[] fExports;
 	private IPath[] fBinIncludes;
 	private WorkspacePluginModelBase fModel;
 	private IBundleProjectService fService;
-
-	private static final String[] EQUINOX_HEADERS = new String[] {ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY, ICoreConstants.ECLIPSE_LAZYSTART};
 
 	/**
 	 * Constructs a bundle description for the specified project.
@@ -102,6 +101,11 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		IContainer root = PDEProject.getBundleRoot(project);
 		if (root != project) {
 			setBundleRoot(root.getProjectRelativePath());
+		}
+		IEclipsePreferences node = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		if (node != null) {
+			setExtensionRegistry(node.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true));
+			setEquniox(node.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true));
 		}
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (model != null) {
@@ -182,12 +186,6 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				header = createHeader(bundle, Constants.BUNDLE_SYMBOLICNAME);
 				if (header instanceof BundleSymbolicNameHeader) {
 					setSingleton(((BundleSymbolicNameHeader) header).isSingleton());
-				}
-				for (int i = 0; i < EQUINOX_HEADERS.length; i++) {
-					if (bundle.getHeader(EQUINOX_HEADERS[i]) != null) {
-						setEqunioxHeaders(true);
-						break;
-					}
 				}
 				header = createHeader(bundle, Constants.IMPORT_PACKAGE);
 				if (header instanceof ImportPackageHeader) {
@@ -605,14 +603,14 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setEqunioxHeaders(boolean)
 	 */
-	public void setEqunioxHeaders(boolean equinox) {
+	public void setEquniox(boolean equinox) {
 		fIsEquinox = equinox;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#isEquinoxHeaders()
 	 */
-	public boolean isEquinoxHeaders() {
+	public boolean isEquinox() {
 		return fIsEquinox;
 	}
 
@@ -698,6 +696,20 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 */
 	public IPath getBundleRoot() {
 		return fRoot;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#isExtensionRegistry()
+	 */
+	public boolean isExtensionRegistry() {
+		return fIsExtensionRegistry;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setExtensionRegistry(boolean)
+	 */
+	public void setExtensionRegistry(boolean supportExtensions) {
+		fIsExtensionRegistry = supportExtensions;
 	}
 
 }

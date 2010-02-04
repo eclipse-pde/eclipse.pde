@@ -103,7 +103,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}
 	
@@ -147,7 +148,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}	
 	
@@ -194,7 +196,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}	
 	
@@ -241,7 +244,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}
 	
@@ -288,7 +292,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}	
 	/**
@@ -328,7 +333,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
 	}
 	
@@ -384,7 +390,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
 	}	
 	
@@ -436,7 +443,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
 	}	
 	
@@ -456,7 +464,8 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
-		description.setEqunioxHeaders(true);
+		description.setEquniox(true);
+		description.setExtensionRegistry(true);
 		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
 		IRequiredBundleDescription rb1 = service.newRequiredBundle(
 				"org.eclipse.core.resources",
@@ -505,7 +514,8 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong required bundle", rb2, bundles[1]);
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertTrue("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertTrue("Wrong extension registry support", d2.isExtensionRegistry());
+		assertTrue("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
 	}		
 	
@@ -571,7 +581,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}	
 	
@@ -621,7 +632,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}		
 	
@@ -682,7 +694,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}
 	
@@ -764,7 +777,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}	
 }

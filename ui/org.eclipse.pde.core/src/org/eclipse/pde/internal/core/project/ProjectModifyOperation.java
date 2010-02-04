@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.project;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.*;
@@ -28,6 +29,7 @@ import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Operation to create or modify a PDE project based on a bundle project description.
@@ -90,6 +92,33 @@ public class ProjectModifyOperation {
 		sub.worked(1);
 		configureBuildPropertiesFile(description, before);
 		sub.worked(1);
+
+		// project settings for Equinox, Extension Registry, and Automated dependency policy
+		IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		if (pref != null) {
+			// best guess for automated dependency management: Equinox + Extensions = use required bundle
+			if (description.isEquinox() && description.isExtensionRegistry()) {
+				pref.remove(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE); // i.e. use required bundle
+			} else {
+				pref.putBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, false);
+			}
+			if (description.isExtensionRegistry()) {
+				pref.remove(ICoreConstants.EXTENSIONS_PROPERTY); // i.e. support extensions
+			} else {
+				pref.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, false);
+			}
+			if (description.isEquinox()) {
+				pref.remove(ICoreConstants.EQUINOX_PROPERTY); // i.e. using Equinox
+			} else {
+				pref.putBoolean(ICoreConstants.EQUINOX_PROPERTY, false);
+			}
+			try {
+				pref.flush();
+			} catch (BackingStoreException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error saving project specific settings", e));
+			}
+		}
+
 		if (fModel.isDirty()) {
 			fModel.save();
 		}
@@ -483,8 +512,8 @@ public class ProjectModifyOperation {
 				}
 			}
 			// Equinox specific headers
-			if (description.isEquinoxHeaders() != before.isEquinoxHeaders()) {
-				if (description.isEquinoxHeaders()) {
+			if (description.isEquinox() != before.isEquinox()) {
+				if (description.isEquinox()) {
 					if (description.getHost() == null && description.getActivator() != null) {
 						if (targetVersion.equals(IBundleProjectDescription.VERSION_3_1))
 							bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$

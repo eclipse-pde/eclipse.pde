@@ -161,7 +161,8 @@ public class BundleRootTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}
 	
@@ -227,7 +228,8 @@ public class BundleRootTests extends TestCase {
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
 		assertNull("Wrong target version", d2.getTargetVersion());
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
-		assertFalse("Wrong Equinox headers", d2.isEquinoxHeaders());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
 	}
 }
