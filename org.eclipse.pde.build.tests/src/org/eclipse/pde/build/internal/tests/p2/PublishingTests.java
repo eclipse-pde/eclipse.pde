@@ -91,7 +91,7 @@ public class PublishingTests extends P2TestCase {
 	}
 
 	public void testBug277824() throws Exception {
-		IFolder buildFolder = newTest("277824");
+		IFolder buildFolder = newTest("277824 space");
 
 		StringBuffer buffer = new StringBuffer("I am a file");
 		Utils.writeBuffer(buildFolder.getFile("file.txt"), buffer);
