@@ -76,7 +76,7 @@ public class MenuSpyDialog extends PopupDialog {
 		toolkit.decorateFormHeading(form.getForm());
 
 		// set title and image
-		form.setText(PDERuntimeMessages.SpyDialog_title);
+		form.setText(PDERuntimeMessages.MenuSpyDialog_title);
 		Image image = PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_SPY_OBJ);
 		form.setImage(image);
 
