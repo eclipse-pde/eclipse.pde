@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,13 @@ public class FilterDialog extends TrayDialog {
 		});
 
 		limitText = new Text(comp, SWT.BORDER);
+		limitText.addVerifyListener(new VerifyListener() {
+			public void verifyText(VerifyEvent e) {
+				if (Character.isLetter(e.character)) {
+					e.doit = false;
+				}
+			}
+		});
 		limitText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				try {
