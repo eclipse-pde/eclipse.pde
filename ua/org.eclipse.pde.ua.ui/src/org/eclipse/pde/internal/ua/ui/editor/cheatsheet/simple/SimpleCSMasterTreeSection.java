@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,7 +149,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	 * 
 	 */
 	private void initializeTreeViewer() {
-
+		ISelection selection = fTreeViewer.getSelection();
 		if (fModel == null) {
 			return;
 		}
@@ -166,10 +166,11 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
 		getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, true);
 
-		ISimpleCS cheatsheet = fModel.getSimpleCS();
+		//ISimpleCS cheatsheet = fModel.getSimpleCS();
 		// Select the cheatsheet node in the tree
-		fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
-		fTreeViewer.expandToLevel(2);
+		//fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
+		//fTreeViewer.expandToLevel(2);
+		fTreeViewer.setSelection(selection, true);
 	}
 
 	/**
