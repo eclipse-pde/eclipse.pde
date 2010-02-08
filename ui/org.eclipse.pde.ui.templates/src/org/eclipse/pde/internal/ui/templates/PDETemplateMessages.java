@@ -263,10 +263,6 @@ public class PDETemplateMessages extends NLS {
 	public static String HelloOSGiServiceNewWizard_title;
 
 	// DS OSGi Service template
-	public static String DSTemplate_startMessage;
-	public static String DSTemplate_stopMessage;
-	public static String DSTemplate_hello;
-	public static String DSTemplate_goodbye;
 	public static String DSTemplate_pageDescription;
 	public static String DSTemplate_pageTitle;
 	public static String DSTemplateWizard_title;
@@ -308,13 +304,10 @@ public class PDETemplateMessages extends NLS {
 	public static String CommonNavigatorTemplate_pagetitle;
 
 	// Declarative Services Template
-	public static String HelloServiceComponentTemplate_message;
-	public static String HelloServiceComponentTemplate_messageTitle;
 	public static String HelloServiceComponentTemplate_command;
 	public static String HelloServiceComponentTemplate_commandTitle;
 
 	// Declarative Services Template
-	public static String OSGiEventAdminTemplate_message;
 	public static String OSGiEventAdminTemplate_eventTopicTitle;
 	public static String OSGiEventAdminTemplateWizard_title;
 	public static String OSGiEventAdminTemplate_pageTitle;
