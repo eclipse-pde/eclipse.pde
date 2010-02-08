@@ -52,6 +52,7 @@ public class UnusedImportsDialog extends TrayDialog {
 
 	public UnusedImportsDialog(Shell parentShell, IPluginModelBase model, Object[] unused) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.model = model;
 		this.unused = unused;
 		checkboxTablePart = new WizardCheckboxTablePart(PDEUIMessages.UnusedDependencies_remove);
