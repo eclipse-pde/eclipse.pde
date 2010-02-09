@@ -16,8 +16,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository;
+import org.eclipse.equinox.internal.p2.core.helpers.ServiceHelper;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.internal.repository.tools.RepositoryUtilities;
 import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
@@ -46,8 +48,15 @@ public class P2TestCase extends PDETestCase {
 			throw new IllegalStateException();
 
 		ServiceReference reference = context.getServiceReference(IMetadataRepositoryManager.class.getName());
-		if (reference == null)
-			throw new IllegalStateException();
+		if (reference == null) {
+			IProvisioningAgent agent = (IProvisioningAgent) ServiceHelper.getService(context, IProvisioningAgent.SERVICE_NAME);
+			if (agent == null)
+				throw new IllegalStateException();
+
+			metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+			artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
+			return;
+		}
 
 		Object result = context.getService(reference);
 		context.ungetService(reference);

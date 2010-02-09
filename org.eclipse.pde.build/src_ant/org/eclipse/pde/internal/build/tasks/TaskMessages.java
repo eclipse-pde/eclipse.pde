@@ -24,6 +24,7 @@ public class TaskMessages extends NLS {
 	public static String error_noArtifactRepo;
 	public static String error_noMetadataRepo;
 	public static String error_metadataRepoManagerService;
+	public static String error_agentService;
 	public static String error_artifactRepoManagerService;
 	public static String error_loadRepository;
 	public static String error_unmodifiableRepository;

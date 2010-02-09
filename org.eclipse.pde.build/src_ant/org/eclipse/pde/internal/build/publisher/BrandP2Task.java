@@ -27,6 +27,7 @@ import org.eclipse.equinox.internal.p2.engine.phases.Install;
 import org.eclipse.equinox.internal.p2.metadata.*;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.IUDescription;
@@ -76,10 +77,13 @@ public class BrandP2Task extends Repo2RunnableTask {
 		if (launcherProvider == null || launcherProvider.startsWith("${")) //$NON-NLS-1$
 			launcherProvider = IPDEBuildConstants.FEATURE_EQUINOX_EXECUTABLE;
 
-		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) BundleHelper.getDefault().acquireService(IMetadataRepositoryManager.class.getName());
+		IProvisioningAgent agent = (IProvisioningAgent) BundleHelper.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent == null)
+			throw new BuildException(TaskMessages.error_agentService);
+		IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 		if (metadataManager == null)
 			throw new BuildException(TaskMessages.error_metadataRepoManagerService);
-		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) BundleHelper.getDefault().acquireService(IArtifactRepositoryManager.class.getName());
+		IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
 		if (artifactManager == null)
 			throw new BuildException(TaskMessages.error_artifactRepoManagerService);
 
