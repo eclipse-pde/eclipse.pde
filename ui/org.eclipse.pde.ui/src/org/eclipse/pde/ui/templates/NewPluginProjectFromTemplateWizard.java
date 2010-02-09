@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
@@ -105,7 +106,10 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 			fTemplateWizard = (IPluginContentWizard) templateWizardElement.createExecutableExtension();
 			fTemplateWizard.init(fPluginData);
 			fTemplateWizard.addPages();
-			addPage(fTemplateWizard.getStartingPage());
+			IWizardPage[] pages = fTemplateWizard.getPages();
+			for (int i = 0; i < pages.length; i++) {
+				addPage(pages[i]);
+			}
 		} catch (CoreException e) {
 			MessageDialog.openError(getShell(), PDEUIMessages.NewPluginProjectFromTemplateWizard_1, NLS.bind(PDEUIMessages.NewPluginProjectFromTemplateWizard_0, getTemplateID()));
 		}
