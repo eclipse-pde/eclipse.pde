@@ -166,7 +166,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		PDEModelUtility.modifyModel(mod, monitor);
 	}
 
-	private IPluginExtension getExtension(IPluginModelBase model, String tPoint) throws CoreException {
+	private IPluginExtension getExtension(IPluginModelBase model, String tPoint) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			String point = extensions[i].getPoint();
@@ -184,9 +184,6 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		try {
 			locationUrl = new URL(PDEPlugin.getDefault().getInstallURL(), "templates_3.1/intro/"); //$NON-NLS-1$
 		} catch (MalformedURLException e1) {
-			return;
-		}
-		if (locationUrl == null) {
 			return;
 		}
 		try {

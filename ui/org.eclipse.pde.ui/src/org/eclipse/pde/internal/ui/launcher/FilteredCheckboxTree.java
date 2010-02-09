@@ -223,7 +223,6 @@ class FilteredCheckboxTree extends FilteredTree {
 			while (iterator.hasNext()) {
 				FilteredCheckboxTreeItem item = (FilteredCheckboxTreeItem) iterator.next();
 				Widget testFindItem = getViewer().testFindItem(item.data);
-				testFindItem = null;
 				if (testFindItem == null) {
 					if (item.state.equals(CHECKED) || item.state.equals(CHECKED_GREYED) || item.state.equals(GREYED)) {
 						checkedElements.add(item.data);
