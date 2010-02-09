@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,7 +178,20 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 
 		String selected = settings.get(S_EXPORT_METADATA);
 		fExportMetadata.setSelection(selected == null ? true : Boolean.TRUE.toString().equals(selected));
+
+		// This enablement depends on both the jar button being selected and the destination setting being something other than install (bug 276989)
 		fExportMetadata.setEnabled(fJarButton.getSelection());
+		String exportType = settings.get(ExportDestinationTab.S_EXPORT_TYPE);
+		if (exportType != null && exportType.length() > 0) {
+			try {
+				int exportTypeCode = Integer.parseInt(exportType);
+				if (exportTypeCode == ExportDestinationTab.TYPE_INSTALL) {
+					fExportMetadata.setEnabled(false);
+				}
+			} catch (NumberFormatException e) {
+			}
+		}
+
 		selected = settings.get(S_CREATE_CATEGORIES);
 
 		fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
