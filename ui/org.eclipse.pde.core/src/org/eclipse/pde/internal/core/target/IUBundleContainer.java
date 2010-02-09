@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.equinox.p2.metadata.Version;
-
 import java.io.File;
 import java.net.URI;
 import java.util.*;
@@ -20,10 +18,10 @@ import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.p2.director.IPlanner;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.*;
-import org.eclipse.equinox.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.IRepositoryManager;
@@ -513,7 +511,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException if none
 	 */
 	private IMetadataRepositoryManager getRepoManager() throws CoreException {
-		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) PDECore.getDefault().acquireService(IMetadataRepositoryManager.class.getName());
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent == null)
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
+		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 		if (manager == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_2));
 		}
@@ -549,7 +550,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException if none
 	 */
 	private IArtifactRepositoryManager getArtifactRepositoryManager() throws CoreException {
-		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) PDECore.getDefault().acquireService(IArtifactRepositoryManager.class.getName());
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent == null)
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
+		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.class.getName());
 		if (manager == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_3));
 		}
