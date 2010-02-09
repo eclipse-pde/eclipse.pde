@@ -337,6 +337,7 @@ public class FeatureExportOperation extends Job {
 								|| (filename.startsWith("javaCompiler.") && filename.endsWith(".args")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| (filename.startsWith("assemble.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| (filename.startsWith("package.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
+								|| (filename.startsWith("compile.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| filename.equals(FEATURE_POST_PROCESSING) || filename.equals(PLUGIN_POST_PROCESSING)) {
 							children[i].delete();
 						}
