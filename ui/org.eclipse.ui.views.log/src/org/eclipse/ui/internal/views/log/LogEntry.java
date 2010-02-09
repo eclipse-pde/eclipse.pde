@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.StringTokenizer;
+import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -26,7 +26,8 @@ public class LogEntry extends AbstractEntry {
 
 	public static final String SPACE = " "; //$NON-NLS-1$
 	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"; //$NON-NLS-1$
-	private static final SimpleDateFormat F_SDF = new SimpleDateFormat(F_DATE_FORMAT);
+	private static final DateFormat GREGORIAN_SDF = new SimpleDateFormat(F_DATE_FORMAT, Locale.ENGLISH);
+	private static final DateFormat LOCAL_SDF = new SimpleDateFormat(F_DATE_FORMAT);
 
 	private String pluginId;
 	private int severity;
@@ -134,7 +135,7 @@ public class LogEntry extends AbstractEntry {
 	 */
 	public String getFormattedDate() {
 		if (fDateString == null) {
-			fDateString = F_SDF.format(getDate());
+			fDateString = LOCAL_SDF.format(getDate());
 		}
 		return fDateString;
 	}
@@ -232,10 +233,10 @@ public class LogEntry extends AbstractEntry {
 				}
 			}
 		}
-		Date date = F_SDF.parse(dateBuffer.toString());
+		Date date = GREGORIAN_SDF.parse(dateBuffer.toString());
 		if (date != null) {
 			fDate = date;
-			fDateString = F_SDF.format(fDate);
+			fDateString = LOCAL_SDF.format(fDate);
 		}
 	}
 
@@ -302,10 +303,10 @@ public class LogEntry extends AbstractEntry {
 				}
 			}
 		}
-		Date date = F_SDF.parse(dateBuffer.toString());
+		Date date = GREGORIAN_SDF.parse(dateBuffer.toString());
 		if (date != null) {
 			fDate = date;
-			fDateString = F_SDF.format(fDate);
+			fDateString = LOCAL_SDF.format(fDate);
 		}
 		return depth;
 	}
@@ -337,7 +338,7 @@ public class LogEntry extends AbstractEntry {
 		severity = status.getSeverity();
 		code = status.getCode();
 		fDate = new Date();
-		fDateString = F_SDF.format(fDate);
+		fDateString = LOCAL_SDF.format(fDate);
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {
