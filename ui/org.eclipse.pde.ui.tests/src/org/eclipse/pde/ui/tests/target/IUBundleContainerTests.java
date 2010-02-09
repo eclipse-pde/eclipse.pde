@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
@@ -46,7 +47,9 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected IMetadataRepository getRepository(URI uri) throws Exception {
-		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) PDECore.getDefault().acquireService(IMetadataRepositoryManager.class.getName());
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		assertNotNull("Unable to acquire p2 agent",agent);
+		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 		assertNotNull("Missing metadata repository manager", manager);
 		IMetadataRepository repo = manager.loadRepository(uri, null);
 		return repo;
