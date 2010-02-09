@@ -535,28 +535,28 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Default XSLT file name
 	 */
-	private static final String DEFAULT_XSLT = "/references.xsl"; //$NON-NLS-1$
+	public static final String DEFAULT_XSLT = "/references.xsl"; //$NON-NLS-1$
 	/**
 	 * Colour white for normal / permissible references
 	 * Possibility: #C0E0C0
 	 */
-	static final String NORMAL_REFS_COLOUR = "#FFFFFF"; //$NON-NLS-1$
+	public static final String NORMAL_REFS_COLOUR = "#FFFFFF"; //$NON-NLS-1$
 	/**
 	 * Colour red for internal references
 	 * Old colour: #E0A0A0
 	 */
-	static final String INTERNAL_REFS_COLOUR = "#F2C3C3"; //$NON-NLS-1$
+	public static final String INTERNAL_REFS_COLOUR = "#F2C3C3"; //$NON-NLS-1$
 	/**
 	 * Colour gray for illegal references
 	 * @since 1.1
 	 */
-	static final String ILLEGAL_REFS_COLOUR = "#E0E0E0";  //$NON-NLS-1$
+	public static final String ILLEGAL_REFS_COLOUR = "#E0E0E0";  //$NON-NLS-1$
 	/**
 	 * Colour gold for the references table header.
 	 * Old colour: #CC9933
 	 * @since 1.1
 	 */
-	static final String REFERENCES_TABLE_HEADER_COLOUR = "#E0C040"; //$NON-NLS-1$
+	public static final String REFERENCES_TABLE_HEADER_COLOUR = "#E0C040"; //$NON-NLS-1$
 	/**
 	 * Style HTML bits for a page that shows references
 	 */
@@ -1048,7 +1048,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @param report
 	 * @param referees the listing of referencing bundles
 	 */
-	void writeReferencedMemberPage(final Report report, final List referees) throws Exception {
+	protected void writeReferencedMemberPage(final Report report, final List referees) throws Exception {
 		PrintWriter writer = null;
 		File originhtml = null;
 		try {
@@ -1753,7 +1753,7 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 		//API header
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(SearchMessages.UseReportConverter_api_ref_description).append("\"\">"); //$NON-NLS-1$
+		buffer.append(SearchMessages.UseReportConverter_api_ref_description).append("\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.UseReportConverter_api_references).append(CLOSE_B).append(CLOSE_TD); 
 		//Internal header
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"8%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
