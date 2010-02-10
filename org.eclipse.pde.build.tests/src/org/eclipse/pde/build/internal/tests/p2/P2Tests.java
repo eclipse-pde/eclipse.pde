@@ -558,6 +558,9 @@ public class P2Tests extends P2TestCase {
 		IFolder c = Utils.createFolder(buildFolder, "plugins/c");
 
 		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=false", "b;unpack=false", "c;unpack=false"});
+		Properties featureProperties = new Properties();
+		featureProperties.put("bin.includes", "feature.xml");
+		Utils.storeProperties(buildFolder.getFile("features/F/build.properties"), featureProperties);
 
 		Attributes additionalAttributes = new Attributes();
 		additionalAttributes = new Attributes();
@@ -607,6 +610,9 @@ public class P2Tests extends P2TestCase {
 		runBuild(buildFolder);
 
 		//now change A and recompile
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"a;unpack=true", "b;optional=true", "c;unpack=false"});
+		Utils.storeProperties(buildFolder.getFile("features/F/build.properties"), featureProperties);
+
 		code = new StringBuffer();
 		code.append("package a;                                   \n");
 		code.append("public class A {                             \n");
@@ -664,7 +670,8 @@ public class P2Tests extends P2TestCase {
 		IArtifactRepository artifact = loadArtifactRepository(finalLocation);
 		assertEquals(artifact.getName(), "testRepoName"); //bug 274094
 		assertLogContainsLine(buildFolder.getFile("log.log"), "Messages while mirroring artifact descriptors");
-		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: osgi.bundle,b,1.0.0", "Difference found for B.class"});
+		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: org.eclipse.update.feature,F,1.0.0", "The entry \"Plugin: a 1.0.0.v2\" is not present in both features", "The entry \"Plugin: b 1.0.0\" has different unpack attribute values"});
+		assertLogContainsLines(buildFolder.getFile("compare.log"), new String[] {"canonical: osgi.bundle,b,1.0.0", "The class B.class is different."});
 		boolean failed = true;
 		try {
 			assertLogContainsLine(buildFolder.getFile("compare.log"), "build.properties");
