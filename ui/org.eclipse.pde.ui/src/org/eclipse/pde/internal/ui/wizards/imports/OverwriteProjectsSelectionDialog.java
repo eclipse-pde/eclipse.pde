@@ -11,13 +11,13 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
+import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,9 +25,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.dialogs.SelectionStatusDialog;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.Version;
 
 /**
@@ -46,7 +45,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	private class PluginContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
-			return null;
+			return new Object[0];
 		}
 
 		public Object getParent(Object element) {
@@ -115,69 +114,19 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	 * Common listener for the Select All and Deselect All buttons
 	 */
 	private class ButtonSelectionListener extends SelectionAdapter {
-
 		public void widgetSelected(SelectionEvent e) {
 			String buttonID = (String) e.widget.getData(ID);
-			boolean state;
 			if (PDEUIMessages.DuplicatePluginResolutionDialog_selectAll.equals(buttonID)) {
-				state = true;
-				fCheckboxTreeViewer.setCheckedElements((Object[]) fCheckboxTreeViewer.getInput());
+				fCheckboxTreeViewer.setAllChecked(true);
 			} else if (PDEUIMessages.DuplicatePluginResolutionDialog_deselectAll.equals(buttonID)) {
-				state = false;
-				fCheckboxTreeViewer.setCheckedElements(new Object[] {});
-			} else {
-				return;
+				fCheckboxTreeViewer.setAllChecked(false);
 			}
-			Object[] elements = (Object[]) fCheckboxTreeViewer.getInput();
-			for (int i = 0; i < elements.length; i++) {
-				fProjectCheckedStateMap.put(elements[i], Boolean.valueOf(state));
-			}
-		}
-	}
-
-	/**
-	 * Extending FilteredTree to listen to refresh job so that check states can be restored when the filter changes
-	 *
-	 */
-	private class PluginFilteredTree extends FilteredTree {
-
-		public PluginFilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook) {
-			super(parent, treeStyle, filter, useNewLook);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateRefreshJob()
-		 */
-		protected WorkbenchJob doCreateRefreshJob() {
-			WorkbenchJob job = super.doCreateRefreshJob();
-			job.addJobChangeListener(new JobChangeAdapter() {
-
-				public void done(IJobChangeEvent event) {
-					TreeItem[] items = fCheckboxTreeViewer.getTree().getItems();
-					for (int i = 0; i < items.length; i++) {
-						Boolean state = (Boolean) fProjectCheckedStateMap.get(items[i].getData());
-						items[i].setChecked(state == null ? false : state.booleanValue());
-					}
-
-				}
-
-			});
-			return job;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
-		 */
-		protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
-			treeViewer = new CheckboxTreeViewer(parent, style);
-			return treeViewer;
 		}
 	}
 
 	private ArrayList fPluginProjectList;
-	private HashMap fProjectCheckedStateMap = new HashMap();
-	private PluginFilteredTree fFilteredTree;
-	private CheckboxTreeViewer fCheckboxTreeViewer;
+	private FilteredCheckboxTree fFilteredTree;
+	private CachedCheckboxTreeViewer fCheckboxTreeViewer;
 
 	/**
 	 * Constructor
@@ -203,13 +152,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < fPluginProjectList.size(); i++) {
-			Boolean state = (Boolean) fProjectCheckedStateMap.get(fPluginProjectList.get(i));
-			if (state != null && state.booleanValue() == true) {
-				result.add(fPluginProjectList.get(i));
-			}
-		}
+		java.util.List result = Arrays.asList(fCheckboxTreeViewer.getCheckedElements());
 		setResult(result);
 	}
 
@@ -220,7 +163,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		Composite tableComposite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 15, 15);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.heightHint = 400;
-		gd.widthHint = 400;
+		gd.widthHint = 500;
 		tableComposite.setLayoutData(gd);
 
 		if (fPluginProjectList != null && fPluginProjectList.size() == 1) {
@@ -246,22 +189,15 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	}
 
 	private void createTableArea(Composite parent) {
-		PatternFilter filter = new PatternFilter();
-		filter.setIncludeLeadingWildcard(true);
-		fFilteredTree = new PluginFilteredTree(parent, SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, filter, true);
-		fCheckboxTreeViewer = (CheckboxTreeViewer) fFilteredTree.getViewer();
+		fFilteredTree = new FilteredCheckboxTree(parent, null, null);
+		fFilteredTree.getPatternFilter().setIncludeLeadingWildcard(true);
+		fCheckboxTreeViewer = fFilteredTree.getCheckboxTreeViewer();
 		fCheckboxTreeViewer.setContentProvider(new PluginContentProvider());
 		fCheckboxTreeViewer.setLabelProvider(new StyledPluginLabelProvider());
-		fCheckboxTreeViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				fProjectCheckedStateMap.put(event.getElement(), Boolean.valueOf(event.getChecked()));
-			}
-		});
 		fCheckboxTreeViewer.setUseHashlookup(true);
 		fCheckboxTreeViewer.setInput(fPluginProjectList.toArray(new IPluginModelBase[fPluginProjectList.size()]));
 		for (int i = 0; i < fPluginProjectList.size(); i++) {
 			fCheckboxTreeViewer.setChecked(fPluginProjectList.get(i), true);
-			fProjectCheckedStateMap.put(fPluginProjectList.get(i), Boolean.valueOf(true));
 		}
 	}
 
