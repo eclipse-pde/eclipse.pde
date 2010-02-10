@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.equinox.p2.engine.IProfile;
-
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -398,6 +397,8 @@ public class TargetLocationsGroup {
 						}
 					}
 				}
+			} else if (parentElement instanceof MultiStatus) {
+				return ((MultiStatus) parentElement).getChildren();
 			}
 			return new Object[0];
 		}
