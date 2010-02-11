@@ -83,7 +83,7 @@
 	<antTask
 		class="org.eclipse.pde.internal.build.generator.GeneratorTask"
 		library="lib/pdebuild-ant.jar"
-		name="p2.new.generator">
+		name="p2.generator">
 	</antTask>
     
    </extension>
