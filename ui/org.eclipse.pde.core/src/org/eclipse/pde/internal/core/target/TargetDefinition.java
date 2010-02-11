@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.equinox.p2.metadata.Version;
-
 import java.io.*;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,6 +21,7 @@ import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.query.IUProfilePropertyQuery;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -545,25 +544,6 @@ public class TargetDefinition implements ITargetDefinition {
 		buf.append("\nImplicit: ").append(fImplicit == null ? "null" : Integer.toString(fImplicit.length)); //$NON-NLS-1$ //$NON-NLS-2$
 		buf.append("\nHandle: ").append(fHandle.toString()); //$NON-NLS-1$
 		return buf.toString();
-	}
-
-	/**
-	 * Returns the existing profile for this target definition or <code>null</code> if none.
-	 *  
-	 * @return profile or <code>null</code>
-	 */
-	public IProfile findProfile() {
-		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		if (registry != null) {
-			AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
-			String id;
-			try {
-				id = handle.getProfileId();
-				return registry.getProfile(id);
-			} catch (CoreException e) {
-			}
-		}
-		return null;
 	}
 
 	/**
