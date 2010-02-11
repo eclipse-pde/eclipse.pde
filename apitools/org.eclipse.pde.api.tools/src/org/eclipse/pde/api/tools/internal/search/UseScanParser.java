@@ -68,96 +68,118 @@ public class UseScanParser {
 		public ReferenceHandler(int type) {
 			this.type = type;
 		}
-		
-		private String[] getIdVersion(String value) {
-			int index = value.indexOf(' ');
-			if (index > 0) {
-				String id = value.substring(0, index);
-				String version = value.substring(index + 1);
-				if (version.startsWith("(")) { //$NON-NLS-1$
-					version = version.substring(1);
-					if (version.endsWith(")")) { //$NON-NLS-1$
-						version = version.substring(0,version.length() - 1);
-					}
-				}
-				return new String[]{id, version};
-			}
-			return new String[]{value, null};
-		}
-		
-		
+			
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
 		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
-			if (IApiXmlConstants.REFERENCES.equals(name)) {
-				String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
-				String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
-				String[] idv = getIdVersion(target);
-				enterTargetComponent(Factory.componentDescriptor(idv[0], idv[1]));
-				idv = getIdVersion(source);
-				enterReferencingComponent(Factory.componentDescriptor(idv[0], idv[1]));
-				String visString = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
+			processElement(uri, localName, name, attributes, type);
+		}
+			
+	}
+	
+	private String[] getIdVersion(String value) {
+		int index = value.indexOf(' ');
+		if (index > 0) {
+			String id = value.substring(0, index);
+			String version = value.substring(index + 1);
+			if (version.startsWith("(")) { //$NON-NLS-1$
+				version = version.substring(1);
+				if (version.endsWith(")")) { //$NON-NLS-1$
+					version = version.substring(0,version.length() - 1);
+				}
+			}
+			return new String[]{id, version};
+		}
+		return new String[]{value, null};
+	}
+	
+	/**
+	 * Process the XML element described by the URI, local name, name and attributes
+	 * @param uri the URI of the XML element
+	 * @param localName the local name of the XML element
+	 * @param name the name of the XML element
+	 * @param attributes the attribute listing for the XML element
+	 * @param type the type of the XML file. One of: {@link IReference#T_TYPE_REFERENCE}, {@link IReference#T_METHOD_REFERENCE} or
+	 * {@link IReference#T_FIELD_REFERENCE}
+	 * @throws SAXException
+	 */
+	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) throws SAXException {
+		if (IApiXmlConstants.REFERENCES.equals(name)) {
+			String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
+			String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
+			String[] idv = getIdVersion(target);
+			enterTargetComponent(Factory.componentDescriptor(idv[0], idv[1]));
+			idv = getIdVersion(source);
+			enterReferencingComponent(Factory.componentDescriptor(idv[0], idv[1]));
+			String visString = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
+			try {
+				int vis = Integer.parseInt(visString);
+				enterVisibility(vis);
+			} catch (NumberFormatException e) {
+				// TODO:
+				enterVisibility(-1);
+				System.out.println("Internal error: invalid visibility: " + visString); //$NON-NLS-1$
+			}
+		} else if(IApiXmlConstants.ELEMENT_TARGET.equals(name)) {
+			String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
+			String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
+			String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
+			IMemberDescriptor member = null;
+			switch (type) {
+				case IReference.T_TYPE_REFERENCE:
+					member = Factory.typeDescriptor(qName);
+					break;
+				case IReference.T_METHOD_REFERENCE:
+					member = Factory.methodDescriptor(qName, memberName, signature);
+					break;
+				case IReference.T_FIELD_REFERENCE:
+					member = Factory.fieldDescriptor(qName, memberName);
+					break;
+			}
+			enterTargetMember(member);
+		} else if (IApiXmlConstants.REFERENCE_KIND.equals(name)) {
+			String value = attributes.getValue(IApiXmlConstants.ATTR_KIND);
+			if (value != null) {
 				try {
-					int vis = Integer.parseInt(visString);
-					enterVisibility(vis);
+					enterReferenceKind(Integer.parseInt(value));
 				} catch (NumberFormatException e) {
-					// TODO:
-					enterVisibility(-1);
-					System.out.println("Internal error: invalid visibility: " + visString); //$NON-NLS-1$
+					// ERROR
+					System.out.println(NLS.bind("Internal error: invalid reference kind: {0}", value)); //$NON-NLS-1$
 				}
-			} else if(IApiXmlConstants.ELEMENT_TARGET.equals(name)) {
-				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
-				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
-				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
-				IMemberDescriptor member = null;
-				switch (type) {
-					case IReference.T_TYPE_REFERENCE:
-						member = Factory.typeDescriptor(qName);
-						break;
-					case IReference.T_METHOD_REFERENCE:
-						member = Factory.methodDescriptor(qName, memberName, signature);
-						break;
-					case IReference.T_FIELD_REFERENCE:
-						member = Factory.fieldDescriptor(qName, memberName);
-						break;
+			}
+		} else if (IApiXmlConstants.ATTR_REFERENCE.equals(name)) {
+			String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
+			String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
+			String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
+			IMemberDescriptor origin = null;
+			if (signature != null) {
+				origin = Factory.methodDescriptor(qName, memberName, signature);
+			} else if (memberName != null) {
+				origin = Factory.fieldDescriptor(qName, memberName);
+			} else {
+				origin = Factory.typeDescriptor(qName);
+			}
+			String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
+			String flags = attributes.getValue(IApiXmlConstants.ATTR_FLAGS);
+			try {
+				int num = Integer.parseInt(line);
+				int flgs = 0;
+				if(flags != null) {
+					flgs = Integer.parseInt(flags);
 				}
-				enterTargetMember(member);
-			} else if (IApiXmlConstants.REFERENCE_KIND.equals(name)) {
-				String value = attributes.getValue(IApiXmlConstants.ATTR_KIND);
-				if (value != null) {
-					try {
-						enterReferenceKind(Integer.parseInt(value));
-					} catch (NumberFormatException e) {
-						// ERROR
-						System.out.println(NLS.bind("Internal error: invalid reference kind: {0}", value)); //$NON-NLS-1$
-					}
-				}
-			} else if (IApiXmlConstants.ATTR_REFERENCE.equals(name)) {
-				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
-				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
-				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
-				IMemberDescriptor origin = null;
-				if (signature != null) {
-					origin = Factory.methodDescriptor(qName, memberName, signature);
-				} else if (memberName != null) {
-					origin = Factory.fieldDescriptor(qName, memberName);
-				} else {
-					origin = Factory.typeDescriptor(qName);
-				}
-				String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
-				String flags = attributes.getValue(IApiXmlConstants.ATTR_FLAGS);
-				try {
-					int num = Integer.parseInt(line);
-					int flgs = 0;
-					if(flags != null) {
-						flgs = Integer.parseInt(flags);
-					}
-					setReference(origin, num, flgs);
-				} catch (NumberFormatException e) {
-					// TODO:
-					System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
-				}
+				setReference(Factory.referenceDescriptor(
+						referencingComponent, 
+						origin, 
+						num, 
+						targetComponent, 
+						targetMember, 
+						referenceKind, 
+						flgs, 
+						visibility));
+			} catch (NumberFormatException e) {
+				// TODO:
+				System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
 			}
 		}
 	}
@@ -238,6 +260,41 @@ public class UseScanParser {
 			throw new Exception(SearchMessages.UseReportConverter_se_error_parser_handle, se);
 		}
 	}	
+	
+	/**
+	 * @return the referencingComponent or <code>null</code>
+	 */
+	protected IComponentDescriptor getReferencingComponent() {
+		return referencingComponent;
+	}
+	
+	/**
+	 * @return the targetComponent or <code>null</code>
+	 */
+	protected IComponentDescriptor getTargetComponent() {
+		return targetComponent;
+	}
+	
+	/**
+	 * @return the targetMember or <code>null</code>
+	 */
+	protected IMemberDescriptor getTargetMember() {
+		return targetMember;
+	}
+	
+	/**
+	 * @return the referenceKind
+	 */
+	protected int getReferenceKind() {
+		return referenceKind;
+	}
+	
+	/**
+	 * @return the visibility
+	 */
+	protected int getVisibility() {
+		return visibility;
+	}
 	
 	/**
 	 * Returns all the child directories form the given directory
@@ -329,9 +386,9 @@ public class UseScanParser {
 		referenceKind = refKind;
 	}
 	
-	public void setReference(IMemberDescriptor from, int lineNumber, int flags) {
+	public void setReference(IReferenceDescriptor reference) {
 		if (visitReferencingComponent&& visitMembers && visitReferences) {
-			visitor.visitReference(referenceKind, flags, from, lineNumber, visibility);
+			visitor.visitReference(reference);
 		}
 	}
 	

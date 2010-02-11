@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,14 @@ import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.model.CompositeApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
+import org.eclipse.pde.api.tools.internal.search.ReferenceDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
@@ -111,6 +114,23 @@ public class Factory {
 	public static IFieldDescriptor fieldDescriptor(String typename , String name) {
 		IReferenceTypeDescriptor type = typeDescriptor(typename);
 		return type.getField(name);
+	}
+	
+	/**
+	 * Creates a new {@link IReferenceDescriptor} object
+	 * @param origincomponent the component where the reference comes from
+	 * @param originmember the member where the reference comes from
+	 * @param line the line number of the reference or -1 if unknown
+	 * @param targetcomponent the component the reference is to
+	 * @param targetmember the member the reference is to
+	 * @param kind the kind of the reference. See {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference} for a complete list of kinds
+	 * @param flags the flags of the reference. See {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference} for a complete list of flags
+	 * @param visibility the visibility of the reference. See {@link VisibilityModifiers} for a complete list of visibilities
+	 * @return a new {@link IReferenceDescriptor}
+	 * @since 1.1
+	 */
+	public static IReferenceDescriptor referenceDescriptor(IComponentDescriptor origincomponent, IMemberDescriptor originmember, int line, IComponentDescriptor targetcomponent, IMemberDescriptor targetmember, int kind, int flags, int visibility) {
+		return new ReferenceDescriptor(origincomponent, originmember, line, targetcomponent, targetmember, kind, flags, visibility);
 	}
 	
 	/**

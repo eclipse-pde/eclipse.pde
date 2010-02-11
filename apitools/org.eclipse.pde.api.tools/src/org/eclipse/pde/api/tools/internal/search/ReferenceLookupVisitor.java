@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
@@ -142,11 +143,14 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, int, org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor, int, int)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
 	 */
-	public void visitReference(int refKind, int refFlags, IMemberDescriptor origin, int lineNumber, int visibility) {
+	public void visitReference(IReferenceDescriptor reference) {
 		Reference ref = null;
 		IApiMember resolved = null;
+		int refKind = reference.getReferenceKind();
+		int lineNumber = reference.getLineNumber();
+		IMemberDescriptor origin = reference.getMember();
 		if (currType != null) {
 			switch (targetMember.getElementType()) {
 			case IElementDescriptor.TYPE:
@@ -170,7 +174,15 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		}
 		if (resolved == null) {
 			// ERROR - failed to resolve
-			addError(new ReferenceDescriptor(referencingComponent, origin, lineNumber, targetComponent, targetMember, refKind, refFlags, visibility));
+			addError(Factory.referenceDescriptor(
+					referencingComponent, 
+					origin, 
+					lineNumber, 
+					targetComponent, 
+					targetMember, 
+					refKind, 
+					reference.getReferenceFlags(), 
+					reference.getVisibility()));
 		}
 	}
 	

@@ -223,12 +223,16 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 	
 		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(int, int, org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor, int, int)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
 		 */
-		public void visitReference(int refKind, int refFlags, IMemberDescriptor fromMember, int lineNumber, int visibility) {
+		public void visitReference(IReferenceDescriptor reference) {
+			IMemberDescriptor fromMember = reference.getMember();
 			if(!acceptReference(fromMember)) {
 				return;
 			}
+			int lineNumber = reference.getLineNumber();
+			int refKind = reference.getReferenceKind();
+			int visibility = reference.getVisibility();
 			String refname = org.eclipse.pde.api.tools.internal.builder.Reference.getReferenceText(refKind);
 			ArrayList refs = (ArrayList) this.currentmember.children.get(refname);
 			if(refs == null) {

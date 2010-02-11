@@ -27,7 +27,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
-import org.eclipse.pde.api.tools.internal.search.ReferenceDescriptor;
 import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -700,7 +699,7 @@ public class Reference implements IReference {
 			//overflow for those references that cannot be resolved
 			visibility = VisibilityModifiers.ALL_VISIBILITIES;
 		}
-		return new ReferenceDescriptor(
+		return Factory.referenceDescriptor(
 				(IComponentDescriptor)mcomponent.getHandle(),
 				getMember().getHandle(),
 				getLineNumber(),

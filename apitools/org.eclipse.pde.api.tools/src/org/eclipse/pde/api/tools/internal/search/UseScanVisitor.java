@@ -98,13 +98,9 @@ public class UseScanVisitor {
 	/**
 	 * Visits a reference to the current member.
 	 * 
-	 * @param refKind the kind of {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference} 
-	 * @param refFlags the flags of the {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference}
-	 * @param fromMember describes the member the reference was made from 
-	 * @param lineNumber the line number the reference was on or -1 if unknown
-	 * @param visibility see {@link org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers}
+	 * @param reference the reference
 	 */
-	public void visitReference(int refKind, int refFlags, IMemberDescriptor fromMember, int lineNumber, int visibility) {
+	public void visitReference(IReferenceDescriptor reference) {
 		
 	}
 	
