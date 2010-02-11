@@ -7,11 +7,9 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sonatype, Inc. - ongoing development
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
-
-import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.equinox.p2.metadata.VersionRange;
 
 import java.io.File;
 import java.net.URI;
@@ -19,7 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitPatchDescription;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -148,7 +146,7 @@ public class RuntimeInstallJob extends Job {
 			}
 
 			if (toInstall.size() > 0) {
-				InstallOperation operation = ui.getInstallOperation((IInstallableUnit[]) toInstall.toArray(new IInstallableUnit[toInstall.size()]), new URI[] {destination});
+				InstallOperation operation = ui.getInstallOperation(toInstall, new URI[] {destination});
 				operation.resolveModal(new SubProgressMonitor(monitor, 5));
 				IStatus status = operation.getResolutionResult();
 				if (status.getSeverity() == IStatus.CANCEL || !(status.isOK() || status.getSeverity() == IStatus.INFO)) {

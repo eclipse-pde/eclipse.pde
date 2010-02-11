@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sonatype, Inc. - ongoing development
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
@@ -338,7 +339,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * Update the details section of the page using the currently selected IU
 	 */
 	private void updateDetails() {
-		IInstallableUnit[] selected = fAvailableIUGroup.getSelectedIUs();
+		IInstallableUnit[] selected = (IInstallableUnit[]) fAvailableIUGroup.getSelectedIUs().toArray(new IInstallableUnit[0]);
 		if (selected.length == 1) {
 			StringBuffer result = new StringBuffer();
 			String description = selected[0].getProperty(IInstallableUnit.PROP_DESCRIPTION, null);

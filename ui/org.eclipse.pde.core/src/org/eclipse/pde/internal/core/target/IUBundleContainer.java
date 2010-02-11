@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sonatype, Inc. - ongoing development
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
+
+import org.eclipse.equinox.p2.planner.IPlanner;
 
 import java.io.File;
 import java.net.URI;
@@ -16,7 +19,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
-import org.eclipse.equinox.internal.provisional.p2.director.IPlanner;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -186,7 +188,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		// create the provisioning plan
 		ProfileChangeRequest request = new ProfileChangeRequest(profile);
-		request.addInstallableUnits(units);
+		request.addAll(Arrays.asList(units));
 		for (int i = 0; i < units.length; i++) {
 			IInstallableUnit unit = units[i];
 			request.setInstallableUnitProfileProperty(unit, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
