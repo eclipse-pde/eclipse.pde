@@ -567,7 +567,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException if none
 	 */
 	private IEngine getEngine() throws CoreException {
-		IEngine engine = (IEngine) PDECore.getDefault().acquireService(IEngine.SERVICE_NAME);
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent == null)
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
+		IEngine engine = (IEngine) agent.getService(IEngine.class.getName());
 		if (engine == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_4));
 		}
@@ -581,7 +584,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException if none
 	 */
 	private IPlanner getPlanner() throws CoreException {
-		IPlanner planner = (IPlanner) PDECore.getDefault().acquireService(IPlanner.class.getName());
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent == null)
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
+		IPlanner planner = (IPlanner) agent.getService(IPlanner.class.getName());
 		if (planner == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_5));
 		}

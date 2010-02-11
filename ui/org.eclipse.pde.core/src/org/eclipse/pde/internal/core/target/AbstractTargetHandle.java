@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.equinox.p2.engine.IProfile;
-import org.eclipse.equinox.p2.engine.IProfileRegistry;
-
 import java.io.File;
 import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
@@ -157,7 +157,8 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 	 * @return profile registry or <code>null</code>
 	 */
 	static IProfileRegistry getProfileRegistry() {
-		return (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		return (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 	}
 
 }

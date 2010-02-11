@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -631,19 +632,22 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * having PDE's bundle pool area grow unbounded.
 	 */
 	public void garbageCollect() {
-		IProfileRegistry registry = (IProfileRegistry) PDECore.getDefault().acquireService(IProfileRegistry.class.getName());
-		if (registry != null) {
-			IProfile[] profiles = registry.getProfiles();
-			if (profiles.length > 0) {
-				IProfile profile = null;
-				for (int i = 0; i < profiles.length; i++) {
-					if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-						profile = profiles[i];
-						break;
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent != null) {
+			IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+			if (registry != null) {
+				IProfile[] profiles = registry.getProfiles();
+				if (profiles.length > 0) {
+					IProfile profile = null;
+					for (int i = 0; i < profiles.length; i++) {
+						if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
+							profile = profiles[i];
+							break;
+						}
 					}
-				}
-				if (profile != null) {
-					new GarbageCollector().runGC(profile);
+					if (profile != null) {
+						new GarbageCollector().runGC(profile);
+					}
 				}
 			}
 		}
