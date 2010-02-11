@@ -642,7 +642,7 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(buildFolder, "repo1/plugins/c_1.0.0.jar");
 		assertResourceFile(buildFolder, "repo2/plugins/a_1.0.0.v2.jar");
 		assertResourceFile(buildFolder, "repo2/plugins/b_1.0.0.jar");
-		assertResourceFile(buildFolder, "repo1/plugins/c_1.0.0.jar");
+		assertResourceFile(buildFolder, "repo2/plugins/c_1.0.0.jar");
 
 		StringBuffer test = new StringBuffer();
 		test.append("<project default=\"mirror\">                                                                    \n");
