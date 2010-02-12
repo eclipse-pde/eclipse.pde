@@ -646,7 +646,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 						}
 					}
 					if (profile != null) {
-						new GarbageCollector().runGC(profile);
+						GarbageCollector gc = (GarbageCollector) agent.getService(GarbageCollector.SERVICE_NAME);
+						gc.runGC(profile);
 					}
 				}
 			}
