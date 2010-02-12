@@ -118,6 +118,19 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	}
 
 	/**
+	 * Returns the contents of the cached check state.  The contents will be all
+	 * checked leaf nodes ignoring any filters.
+	 * 
+	 * @return checked leaf elements
+	 */
+	public Object[] getCheckedLeafElements() {
+		if (checkState == null) {
+			return new Object[0];
+		}
+		return checkState.toArray(new Object[checkState.size()]);
+	}
+
+	/**
 	 * Returns the number of leaf nodes checked.  This method uses its internal check
 	 * state cache to determine what has been checked, not what is visible in the viewer.
 	 * The cache does not count duplicate items in the tree.

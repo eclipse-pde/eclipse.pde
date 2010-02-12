@@ -56,7 +56,6 @@ public class TargetLocationsGroup {
 	 * 
 	 * @param parent parent composite
 	 * @param toolkit toolkit to create the widgets with
-	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 * @return generated instance of the table part
 	 */
 	public static TargetLocationsGroup createInForm(Composite parent, FormToolkit toolkit) {
@@ -69,7 +68,6 @@ public class TargetLocationsGroup {
 	 * Creates this part using standard dialog widgets and adds it to the given composite.
 	 * 
 	 * @param parent parent composite
-	 * @param reporter reporter implementation that will handle resolving and changes to the containers
 	 * @return generated instance of the table part
 	 */
 	public static TargetLocationsGroup createInDialog(Composite parent) {

@@ -167,7 +167,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		contentTab.setText(PDEUIMessages.TargetDefinitionContentPage_6);
 		Composite contentTabContainer = SWTFactory.createComposite(tabs, 1, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(contentTabContainer, PDEUIMessages.ContentSection_1, 2, 400);
-		fContentTree = new TargetContentsGroup(contentTabContainer);
+		fContentTree = TargetContentsGroup.createInDialog(contentTabContainer);
 		contentTab.setControl(contentTabContainer);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentTabContainer, IHelpContextIds.EDIT_TARGET_WIZARD_CONTENT_TAB);
 

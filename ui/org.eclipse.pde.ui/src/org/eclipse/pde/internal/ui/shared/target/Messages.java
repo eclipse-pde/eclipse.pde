@@ -62,7 +62,6 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_14;
 	public static String BundleContainerTable_15;
 	public static String BundleContainerTable_2;
-	public static String BundleContainerTable_3;
 	public static String BundleContainerTable_8;
 	public static String BundleContainerTable_9;
 	public static String EditBundleContainerWizard_0;
@@ -110,8 +109,6 @@ public class Messages extends NLS {
 	public static String TargetContentsGroup_1;
 	public static String TargetContentsGroup_10;
 	public static String TargetContentsGroup_11;
-	public static String TargetContentsGroup_12;
-	public static String TargetContentsGroup_13;
 	public static String TargetContentsGroup_2;
 	public static String TargetContentsGroup_3;
 	public static String TargetContentsGroup_4;

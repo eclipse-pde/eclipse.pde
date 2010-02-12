@@ -20,7 +20,6 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -36,6 +35,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
+import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -45,11 +46,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.BundleException;
 
 /**
@@ -62,9 +59,9 @@ import org.osgi.framework.BundleException;
  * @see ITargetDefinition
  * @see IResolvedBundle
  */
-public class TargetContentsGroup extends FilteredTree {
+public class TargetContentsGroup {
 
-	private CheckboxTreeViewer fTree;
+	private CachedCheckboxTreeViewer fTree;
 	private MenuManager fMenuManager;
 	private Button fSelectButton;
 	private Button fDeselectButton;
@@ -82,21 +79,15 @@ public class TargetContentsGroup extends FilteredTree {
 	private ViewerFilter fSourceFilter;
 	private ViewerFilter fPluginFilter;
 
-	/*
-	 * TODO This could likely be done better with fewer datastructures by using a 
-	 * similar structure to FilteredCheckboxTree.  Instead of storing resolved bundles
-	 * store a special object which remembers it's check state.
-	 */
-	private List fAllBundles;
-	private Set fAllChecked;
-	private Map fContainerBundles;
-	private Map fContainerChecked;
-	private Map fFileBundles;
-	private Map fFileChecked;
-
 	private ITargetDefinition fTargetDefinition;
-
-	private FormToolkit fToolkit;
+	/**
+	 * Maps file paths to a list of bundles that reside in that location, use {@link #getFileBundleMapping()} rather than accessing the field directly
+	 */
+	private Map fFileBundleMapping;
+	/**
+	 * Cached list of all bundles, used to quickly obtain bundle counts.
+	 */
+	private List fAllBundles = new ArrayList();
 
 	private int fGrouping;
 	private static final int GROUP_BY_NONE = 0;
@@ -104,20 +95,35 @@ public class TargetContentsGroup extends FilteredTree {
 	private static final int GROUP_BY_CONTAINER = 2;
 	private ListenerList fChangeListeners = new ListenerList();
 
-	public TargetContentsGroup(Composite parent) {
-		super(parent, SWT.NONE, null, true);
-		PatternFilter filter = new PatternFilter();
-		filter.setIncludeLeadingWildcard(true);
-		super.init(SWT.NONE, filter);
+	/**
+	 * Creates this part using the form toolkit and adds it to the given composite.
+	 * 
+	 * @param parent parent composite
+	 * @param toolkit toolkit to create the widgets with
+	 * @return generated instance of the table part
+	 */
+	public static TargetContentsGroup createInForm(Composite parent, FormToolkit toolkit) {
+		TargetContentsGroup contentTable = new TargetContentsGroup();
+		contentTable.createFormContents(parent, toolkit);
+		return contentTable;
 	}
 
-	public TargetContentsGroup(Composite parent, FormToolkit toolkit) {
-		// Hack to setup the toolkit before creating the controls
-		super(parent, SWT.NONE, null, true);
-		fToolkit = toolkit;
-		PatternFilter filter = new PatternFilter();
-		filter.setIncludeLeadingWildcard(true);
-		super.init(SWT.NONE, filter);
+	/**
+	 * Creates this part using standard dialog widgets and adds it to the given composite.
+	 * 
+	 * @param parent parent composite
+	 * @return generated instance of the table part
+	 */
+	public static TargetContentsGroup createInDialog(Composite parent) {
+		TargetContentsGroup contentTable = new TargetContentsGroup();
+		contentTable.createDialogContents(parent);
+		return contentTable;
+	}
+
+	/**
+	 * Use {@link #createInDialog(Composite)} or {@link #createInDialog(Composite)}
+	 */
+	protected TargetContentsGroup() {
 	}
 
 	/**
@@ -140,89 +146,97 @@ public class TargetContentsGroup extends FilteredTree {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#init(int, org.eclipse.ui.dialogs.PatternFilter)
+	/**
+	 * Disposes the contents of this group
 	 */
-	protected void init(int treeStyle, PatternFilter filter) {
-		// Overridden to do nothing to avoid creating the controls when we don't have a form toolkit
+	public void dispose() {
+		if (fMenuManager != null) {
+			fMenuManager.dispose();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#createTreeControl(org.eclipse.swt.widgets.Composite, int)
+	/**
+	 * Creates the contents of this group, using the given toolkit where appropriate so that the controls
+	 * have the form editor look and feel.
+	 * 
+	 * @param parent parent composite
+	 * @param toolkit toolkit to create controls with
 	 */
-	protected Control createTreeControl(Composite parent, int style) {
+	protected void createFormContents(Composite parent, FormToolkit toolkit) {
 		fGrouping = GROUP_BY_NONE;
-		Composite treeComp = null;
-		if (fToolkit != null) {
-			treeComp = fToolkit.createComposite(parent);
-			GridLayout layout = new GridLayout(2, false);
-			layout.marginWidth = layout.marginHeight = 0;
-			treeComp.setLayout(layout);
-			treeComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		} else {
-			treeComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
-		}
-		super.createTreeControl(treeComp, style);
-		((GridData) fTree.getControl().getLayoutData()).heightHint = 300;
-		createButtons(treeComp);
 
-		if (fToolkit != null) {
-			fCountLabel = fToolkit.createLabel(treeComp, ""); //$NON-NLS-1$
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.horizontalSpan = 2;
-			fCountLabel.setLayoutData(data);
-		} else {
-			fCountLabel = SWTFactory.createLabel(treeComp, "", 2); //$NON-NLS-1$
-		}
+		Composite comp = toolkit.createComposite(parent);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = layout.marginHeight = 0;
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		createTree(comp, toolkit);
+		createButtons(comp, toolkit);
+
+		fCountLabel = toolkit.createLabel(comp, ""); //$NON-NLS-1$
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		fCountLabel.setLayoutData(data);
 
 		updateButtons();
 		initializeFilters();
-		return treeComp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateRefreshJob()
+	/**
+	 * Creates the contents of this group in the normal dialog style
+	 * 
+	 * @param parent parent composite
 	 */
-	protected WorkbenchJob doCreateRefreshJob() {
-		WorkbenchJob job = super.doCreateRefreshJob();
-		job.addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				// Don't update the tree if no filtering has been done yet
-				if (event.getResult().getSeverity() != IStatus.CANCEL && fAllBundles != null) {
-					fTree.expandAll();
-					updateCheckState();
-				}
-			}
-		});
-		return job;
+	protected void createDialogContents(Composite parent) {
+		fGrouping = GROUP_BY_NONE;
+
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
+
+		createTree(comp, null);
+		createButtons(comp, null);
+
+		fCountLabel = SWTFactory.createLabel(comp, "", 2); //$NON-NLS-1$
+
+		updateButtons();
+		initializeFilters();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
+	/**
+	 * Creates the tree in this group
+	 * 
+	 * @param parent parent composite
+	 * @param style toolkit for form style or <code>null</code> for dialog style
 	 */
-	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
-		Tree tree = null;
-		if (fToolkit != null) {
-			tree = fToolkit.createTree(parent, SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		} else {
-			tree = new Tree(parent, style | SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		}
+	private TreeViewer createTree(Composite parent, FormToolkit toolkit) {
+		TreeContentProvider contentProvider = new TreeContentProvider();
 
+		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, contentProvider, toolkit);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTree = new CheckboxTreeViewer(tree);
+		tree.getPatternFilter().setIncludeLeadingWildcard(true);
+
+		fTree = tree.getCheckboxTreeViewer();
+		((GridData) fTree.getControl().getLayoutData()).heightHint = 300;
 		fTree.setUseHashlookup(true);
-		fTree.setContentProvider(new TreeContentProvider());
+		fTree.setContentProvider(contentProvider);
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				Object first = selection.getFirstElement();
-				handleCheck(new Object[] {selection.getFirstElement()}, !fTree.getChecked(first));
+				fTree.setChecked(first, !fTree.getChecked(first));
+				saveIncludedBundleState();
+				contentChanged();
+				updateButtons();
+				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 		fTree.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleCheck(new Object[] {event.getElement()}, fTree.getChecked(event.getElement()));
+				saveIncludedBundleState();
+				contentChanged();
+				updateButtons();
+				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -259,39 +273,23 @@ public class TargetContentsGroup extends FilteredTree {
 		return fTree;
 	}
 
-	public void dispose() {
-		super.dispose();
-		if (fMenuManager != null) {
-			fMenuManager.dispose();
-		}
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateFilterText(org.eclipse.swt.widgets.Composite)
+	/**
+	 * Creates the buttons in this group inside a new composite
+	 * 
+	 * @param parent parent composite
+	 * @param toolkit toolkit to give form style or <code>null</code> for dialog style
 	 */
-	protected Text doCreateFilterText(Composite parent) {
-		// Overridden so the text gets create using the toolkit if we have one
-		Text parentText = super.doCreateFilterText(parent);
-		if (fToolkit != null) {
-			int style = parentText.getStyle();
-			parentText.dispose();
-			return fToolkit.createText(parent, null, style);
-		}
-		return parentText;
-	}
-
-	private void createButtons(Composite parent) {
-		if (fToolkit != null) {
-			Composite buttonComp = fToolkit.createComposite(parent);
+	private void createButtons(Composite parent, FormToolkit toolkit) {
+		if (toolkit != null) {
+			Composite buttonComp = toolkit.createComposite(parent);
 			GridLayout layout = new GridLayout();
 			layout.marginWidth = layout.marginHeight = 0;
 			buttonComp.setLayout(layout);
 			buttonComp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-			fSelectButton = fToolkit.createButton(buttonComp, Messages.IncludedBundlesTree_0, SWT.PUSH);
+			fSelectButton = toolkit.createButton(buttonComp, Messages.IncludedBundlesTree_0, SWT.PUSH);
 			fSelectButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			fDeselectButton = fToolkit.createButton(buttonComp, Messages.IncludedBundlesTree_1, SWT.PUSH);
+			fDeselectButton = toolkit.createButton(buttonComp, Messages.IncludedBundlesTree_1, SWT.PUSH);
 			fDeselectButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			Label emptySpace = new Label(buttonComp, SWT.NONE);
@@ -299,9 +297,9 @@ public class TargetContentsGroup extends FilteredTree {
 			gd.widthHint = gd.heightHint = 5;
 			emptySpace.setLayoutData(gd);
 
-			fSelectAllButton = fToolkit.createButton(buttonComp, Messages.IncludedBundlesTree_2, SWT.PUSH);
+			fSelectAllButton = toolkit.createButton(buttonComp, Messages.IncludedBundlesTree_2, SWT.PUSH);
 			fSelectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			fDeselectAllButton = fToolkit.createButton(buttonComp, Messages.IncludedBundlesTree_3, SWT.PUSH);
+			fDeselectAllButton = toolkit.createButton(buttonComp, Messages.IncludedBundlesTree_3, SWT.PUSH);
 			fDeselectAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			emptySpace = new Label(buttonComp, SWT.NONE);
@@ -309,20 +307,20 @@ public class TargetContentsGroup extends FilteredTree {
 			gd.widthHint = gd.heightHint = 5;
 			emptySpace.setLayoutData(gd);
 
-			fSelectRequiredButton = fToolkit.createButton(buttonComp, Messages.TargetContentsGroup_4, SWT.PUSH);
+			fSelectRequiredButton = toolkit.createButton(buttonComp, Messages.TargetContentsGroup_4, SWT.PUSH);
 			fSelectRequiredButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-			Composite filterComp = fToolkit.createComposite(buttonComp);
+			Composite filterComp = toolkit.createComposite(buttonComp);
 			layout = new GridLayout();
 			layout.marginWidth = layout.marginHeight = 0;
 			filterComp.setLayout(layout);
 			filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
 
-			fShowLabel = fToolkit.createLabel(filterComp, Messages.BundleContainerTable_9);
+			fShowLabel = toolkit.createLabel(filterComp, Messages.BundleContainerTable_9);
 
-			fShowPluginsButton = fToolkit.createButton(filterComp, Messages.BundleContainerTable_14, SWT.CHECK);
+			fShowPluginsButton = toolkit.createButton(filterComp, Messages.BundleContainerTable_14, SWT.CHECK);
 			fShowPluginsButton.setSelection(true);
-			fShowSourceButton = fToolkit.createButton(filterComp, Messages.BundleContainerTable_15, SWT.CHECK);
+			fShowSourceButton = toolkit.createButton(filterComp, Messages.BundleContainerTable_15, SWT.CHECK);
 			fShowSourceButton.setSelection(true);
 
 			emptySpace = new Label(filterComp, SWT.NONE);
@@ -330,10 +328,10 @@ public class TargetContentsGroup extends FilteredTree {
 			gd.widthHint = gd.heightHint = 5;
 			emptySpace.setLayoutData(gd);
 
-			fGroupLabel = fToolkit.createLabel(filterComp, Messages.TargetContentsGroup_0);
+			fGroupLabel = toolkit.createLabel(filterComp, Messages.TargetContentsGroup_0);
 
 			fGroupComboPart = new ComboPart();
-			fGroupComboPart.createControl(filterComp, fToolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+			fGroupComboPart.createControl(filterComp, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalIndent = 10;
 			fGroupComboPart.getControl().setLayoutData(gd);
@@ -396,7 +394,13 @@ public class TargetContentsGroup extends FilteredTree {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
-					handleCheck(selected, true);
+					for (int i = 0; i < selected.length; i++) {
+						fTree.setChecked(selected[i], true);
+					}
+					saveIncludedBundleState();
+					contentChanged();
+					updateButtons();
+					fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 				}
 			}
 		});
@@ -405,28 +409,48 @@ public class TargetContentsGroup extends FilteredTree {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
-					handleCheck(selected, false);
+					for (int i = 0; i < selected.length; i++) {
+						fTree.setChecked(selected[i], false);
+					}
+					saveIncludedBundleState();
+					contentChanged();
+					updateButtons();
+					fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 				}
 			}
 		});
 
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Object[] elements = ((ITreeContentProvider) fTree.getContentProvider()).getElements(fTree.getInput());
-				handleCheck(elements, true);
+				fTree.setAllChecked(true);
+				saveIncludedBundleState();
+				contentChanged();
+				updateButtons();
+				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Object[] elements = ((ITreeContentProvider) fTree.getContentProvider()).getElements(fTree.getInput());
-				handleCheck(elements, false);
+				fTree.setAllChecked(false);
+				saveIncludedBundleState();
+				contentChanged();
+				updateButtons();
+				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 
 		fSelectRequiredButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleCheck(getRequiredElements(fAllBundles, fAllChecked), true);
+				Object[] allChecked = fTree.getCheckedLeafElements();
+				Object[] required = getRequiredElements(fAllBundles, Arrays.asList(allChecked));
+				for (int i = 0; i < required.length; i++) {
+					fTree.setChecked(required[i], true);
+				}
+				saveIncludedBundleState();
+				contentChanged();
+				updateButtons();
+				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 
@@ -638,7 +662,7 @@ public class TargetContentsGroup extends FilteredTree {
 		};
 		try {
 			// Calculate the dependencies
-			new ProgressMonitorDialog(getShell()).run(true, true, op);
+			new ProgressMonitorDialog(fTree.getControl().getShell()).run(true, true, op);
 
 			// We want to check the dependents, the source of the dependents, and the source of the originally checked
 			Set checkedNames = new HashSet(checkedBundles.size());
@@ -668,108 +692,6 @@ public class TargetContentsGroup extends FilteredTree {
 		return new Object[0];
 	}
 
-	/**
-	 * Sets the check state of the given elements to the given state.  Updates
-	 * all the datastructures that store the current check state and updates any
-	 * parent items in the tree.
-	 * 
-	 * @param changedElements list of changed elements
-	 * @param checkState new check state for the elements
-	 */
-	private void handleCheck(Object[] changedElements, boolean checkState) {
-		if (changedElements.length > 0) {
-			if (changedElements[0] instanceof IResolvedBundle) {
-				Set changedContainers = new HashSet();
-				Set changedFiles = new HashSet();
-				for (int i = 0; i < changedElements.length; i++) {
-					Object parent = ((IResolvedBundle) changedElements[i]).getParentContainer();
-					changedContainers.add(parent);
-					Set containerChecked = ((Set) fContainerChecked.get(parent));
-
-					parent = getParentPath((IResolvedBundle) changedElements[i]);
-					changedFiles.add(parent);
-					Set fileChecked = ((Set) fFileChecked.get(parent));
-
-					if (checkState) {
-						fAllChecked.add(changedElements[i]);
-						containerChecked.add(changedElements[i]);
-						fileChecked.add(changedElements[i]);
-					} else {
-						fAllChecked.remove(changedElements[i]);
-						containerChecked.remove(changedElements[i]);
-						fileChecked.remove(changedElements[i]);
-					}
-					fTree.setChecked(changedElements[i], checkState);
-				}
-				if (fGrouping != GROUP_BY_NONE) {
-					Iterator iterator = fGrouping == GROUP_BY_CONTAINER ? changedContainers.iterator() : changedFiles.iterator();
-					while (iterator.hasNext()) {
-						Object parent = iterator.next();
-						if (getChecked(parent).size() == 0) {
-							fTree.setGrayChecked(parent, false);
-						} else if (getChecked(parent).size() == getBundleChildren(parent).size()) {
-							fTree.setGrayed(parent, false);
-							fTree.setChecked(parent, true);
-						} else {
-							fTree.setGrayChecked(parent, true);
-						}
-					}
-				}
-				saveIncludedBundleState(changedContainers.toArray());
-			} else {
-				Set totalChanged = new HashSet();
-				for (int i = 0; i < changedElements.length; i++) {
-					fTree.setGrayed(changedElements[i], false);
-					fTree.setChecked(changedElements[i], checkState);
-					fTree.setSubtreeChecked(changedElements[i], checkState);
-
-					Set checked;
-					List all;
-					if (fGrouping == GROUP_BY_CONTAINER) {
-						checked = (Set) fContainerChecked.get(changedElements[i]);
-						all = (List) fContainerBundles.get(changedElements[i]);
-					} else {
-						checked = (Set) fFileChecked.get(changedElements[i]);
-						all = (List) fFileBundles.get(changedElements[i]);
-					}
-					if (checkState) {
-						checked.addAll(all);
-					} else {
-						checked.removeAll(all);
-					}
-					totalChanged.addAll(all);
-				}
-				// Update the maps that we are not currently displaying
-				Iterator iterator = fGrouping == GROUP_BY_CONTAINER ? fFileChecked.values().iterator() : fContainerChecked.values().iterator();
-				while (iterator.hasNext()) {
-					Set current = (Set) iterator.next();
-					if (checkState) {
-						current.addAll(totalChanged);
-					} else {
-						current.removeAll(totalChanged);
-					}
-				}
-				if (checkState) {
-					fAllChecked.addAll(totalChanged);
-				} else {
-					fAllChecked.removeAll(totalChanged);
-				}
-				if (fGrouping == GROUP_BY_CONTAINER) {
-					saveIncludedBundleState(changedElements);
-				} else {
-					// Easier to just save everything than loop through every bundle that changed and find its parent
-					saveIncludedBundleState(fTargetDefinition.getBundleContainers());
-				}
-			}
-			contentChanged();
-			updateButtons();
-			// Update the parent container labels with the new count
-			if (fGrouping == GROUP_BY_CONTAINER) {
-				fTree.update(fContainerBundles.keySet().toArray(), new String[] {IBasicPropertyConstants.P_TEXT});
-			}
-		}
-	}
-
 	private void handleGroupChange() {
 		int index;
 		if (fGroupCombo != null) {
@@ -786,37 +708,6 @@ public class TargetContentsGroup extends FilteredTree {
 			updateButtons();
 			fTree.getControl().setRedraw(true);
 		}
-	}
-
-	private void updateCheckState() {
-		for (Iterator iterator = fAllChecked.iterator(); iterator.hasNext();) {
-			fTree.setChecked(iterator.next(), true);
-		}
-		if (fGrouping != GROUP_BY_NONE) {
-			Map bundleMap = null;
-			Map checkedMap = null;
-			if (fGrouping == GROUP_BY_CONTAINER) {
-				bundleMap = fContainerBundles;
-				checkedMap = fContainerChecked;
-			} else if (fGrouping == GROUP_BY_FILE_LOC) {
-				bundleMap = fFileBundles;
-				checkedMap = fFileChecked;
-			}
-			for (Iterator iterator = bundleMap.keySet().iterator(); iterator.hasNext();) {
-				Object currentParent = iterator.next();
-				Set checked = (Set) checkedMap.get(currentParent);
-				if (checked.size() == 0) {
-					fTree.setGrayed(currentParent, false);
-					fTree.setChecked(currentParent, false);
-				} else if (checked.size() == ((List) bundleMap.get(currentParent)).size()) {
-					fTree.setGrayed(currentParent, false);
-					fTree.setChecked(currentParent, true);
-				} else {
-					fTree.setGrayChecked(currentParent, true);
-				}
-			}
-		}
-
 	}
 
 	private void updateButtons() {
@@ -849,12 +740,12 @@ public class TargetContentsGroup extends FilteredTree {
 			fDeselectButton.setEnabled(false);
 		}
 
-		fSelectAllButton.setEnabled(fTargetDefinition != null && fAllChecked.size() != fAllBundles.size());
-		fDeselectAllButton.setEnabled(fTargetDefinition != null && fAllChecked.size() != 0);
-		fSelectRequiredButton.setEnabled(fTargetDefinition != null && fAllChecked.size() > 0 && fAllChecked.size() != fAllBundles.size());
+		fSelectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != fAllBundles.size());
+		fDeselectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != 0);
+		fSelectRequiredButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() > 0 && fTree.getCheckedLeafCount() != fAllBundles.size());
 
 		if (fTargetDefinition != null) {
-			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fAllChecked.size()), Integer.toString(fAllBundles.size())}));
+			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(fAllBundles.size())}));
 		} else {
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}
@@ -866,6 +757,10 @@ public class TargetContentsGroup extends FilteredTree {
 	 */
 	public void setInput(ITargetDefinition input) {
 		fTargetDefinition = input;
+
+		// Update the cached data
+		fFileBundleMapping = null;
+		fAllBundles.clear();
 
 		if (input == null || !input.isResolved()) {
 			fTree.setInput(Messages.TargetContentsGroup_10);
@@ -880,26 +775,26 @@ public class TargetContentsGroup extends FilteredTree {
 			return;
 		}
 
-		fTree.setInput(Messages.TargetContentsGroup_12);
-		setEnabled(false);
-		Job initJob = new InitalizeJob();
-		initJob.addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				Job refreshJob = new UIJob(Messages.TargetContentsGroup_13) {
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						fTree.setInput(fTargetDefinition);
-						fTree.expandAll();
-						updateCheckState();
-						updateButtons();
-						setEnabled(true);
-						return Status.OK_STATUS;
-					}
-				};
-				refreshJob.setSystem(true);
-				refreshJob.schedule();
+		for (int i = 0; i < allResolvedBundles.length; i++) {
+			fAllBundles.add(allResolvedBundles[i]);
+		}
+		fTree.setInput(fTargetDefinition);
+		fTree.expandAll();
+		updateCheckState();
+		updateButtons();
+		setEnabled(true);
+	}
+
+	private void updateCheckState() {
+		Collection included = new ArrayList();
+		IBundleContainer[] containers = fTargetDefinition.getBundleContainers();
+		for (int i = 0; i < containers.length; i++) {
+			IResolvedBundle[] bundles = containers[i].getBundles();
+			for (int j = 0; j < bundles.length; j++) {
+				included.add(bundles[j]);
 			}
-		});
-		initJob.schedule();
+		}
+		fTree.setCheckedElements(included.toArray());
 	}
 
 	/**
@@ -913,113 +808,46 @@ public class TargetContentsGroup extends FilteredTree {
 		setEnabled(false);
 	}
 
-	private class InitalizeJob extends Job {
-
-		public InitalizeJob() {
-			super(Messages.TargetContentsGroup_13);
-			setSystem(true);
+	/**
+	 * @return a map connecting IPath to the resolved bundles in that path
+	 */
+	private Map getFileBundleMapping() {
+		if (fFileBundleMapping != null) {
+			return fFileBundleMapping;
 		}
 
-		protected IStatus run(IProgressMonitor monitor) {
-			fAllBundles = new ArrayList();
-			fAllChecked = new HashSet();
-			fContainerBundles = new HashMap();
-			fContainerChecked = new HashMap();
-			IBundleContainer[] containers = fTargetDefinition.getBundleContainers();
-			// Iterate through each container, adding bundles to the map and list
-			for (int i = 0; i < containers.length; i++) {
-				Object[] containerBundlesArray = containers[i].getAllBundles();
-				List containerBundles = new ArrayList(containerBundlesArray.length);
-				for (int j = 0; j < containerBundlesArray.length; j++) {
-					containerBundles.add(containerBundlesArray[j]);
-				}
-				fAllBundles.addAll(containerBundles);
-				fContainerBundles.put(containers[i], containerBundles);
-
-				// Determine which of the bundles are checked (included)
-				if (containers[i].getIncludedBundles() == null) {
-					// Everything is included
-					Set checked = new HashSet();
-					checked.addAll(containerBundles);
-					fContainerChecked.put(containers[i], checked);
-					fAllChecked.addAll(checked);
-				} else {
-					// Mark the included bundles as checked
-					List includedBundles = Arrays.asList(containers[i].getBundles());
-					// If an included bundle has errors it must be explicitly added to the bundle list as getAllBundles does not return it.
-					for (Iterator iterator = includedBundles.iterator(); iterator.hasNext();) {
-						IResolvedBundle currentIncluded = (IResolvedBundle) iterator.next();
-						if (!currentIncluded.getStatus().isOK()) {
-							((List) fContainerBundles.get(containers[i])).add(currentIncluded);
-							fAllBundles.add(currentIncluded);
-						}
-					}
-					Set checked = new HashSet();
-					checked.addAll(includedBundles);
-					fContainerChecked.put(containers[i], checked);
-					fAllChecked.addAll(checked);
-				}
+		// Map the bundles into their file locations
+		fFileBundleMapping = new HashMap();
+		for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
+			IResolvedBundle currentBundle = (IResolvedBundle) iterator.next();
+			IPath parentPath = getParentPath(currentBundle);
+			List bundles = (List) fFileBundleMapping.get(parentPath);
+			if (bundles == null) {
+				bundles = new ArrayList();
+				bundles.add(currentBundle);
+				fFileBundleMapping.put(parentPath, bundles);
+			} else {
+				bundles.add(currentBundle);
 			}
-
-			// Map the bundles into their file locations
-			fFileBundles = new HashMap();
-			fFileChecked = new HashMap();
-			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-				IResolvedBundle currentBundle = (IResolvedBundle) iterator.next();
-				IPath parentPath = getParentPath(currentBundle);
-				List bundles = (List) fFileBundles.get(parentPath);
-				if (bundles == null) {
-					bundles = new ArrayList();
-					bundles.add(currentBundle);
-					fFileBundles.put(parentPath, bundles);
-					// Some paths may have nothing checked, but we still need a set stored in the map
-					fFileChecked.put(parentPath, new HashSet());
-				} else {
-					bundles.add(currentBundle);
-				}
-				// Determine whether the current bundle is checked
-				if (fAllChecked.contains(currentBundle)) {
-					Set checked = (Set) fFileChecked.get(parentPath);
-					if (checked == null) {
-						checked = new HashSet();
-						checked.add(currentBundle);
-						fFileChecked.put(parentPath, checked);
-					} else {
-						checked.add(currentBundle);
-					}
-				}
-			}
-
-			return Status.OK_STATUS;
 		}
+		return fFileBundleMapping;
 	}
 
-	private Set getChecked(Object parent) {
-		Set result = null;
+	private Object[] getBundleChildren(Object parent) {
+		Object[] result = null;
 		if (parent == null) {
-			result = fAllChecked;
-		} else if (fGrouping == GROUP_BY_CONTAINER) {
-			result = (Set) fContainerChecked.get(parent);
-		} else if (fGrouping == GROUP_BY_FILE_LOC) {
-			result = (Set) fFileChecked.get(parent);
+			result = fAllBundles.toArray();
+		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof IBundleContainer) {
+			IBundleContainer container = (IBundleContainer) parent;
+			return container.getAllBundles();
+		} else if (fGrouping == GROUP_BY_FILE_LOC && parent instanceof IPath) {
+			List bundles = (List) getFileBundleMapping().get(parent);
+			if (bundles != null && bundles.size() > 0) {
+				result = bundles.toArray();
+			}
 		}
 		if (result == null) {
-			return new HashSet(0);
-		}
-		return result;
-	}
-
-	private List getBundleChildren(Object parent) {
-		List result = null;
-		if (parent == null) {
-			result = fAllBundles;
-		} else if (fGrouping == GROUP_BY_CONTAINER) {
-			result = (List) fContainerBundles.get(parent);
-		} else if (fGrouping == GROUP_BY_FILE_LOC) {
-			result = (List) fFileBundles.get(parent);
-		}
-		if (result == null) {
-			return new ArrayList(0);
+			return new Object[0];
 		}
 		return result;
 	}
@@ -1028,7 +856,7 @@ public class TargetContentsGroup extends FilteredTree {
 	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
+		fTree.getControl().setEnabled(enabled);
 		if (enabled) {
 			updateButtons();
 		} else {
@@ -1048,44 +876,59 @@ public class TargetContentsGroup extends FilteredTree {
 		} else {
 			fGroupComboPart.setEnabled(enabled);
 		}
-		super.setEnabled(enabled);
 	}
 
-	public void saveIncludedBundleState(Object[] changeContainers) {
-		for (int i = 0; i < changeContainers.length; i++) {
-			if (changeContainers[i] instanceof IBundleContainer) {
-				IBundleContainer container = (IBundleContainer) changeContainers[i];
-				Set checked = (Set) fContainerChecked.get(container);
-				if (checked.size() == ((Collection) fContainerBundles.get(changeContainers[i])).size()) {
-					((IBundleContainer) changeContainers[i]).setIncludedBundles(null);
+	public void saveIncludedBundleState() {
+		Map includedBundleMap = new HashMap();
+
+		// Figure out if there are multiple bundles sharing the same id
+		Set multi = new HashSet(); // BSNs of bundles with multiple versions available
+		Set all = new HashSet();
+		for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
+			IResolvedBundle rb = (IResolvedBundle) iterator.next();
+			if (!all.add(rb.getBundleInfo().getSymbolicName())) {
+				multi.add(rb.getBundleInfo().getSymbolicName());
+			}
+		}
+
+		// Create a per container list of checked bundle infos
+		Object[] checked = fTree.getCheckedLeafElements();
+		for (int i = 0; i < checked.length; i++) {
+			if (checked[i] instanceof IResolvedBundle) {
+				// Create the bundle info object
+				String bsn = ((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName();
+				BundleInfo info = null;
+				if (multi.contains(bsn)) {
+					// include version info
+					info = new BundleInfo(bsn, ((IResolvedBundle) checked[i]).getBundleInfo().getVersion(), null, BundleInfo.NO_BUNDLEID, false);
 				} else {
-					List included = new ArrayList(checked.size());
-					// need to save version information if a checked bundle has multiple versions available
-					IResolvedBundle[] allBundles = container.getAllBundles();
-					Set multi = new HashSet(); // BSNs of bundles with multiple versions available
-					Set all = new HashSet();
-					for (int j = 0; j < allBundles.length; j++) {
-						IResolvedBundle rb = allBundles[j];
-						if (!all.add(rb.getBundleInfo().getSymbolicName())) {
-							multi.add(rb.getBundleInfo().getSymbolicName());
-						}
-					}
-					for (Iterator iterator = checked.iterator(); iterator.hasNext();) {
-						IResolvedBundle currentBundle = (IResolvedBundle) iterator.next();
-						BundleInfo bi = currentBundle.getBundleInfo();
-						String bsn = bi.getSymbolicName();
-						BundleInfo info = null;
-						if (multi.contains(bsn)) {
-							// include version info
-							info = new BundleInfo(bsn, bi.getVersion(), null, BundleInfo.NO_BUNDLEID, false);
-						} else {
-							// don't store version info
-							info = new BundleInfo(bsn, null, null, BundleInfo.NO_BUNDLEID, false);
-						}
-						included.add(info);
-					}
-					((IBundleContainer) changeContainers[i]).setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
+					// don't store version info
+					info = new BundleInfo(bsn, null, null, BundleInfo.NO_BUNDLEID, false);
 				}
+
+				// Add it to the correct map entry
+				IBundleContainer parent = ((IResolvedBundle) checked[i]).getParentContainer();
+				List included = (List) includedBundleMap.get(parent);
+				if (included == null) {
+					included = new ArrayList();
+					included.add(info);
+					includedBundleMap.put(parent, included);
+				} else {
+					included.add(info);
+				}
+			}
+		}
+
+		// Save the bundle lists to the containers
+		IBundleContainer[] containers = fTargetDefinition.getBundleContainers();
+		for (int i = 0; i < containers.length; i++) {
+			List included = (List) includedBundleMap.get(containers[i]);
+			if (included == null || included.size() == 0) {
+				containers[i].setIncludedBundles(new BundleInfo[0]);
+			} else if (included.size() == containers[i].getAllBundles().length) {
+				containers[i].setIncludedBundles(null);
+			} else {
+				containers[i].setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
 			}
 		}
 	}
@@ -1096,7 +939,7 @@ public class TargetContentsGroup extends FilteredTree {
 	 */
 	class TreeContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
-			return getBundleChildren(parentElement).toArray();
+			return getBundleChildren(parentElement);
 		}
 
 		public Object getParent(Object element) {
@@ -1108,7 +951,7 @@ public class TargetContentsGroup extends FilteredTree {
 				return false;
 			}
 			if (element instanceof IBundleContainer || element instanceof IPath) {
-				return getBundleChildren(element).size() > 0;
+				return getBundleChildren(element).length > 0;
 			}
 			return false;
 		}
@@ -1116,11 +959,11 @@ public class TargetContentsGroup extends FilteredTree {
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
 				if (fGrouping == GROUP_BY_NONE) {
-					return fAllBundles.toArray();
+					return fTargetDefinition.getAllBundles();
 				} else if (fGrouping == GROUP_BY_CONTAINER) {
-					return fContainerBundles.keySet().toArray();
+					return fTargetDefinition.getBundleContainers();
 				} else {
-					return fFileBundles.keySet().toArray();
+					return getFileBundleMapping().keySet().toArray();
 				}
 			}
 			return new Object[] {inputElement};
