@@ -531,32 +531,37 @@ public class ProjectModifyOperation {
 				}
 			}
 			// Activation policy
+			boolean removeActivation = false;
 			if (!isEqual(description.getActivationPolicy(), before.getActivationPolicy())) {
 				if (Constants.ACTIVATION_LAZY.equals(description.getActivationPolicy())) {
 					if (description.isEquinox()) {
-						if (description.getHost() == null && description.getActivator() != null) {
-							if (targetVersion.equals(IBundleProjectDescription.VERSION_3_1))
-								bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
-							else {
-								double version = Double.parseDouble(targetVersion);
-								if (version >= 3.4) {
-									// use OSGi R4.1 header
-									bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
-								} else {
-									bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
-								}
+						if (targetVersion.equals(IBundleProjectDescription.VERSION_3_1))
+							bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
+						else {
+							double version = Double.parseDouble(targetVersion);
+							if (version >= 3.4) {
+								// use OSGi R4.1 header
+								bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
+							} else {
+								bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
 							}
-
 						}
 					} else {
 						// use OSGi R4.1 header
 						bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
 					}
 				} else { // remove activation policy headers
-					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, null);
-					bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, null);
-					bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, null);
+					removeActivation = true;
 				}
+			}
+			if (description.getHost() != null && before.getHost() == null) {
+				// remove activation policy if becoming a fragment
+				removeActivation = true;
+			}
+			if (removeActivation) {
+				bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, null);
+				bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, null);
+				bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, null);
 			}
 			// Localization
 			IPath localization = description.getLocalization();

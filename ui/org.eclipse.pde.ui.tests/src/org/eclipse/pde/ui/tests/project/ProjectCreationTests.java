@@ -180,6 +180,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IHostDescription host = service.newHost("some.host", new VersionRange(new Version("1.0.0"), true, new Version("2.0.0"), false));
 		description.setHost(host);
+		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"), new Path("frag.jar"));
 		description.setBundleClassath(new IBundleClasspathEntry[]{e1});
 		description.apply(null);
@@ -391,11 +392,12 @@ public class ProjectCreationTests extends TestCase {
 		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
 		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
+		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
-		assertNull("Should be no activation policy", d2.getActivationPolicy());
+		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -446,6 +448,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
 		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
 		
 		// modify
