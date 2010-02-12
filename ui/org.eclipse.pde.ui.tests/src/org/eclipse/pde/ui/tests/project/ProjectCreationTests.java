@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import org.eclipse.pde.core.project.IBundleProjectService;
-
-import org.eclipse.pde.internal.core.PDECore;
-
-import org.eclipse.pde.internal.core.ICoreConstants;
-
 import java.io.*;
 import java.net.URL;
 import junit.framework.*;
@@ -23,8 +17,13 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.project.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.Version;
 
@@ -255,6 +254,13 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+		
+		// validate there's only one output.the.jar entry in build.properties
+		WorkspaceBuildModel properties = new WorkspaceBuildModel(PDEProject.getBuildProperties(project));
+		IBuildEntry entry = properties.getBuild().getEntry("output.the.jar");
+		assertNotNull("Missing output entry", entry);
+		String[] tokens = entry.getTokens();
+		assertEquals("Wrong number of output folders", 1, tokens.length);
 	}
 	
 	/**

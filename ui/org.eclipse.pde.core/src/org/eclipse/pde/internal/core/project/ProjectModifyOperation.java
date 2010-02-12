@@ -777,10 +777,14 @@ public class ProjectModifyOperation {
 					}
 					if (outFolder != null) {
 						IBuildEntry entry = getBuildEntry(build, factory, IBuildEntry.OUTPUT_PREFIX + libraryName);
+						String token = null;
 						if (!outFolder.isEmpty())
-							entry.addToken(outFolder.addTrailingSeparator().toString());
+							token = outFolder.addTrailingSeparator().toString();
 						else
-							entry.addToken("."); //$NON-NLS-1$
+							token = "."; //$NON-NLS-1$
+						if (!entry.contains(token)) {
+							entry.addToken(token);
+						}
 					}
 
 				}
