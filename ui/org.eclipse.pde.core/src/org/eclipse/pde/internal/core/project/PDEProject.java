@@ -53,6 +53,41 @@ public class PDEProject {
 	}
 
 	/**
+	 * Returns the launch shortcuts configured for this project
+	 * or <code>null</code> if default launchers should be used.
+	 *  
+	 * @param project project
+	 * @return configured launch shortcuts or <code>null</code>
+	 */
+	public static String[] getLaunchShortcuts(IProject project) {
+		ProjectScope scope = new ProjectScope(project);
+		IEclipsePreferences node = scope.getNode(PDECore.PLUGIN_ID);
+		if (node != null) {
+			String list = node.get(ICoreConstants.MANIFEST_LAUNCH_SHORTCUTS, (String) null);
+			if (list != null) {
+				return list.split(","); //$NON-NLS-1$
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the export wizard configured for this project or <code>null</code>
+	 * if default.
+	 * 
+	 * @param project project
+	 * @return export wizard identifier or <code>null</code>
+	 */
+	public static String getExportWizard(IProject project) {
+		ProjectScope scope = new ProjectScope(project);
+		IEclipsePreferences node = scope.getNode(PDECore.PLUGIN_ID);
+		if (node != null) {
+			return node.get(ICoreConstants.MANIFEST_EXPORT_WIZARD, (String) null);
+		}
+		return null;
+	}
+
+	/**
 	 * Sets the root of the bundle related artifacts in the specified project
 	 * to the specified container. When <code>null</code> is specified, the 
 	 * bundle root will be the project itself. The container must be within

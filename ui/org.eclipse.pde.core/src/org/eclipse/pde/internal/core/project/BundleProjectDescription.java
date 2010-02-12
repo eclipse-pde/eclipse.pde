@@ -65,6 +65,8 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private IPath[] fBinIncludes;
 	private WorkspacePluginModelBase fModel;
 	private IBundleProjectService fService;
+	private String[] fLaunchShortcuts;
+	private String fExportWizard;
 
 	/**
 	 * Constructs a bundle description for the specified project.
@@ -107,6 +109,10 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			setExtensionRegistry(node.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true));
 			setEquniox(node.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true));
 		}
+		// export wizard and launch shortcuts
+		setExportWizardId(PDEProject.getExportWizard(project));
+		setLaunchShortcuts(PDEProject.getLaunchShortcuts(project));
+
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (model != null) {
 			IPluginBase base = model.getPluginBase();
@@ -710,6 +716,34 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 */
 	public void setExtensionRegistry(boolean supportExtensions) {
 		fIsExtensionRegistry = supportExtensions;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getLaunchShortcuts()
+	 */
+	public String[] getLaunchShortcuts() {
+		return fLaunchShortcuts;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setLaunchShortcuts(java.lang.String[])
+	 */
+	public void setLaunchShortcuts(String[] ids) {
+		fLaunchShortcuts = ids;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getExportWizardId()
+	 */
+	public String getExportWizardId() {
+		return fExportWizard;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setExportWizardId(java.lang.String)
+	 */
+	public void setExportWizardId(String id) {
+		fExportWizard = id;
 	}
 
 }

@@ -108,4 +108,19 @@
             id="org.eclipse.pde.ui.tests.ee.analyzer">
       </analyzer>
    </extension>
+   <extension
+         point="org.eclipse.pde.ui.launchShortcuts">
+      <shortcut
+            id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
+            label="Run this bundle"
+            mode="run"
+            projectSpecific="true">
+      </shortcut>
+      <shortcut
+            id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
+            label="Debug this bundle"
+            mode="debug"
+            projectSpecific="true">
+      </shortcut>
+   </extension>
 </plugin>

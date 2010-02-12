@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -20,11 +22,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
 import org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  *
@@ -58,15 +63,37 @@ public class PluginExportAction extends Action {
 	public void run() {
 		if (fEditor != null)
 			ensureContentSaved();
-		PluginExportWizard wizard = new PluginExportWizard();
 		IStructuredSelection selection;
 		IResource resource = null;
 		if (fEditor != null)
 			resource = ((IModel) fEditor.getAggregateModel()).getUnderlyingResource();
-		if (resource != null)
+		String customWizard = null;
+		if (resource != null) {
 			selection = new StructuredSelection(resource);
-		else
+			IProject project = resource.getProject();
+			if (project != null) {
+				// a project can override the default export wizard
+				customWizard = PDEProject.getExportWizard(project);
+			}
+		} else {
 			selection = new StructuredSelection();
+		}
+		IWorkbenchWizard wizard = null;
+		if (customWizard != null) {
+			IWizardDescriptor descriptor = PlatformUI.getWorkbench().getExportWizardRegistry().findWizard(customWizard);
+			if (descriptor != null) {
+				try {
+					wizard = descriptor.createWizard();
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+					notifyResult(false);
+					return;
+				}
+			}
+		}
+		if (wizard == null) {
+			wizard = new PluginExportWizard();
+		}
 		wizard.init(PlatformUI.getWorkbench(), selection);
 		WizardDialog wd = new ResizableWizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		wd.create();

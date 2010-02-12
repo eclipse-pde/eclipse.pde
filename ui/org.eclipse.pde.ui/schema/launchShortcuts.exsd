@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde.ui">
+<schema targetNamespace="org.eclipse.pde.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.pde.ui" id="launchShortcuts" name="Launch Shortcuts"/>
@@ -13,6 +13,11 @@ This extension point is used to register a launching shortcut in a PDE editor. L
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="shortcut" minOccurs="1" maxOccurs="unbounded"/>
@@ -84,6 +89,13 @@ This extension point is used to register a launching shortcut in a PDE editor. L
             <annotation>
                <documentation>
                   If set to &lt;samp&gt;true&lt;/samp&gt;, the link is displayed only if the plug-in manifest editor&apos;s presentation is set to show OSGi-related sections only, ie. when the Extensions and Extension Points pages are absent.  If not specified, the value is assumed to be &lt;samp&gt;false&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="projectSpecific" type="boolean">
+            <annotation>
+               <documentation>
+                  When &lt;code&gt;true&lt;/code&gt;, this launch shortcut is only displayed in projects it has been associated with via &lt;code&gt;IBundleProjectDescription&lt;/code&gt;. When unspecified, this value is assumed to be &lt;code&gt;false&lt;/code&gt;. This attribute was added in the 3.6 release to support custom launch shortcuts in Manifest editors.
                </documentation>
             </annotation>
          </attribute>

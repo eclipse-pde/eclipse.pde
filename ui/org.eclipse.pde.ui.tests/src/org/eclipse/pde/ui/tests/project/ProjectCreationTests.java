@@ -106,6 +106,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
 	
 	/**
@@ -151,6 +153,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}	
 	
 	/**
@@ -199,6 +203,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}	
 	
 	/**
@@ -247,6 +253,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
 	
 	/**
@@ -295,6 +303,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}	
 	/**
 	 * Set a symbolic name and singleton property, and go.
@@ -336,6 +346,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
 	
 	/**
@@ -393,6 +405,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}	
 	
 	/**
@@ -446,6 +460,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}	
 	
 	/**
@@ -517,6 +533,8 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong extension registry support", d2.isExtensionRegistry());
 		assertTrue("Wrong Equinox headers", d2.isEquinox());
 		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}		
 	
 	/**
@@ -584,6 +602,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}	
 	
 	/**
@@ -635,6 +655,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}		
 	
 	/**
@@ -697,6 +719,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
 	
 	/**
@@ -780,5 +804,56 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}	
+	
+	/**
+	 * Test custom export wizard and launch shortcuts.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testExportWizardLaunchShortcuts() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		description.setLaunchShortcuts(new String[]{"org.eclipse.jdt.debug.ui.javaAppletShortcut"});
+		description.setExportWizardId("org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints");
+		description.apply(null);
+		
+		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
+		
+		assertNull("Should be no activator", d2.getActivator());
+		IPath[] binIncludes = d2.getBinIncludes();
+		assertNull("Wrong number of entries on bin.includes", binIncludes);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertNotNull("Wrong Bundle-Classpath", classpath);
+		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", DEFAULT_BUNDLE_CLASSPATH_ENTRY, classpath[0]);
+		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
+		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
+		assertNull("Wrong host", d2.getHost());
+		assertNull("Wrong localization", d2.getLocalization());
+		assertNull("Wrong project location URI", d2.getLocationURI());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		assertNull("Wrong imports", d2.getPackageImports());
+		assertNull("Wrong exports", d2.getPackageExports());
+		assertEquals("Wrong project", project, d2.getProject());
+		assertNull("Wrong required bundles", d2.getRequiredBundles());
+		assertNull("Wrong target version", d2.getTargetVersion());
+		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
+		assertFalse("Wrong singleton", d2.isSingleton());
+		assertEquals("Wrong export wizard", "org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints", d2.getExportWizardId());
+		String[] ids = d2.getLaunchShortcuts();
+		assertNotNull("Wrong launch shortctus", ids);
+		assertEquals("Wrong number of shortcuts", 1, ids.length);
+		assertEquals("org.eclipse.jdt.debug.ui.javaAppletShortcut", ids[0]);
+	}
 }

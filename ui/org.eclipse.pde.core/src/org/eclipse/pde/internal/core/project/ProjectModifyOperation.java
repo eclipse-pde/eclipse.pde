@@ -93,7 +93,8 @@ public class ProjectModifyOperation {
 		configureBuildPropertiesFile(description, before);
 		sub.worked(1);
 
-		// project settings for Equinox, Extension Registry, and Automated dependency policy
+		// project settings for Equinox, Extension Registry, Automated dependency policy,
+		// manifest editor launch shortcuts and export wizard
 		IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 		if (pref != null) {
 			// best guess for automated dependency management: Equinox + Extensions = use required bundle
@@ -112,10 +113,28 @@ public class ProjectModifyOperation {
 			} else {
 				pref.putBoolean(ICoreConstants.EQUINOX_PROPERTY, false);
 			}
+			String[] shorts = description.getLaunchShortcuts();
+			if (shorts == null || shorts.length == 0) {
+				pref.remove(ICoreConstants.MANIFEST_LAUNCH_SHORTCUTS); // use defaults
+			} else {
+				StringBuffer value = new StringBuffer();
+				for (int i = 0; i < shorts.length; i++) {
+					if (i > 0) {
+						value.append(',');
+					}
+					value.append(shorts[i]);
+				}
+				pref.put(ICoreConstants.MANIFEST_LAUNCH_SHORTCUTS, value.toString());
+			}
+			if (description.getExportWizardId() == null) {
+				pref.remove(ICoreConstants.MANIFEST_EXPORT_WIZARD);
+			} else {
+				pref.put(ICoreConstants.MANIFEST_EXPORT_WIZARD, description.getExportWizardId());
+			}
 			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error saving project specific settings", e));
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.ProjectModifyOperation_2, e));
 			}
 		}
 

@@ -100,6 +100,22 @@ public interface ICoreConstants {
 	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
 	public static final String RESOLVE_WITH_REQUIRE_BUNDLE = "resolve.requirebundle"; //$NON-NLS-1$
 	public static final String TARGET_PROFILE = "target.profile"; //$NON-NLS-1$
+	/**
+	 * Configures launch shortcuts visible in the manifest editor for a project.
+	 * Value is a comma separated list of <code>org.eclipse.pde.ui.launchShortcuts</code>
+	 * extension identifiers.
+	 * 
+	 * @since 3.6 
+	 */
+	public static final String MANIFEST_LAUNCH_SHORTCUTS = "manifest.launchShortcuts"; //$NON-NLS-1$
+
+	/**
+	 * Configures the export wizard used in the manifest editor for a project.
+	 * Value is an <code>org.eclipse.ui.exportWizards</code> extension identifier.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String MANIFEST_EXPORT_WIZARD = "manifest.exportWizard"; //$NON-NLS-1$
 
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
 	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$

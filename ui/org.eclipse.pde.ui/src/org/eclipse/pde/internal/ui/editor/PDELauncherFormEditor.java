@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.ILaunchShortcut;
@@ -18,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.actions.ActionMenu;
 
@@ -67,7 +70,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		for (int i = 0; i < elements.length; i++) {
 			String label = elements[i].getAttribute("label"); //$NON-NLS-1$
 			final String thisLaunchShortcut = getLaunchString(elements[i]);
-			Action thisAction = new Action(label) { 
+			Action thisAction = new Action(label) {
 				public void run() {
 					doSave(null);
 					launch(thisLaunchShortcut, getPreLaunchRunnable(), getLauncherHelper().getLaunchObject());
@@ -142,16 +145,40 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		ArrayList runList = new ArrayList();
 		ArrayList debugList = new ArrayList();
 		ArrayList profileList = new ArrayList();
+		// limit to specific shortcuts based on project settings (if specified)
+		IResource resource = (IResource) getEditorInput().getAdapter(IResource.class);
+		Set specificIds = null;
+		if (resource != null) {
+			IProject project = resource.getProject();
+			if (project != null) {
+				String[] values = PDEProject.getLaunchShortcuts(project);
+				if (values != null) {
+					specificIds = new HashSet();
+					for (int i = 0; i < values.length; i++) {
+						specificIds.add(values[i]);
+					}
+				}
+			}
+		}
 		for (int i = 0; i < elements.length; i++) {
 			String mode = elements[i].getAttribute("mode"); //$NON-NLS-1$
-			if (mode != null && elements[i].getAttribute("label") != null && elements[i].getAttribute("id") != null && //$NON-NLS-1$ //$NON-NLS-2$
-					osgi == "true".equals(elements[i].getAttribute("osgi"))) { //$NON-NLS-1$ //$NON-NLS-2$
-				if (mode.equals(ILaunchManager.RUN_MODE))
-					runList.add(elements[i]);
-				else if (mode.equals(ILaunchManager.DEBUG_MODE))
-					debugList.add(elements[i]);
-				else if (mode.equals(ILaunchManager.PROFILE_MODE))
-					profileList.add(elements[i]);
+			String id = elements[i].getAttribute("id"); //$NON-NLS-1$
+			String projectSpecific = elements[i].getAttribute("projectSpecific"); //$NON-NLS-1$
+			if (mode != null && elements[i].getAttribute("label") != null && id != null) { //$NON-NLS-1$
+				boolean include = false;
+				if (specificIds != null) {
+					include = specificIds.contains(id);
+				} else {
+					include = osgi == "true".equals(elements[i].getAttribute("osgi")) && !"true".equals(projectSpecific); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				}
+				if (include) {
+					if (mode.equals(ILaunchManager.RUN_MODE))
+						runList.add(elements[i]);
+					else if (mode.equals(ILaunchManager.DEBUG_MODE))
+						debugList.add(elements[i]);
+					else if (mode.equals(ILaunchManager.PROFILE_MODE))
+						profileList.add(elements[i]);
+				}
 			}
 		}
 

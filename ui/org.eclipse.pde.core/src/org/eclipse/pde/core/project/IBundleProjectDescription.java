@@ -473,4 +473,56 @@ public interface IBundleProjectDescription {
 	 */
 	public IPath getBundleRoot();
 
+	/**
+	 * Returns identifiers of <code>org.eclipse.debug.ui.launchShortcuts</code>
+	 * referenced by <code>org.eclipse.pde.ui.launchShortcuts</code> extensions
+	 * that will be displayed in the manifest editor for the project associated
+	 * with these settings, or <code>null</code> if default shortcuts are being
+	 * used.
+	 * 
+	 * @return identifiers of the <code>org.eclipse.debug.ui.launchShortcuts</code> extensions
+	 *  or <code>null</code>
+	 */
+	public String[] getLaunchShortcuts();
+
+	/**
+	 * Sets the identifiers of <code>org.eclipse.debug.ui.launchShortcuts</code>
+	 * referenced by <code>org.eclipse.pde.ui.launchShortcuts</code> extensions
+	 * to be displayed in the manifest editor for the project associated with these settings,
+	 * or <code>null</code> to indicate default shortcuts should be used.
+	 * <p>
+	 * When default shortcuts are used, all <code>org.eclipse.pde.ui.launchShortcuts</code> extensions
+	 * are considered. When specific shortcuts are specified, the available shortcuts will be limited
+	 * to those specified.
+	 * </p>
+	 * <p>
+	 * <b>Important</b>: When specifying shortcuts, both <code>org.eclipse.debug.ui.launchShortcuts</code> and
+	 * <code>org.eclipse.pde.ui.launchShortcuts</code> must exist. Labels for shortcuts in the editor
+	 * are derived from the <code>org.eclipse.pde.ui.launchShortcuts</code>.
+	 * </p>
+	 * @param ids identifiers of <code>org.eclipse.debug.ui.launchShortcuts</code> extensions
+	 *  or <code>null</code>
+	 */
+	public void setLaunchShortcuts(String[] ids);
+
+	/**
+	 * Returns the identifier of the <code>org.eclipse.ui.exportWizards</code> extension
+	 * used in the manifest editor for exporting the project associated with these
+	 * settings, or <code>null</code> if the default export wizard should be used.
+	 * 
+	 * @return identifier of an <code>org.eclipse.ui.exportWizards</code> extension
+	 *  or <code>null</code>
+	 */
+	public String getExportWizardId();
+
+	/**
+	 * Sets the identifier of the <code>org.eclipse.ui.exportWizards</code> extension
+	 * used in the manifest editor for exporting the project associated with these
+	 * settings, or <code>null</code> if the default export wizard should be used.
+	 * 
+	 * @param id identifier of an <code>org.eclipse.ui.exportWizards</code> extension
+	 *  or <code>null</code>
+	 */
+	public void setExportWizardId(String id);
+
 }
