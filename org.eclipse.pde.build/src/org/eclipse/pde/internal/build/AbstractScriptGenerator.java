@@ -274,7 +274,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 	protected static boolean loadP2Class() {
 		try {
-			BundleHelper.getDefault().getClass().getClassLoader().loadClass("org.eclipse.equinox.internal.provisional.p2.metadata.generator.Generator"); //$NON-NLS-1$
+			BundleHelper.getDefault().getClass().getClassLoader().loadClass("org.eclipse.equinox.p2.publisher.Publisher"); //$NON-NLS-1$
 			return true;
 		} catch (Throwable e) {
 			return false;
