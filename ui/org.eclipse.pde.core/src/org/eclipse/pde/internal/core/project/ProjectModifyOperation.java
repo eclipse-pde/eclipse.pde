@@ -530,23 +530,29 @@ public class ProjectModifyOperation {
 					bundle.setHeader(Constants.EXPORT_PACKAGE, header.getValue());
 				}
 			}
-			// Equinox specific headers
-			if (description.isEquinox() != before.isEquinox()) {
-				if (description.isEquinox()) {
-					if (description.getHost() == null && description.getActivator() != null) {
-						if (targetVersion.equals(IBundleProjectDescription.VERSION_3_1))
-							bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
-						else {
-							double version = Double.parseDouble(targetVersion);
-							if (version >= 3.4) {
-								bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
-							} else {
-								bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
+			// Activation policy
+			if (!isEqual(description.getActivationPolicy(), before.getActivationPolicy())) {
+				if (Constants.ACTIVATION_LAZY.equals(description.getActivationPolicy())) {
+					if (description.isEquinox()) {
+						if (description.getHost() == null && description.getActivator() != null) {
+							if (targetVersion.equals(IBundleProjectDescription.VERSION_3_1))
+								bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
+							else {
+								double version = Double.parseDouble(targetVersion);
+								if (version >= 3.4) {
+									// use OSGi R4.1 header
+									bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
+								} else {
+									bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
+								}
 							}
-						}
 
+						}
+					} else {
+						// use OSGi R4.1 header
+						bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
 					}
-				} else { // remove
+				} else { // remove activation policy headers
 					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, null);
 					bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, null);
 					bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, null);

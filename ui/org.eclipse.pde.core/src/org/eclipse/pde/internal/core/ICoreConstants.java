@@ -131,7 +131,17 @@ public interface ICoreConstants {
 	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
 	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
 	public final static String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
+	/**
+	 * The 'Eclipse-AutoStart=true' header was used up to and including 3.1 to mean LAZY.
+	 * However, this was a poorly named header, since "auto-start" sounds UN-LAZY, and
+	 * was replaced with 'Eclipse-LazyStart=true' in 3.2.
+	 */
 	public final static String ECLIPSE_AUTOSTART = "Eclipse-AutoStart"; //$NON-NLS-1$
+	/**
+	 * The 'Eclipse-LazyStart=true' header replaced the 'Eclipse-AutoStart' header 
+	 * with a better name in 3.2. And since 3.4 (OSGi R4.1), the 'Bundle-ActivationPolicy: lazy'
+	 * replaces all of these.
+	 */
 	public final static String ECLIPSE_LAZYSTART = "Eclipse-LazyStart"; //$NON-NLS-1$
 	public final static String ECLIPSE_JREBUNDLE = "Eclipse-JREBundle"; //$NON-NLS-1$
 	public static final String ECLIPSE_BUDDY_POLICY = "Eclipse-BuddyPolicy"; //$NON-NLS-1$

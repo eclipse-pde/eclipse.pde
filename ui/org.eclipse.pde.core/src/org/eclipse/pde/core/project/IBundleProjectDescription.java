@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
 /**
@@ -326,31 +327,65 @@ public interface IBundleProjectDescription {
 	/**
 	 * Sets whether the described bundle is targeted for the Equinox OSGi framework.
 	 * <p>
-	 * Equniox specific headers will be generated in the associated manifest
-	 * when <code>true</code> and removed when <code>false</code>. For new projects
+	 * An Equniox specific lazy-start header will be generated in the associated manifest
+	 * when <code>true</code> based on the target version and activation policy. For new projects
 	 * the value is <code>false</code>, by default.
 	 * </p>
 	 * <p>
-	 * This following headers are added when <code>true</code>, based on the {@link #getTargetVersion()}
-	 * and removed when <code>false</code>.
+	 * This following headers are affected when <code>true</code>, based on the {@link #getTargetVersion()}
+	 * and {@link #getActivationPolicy()}. The headers are removed when {@link #getActivationPolicy()} is
+	 * unspecified (<code>null</code>).
 	 * <ul>
-	 * <li><code>Eclipse-AutoStart</code> is set to <code>true</code> when the target version is 3.1</li>
-	 * <li><code>Eclipse-LazyStart</code> is set to <code>true</code> when the target version is 3.2 or 3.3</li>
-	 * <li><code>Bundle-ActivationPolicy</code> is set to <code>lazy</code> when the target version is 3.4 or greater</li>
+	 * <li><code>Eclipse-AutoStart</code> is set to <code>true</code> when the target version is 3.1
+	 * 	and {@link #getActivationPolicy()} is {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Eclipse-LazyStart</code> is set to <code>true</code> when the target version is 3.2 or 3.3
+	 *  and {@link #getActivationPolicy()} is {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Bundle-ActivationPolicy</code> is set to <code>lazy</code> when the target version is 3.4 or
+	 *  greater and {@link #getActivationPolicy()} is {@link Constants#ACTIVATION_LAZY}</li>
 	 * </ul>
 	 * </p>
-	 * @param equinox 
+	 * @param equinox whether targeted for the Equinox OSGi framework
 	 * @see #getTargetVersion()
 	 */
 	public void setEquniox(boolean equinox);
 
 	/**
 	 * Returns whether the described bundle is targeted for the Equinox OSGi framework.
-	 * Effects the Equinox headers generated in the manifest.
+	 * Effects the Equinox lazy-start header generated in the manifest.
 	 * 
 	 * @return whether the described bundle is targeted for the Equinox OSGi framework
 	 */
 	public boolean isEquinox();
+
+	/**
+	 * Sets this bundle's activation policy. Legal values are {@link Constants#ACTIVATION_LAZY}
+	 * or <code>null</code> (unspecified). Any other values are ignored (equivalent to
+	 * <code>null</code>). When unspecified, a corresponding header is not generated. By default
+	 * the value is unspecified for newly created projects.
+	 * <p>
+	 * An Equniox specific lazy-start header will be generated in the associated manifest
+	 * based on the {@link #getTargetVersion()} and the specified policy. The headers are
+	 * removed when the policy is unspecified (<code>null</code>).
+	 * <ul>
+	 * <li><code>Eclipse-AutoStart</code> is set to <code>true</code> when the target version is 3.1
+	 * 	and policy is {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Eclipse-LazyStart</code> is set to <code>true</code> when the target version is 3.2 or 3.3
+	 *  and policy is {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Bundle-ActivationPolicy</code> is set to <code>lazy</code> when the target version is 3.4 or
+	 *  greater and policy is {@link Constants#ACTIVATION_LAZY}</li>
+	 * </ul>
+	 * </p>
+	 * @param policy activation policy or <code>null</code>
+	 * @see #getTargetVersion()
+	 */
+	public void setActivationPolicy(String policy);
+
+	/**
+	 * Returns this bundle's activation policy or <code>null</code> if unspecified.
+	 * 
+	 * @return activation policy or <code>null</code>
+	 */
+	public String getActivationPolicy();
 
 	/**
 	 * Sets whether this bundle supports extension points and extensions via 

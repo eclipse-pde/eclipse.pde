@@ -59,6 +59,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private String fTargetVersion;
 	private boolean fIsEquinox = false;
 	private boolean fIsExtensionRegistry = false;
+	private String fActivationPolicy;
 	private IRequiredBundleDescription[] fRequiredBundles;
 	private IPackageImportDescription[] fImports;
 	private IPackageExportDescription[] fExports;
@@ -237,6 +238,23 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						setRequiredBundles(req);
 					}
 				}
+				String policy = null;
+				header = createHeader(bundle, ICoreConstants.ECLIPSE_AUTOSTART);
+				if (header == null) {
+					header = createHeader(bundle, ICoreConstants.ECLIPSE_LAZYSTART);
+					if (header == null) {
+						header = createHeader(bundle, Constants.BUNDLE_ACTIVATIONPOLICY);
+					}
+				}
+				if (header instanceof LazyStartHeader) {
+					if (((LazyStartHeader) header).isLazyStart()) {
+						policy = Constants.ACTIVATION_LAZY;
+					}
+				}
+				setActivationPolicy(policy);
+			} else {
+				// not a bundle
+				setActivationPolicy(null);
 			}
 			setLocationURI(project.getDescription().getLocationURI());
 			setNatureIds(project.getDescription().getNatureIds());
@@ -744,6 +762,24 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 */
 	public void setExportWizardId(String id) {
 		fExportWizard = id;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setActivationPolicy(java.lang.String)
+	 */
+	public void setActivationPolicy(String policy) {
+		if (Constants.ACTIVATION_LAZY.equals(policy)) {
+			fActivationPolicy = policy;
+		} else {
+			fActivationPolicy = null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getActivationPolicy()
+	 */
+	public String getActivationPolicy() {
+		return fActivationPolicy;
 	}
 
 }

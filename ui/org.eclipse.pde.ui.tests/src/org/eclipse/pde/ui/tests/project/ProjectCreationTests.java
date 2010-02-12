@@ -10,6 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
+
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+
+import org.eclipse.pde.core.plugin.*;
+
+import org.osgi.framework.Constants;
+
 import java.io.*;
 import java.net.URL;
 import junit.framework.*;
@@ -78,6 +88,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -125,6 +136,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -175,6 +187,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -224,6 +237,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -251,6 +265,7 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
@@ -281,6 +296,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -325,6 +341,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -378,6 +395,7 @@ public class ProjectCreationTests extends TestCase {
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -439,6 +457,7 @@ public class ProjectCreationTests extends TestCase {
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -486,6 +505,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
+		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setEquniox(true);
 		description.setExtensionRegistry(true);
 		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
@@ -501,6 +521,7 @@ public class ProjectCreationTests extends TestCase {
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
+		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
 		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
@@ -568,12 +589,14 @@ public class ProjectCreationTests extends TestCase {
 		modify.setPackageExports(new IPackageExportDescription[]{ex0, ex2, ex4, ex3}); // remove, add, re-order
 		modify.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		modify.setActivator("org.eclipse.foo.Activator");
+		modify.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		modify.apply(null);
 		
 		// verify attributes
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
-		assertEquals("Should be no activator", "org.eclipse.foo.Activator", d2.getActivator());
+		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
+		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
 		assertEquals("Wrong bin.includes entry", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
@@ -634,6 +657,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -690,6 +714,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -775,6 +800,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -829,6 +855,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		
 		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertNull("Wrong number of entries on bin.includes", binIncludes);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
@@ -862,4 +889,299 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong number of shortcuts", 1, ids.length);
 		assertEquals("org.eclipse.jdt.debug.ui.javaAppletShortcut", ids[0]);
 	}
+	
+	/**
+	 * Targeting 3.1, should get result it Eclipse-AutoStart: true
+	 * 
+	 * @throws CoreException
+	 */
+	public void testLazyAutostart() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		description.setSingleton(true);
+		IPath src = new Path("src");
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setActivator("org.eclipse.foo.Activator");
+		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
+		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
+		description.setEquniox(true);
+		description.setExtensionRegistry(true);
+		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
+		IRequiredBundleDescription rb1 = service.newRequiredBundle(
+				"org.eclipse.core.resources",
+				new VersionRange(new Version(3,5,0), true, new Version(4,0,0), false),
+				true, false);
+		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", null, false, false);
+		description.setRequiredBundles(new IRequiredBundleDescription[]{rb1, rb2});
+		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
+		description.setPackageImports(new IPackageImportDescription[]{pi1});
+		description.apply(null);
+		
+		IBundleProjectDescription d2 = service.getDescription(project);
+		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
+		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
+		IPath[] binIncludes = d2.getBinIncludes();
+		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
+		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertNotNull("Bundle-Classpath should be specified", classpath);
+		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", classpath[0], spec);
+		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
+		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		String[] ees = d2.getExecutionEnvironments();
+		assertNotNull("Wrong execution environments", ees);
+		assertEquals("Wrong number of execution environments", 1, ees.length);
+		assertEquals("Wrong execution environment", "J2SE-1.4", ees[0]);
+		assertNull("Wrong host", d2.getHost());
+		assertNull("Wrong localization", d2.getLocalization());
+		assertNull("Wrong project location URI", d2.getLocationURI());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		IPackageImportDescription[] imports = d2.getPackageImports();
+		assertNull("Wrong exports", d2.getPackageExports());
+		assertNotNull("Wrong imports", imports);
+		assertEquals("Wrong number of package imports", 1, imports.length);
+		assertEquals("Wrong package import", pi1, imports[0]);
+		assertEquals("Wrong project", project, d2.getProject());
+		IRequiredBundleDescription[] bundles = d2.getRequiredBundles();
+		assertNotNull("Wrong required bundles", bundles);
+		assertEquals("Wrong number of required bundles", 2, bundles.length);
+		assertEquals("Wrong required bundle", rb1, bundles[0]);
+		assertEquals("Wrong required bundle", rb2, bundles[1]);
+		assertNull("Wrong target version", d2.getTargetVersion());
+		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
+		assertTrue("Wrong extension registry support", d2.isExtensionRegistry());
+		assertTrue("Wrong Equinox headers", d2.isEquinox());
+		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+		
+		// ensure proper header was generated
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		assertNotNull("Missing plugin model", model);
+		IPluginBase base = model.getPluginBase();
+		IBundle bundle = ((BundlePluginBase) base).getBundle();
+		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_AUTOSTART);
+		assertNotNull("Missing header", header);
+	}
+	
+	/**
+	 * Returns a structured header from a bundle model
+	 * 
+	 * @param bundle the bundle
+	 * @param header header name/key
+	 * @return header or <code>null</code>
+	 */
+	private IManifestHeader createHeader(IBundle bundle, String header) {
+		BundleModelFactory factory = new BundleModelFactory(bundle.getModel());
+		String headerValue = bundle.getHeader(header);
+		if (headerValue == null) {
+			return null;
+		}
+		return factory.createHeader(header, headerValue);
+	}
+	
+	/**
+	 * Targeting 3.1, eager bundle should omit Eclipse-AutoStart: header
+	 * 
+	 * @throws CoreException
+	 */
+	public void testEagerAutostart() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		description.setSingleton(true);
+		IPath src = new Path("src");
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setActivator("org.eclipse.foo.Activator");
+		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
+		description.setEquniox(true);
+		description.setExtensionRegistry(true);
+		description.apply(null);
+		
+		IBundleProjectDescription d2 = service.getDescription(project);
+		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
+		IPath[] binIncludes = d2.getBinIncludes();
+		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
+		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertNotNull("Bundle-Classpath should be specified", classpath);
+		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", classpath[0], spec);
+		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
+		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
+		assertNull("Wrong host", d2.getHost());
+		assertNull("Wrong localization", d2.getLocalization());
+		assertNull("Wrong project location URI", d2.getLocationURI());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		IPackageImportDescription[] imports = d2.getPackageImports();
+		assertNull("Wrong exports", d2.getPackageExports());
+		assertNull("Wrong imports", imports);
+		assertEquals("Wrong project", project, d2.getProject());
+		IRequiredBundleDescription[] bundles = d2.getRequiredBundles();
+		assertNull("Wrong required bundles", bundles);
+		assertNull("Wrong target version", d2.getTargetVersion());
+		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
+		assertTrue("Wrong extension registry support", d2.isExtensionRegistry());
+		assertTrue("Wrong Equinox headers", d2.isEquinox());
+		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+		
+		// ensure header was *not* generated
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		assertNotNull("Missing plugin model", model);
+		IPluginBase base = model.getPluginBase();
+		IBundle bundle = ((BundlePluginBase) base).getBundle();
+		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_AUTOSTART);
+		assertNull("Header should not be present", header);
+	}
+	
+	/**
+	 * Targeting 3.2, lazy bundle should have Eclipse-LazyStart: header
+	 * 
+	 * @throws CoreException
+	 */
+	public void testLazyEclipseLazyStart() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		description.setSingleton(true);
+		IPath src = new Path("src");
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setActivator("org.eclipse.foo.Activator");
+		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
+		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
+		description.setEquniox(true);
+		description.setExtensionRegistry(true);
+		description.apply(null);
+		
+		IBundleProjectDescription d2 = service.getDescription(project);
+		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
+		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
+		IPath[] binIncludes = d2.getBinIncludes();
+		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
+		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertNotNull("Bundle-Classpath should be specified", classpath);
+		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", classpath[0], spec);
+		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
+		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
+		assertNull("Wrong host", d2.getHost());
+		assertNull("Wrong localization", d2.getLocalization());
+		assertNull("Wrong project location URI", d2.getLocationURI());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		IPackageImportDescription[] imports = d2.getPackageImports();
+		assertNull("Wrong exports", d2.getPackageExports());
+		assertNull("Wrong imports", imports);
+		assertEquals("Wrong project", project, d2.getProject());
+		IRequiredBundleDescription[] bundles = d2.getRequiredBundles();
+		assertNull("Wrong required bundles", bundles);
+		assertNull("Wrong target version", d2.getTargetVersion());
+		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
+		assertTrue("Wrong extension registry support", d2.isExtensionRegistry());
+		assertTrue("Wrong Equinox headers", d2.isEquinox());
+		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+		
+		// ensure header was generated
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		assertNotNull("Missing plugin model", model);
+		IPluginBase base = model.getPluginBase();
+		IBundle bundle = ((BundlePluginBase) base).getBundle();
+		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_LAZYSTART);
+		assertNotNull("Header should be present", header);
+	}
+	
+	/**
+	 * Targeting 3.2, eager bundle should not have Eclipse-LazyStart: header
+	 * 
+	 * @throws CoreException
+	 */
+	public void testEagerEclipseLazyStart() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		description.setSingleton(true);
+		IPath src = new Path("src");
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setActivator("org.eclipse.foo.Activator");
+		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
+		description.setEquniox(true);
+		description.setExtensionRegistry(true);
+		description.apply(null);
+		
+		IBundleProjectDescription d2 = service.getDescription(project);
+		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
+		IPath[] binIncludes = d2.getBinIncludes();
+		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
+		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertNotNull("Bundle-Classpath should be specified", classpath);
+		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", classpath[0], spec);
+		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
+		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
+		assertNull("Wrong host", d2.getHost());
+		assertNull("Wrong localization", d2.getLocalization());
+		assertNull("Wrong project location URI", d2.getLocationURI());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		IPackageImportDescription[] imports = d2.getPackageImports();
+		assertNull("Wrong exports", d2.getPackageExports());
+		assertNull("Wrong imports", imports);
+		assertEquals("Wrong project", project, d2.getProject());
+		IRequiredBundleDescription[] bundles = d2.getRequiredBundles();
+		assertNull("Wrong required bundles", bundles);
+		assertNull("Wrong target version", d2.getTargetVersion());
+		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
+		assertTrue("Wrong extension registry support", d2.isExtensionRegistry());
+		assertTrue("Wrong Equinox headers", d2.isEquinox());
+		assertTrue("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+		
+		// ensure header was generated
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		assertNotNull("Missing plugin model", model);
+		IPluginBase base = model.getPluginBase();
+		IBundle bundle = ((BundlePluginBase) base).getBundle();
+		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_LAZYSTART);
+		assertNull("Header should not be present", header);
+	}		
 }
