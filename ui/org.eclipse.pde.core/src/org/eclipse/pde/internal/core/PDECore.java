@@ -28,8 +28,6 @@ import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.*;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.util.tracker.ServiceTracker;
 
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
@@ -126,9 +124,6 @@ public class PDECore extends Plugin {
 	private FeatureModelManager fFeatureModelManager;
 
 	private TargetDefinitionManager fTargetProfileManager;
-
-	private PackageAdmin fPackageAdmin = null;
-	private ServiceTracker fServiceTracker = null;
 
 	// Schema registry
 	private SchemaRegistry fSchemaRegistry;
@@ -243,7 +238,7 @@ public class PDECore extends Plugin {
 		if (fSearchablePluginsManager == null) {
 			fSearchablePluginsManager = new SearchablePluginsManager();
 			try {
-				getWorkspace().addSaveParticipant(inst, fSearchablePluginsManager);
+				getWorkspace().addSaveParticipant(inst.getBundle().getSymbolicName(), fSearchablePluginsManager);
 			} catch (CoreException e) {
 				log(e);
 			}
@@ -255,36 +250,9 @@ public class PDECore extends Plugin {
 		return fModelManager != null && fModelManager.isInitialized();
 	}
 
-	private Bundle getBundle(String symbolicName) {
-		if (fPackageAdmin == null)
-			return null;
-		Bundle[] bundles = fPackageAdmin.getBundles(symbolicName, null);
-		if (bundles == null)
-			return null;
-		// Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
-			}
-		}
-		return null;
-	}
-
-	private boolean startEarly(String bundleName) throws BundleException {
-		Bundle bundle = getBundle(bundleName);
-		if (bundle == null)
-			return false;
-		bundle.start(Bundle.START_TRANSIENT);
-		return true;
-	}
-
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext = context;
-
-		fServiceTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
-		fServiceTracker.open();
-		fPackageAdmin = (PackageAdmin) fServiceTracker.getService();
 
 		fJavaElementChangeListener = new JavaElementChangeListener();
 		fJavaElementChangeListener.start();
@@ -295,10 +263,6 @@ public class PDECore extends Plugin {
 
 		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable());
 		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable());
-
-		// for now we need to start this bundle to ensure required services
-		// are present when we need them (like IProfileRegistry)
-		startEarly("org.eclipse.equinox.p2.exemplarysetup"); //$NON-NLS-1$
 	}
 
 	public BundleContext getBundleContext() {
@@ -329,7 +293,7 @@ public class PDECore extends Plugin {
 			fTargetProfileManager = null;
 		}
 		if (fSearchablePluginsManager != null) {
-			getWorkspace().removeSaveParticipant(inst);
+			getWorkspace().removeSaveParticipant(inst.getBundle().getSymbolicName());
 			fSearchablePluginsManager.shutdown();
 			fSearchablePluginsManager = null;
 		}
@@ -354,9 +318,6 @@ public class PDECore extends Plugin {
 			fBundleProjectService.unregister();
 			fBundleProjectService = null;
 		}
-
-		fServiceTracker.close();
-		fPackageAdmin = null;
 	}
 
 	/**
