@@ -402,11 +402,38 @@ public interface IPDELauncherConstants {
 	 */
 	String GENERATE_PROFILE = "generateProfile"; //$NON-NLS-1$
 
+	/**
+	 * Launch configuration attribute key. The value is a string specifying
+	 * a comma-separated list of IDs of features to launch with.
+	 * 
+	 * @since 3.6
+	 */
 	String SELECTED_FEATURES = "selected_features"; //$NON-NLS-1$
 
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying
+	 * if the feature-based launching mode should be used.
+	 * This mode will launch with all the workspace and external features
+	 * that have been explicitly selected in the Plug-ins Tab.
+	 * 
+	 *  @since 3.6
+	 */
 	String USE_CUSTOM_FEATURES = "useCustomFeatures"; //$NON-NLS-1$
 
-	String LOCATION_WORKSPACE = "Workspace"; //$NON-NLS-1$
+	/**
+	 * Launch configuration attribute key. The value is a String specifying
+	 * if the default location for a feature is workspace or external. 
+	 * 
+	 *  @since 3.6
+	 */
+	String FEATURE_DEFAULT_LOCATION = "featureDefaultLocation"; //$NON-NLS-1$
 
-	String LOCATION_EXTERNAL = "Target"; //$NON-NLS-1$
+	/**
+	 * Launch configuration attribute key. The value is a String specifying
+	 * if the default plug-in resolution location for a feature 
+	 * is workspace or external. 
+	 * 
+	 *  @since 3.6
+	 */
+	String FEATURE_PLUGIN_RESOLUTION = "featurePluginResolution"; //$NON-NLS-1$
 }

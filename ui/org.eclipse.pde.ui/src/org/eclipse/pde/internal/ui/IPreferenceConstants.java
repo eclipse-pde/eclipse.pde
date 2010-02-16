@@ -39,4 +39,8 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	public static final String DEPS_VIEW_SHOW_CALLERS = "DependenciesView.show.callers"; //$NON-NLS-1$
 	public static final String DEPS_VIEW_SHOW_LIST = "DependenciesView.show.list"; //$NON-NLS-1$
 	public static final String DEPS_VIEW_SHOW_STATE = "DependenciesView.show.state"; //$NON-NLS-1$
+
+	//Run Configurations - Plug-ins Tab - Feature launching
+	public static final String FEATURE_SORT_COLUMN = "Preferences.RunConfigs.Feature.SortColumn"; //$NON-NLS-1$
+	public static final String FEATURE_SORT_ORDER = "Preferences.RunConfigs.Feature.SortOrder"; //$NON-NLS-1$
 }

@@ -66,13 +66,21 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_addRequiredFeatues;
 
+	public static String FeatureBlock_default;
+
+	public static String FeatureBlock_defaultFeatureLocation;
+
+	public static String FeatureBlock_defaultPluginResolution;
+
 	public static String FeatureBlock_features;
 
-	public static String FeatureBlock_location;
+	public static String FeatureBlock_featureLocation;
+
+	public static String FeatureBlock_pluginResolution;
 
 	public static String FeatureBlock_showSelected;
 
-	public static String FeatureBlock_external;
+	public static String FeatureBlock_externalBefore;
 
 	public static String FeatureBlock_useExternalFeatures;
 
@@ -80,7 +88,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_version;
 
-	public static String FeatureBlock_workspace;
+	public static String FeatureBlock_workspaceBefore;
 
 	public static String FeatureEditor_exportTooltip;
 
