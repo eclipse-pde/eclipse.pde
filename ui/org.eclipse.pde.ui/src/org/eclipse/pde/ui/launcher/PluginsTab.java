@@ -48,8 +48,8 @@ public class PluginsTab extends AbstractLauncherTab {
 
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int CUSTOM_SELECTION = 1;
-	private static final int FEATURE_SELECTION = 2;
-	private static final int CUSTOM_FEATURE_SELECTION = 3;
+	private static final int CUSTOM_FEATURE_SELECTION = 2;
+	private static final int FEATURE_SELECTION = 3;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
@@ -112,8 +112,8 @@ public class PluginsTab extends AbstractLauncherTab {
 
 		SWTFactory.createLabel(buttonComp, PDEUIMessages.PluginsTab_launchWith, 1);
 
-		fSelectionCombo = SWTFactory.createCombo(buttonComp, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_featureMode, PDEUIMessages.PluginsTab_customFeatureMode});
-		fSelectionCombo.select(0);
+		fSelectionCombo = SWTFactory.createCombo(buttonComp, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_customFeatureMode, PDEUIMessages.PluginsTab_featureMode});
+		fSelectionCombo.select(DEFAULT_SELECTION);
 		fSelectionCombo.addSelectionListener(fListener);
 
 		Label label = SWTFactory.createLabel(buttonComp, PDEUIMessages.EquinoxPluginsTab_defaultStart, 1);
@@ -159,7 +159,7 @@ public class PluginsTab extends AbstractLauncherTab {
 			} else if (!configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				index = CUSTOM_SELECTION;
 			}
-			fSelectionCombo.setText(fSelectionCombo.getItem(index));
+			fSelectionCombo.select(index);
 			fPluginBlock.setActiveBlock(index);
 			boolean custom = fSelectionCombo.getSelectionIndex() == CUSTOM_SELECTION;
 			fPluginBlock.initializeFrom(configuration, custom);

@@ -22,7 +22,8 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
+import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
@@ -39,7 +40,7 @@ import org.osgi.framework.Version;
 
 public class FeatureBlock {
 
-	class FeatureTableLabelProvider extends PDELabelProvider {
+	class FeatureTreeLabelProvider extends PDELabelProvider {
 		public Image getColumnImage(Object obj, int index) {
 			return index == 0 ? super.getColumnImage(obj, index) : null;
 		}
@@ -76,22 +77,22 @@ public class FeatureBlock {
 				handleRestoreDefaults();
 			} else if (source == fDefaultFeatureLocationCombo) {
 				handleDefaultChange();
-			} else if (source instanceof TableColumn) {
-				handleColumn((TableColumn) source, 0);
+			} else if (source instanceof TreeColumn) {
+				handleColumn((TreeColumn) source, 0);
 			}
 			fTab.updateLaunchConfigurationDialog();
 		}
 
 		private void handleAddRequired() {
-			if (fViewer.getCheckedElements() != null && fViewer.getCheckedElements().length > 0) {
-				Object[] featureModelIDs = fViewer.getCheckedElements();
+			if (fTree.getCheckedElements() != null && fTree.getCheckedElements().length > 0) {
+				Object[] featureModelIDs = fTree.getCheckedElements();
 				ArrayList requiredFeatureList = new ArrayList();
 
 				for (int i = 0; i < featureModelIDs.length; i++) {
 					requiredFeatureList.add(featureModelIDs[i]);
 					getFeatureDependencies((IFeatureModel) fFeatureModelMap.get(featureModelIDs[i]), requiredFeatureList);
 				}
-				fViewer.setCheckedElements(requiredFeatureList.toArray());
+				fTree.setCheckedElements(requiredFeatureList.toArray());
 			}
 		}
 
@@ -121,10 +122,11 @@ public class FeatureBlock {
 			}
 		}
 
-		private void handleColumn(TableColumn tc, int sortDirn) {
-			fTable.setSortColumn(tc);
+		private void handleColumn(TreeColumn tc, int sortDirn) {
+			Tree tree = fTree.getTree();
+			tree.setSortColumn(tc);
 			if (sortDirn == 0) {
-				switch (fTable.getSortDirection()) {
+				switch (tree.getSortDirection()) {
 					case SWT.DOWN :
 						sortDirn = SWT.UP;
 						break;
@@ -133,24 +135,23 @@ public class FeatureBlock {
 						sortDirn = SWT.DOWN;
 				}
 			}
-			fTable.setSortDirection(sortDirn);
+			tree.setSortDirection(sortDirn);
 			int sortOrder = sortDirn == SWT.UP ? 1 : -1;
 			int sortColumn = ((Integer) tc.getData(COLUMN_ID)).intValue();
-			fViewer.setSorter(new TableSorter(sortColumn, sortOrder));
+			fTree.setSorter(new TreeSorter(sortColumn, sortOrder));
 			saveSortOrder();
 		}
 
 		private void handleRestoreDefaults() {
 			fDefaultFeatureLocationCombo.setText(getLocationText(LOCATION_WORKSPACE));
 			fDefaultPluginResolutionCombo.setText(getLocationText(LOCATION_WORKSPACE));
-			fViewer.setInput(getFeatures(LOCATION_WORKSPACE));
-			fViewer.refresh(true);
+			fTree.setInput(getFeatures(LOCATION_WORKSPACE));
+			fTree.refresh(true);
 		}
 
 		private void handleSelectAll(boolean state) {
-			fViewer.setAllChecked(state);
+			fTree.setAllChecked(state);
 			updateCounter();
-			fViewer.refresh(true);
 		}
 
 		private void handleDefaultChange() {
@@ -168,7 +169,7 @@ public class FeatureBlock {
 					if (model != null) {
 						fFeatureModelMap.put(id, model);
 						fFeatureVersionMap.put(id, model.getFeature().getVersion());
-						fViewer.refresh(id, true);
+						fTree.refresh(id, true);
 					}
 				}
 			}
@@ -180,7 +181,7 @@ public class FeatureBlock {
 		public boolean canModify(Object id, String property) {
 			if (PROPERTY_LOCATION.equalsIgnoreCase(property)) {
 				if (fWorkspaceFeatureMap.containsKey(id) && fExternalFeatureMap.containsKey(id)) {
-					return fViewer.getChecked(id);
+					return fTree.getChecked(id);
 				}
 
 			} else if (PROPERTY_RESOLUTION.equalsIgnoreCase(property)) {
@@ -206,7 +207,7 @@ public class FeatureBlock {
 		}
 
 		public void modify(Object item, String property, Object value) {
-			String id = (String) ((TableItem) item).getData();
+			String id = (String) ((TreeItem) item).getData();
 			int comboIndex = ((Integer) value).intValue();
 			String location = null;
 			HashMap map = null;
@@ -240,23 +241,44 @@ public class FeatureBlock {
 				return; // nothing to do
 			}
 
-			fViewer.refresh(id, true);
+			fTree.refresh(id, true);
 			fTab.updateLaunchConfigurationDialog();
 		}
 	}
 
-	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+	class PluginContentProvider implements ITreeContentProvider {
 
 		public Object[] getElements(Object input) {
-			return (String[]) input;
+			if (input instanceof Object[]) {
+				return (Object[]) input;
+			}
+			return new Object[0];
+		}
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
+		public Object[] getChildren(Object parentElement) {
+			return new Object[0];
+		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			return false;
 		}
 	}
 
-	private class TableSorter extends ViewerSorter {
+	private class TreeSorter extends ViewerSorter {
 		int sortColumn;
 		int sortOrder;
 
-		public TableSorter(int sortColumn, int sortOrder) {
+		public TreeSorter(int sortColumn, int sortOrder) {
 			this.sortColumn = sortColumn;
 			this.sortOrder = sortOrder;
 		}
@@ -265,7 +287,7 @@ public class FeatureBlock {
 		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			FeatureTableLabelProvider labelProvider = (FeatureTableLabelProvider) fViewer.getLabelProvider();
+			FeatureTreeLabelProvider labelProvider = (FeatureTreeLabelProvider) fTree.getLabelProvider();
 			return sortOrder * super.compare(viewer, labelProvider.getColumnText(e1, sortColumn), labelProvider.getColumnText(e2, sortColumn));
 		}
 
@@ -299,24 +321,129 @@ public class FeatureBlock {
 	private HashMap fWorkspaceFeatureMap;
 	private HashMap fFeatureVersionMap;
 	private HashMap fFeatureModelMap;
+
 	private ILaunchConfiguration fLaunchConfig;
 	private Listener fListener;
 	private AbstractLauncherTab fTab;
-	private Table fTable;
-	private CheckboxTableViewer fViewer;
+	private CachedCheckboxTreeViewer fTree;
 
 	public FeatureBlock(PluginsTab pluginsTab) {
 		Assert.isNotNull(pluginsTab);
 		fTab = pluginsTab;
 	}
 
-	private Button createButton(Composite composite, String text, int style) {
-		Button button = new Button(composite, style);
-		button.setText(text);
-		button.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		SWTUtil.setButtonDimensionHint(button);
-		button.addSelectionListener(fListener);
-		return button;
+	public void createControl(Composite parent, int span, int indent) {
+		fListener = new Listener();
+
+		Composite treeComposite = SWTFactory.createComposite(parent, 2, span, GridData.FILL_BOTH, 0, 0);
+		createCheckBoxTree(treeComposite, indent);
+		createButtonContainer(treeComposite, 10);
+
+		Composite defaultsCombo = SWTFactory.createComposite(parent, 2, span, GridData.FILL_HORIZONTAL, 0, 0);
+
+		Label label = SWTFactory.createLabel(defaultsCombo, PDEUIMessages.FeatureBlock_defaultFeatureLocation, 1);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indent;
+		label.setLayoutData(gd);
+		fDefaultFeatureLocationCombo = SWTFactory.createCombo(defaultsCombo, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore});
+
+		label = SWTFactory.createLabel(defaultsCombo, PDEUIMessages.FeatureBlock_defaultPluginResolution, 1);
+		fDefaultPluginResolutionCombo = SWTFactory.createCombo(defaultsCombo, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore});
+
+		fDefaultFeatureLocationCombo.addSelectionListener(fListener);
+		fDefaultPluginResolutionCombo.addSelectionListener(fListener);
+	}
+
+	public void dispose() {
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+	}
+
+	private void createCheckBoxTree(Composite parent, int indent) {
+		ITreeContentProvider contentProvider = new PluginContentProvider();
+		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, contentProvider, null, SWT.FULL_SELECTION);
+		tree.getPatternFilter().setIncludeLeadingWildcard(true);
+
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalIndent = indent;
+		tree.setLayoutData(gd);
+		fTree = tree.getCheckboxTreeViewer();
+
+		TreeColumn column1 = new TreeColumn(fTree.getTree(), SWT.LEFT);
+		column1.setText(PDEUIMessages.FeatureBlock_features);
+		column1.setWidth(250);
+		column1.addSelectionListener(fListener);
+		column1.setData(COLUMN_ID, new Integer(0));
+
+		TreeColumn column2 = new TreeColumn(fTree.getTree(), SWT.LEFT);
+		column2.setText(PDEUIMessages.FeatureBlock_version);
+		column2.setWidth(100);
+		column2.addSelectionListener(fListener);
+		column2.setData(COLUMN_ID, new Integer(1));
+
+		TreeColumn column3 = new TreeColumn(fTree.getTree(), SWT.LEFT);
+		column3.setText(PDEUIMessages.FeatureBlock_featureLocation);
+		column3.setWidth(100);
+		column3.addSelectionListener(fListener);
+		column3.setData(COLUMN_ID, new Integer(2));
+
+		TreeColumn column4 = new TreeColumn(fTree.getTree(), SWT.LEFT);
+		column4.setText(PDEUIMessages.FeatureBlock_pluginResolution);
+		column4.setWidth(100);
+		column4.addSelectionListener(fListener);
+		column4.setData(COLUMN_ID, new Integer(3));
+
+		fTree.getTree().setHeaderVisible(true);
+		fTree.setLabelProvider(new FeatureTreeLabelProvider());
+		fTree.setContentProvider(contentProvider);
+		fTree.setInput(getFeatures(LOCATION_WORKSPACE));
+		fTree.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				String id = (String) event.getElement();
+				if (event.getChecked() == false) {
+					fFeatureLocationMap.put(id, LOCATION_DEFAULT);
+					fPluginResolutionMap.put(id, LOCATION_DEFAULT);
+					IFeatureModel model = (IFeatureModel) fWorkspaceFeatureMap.get(id);
+					if (model == null) {
+						model = (IFeatureModel) fExternalFeatureMap.get(id);
+					}
+					fFeatureModelMap.put(id, model);
+					fFeatureVersionMap.put(id, model.getFeature().getVersion());
+				}
+				fTree.refresh(id, true);
+				fTab.updateLaunchConfigurationDialog();
+			}
+		});
+
+		String[] items = new String[] {PDEUIMessages.FeatureBlock_default, PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore};
+		fTree.setCellEditors(new CellEditor[] {null, null, new ComboBoxCellEditor(tree, items), new ComboBoxCellEditor(tree, items)});
+		fTree.setColumnProperties(new String[] {null, null, PROPERTY_LOCATION, PROPERTY_RESOLUTION});
+		fTree.setCellModifier(new LocationCellModifier());
+		fTree.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISelection selection = event.getSelection();
+				if (selection == null || !(selection instanceof IStructuredSelection)) {
+					return;
+				}
+				fTree.editElement(((IStructuredSelection) selection).getFirstElement(), 2);
+			}
+		});
+
+		TreeViewerColumn tvc = new TreeViewerColumn(fTree, column3);
+		tvc.setLabelProvider(new CellLabelProvider() {
+			public void update(ViewerCell cell) {
+				String id = (String) cell.getElement();
+				Display display = fTree.getTree().getDisplay();
+				Color gray = display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+				Color white = display.getSystemColor(SWT.COLOR_WHITE);
+				if (fWorkspaceFeatureMap.containsKey(id) && fExternalFeatureMap.containsKey(id) && fTree.getChecked(id)) {
+					cell.setBackground(white);
+				} else {
+					cell.setBackground(gray);
+				}
+				FeatureTreeLabelProvider provider = (FeatureTreeLabelProvider) fTree.getLabelProvider();
+				cell.setText(provider.getColumnText(id, COLUMN_FEATURE_LOCATION));
+			}
+		});
 	}
 
 	private void createButtonContainer(Composite parent, int vOffset) {
@@ -332,129 +459,19 @@ public class FeatureBlock {
 
 		fAddRequiredFeaturesButton = createButton(composite, PDEUIMessages.FeatureBlock_addRequiredFeatues, SWT.PUSH);
 		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults, SWT.PUSH);
-		//fShowFilterButton = createButton(composite, PDEUIMessages.FeatureBlock_showSelected, SWT.CHECK);
-		//fShowFilterButton.addSelectionListener(fListener);
-		//GridData filterButtonGridData = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_END);
-		//fShowFilterButton.setLayoutData(filterButtonGridData);
 
 		fCounter = new Label(composite, SWT.NONE);
 		fCounter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 		updateCounter();
 	}
 
-	private void createCheckBoxTable(Composite parent, int span, int indent) {
-		fViewer = CheckboxTableViewer.newCheckList(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
-		fTable = fViewer.getTable();
-
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = span;
-		gd.horizontalIndent = indent;
-		fTable.setLayoutData(gd);
-
-		TableColumn column1 = new TableColumn(fTable, SWT.LEFT);
-		column1.setText(PDEUIMessages.FeatureBlock_features);
-		column1.setWidth(250);
-		column1.addSelectionListener(fListener);
-		column1.setData(COLUMN_ID, new Integer(0));
-
-		TableColumn column2 = new TableColumn(fTable, SWT.LEFT);
-		column2.setText(PDEUIMessages.FeatureBlock_version);
-		column2.setWidth(100);
-		column2.addSelectionListener(fListener);
-		column2.setData(COLUMN_ID, new Integer(1));
-
-		TableColumn column3 = new TableColumn(fTable, SWT.LEFT);
-		column3.setText(PDEUIMessages.FeatureBlock_featureLocation);
-		column3.setWidth(100);
-		column3.addSelectionListener(fListener);
-		column3.setData(COLUMN_ID, new Integer(2));
-
-		TableColumn column4 = new TableColumn(fTable, SWT.LEFT);
-		column4.setText(PDEUIMessages.FeatureBlock_pluginResolution);
-		column4.setWidth(100);
-		column4.addSelectionListener(fListener);
-		column4.setData(COLUMN_ID, new Integer(3));
-
-		fTable.setHeaderVisible(true);
-
-		fViewer.setLabelProvider(new FeatureTableLabelProvider());
-		fViewer.setContentProvider(new PluginContentProvider());
-		fViewer.setInput(getFeatures(LOCATION_WORKSPACE));
-
-		fViewer.addCheckStateListener(new ICheckStateListener() {
-
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				String id = (String) event.getElement();
-				if (event.getChecked() == false) {
-					fFeatureLocationMap.put(id, LOCATION_DEFAULT);
-					fPluginResolutionMap.put(id, LOCATION_DEFAULT);
-					IFeatureModel model = (IFeatureModel) fWorkspaceFeatureMap.get(id);
-					if (model == null) {
-						model = (IFeatureModel) fExternalFeatureMap.get(id);
-					}
-					fFeatureModelMap.put(id, model);
-					fFeatureVersionMap.put(id, model.getFeature().getVersion());
-				}
-				fViewer.refresh(id, true);
-				fTab.updateLaunchConfigurationDialog();
-			}
-		});
-
-		String[] items = new String[] {PDEUIMessages.FeatureBlock_default, PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore};
-		fViewer.setCellEditors(new CellEditor[] {null, null, new ComboBoxCellEditor(fTable, items), new ComboBoxCellEditor(fTable, items)});
-		fViewer.setColumnProperties(new String[] {null, null, PROPERTY_LOCATION, PROPERTY_RESOLUTION});
-
-		fViewer.setCellModifier(new LocationCellModifier());
-		fViewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			public void doubleClick(DoubleClickEvent event) {
-				ISelection selection = event.getSelection();
-				if (selection == null || !(selection instanceof IStructuredSelection)) {
-					return;
-				}
-				fViewer.editElement(((IStructuredSelection) selection).getFirstElement(), 2);
-			}
-		});
-
-		TableViewerColumn tvc = new TableViewerColumn(fViewer, column3);
-		tvc.setLabelProvider(new CellLabelProvider() {
-
-			public void update(ViewerCell cell) {
-				String id = (String) cell.getElement();
-				Display display = fTable.getDisplay();
-				Color gray = display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-				Color white = display.getSystemColor(SWT.COLOR_WHITE);
-				if (fWorkspaceFeatureMap.containsKey(id) && fExternalFeatureMap.containsKey(id) && fViewer.getChecked(id)) {
-					cell.setBackground(white);
-				} else {
-					cell.setBackground(gray);
-				}
-				FeatureTableLabelProvider provider = (FeatureTableLabelProvider) fViewer.getLabelProvider();
-				cell.setText(provider.getColumnText(id, COLUMN_FEATURE_LOCATION));
-			}
-		});
-	}
-
-	public void createControl(Composite parent, int span, int indent) {
-		fListener = new Listener();
-
-		Label label = SWTFactory.createLabel(parent, PDEUIMessages.FeatureBlock_defaultFeatureLocation, 1);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent = indent;
-		label.setLayoutData(gd);
-		fDefaultFeatureLocationCombo = SWTFactory.createCombo(parent, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore});
-
-		label = SWTFactory.createLabel(parent, PDEUIMessages.FeatureBlock_defaultPluginResolution, 1);
-		fDefaultPluginResolutionCombo = SWTFactory.createCombo(parent, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore});
-
-		fDefaultFeatureLocationCombo.addSelectionListener(fListener);
-		fDefaultPluginResolutionCombo.addSelectionListener(fListener);
-		createCheckBoxTable(parent, span - 1, indent);
-		createButtonContainer(parent, 10);
-	}
-
-	public void dispose() {
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+	private Button createButton(Composite composite, String text, int style) {
+		Button button = new Button(composite, style);
+		button.setText(text);
+		button.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		SWTUtil.setButtonDimensionHint(button);
+		button.addSelectionListener(fListener);
+		return button;
 	}
 
 	private Object getFeatures(String defaultLocation) {
@@ -547,14 +564,14 @@ public class FeatureBlock {
 		fDefaultFeatureLocationCombo.setText(getLocationText(defaultLocation));
 		String pluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, LOCATION_WORKSPACE);
 		fDefaultPluginResolutionCombo.setText(getLocationText(pluginResolution));
-		fViewer.setInput(getFeatures(defaultLocation));
+		fTree.setInput(getFeatures(defaultLocation));
 
 		ArrayList selectedFeatureList = BundleLauncherHelper.getFeatureMaps(config, fFeatureVersionMap, fFeatureLocationMap, fPluginResolutionMap);
 
 		for (int index = 0; index < selectedFeatureList.size(); index++) {
 			String id = (String) selectedFeatureList.get(index);
 			fFeatureModelMap.put(id, getFeatureModel(id));
-			fViewer.setChecked(id, true);
+			fTree.setChecked(id, true);
 		}
 
 		// If the workspace plug-in state has changed (project closed, etc.) the launch config needs to be updated without making the tab dirty
@@ -567,9 +584,9 @@ public class FeatureBlock {
 
 		PDEPreferencesManager prefs = new PDEPreferencesManager(IPDEUIConstants.PLUGIN_ID);
 		int index = prefs.getInt(IPreferenceConstants.FEATURE_SORT_COLUMN);
-		TableColumn column = fTable.getColumn(index == 0 ? COLUMN_FEATURE_LOCATION : index - 1);
+		TreeColumn column = fTree.getTree().getColumn(index == 0 ? COLUMN_FEATURE_LOCATION : index - 1);
 		fListener.handleColumn(column, prefs.getInt(IPreferenceConstants.FEATURE_SORT_ORDER));
-		fViewer.refresh(true);
+		fTree.refresh(true);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -581,8 +598,8 @@ public class FeatureBlock {
 
 	private void savePluginState(ILaunchConfigurationWorkingCopy config) {
 		StringBuffer featuresEntry = new StringBuffer();
-		if (fViewer.getCheckedElements() != null && fViewer.getCheckedElements().length > 0) {
-			Object[] selectedFeatureModels = fViewer.getCheckedElements();
+		if (fTree.getCheckedElements() != null && fTree.getCheckedElements().length > 0) {
+			Object[] selectedFeatureModels = fTree.getCheckedElements();
 			Arrays.sort(selectedFeatureModels); // So that Tab is not marked dirty due to Sorting changes
 			for (int i = 0; i < selectedFeatureModels.length; i++) {
 				String id = (String) selectedFeatureModels[i];
@@ -601,10 +618,11 @@ public class FeatureBlock {
 
 	private void saveSortOrder() {
 		PDEPreferencesManager prefs = new PDEPreferencesManager(IPDEUIConstants.PLUGIN_ID);
-		TableColumn column = fTable.getSortColumn();
-		int index = column == null ? 0 : ((Integer) fTable.getSortColumn().getData(COLUMN_ID)).intValue();
+		Tree tree = fTree.getTree();
+		TreeColumn column = tree.getSortColumn();
+		int index = column == null ? 0 : ((Integer) tree.getSortColumn().getData(COLUMN_ID)).intValue();
 		prefs.setValue(IPreferenceConstants.FEATURE_SORT_COLUMN, index + 1);
-		int sortOrder = column == null ? 0 : fTable.getSortDirection();
+		int sortOrder = column == null ? 0 : tree.getSortDirection();
 		prefs.setValue(IPreferenceConstants.FEATURE_SORT_ORDER, sortOrder);
 		prefs.savePluginPreferences();
 	}
@@ -615,7 +633,7 @@ public class FeatureBlock {
 
 	private void updateCounter() {
 		if (fCounter != null) {
-			int checked = fViewer.getCheckedElements().length;
+			int checked = fTree.getCheckedElements().length;
 			int total = fFeatureLocationMap.keySet().size();
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
 		}

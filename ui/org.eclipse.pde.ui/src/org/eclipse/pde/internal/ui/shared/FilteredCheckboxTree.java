@@ -43,21 +43,32 @@ public class FilteredCheckboxTree extends FilteredTree {
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 */
 	public FilteredCheckboxTree(Composite parent, ITreeContentProvider contentProvider, FormToolkit toolkit) {
+		this(parent, contentProvider, toolkit, SWT.NONE);
+	}
+
+	/**
+	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
+	 * 
+	 * @param parent parent composite
+	 * @param contentProvider Used to determine which elements are leaf nodes
+	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
+	 */
+	public FilteredCheckboxTree(Composite parent, ITreeContentProvider contentProvider, FormToolkit toolkit, int treeStyle) {
 		super(parent, true);
 		fToolkit = toolkit;
-		init(SWT.NONE, new PatternFilter());
+		init(treeStyle, new PatternFilter());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
 	 */
 	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
+		int treeStyle = style | SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER;
 		Tree tree = null;
-
 		if (fToolkit != null) {
-			tree = fToolkit.createTree(parent, SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+			tree = fToolkit.createTree(parent, treeStyle);
 		} else {
-			tree = new Tree(parent, SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+			tree = new Tree(parent, treeStyle);
 		}
 
 		checkboxViewer = new CachedCheckboxTreeViewer(tree);

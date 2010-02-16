@@ -30,8 +30,9 @@ public class BlockAdapter {
 	private ILaunchConfiguration fLaunchConfig;
 	private int fActiveIndex;
 
+	// These constants MUST match the constants in PluginsTab
 	private static final int CUSTOM_SELECTION = 1;
-	private static final int CUSTOM_FEATURES_SELECTION = 3;
+	private static final int CUSTOM_FEATURES_SELECTION = 2;
 
 	public BlockAdapter(PluginBlock pluginBlock, FeatureBlock featureBlock) {
 		Assert.isNotNull(pluginBlock);
