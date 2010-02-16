@@ -20,8 +20,7 @@ import org.eclipse.pde.build.IFetchFactory;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.IScriptRunner;
 import org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory;
-import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
+import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
@@ -369,8 +368,14 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			tags = repositoryFeatureTags;
 		else
 			tags = repositoryPluginTags;
-		if (mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG) != null)
-			tags.put(elementToFetch + ',' + new Version(version.getMajor(), version.getMinor(), version.getMicro()), mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
+		if (mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG) != null) {
+			if (version.getQualifier().endsWith(PROPERTY_QUALIFIER)) {
+				String key = QualifierReplacer.getQualifierKey(elementToFetch, version.toString());
+				tags.put(key, mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
+			} else {
+				tags.put(elementToFetch + ',' + new Version(version.getMajor(), version.getMinor(), version.getMicro()), mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
+			}
+		}
 
 		return true;
 	}

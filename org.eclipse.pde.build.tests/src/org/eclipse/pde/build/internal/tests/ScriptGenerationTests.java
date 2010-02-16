@@ -1625,4 +1625,29 @@ public class ScriptGenerationTests extends PDETestCase {
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] {"generateFeature"}, buildFolder.getLocation().toOSString(), properties);
 	}
+
+	public void testBug301311() throws Exception {
+		Properties antProperties = new Properties();
+		antProperties.put(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true");
+
+		BuildScriptGenerator generator = new BuildScriptGenerator() {
+			public void setImmutableAntProperties(Properties properties) {
+				AbstractScriptGenerator.setStaticAntProperties(properties);
+			}
+		};
+		generator.setImmutableAntProperties(antProperties);
+
+		try {
+			Properties newVersions = new Properties();
+			newVersions.put("foo,0.0.0", "wildcard");
+			newVersions.put("foo,1.0.0", "one");
+			newVersions.put("foo,2.0.0.R1_", "r1");
+
+			assertEquals("1.0.0.one", QualifierReplacer.replaceQualifierInVersion("1.0.0.qualifier", "foo", null, newVersions));
+			assertEquals("2.0.0.wildcard", QualifierReplacer.replaceQualifierInVersion("2.0.0.qualifier", "foo", null, newVersions));
+			assertEquals("2.0.0.R1_r1", QualifierReplacer.replaceQualifierInVersion("2.0.0.R1_qualifier", "foo", null, newVersions));
+		} finally {
+			generator.setImmutableAntProperties(null);
+		}
+	}
 }

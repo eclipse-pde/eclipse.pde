@@ -39,7 +39,7 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 				newQualifier = globalQualifier;
 
 			if (newQualifier == null && newVersions != null && newVersions.size() != 0) { //Skip the lookup in the file if there is no entries
-				newQualifier = (String) newVersions.get(id + ',' + version.substring(0, version.length() - PROPERTY_QUALIFIER.length() - 1)); //First we check to see if there is a precise version
+				newQualifier = (String) newVersions.get(getQualifierKey(id, version)); //First we check to see if there is a precise version
 				if (newQualifier == null) //If not found, then lookup for the id,0.0.0
 					newQualifier = (String) newVersions.get(id + ',' + Version.emptyVersion.toString());
 				if (newQualifier == null)
@@ -57,6 +57,30 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 		if (version.endsWith(".")) //$NON-NLS-1$
 			version = version.substring(0, version.length() - 1);
 		return version;
+	}
+
+	//given a version ending in "qualifier" return the key to look up the replacement
+	public static String getQualifierKey(String id, String version) {
+		if (version == null || !version.endsWith(PROPERTY_QUALIFIER))
+			return null;
+
+		Version osgiVersion = new Version(version);
+		String qualifier = osgiVersion.getQualifier();
+		qualifier = qualifier.substring(0, qualifier.length() - PROPERTY_QUALIFIER.length());
+
+		StringBuffer keyBuffer = new StringBuffer(id);
+		keyBuffer.append(',');
+		keyBuffer.append(osgiVersion.getMajor());
+		keyBuffer.append('.');
+		keyBuffer.append(osgiVersion.getMinor());
+		keyBuffer.append('.');
+		keyBuffer.append(osgiVersion.getMicro());
+
+		if (qualifier.length() > 0) {
+			keyBuffer.append('.');
+			keyBuffer.append(qualifier);
+		}
+		return keyBuffer.toString();
 	}
 
 	/**
