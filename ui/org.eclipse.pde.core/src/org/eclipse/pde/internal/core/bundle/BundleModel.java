@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,18 +12,16 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
-
+import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.AbstractModel;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
@@ -60,6 +58,18 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 			if (!outOfSync)
 				updateTimeStamp();
 			setLoaded(true);
+			// format headers
+			BundleModelFactory factory = new BundleModelFactory(this);
+			Map headers = fBundle.getHeaders();
+			Iterator it = headers.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry entry = (Entry) it.next();
+				String key = (String) entry.getKey();
+				String value = (String) entry.getValue();
+				IManifestHeader header = factory.createHeader(key, value);
+				header.update();
+				fBundle.setHeader(key, header.getValue());
+			}
 		} catch (BundleException e) {
 		} catch (IOException e) {
 		} finally {

@@ -10,6 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.jface.text.Document;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.*;
+
+import org.eclipse.core.resources.IFile;
+
+import org.eclipse.pde.core.project.IPackageImportDescription;
+
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
 
@@ -1187,4 +1200,121 @@ public class ProjectCreationTests extends TestCase {
 		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_LAZYSTART);
 		assertNull("Header should not be present", header);
 	}		
+	
+	/**
+	 * Returns the given input stream's contents as a character array.
+	 * If a length is specified (i.e. if length != -1), this represents the number of bytes in the stream.
+	 * Note the specified stream is not closed in this method
+	 * @param stream the stream to get convert to the char array 
+	 * @return the given input stream's contents as a character array.
+	 * @throws IOException if a problem occurred reading the stream.
+	 */
+	public static char[] getInputStreamAsCharArray(InputStream stream) throws IOException {
+		Charset charset = null;
+		try {
+			charset = Charset.forName("UTF-8");
+		} catch (IllegalCharsetNameException e) {
+			System.err.println("Illegal charset name : " + "UTF-8"); //$NON-NLS-1$
+			return null;
+		} catch(UnsupportedCharsetException e) {
+			System.err.println("Unsupported charset : " + "UTF-8"); //$NON-NLS-1$
+			return null;
+		}
+		CharsetDecoder charsetDecoder = charset.newDecoder();
+		charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
+		byte[] contents = getInputStreamAsByteArray(stream, -1);
+		ByteBuffer byteBuffer = ByteBuffer.allocate(contents.length);
+		byteBuffer.put(contents);
+		byteBuffer.flip();
+		return charsetDecoder.decode(byteBuffer).array();
+	}
+	
+	/**
+	 * Returns the given input stream as a byte array
+	 * @param stream the stream to get as a byte array
+	 * @param length the length to read from the stream or -1 for unknown
+	 * @return the given input stream as a byte array
+	 * @throws IOException
+	 */
+	public static byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
+		byte[] contents;
+		if (length == -1) {
+			contents = new byte[0];
+			int contentsLength = 0;
+			int amountRead = -1;
+			do {
+				// read at least 8K
+				int amountRequested = Math.max(stream.available(), 8192);
+				// resize contents if needed
+				if (contentsLength + amountRequested > contents.length) {
+					System.arraycopy(contents,
+							0,
+							contents = new byte[contentsLength + amountRequested],
+							0,
+							contentsLength);
+				}
+				// read as many bytes as possible
+				amountRead = stream.read(contents, contentsLength, amountRequested);
+				if (amountRead > 0) {
+					// remember length of contents
+					contentsLength += amountRead;
+				}
+			} while (amountRead != -1);
+			// resize contents if necessary
+			if (contentsLength < contents.length) {
+				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
+			}
+		} else {
+			contents = new byte[length];
+			int len = 0;
+			int readSize = 0;
+			while ((readSize != -1) && (len != length)) {
+				// See PR 1FMS89U
+				// We record first the read size. In this case length is the actual
+				// read size.
+				len += readSize;
+				readSize = stream.read(contents, len, length - len);
+			}
+		}
+		return contents;
+	}	
+	
+	/**
+	 * Tests that package import/export headers don't get flattened when doing an unrelated edit.
+	 * 
+	 * @throws CoreException
+	 * @throws IOException
+	 */
+	public void testHeaderFormatting() throws CoreException, IOException {
+		IBundleProjectDescription description = newProject();
+		IPackageImportDescription imp1 = getBundleProjectService().newPackageImport("org.eclipse.osgi", null, false);
+		IPackageImportDescription imp2 = getBundleProjectService().newPackageImport("org.eclipse.core.runtime", null, false);
+		IPackageImportDescription imp3 = getBundleProjectService().newPackageImport("org.eclipse.core.resources", null, false);
+		description.setPackageImports(new IPackageImportDescription[]{imp1, imp2, imp3});
+		IPackageExportDescription ex1 = getBundleProjectService().newPackageExport("a.b.c", null, true, null);
+		IPackageExportDescription ex2 = getBundleProjectService().newPackageExport("a.b.c.d", null, true, null);
+		IPackageExportDescription ex3 = getBundleProjectService().newPackageExport("a.b.c.e", null, true, null);
+		description.setPackageExports(new IPackageExportDescription[]{ex1, ex2, ex3});
+		IProject project = description.getProject();
+		description.apply(null);
+		
+		// should be 12 lines
+		IFile manifest = PDEProject.getManifest(project);
+		char[] chars = getInputStreamAsCharArray(manifest.getContents());
+		Document document = new Document(new String(chars));
+		int lines = document.getNumberOfLines();
+		assertEquals("Wrong number of lines", 12, lines);
+		
+		// modify version attribute
+		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
+		d2.setBundleVersion(new Version("2.0.0"));
+		d2.apply(null);
+		
+		// should be 12 lines
+		manifest = PDEProject.getManifest(project);
+		chars = getInputStreamAsCharArray(manifest.getContents());
+		document = new Document(new String(chars));
+		lines = document.getNumberOfLines();
+		assertEquals("Wrong number of lines", 12, lines);
+	}
 }
