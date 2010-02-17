@@ -608,7 +608,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER), new FileSet[] {metadata}, true, true);
 
 			if (Utils.isSourceBundle(model)) {
-				Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
+				Set pluginsToGatherSourceFrom = getPluginSourceProviders();
 				if (pluginsToGatherSourceFrom != null) {
 					for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
 						BundleDescription plugin = (BundleDescription) iter.next();
@@ -749,7 +749,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		if (Utils.isSourceBundle(model)) {
-			Set pluginsToGatherSourceFrom = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
+			Set pluginsToGatherSourceFrom = getPluginSourceProviders();
 			if (pluginsToGatherSourceFrom != null) {
 				for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
 					BundleDescription plugin = (BundleDescription) iter.next();
@@ -764,6 +764,25 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		generatePermissionProperties(root);
 		genarateIdReplacementCall(destination.toString());
 		generateAPIToolsCall(fileSetValues, dotIncluded, root);
+	}
+
+	private Set getPluginSourceProviders() throws CoreException {
+		Set pluginSet = (Set) featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
+		if (pluginSet != null && pluginSet.size() > 0)
+			return pluginSet;
+
+		String sourceAttribute = getBuildProperties().getProperty(SOURCE_PLUGIN_ATTRIBUTE);
+		if (Boolean.valueOf(sourceAttribute).booleanValue())
+			return null;
+
+		String[] tokens = Utils.getArrayFromString(sourceAttribute, ";"); //$NON-NLS-1$
+		pluginSet = new HashSet();
+		for (int i = 0; i + 1 < tokens.length; i += 2) {
+			BundleDescription fromPlugin = getSite(false).getRegistry().getBundle(tokens[i], tokens[i + 1], true);
+			if (fromPlugin != null && !Utils.isBinary(fromPlugin))
+				pluginSet.add(fromPlugin);
+		}
+		return pluginSet;
 	}
 
 	private void genarateIdReplacementCall(String location) {

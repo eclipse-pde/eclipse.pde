@@ -439,6 +439,15 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 	}
 
+	public static void writeProperties(Properties properites, File outputFile, String comment) throws IOException {
+		OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(outputFile));
+		try {
+			properites.store(buildFile, comment);
+		} finally {
+			close(buildFile);
+		}
+	}
+
 	public static FeatureEntry[] getPluginEntry(BuildTimeFeature feature, String pluginId, boolean raw) {
 		FeatureEntry[] plugins;
 		if (raw)

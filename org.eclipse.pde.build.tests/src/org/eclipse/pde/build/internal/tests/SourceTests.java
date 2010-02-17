@@ -17,10 +17,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.taskdefs.Ant;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
@@ -606,5 +610,53 @@ public class SourceTests extends PDETestCase {
 		for (int i = 0; i < included.length; i++) {
 			assertResourceFile(buildFolder, "tmp/eclipse/plugins/" + included[i].getId() + "_" + included[i].getVersion() + ".jar");
 		}
+	}
+
+	public void testbug302941() throws Exception {
+		IFolder buildFolder = newTest("302941");
+
+		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
+		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
+
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"bundleA", "bundleA.source;unpack=false"});
+		Properties properties = new Properties();
+		properties.put("generate.plugin@bundleA.source", "bundleA");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(sdk, properties);
+
+		Utils.generateBundleManifest(bundleA, "bundleA", "1.0.0", null);
+		Properties buildProperties = new Properties();
+		buildProperties.put("src.includes", "about.html");
+		Utils.generatePluginBuildProperties(bundleA, buildProperties);
+		Utils.writeBuffer(bundleA.getFile("src/A.java"), new StringBuffer("class A {\n}\n"));
+		Utils.writeBuffer(bundleA.getFile("about.html"), new StringBuffer("about\n"));
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "sdk");
+		properties.put("baseLocation", "");
+		properties.put("archivesFormat", "*,*,*-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		StringBuffer buildAll = new StringBuffer();
+		buildAll.append("<project default=\"main\">                                                                  \n");
+		buildAll.append("   <target name=\"main\" >                                                                  \n");
+		buildAll.append("      <property name=\"builder\" value=\"${basedir}\" />                                    \n");
+		buildAll.append("      <ant antfile=\"build.xml\" dir=\"${eclipse.pdebuild.scripts}\" target=\"generate\" /> \n");
+		buildAll.append("      <ant antfile=\"build.xml\" dir=\"${eclipse.pdebuild.scripts}\" target=\"generate\" /> \n");
+		buildAll.append("   </target>                                                                                \n");
+		buildAll.append("</project>                                                                                  \n");
+
+		IFile buildXml = buildFolder.getFile("buildAll.xml");
+		Utils.writeBuffer(buildXml, buildAll);
+
+		runAntScript(buildXml.getLocation().toOSString(), new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
+
+		IFile buildScript = buildFolder.getFile("plugins/bundleA.source_1.0.0/build.xml");
+		Project antProject = assertValidAntScript(buildScript);
+		Target publishBinParts = (Target) antProject.getTargets().get("publish.bin.parts");
+		assertNotNull(publishBinParts);
+		Object child = AntUtils.getFirstChildByName(publishBinParts, "ant");
+		assertNotNull(child);
+		assertTrue(child instanceof Ant);
 	}
 }

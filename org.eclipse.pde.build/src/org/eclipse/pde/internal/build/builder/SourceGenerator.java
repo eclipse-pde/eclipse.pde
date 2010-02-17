@@ -332,15 +332,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
 			sourceBuildProperties.put(SOURCE_PLUGIN_ATTRIBUTE, "true"); //$NON-NLS-1$
 			try {
-				OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
-				try {
-					sourceBuildProperties.store(buildFile, null);
-				} finally {
-					buildFile.close();
-				}
-			} catch (FileNotFoundException e) {
-				String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+				Utils.writeProperties(sourceBuildProperties, buildProperty, null);
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
@@ -413,15 +405,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
 				sourceBuildProperties.put("sourcePlugin", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
-					OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
-					try {
-						sourceBuildProperties.store(buildFile, null);
-					} finally {
-						buildFile.close();
-					}
-				} catch (FileNotFoundException e) {
-					String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
-					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+					Utils.writeProperties(sourceBuildProperties, buildProperty, null);
 				} catch (IOException e) {
 					String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
 					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
@@ -480,15 +464,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
 				sourceBuildProperties.put("sourcePlugin", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
-					OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
-					try {
-						sourceBuildProperties.store(buildFile, null);
-					} finally {
-						buildFile.close();
-					}
-				} catch (FileNotFoundException e) {
-					String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
-					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+					Utils.writeProperties(sourceBuildProperties, buildProperty, null);
 				} catch (IOException e) {
 					String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
 					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
@@ -535,17 +511,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		copiedFiles.add(Constants.FEATURE_FILENAME_DESCRIPTOR); //Because the feature.xml is not copied, we need to add it to the file
 		Properties sourceBuildProperties = new Properties();
 		sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
-		OutputStream output = null;
 		try {
-			output = new BufferedOutputStream(new FileOutputStream(buildProperty));
-			try {
-				sourceBuildProperties.store(output, null);
-			} finally {
-				output.close();
-			}
-		} catch (FileNotFoundException e) {
-			String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+			Utils.writeProperties(sourceBuildProperties, buildProperty, null);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
@@ -770,21 +737,16 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		localizationEntry = localization + ".properties"; //$NON-NLS-1$
 		File localizationFile = new File(sourcePluginDirURL.toFile(), localizationEntry);
-		BufferedOutputStream out = null;
 		try {
-			localizationFile.getParentFile().mkdirs();
-			out = new BufferedOutputStream(new FileOutputStream(localizationFile));
-			localizationProperties.store(out, "#Source Bundle Localization"); //$NON-NLS-1$
+			Utils.writeProperties(localizationProperties, localizationFile, "#Source Bundle Localization"); //$NON-NLS-1$
 		} catch (IOException e) {
 			//	what?
-		} finally {
-			Utils.close(out);
 		}
 
 		File manifestFile = new File(sourcePluginDirURL.toFile(), Constants.BUNDLE_FILENAME_DESCRIPTOR);
 		manifestFile.getParentFile().mkdirs();
 		try {
-			out = new BufferedOutputStream(new FileOutputStream(manifestFile));
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(manifestFile));
 			try {
 				manifest.write(out);
 			} finally {
@@ -797,7 +759,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		// if this source bundle  will be the branding plug-in for the source feature, use the old plug-in template directory
 		String template = sourceEntry.getId().equals(brandingPlugin) ? "sourceTemplatePlugin" : "sourceTemplateBundle"; //$NON-NLS-1$ //$NON-NLS-2$
-		generateSourceFiles(sourcePluginDirURL, sourceEntry, template, localizationEntry);
+		generateSourceFiles(sourcePluginDirURL, sourceEntry, template, localizationEntry, originalBundle);
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(sourceEntry.getId(), sourceEntry.getVersion());
@@ -855,7 +817,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 
 		//Copy the other files
-		generateSourceFiles(sourcePluginDirURL, result, "sourceTemplatePlugin", null); //$NON-NLS-1$
+		generateSourceFiles(sourcePluginDirURL, result, "sourceTemplatePlugin", null, null); //$NON-NLS-1$
 
 		PDEState state = getSite().getRegistry();
 		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
@@ -884,12 +846,14 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		return result;
 	}
 
-	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry, String templateDir, String extraFiles) throws CoreException {
+	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry, String templateDir, String extraFiles, BundleDescription originalBundle) throws CoreException {
 		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + templateDir, sourcePluginDirURL.toFile().getAbsolutePath());
 		if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {
 			//make sure the manifest.mf has the version we want
 			replaceManifestValue(sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, sourceEntry.getVersion());
 		}
+
+		String original = originalBundle != null ? originalBundle.getSymbolicName() + ';' + originalBundle.getVersion().toString() : "true"; //$NON-NLS-1$
 
 		//	If a build.properties file already exist then we use it supposing it is correct.
 		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
@@ -902,20 +866,20 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			if (extraFiles != null)
 				binIncludes += "," + extraFiles; //$NON-NLS-1$
 			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, binIncludes);
-			sourceBuildProperties.put(SOURCE_PLUGIN_ATTRIBUTE, "true"); //$NON-NLS-1$
+			sourceBuildProperties.put(SOURCE_PLUGIN_ATTRIBUTE, original);
 			try {
-				OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
-				try {
-					sourceBuildProperties.store(buildFile, null);
-				} finally {
-					buildFile.close();
-				}
-			} catch (FileNotFoundException e) {
-				String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+				Utils.writeProperties(sourceBuildProperties, buildProperty, null);
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
+			}
+		} else if (originalBundle != null) {
+			Properties props = AbstractScriptGenerator.readProperties(sourcePluginDirURL.toOSString(), PROPERTIES_FILE, IStatus.OK);
+			props.put(SOURCE_PLUGIN_ATTRIBUTE, original);
+			try {
+				Utils.writeProperties(props, buildProperty, null);
+			} catch (IOException e) {
+				//ignore
 			}
 		}
 	}
