@@ -19,13 +19,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
-import org.eclipse.equinox.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 
 public class P2Tests extends P2TestCase {
 
@@ -188,7 +188,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.artifact.repo", repoLocation);
 		properties.put("p2.flavor", "tooling");
 		properties.put("p2.publish.artifacts", "true");
-		properties.put("p2.product.qualifier", "v1234"); //bug 246060
+		//		properties.put("p2.product.qualifier", "v1234"); //bug 246060 //commented out for bug 297064
 		Utils.storeBuildProperties(buildFolder, properties);
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
@@ -213,7 +213,8 @@ public class P2Tests extends P2TestCase {
 
 		iu = getIU(repository, "rcp.product");
 		assertRequires(iu, requiredIUs, true);
-		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
+		//check up to the date on the timestamp, don't worry about hours/mins
+		assertTrue(Version.toOSGiVersion(iu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
 
 		IFolder installFolder = buildFolder.getFolder("install");
 		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());

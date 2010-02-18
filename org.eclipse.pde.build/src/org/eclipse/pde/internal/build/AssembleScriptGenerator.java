@@ -51,6 +51,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			openScript(directory, getScriptName());
 			printProjectDeclaration();
 			printAssembleMacroDef();
+			generatePrologue();
 			generateMainTarget();
 			generateReplaceProductTarget();
 			generateMetadataTarget();
@@ -64,6 +65,12 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	protected void printProjectDeclaration() {
 		script.printProjectDeclaration("Assemble All Config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
+	}
+
+	protected void generatePrologue() {
+		if (productQualifier != null)
+			script.printProperty(PROPERTY_P2_PRODUCT_QUALIFIER, productQualifier);
+		script.println();
 	}
 
 	protected void printDefaultAssembleCondition() {
