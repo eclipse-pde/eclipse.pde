@@ -348,7 +348,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			} else
 				addRequireBundles(plugins, pbase, build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES));
 			try {
-				build.write("", new PrintWriter(new FileOutputStream(PDEProject.getBuildProperties(fProject).getFullPath().toFile()))); //$NON-NLS-1$ //$NON-NLS-2$
+				build.write("", new PrintWriter(new FileOutputStream(PDEProject.getBuildProperties(fProject).getFullPath().toFile()))); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
 			}
 		} else {
