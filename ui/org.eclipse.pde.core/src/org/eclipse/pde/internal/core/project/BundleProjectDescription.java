@@ -108,7 +108,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		IEclipsePreferences node = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 		if (node != null) {
 			setExtensionRegistry(node.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true));
-			setEquniox(node.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true));
+			setEquinox(node.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true));
 		}
 		// export wizard and launch shortcuts
 		setExportWizardId(PDEProject.getExportWizard(project));
@@ -627,7 +627,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setEqunioxHeaders(boolean)
 	 */
-	public void setEquniox(boolean equinox) {
+	public void setEquinox(boolean equinox) {
 		fIsEquinox = equinox;
 	}
 

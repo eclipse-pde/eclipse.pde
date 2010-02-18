@@ -522,7 +522,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
-		description.setEquniox(true);
+		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
 		IRequiredBundleDescription rb1 = service.newRequiredBundle(
@@ -923,7 +923,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
-		description.setEquniox(true);
+		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
 		IRequiredBundleDescription rb1 = service.newRequiredBundle(
@@ -1021,7 +1021,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
-		description.setEquniox(true);
+		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
 		
@@ -1087,7 +1087,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
-		description.setEquniox(true);
+		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
 		
@@ -1152,7 +1152,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
-		description.setEquniox(true);
+		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
 		

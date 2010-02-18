@@ -311,7 +311,7 @@ public interface IBundleProjectDescription {
 	 * used.
 	 * 
 	 * @param version one of the version constant values defined by this class or <code>null</code>
-	 * @see #setEquniox(boolean)
+	 * @see #setEquinox(boolean)
 	 */
 	public void setTargetVersion(String version);
 
@@ -347,7 +347,7 @@ public interface IBundleProjectDescription {
 	 * @param equinox whether targeted for the Equinox OSGi framework
 	 * @see #getTargetVersion()
 	 */
-	public void setEquniox(boolean equinox);
+	public void setEquinox(boolean equinox);
 
 	/**
 	 * Returns whether the described bundle is targeted for the Equinox OSGi framework.
