@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.equinox.p2.metadata.VersionRange;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,13 +20,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.provisional.p2.director.PlannerHelper;
-import org.eclipse.equinox.internal.provisional.p2.metadata.*;
+import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.VersionRange;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -394,19 +392,15 @@ public class P2Utils {
 			ius.add(createBundleIU(bundle));
 		}
 
-		// Create operands to install the metadata
-		Operand[] operands = new Operand[ius.size() * 2];
-		int i = 0;
-		for (Iterator iter = ius.iterator(); iter.hasNext();) {
-			IInstallableUnit iu = (IInstallableUnit) iter.next();
-			operands[i++] = new InstallableUnitOperand(null, iu);
-			operands[i++] = new InstallableUnitPropertyOperand(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", null, PlannerHelper.createOptionalInclusionRule(iu)); //$NON-NLS-1$
-		}
-
 		// Add the metadata to the profile
 		ProvisioningContext context = new ProvisioningContext();
+		IProvisioningPlan plan = engine.createPlan(profile, context);
+		for (Iterator iter = ius.iterator(); iter.hasNext();) {
+			IInstallableUnit iu = (IInstallableUnit) iter.next();
+			plan.addInstallableUnit(iu);
+			plan.setInstallableUnitProfileProperty(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", PlannerHelper.createOptionalInclusionRule(iu));
+		}
 		PhaseSet phaseSet = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_COLLECT | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
-		ProvisioningPlan plan = new ProvisioningPlan(profile, operands, context);
 		IStatus status = engine.perform(plan, phaseSet, new NullProgressMonitor());
 
 		if (!status.isOK() && status.getSeverity() != IStatus.CANCEL) {
