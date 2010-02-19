@@ -374,12 +374,10 @@ public class BundleLauncherHelper {
 			wc.doSave();
 	}
 
-	public static String writeFeatureEntry(String id, String version, String location, String resolution) {
+	public static String writeFeatureEntry(String id, String location, String resolution) {
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append(id);
-		buffer.append(':');
-		buffer.append(version);
 		buffer.append(':');
 		buffer.append(location);
 		buffer.append(':');
