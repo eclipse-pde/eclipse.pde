@@ -181,22 +181,24 @@ public class FeatureBlock {
 				}
 
 			} else if (PROPERTY_RESOLUTION.equalsIgnoreCase(property)) {
-				return true;
+				return fTree.getChecked(id);
 			}
 			return false;
 		}
 
 		public Object getValue(Object id, String property) {
-			if (PROPERTY_LOCATION.equalsIgnoreCase(property) || PROPERTY_RESOLUTION.equalsIgnoreCase(property)) {
-				String location = fModelProvider.getLocation((String) id);
-
-				if (LOCATION_DEFAULT.equalsIgnoreCase(location)) {
-					return new Integer(0);
-				} else if (LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
-					return new Integer(1);
-				} else if (LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
-					return new Integer(2);
-				}
+			String location = ""; //$NON-NLS-1$
+			if (PROPERTY_LOCATION.equalsIgnoreCase(property)) {
+				location = fModelProvider.getLocation((String) id);
+			} else if (PROPERTY_RESOLUTION.equalsIgnoreCase(property)) {
+				location = fModelProvider.getPluginResolution(location);
+			}
+			if (LOCATION_DEFAULT.equalsIgnoreCase(location)) {
+				return new Integer(0);
+			} else if (LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
+				return new Integer(1);
+			} else if (LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
+				return new Integer(2);
 			}
 
 			return new Integer(0);
@@ -389,7 +391,9 @@ public class FeatureBlock {
 		});
 
 		String[] items = new String[] {PDEUIMessages.FeatureBlock_default, PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore};
-		fTree.setCellEditors(new CellEditor[] {null, null, new ComboBoxCellEditor(fTree.getTree(), items), new ComboBoxCellEditor(fTree.getTree(), items)});
+		ComboBoxCellEditor cellEditor = new ComboBoxCellEditor(fTree.getTree(), items);
+		cellEditor.getControl().pack();
+		fTree.setCellEditors(new CellEditor[] {null, null, cellEditor, cellEditor});
 		fTree.setColumnProperties(new String[] {null, null, PROPERTY_LOCATION, PROPERTY_RESOLUTION});
 		fTree.setCellModifier(new LocationCellModifier());
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
@@ -398,9 +402,15 @@ public class FeatureBlock {
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
 					return;
 				}
-				fTree.editElement(((IStructuredSelection) selection).getFirstElement(), 2);
+				Object element = ((IStructuredSelection) selection).getFirstElement();
+				if (fTree.getChecked(element) == true) {
+					fTree.editElement(element, COLUMN_FEATURE_LOCATION);
+				} else {
+					fTree.setChecked(element, true);
+				}
 			}
 		});
+		fTree.setAllChecked(true);
 
 		/*		TreeViewerColumn tvc = new TreeViewerColumn(fTree, column3);
 				tvc.setLabelProvider(new CellLabelProvider() {
@@ -485,14 +495,17 @@ public class FeatureBlock {
 		}
 
 		fLaunchConfig = config;
+		fModelProvider.init(fModelProvider.getDefaultFeatureLocation());
 		ArrayList selectedFeatureList = fModelProvider.parseConfig(config);
+
 		fDefaultFeatureLocationCombo.setText(getLocationText(fModelProvider.getDefaultFeatureLocation()));
 		fDefaultPluginResolutionCombo.setText(getLocationText(fModelProvider.getDefaultPluginResolution()));
-		fModelProvider.init(fModelProvider.getDefaultFeatureLocation());
-
-		for (int index = 0; index < selectedFeatureList.size(); index++) {
-			String id = (String) selectedFeatureList.get(index);
-			fTree.setChecked(id, true);
+		if (selectedFeatureList.size() > 0) {
+			fTree.setAllChecked(false);
+			for (int index = 0; index < selectedFeatureList.size(); index++) {
+				String id = (String) selectedFeatureList.get(index);
+				fTree.setChecked(id, true);
+			}
 		}
 
 		// If the workspace plug-in state has changed (project closed, etc.) the launch config needs to be updated without making the tab dirty

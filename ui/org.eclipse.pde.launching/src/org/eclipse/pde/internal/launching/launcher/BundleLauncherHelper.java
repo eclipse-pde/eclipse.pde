@@ -62,66 +62,108 @@ public class BundleLauncherHelper {
 				}
 				return map;
 			}
-		}
 
-		if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true)) {
-			//TODO
-			FeatureModelManager featureModelMgr = new FeatureModelManager();
-			ExternalFeatureModelManager extFeatureModelMgr = new ExternalFeatureModelManager();
+			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true)) {
+				//TODO
+				String value = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, ""); //$NON-NLS-1$
+				String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, LOCATION_WORKSPACE);
+				String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, LOCATION_WORKSPACE);
 
-			IFeatureModel[] workspaceModels = featureModelMgr.getWorkspaceModels();
-			HashMap wrkspcFeaturesMap = new HashMap();
-			for (int i = 0; i < workspaceModels.length; i++) {
-				wrkspcFeaturesMap.put(workspaceModels[i].getFeature().getId(), workspaceModels[i].getFeature());
-			}
-
-			extFeatureModelMgr.startup();
-			IFeatureModel[] externalModels = extFeatureModelMgr.getModels();
-			HashMap extrnlFeaturesMap = new HashMap();
-			for (int i = 0; i < externalModels.length; i++) {
-				extrnlFeaturesMap.put(externalModels[i].getFeature().getId(), externalModels[i].getFeature());
-			}
-			extFeatureModelMgr.shutdown();
-
-			HashMap featureVersionMap = new HashMap();
-			HashMap featureLocationMap = new HashMap();
-			HashMap pluginResolutionMap = new HashMap();
-			getFeatureMaps(configuration, featureVersionMap, featureLocationMap, pluginResolutionMap);
-			String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, LOCATION_WORKSPACE);
-			PluginModelManager pluginModelMgr = new PluginModelManager();
-			for (Iterator iterator = featureLocationMap.keySet().iterator(); iterator.hasNext();) {
-				String id = (String) iterator.next();
-				String location = (String) featureLocationMap.get(id);
-				IFeature feature = null;
-				if (LOCATION_DEFAULT.equalsIgnoreCase(location)) {
-					location = defaultLocation;
+				HashMap featureLocationMap = new HashMap();
+				HashMap featurePluginResolutionMap = new HashMap();
+				if (value.length() != 0) {
+					String[] features = value.split(";"); //$NON-NLS-1$
+					if (features != null && features.length > 0) {
+						for (int i = 0; i < features.length; i++) {
+							String[] attributes = features[i].split(":"); //$NON-NLS-1$
+							String id = attributes[0];
+							featureLocationMap.put(id, attributes[1]);
+							featurePluginResolutionMap.put(id, attributes[2]);
+						}
+					}
 				}
-				if (LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
-					feature = (IFeature) wrkspcFeaturesMap.get(id);
-				} else if (LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
-					feature = (IFeature) extrnlFeaturesMap.get(id);
+
+				HashMap workspaceFeatureMap = new HashMap();
+				HashMap externalFeatureMap = new HashMap();
+
+				FeatureModelManager fmm = new FeatureModelManager();
+				IFeatureModel[] workspaceFeatureModels = fmm.getWorkspaceModels();
+				for (int i = 0; i < workspaceFeatureModels.length; i++) {
+					String id = workspaceFeatureModels[i].getFeature().getId();
+					workspaceFeatureMap.put(id, workspaceFeatureModels[i]);
 				}
-				if (feature == null || !feature.getVersion().equalsIgnoreCase((String) featureVersionMap.get(id)))
-					continue;
-				IFeaturePlugin[] featurePlugins = feature.getPlugins();
-				for (int i = 0; i < featurePlugins.length; i++) {
-					IPluginModelBase model = pluginModelMgr.findModel(featurePlugins[i].getId());
-					if (model == null)
+				fmm.shutdown();
+
+				ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
+				efmm.startup();
+				IFeatureModel[] externalFeatureModels = efmm.getModels();
+				for (int i = 0; i < externalFeatureModels.length; i++) {
+					String id = externalFeatureModels[i].getFeature().getId();
+					externalFeatureMap.put(id, externalFeatureModels[i]);
+				}
+				efmm.shutdown();
+
+				PluginModelManager pluginModelMgr = new PluginModelManager();
+				for (Iterator iterator = featureLocationMap.keySet().iterator(); iterator.hasNext();) {
+					String id = (String) iterator.next();
+					String location = (String) featureLocationMap.get(id);
+					IFeatureModel featureModel = null;
+					if (LOCATION_DEFAULT.equalsIgnoreCase(location)) {
+						location = defaultLocation;
+					}
+					if (LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
+						featureModel = (IFeatureModel) workspaceFeatureMap.get(id);
+					} else if (LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
+						featureModel = (IFeatureModel) externalFeatureMap.get(id);
+					}
+					if (featureModel == null) {
 						continue;
-					addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
-				}
-				IFeatureImport[] featureImports = feature.getImports();
-				for (int i = 0; i < featureImports.length; i++) {
-					if (featureImports[i].getType() == IFeatureImport.PLUGIN) {
-						IPluginModelBase model = pluginModelMgr.findModel(featureImports[i].getId());
-						if (model == null)
+					}
+					IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
+					String pluginResolution = (String) featurePluginResolutionMap.get(id);
+					if (LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
+						pluginResolution = defaultPluginResolution;
+					}
+
+					for (int i = 0; i < featurePlugins.length; i++) {
+						ModelEntry modelEntry = pluginModelMgr.findEntry(featurePlugins[i].getId());
+						if (modelEntry == null) {
+							continue;
+						}
+						IPluginModelBase model = null;
+						if (LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
+							model = getBestCandidateModel(modelEntry.getWorkspaceModels());
+						} else if (LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+							model = getBestCandidateModel(modelEntry.getExternalModels());
+						}
+						if (model == null || map.containsKey(model))
 							continue;
 						addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 					}
-				}
-			}
 
-			return map;
+					IFeatureImport[] featureImports = featureModel.getFeature().getImports();
+					for (int i = 0; i < featureImports.length; i++) {
+						if (featureImports[i].getType() == IFeatureImport.PLUGIN) {
+							ModelEntry modelEntry = pluginModelMgr.findEntry(featureImports[i].getId());
+							if (modelEntry == null) {
+								continue;
+							}
+							IPluginModelBase model = null;
+							if (LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
+								model = getBestCandidateModel(modelEntry.getWorkspaceModels());
+							} else if (LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+								model = getBestCandidateModel(modelEntry.getExternalModels());
+							}
+
+							if (model == null || map.containsKey(model))
+								continue;
+							addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
+						}
+					}
+				}
+
+				return map;
+			}
 		}
 
 		String workspace = osgi == false ? IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.WORKSPACE_BUNDLES;
@@ -129,6 +171,36 @@ public class BundleLauncherHelper {
 		map = getWorkspaceBundleMap(configuration, set, workspace);
 		map.putAll(getTargetBundleMap(configuration, set, target));
 		return map;
+	}
+
+	private static IPluginModelBase getBestCandidateModel(IPluginModelBase[] models) {
+		IPluginModelBase model = null;
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].getBundleDescription() == null)
+				continue;
+
+			if (model == null) {
+				model = models[i];
+				continue;
+			}
+
+			if (!model.isEnabled() && models[i].isEnabled()) {
+				model = models[i];
+				continue;
+			}
+
+			BundleDescription current = model.getBundleDescription();
+			BundleDescription candidate = models[i].getBundleDescription();
+			if (!current.isResolved() && candidate.isResolved()) {
+				model = models[i];
+				continue;
+			}
+
+			if (current.getVersion().compareTo(candidate.getVersion()) < 0) {
+				model = models[i];
+			}
+		}
+		return model;
 	}
 
 	public static IPluginModelBase[] getMergedBundles(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
