@@ -12,10 +12,11 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
@@ -26,6 +27,41 @@ import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class PluginModelManager implements IModelProviderListener {
+
+	/**
+	 * Job to update class path containers asynchronously. Avoids blocking the UI thread
+	 * while saving the manifest editor.
+	 */
+	class UpdateClasspathsJob extends Job {
+
+		private IJavaProject[] fProjects;
+		private IClasspathContainer[] fContianers;
+
+		/**
+		 * Constructs a new job.
+		 * 
+		 * @param projects Java projects
+		 * @param containers associated class path containers
+		 */
+		public UpdateClasspathsJob(IJavaProject[] projects, IClasspathContainer[] containers) {
+			super(PDECoreMessages.PluginModelManager_1);
+			fProjects = projects;
+			fContianers = containers;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, fProjects, fContianers, monitor);
+			} catch (JavaModelException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+
+	}
 
 	/**
 	 * Subclass of ModelEntry
@@ -251,13 +287,19 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 
 		if (map.size() > 0) {
-			try {
-				// update classpath for all affected workspace plug-ins in one operation
-				IJavaProject[] jProjects = (IJavaProject[]) map.keySet().toArray(new IJavaProject[map.size()]);
-				IClasspathContainer[] containers = (IClasspathContainer[]) map.values().toArray(new IClasspathContainer[map.size()]);
-				JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, jProjects, containers, null);
-			} catch (JavaModelException e) {
+			// update class path for all affected workspace plug-ins in one operation
+			Iterator iterator = map.entrySet().iterator();
+			IJavaProject[] projects = new IJavaProject[map.size()];
+			IClasspathContainer[] containers = new IClasspathContainer[projects.length];
+			int index = 0;
+			while (iterator.hasNext()) {
+				Entry entry = (Entry) iterator.next();
+				projects[index] = (IJavaProject) entry.getKey();
+				containers[index] = (IClasspathContainer) entry.getValue();
+				index++;
 			}
+			UpdateClasspathsJob job = new UpdateClasspathsJob(projects, containers);
+			job.schedule();
 		}
 	}
 

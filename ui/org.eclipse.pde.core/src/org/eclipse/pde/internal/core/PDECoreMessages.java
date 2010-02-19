@@ -279,6 +279,7 @@ public class PDECoreMessages extends NLS {
 	public static String PluginConverter_EclipseConverterFileNotFound;
 
 	public static String PluginModelManager_0;
+	public static String PluginModelManager_1;
 
 	public static String PluginParser_EclipseConverterMissingAttribute;
 
