@@ -215,7 +215,7 @@ public final class Util {
 					}
 				}
 			} catch (CoreException e) {
-				return e.getStatus();
+				return new Status(e.getStatus().getSeverity(), ApiPlugin.PLUGIN_ID, ApiPlugin.INTERNAL_ERROR, UtilMessages.Util_builder_errorMessage, e);
 			} catch (OperationCanceledException e) {
 				return Status.CANCEL_STATUS;
 			}
