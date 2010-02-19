@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,10 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 
 public class CoreUtility {
 
@@ -135,6 +138,32 @@ public class CoreUtility {
 		IPluginModelBase model = PluginRegistry.findModel(bundle);
 		if (model == null)
 			return true;
+
+		// check bundle header
+		if (model instanceof IBundlePluginModelBase) {
+			IBundleModel bundleModel = ((IBundlePluginModelBase) model).getBundleModel();
+			if (bundleModel != null) {
+				IBundle b = bundleModel.getBundle();
+				String header = b.getHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
+				if (header != null) {
+					return ICoreConstants.SHAPE_DIR.equals(header);
+				}
+			}
+		}
+
+		// check features
+		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+		IFeatureModel[] models = manager.getModels();
+		for (int i = 0; i < models.length; i++) {
+			IFeatureModel featureModel = models[i];
+			IFeaturePlugin[] plugins = featureModel.getFeature().getPlugins();
+			for (int j = 0; j < plugins.length; j++) {
+				IFeaturePlugin featurePlugin = plugins[j];
+				if (featurePlugin.getId().equals(bundle.getSymbolicName())) {
+					return featurePlugin.isUnpack();
+				}
+			}
+		}
 
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		if (libraries.length == 0)

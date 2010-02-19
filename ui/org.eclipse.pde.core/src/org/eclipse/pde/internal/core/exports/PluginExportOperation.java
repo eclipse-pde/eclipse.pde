@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.w3c.dom.Element;
 
 public class PluginExportOperation extends FeatureBasedExportOperation {
 
@@ -50,6 +52,13 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 		}
 		// always include plug-ins, even ones with environment conflicts
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setAdditionalAttributes(org.w3c.dom.Element, org.eclipse.osgi.service.resolver.BundleDescription)
+	 */
+	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
+		plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
 	}
 
 }

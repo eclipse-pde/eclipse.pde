@@ -167,8 +167,9 @@ public interface ICoreConstants {
 	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
 	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 
-	public static final String[] SHAPE_VALUES = new String[] {"dir", //$NON-NLS-1$
-			"jar"}; //$NON-NLS-1$
+	public static final String SHAPE_JAR = "jar"; //$NON-NLS-1$
+	public static final String SHAPE_DIR = "dir"; //$NON-NLS-1$
+	public static final String[] SHAPE_VALUES = new String[] {SHAPE_DIR, SHAPE_JAR};
 
 	public static final String[] TRANSLATABLE_HEADERS = new String[] {Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CONTACTADDRESS};
 
