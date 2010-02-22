@@ -397,7 +397,7 @@ public class P2Utils {
 		for (Iterator iter = ius.iterator(); iter.hasNext();) {
 			IInstallableUnit iu = (IInstallableUnit) iter.next();
 			plan.addInstallableUnit(iu);
-			plan.setInstallableUnitProfileProperty(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", PlannerHelper.createOptionalInclusionRule(iu));
+			plan.setInstallableUnitProfileProperty(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", PlannerHelper.createOptionalInclusionRule(iu)); //$NON-NLS-1$
 		}
 		IPhaseSet phaseSet = DefaultPhaseSet.createExcluding(new String[] {DefaultPhaseSet.PHASE_CHECK_TRUST, DefaultPhaseSet.PHASE_COLLECT, DefaultPhaseSet.PHASE_CONFIGURE, DefaultPhaseSet.PHASE_UNCONFIGURE, DefaultPhaseSet.PHASE_UNINSTALL});
 		IStatus status = engine.perform(plan, phaseSet, new NullProgressMonitor());
