@@ -643,7 +643,6 @@ public class TargetDefinition implements ITargetDefinition {
 				// check top level IU's. If any have been removed from the containers that are
 				// still in the profile, we need to recreate (rather than uninstall)
 				IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
-				propertyQuery.setProfile(profile);
 				IQueryResult queryResult = profile.query(propertyQuery, null);
 				Iterator iterator = queryResult.iterator();
 				if (iterator.hasNext()) {

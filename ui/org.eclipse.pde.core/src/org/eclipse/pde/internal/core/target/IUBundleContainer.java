@@ -16,7 +16,6 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
-import org.eclipse.equinox.internal.p2.engine.*;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -219,7 +218,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// execute the provisioning plan
-		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
+		IPhaseSet phases = DefaultPhaseSet.createExcluding(new String[] {DefaultPhaseSet.PHASE_CHECK_TRUST, DefaultPhaseSet.PHASE_CONFIGURE, DefaultPhaseSet.PHASE_UNCONFIGURE, DefaultPhaseSet.PHASE_UNINSTALL});
 		IEngine engine = getEngine();
 		plan.setProfileProperty(AbstractTargetHandle.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_PLANNER);
 		plan.setProfileProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(false));
@@ -362,25 +361,25 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
-		Set querySet = queryResult.unmodifiableSet();
-		ArrayList operands = new ArrayList(querySet.size());
-		Iterator itor = querySet.iterator();
-		while (itor.hasNext()) {
-			operands.add(new InstallableUnitOperand(null, (IInstallableUnit) itor.next()));
-		}
-		for (int i = 0; i < units.length; i++) {
-			IInstallableUnit unit = units[i];
-			operands.add(new InstallableUnitPropertyOperand(unit, AbstractTargetHandle.PROP_INSTALLED_IU, null, Boolean.toString(true)));
-		}
-		operands.add(new PropertyOperand(AbstractTargetHandle.PROP_PROVISION_MODE, null, TargetDefinitionPersistenceHelper.MODE_SLICER));
-		operands.add(new PropertyOperand(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, null, Boolean.toString(getIncludeAllEnvironments())));
-
-		// execute the provisioning plan
-		PhaseSet phases = DefaultPhaseSet.createDefaultPhaseSet(DefaultPhaseSet.PHASE_CHECK_TRUST | DefaultPhaseSet.PHASE_CONFIGURE | DefaultPhaseSet.PHASE_UNCONFIGURE | DefaultPhaseSet.PHASE_UNINSTALL);
 		IEngine engine = getEngine();
 		ProvisioningContext context = new ProvisioningContext(repositories);
 		context.setArtifactRepositories(repositories);
-		ProvisioningPlan plan = new ProvisioningPlan(profile, (Operand[]) operands.toArray(new Operand[operands.size()]), context);
+		IProvisioningPlan plan = engine.createPlan(profile, context);
+
+		Set querySet = queryResult.unmodifiableSet();
+		Iterator itor = querySet.iterator();
+		while (itor.hasNext()) {
+			plan.addInstallableUnit((IInstallableUnit) itor.next());
+		}
+		for (int i = 0; i < units.length; i++) {
+			IInstallableUnit unit = units[i];
+			plan.setInstallableUnitProfileProperty(unit, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
+		}
+		plan.setProfileProperty(AbstractTargetHandle.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_SLICER);
+		plan.setProfileProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
+
+		// execute the provisioning plan
+		IPhaseSet phases = DefaultPhaseSet.createExcluding(new String[] {DefaultPhaseSet.PHASE_CHECK_TRUST, DefaultPhaseSet.PHASE_CONFIGURE, DefaultPhaseSet.PHASE_UNCONFIGURE, DefaultPhaseSet.PHASE_UNINSTALL});
 		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
