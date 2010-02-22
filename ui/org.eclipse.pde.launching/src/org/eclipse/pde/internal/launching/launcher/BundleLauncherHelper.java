@@ -64,7 +64,6 @@ public class BundleLauncherHelper {
 			}
 
 			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true)) {
-				//TODO
 				String value = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, ""); //$NON-NLS-1$
 				String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, LOCATION_WORKSPACE);
 				String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, LOCATION_WORKSPACE);
@@ -113,7 +112,8 @@ public class BundleLauncherHelper {
 					}
 					if (LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
 						featureModel = (IFeatureModel) workspaceFeatureMap.get(id);
-					} else if (LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
+					}
+					if (featureModel == null || LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
 						featureModel = (IFeatureModel) externalFeatureMap.get(id);
 					}
 					if (featureModel == null) {
@@ -133,7 +133,8 @@ public class BundleLauncherHelper {
 						IPluginModelBase model = null;
 						if (LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
 							model = getBestCandidateModel(modelEntry.getWorkspaceModels());
-						} else if (LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+						}
+						if (model == null || LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
 							model = getBestCandidateModel(modelEntry.getExternalModels());
 						}
 						if (model == null || map.containsKey(model))
