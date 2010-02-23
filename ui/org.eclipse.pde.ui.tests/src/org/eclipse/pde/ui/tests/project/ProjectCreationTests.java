@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+
+import org.eclipse.core.resources.IProjectDescription;
+
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -1315,5 +1321,39 @@ public class ProjectCreationTests extends TestCase {
 		document = new Document(new String(chars));
 		lines = document.getNumberOfLines();
 		assertEquals("Wrong number of lines", 12, lines);
+	}
+	
+	/**
+	 * Changes a non-plug-in project into a a plug-in.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testNonBundleToBundle() throws CoreException {
+		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject("test.non.bundle.to.bundle");
+		assertFalse("Project should not exist", proj.exists());
+		proj.create(null);
+		proj.open(null);
+		IProjectDescription pd = proj.getDescription();
+		pd.setNatureIds(new String[]{JavaCore.NATURE_ID});
+		proj.setDescription(pd, null);
+		
+		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
+		assertTrue("Missing Java Nature", description.hasNature(JavaCore.NATURE_ID));
+		description.setSymbolicName("test.non.bundle.to.bundle");
+		description.setNatureIds(new String[]{IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
+		description.apply(null);
+		
+		// validate
+		IBundleProjectDescription d2 = getBundleProjectService().getDescription(proj);
+		assertEquals("Wrong symbolic name", proj.getName(), d2.getSymbolicName());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
+		assertTrue("Nature should be present", d2.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", DEFAULT_BUNDLE_CLASSPATH_ENTRY, classpath[0]);
+		
 	}
 }

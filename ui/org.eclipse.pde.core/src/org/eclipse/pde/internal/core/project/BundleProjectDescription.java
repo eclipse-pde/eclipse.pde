@@ -115,6 +115,9 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		// export wizard and launch shortcuts
 		setExportWizardId(PDEProject.getExportWizard(project));
 		setLaunchShortcuts(PDEProject.getLaunchShortcuts(project));
+		// location and natures
+		setLocationURI(project.getDescription().getLocationURI());
+		setNatureIds(project.getDescription().getNatureIds());
 
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (model != null) {
@@ -259,8 +262,6 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				// not a bundle
 				setActivationPolicy(null);
 			}
-			setLocationURI(project.getDescription().getLocationURI());
-			setNatureIds(project.getDescription().getNatureIds());
 			setSymbolicName(base.getId());
 			String latest = TargetPlatformHelper.getTargetVersionString();
 			String tv = TargetPlatformHelper.getTargetVersionForSchemaVersion(base.getSchemaVersion());
