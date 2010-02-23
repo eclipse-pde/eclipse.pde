@@ -37,7 +37,6 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.framework.Version;
 
 /**
@@ -74,9 +73,9 @@ public class ProjectUtils {
 		String[] resolvednatures = additionalNatures;
 		if(additionalNatures != null) {
 			ArrayList natures = new ArrayList(Arrays.asList(additionalNatures));
-			if(!natures.contains(PDE.PLUGIN_NATURE)) {
+			if(!natures.contains(IBundleProjectDescription.PLUGIN_NATURE)) {
 				//need to always set this one first, in case others depend on it, like API tooling does
-				natures.add(0, PDE.PLUGIN_NATURE);
+				natures.add(0, IBundleProjectDescription.PLUGIN_NATURE);
 			}
 			if (!natures.contains(JavaCore.NATURE_ID)) {
 				natures.add(0, JavaCore.NATURE_ID);
