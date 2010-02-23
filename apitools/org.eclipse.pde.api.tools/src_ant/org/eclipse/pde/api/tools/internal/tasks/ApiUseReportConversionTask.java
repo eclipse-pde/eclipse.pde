@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	private String htmlReportsLocation = null;
 	private String xsltFileLocation = null;
 	private String[] filterPatterns = null;
+	private String[] toPatterns = null;
 	
 	/**
 	 * Set the debug value.
@@ -66,11 +67,20 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	
 	/**
 	 * Set the group of {@link String} patterns to use as heuristics to filter
-	 * during the report conversion
+	 * references to names matching any of the given patterns during the report conversion
+	 * @param patterns
+	 */
+	public void setToFilterPatterns(String patterns) {
+		this.toPatterns = parsePatterns(patterns);
+	}
+	
+	/**
+	 * Set the group of {@link String} patterns to use as heuristics to filter
+	 * references from names matching any of the given patterns during the report conversion
 	 * @param patterns
 	 */
 	public void setFilterPatterns(String patterns) {
-		this.filterPatterns = parsePatterns(patterns);
+		this.filterPatterns = parsePatterns(patterns);	
 	}
 	
 	/**
@@ -102,7 +112,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		}
 		try {
 			Util.delete(new File(this.htmlReportsLocation));
-			UseReportConverter converter = new UseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation, this.filterPatterns);
+			UseReportConverter converter = new UseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation, this.toPatterns, this.filterPatterns);
 			UseReportConverter.setDebug(this.debug);
 			converter.convert(this.xsltFileLocation, null);
 			File index = converter.getReportIndex();

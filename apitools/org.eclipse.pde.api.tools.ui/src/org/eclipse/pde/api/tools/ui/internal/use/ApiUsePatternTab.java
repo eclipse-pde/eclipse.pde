@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,12 +88,14 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 						case Pattern.REPORT: {
 							return Messages.ApiUsePatternTab_report;
 						}
+						case Pattern.REPORT_TO: {
+							return Messages.ApiUsePatternTab_report_to;
+						}
 					}
 				}
 			}
 			return null;
 		}
-		
 	}
 	
 	class RegexValidator implements IInputValidator {
@@ -112,7 +114,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	class Pattern {
-		static final int API = 1, INTERNAL = 2, JAR = 3, REPORT = 4;
+		static final int API = 1, INTERNAL = 2, JAR = 3, REPORT = 4, REPORT_TO = 5;
 		String pattern = null;
 		int kind = -1;
 		public Pattern(String pattern, int kind) {
@@ -310,6 +312,12 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 					addPattern((String) iter.next(), Pattern.REPORT);
 				}
 			}
+			pats = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List)null);
+			if(pats != null) {
+				for (Iterator iter = pats.iterator(); iter.hasNext();) {
+					addPattern((String) iter.next(), Pattern.REPORT_TO);
+				}
+			}
 			this.viewer.refresh();
 		}
 		catch(CoreException ce) {
@@ -344,6 +352,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		ArrayList internal = new ArrayList();
 		ArrayList jar = new ArrayList();
 		ArrayList report = new ArrayList();
+		ArrayList reportto = new ArrayList();
 		Pattern pattern = null;
 		for (Iterator iter = this.patterns.iterator(); iter.hasNext();) {
 			pattern = (Pattern) iter.next();
@@ -364,12 +373,17 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 					report.add(pattern.pattern);
 					break;
 				}
+				case Pattern.REPORT_TO: {
+					reportto.add(pattern.pattern);
+					break;
+				}
 			}
 		}
 		configuration.setAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, api.size() > 0 ? api : (List)null);
 		configuration.setAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, internal.size() > 0 ? internal : (List)null);
 		configuration.setAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, jar.size() > 0 ? jar : (List)null);
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, report.size() > 0 ? report : (List)null);
+		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, reportto.size() > 0 ? reportto : (List)null);
 	}
 
 	/* (non-Javadoc)

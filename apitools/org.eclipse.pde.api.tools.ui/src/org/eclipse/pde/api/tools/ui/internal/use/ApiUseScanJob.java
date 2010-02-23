@@ -192,6 +192,7 @@ public class ApiUseScanJob extends Job {
 						htmlPath,
 						xmlPath,
 						isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT),
+						getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List)null)),
 						getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List)null)),
 						localmonitor.newChild(10));
 			}
@@ -376,14 +377,15 @@ public class ApiUseScanJob extends Job {
 			String hlocation, 
 			String rlocation, 
 			boolean openhtml,
-			String[] patterns,
+			String[] topatterns,
+			String[] frompatterns,
 			IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_creating_html_reports, 10);
 		if(cleanh) {
 			cleanReportLocation(hlocation, localmonitor.newChild(5));
 		}
 		try {
-			UseReportConverter converter = new UseReportConverter(hlocation, rlocation, patterns);
+			UseReportConverter converter = new UseReportConverter(hlocation, rlocation, topatterns, frompatterns);
 			converter.convert(null, localmonitor.newChild(5));
 			if(openhtml) {
 				final File index = converter.getReportIndex();

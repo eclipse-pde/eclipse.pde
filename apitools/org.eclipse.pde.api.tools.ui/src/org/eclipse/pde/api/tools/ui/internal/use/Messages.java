@@ -27,6 +27,7 @@ public class Messages extends NLS {
 	public static String ApiUsePatternTab_provide_regex;
 	public static String ApiUsePatternTab_remove;
 	public static String ApiUsePatternTab_report;
+	public static String ApiUsePatternTab_report_to;
 	public static String ApiUseScanJob_api_use_report;
 	public static String ApiUseScanJob_baseline_does_not_exist;
 	public static String ApiUseScanJob_baseline_name_missing;
@@ -106,6 +107,8 @@ public class Messages extends NLS {
 	public static String ReportPatternPage_create_conversion_pattern;
 	public static String ReportPatternPage_edit_conversion_pattern;
 	public static String ReportPatternPage_enter_conversion_pattern;
+	public static String ReportPatternPage_filter_from_pattern;
+	public static String ReportPatternPage_filter_to_pattern;
 	public static String ReportPatternPage_pattern;
 	public static String ReportPatternPage_report_conversion_pattern;
 	static {

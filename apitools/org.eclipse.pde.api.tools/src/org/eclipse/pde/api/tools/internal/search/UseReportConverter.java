@@ -92,11 +92,10 @@ public class UseReportConverter extends HTMLConvertor {
 		 * @param desc
 		 * @return true if the reference should be reported false otherwise
 		 */
-		private boolean acceptReference(IMemberDescriptor desc) {
-			if(filterPatterns != null) {
-				for (int i = 0; i < filterPatterns.length; i++) {
-					if(filterPatterns[i].matcher(desc.getPackage().getName()).find()) {
-						//TODO should we record filtered results?
+		private boolean acceptReference(IMemberDescriptor desc, Pattern[] patterns) {
+			if(patterns != null) {
+				for (int i = 0; i < patterns.length; i++) {
+					if(patterns[i].matcher(desc.getPackage().getName()).find()) {
 						return false;
 					}
 				}
@@ -227,7 +226,8 @@ public class UseReportConverter extends HTMLConvertor {
 		 */
 		public void visitReference(IReferenceDescriptor reference) {
 			IMemberDescriptor fromMember = reference.getMember();
-			if(!acceptReference(fromMember)) {
+			if(!acceptReference(reference.getReferencedMember(), topatterns) || 
+					!acceptReference(fromMember, frompatterns)) {
 				return;
 			}
 			int lineNumber = reference.getLineNumber();
@@ -609,32 +609,51 @@ public class UseReportConverter extends HTMLConvertor {
 	SAXParser parser = null;
 	private boolean hasmissing = false;
 	private UseMetadata metadata = null;
-	Pattern[] filterPatterns = null;
+	Pattern[] topatterns = null;
+	Pattern[] frompatterns = null;
 	
 	/**
 	 * Constructor
 	 * @param htmlroot the folder root where the HTML reports should be written
 	 * @param xmlroot the folder root where the current API use scan output is located
-	 * @param patterns array of regular expressions to prune HTML output with
+	 * @param topatterns array of regular expressions used to prune references to a given name pattern
+	 * @param frompatterns array of regular expressions used to prune references from a given name pattern
 	 */
-	public UseReportConverter(String htmlroot, String xmlroot, String[] patterns) {
+	public UseReportConverter(String htmlroot, String xmlroot, String[] topatterns, String[] frompatterns) {
 		this.xmlLocation = xmlroot;
 		this.htmlLocation = htmlroot;
-		if(patterns != null) {
-			ArrayList pats = new ArrayList(patterns.length);
-			for (int i = 0; i < patterns.length; i++) {
+		if(topatterns != null) {
+			ArrayList pats = new ArrayList(topatterns.length);
+			for (int i = 0; i < topatterns.length; i++) {
 				try {
-					pats.add(Pattern.compile(patterns[i]));
+					pats.add(Pattern.compile(topatterns[i]));
 				}
 				catch(PatternSyntaxException pse) {
 					if(DEBUG) {
-						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, patterns[i]));
+						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, topatterns[i]));
 						System.out.println(pse.getMessage());
 					}
 				}
 			}
 			if(!pats.isEmpty()) {
-				this.filterPatterns = (Pattern[]) pats.toArray(new Pattern[pats.size()]);
+				this.topatterns = (Pattern[]) pats.toArray(new Pattern[pats.size()]);
+			}
+		}
+		if(frompatterns != null) {
+			ArrayList pats = new ArrayList(frompatterns.length);
+			for (int i = 0; i < frompatterns.length; i++) {
+				try {
+					pats.add(Pattern.compile(frompatterns[i]));
+				}
+				catch(PatternSyntaxException pse) {
+					if(DEBUG) {
+						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, frompatterns[i]));
+						System.out.println(pse.getMessage());
+					}
+				}
+			}
+			if(!pats.isEmpty()) {
+				this.frompatterns = (Pattern[]) pats.toArray(new Pattern[pats.size()]);
 			}
 		}
 	}
@@ -1610,9 +1629,23 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_filter_pattern).append(CLOSE_TD); 
 			buffer.append(openTD(36)); 
-			if(this.filterPatterns != null) {
-				for (int i = 0; i < this.filterPatterns.length; i++) {
-					buffer.append(this.filterPatterns[i].pattern()).append(BR);
+			if(this.frompatterns != null) {
+				for (int i = 0; i < this.frompatterns.length; i++) {
+					buffer.append(this.frompatterns[i].pattern()).append(BR);
+				}
+			}
+			else {
+				buffer.append(SearchMessages.UseReportConverter_none); 
+			}
+			buffer.append(CLOSE_TD);
+			buffer.append(CLOSE_TR);
+			
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_to_filter_patterns).append(CLOSE_TD); 
+			buffer.append(openTD(36)); 
+			if(this.topatterns != null) {
+				for (int i = 0; i < this.topatterns.length; i++) {
+					buffer.append(this.topatterns[i].pattern()).append(BR);
 				}
 			}
 			else {

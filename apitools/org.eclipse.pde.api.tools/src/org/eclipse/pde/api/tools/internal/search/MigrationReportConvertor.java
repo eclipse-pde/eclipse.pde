@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,11 @@ public class MigrationReportConvertor extends UseReportConverter {
 	 * Constructor
 	 * @param htmlroot
 	 * @param xmlroot
-	 * @param patterns
+	 * @param topatterns
+	 * @param frompatterns
 	 */
-	public MigrationReportConvertor(String htmlroot, String xmlroot, String[] patterns) {
-		super(htmlroot, xmlroot, patterns);
+	public MigrationReportConvertor(String htmlroot, String xmlroot, String[] topatterns, String[] frompatterns) {
+		super(htmlroot, xmlroot, topatterns, frompatterns);
 	}
 
 	/* (non-Javadoc)

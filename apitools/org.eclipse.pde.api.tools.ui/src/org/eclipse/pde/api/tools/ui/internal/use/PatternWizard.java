@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class PatternWizard extends Wizard {
 			addPage(new PatternSelectionPage());
 			addPage(new DescriptionPatternPage(null, -1));
 			addPage(new ArchivePatternPage(null));
-			addPage(new ReportPatternPage(null));
+			addPage(new ReportPatternPage(null, -1));
 		}
 		else {
 			switch(this.kind) {
@@ -56,8 +56,9 @@ public class PatternWizard extends Wizard {
 					addPage(new ArchivePatternPage(this.pattern));
 					break;
 				}
+				case Pattern.REPORT_TO:
 				case Pattern.REPORT: {
-					addPage(new ReportPatternPage(this.pattern));
+					addPage(new ReportPatternPage(this.pattern, this.kind));
 					break;
 				}
 			}
