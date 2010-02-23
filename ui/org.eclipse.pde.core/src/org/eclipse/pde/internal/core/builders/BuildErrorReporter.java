@@ -463,23 +463,25 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (model instanceof IBundlePluginModelBase && !(model instanceof IBundleFragmentModel)) {
 			IBundleModel bm = ((IBundlePluginModelBase) model).getBundleModel();
 			IManifestHeader mh = bm.getBundle().getManifestHeader(Constants.BUNDLE_LOCALIZATION);
+			IPath resourcePath = null;
+			String entry = null;
 			if ((mh == null || mh.getValue() == null)) { // check for default location
-				Path path = new Path(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
-				if (fProject.exists(path))
-					validateBinIncludes(binIncludes, Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
+				resourcePath = new Path(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
+				entry = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 			} else { // check for the real location
 				String localization = mh.getValue();
 				int index = localization.lastIndexOf('/');
 				if (index != -1) { // if we're a folder
-					String folder = localization.substring(0, index + 1);
-					Path path = new Path(folder);
-					if (fProject.exists(path))
-						validateBinIncludes(binIncludes, folder);
+					entry = localization.substring(0, index + 1);
+					resourcePath = new Path(entry);
 				} else { // if we're just a file location
-					String location = mh.getValue().concat(".properties"); //$NON-NLS-1$
-					Path path = new Path(location);
-					if (fProject.exists(path))
-						validateBinIncludes(binIncludes, location);
+					entry = mh.getValue().concat(".properties"); //$NON-NLS-1$
+					resourcePath = new Path(entry);
+				}
+			}
+			if (resourcePath != null && entry != null) {
+				if (PDEProject.getBundleRoot(fProject).exists(resourcePath)) {
+					validateBinIncludes(binIncludes, entry);
 				}
 			}
 		}

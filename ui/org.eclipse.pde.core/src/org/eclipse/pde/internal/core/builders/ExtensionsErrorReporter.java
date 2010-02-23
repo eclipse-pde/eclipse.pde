@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.util.*;
 import org.w3c.dom.*;
@@ -512,7 +513,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				IPath currPath = new Path(paths.get(i).toString());
 				if (currPath.isAbsolute() && currPath.toFile().exists())
 					return true;
-				if (fFile.getProject().findMember(currPath) != null)
+				if (PDEProject.getBundleRoot(fFile.getProject()).findMember(currPath) != null)
 					return true;
 				if (fBuildModel != null && fBuildModel.getEntry("source." + paths.get(i)) != null) //$NON-NLS-1$
 					return true;
