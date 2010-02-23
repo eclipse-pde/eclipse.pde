@@ -68,6 +68,8 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private IBundleProjectService fService;
 	private String[] fLaunchShortcuts;
 	private String fExportWizard;
+	private IBundle fBundle;
+	private Map fHeaders = new HashMap();
 
 	/**
 	 * Constructs a bundle description for the specified project.
@@ -152,6 +154,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			}
 			if (base instanceof BundlePluginBase) {
 				IBundle bundle = ((BundlePluginBase) base).getBundle();
+				fBundle = bundle;
 				String value = bundle.getHeader(Constants.BUNDLE_LOCALIZATION);
 				if (value != null) {
 					setLocalization(new Path(value));
@@ -780,6 +783,37 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 */
 	public String getActivationPolicy() {
 		return fActivationPolicy;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setHeader(java.lang.String, java.lang.String)
+	 */
+	public void setHeader(String header, String value) {
+		fHeaders.put(header, value);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getHeader(java.lang.String)
+	 */
+	public String getHeader(String header) {
+		if (fHeaders.containsKey(header)) { // might be null so check contains
+			return (String) fHeaders.get(header);
+		}
+		// get the value from the model
+		if (fBundle != null) {
+			return fBundle.getHeader(header);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns any extra headers that have been specified. A map of header names to header
+	 * values.
+	 * 
+	 * @return a map of header names to header values, possible empty
+	 */
+	Map getExtraHeaders() {
+		return fHeaders;
 	}
 
 }

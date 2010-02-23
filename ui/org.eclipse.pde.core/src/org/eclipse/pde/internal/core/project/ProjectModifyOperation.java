@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.project;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -578,6 +579,18 @@ public class ProjectModifyOperation {
 				WorkspaceBundleModel wbm = (WorkspaceBundleModel) bundleModel;
 				if (wbm.isDirty()) {
 					fModel.setDirty(true);
+				}
+			}
+			// apply any other headers that have been specified
+			BundleProjectDescription bpd = (BundleProjectDescription) description;
+			Map extraHeaders = bpd.getExtraHeaders();
+			Iterator iterator = extraHeaders.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry entry = (Entry) iterator.next();
+				String name = (String) entry.getKey();
+				String value = (String) entry.getValue();
+				if (!isEqual(value, bundle.getHeader(name))) {
+					bundle.setHeader(name, value);
 				}
 			}
 		}

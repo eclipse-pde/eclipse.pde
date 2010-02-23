@@ -533,6 +533,10 @@ public class ProjectCreationTests extends TestCase {
 		description.setRequiredBundles(new IRequiredBundleDescription[]{rb1, rb2});
 		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
 		description.setPackageImports(new IPackageImportDescription[]{pi1});
+		description.setHeader("SomeHeader", "something");
+		// test version override with explicit header setting
+		description.setBundleVersion(new Version("2.0.0"));
+		description.setHeader(Constants.BUNDLE_VERSION, "3.2.1");
 		description.apply(null);
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -546,8 +550,9 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
 		assertEquals("Wrong Bundle-Classpath entry", classpath[0], spec);
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertEquals("Wrong header", project.getName(), d2.getHeader(Constants.BUNDLE_NAME));
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
-		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		assertEquals("Wrong version", "3.2.1", d2.getBundleVersion().toString());
 		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
 		String[] ees = d2.getExecutionEnvironments();
 		assertNotNull("Wrong execution environments", ees);
@@ -578,6 +583,8 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+		assertEquals("Wrong header", "something", d2.getHeader("SomeHeader"));
+		assertNull("Header should be missing", d2.getHeader("AnotherHeader"));
 	}		
 	
 	/**
@@ -661,17 +668,21 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 		IHostDescription host = service.newHost("some.host", null);
+		description.setHeader("HeaderOne", "one"); // arbitrary header
 		description.setHost(host);
 		description.apply(null);
 		
-		//modify to a bundle
+		//modify to a bundle and remove a header
 		IBundleProjectDescription modify = service.getDescription(project);
+		assertEquals("Wrong header value", "one", modify.getHeader("HeaderOne"));
+		modify.setHeader("HeaderOne", null);
 		modify.setHost(null);
 		modify.apply(null);
 		
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
+		assertNull("Header should be removed", d2.getHeader("HeaderOne"));
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
