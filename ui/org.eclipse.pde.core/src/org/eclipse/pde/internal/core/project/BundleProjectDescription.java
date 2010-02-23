@@ -540,14 +540,38 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#getNatureIds()
 	 */
 	public String[] getNatureIds() {
-		return fNatures;
+		if (fNatures == null) {
+			return new String[0];
+		}
+		String[] copy = new String[fNatures.length];
+		System.arraycopy(fNatures, 0, copy, 0, fNatures.length);
+		return copy;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setNatureIds(java.lang.String[])
 	 */
 	public void setNatureIds(String[] natures) {
-		fNatures = natures;
+		String[] copy = null;
+		if (natures != null) {
+			copy = new String[natures.length];
+			System.arraycopy(natures, 0, copy, 0, natures.length);
+		}
+		fNatures = copy;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#hasNature(java.lang.String)
+	 */
+	public boolean hasNature(String natureId) {
+		if (fNatures != null) {
+			for (int i = 0; i < fNatures.length; i++) {
+				if (fNatures[i].equals(natureId)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

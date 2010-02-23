@@ -10,44 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import org.eclipse.jface.text.Document;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.*;
-
-import org.eclipse.core.resources.IFile;
-
-import org.eclipse.pde.core.project.IPackageImportDescription;
-
-import org.eclipse.pde.core.project.IBundleProjectDescription;
-
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
-
-import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-
-import org.eclipse.pde.core.plugin.*;
-
-import org.osgi.framework.Constants;
-
 import java.io.*;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.*;
 import junit.framework.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.text.Document;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.project.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
 /**
@@ -118,8 +103,11 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
+		assertTrue("Nature should be present", d2.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		assertTrue("Nature should be present", d2.hasNature(JavaCore.NATURE_ID));
+		assertFalse("Should not have bogus nature", d2.hasNature("BOGUS_NATURE"));
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
 		assertEquals("Wrong project", project, d2.getProject());
@@ -166,7 +154,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -218,7 +206,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -269,7 +257,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -328,7 +316,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -372,7 +360,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -427,7 +415,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		IPackageExportDescription[] exports = d2.getPackageExports();
@@ -490,7 +478,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -563,7 +551,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		IPackageImportDescription[] imports = d2.getPackageImports();
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -637,7 +625,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		IPackageExportDescription[] exports = d2.getPackageExports();
@@ -701,7 +689,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -762,7 +750,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		IPackageExportDescription[] exports = d2.getPackageExports();
@@ -848,7 +836,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		IPackageExportDescription[] exports = d2.getPackageExports();
@@ -899,7 +887,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		assertNull("Wrong imports", d2.getPackageImports());
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -970,7 +958,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		IPackageImportDescription[] imports = d2.getPackageImports();
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -1056,7 +1044,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		IPackageImportDescription[] imports = d2.getPackageImports();
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -1122,7 +1110,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		IPackageImportDescription[] imports = d2.getPackageImports();
 		assertNull("Wrong exports", d2.getPackageExports());
@@ -1187,7 +1175,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong project location URI", d2.getLocationURI());
 		String[] natureIds = d2.getNatureIds();
 		assertEquals("Wrong number of natures", 2, natureIds.length);
-		assertEquals("Wrong nature", PDE.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
 		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
 		IPackageImportDescription[] imports = d2.getPackageImports();
 		assertNull("Wrong exports", d2.getPackageExports());

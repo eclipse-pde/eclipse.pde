@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -65,8 +64,8 @@ public class ProjectModifyOperation {
 			if (description.getBundleVersion() == null) {
 				description.setBundleVersion(new Version(1, 0, 0, "qualifier")); //$NON-NLS-1$
 			}
-			if (description.getNatureIds() == null) {
-				description.setNatureIds(new String[] {PDE.PLUGIN_NATURE, JavaCore.NATURE_ID});
+			if (description.getNatureIds().length == 0) {
+				description.setNatureIds(new String[] {IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
 			}
 		}
 		SubMonitor sub = SubMonitor.convert(monitor, taskName, 6);

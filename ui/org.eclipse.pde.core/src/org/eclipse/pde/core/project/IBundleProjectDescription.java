@@ -14,7 +14,9 @@ import java.net.URI;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -55,6 +57,11 @@ public interface IBundleProjectDescription {
 	 * Identifies bundles developed for Eclipse 3.6, value is <code>"3.6"</code>.
 	 */
 	public static final String VERSION_3_6 = ICoreConstants.TARGET36;
+
+	/**
+	 * Constant for the PDE Plug-in project nature, value is <code>"org.eclipse.pde.PluginNature"</code>.
+	 */
+	public static final String PLUGIN_NATURE = PDE.PLUGIN_NATURE;
 
 	/**
 	 * Creates or modifies a bundle project and associated artifacts based current settings.
@@ -208,12 +215,25 @@ public interface IBundleProjectDescription {
 	 * Sets the list of natures associated with the described project.
 	 * A project created with this description will have these natures
 	 * added to it in the given order when this description is applied.
-	 *
+	 * <p>
+	 * When creating a new project, plug-in and Java natures ({@link #PLUGIN_NATURE}
+	 * and {@link JavaCore#NATURE_ID}) will be added by default when unspecified.
+	 * </p>
 	 * @param natures the list of natures
 	 * @see #getNatureIds()
 	 * @see IProjectDescription#getNatureIds()
 	 */
 	public void setNatureIds(String[] natures);
+
+	/** 
+	 * Returns whether the project nature specified by the given
+	 * nature extension id has been added to the described project. 
+	 *
+	 * @param natureId the nature extension identifier
+	 * @return <code>true</code> if the described project has the given nature 
+	 * @see IProjectDescription#hasNature(String)
+	 */
+	public boolean hasNature(String natureId);
 
 	/**
 	 * Sets the the Fragment-Host header for the described fragment.
