@@ -850,7 +850,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				}
 				if(fFilterMap != null) {
 					fFilterMap.clear();
-					needsbuild = true;
+					needsbuild = fProject.getProject().isAccessible();
 				}
 			}
 			else if(leafdelta.getKind() == IResourceDelta.ADDED || 
@@ -871,12 +871,12 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 							initializeApiFilters();
 						}
 						finally {
-							needsbuild = true;
+							needsbuild = fProject.getProject().isAccessible();
 						}
 					}
 				}
 			}
-			if(needsbuild && ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+			if(needsbuild && !ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 				Util.getBuildJob(new IProject[] {fProject.getProject()}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			}
 		}
