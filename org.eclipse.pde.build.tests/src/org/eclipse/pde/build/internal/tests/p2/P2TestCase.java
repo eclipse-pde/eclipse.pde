@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,8 +22,8 @@ import org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepo
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.internal.repository.tools.RepositoryUtilities;
 import org.eclipse.equinox.p2.metadata.*;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
@@ -161,7 +161,7 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public IInstallableUnit getIU(IMetadataRepository repository, String name, boolean assertNotNull) {
-		IQueryResult queryResult = repository.query(new InstallableUnitQuery(name), null);
+		IQueryResult queryResult = repository.query(QueryUtil.createIUQuery(name), null);
 
 		IInstallableUnit unit = null;
 		if (!queryResult.isEmpty())

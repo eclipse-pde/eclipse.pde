@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.p2.metadata.*;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
@@ -1318,7 +1318,7 @@ public class PublishingTests extends P2TestCase {
 
 		URI repoURI = URIUtil.fromString("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
-		IQueryResult queryResult = metadata.query(new InstallableUnitQuery("a"), null);
+		IQueryResult queryResult = metadata.query(QueryUtil.createIUQuery("a"), null);
 		assertTrue(queryResult.isEmpty());
 		getIU(metadata, "b");
 	}
