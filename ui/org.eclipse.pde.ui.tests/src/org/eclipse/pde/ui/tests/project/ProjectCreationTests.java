@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.jdt.launching.JavaRuntime;
+
+import org.eclipse.jdt.core.IClasspathEntry;
+
+import org.eclipse.jdt.core.IJavaProject;
+
+import org.eclipse.core.resources.IFolder;
+
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 
 import org.eclipse.core.resources.IProjectDescription;
@@ -582,7 +590,7 @@ public class ProjectCreationTests extends TestCase {
 	}		
 	
 	/**
-	 * Modify a simple project - change classpath, add activator and plugin.xml.
+	 * Modify a simple project - change class path, add activator and plugin.xml.
 	 * 
 	 * @throws CoreException
 	 */
@@ -590,6 +598,9 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
+		IPath src = new Path("srcA");
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("a.jar"));
+		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
 		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
@@ -599,9 +610,9 @@ public class ProjectCreationTests extends TestCase {
 		
 		// modify the project
 		IBundleProjectDescription modify = service.getDescription(project);
-		IPath src = new Path("src");
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("a.jar"));
-		modify.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		IPath srcB = new Path("srcB");
+		IBundleClasspathEntry specB = service.newBundleClasspathEntry(srcB, null, new Path("b.jar"));
+		modify.setBundleClassath(new IBundleClasspathEntry[] {specB});
 		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false, new String[]{"zz.top"});
 		modify.setPackageExports(new IPackageExportDescription[]{ex0, ex2, ex4, ex3}); // remove, add, re-order
 		modify.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
@@ -620,7 +631,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Wrong Bundle-Classpath", classpath);
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
-		assertEquals("Wrong Bundle-Classpath entry", spec, classpath[0]);
+		assertEquals("Wrong Bundle-Classpath entry", specB, classpath[0]);
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
@@ -1355,5 +1366,70 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
 		assertEquals("Wrong Bundle-Classpath entry", DEFAULT_BUNDLE_CLASSPATH_ENTRY, classpath[0]);
 		
+	}
+	
+	/**
+	 * Convert an existing Java project into a bundle project. Ensure it's build path
+	 * doesn't get toasted in the process.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testJavaToBundle() throws CoreException {
+		// create a Java project
+		String name = getName().toLowerCase().substring(4);
+		name = "test." + name;
+		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		assertFalse("Project should not exist", proj.exists());
+		proj.create(null);
+		proj.open(null);
+		IProjectDescription pd = proj.getDescription();
+		pd.setNatureIds(new String[]{JavaCore.NATURE_ID});
+		proj.setDescription(pd, null);
+		IFolder src = proj.getFolder("someSrc");
+		src.create(false, true, null);
+		IFolder output = proj.getFolder("someBin");
+		output.create(false, true, null);
+		IJavaProject javaProject = JavaCore.create(proj);
+		javaProject.setOutputLocation(output.getFullPath(), null);
+		IClasspathEntry entry1 = JavaCore.newSourceEntry(src.getFullPath());
+		IClasspathEntry entry2 = JavaCore.newContainerEntry(JavaRuntime.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")));
+		IClasspathEntry entry3 = JavaCore.newContainerEntry(ClasspathContainerInitializer.PATH);
+		javaProject.setRawClasspath(new IClasspathEntry[]{entry1, entry2, entry3}, null);
+		
+		// convert to a bundle
+		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
+		assertTrue("Missing Java Nature", description.hasNature(JavaCore.NATURE_ID));
+		description.setSymbolicName(proj.getName());
+		description.setNatureIds(new String[]{IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
+		IBundleClasspathEntry entry = getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, null);
+		description.setBundleClassath(new IBundleClasspathEntry[]{entry});
+		description.apply(null);
+		
+		// validate
+		IBundleProjectDescription d2 = getBundleProjectService().getDescription(proj);
+		assertEquals("Wrong symbolic name", proj.getName(), d2.getSymbolicName());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
+		assertTrue("Nature should be present", d2.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		// execution environment should be that on the Java build path
+		String[] ees = d2.getExecutionEnvironments();
+		assertNotNull("Missing EEs", ees);
+		assertEquals("Wrong number of EEs", 1, ees.length);
+		assertEquals("Wrong EE", "J2SE-1.4", ees[0]);
+		// version
+		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, new Path(".")), classpath[0]);
+		
+		// raw class path should still be intact
+		IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
+		assertEquals("Wrong number of entries", 3, rawClasspath.length);
+		assertEquals("Wrong entry", entry1, rawClasspath[0]);
+		assertEquals("Wrong entry", entry2, rawClasspath[1]);
+		assertEquals("Wrong entry", entry3, rawClasspath[2]);
 	}
 }

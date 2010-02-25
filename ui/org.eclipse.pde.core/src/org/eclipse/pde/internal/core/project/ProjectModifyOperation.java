@@ -10,22 +10,69 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.Set;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.project.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IHostDescription;
+import org.eclipse.pde.core.project.IPackageExportDescription;
+import org.eclipse.pde.core.project.IPackageImportDescription;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
+import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.bundle.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundleFragmentModel;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -56,18 +103,47 @@ public class ProjectModifyOperation {
 		IBundleProjectDescription before = service.getDescription(project);
 		boolean considerRoot = !project.exists();
 		String taskName = null;
+		boolean jpExisted = false;
 		if (project.exists()) {
 			taskName = Messages.ProjectModifyOperation_0;
+			jpExisted = before.hasNature(JavaCore.NATURE_ID);
 		} else {
 			taskName = Messages.ProjectModifyOperation_1;
-			// set default values for where unspecified
-			if (description.getBundleVersion() == null) {
-				description.setBundleVersion(new Version(1, 0, 0, "qualifier")); //$NON-NLS-1$
-			}
+			// new bundle projects get Java and Plug-in natures
 			if (description.getNatureIds().length == 0) {
 				description.setNatureIds(new String[] {IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
 			}
 		}
+		boolean becomeBundle = !before.hasNature(IBundleProjectDescription.PLUGIN_NATURE) && description.hasNature(IBundleProjectDescription.PLUGIN_NATURE);
+
+		// set default values when migrating from Java project to bundle project
+		if (jpExisted && becomeBundle) {
+			if (description.getExecutionEnvironments() == null) {
+				// use EE from Java project when unspecified in the description, and a bundle nature is being added
+				IJavaProject jp = JavaCore.create(project);
+				if (jp.exists()) {
+					IClasspathEntry[] classpath = jp.getRawClasspath();
+					for (int i = 0; i < classpath.length; i++) {
+						IClasspathEntry entry = classpath[i];
+						if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+							String id = JavaRuntime.getExecutionEnvironmentId(entry.getPath());
+							if (id != null) {
+								description.setExecutionEnvironments(new String[] {id});
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		// other default values when becoming a bundle
+		if (becomeBundle) {
+			// set default values for where unspecified
+			if (description.getBundleVersion() == null) {
+				description.setBundleVersion(new Version(1, 0, 0, "qualifier")); //$NON-NLS-1$
+			}
+		}
+
 		SubMonitor sub = SubMonitor.convert(monitor, taskName, 6);
 		// create and open project
 		createProject(description);
@@ -85,7 +161,7 @@ public class ProjectModifyOperation {
 		configureNatures(description);
 		sub.worked(1);
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			configureJavaProject(description, before);
+			configureJavaProject(description, before, jpExisted);
 		}
 		sub.worked(1);
 		configureManifest(description, before);
@@ -159,11 +235,15 @@ public class ProjectModifyOperation {
 
 	/**
 	 * Configures the build path and output location of the described Java project.
+	 * If the Java project existed before this operation, new build path entries are
+	 * added for the bundle class path, if required, but we don't change the exiting
+	 * build path.
 	 * 
 	 * @param description desired project description
 	 * @param before state before the operation
+	 * @param existed whether the Java project existed before the operation
 	 */
-	private void configureJavaProject(IBundleProjectDescription description, IBundleProjectDescription before) throws CoreException {
+	private void configureJavaProject(IBundleProjectDescription description, IBundleProjectDescription before, boolean existed) throws CoreException {
 		IProject project = description.getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		// create source folders as required
@@ -182,10 +262,42 @@ public class ProjectModifyOperation {
 			javaProject.setOutputLocation(path, null);
 		}
 
+		// merge the class path if the project existed before
 		IBundleClasspathEntry[] prev = before.getBundleClasspath();
 		if (!isEqual(bces, prev)) {
-			IClasspathEntry[] entries = getClassPathEntries(javaProject, description);
-			javaProject.setRawClasspath(entries, null);
+			if (existed) {
+				// add entries not already present
+				IClasspathEntry[] entries = getSourceFolderEntries(javaProject, description);
+				IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
+				List add = new ArrayList();
+				for (int i = 0; i < entries.length; i++) {
+					IClasspathEntry entry = entries[i];
+					boolean present = false;
+					for (int j = 0; j < rawClasspath.length; j++) {
+						IClasspathEntry existingEntry = rawClasspath[j];
+						if (existingEntry.getEntryKind() == entry.getEntryKind()) {
+							if (existingEntry.getPath().equals(entry.getPath())) {
+								present = true;
+								break;
+							}
+						}
+					}
+					if (!present) {
+						add.add(entry);
+					}
+				}
+				if (!add.isEmpty()) {
+					List all = new ArrayList();
+					for (int i = 0; i < rawClasspath.length; i++) {
+						all.add(rawClasspath[i]);
+					}
+					all.addAll(add);
+					javaProject.setRawClasspath((IClasspathEntry[]) all.toArray(new IClasspathEntry[all.size()]), null);
+				}
+			} else {
+				IClasspathEntry[] entries = getClassPathEntries(javaProject, description);
+				javaProject.setRawClasspath(entries, null);
+			}
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,17 +13,39 @@ package org.eclipse.pde.internal.core.bundle;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IIdentifiable;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.core.text.bundle.*;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.plugin.AbstractExtensions;
+import org.eclipse.pde.internal.core.plugin.PluginImport;
+import org.eclipse.pde.internal.core.plugin.PluginLibrary;
+import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleVendorHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleVersionHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 public class BundlePluginBase extends PlatformObject implements IBundlePluginBase, Serializable {
 
@@ -138,6 +160,44 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		getBundle().setHeader(Constants.BUNDLE_CLASSPATH, buffer.toString());
 	}
 
+	/**
+	 * Removes the specified library from the given 'Bundle-Classpath' header.
+	 * 
+	 * @param library library to remove
+	 * @param header header to update
+	 */
+	private void removeLibrary(IPluginLibrary library, IManifestHeader header) {
+		String value = header == null ? null : header.getValue();
+		String name = library.getName();
+		int index = value.indexOf(name);
+		if (index >= 0) {
+			// copy up to the removed library
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i > index; i++) {
+				buffer.append(value.charAt(i));
+			}
+			int after = index + name.length();
+			// delete (skip) comma
+			if (after < value.length()) {
+				while (value.charAt(after) == ',') {
+					after++;
+				}
+			}
+			// delete (skip) whitespace
+			if (after < value.length()) {
+				while (Character.isWhitespace(value.charAt(after))) {
+					after++;
+				}
+			}
+			// keep everything else
+			while (after < value.length()) {
+				buffer.append(value.charAt(after));
+				after++;
+			}
+			getBundle().setHeader(Constants.BUNDLE_CLASSPATH, buffer.toString());
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -147,9 +207,11 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		ensureModelEditable();
 		if (libraries != null) {
 			libraries.remove(library);
-			Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
+			IManifestHeader header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
 			if (header instanceof BundleClasspathHeader) {
 				((BundleClasspathHeader) header).removeLibrary(library.getName());
+			} else if (header != null) {
+				removeLibrary(library, header);
 			}
 			fireStructureChanged(library, false);
 		}
