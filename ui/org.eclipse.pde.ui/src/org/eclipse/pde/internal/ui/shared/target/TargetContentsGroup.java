@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,8 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
@@ -68,6 +70,9 @@ public class TargetContentsGroup {
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
 	private Button fSelectRequiredButton;
+	private Label fModeLabel;
+	private Button fPluginModeButton;
+	private Button fFeaureModeButton;
 	private Label fShowLabel;
 	private Button fShowSourceButton;
 	private Button fShowPluginsButton;
@@ -84,6 +89,9 @@ public class TargetContentsGroup {
 	 * Maps file paths to a list of bundles that reside in that location, use {@link #getFileBundleMapping()} rather than accessing the field directly
 	 */
 	private Map fFileBundleMapping;
+
+	private static final NameVersionDescriptor OTHER_CATEGORY = new NameVersionDescriptor(Messages.TargetContentsGroup_OtherPluginsParent, null);
+
 	/**
 	 * Cached list of all bundles, used to quickly obtain bundle counts.
 	 */
@@ -246,6 +254,14 @@ public class TargetContentsGroup {
 		});
 		fTree.setSorter(new ViewerSorter() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (fFeaureModeButton.getSelection()) {
+					if (e1 == OTHER_CATEGORY) {
+						return 1;
+					}
+					if (e2 == OTHER_CATEGORY) {
+						return -1;
+					}
+				}
 				if (e1 instanceof IResolvedBundle && e2 instanceof IResolvedBundle) {
 					IStatus status1 = ((IResolvedBundle) e1).getStatus();
 					IStatus status2 = ((IResolvedBundle) e2).getStatus();
@@ -316,6 +332,18 @@ public class TargetContentsGroup {
 			filterComp.setLayout(layout);
 			filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
 
+			fModeLabel = toolkit.createLabel(filterComp, Messages.TargetContentsGroup_ManageUsing);
+
+			fPluginModeButton = toolkit.createButton(filterComp, Messages.TargetContentsGroup_PluginMode, SWT.RADIO);
+			fPluginModeButton.setSelection(true);
+			fFeaureModeButton = toolkit.createButton(filterComp, Messages.TargetContentsGroup_FeatureMode, SWT.RADIO);
+			fFeaureModeButton.setSelection(true);
+
+			emptySpace = new Label(filterComp, SWT.NONE);
+			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.widthHint = gd.heightHint = 5;
+			emptySpace.setLayoutData(gd);
+
 			fShowLabel = toolkit.createLabel(filterComp, Messages.BundleContainerTable_9);
 
 			fShowPluginsButton = toolkit.createButton(filterComp, Messages.BundleContainerTable_14, SWT.CHECK);
@@ -366,6 +394,16 @@ public class TargetContentsGroup {
 
 			Composite filterComp = SWTFactory.createComposite(buttonComp, 1, 1, SWT.NONE, 0, 0);
 			filterComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
+
+			fModeLabel = SWTFactory.createLabel(filterComp, Messages.TargetContentsGroup_ManageUsing, 1);
+
+			fPluginModeButton = SWTFactory.createRadioButton(filterComp, Messages.TargetContentsGroup_PluginMode);
+			fFeaureModeButton = SWTFactory.createRadioButton(filterComp, Messages.TargetContentsGroup_FeatureMode);
+
+			emptySpace = new Label(filterComp, SWT.NONE);
+			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.widthHint = gd.heightHint = 5;
+			emptySpace.setLayoutData(gd);
 
 			fShowLabel = SWTFactory.createLabel(filterComp, Messages.BundleContainerTable_9, 1);
 
@@ -443,7 +481,12 @@ public class TargetContentsGroup {
 		fSelectRequiredButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Object[] allChecked = fTree.getCheckedLeafElements();
-				Object[] required = getRequiredElements(fAllBundles, Arrays.asList(allChecked));
+				Object[] required = null;
+				if (fFeaureModeButton.getSelection()) {
+					required = getRequiredFeatures(((TargetDefinition) fTargetDefinition).getFeatureModels(), allChecked);
+				} else {
+					required = getRequiredPlugins(fAllBundles, allChecked);
+				}
 				for (int i = 0; i < required.length; i++) {
 					fTree.setChecked(required[i], true);
 				}
@@ -453,6 +496,60 @@ public class TargetContentsGroup {
 				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
+
+		fPluginModeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				// Moving from feature based filtering to plug-in based, need to update storage
+				((TargetDefinition) fTargetDefinition).setUIMode(TargetDefinition.MODE_PLUGIN);
+				contentChanged();
+				fTargetDefinition.setIncluded(null);
+
+				fGroupLabel.setEnabled(true);
+				if (fGroupCombo != null) {
+					fGroupCombo.setEnabled(true);
+				} else {
+					fGroupComboPart.getControl().setEnabled(true);
+				}
+
+				fTree.getControl().setRedraw(false);
+				fTree.refresh(false);
+				fTree.expandAll();
+				updateCheckState();
+				updateButtons();
+				fTree.getControl().setRedraw(true);
+			}
+		});
+		fPluginModeButton.setSelection(true);
+		GridData gd = new GridData();
+		gd.horizontalIndent = 10;
+		fPluginModeButton.setLayoutData(gd);
+
+		fFeaureModeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				// Moving from plug-in based filtering to feature based, need to update storage
+				((TargetDefinition) fTargetDefinition).setUIMode(TargetDefinition.MODE_FEATURE);
+				contentChanged();
+				fTargetDefinition.setIncluded(null);
+
+				fGroupLabel.setEnabled(false);
+				if (fGroupCombo != null) {
+					fGroupCombo.setEnabled(false);
+				} else {
+					fGroupComboPart.getControl().setEnabled(false);
+				}
+
+				fTree.getControl().setRedraw(false);
+				fTree.refresh(false);
+				fTree.expandAll();
+				updateCheckState();
+				updateButtons();
+				fTree.getControl().setRedraw(true);
+			}
+		});
+		fFeaureModeButton.setSelection(false);
+		gd = new GridData();
+		gd.horizontalIndent = 10;
+		fFeaureModeButton.setLayoutData(gd);
 
 		fShowPluginsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -467,7 +564,7 @@ public class TargetContentsGroup {
 			}
 		});
 		fShowPluginsButton.setSelection(true);
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalIndent = 10;
 		fShowPluginsButton.setLayoutData(gd);
 
@@ -531,9 +628,6 @@ public class TargetContentsGroup {
 	}
 
 	/**
-	 * 
-	 * TODO SHOULD BE EQUIVALENT METHOD ELSEWHERE IN PDE
-	 * 
 	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
 	 * or in a directory at the specified location.
 	 * 
@@ -586,9 +680,11 @@ public class TargetContentsGroup {
 	 * Uses the target state to determine all bundles required by the
 	 * currently checked bundles and returns them so they can be checked in the tree.
 	 * 
-	 * @return list of plug-ins required by the currently checked plug-ins
+	 * @param allBundles list of all bundles to search requirements in
+	 * @param checkedBundles list of bundles to get requirements for
+	 * @return list of resolved bundles from the collection to be checked
 	 */
-	private Object[] getRequiredElements(final Collection allBundles, final Collection checkedBundles) {
+	private Object[] getRequiredPlugins(final Collection allBundles, final Object[] checkedBundles) {
 		final Set dependencies = new HashSet();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -624,13 +720,15 @@ public class TargetContentsGroup {
 
 					// Figure out which of the models have been checked
 					IPluginModelBase[] models = state.getTargetModels();
-					List checkedModels = new ArrayList(checkedBundles.size());
-					for (Iterator iterator = checkedBundles.iterator(); iterator.hasNext();) {
-						BundleInfo bundle = ((IResolvedBundle) iterator.next()).getBundleInfo();
-						for (int j = 0; j < models.length; j++) {
-							if (models[j].getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName()) && models[j].getBundleDescription().getVersion().toString().equals(bundle.getVersion())) {
-								checkedModels.add(models[j]);
-								break;
+					List checkedModels = new ArrayList(checkedBundles.length);
+					for (int i = 0; i < checkedBundles.length; i++) {
+						if (checkedBundles[i] instanceof IResolvedBundle) {
+							BundleInfo bundle = ((IResolvedBundle) checkedBundles[i]).getBundleInfo();
+							for (int j = 0; j < models.length; j++) {
+								if (models[j].getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName()) && models[j].getBundleDescription().getVersion().toString().equals(bundle.getVersion())) {
+									checkedModels.add(models[j]);
+									break;
+								}
 							}
 						}
 					}
@@ -641,11 +739,11 @@ public class TargetContentsGroup {
 
 					// Get implicit dependencies as a list of strings
 					// This is wasteful since the dependency calculation puts them back into BundleInfos
-					BundleInfo[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
+					NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
 					List implicitIDs = new ArrayList();
 					if (implicitDependencies != null) {
 						for (int i = 0; i < implicitDependencies.length; i++) {
-							implicitIDs.add(implicitDependencies[i].getSymbolicName());
+							implicitIDs.add(implicitDependencies[i].getId());
 						}
 					}
 					monitor.worked(10);
@@ -665,10 +763,11 @@ public class TargetContentsGroup {
 			new ProgressMonitorDialog(fTree.getControl().getShell()).run(true, true, op);
 
 			// We want to check the dependents, the source of the dependents, and the source of the originally checked
-			Set checkedNames = new HashSet(checkedBundles.size());
-			for (Iterator iterator = checkedBundles.iterator(); iterator.hasNext();) {
-				IResolvedBundle current = (IResolvedBundle) iterator.next();
-				checkedNames.add(current.getBundleInfo().getSymbolicName());
+			Set checkedNames = new HashSet(checkedBundles.length);
+			for (int i = 0; i < checkedBundles.length; i++) {
+				if (checkedBundles[i] instanceof IResolvedBundle) {
+					checkedNames.add(((IResolvedBundle) checkedBundles[i]).getBundleInfo().getSymbolicName());
+				}
 			}
 
 			List toCheck = new ArrayList();
@@ -692,6 +791,57 @@ public class TargetContentsGroup {
 		return new Object[0];
 	}
 
+	/**
+	 * Uses the feature model to determine the set of features required by the
+	 * given list of checked features
+	 * 
+	 * @param allFeatures list of all features to search requirements in
+	 * @param checkedFeatures list of features to get requirements for
+	 * @return list of features to be checked
+	 */
+	private Object[] getRequiredFeatures(final IFeatureModel[] allFeatures, final Object[] checkedFeatures) {
+		ArrayList required = new ArrayList();
+		for (int j = 0; j < checkedFeatures.length; j++) {
+			if (checkedFeatures[j] instanceof IFeatureModel) {
+				getFeatureDependencies((IFeatureModel) checkedFeatures[j], allFeatures, required);
+			}
+		}
+		return required.toArray();
+	}
+
+	/**
+	 * Recursively gets the ID of required features of this feature and adds them to the list
+	 * @param model feature model to get requirements of
+	 * @param requiredFeatureList collector for the required features
+	 */
+	private void getFeatureDependencies(IFeatureModel model, IFeatureModel[] allFeatures, ArrayList requiredFeatureList) {
+		IFeature feature = model.getFeature();
+		IFeatureImport[] featureImports = feature.getImports();
+		for (int i = 0; i < featureImports.length; i++) {
+			if (featureImports[i].getType() == IFeatureImport.FEATURE) {
+				for (int j = 0; j < allFeatures.length; j++) {
+					if (allFeatures[j].getFeature().getId().equals(featureImports[i].getId())) {
+						requiredFeatureList.add(allFeatures[j]);
+						getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatureList);
+						break;
+					}
+				}
+
+			}
+		}
+		IFeatureChild[] featureIncludes = feature.getIncludedFeatures();
+		for (int i = 0; i < featureIncludes.length; i++) {
+			requiredFeatureList.add(featureIncludes[i].getId());
+			for (int j = 0; j < allFeatures.length; j++) {
+				if (allFeatures[j].getFeature().getId().equals(featureIncludes[i].getId())) {
+					requiredFeatureList.add(allFeatures[j]);
+					getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatureList);
+					break;
+				}
+			}
+		}
+	}
+
 	private void handleGroupChange() {
 		int index;
 		if (fGroupCombo != null) {
@@ -700,6 +850,7 @@ public class TargetContentsGroup {
 			index = fGroupComboPart.getSelectionIndex();
 		}
 		if (index != fGrouping) {
+			// Refresh tree
 			fGrouping = index;
 			fTree.getControl().setRedraw(false);
 			fTree.refresh(false);
@@ -732,7 +883,7 @@ public class TargetContentsGroup {
 					allSelected = false;
 				}
 			}
-			// Selection is available is not everything is already selected and not both a parent and child item are selected
+			// Selection is available if not everything is already selected and not both a parent and child item are selected
 			fSelectButton.setEnabled(!allSelected && !(hasResolveBundle && hasParent));
 			fDeselectButton.setEnabled(!noneSelected && !(hasResolveBundle && hasParent));
 		} else {
@@ -740,12 +891,18 @@ public class TargetContentsGroup {
 			fDeselectButton.setEnabled(false);
 		}
 
-		fSelectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != fAllBundles.size());
+		int total = fAllBundles.size();
+		if (fFeaureModeButton.getSelection()) {
+			total = ((TargetDefinition) fTargetDefinition).getFeatureModels().length;
+			total += ((TargetDefinition) fTargetDefinition).getOtherBundles().length;
+		}
+
+		fSelectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != total);
 		fDeselectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != 0);
-		fSelectRequiredButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() > 0 && fTree.getCheckedLeafCount() != fAllBundles.size());
+		fSelectRequiredButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() > 0 && fTree.getCheckedLeafCount() != total);
 
 		if (fTargetDefinition != null) {
-			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(fAllBundles.size())}));
+			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(total)}));
 		} else {
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}
@@ -778,23 +935,27 @@ public class TargetContentsGroup {
 		for (int i = 0; i < allResolvedBundles.length; i++) {
 			fAllBundles.add(allResolvedBundles[i]);
 		}
+
+		boolean isFeatureMode = ((TargetDefinition) fTargetDefinition).getUIMode() == TargetDefinition.MODE_FEATURE;
+		fFeaureModeButton.setSelection(isFeatureMode);
+		fPluginModeButton.setSelection(!isFeatureMode);
+		fGroupLabel.setEnabled(!isFeatureMode);
+
+		fTree.getControl().setRedraw(false);
 		fTree.setInput(fTargetDefinition);
 		fTree.expandAll();
 		updateCheckState();
 		updateButtons();
 		setEnabled(true);
+		fTree.getControl().setRedraw(true);
 	}
 
 	private void updateCheckState() {
-		Collection included = new ArrayList();
-		IBundleContainer[] containers = fTargetDefinition.getBundleContainers();
-		for (int i = 0; i < containers.length; i++) {
-			IResolvedBundle[] bundles = containers[i].getBundles();
-			for (int j = 0; j < bundles.length; j++) {
-				included.add(bundles[j]);
-			}
+		if (fFeaureModeButton.getSelection()) {
+			fTree.setCheckedElements(((TargetDefinition) fTargetDefinition).getFeaturesAndBundles());
+		} else {
+			fTree.setCheckedElements(fTargetDefinition.getBundles());
 		}
-		fTree.setCheckedElements(included.toArray());
 	}
 
 	/**
@@ -837,9 +998,11 @@ public class TargetContentsGroup {
 		Object[] result = null;
 		if (parent == null) {
 			result = fAllBundles.toArray();
+		} else if (fFeaureModeButton.getSelection() && parent == OTHER_CATEGORY) {
+			return ((TargetDefinition) fTargetDefinition).getOtherBundles();
 		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof IBundleContainer) {
 			IBundleContainer container = (IBundleContainer) parent;
-			return container.getAllBundles();
+			return container.getBundles();
 		} else if (fGrouping == GROUP_BY_FILE_LOC && parent instanceof IPath) {
 			List bundles = (List) getFileBundleMapping().get(parent);
 			if (bundles != null && bundles.size() > 0) {
@@ -867,68 +1030,78 @@ public class TargetContentsGroup {
 			fSelectRequiredButton.setEnabled(false);
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}
+		fModeLabel.setEnabled(enabled);
+		fPluginModeButton.setEnabled(enabled);
+		fFeaureModeButton.setEnabled(enabled);
 		fShowLabel.setEnabled(enabled);
 		fShowPluginsButton.setEnabled(enabled);
 		fShowSourceButton.setEnabled(enabled);
-		fGroupLabel.setEnabled(enabled);
+		boolean isPluginMode = !fFeaureModeButton.getSelection();
+		fGroupLabel.setEnabled(enabled && isPluginMode);
 		if (fGroupCombo != null) {
-			fGroupCombo.setEnabled(enabled);
+			fGroupCombo.setEnabled(enabled && isPluginMode);
 		} else {
-			fGroupComboPart.setEnabled(enabled);
+			fGroupComboPart.setEnabled(enabled && isPluginMode);
 		}
 	}
 
 	public void saveIncludedBundleState() {
-		Map includedBundleMap = new HashMap();
-
-		// Figure out if there are multiple bundles sharing the same id
-		Set multi = new HashSet(); // BSNs of bundles with multiple versions available
-		Set all = new HashSet();
-		for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-			IResolvedBundle rb = (IResolvedBundle) iterator.next();
-			if (!all.add(rb.getBundleInfo().getSymbolicName())) {
-				multi.add(rb.getBundleInfo().getSymbolicName());
-			}
-		}
-
-		// Create a per container list of checked bundle infos
-		Object[] checked = fTree.getCheckedLeafElements();
-		for (int i = 0; i < checked.length; i++) {
-			if (checked[i] instanceof IResolvedBundle) {
-				// Create the bundle info object
-				String bsn = ((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName();
-				BundleInfo info = null;
-				if (multi.contains(bsn)) {
-					// include version info
-					info = new BundleInfo(bsn, ((IResolvedBundle) checked[i]).getBundleInfo().getVersion(), null, BundleInfo.NO_BUNDLEID, false);
-				} else {
-					// don't store version info
-					info = new BundleInfo(bsn, null, null, BundleInfo.NO_BUNDLEID, false);
+		if (fFeaureModeButton.getSelection()) {
+			// Create a list of checked bundle infos
+			List included = new ArrayList();
+			Object[] checked = fTree.getCheckedLeafElements();
+			for (int i = 0; i < checked.length; i++) {
+				if (checked[i] instanceof IFeatureModel) {
+					included.add(new NameVersionDescriptor(((IFeatureModel) checked[i]).getFeature().getId(), null, NameVersionDescriptor.TYPE_FEATURE));
 				}
-
-				// Add it to the correct map entry
-				IBundleContainer parent = ((IResolvedBundle) checked[i]).getParentContainer();
-				List included = (List) includedBundleMap.get(parent);
-				if (included == null) {
-					included = new ArrayList();
-					included.add(info);
-					includedBundleMap.put(parent, included);
-				} else {
-					included.add(info);
+				if (checked[i] instanceof IResolvedBundle) {
+					included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null));
 				}
 			}
-		}
 
-		// Save the bundle lists to the containers
-		IBundleContainer[] containers = fTargetDefinition.getBundleContainers();
-		for (int i = 0; i < containers.length; i++) {
-			List included = (List) includedBundleMap.get(containers[i]);
 			if (included == null || included.size() == 0) {
-				containers[i].setIncludedBundles(new BundleInfo[0]);
-			} else if (included.size() == containers[i].getAllBundles().length) {
-				containers[i].setIncludedBundles(null);
+				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
+			} else if (included.size() == ((TargetDefinition) fTargetDefinition).getFeatureModels().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
+				fTargetDefinition.setIncluded(null);
 			} else {
-				containers[i].setIncludedBundles((BundleInfo[]) included.toArray(new BundleInfo[included.size()]));
+				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
+			}
+		} else {
+			// Figure out if there are multiple bundles sharing the same id
+			Set multi = new HashSet(); // BSNs of bundles with multiple versions available
+			Set all = new HashSet();
+			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
+				IResolvedBundle rb = (IResolvedBundle) iterator.next();
+				if (!all.add(rb.getBundleInfo().getSymbolicName())) {
+					multi.add(rb.getBundleInfo().getSymbolicName());
+				}
+			}
+
+			// Create a list of checked bundle infos
+			List included = new ArrayList();
+			Object[] checked = fTree.getCheckedLeafElements();
+			for (int i = 0; i < checked.length; i++) {
+				if (checked[i] instanceof IResolvedBundle) {
+					// Create the bundle info object
+					String bsn = ((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName();
+					NameVersionDescriptor info = null;
+					if (multi.contains(bsn)) {
+						// include version info
+						info = new NameVersionDescriptor(bsn, ((IResolvedBundle) checked[i]).getBundleInfo().getVersion());
+					} else {
+						// don't store version info
+						info = new NameVersionDescriptor(bsn, null);
+					}
+					included.add(info);
+				}
+			}
+
+			if (included == null || included.size() == 0) {
+				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
+			} else if (included.size() == fAllBundles.size()) {
+				fTargetDefinition.setIncluded(null);
+			} else {
+				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
 			}
 		}
 	}
@@ -947,6 +1120,9 @@ public class TargetContentsGroup {
 		}
 
 		public boolean hasChildren(Object element) {
+			if (fFeaureModeButton.getSelection() && element == OTHER_CATEGORY) {
+				return true;
+			}
 			if (fGrouping == GROUP_BY_NONE || element instanceof IResolvedBundle) {
 				return false;
 			}
@@ -958,10 +1134,19 @@ public class TargetContentsGroup {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
-				if (fGrouping == GROUP_BY_NONE) {
-					return fTargetDefinition.getAllBundles();
+				if (fFeaureModeButton.getSelection()) {
+					if (((TargetDefinition) fTargetDefinition).getOtherBundles().length == 0) {
+						return ((TargetDefinition) fTargetDefinition).getFeatureModels();
+					}
+					IFeatureModel[] features = ((TargetDefinition) fTargetDefinition).getFeatureModels();
+					Object[] result = new Object[features.length + 1];
+					System.arraycopy(features, 0, result, 0, features.length);
+					result[features.length] = OTHER_CATEGORY;
+					return result;
 				} else if (fGrouping == GROUP_BY_CONTAINER) {
 					return fTargetDefinition.getBundleContainers();
+				} else if (fGrouping == GROUP_BY_NONE) {
+					return fTargetDefinition.getAllBundles();
 				} else {
 					return getFileBundleMapping().keySet().toArray();
 				}

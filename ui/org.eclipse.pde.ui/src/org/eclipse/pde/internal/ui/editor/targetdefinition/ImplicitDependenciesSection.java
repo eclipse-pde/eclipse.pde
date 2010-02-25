@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,7 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
@@ -107,9 +106,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fViewer = new TableViewer(table);
 		fViewer.setContentProvider(new DefaultTableProvider() {
 			public Object[] getElements(Object inputElement) {
-				BundleInfo[] bundles = getTarget().getImplicitDependencies();
+				NameVersionDescriptor[] bundles = getTarget().getImplicitDependencies();
 				if (bundles == null) {
-					return new BundleInfo[0];
+					return new NameVersionDescriptor[0];
 				}
 				return bundles;
 			}
@@ -117,9 +116,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				BundleInfo bundle1 = (BundleInfo) e1;
-				BundleInfo bundle2 = (BundleInfo) e2;
-				return super.compare(viewer, bundle1.getSymbolicName(), bundle2.getSymbolicName());
+				NameVersionDescriptor bundle1 = (NameVersionDescriptor) e1;
+				NameVersionDescriptor bundle2 = (NameVersionDescriptor) e2;
+				return super.compare(viewer, bundle1.getId(), bundle2.getId());
 			}
 		});
 		fViewer.setInput(getTarget());
@@ -131,7 +130,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				Object object = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				ManifestEditor.openPluginEditor(((BundleInfo) object).getSymbolicName());
+				ManifestEditor.openPluginEditor(((NameVersionDescriptor) object).getId());
 			}
 		});
 	}
@@ -206,15 +205,15 @@ public class ImplicitDependenciesSection extends SectionPart {
 			ArrayList pluginsToAdd = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
 				BundleInfo selected = ((BundleInfo) models[i]);
-				pluginsToAdd.add(new BundleInfo(selected.getSymbolicName(), null, null, BundleInfo.NO_LEVEL, false));
+				pluginsToAdd.add(new NameVersionDescriptor(selected.getSymbolicName(), null));
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
-			BundleInfo[] currentBundles = getTarget().getImplicitDependencies();
+			NameVersionDescriptor[] currentBundles = getTarget().getImplicitDependencies();
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTarget().setImplicitDependencies((BundleInfo[]) allDependencies.toArray(new BundleInfo[allDependencies.size()]));
+			getTarget().setImplicitDependencies((NameVersionDescriptor[]) allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
 			markDirty();
 			refresh();
 		}
@@ -225,11 +224,11 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 * @return list of possible dependencies
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
-		BundleInfo[] current = getTarget().getImplicitDependencies();
+		NameVersionDescriptor[] current = getTarget().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
-				currentBundles.add(current[i].getSymbolicName());
+				currentBundles.add(current[i].getId());
 			}
 		}
 
@@ -253,11 +252,11 @@ public class ImplicitDependenciesSection extends SectionPart {
 		Object[] removeBundles = ((IStructuredSelection) fViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
 			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof BundleInfo) {
+				if (removeBundles[i] instanceof NameVersionDescriptor) {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTarget().setImplicitDependencies((BundleInfo[]) bundles.toArray((new BundleInfo[bundles.size()])));
+			getTarget().setImplicitDependencies((NameVersionDescriptor[]) bundles.toArray((new NameVersionDescriptor[bundles.size()])));
 			markDirty();
 			refresh();
 		}

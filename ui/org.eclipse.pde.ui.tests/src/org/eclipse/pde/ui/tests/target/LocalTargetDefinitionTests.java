@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -140,19 +142,19 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		BundleInfo[] restrictions = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.jdt.launching", null),
+				new NameVersionDescriptor("org.eclipse.jdt.debug", null)
 		};
-		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setIncluded(restrictions);
 		List infos = getAllBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
 		for (int i = 0; i < restrictions.length; i++) {
-			BundleInfo info = restrictions[i];
-			set.remove(info.getSymbolicName());
+			NameVersionDescriptor info = restrictions[i];
+			set.remove(info.getId());
 		}
 		assertEquals("Wrong bundles", 0, set.size());
 		
@@ -184,11 +186,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertNotNull(v1);
 		assertNotNull(v2);
 		
-		BundleInfo[] restrictions = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", v1, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", v2, null, BundleInfo.NO_LEVEL, false)
+		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.jdt.launching", v1),
+				new NameVersionDescriptor("org.eclipse.jdt.debug", v2)
 		};
-		container.setIncludedBundles(restrictions);
+		definition.setIncluded(restrictions);
 		infos = getAllBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 2, infos.size());
@@ -213,12 +215,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testMissingVersionRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		BundleInfo[] restrictions = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", "xyz", null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", "abc", null, BundleInfo.NO_LEVEL, false)
+		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.jdt.launching", "xyz"),
+				new NameVersionDescriptor("org.eclipse.jdt.debug", "abc")
 		};
-		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setIncluded(restrictions);
 		definition.resolve(null);
 		IResolvedBundle[] bundles = definition.getBundles();
 		
@@ -641,19 +643,19 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		ITargetDefinition definition = getNewTarget();
 		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt", null);
-		BundleInfo[] restrictions = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.junit", "3.8.2.v20090203-1005", null, BundleInfo.NO_LEVEL, false)
+		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.jdt", null),
+				new NameVersionDescriptor("org.junit", "3.8.2.v20090203-1005")
 		};
-		container.setIncludedBundles(restrictions);
 		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setIncluded(restrictions);
 		List infos = getAllBundleInfos(definition);
 		
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
 		for (int i = 0; i < restrictions.length; i++) {
-			BundleInfo info = restrictions[i];
-			set.remove(info.getSymbolicName());
+			NameVersionDescriptor info = restrictions[i];
+			set.remove(info.getId());
 		}
 		assertEquals("Wrong bundles", 0, set.size());
 		
@@ -805,36 +807,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}
 	
 	/**
-	 * Tests resolution of implicit dependencies in a default target platform
-	 * 
-	 * @throws Exception
-	 */
-	public void testImplicitDependencies() throws Exception {
-		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		definition.setBundleContainers(new IBundleContainer[]{container});
-		BundleInfo[] implicit = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
-		};		
-		definition.setImplicitDependencies(implicit);
-		definition.resolve(null);
-		IResolvedBundle[] infos = definition.getResolvedImplicitDependencies();
-		
-		assertEquals("Wrong number of bundles", 2, infos.length);
-		Set set = new HashSet();
-		for (int i = 0; i < infos.length; i++) {
-			set.add(infos[i].getBundleInfo().getSymbolicName());
-		}
-		for (int i = 0; i < implicit.length; i++) {
-			BundleInfo info = implicit[i];
-			set.remove(info.getSymbolicName());
-		}
-		assertEquals("Wrong bundles", 0, set.size());
-		
-	}	
-	
-	/**
 	 * A directory of bundles should not have VM arguments.
 	 * 
 	 * @throws Exception
@@ -963,15 +935,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		IPath extras = extractMultiVersionPlugins();
 		ITargetDefinition target = getNewTarget();
 		IBundleContainer container = getTargetService().newDirectoryContainer(extras.toOSString());
-		BundleInfo[] infos = null;
-		if (descriptions != null) {
-			infos = new BundleInfo[descriptions.length];
-			for (int i = 0; i < infos.length; i++) {
-				infos[i] = new BundleInfo(descriptions[i].getId(), descriptions[i].getVersion(), null, 0, false);
-			}
-		}
-		container.setIncludedBundles(infos);
 		target.setBundleContainers(new IBundleContainer[]{container});
+		target.setIncluded(descriptions);
 		try {
 			getTargetService().saveTargetDefinition(target);
 			setTargetPlatform(target);

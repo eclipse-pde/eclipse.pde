@@ -62,8 +62,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsProcessor_errorMessage;
 
-	public static String FeatureBlock_addRequiedBundles;
-
 	public static String FeatureBlock_addRequiredFeatues;
 
 	public static String FeatureBlock_default;
@@ -78,13 +76,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_pluginResolution;
 
-	public static String FeatureBlock_showSelected;
-
 	public static String FeatureBlock_externalBefore;
-
-	public static String FeatureBlock_useExternalFeatures;
-
-	public static String FeatureBlock_useWorkspaceFeatures;
 
 	public static String FeatureBlock_version;
 
@@ -1288,8 +1280,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginContentPage_enable_api_analysis;
 
 	public static String ImportWizard_title;
-	public static String ImportWizard_messages_title;
-	public static String ImportWizard_messages_exists;
 	public static String ImportWizard_FirstPage_title;
 	public static String ImportWizard_FirstPage_desc;
 	public static String ImportWizard_FirstPage_importGroup;
@@ -2755,13 +2745,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String DuplicatePluginResolutionDialog_messageSingular;
 
-	public static String DuplicatePluginResolutionDialog_projectName;
-
 	public static String DuplicatePluginResolutionDialog_selectAll;
-
-	public static String DuplicatePluginResolutionDialog_symbolicName;
-
-	public static String DuplicatePluginResolutionDialog_version;
 
 	public static String OrganizeManifestsOperation_additionalDeps;
 

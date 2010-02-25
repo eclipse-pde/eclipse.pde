@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
-import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
@@ -341,12 +340,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * @throws CoreException
 	 */
 	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
-		IBundleContainer container = getTargetPlatformService().newDirectoryContainer(fInstallLocation.getText());
-		if (previous instanceof DirectoryBundleContainer) {
-			container.setIncludedBundles(previous.getIncludedBundles());
-			container.setOptionalBundles(previous.getOptionalBundles());
-		}
-		return container;
+		return getTargetPlatformService().newDirectoryContainer(fInstallLocation.getText());
 	}
 
 	/**

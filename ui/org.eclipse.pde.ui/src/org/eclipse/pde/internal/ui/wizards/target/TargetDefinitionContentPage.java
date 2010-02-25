@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -633,21 +632,21 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			public Object[] getElements(Object inputElement) {
 				ITargetDefinition target = getTargetDefinition();
 				if (target != null) {
-					BundleInfo[] bundles = target.getImplicitDependencies();
+					NameVersionDescriptor[] bundles = target.getImplicitDependencies();
 					if (bundles != null) {
 						return bundles;
 					}
 				}
-				return new BundleInfo[0];
+				return new NameVersionDescriptor[0];
 			}
 		});
 		fElementViewer.setLabelProvider(new StyledBundleLabelProvider(false, false));
 		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				BundleInfo bundle1 = (BundleInfo) e1;
-				BundleInfo bundle2 = (BundleInfo) e2;
-				return super.compare(viewer, bundle1.getSymbolicName(), bundle2.getSymbolicName());
+				NameVersionDescriptor bundle1 = (NameVersionDescriptor) e1;
+				NameVersionDescriptor bundle2 = (NameVersionDescriptor) e2;
+				return super.compare(viewer, bundle1.getId(), bundle2.getId());
 			}
 		});
 		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -717,15 +716,15 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			ArrayList pluginsToAdd = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
 				BundleInfo desc = ((BundleInfo) models[i]);
-				pluginsToAdd.add(new BundleInfo(desc.getSymbolicName(), null, null, BundleInfo.NO_LEVEL, false));
+				pluginsToAdd.add(new NameVersionDescriptor(desc.getSymbolicName(), null));
 			}
 			Set allDependencies = new HashSet();
 			allDependencies.addAll(pluginsToAdd);
-			BundleInfo[] currentBundles = getTargetDefinition().getImplicitDependencies();
+			NameVersionDescriptor[] currentBundles = getTargetDefinition().getImplicitDependencies();
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTargetDefinition().setImplicitDependencies((BundleInfo[]) allDependencies.toArray(new BundleInfo[allDependencies.size()]));
+			getTargetDefinition().setImplicitDependencies((NameVersionDescriptor[]) allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}
@@ -736,12 +735,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * @return list of possible dependencies
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
-		BundleInfo[] current = getTargetDefinition().getImplicitDependencies();
+		NameVersionDescriptor[] current = getTargetDefinition().getImplicitDependencies();
 		Set currentBundles = new HashSet();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
-				if (!currentBundles.contains(current[i].getSymbolicName())) {
-					currentBundles.add(current[i].getSymbolicName());
+				if (!currentBundles.contains(current[i].getId())) {
+					currentBundles.add(current[i].getId());
 				}
 			}
 		}
@@ -768,11 +767,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		Object[] removeBundles = ((IStructuredSelection) fElementViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {
 			for (int i = 0; i < removeBundles.length; i++) {
-				if (removeBundles[i] instanceof BundleInfo) {
+				if (removeBundles[i] instanceof NameVersionDescriptor) {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTargetDefinition().setImplicitDependencies((BundleInfo[]) bundles.toArray((new BundleInfo[bundles.size()])));
+			getTargetDefinition().setImplicitDependencies((NameVersionDescriptor[]) bundles.toArray((new NameVersionDescriptor[bundles.size()])));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}

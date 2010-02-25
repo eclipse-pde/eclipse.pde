@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	public boolean isContentEqual(AbstractBundleContainer container) {
 		if (container instanceof DirectoryBundleContainer) {
 			DirectoryBundleContainer dbc = (DirectoryBundleContainer) container;
-			return fPath.equals(dbc.fPath) && super.isContentEqual(container);
+			return fPath.equals(dbc.fPath);
 		}
 		return false;
 	}
@@ -119,7 +119,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return new StringBuffer().append("Directory ").append(fPath).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new StringBuffer().append("Directory ").append(fPath).toString(); //$NON-NLS-1$
 	}
 
 	/**

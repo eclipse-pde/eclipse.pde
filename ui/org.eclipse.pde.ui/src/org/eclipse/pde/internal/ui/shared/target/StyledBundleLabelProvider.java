@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,9 @@ import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.*;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
@@ -77,6 +77,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		StyledString styledString = new StyledString();
 		if (element instanceof BundleInfo) {
 			appendBundleInfo(styledString, ((BundleInfo) element));
+		} else if (element instanceof NameVersionDescriptor) {
+			appendBundleInfo(styledString, new BundleInfo(((NameVersionDescriptor) element).getId(), ((NameVersionDescriptor) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof IResolvedBundle) {
 			IResolvedBundle bundle = ((IResolvedBundle) element);
 			if (bundle.getStatus().isOK()) {
@@ -89,6 +91,9 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			styledString.append(((IStatus) element).getMessage());
 		} else if (element instanceof IPath) {
 			styledString.append(((IPath) element).removeFirstSegments(1).toString());
+		} else if (element instanceof IFeatureModel) {
+			// Use a bundle info to reuse existing code
+			appendBundleInfo(styledString, new BundleInfo(((IFeatureModel) element).getFeature().getId(), ((IFeatureModel) element).getFeature().getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof FeatureBundleContainer) {
 			FeatureBundleContainer container = (FeatureBundleContainer) element;
 			styledString.append(container.getFeatureId());
@@ -103,7 +108,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				appendLocation(styledString, container, true);
 			}
 			appendLocation(styledString, container, false);
-			appendIncludedBundles(styledString, container);
+			appendBundleCount(styledString, container);
 		} else if (element instanceof DirectoryBundleContainer) {
 			DirectoryBundleContainer container = (DirectoryBundleContainer) element;
 			try {
@@ -114,7 +119,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			if (fAppendResolvedVariables) {
 				appendLocation(styledString, container, true);
 			}
-			appendIncludedBundles(styledString, container);
+			appendBundleCount(styledString, container);
 		} else if (element instanceof ProfileBundleContainer) {
 			ProfileBundleContainer container = (ProfileBundleContainer) element;
 			try {
@@ -125,7 +130,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			if (fAppendResolvedVariables) {
 				appendLocation(styledString, container, true);
 			}
-			appendIncludedBundles(styledString, container);
+			appendBundleCount(styledString, container);
 		} else if (element instanceof IUBundleContainer) {
 			IUBundleContainer container = (IUBundleContainer) element;
 			URI[] repos = container.getRepositories();
@@ -134,7 +139,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			} else {
 				styledString.append(repos[0].toString());
 			}
-			appendIncludedBundles(styledString, container);
+			appendBundleCount(styledString, container);
 		} else if (element instanceof IInstallableUnit) {
 			IInstallableUnit iu = (IInstallableUnit) element;
 			String name = fTranslations.getIUProperty(iu, IInstallableUnit.PROP_NAME);
@@ -146,6 +151,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			styledString.append(iu.getVersion().toString(), StyledString.QUALIFIER_STYLER);
 		} else if (element instanceof String) {
 			styledString.append((String) element);
+		} else {
+			styledString.append(element.toString());
 		}
 		return styledString;
 	}
@@ -191,21 +198,15 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @param styledString label to append to
 	 * @param container bundle container to check for inclusions
 	 */
-	private void appendIncludedBundles(StyledString styledString, IBundleContainer container) {
-		if (!container.isResolved() || (!container.getBundleStatus().isOK() && !container.getBundleStatus().isMultiStatus()) || container.getBundles() == null) {
+	private void appendBundleCount(StyledString styledString, IBundleContainer container) {
+		if (!container.isResolved() || (!container.getStatus().isOK() && !container.getStatus().isMultiStatus()) || container.getBundles() == null) {
 			return;
 		}
-		BundleInfo[] restrictions = container.getIncludedBundles();
-		int bundleCount = container.getAllBundles().length;
+		int bundleCount = container.getBundles().length;
 		String bundleCountString = Integer.toString(bundleCount);
 
-		if (restrictions != null && restrictions.length > bundleCount) {
-			// If some bundles are missing, the bundleCount is likely wrong, just do the best we can
-			return;
-		}
-
 		styledString.append(' ');
-		styledString.append(MessageFormat.format(Messages.BundleContainerTable_10, new String[] {restrictions != null ? Integer.toString(restrictions.length) : bundleCountString, bundleCountString}), StyledString.COUNTER_STYLER);
+		styledString.append(MessageFormat.format(Messages.BundleContainerTable_10, new String[] {bundleCountString}), StyledString.COUNTER_STYLER);
 	}
 
 	/**
@@ -233,6 +234,12 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			}
 		} else if (element instanceof BundleInfo) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
+		} else if (element instanceof NameVersionDescriptor) {
+			if (((NameVersionDescriptor) element).getType() == NameVersionDescriptor.TYPE_FEATURE) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
+			} else if (((NameVersionDescriptor) element).getType() == NameVersionDescriptor.TYPE_PLUGIN) {
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ);
+			}
 		} else if (element instanceof IStatus) {
 			int severity = ((IStatus) element).getSeverity();
 			if (severity == IStatus.WARNING || severity == IStatus.INFO) {
@@ -242,11 +249,13 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			}
 		} else if (element instanceof IPath) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+		} else if (element instanceof IFeatureModel) {
+			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
 		} else if (element instanceof IBundleContainer) {
 			int flag = 0;
 			IBundleContainer container = (IBundleContainer) element;
 			if (container.isResolved()) {
-				IStatus status = container.getBundleStatus();
+				IStatus status = container.getStatus();
 				if (status.getSeverity() == IStatus.WARNING || status.getSeverity() == IStatus.INFO) {
 					flag = SharedLabelProvider.F_WARNING;
 				} else if (status.getSeverity() == IStatus.ERROR) {

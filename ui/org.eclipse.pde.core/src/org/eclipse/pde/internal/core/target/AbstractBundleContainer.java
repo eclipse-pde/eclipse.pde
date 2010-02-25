@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,22 +45,6 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * Status generated when this container was resolved, possibly <code>null</code>
 	 */
 	private IStatus fResolutionStatus;
-
-	/**
-	 * Status generated when this container resolved it's bundles, a multi-status containing all individual bundle statuses, possibly <code>null</code>
-	 */
-	private IStatus fBundleStatus;
-
-	/**
-	 * Bundle restrictions (subset) this container is restricted to or <code>null</code> if
-	 * no restrictions.
-	 */
-	private BundleInfo[] fRestrictions;
-
-	/**
-	 * Optional bundles or <code>null</code> if none
-	 */
-	private BundleInfo[] fOptional;
 
 	/**
 	 * A registry can be built to identify old school source bundles.
@@ -122,60 +106,23 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				monitor.done();
 			}
 		}
-		fBundleStatus = null;
 		return fResolutionStatus;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getBundleStatus()
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getStatus()
 	 */
-	public IStatus getBundleStatus() {
+	public IStatus getStatus() {
 		if (!isResolved()) {
 			return null;
 		}
-		if (!fResolutionStatus.isOK()) {
-			return fResolutionStatus;
-		}
-
-		if (fBundleStatus != null) {
-			return fBundleStatus;
-		}
-		// build status from bundle list
-		IResolvedBundle[] bundles = getBundles();
-		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.AbstractBundleContainer_0, null);
-		for (int i = 0; i < bundles.length; i++) {
-			if (!bundles[i].getStatus().isOK()) {
-				status.add(bundles[i].getStatus());
-			}
-		}
-		if (status.isOK()) {
-			// return the generic ok status vs a problem multi-status with no children
-			fBundleStatus = Status.OK_STATUS;
-			return fBundleStatus;
-		}
-		fBundleStatus = status;
-		return fBundleStatus;
+		return fResolutionStatus;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getBundles()
 	 */
 	public final IResolvedBundle[] getBundles() {
-		if (isResolved()) {
-			return getMatchingBundles(fBundles, getIncludedBundles(), getOptionalBundles(), this);
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the list of resolved bundles in this container.  Does not filter based on any
-	 * includedBundles or optionalBundles set on this container.  Returns <code>null</code> if
-	 * this container has not been resolved.  Use {@link #getBundles()} to get the restricted
-	 * list of bundles.
-	 *  
-	 * @return list of resolved bundles or <code>null</code>
-	 */
-	public IResolvedBundle[] getAllBundles() {
 		if (isResolved()) {
 			return fBundles;
 		}
@@ -195,136 +142,6 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * @throws CoreException if an error occurs
 	 */
 	protected abstract IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getRestrictions()
-	 */
-	public final BundleInfo[] getIncludedBundles() {
-		return fRestrictions;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#setRestrictions(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
-	 */
-	public final void setIncludedBundles(BundleInfo[] bundles) {
-		fRestrictions = bundles;
-		fBundleStatus = null;
-	}
-
-	/**
-	 * Returns bundles from the specified collection that match the symbolic names
-	 * and/or version in the specified criteria. When no version is specified
-	 * the newest version (if any) is selected.
-	 * 
-	 * @param collection bundles to resolve against match criteria
-	 * @param included bundles to include or <code>null</code> if no restrictions
-	 * @param optional optional bundles or <code>null</code> of no optional bundles
-	 * @param parentContainer parent bundle container to be set on any errors that are created, if <code>null</code> some returned contains may have a null parent
-	 * @return bundles that match this container's restrictions
-	 */
-	static IResolvedBundle[] getMatchingBundles(IResolvedBundle[] collection, BundleInfo[] included, BundleInfo[] optional, IBundleContainer parentContainer) {
-		if (included == null && optional == null) {
-			return collection;
-		}
-		// map bundles names to available versions
-		Map bundleMap = new HashMap(collection.length);
-		for (int i = 0; i < collection.length; i++) {
-			IResolvedBundle resolved = collection[i];
-			List list = (List) bundleMap.get(resolved.getBundleInfo().getSymbolicName());
-			if (list == null) {
-				list = new ArrayList(3);
-				bundleMap.put(resolved.getBundleInfo().getSymbolicName(), list);
-			}
-			list.add(resolved);
-		}
-		List resolved = new ArrayList();
-		if (included == null) {
-			for (int i = 0; i < collection.length; i++) {
-				resolved.add(collection[i]);
-			}
-		} else {
-			for (int i = 0; i < included.length; i++) {
-				BundleInfo info = included[i];
-				resolved.add(resolveBundle(bundleMap, info, false, parentContainer));
-			}
-		}
-		if (optional != null) {
-			for (int i = 0; i < optional.length; i++) {
-				BundleInfo option = optional[i];
-				IResolvedBundle resolveBundle = resolveBundle(bundleMap, option, true, parentContainer);
-				IStatus status = resolveBundle.getStatus();
-				if (status.isOK()) {
-					// add to list if not there already
-					if (!resolved.contains(resolveBundle)) {
-						resolved.add(resolveBundle);
-					}
-				} else {
-					// missing optional bundle - add it to the list
-					resolved.add(resolveBundle);
-				}
-			}
-		}
-		return (IResolvedBundle[]) resolved.toArray(new IResolvedBundle[resolved.size()]);
-	}
-
-	/**
-	 * Resolves a bundle for the given info from the given map. The map contains
-	 * keys of symbolic names and values are lists of {@link IResolvedBundle}'s available
-	 * that match the names.
-	 * 
-	 * @param bundleMap available bundles to resolve against
-	 * @param info name and version to match against
-	 * @param optional whether the bundle is optional
-	 * @param parentContainer bundle container the resolved bundle belongs too
-	 * @return resolved bundle
-	 */
-	private static IResolvedBundle resolveBundle(Map bundleMap, BundleInfo info, boolean optional, IBundleContainer parentContainer) {
-		List list = (List) bundleMap.get(info.getSymbolicName());
-		if (list != null) {
-			String version = info.getVersion();
-			if (version == null) {
-				// select newest
-				if (list.size() > 1) {
-					// sort the list
-					Collections.sort(list, new Comparator() {
-						public int compare(Object o1, Object o2) {
-							BundleInfo b1 = ((IResolvedBundle) o1).getBundleInfo();
-							BundleInfo b2 = ((IResolvedBundle) o2).getBundleInfo();
-							return b1.getVersion().compareTo(b2.getVersion());
-						}
-					});
-				}
-				// select the last one
-				ResolvedBundle rb = (ResolvedBundle) list.get(list.size() - 1);
-				rb.setOptional(optional);
-				return rb;
-			}
-			Iterator iterator = list.iterator();
-			while (iterator.hasNext()) {
-				IResolvedBundle bundle = (IResolvedBundle) iterator.next();
-				if (bundle.getBundleInfo().getVersion().equals(version)) {
-					((ResolvedBundle) bundle).setOptional(optional);
-					return bundle;
-				}
-			}
-			// VERSION DOES NOT EXIST
-			int sev = IStatus.ERROR;
-			String message = NLS.bind(Messages.AbstractBundleContainer_1, new Object[] {info.getVersion(), info.getSymbolicName()});
-			if (optional) {
-				sev = IStatus.INFO;
-				message = NLS.bind(Messages.AbstractBundleContainer_2, new Object[] {info.getVersion(), info.getSymbolicName()});
-			}
-			return new ResolvedBundle(info, parentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), null, optional, false);
-		}
-		// DOES NOT EXIST
-		int sev = IStatus.ERROR;
-		String message = NLS.bind(Messages.AbstractBundleContainer_3, info.getSymbolicName());
-		if (optional) {
-			sev = IStatus.INFO;
-			message = NLS.bind(Messages.AbstractBundleContainer_4, info.getSymbolicName());
-		}
-		return new ResolvedBundle(info, parentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null), null, optional, false);
-	}
 
 	/**
 	 * Returns a string that identifies the type of bundle container.  This type is persisted to xml
@@ -348,54 +165,12 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	public abstract String getLocation(boolean resolve) throws CoreException;
 
 	/**
-	 * Returns whether restrictions are equivalent. Subclasses should override for other data.
+	 * Returns whether this container has equivalent bundle content to the given container
 	 * 
 	 * @param container bundle container
 	 * @return whether content is equivalent
 	 */
-	public boolean isContentEqual(AbstractBundleContainer container) {
-		return isEqualOrNull(fRestrictions, container.fRestrictions) && isEqualOrNull(fOptional, container.fOptional);
-	}
-
-	/**
-	 * Returns whether the arrays have equal contents or are both <code>null</code>.
-	 * 
-	 * @param objects1
-	 * @param objects2
-	 * @return whether the arrays have equal contents or are both <code>null</code>
-	 */
-	protected boolean isEqualOrNull(Object[] objects1, Object[] objects2) {
-		if (objects1 == null) {
-			return objects2 == null;
-		}
-		if (objects2 == null) {
-			return false;
-		}
-		if (objects1.length == objects2.length) {
-			for (int i = 0; i < objects1.length; i++) {
-				if (!objects1[i].equals(objects2[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getOptionalBundles()
-	 */
-	public BundleInfo[] getOptionalBundles() {
-		return fOptional;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#setOptionalBundles(org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo[])
-	 */
-	public void setOptionalBundles(BundleInfo[] bundles) {
-		fOptional = bundles;
-		fBundleStatus = null;
-	}
+	public abstract boolean isContentEqual(AbstractBundleContainer container);
 
 	/**
 	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
@@ -735,35 +510,4 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		}
 		return fVMArgs;
 	}
-
-	// Helpful when using working copies, but needs to differentiate between all containers, including different features with same location
-//	/* (non-Javadoc)
-//	 * @see java.lang.Object#equals(java.lang.Object)
-//	 */
-//	public boolean equals(Object obj) {
-//		if (obj instanceof AbstractBundleContainer) {
-//			AbstractBundleContainer container = (AbstractBundleContainer) obj;
-//			try {
-//				if (container.getType().equals(getType()) && container.getLocation(false).equals(getLocation(false))) {
-//					return true;
-//				}
-//			} catch (CoreException e) {
-//				PDECore.log(e);
-//			}
-//		}
-//		return false;
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see java.lang.Object#hashCode()
-//	 */
-//	public int hashCode() {
-//		int result = getType().hashCode();
-//		try {
-//			result += getLocation(false).hashCode();
-//		} catch (CoreException e) {
-//			// Do nothing, caught by equals
-//		}
-//		return result;
-//	}
 }

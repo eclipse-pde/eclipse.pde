@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
+
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 
-import org.eclipse.pde.internal.core.target.NameVersionDescriptor;
 
 
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
@@ -39,35 +40,28 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		
 		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
-		directoryContainer.setIncludedBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
 		
 		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		profileContainer.setIncludedBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
 		
 		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer});
+		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
 		definition.resolve(null);
 		
 		assertNotNull("Target didn't resolve",definition.getBundles());
-		assertEquals("Wrong number of included bundles", 4, definition.getBundles().length);
+		assertEquals("Wrong number of included bundles", 2, definition.getBundles().length);
 		
 		IStatus definitionStatus = definition.getBundleStatus();
 		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
 
-		IStatus[] containerStatuses = definitionStatus.getChildren();
-		assertEquals("Wrong number of container status", 2, containerStatuses.length);
-		for (int i = 0; i < containerStatuses.length; i++) {
-			IStatus[] children = containerStatuses[i].getChildren();
-			assertEquals("Wrong number of statuses", 2, children.length);
-			assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
-			assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
-			assertEquals("Wrong severity", IStatus.ERROR, children[1].getSeverity());
-			assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
-		}
+		IStatus[] children = definitionStatus.getChildren();
+		assertEquals("Wrong number of statuses", 2, children.length);
+		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
+		assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals("Wrong severity", IStatus.ERROR, children[1].getSeverity());
+		assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
 		
 		// Check that removing the included bundles and resolving removes the errors.
-		directoryContainer.setIncludedBundles(null);
-		profileContainer.setIncludedBundles(null);
-
+		definition.setIncluded(null);
 		assertTrue(definition.isResolved());
 		assertTrue(definition.getBundleStatus().isOK());
 		assertTrue(definition.getBundles().length > 4);
@@ -77,12 +71,10 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		
 		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
-		directoryContainer.setOptionalBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
-		
 		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		profileContainer.setOptionalBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
 		
 		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer});
+		definition.setOptional(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
 		definition.resolve(null);
 		
 		assertNotNull("Target didn't resolve",definition.getBundles());
@@ -90,20 +82,15 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		IStatus definitionStatus = definition.getBundleStatus();
 		assertEquals("Wrong severity", IStatus.INFO, definitionStatus.getSeverity());
 
-		IStatus[] containerStatuses = definitionStatus.getChildren();
-		assertEquals("Wrong number of container status", 2, containerStatuses.length);
-		for (int i = 0; i < containerStatuses.length; i++) {
-			IStatus[] children = containerStatuses[i].getChildren();
-			assertEquals("Wrong number of statuses", 2, children.length);
-			assertEquals("Wrong severity", IStatus.INFO, children[0].getSeverity());
-			assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
-			assertEquals("Wrong severity", IStatus.INFO, children[1].getSeverity());
-			assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
-		}
+		IStatus[] children = definitionStatus.getChildren();
+		assertEquals("Wrong number of statuses", 2, children.length);
+		assertEquals("Wrong severity", IStatus.INFO, children[0].getSeverity());
+		assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals("Wrong severity", IStatus.INFO, children[1].getSeverity());
+		assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
 		
 		// Check that removing the optional bundles and resolving removes the errors.
-		directoryContainer.setOptionalBundles(null);
-		profileContainer.setOptionalBundles(null);
+		definition.setOptional(null);
 		assertTrue(definition.isResolved());
 		assertTrue(definition.getBundleStatus().isOK());
 		assertTrue(definition.getBundles().length > 4);
@@ -181,26 +168,26 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		
 		// Having a bundle status does not prevent the resolution, adding a resolved container should leave the target resolved
 		IBundleContainer includesContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		includesContainer.setIncludedBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
-		includesContainer.setOptionalBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
 		assertFalse(includesContainer.isResolved());
 		assertNull("Bundles available when unresolved", includesContainer.getBundles());
 		status = includesContainer.resolve(definition, null);
 		assertTrue(includesContainer.isResolved());
 		assertNotNull("Bundles not available when resolved", includesContainer.getBundles());
 		assertEquals("Incorrect Severity", IStatus.OK, status.getSeverity());
-		assertEquals("Incorrect Severity", IStatus.ERROR, includesContainer.getBundleStatus().getSeverity());
+		assertEquals("Incorrect Severity", IStatus.OK, includesContainer.getStatus().getSeverity());
 		definition.setBundleContainers(new IBundleContainer[]{brokenContainer, profileContainer});
+		definition.setOptional(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
+		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
 		assertTrue(definition.isResolved());
+		assertEquals("Incorrect Severity", IStatus.ERROR, definition.getBundleStatus().getSeverity());
 		assertNotNull("Bundles not available when resolved", definition.getBundles());
 		
 		// Setting includes, optional, etc. should not unresolve the target
-		includesContainer.setIncludedBundles(null);
-		includesContainer.setOptionalBundles(null);
+		definition.setOptional(null);
+		definition.setIncluded(null);
 		assertTrue(definition.isResolved());
-		profileContainer.setIncludedBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
-		profileContainer.setOptionalBundles(new BundleInfo[]{new BundleInfo("bogus",null,null,BundleInfo.NO_LEVEL,false),new BundleInfo("org.eclipse.platform","666.666.666",null,BundleInfo.NO_LEVEL,false)});
-		assertTrue(definition.isResolved());
+		definition.setOptional(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
+		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});		assertTrue(definition.isResolved());
 		definition.setName("name");
 		definition.setOS("os");
 		definition.setWS("ws");
@@ -209,9 +196,9 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		definition.setProgramArguments("program\nargs");
 		definition.setVMArguments("vm\nargs");
 		definition.setJREContainer(JavaRuntime.newDefaultJREContainerPath());
-		BundleInfo[] implicit = new BundleInfo[]{
-				new BundleInfo("org.eclipse.jdt.launching", null, null, BundleInfo.NO_LEVEL, false),
-				new BundleInfo("org.eclipse.jdt.debug", null, null, BundleInfo.NO_LEVEL, false)
+		NameVersionDescriptor[] implicit = new NameVersionDescriptor[]{
+				new NameVersionDescriptor("org.eclipse.jdt.launching", null),
+				new NameVersionDescriptor("org.eclipse.jdt.debug", null)
 		};		
 		definition.setImplicitDependencies(implicit);
 		assertTrue(definition.isResolved());

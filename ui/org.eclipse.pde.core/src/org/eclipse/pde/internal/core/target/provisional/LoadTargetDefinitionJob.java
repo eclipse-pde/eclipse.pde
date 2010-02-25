@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,12 +235,12 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @param monitor progress monitor
 	 */
 	private void loadImplicitPlugins(PDEPreferencesManager pref, IProgressMonitor monitor) {
-		BundleInfo[] infos = fTarget.getImplicitDependencies();
+		NameVersionDescriptor[] infos = fTarget.getImplicitDependencies();
 		if (infos != null) {
 			monitor.beginTask(Messages.LoadTargetOperation_implicitPluginsTaskName, infos.length + 1);
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < infos.length; i++) {
-				buffer.append(infos[i].getSymbolicName()).append(',');
+				buffer.append(infos[i].getId()).append(',');
 				monitor.worked(1);
 			}
 			if (infos.length > 0)
@@ -386,19 +386,13 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			// Compute missing (not included) bundles (preference need to know disabled/missing bundles)
 			List missing = new ArrayList();
-			IBundleContainer[] containers = fTarget.getBundleContainers();
-			if (containers != null) {
-				for (int i = 0; i < containers.length; i++) {
-					IBundleContainer container = containers[i];
-					BundleInfo[] restrictions = container.getIncludedBundles();
-					if (restrictions != null) {
-						IResolvedBundle[] all = container.getAllBundles();
-						for (int j = 0; j < all.length; j++) {
-							IResolvedBundle bi = all[j];
-							if (!included.contains(bi.getBundleInfo())) {
-								missing.add(bi.getBundleInfo());
-							}
-						}
+			NameVersionDescriptor[] restrictions = fTarget.getIncluded();
+			if (restrictions != null) {
+				IResolvedBundle[] all = fTarget.getAllBundles();
+				for (int j = 0; j < all.length; j++) {
+					IResolvedBundle bi = all[j];
+					if (!included.contains(bi.getBundleInfo())) {
+						missing.add(bi.getBundleInfo());
 					}
 				}
 			}

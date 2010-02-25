@@ -363,11 +363,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		if (value.length() > 0) {
 			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			BundleInfo[] plugins = new BundleInfo[tokenizer.countTokens()];
+			NameVersionDescriptor[] plugins = new NameVersionDescriptor[tokenizer.countTokens()];
 			int i = 0;
 			while (tokenizer.hasMoreTokens()) {
 				String id = tokenizer.nextToken();
-				plugins[i++] = new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false);
+				plugins[i++] = new NameVersionDescriptor(id, null);
 			}
 			target.setImplicitDependencies(plugins);
 		}
@@ -437,7 +437,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	private void initializePluginContent(PDEPreferencesManager preferences, ITargetDefinition target) {
 		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
-		IBundleContainer primary = target.getBundleContainers()[0];
 		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			// no bundles
 			target.setBundleContainers(null);
@@ -459,15 +458,15 @@ public class TargetPlatformService implements ITargetPlatformService {
 					if (id != null) {
 						if (disabledIDs.contains(id)) {
 							// include version info since some versions are disabled
-							list.add(new BundleInfo(id, models[i].getPluginBase().getVersion(), null, BundleInfo.NO_LEVEL, false));
+							list.add(new NameVersionDescriptor(id, models[i].getPluginBase().getVersion()));
 						} else {
-							list.add(new BundleInfo(id, null, null, BundleInfo.NO_LEVEL, false));
+							list.add(new NameVersionDescriptor(id, null));
 						}
 					}
 				}
 			}
 			if (list.size() > 0) {
-				primary.setIncludedBundles((BundleInfo[]) list.toArray(new BundleInfo[list.size()]));
+				target.setIncluded((NameVersionDescriptor[]) list.toArray(new NameVersionDescriptor[list.size()]));
 			}
 		}
 

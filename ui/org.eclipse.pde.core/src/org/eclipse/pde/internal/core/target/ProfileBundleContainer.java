@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -223,7 +223,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	public boolean isContentEqual(AbstractBundleContainer container) {
 		if (container instanceof ProfileBundleContainer) {
 			ProfileBundleContainer pbc = (ProfileBundleContainer) container;
-			return fHome.equals(pbc.fHome) && isNullOrEqual(fConfiguration, fConfiguration) && super.isContentEqual(container);
+			return fHome.equals(pbc.fHome) && isNullOrEqual(fConfiguration, fConfiguration);
 		}
 		return false;
 	}
@@ -242,7 +242,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

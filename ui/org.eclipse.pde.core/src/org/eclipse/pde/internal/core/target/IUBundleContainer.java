@@ -597,11 +597,34 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			if (iuContainer.getIncludeAllRequired() == getIncludeAllRequired()) {
 				// include all targets only matters if include all required is turned off
 				if (getIncludeAllRequired() || iuContainer.getIncludeAllEnvironments() == getIncludeAllEnvironments()) {
-					if (isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos)) {
-						return super.isContentEqual(container);
-					}
+					return isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos);
 				}
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether the arrays have equal contents or are both <code>null</code>.
+	 * 
+	 * @param objects1
+	 * @param objects2
+	 * @return whether the arrays have equal contents or are both <code>null</code>
+	 */
+	private boolean isEqualOrNull(Object[] objects1, Object[] objects2) {
+		if (objects1 == null) {
+			return objects2 == null;
+		}
+		if (objects2 == null) {
+			return false;
+		}
+		if (objects1.length == objects2.length) {
+			for (int i = 0; i < objects1.length; i++) {
+				if (!objects1[i].equals(objects2[i])) {
+					return false;
+				}
+			}
+			return true;
 		}
 		return false;
 	}
@@ -731,4 +754,5 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	Version[] getVersions() {
 		return fVersions;
 	}
+
 }

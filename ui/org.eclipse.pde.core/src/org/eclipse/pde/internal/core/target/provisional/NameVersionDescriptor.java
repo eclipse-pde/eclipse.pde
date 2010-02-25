@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.target;
+package org.eclipse.pde.internal.core.target.provisional;
 
 /**
  * Describes something with a name and version.
  */
 public class NameVersionDescriptor {
 
+	public static final String TYPE_PLUGIN = "plugin"; //$NON-NLS-1$
+	public static final String TYPE_FEATURE = "feature"; //$NON-NLS-1$
+
 	private String fId;
 	private String fVersion;
+	private String fType;
 
 	/**
-	 * Constructs a descriptor.
+	 * Constructs a descriptor with a type of 'plugin'
 	 * 
 	 * @param id name identifier
 	 * @param version version identifier, can be <code>null</code>
@@ -27,6 +31,20 @@ public class NameVersionDescriptor {
 	public NameVersionDescriptor(String id, String version) {
 		fId = id;
 		fVersion = version;
+		fType = TYPE_PLUGIN;
+	}
+
+	/**
+	 * Constructs a descriptor of the given type
+	 * 
+	 * @param id name identifier
+	 * @param version version identifier, can be <code>null</code>
+	 * @param type type of object this descriptor represents, should be one of the TYPE constants defined in this file
+	 */
+	public NameVersionDescriptor(String id, String version, String type) {
+		fId = id;
+		fVersion = version;
+		fType = type;
 	}
 
 	/* (non-Javadoc)
@@ -57,6 +75,10 @@ public class NameVersionDescriptor {
 		return fVersion;
 	}
 
+	public String getType() {
+		return fType;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -65,6 +87,8 @@ public class NameVersionDescriptor {
 		buf.append(fId);
 		buf.append('_');
 		buf.append(fVersion);
+		buf.append('_');
+		buf.append(fType);
 		return buf.toString();
 	}
 

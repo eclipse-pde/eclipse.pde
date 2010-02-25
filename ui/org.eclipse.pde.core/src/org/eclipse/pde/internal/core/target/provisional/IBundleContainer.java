@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.target.provisional;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 
 /**
  * A collection of bundles. A bundle container abstracts the storage and location of the
@@ -30,7 +29,7 @@ public interface IBundleContainer {
 	 * returned. If the progress monitor is canceled a CANCEL status will be returned.
 	 * </p><p>
 	 * Note that the returned status may differ from the result of calling 
-	 * {@link #getBundleStatus()}
+	 * {@link #getStatus()}
 	 * </p>
 	 * @param definition target being resolved for
 	 * @param monitor progress monitor or <code>null</code>
@@ -40,17 +39,15 @@ public interface IBundleContainer {
 	public IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor);
 
 	/**
-	 * Returns the status of the bundles in this container or <code>null</code> if 
+	 * Returns the status of the last bundle resolution or <code>null</code> if 
 	 * this container has not been resolved.  If there was a problem during the 
-	 * resolution, a single status explaining the problem will be returned, see
-	 * {@link #resolve(ITargetDefinition, IProgressMonitor)}.  Otherwise a multi-status
-	 * will be returned containing all non-OK statuses on the bundles in this container
-	 * (the bundles in this container can be retrieved by calling {@link #getBundles()}. 
+	 * resolution, a status, possibly a multi-status explaining the problem will be 
+	 * returned, see {@link #resolve(ITargetDefinition, IProgressMonitor)}. 
 	 * 	 
 	 * @see IBundleContainer#getBundles()
-	 * @return single resolution status, bundle multi-status or <code>null</code>
+	 * @return single resolution status or <code>null</code>
 	 */
-	public IStatus getBundleStatus();
+	public IStatus getStatus();
 
 	/**
 	 * Returns whether this container has resolved all of its contained bundles.
@@ -62,68 +59,15 @@ public interface IBundleContainer {
 
 	/**
 	 * Returns the bundles in this container or <code>null</code> if this container is
-	 * not resolved.  The returned list of bundles will be filtered if included bundles
-	 * {@link #setIncludedBundles(BundleInfo[])} or optional bundles
-	 * {@link #setOptionalBundles(BundleInfo[])} have been set.
 	 * <p>
 	 * Some of the returned bundles may have non-OK statuses.  These bundles may be missing some
 	 * information (location, version, source target).  To get a bundle's status call
-	 * {@link IResolvedBundle#getStatus()}.  You can also use {@link #getBundleStatus()} to
+	 * {@link IResolvedBundle#getStatus()}.  You can also use {@link #getStatus()} to
 	 * get the complete set of problems.
 	 * </p>
 	 * @return resolved bundles or <code>null</code>
 	 */
 	public IResolvedBundle[] getBundles();
-
-	/**
-	 * Returns the list of resolved bundles in this container.  Does not filter based on any
-	 * includedBundles or optionalBundles set on this container.  Returns <code>null</code> if
-	 * this container has not been resolved.  Use {@link #getBundles()} to get the restricted
-	 * list of bundles.
-	 *  
-	 * @return collection of resolved bundles or <code>null</code>
-	 */
-	public IResolvedBundle[] getAllBundles();
-
-	/**
-	 * Restricts the bundles in this container to the explicit set of bundles specified or
-	 * all bundles in this container when <code>null</code>. When this container resolves
-	 * bundles and source bundles the result will be limited to those bundles matching the
-	 * bundles specified.
-	 * <p>
-	 * When bundle versions are specified, resolving will enforce version matching. When
-	 * bundle versions are unspecified, resolving will select the bundle with the highest
-	 * version identifier and matching symbolic name.
-	 * </p>
-	 * @param bundles bundle restriction or <code>null</code> for all bundles
-	 */
-	public void setIncludedBundles(BundleInfo[] bundles);
-
-	/**
-	 * Returns the explicit list of bundles to be included in the bundle container.  Any 
-	 * bundles in the container that are not included in this list will not be included 
-	 * in the result of {@link #resolveBundles(IProgressMonitor)}. This method will return 
-	 * <code>null</code> if an explicit list has not been set, all bundles will be included
-	 * in the container.
-	 * 
-	 * @return list of included bundles set or <code>null</code> if all bundles included
-	 */
-	public BundleInfo[] getIncludedBundles();
-
-	/**
-	 * Describes a set of bundles in this container that are optional. During resolution,
-	 * missing optional bundles are not considered as resolution errors.
-	 * 
-	 * @param bundles optional bundles or <code>null</code>
-	 */
-	public void setOptionalBundles(BundleInfo[] bundles);
-
-	/**
-	 * Returns bundles that are optionally part of this container or <code>null</code> if none.
-	 * 
-	 * @return optional bundles or <code>null</code>
-	 */
-	public BundleInfo[] getOptionalBundles();
 
 	/**
 	 * Returns VM Arguments that are specified in the bundle container or <code>null</code> if none.

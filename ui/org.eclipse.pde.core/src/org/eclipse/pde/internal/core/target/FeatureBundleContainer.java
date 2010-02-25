@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.*;
@@ -200,7 +199,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 				IFeaturePlugin plugin = plugins[i];
 				// only include if plug-in matches environment
 				if (isMatch(definition.getArch(), plugin.getArch(), Platform.getOSArch()) && isMatch(definition.getNL(), plugin.getNL(), Platform.getNL()) && isMatch(definition.getOS(), plugin.getOS(), Platform.getOS()) && isMatch(definition.getWS(), plugin.getWS(), Platform.getWS())) {
-					matchInfos.add(new BundleInfo(plugin.getId(), plugin.getVersion(), null, BundleInfo.NO_LEVEL, false));
+					matchInfos.add(new NameVersionDescriptor(plugin.getId(), plugin.getVersion()));
 				}
 			}
 
@@ -208,7 +207,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			for (int i = 0; i < bundles.length; i++) {
 				bundles[i].setParentContainer(this);
 			}
-			return AbstractBundleContainer.getMatchingBundles(bundles, (BundleInfo[]) matchInfos.toArray(new BundleInfo[matchInfos.size()]), null, this);
+			return TargetDefinition.getMatchingBundles(bundles, (NameVersionDescriptor[]) matchInfos.toArray(new NameVersionDescriptor[matchInfos.size()]), null, this);
 		} finally {
 			if (model != null) {
 				model.dispose();
@@ -241,7 +240,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	public boolean isContentEqual(AbstractBundleContainer container) {
 		if (container instanceof FeatureBundleContainer) {
 			FeatureBundleContainer fbc = (FeatureBundleContainer) container;
-			return fHome.equals(fbc.fHome) && fId.equals(fbc.fId) && isNullOrEqual(fVersion, fVersion) && super.isContentEqual(container);
+			return fHome.equals(fbc.fHome) && fId.equals(fbc.fId) && isNullOrEqual(fVersion, fVersion);
 		}
 		return false;
 	}
@@ -260,7 +259,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return new StringBuffer().append("Feature ").append(fId).append(' ').append(fVersion).append(' ').append(fHome).append(' ').append(getIncludedBundles() == null ? "All" : Integer.toString(getIncludedBundles().length)).append(" included").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new StringBuffer().append("Feature ").append(fId).append(' ').append(fVersion).append(' ').append(fHome).toString(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

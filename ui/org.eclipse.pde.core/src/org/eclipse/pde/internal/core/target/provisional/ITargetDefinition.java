@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.target.provisional;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.environment.Constants;
 
@@ -144,10 +143,58 @@ public interface ITargetDefinition {
 	public void setBundleContainers(IBundleContainer[] containers);
 
 	/**
-	 * Returns all bundles in this target definition or <code>null</code>
-	 * if this container is not resolved.  Equivalent to collecting the result
-	 * of {@link IBundleContainer#getBundles()} on each of the bundle containers
-	 * in this target.
+	 * Sets a list of descriptors to filter the resolved plug-ins in this target.  The list may include both
+	 * plug-ins and features.  To include all plug-ins in the target, pass <code>null</code> as the argument.
+	 * <p>
+	 * The descriptions passed to this method must have an ID set.  The version may be <code>null</code>
+	 * to include any version of the matches the ID.  Only descriptors with a type of {@link NameVersionDescriptor#TYPE_FEATURE}
+	 * or {@link NameVersionDescriptor#TYPE_PLUGIN} will be considered.
+	 * </p>
+	 * @see #getBundles()
+	 * @see #getIncluded()
+	 * @param included list of descriptors to include in the target or <code>null</code> to include all plug-ins
+	 */
+	public void setIncluded(NameVersionDescriptor[] included);
+
+	/**
+	 * Returns a list of descriptors that filter the resolved plug-ins in this target.  The list may include
+	 * both plug-ins and features.  The returned descriptors will have an id, may have a version and will have
+	 * either {@link NameVersionDescriptor#TYPE_FEATURE} or {@link NameVersionDescriptor#TYPE_PLUGIN} as their
+	 * type.  If the target is set to include all units (no filtering is being done), this method will return 
+	 * <code>null</code>.
+	 * 
+	 * @see #getBundles()
+	 * @see #setIncluded()
+	 * @return list of name version descriptors or <code>null</code>
+	 */
+	public NameVersionDescriptor[] getIncluded();
+
+	/**
+	 * Sets a list of descriptors used to add optional bundles to the resolved target.  To not use optional bundles
+	 * pass <code>null</code> as the argument.  Only {@link NameVersionDescriptor}s with a type of {@link NameVersionDescriptor#TYPE_PLUGIN}
+	 * will be considered. The unit descriptions passed to this method must have an ID set, but the version may be <code>null</code>
+	 * to include any version of that plug-in.
+	 * 
+	 * @param included list of units to include in the target or <code>null</code> to not use optional bundles
+	 */
+	public void setOptional(NameVersionDescriptor[] optional);
+
+	/**
+	 * Returns a list of descriptors used to add optional bundles to the resolved target.  If optional
+	 * bundles are not being used in this target this method will return <code>null</code>.  The returned
+	 * descriptors will have an ID set, may have a version set and will have a type of {@link NameVersionDescriptor#TYPE_PLUGIN}.
+	 * 
+	 * @return list of name version descriptors or <code>null</code>
+	 */
+	public NameVersionDescriptor[] getOptional();
+
+	/**
+	 * Returns all bundles included in this target definition or <code>null</code>
+	 * if this container is not resolved.  Takes all the bundles available from the
+	 * set bundle containers (result returned by {@link #getAllBundles()} and applies
+	 * the filters set by {@link #setIncluded(NameVersionDescriptor[])} and 
+	 * {@link #setOptional(NameVersionDescriptor[])} to determine the final list of 
+	 * bundles in this target.
 	 * <p>
 	 * Some of the returned bundles may have non-OK statuses.  These bundles may be missing some
 	 * information (location, version, source target).  To get a bundle's status call
@@ -163,7 +210,7 @@ public interface ITargetDefinition {
 	 * Returns the list of resolved bundles in this target definition or <code>null</code>. 
 	 * Does not filter based on any includedBundles or optionalBundles set on bundle containers.
 	 * Returns <code>null</code> if this target has not been resolved. 
-	 * Use {@link #getBundles()} to get the restricted list of bundles.
+	 * Use {@link #getBundles()} to get the filtered list of bundles.
 	 *  
 	 * @return collection of resolved bundles or <code>null</code>
 	 */
@@ -201,7 +248,7 @@ public interface ITargetDefinition {
 	 * Returns a multi-status containing the bundle status of all bundle containers
 	 * in this target or <code>null</code> if this target has not been resolved.  For
 	 * information on the statuses collected from the bundle containers see
-	 * {@link IBundleContainer#getBundleStatus()}.
+	 * {@link IBundleContainer#getStatus()}.
 	 * 
 	 * @see #getBundles()
 	 * @return multi-status containing status for each bundle container or <code>null</code>
@@ -250,11 +297,11 @@ public interface ITargetDefinition {
 	/**
 	 * Sets implicit dependencies for this target. Bundles in this collection are always
 	 * considered by PDE when computing plug-in dependencies. Only symbolic names need to
-	 * be specified in the given bundle descriptions. 
+	 * be specified in the given descriptors. 
 	 * 
 	 * @param bundles implicit dependencies or <code>null</code> if none
 	 */
-	public void setImplicitDependencies(BundleInfo[] bundles);
+	public void setImplicitDependencies(NameVersionDescriptor[] bundles);
 
 	/**
 	 * Returns the implicit dependencies set on this target or <code>null</code> if none.
@@ -263,14 +310,5 @@ public interface ITargetDefinition {
 	 * 
 	 * @return implicit dependencies or <code>null</code>
 	 */
-	public BundleInfo[] getImplicitDependencies();
-
-	/**
-	 * Returns implicit dependencies resolved against the actual bundles contained in this target
-	 * or <code>null</code> if this target has not been resolved. Matches symbolic names and optional
-	 * versions of implicit dependencies against the actual bundles in this target.
-	 *  
-	 * @return resolved implicit dependencies or <code>null</code>
-	 */
-	public IResolvedBundle[] getResolvedImplicitDependencies();
+	public NameVersionDescriptor[] getImplicitDependencies();
 }

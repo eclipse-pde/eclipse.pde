@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,12 +278,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#refreshContainer(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
 	 */
 	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
-		IBundleContainer container = getTargetPlatformService().newProfileContainer(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
-		if (previous instanceof ProfileBundleContainer) {
-			container.setIncludedBundles(previous.getIncludedBundles());
-			container.setOptionalBundles(previous.getOptionalBundles());
-		}
-		return container;
+		return getTargetPlatformService().newProfileContainer(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
 	}
 
 }

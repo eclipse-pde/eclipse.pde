@@ -373,7 +373,7 @@ public class TargetLocationsGroup {
 			} else if (parentElement instanceof IBundleContainer) {
 				IBundleContainer container = (IBundleContainer) parentElement;
 				if (container.isResolved()) {
-					IStatus status = container.getBundleStatus();
+					IStatus status = container.getStatus();
 					if (!status.isOK() && !status.isMultiStatus()) {
 						return new Object[] {status};
 					}
@@ -412,10 +412,16 @@ public class TargetLocationsGroup {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
+				Collection result = new ArrayList();
 				IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
 				if (containers != null) {
-					return containers;
+					result.addAll(Arrays.asList(containers));
 				}
+				IStatus status = ((ITargetDefinition) inputElement).getBundleStatus();
+				if (status != null && !status.isOK()) {
+					result.add(status);
+				}
+				return result.toArray();
 			} else if (inputElement instanceof String) {
 				return new Object[] {inputElement};
 			}

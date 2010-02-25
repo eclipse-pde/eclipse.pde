@@ -90,6 +90,14 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#refresh(boolean)
+	 */
+	public void refresh(boolean updateLabels) {
+		checkState = null;
+		super.refresh(updateLabels);
+	}
+
 	/**
 	 * Restores the checked state of items based on the cached check state.  This
 	 * will only check leaf nodes, but parent items will be updated by the container
