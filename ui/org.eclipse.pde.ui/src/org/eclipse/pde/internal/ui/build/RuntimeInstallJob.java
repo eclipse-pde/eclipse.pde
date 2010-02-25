@@ -13,7 +13,8 @@ package org.eclipse.pde.internal.ui.build;
 
 import java.io.File;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
@@ -24,10 +25,10 @@ import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.query.ExpressionQuery;
 import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.operations.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.query.MatchQuery;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.osgi.util.NLS;
@@ -200,22 +201,9 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		IQueryResult queryMatches = profile.query(new MatchQuery() {
-			public boolean isMatch(Object candidate) {
-				if (candidate instanceof IInstallableUnit) {
-					Collection/*<IRequirement>*/reqs = ((IInstallableUnit) candidate).getRequiredCapabilities();
-					for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
-						IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
-						if (reqCap.getName().equals(id)) {
-							if (new VersionRange(existingVersion, true, existingVersion, true).equals(reqCap.getRange())) {
-								return true;
-							}
-						}
-					}
-				}
-				return false;
-			}
-		}, monitor);
+		IQueryResult queryMatches = profile.query(ExpressionQuery.create(//
+				"requiredCapabilities.exists(rq | rq ~= $0 && rq.name == $1 && rq.range == $2",//$NON-NLS-1$
+				new Object[] {IRequiredCapability.class, id, new VersionRange(existingVersion, true, existingVersion, true)}), monitor);
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
