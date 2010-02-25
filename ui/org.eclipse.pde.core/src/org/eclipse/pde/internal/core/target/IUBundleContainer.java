@@ -21,7 +21,6 @@ import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.*;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.planner.IPlanner;
 import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.IRepositoryManager;
@@ -339,7 +338,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		if (repoCount == 1) {
 			allMetadata = (IQueryable) metadataRepos.get(0);
 		} else {
-			allMetadata = new CompoundQueryable(metadataRepos);
+			allMetadata = QueryUtil.compoundQueryable(metadataRepos);
 		}
 
 		// slice IUs and all prerequisites
@@ -355,7 +354,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-		IQueryResult queryResult = slice.query(InstallableUnitQuery.ANY, new SubProgressMonitor(subMonitor, 10));
+		IQueryResult queryResult = slice.query(QueryUtil.createIUAnyQuery(), new SubProgressMonitor(subMonitor, 10));
 
 		if (subMonitor.isCanceled() || queryResult.isEmpty()) {
 			return new IResolvedBundle[0];
@@ -461,7 +460,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		if (fUnits == null) {
 			fUnits = new IInstallableUnit[fIds.length];
 			for (int i = 0; i < fIds.length; i++) {
-				InstallableUnitQuery query = new InstallableUnitQuery(fIds[i], fVersions[i]);
+				IQuery query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
 				IQueryResult queryResult = profile.query(query, null);
 				if (queryResult.isEmpty()) {
 					// try repositories

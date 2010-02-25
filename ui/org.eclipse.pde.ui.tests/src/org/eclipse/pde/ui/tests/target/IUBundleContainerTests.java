@@ -21,8 +21,8 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -76,7 +76,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return installable unit
 	 */
 	protected IInstallableUnit getUnit(String id, IMetadataRepository repository) {
-		IQueryResult result = repository.query(new InstallableUnitQuery(id),  null);
+		IQueryResult result = repository.query(QueryUtil.createIUQuery(id),  null);
 		IInstallableUnit[] units  = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
 		if (units.length == 1) {
 			return units[0];

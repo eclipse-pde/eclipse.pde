@@ -25,10 +25,9 @@ import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.*;
-import org.eclipse.equinox.p2.metadata.query.ExpressionQuery;
-import org.eclipse.equinox.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.operations.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.osgi.util.NLS;
@@ -125,7 +124,7 @@ public class RuntimeInstallJob extends Job {
 
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
-				IQueryResult queryMatches = metaRepo.query(new InstallableUnitQuery(id, newVersion), monitor);
+				IQueryResult queryMatches = metaRepo.query(QueryUtil.createIUQuery(id, newVersion), monitor);
 				if (queryMatches.isEmpty()) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
@@ -133,7 +132,7 @@ public class RuntimeInstallJob extends Job {
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
 
 				// Find out if the profile already has that iu installed												
-				queryMatches = profile.query(new InstallableUnitQuery(id), new SubProgressMonitor(monitor, 0));
+				queryMatches = profile.query(QueryUtil.createIUQuery(id), new SubProgressMonitor(monitor, 0));
 				if (queryMatches.isEmpty()) {
 					// Just install the new iu into the profile
 					toInstall.add(iuToInstall);
@@ -201,7 +200,7 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		IQueryResult queryMatches = profile.query(ExpressionQuery.create(//
+		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery(//
 				"requiredCapabilities.exists(rq | rq ~= $0 && rq.name == $1 && rq.range == $2",//$NON-NLS-1$
 				new Object[] {IRequiredCapability.class, id, new VersionRange(existingVersion, true, existingVersion, true)}), monitor);
 		if (!queryMatches.isEmpty()) {
