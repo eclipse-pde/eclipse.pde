@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher.compatibility;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
@@ -18,8 +20,6 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.publisher.*;
 import org.eclipse.equinox.p2.publisher.actions.RootFilesAction;
-import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.query.MatchQuery;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 public class RootFileParentAction extends AbstractPublisherAction {
@@ -43,19 +43,17 @@ public class RootFileParentAction extends AbstractPublisherAction {
 	public IStatus perform(IPublisherInfo publisherInfo, IPublisherResult results, IProgressMonitor monitor) {
 		final String idPrefix = baseId + ".rootfiles"; //$NON-NLS-1$
 		final String flavorPrefix = flavor + baseId + ".rootfiles"; //$NON-NLS-1$
-		//TODO this could be turned into a "name query", a query that checks on some parameters
-		MatchQuery query = new MatchQuery() {
-			public boolean isMatch(Object candidate) {
-				if (candidate instanceof IInstallableUnit) {
-					String id = ((IInstallableUnit) candidate).getId();
-					return id.startsWith(idPrefix) || id.startsWith(flavorPrefix);
-				}
-				return false;
-			}
-		};
 
-		IQueryResult collector = query.perform(results.getIUs(null, IPublisherResult.NON_ROOT).iterator());
-		InstallableUnitDescription descriptor = createParentIU(collector.unmodifiableSet(), RootFilesAction.computeIUId(baseId, flavor), Version.parseVersion(version));
+		HashSet collector = new HashSet();
+		Iterator iter = results.getIUs(null, IPublisherResult.NON_ROOT).iterator();
+		while (iter.hasNext()) {
+			IInstallableUnit iu = (IInstallableUnit) iter.next();
+			String id = iu.getId();
+			if (id.startsWith(idPrefix) || id.startsWith(flavorPrefix))
+				collector.add(iu);
+		}
+
+		InstallableUnitDescription descriptor = createParentIU(collector, RootFilesAction.computeIUId(baseId, flavor), Version.parseVersion(version));
 		descriptor.setSingleton(true);
 		IInstallableUnit rootIU = MetadataFactory.createInstallableUnit(descriptor);
 		results.addIU(rootIU, IPublisherResult.ROOT);
