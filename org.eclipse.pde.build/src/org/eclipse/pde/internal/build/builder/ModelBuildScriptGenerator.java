@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
@@ -21,6 +22,7 @@ import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
 import org.eclipse.pde.internal.build.site.ProfileManager;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
 /**
@@ -119,6 +121,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private Map workspaceOutputFolders = null;
 
 	private boolean generateErrorPropertyAttribute = true;
+	private boolean sourceReferences = false;
 
 	/**
 	 * @see AbstractScriptGenerator#generate()
@@ -791,9 +794,47 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			return;
 
 		String qualifier = bundleProperties.getProperty(PROPERTY_QUALIFIER);
-		if (qualifier == null)
+		String sourceReference = getSourceReference(bundleProperties);
+		if (qualifier == null && sourceReference == null)
 			return;
-		script.println("<eclipse.versionReplacer path=\"" + AntScript.getEscaped(location) + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+
+		Map arguments = new HashMap();
+		arguments.put("path", AntScript.getEscaped(location)); //$NON-NLS-1$
+		if (qualifier != null)
+			arguments.put("version", model.getVersion().toString()); //$NON-NLS-1$
+		if (sourceReference != null)
+			arguments.put("attributes", ECLIPSE_SOURCE_REF + '|' + sourceReference); //$NON-NLS-1$
+		script.printElement("eclipse.versionReplacer", arguments); //$NON-NLS-1$
+	}
+
+	private String getSourceReference(Properties bundleProperties) {
+		String reference = (String) bundleProperties.get(PROPERTY_SOURCE_REFERENCE);
+		if (!sourceReferences || reference == null)
+			return null;
+
+		String originalEntry = (String) bundleProperties.get(ECLIPSE_SOURCE_REF);
+		if (originalEntry != null) {
+			try {
+				ManifestElement[] elements = ManifestElement.parseHeader(ECLIPSE_SOURCE_REF, originalEntry);
+				StringBuffer newEntry = new StringBuffer();
+				boolean changed = false;
+				for (int i = 0; i < elements.length; i++) {
+					if (i > 0)
+						newEntry.append(',');
+					if (elements[i].getValue().equals(PDE_SOURCE_REF)) {
+						newEntry.append(reference);
+						changed = true;
+					} else
+						newEntry.append(elements[i].toString());
+				}
+				return changed ? newEntry.toString() : null; //returning null is no change
+			} catch (BundleException e) {
+				// ignore
+			}
+		} else {
+			return reference;
+		}
+		return null;
 	}
 
 	private void generatePermissionProperties(String directory) throws CoreException {
@@ -1703,5 +1744,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	protected void setWorkspaceOutputFolders(Map folders) {
 		this.workspaceOutputFolders = folders;
+	}
+
+	public void setGenerateSourceReferences(boolean sourceReferences) {
+		this.sourceReferences = sourceReferences;
 	}
 }

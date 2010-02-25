@@ -62,6 +62,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// A property table containing the association between the plugins and the version from the map  
 	protected Properties repositoryPluginTags = new Properties();
 	protected Properties repositoryFeatureTags = new Properties();
+	protected Properties sourceReferences = new Properties();
 
 	//The registry of the task factories
 	private FetchTaskFactoriesRegistry fetchTaskFactories;
@@ -156,6 +157,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private void saveRepositoryTags() throws CoreException {
 		saveRepositoryTags(repositoryPluginTags, DEFAULT_PLUGIN_REPOTAG_FILENAME_DESCRIPTOR);
 		saveRepositoryTags(repositoryFeatureTags, DEFAULT_FEATURE_REPOTAG_FILENAME_DESCRIPTOR);
+		saveRepositoryTags(sourceReferences, DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR);
 	}
 
 	/**
@@ -178,6 +180,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			generator.setDirectoryFile(directoryFile);
 			generator.setBuildSiteFactory(siteFactory);
 			generator.repositoryPluginTags = repositoryPluginTags;
+			generator.setSourceReferences(sourceReferences);
 			generator.setScriptRunner(scriptRunner);
 			generator.generate();
 		}
@@ -362,6 +365,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			factory.generateRetrieveFilesCall(mapFileEntry, computeFinalLocation(type, elementToFetch, (Version) mapFileEntry.get(MATCHED_VERSION)), files, script);
 		}
 
+		//key to use for version and source references properties files
+		String key = null;
+		if (version.getQualifier().endsWith(PROPERTY_QUALIFIER))
+			key = QualifierReplacer.getQualifierKey(elementToFetch, version.toString());
+		else
+			key = elementToFetch + ',' + new Version(version.getMajor(), version.getMinor(), version.getMicro()).toString();
 		//Keep track of the element that are being fetched. To simplify the lookup in the qualifier replacer, the versioned that was initially looked up is used as key in the file
 		Properties tags = null;
 		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
@@ -369,14 +378,14 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		else
 			tags = repositoryPluginTags;
 		if (mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG) != null) {
-			if (version.getQualifier().endsWith(PROPERTY_QUALIFIER)) {
-				String key = QualifierReplacer.getQualifierKey(elementToFetch, version.toString());
-				tags.put(key, mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
-			} else {
-				tags.put(elementToFetch + ',' + new Version(version.getMajor(), version.getMinor(), version.getMicro()), mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
-			}
+			tags.put(key, mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
 		}
 
+		if (!type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
+			String sourceURLs = (String) mapFileEntry.get(Constants.KEY_SOURCE_REFERENCES);
+			if (sourceURLs != null)
+				sourceReferences.put(key, sourceURLs);
+		}
 		return true;
 	}
 
@@ -734,6 +743,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 */
 	public void setFetchTag(Properties value) {
 		fetchTags = value;
+	}
+
+	public void setSourceReferences(Properties sourceReferences) {
+		this.sourceReferences = sourceReferences;
 	}
 
 	/**

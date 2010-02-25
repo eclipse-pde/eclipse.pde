@@ -58,6 +58,7 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_UNZIPPER_FILENAME_DESCRIPTOR = "unzipper.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_PLUGIN_REPOTAG_FILENAME_DESCRIPTOR = "pluginVersions.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_REPOTAG_FILENAME_DESCRIPTOR = "featureVersions.properties"; //$NON-NLS-1$
+	public final static String DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR = "sourceReferences.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_PLUGINS_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURES_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE = "customBuildCallbacks.xml"; //$NON-NLS-1$
@@ -120,6 +121,8 @@ public interface IPDEBuildConstants {
 	public final static String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
 	public final static String ECLIPSE_PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 	public final static String ECLIPSE_BUNDLE_SHAPE = "Eclipse-BundleShape"; //$NON-NLS-1$
+	public final static String ECLIPSE_SOURCE_REF = "Eclipse-SourceReferences"; //$NON-NLS-1$
+	public final static String PDE_SOURCE_REF = "${PDE_SOURCE_REF}"; //$NON-NLS-1$
 
 	//Some Bundle IDs we care about
 	public final static String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$

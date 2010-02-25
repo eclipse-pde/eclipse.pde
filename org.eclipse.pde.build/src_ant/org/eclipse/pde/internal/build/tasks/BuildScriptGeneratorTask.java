@@ -55,6 +55,10 @@ public class BuildScriptGeneratorTask extends Task {
 		generator.setFlattenDependencies(flatten);
 	}
 
+	public void setGenerateSourceReferences(boolean generateSourceRef) {
+		generator.setGenerateSourceReferences(generateSourceRef);
+	}
+
 	/**
 	 * Set the plug-in path to be the given value.
 	 * 

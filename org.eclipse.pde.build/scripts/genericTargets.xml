@@ -92,6 +92,7 @@
 		significantVersionDigits="${significantVersionDigits}"
 		generatedVersionLength="${generatedVersionLength}"
 		generateVersionsLists="${generateVersionsLists}"
+		generateSourceReferences="${generateSourceReferences}"
 		groupConfiguration="${groupConfigurations}"
 		pluginPath="${transformedRepoLocation}${path.separator}${pluginPath}"
 		filteredDependencyCheck="${filteredDependencyCheck}"

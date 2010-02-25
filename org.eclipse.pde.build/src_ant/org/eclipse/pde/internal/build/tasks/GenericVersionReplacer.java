@@ -24,6 +24,7 @@ public class GenericVersionReplacer extends Task {
 	private static final String MANIFEST = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	private String rootPath;
 	private String version;
+	private String attributes;
 
 	public void execute() {
 		File root = new File(rootPath);
@@ -58,6 +59,8 @@ public class GenericVersionReplacer extends Task {
 		modifier.setProject(getProject());
 		modifier.setManifestLocation(path);
 		modifier.setKeyValue("Bundle-Version|" + version); //$NON-NLS-1$
+		if (attributes != null)
+			modifier.setKeyValue(attributes);
 		modifier.execute();
 	}
 
@@ -75,5 +78,9 @@ public class GenericVersionReplacer extends Task {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public void setAttributes(String attributes) {
+		this.attributes = attributes;
 	}
 }

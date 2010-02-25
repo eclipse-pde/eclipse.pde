@@ -34,6 +34,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_MANIFEST_PREFIX = "manifest."; //$NON-NLS-1$
 
 	public static final String PROPERTY_CONVERTED_MANIFEST = "convertedManifest"; //$NON-NLS-1$
+	public static final String PROPERTY_SOURCE_REFERENCE = "sourceReference"; //$NON-NLS-1$
 	public static final String PROPERTY_QUALIFIER = "qualifier"; //$NON-NLS-1$
 	public static final String PROPERTY_VERSION_REPLACEMENT = "versionReplacement"; //$NON-NLS-1$
 	public static final String PROPERTY_REQUIRED_BUNDLE_IDS = "requiredBundleIds"; //$NON-NLS-1$

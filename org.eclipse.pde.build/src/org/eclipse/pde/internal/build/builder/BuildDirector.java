@@ -53,6 +53,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	protected String product = null;
 	protected boolean generateJnlp = false;
 	protected boolean workspaceBinaries = false;
+	private boolean sourceReferences = false;
 
 	public static boolean p2Gathering = false;
 
@@ -514,6 +515,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			generator.setSignJars(signJars);
 			generator.setAssociatedEntry(correspondingEntry);
+			generator.setGenerateSourceReferences(sourceReferences);
 			generator.generate();
 		}
 
@@ -630,6 +632,10 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 */
 	public void setSignJars(boolean value) {
 		signJars = value;
+	}
+
+	public void setGenerateSourceReferences(boolean generateSourceRef) {
+		this.sourceReferences = generateSourceRef;
 	}
 
 	/**

@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
-import java.util.jar.Attributes.Name;
 import org.apache.tools.ant.filters.ReplaceTokens;
 import org.apache.tools.ant.util.ReaderInputStream;
 import org.apache.tools.zip.ZipEntry;
@@ -93,11 +92,11 @@ public class Utils {
 	static public void generateBundleManifest(IFolder folder, String bundleId, String bundleVersion, Attributes additionalAttributes) throws CoreException, IOException {
 		Manifest manifest = new Manifest();
 		Attributes mainAttributes = manifest.getMainAttributes();
-		mainAttributes.put(Name.MANIFEST_VERSION, "1.0");
-		mainAttributes.put(new Name("Bundle-ManifestVersion"), "2");
-		mainAttributes.put(new Name("Bundle-Name"), "Test Bundle " + bundleId);
-		mainAttributes.put(new Name("Bundle-SymbolicName"), bundleId);
-		mainAttributes.put(new Name("Bundle-Version"), bundleVersion);
+		mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+		mainAttributes.put(new Attributes.Name("Bundle-ManifestVersion"), "2");
+		mainAttributes.put(new Attributes.Name("Bundle-Name"), "Test Bundle " + bundleId);
+		mainAttributes.put(new Attributes.Name("Bundle-SymbolicName"), bundleId);
+		mainAttributes.put(new Attributes.Name("Bundle-Version"), bundleVersion);
 		if (additionalAttributes != null)
 			mainAttributes.putAll(additionalAttributes);
 
@@ -434,5 +433,27 @@ public class Utils {
 				}
 			}
 		}
+	}
+
+	public static Manifest loadManifest(IFile file) throws IOException {
+		IPath location = file.getLocation();
+
+		if (location.getFileExtension().equals(".jar")) {
+			JarFile jar = null;
+			try {
+				jar = new JarFile(location.toFile());
+				return jar.getManifest();
+			} finally {
+				org.eclipse.pde.internal.build.Utils.close(jar);
+			}
+		} else if (location.lastSegment().equalsIgnoreCase("MANIFEST.MF")) {
+			InputStream stream = new FileInputStream(location.toFile());
+			try {
+				return new Manifest(stream);
+			} finally {
+				org.eclipse.pde.internal.build.Utils.close(stream);
+			}
+		}
+		return null;
 	}
 }

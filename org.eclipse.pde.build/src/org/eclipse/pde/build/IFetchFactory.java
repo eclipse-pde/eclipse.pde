@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2006 Eclipse Foundation and others.
+ * Copyright (c) 2004, 2010 Eclipse Foundation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,10 @@ public interface IFetchFactory {
 	 * infos should be filled with provider specific information that is
 	 * required in later processing to sucessfully generate the fetch script.
 	 * </p>
-	 * 
+	 * <p>
+	 * Since 3.6, factories may optionally set the {@link Constants#KEY_SOURCE_REFERENCES} property in the entry infos map to support the inclusion 
+	 * of source references in the bundle manifest using the Eclipse-SourceReferences header.
+	 * </p>
 	 * @param rawEntry the arguments as specified in the map file (may not be <code>null</code>).
 	 * @param overrideTags a key / value containing all the override tags specified for all the repository (maybe <code>null</code> or empty). 
 	 * The values of this map of this are read from the fetchTag property (see file scripts/templates/headless-build/build.properties). 

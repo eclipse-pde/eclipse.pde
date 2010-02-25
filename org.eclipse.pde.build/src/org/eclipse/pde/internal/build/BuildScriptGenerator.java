@@ -80,6 +80,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	private Properties antProperties = null;
 	private BundleDescription[] bundlesToBuild;
 	private boolean flatten = false;
+	private boolean sourceReferences = false;
 
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
@@ -154,6 +155,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.setCompiledElements(generator.getCompiledElements());
 				generator.setBuildingOSGi(isBuildingOSGi());
 				generator.setSignJars(signJars);
+				generator.setGenerateSourceReferences(sourceReferences);
 				generator.generate();
 			}
 			if (bundlesToBuild != null)
@@ -170,6 +172,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					generator.setCompiledElements(generator.getCompiledElements());
 					generator.setBuildingOSGi(isBuildingOSGi());
 					generator.setSignJars(signJars);
+					generator.setGenerateSourceReferences(sourceReferences);
 					generator.generate();
 				}
 		} finally {
@@ -222,6 +225,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setProductQualifier(productQualifier);
 			generator.setUseWorkspaceBinaries(workspaceBinaries);
 			generator.setContextMetadataRepositories(contextMetadata);
+			generator.setGenerateSourceReferences(sourceReferences);
 		}
 
 		if (generator != null) {
@@ -593,5 +597,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void setUseWorkspaceBinaries(boolean workspaceBinaries) {
 		this.workspaceBinaries = workspaceBinaries;
+	}
+
+	public void setGenerateSourceReferences(boolean generateSourceRef) {
+		this.sourceReferences = generateSourceRef;
 	}
 }

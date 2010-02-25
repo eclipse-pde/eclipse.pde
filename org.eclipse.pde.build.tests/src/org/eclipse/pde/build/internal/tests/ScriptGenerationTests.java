@@ -1590,6 +1590,51 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String[] {"Discouraged access: The type A", "3 problems (3 errors)"});
 	}
 
+	public void testBug243582() throws Exception {
+		IFolder buildFolder = newTest("243582");
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+		IFolder B = Utils.createFolder(buildFolder, "plugins/B");
+		IFolder C = Utils.createFolder(buildFolder, "plugins/C");
+
+		Utils.generateBundle(A, "A");
+
+		Attributes attributes = new Attributes();
+		attributes.put(new Attributes.Name(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "${PDE_SOURCE_REF},foo.bar;type:=mine");
+		Utils.writeBuffer(B.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
+		Utils.generateBundleManifest(B, "B", "1.0.0", attributes);
+		Utils.generatePluginBuildProperties(B, null);
+
+		attributes = new Attributes();
+		attributes.put(new Attributes.Name(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "foo.bar;type:=mine");
+		Utils.writeBuffer(C.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
+		Utils.generateBundleManifest(C, "C", "1.0.0", attributes);
+		Utils.generatePluginBuildProperties(C, null);
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"A", "B", "C"});
+
+		Properties sourceRefs = new Properties();
+		final String a_source = "\"1.0,:pserver:dev.eclipse.org:/cvsroot/rt,org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher,org.eclipse.equinox.p2.publisher\";type:=psf;provider:=\"org.eclipse.team.cvs.core.cvsnature\"";
+		sourceRefs.put("A,0.0.0", a_source);
+		sourceRefs.put("B,0.0.0", "B's source");
+		sourceRefs.put("C,0.0.0", "C's source");
+		Utils.storeProperties(buildFolder.getFile(IPDEBuildConstants.DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR), sourceRefs);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("baseLocation", "");
+		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("generateSourceReferences", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		Manifest m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/A_1.0.0/META-INF/MANIFEST.MF"));
+		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), a_source);
+		m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/B_1.0.0/META-INF/MANIFEST.MF"));
+		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "B's source,foo.bar;type:=\"mine\"");
+		m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/C_1.0.0/META-INF/MANIFEST.MF"));
+		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "foo.bar;type:=mine");
+	}
+
 	public void testBug284806() throws Exception {
 		IFolder buildFolder = newTest("284806");
 		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
@@ -1650,4 +1695,5 @@ public class ScriptGenerationTests extends PDETestCase {
 			generator.setImmutableAntProperties(null);
 		}
 	}
+
 }

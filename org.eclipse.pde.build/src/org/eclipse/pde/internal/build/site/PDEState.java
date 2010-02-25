@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,12 +26,13 @@ import org.osgi.framework.*;
 
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
-	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE};
+	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE, ECLIPSE_SOURCE_REF};
 
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
 	private Properties repositoryVersions;
+	private Properties sourceReferences;
 	private HashMap bundleClasspaths;
 	private ProfileManager profileManager;
 	private Map patchBundles;
@@ -68,6 +69,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		patchBundles = new HashMap();
 		convertedManifests = new HashSet(2);
 		loadPluginTagFile();
+		loadSourceReferences();
 	}
 
 	public StateObjectFactory getFactory() {
@@ -84,7 +86,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	//Add a bundle to the state, updating the version number 
 	public boolean addBundle(Dictionary enhancedManifest, File bundleLocation) {
-		updateVersionNumber(enhancedManifest);
+		String oldVersion = updateVersionNumber(enhancedManifest);
 		try {
 			BundleDescription descriptor;
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
@@ -95,6 +97,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			rememberQualifierTagPresence(descriptor);
 			rememberManifestConversion(descriptor, enhancedManifest);
 			rememberManifestEntries(descriptor, enhancedManifest, MANIFEST_ENTRIES);
+			rememberSourceReference(descriptor, oldVersion);
 			if (addBundleDescription(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
@@ -113,6 +116,20 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			descriptor.setUserObject(bundleProperties);
 		}
 		bundleProperties.setProperty(PROPERTY_QUALIFIER, "marker"); //$NON-NLS-1$
+	}
+
+	private void rememberSourceReference(BundleDescription descriptor, String oldVersion) {
+		String key = QualifierReplacer.getQualifierKey(descriptor.getSymbolicName(), oldVersion);
+		if (key == null)
+			key = descriptor.getSymbolicName() + ',' + Version.emptyVersion.toString();
+		if (sourceReferences != null && sourceReferences.containsKey(key)) {
+			Properties bundleProperties = (Properties) descriptor.getUserObject();
+			if (bundleProperties == null) {
+				bundleProperties = new Properties();
+				descriptor.setUserObject(bundleProperties);
+			}
+			bundleProperties.setProperty(PROPERTY_SOURCE_REFERENCE, sourceReferences.getProperty(key));
+		}
 	}
 
 	private void rememberManifestEntries(BundleDescription descriptor, Dictionary manifest, String[] entries) {
@@ -181,6 +198,20 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 	}
 
+	private void loadSourceReferences() {
+		sourceReferences = new Properties();
+		try {
+			InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR));
+			try {
+				sourceReferences.load(input);
+			} finally {
+				input.close();
+			}
+		} catch (IOException e) {
+			//Ignore
+		}
+	}
+
 	public boolean addBundle(File bundleLocation) {
 		Dictionary manifest;
 		manifest = loadManifest(bundleLocation);
@@ -194,20 +225,23 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return addBundle(manifest, bundleLocation);
 	}
 
-	private void updateVersionNumber(Dictionary manifest) {
+	private String updateVersionNumber(Dictionary manifest) {
 		String newVersion = null;
+		String oldVersion = null;
 		try {
 			String symbolicName = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 			if (symbolicName == null)
-				return;
+				return null;
 
 			symbolicName = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicName)[0].getValue();
-			newVersion = QualifierReplacer.replaceQualifierInVersion((String) manifest.get(Constants.BUNDLE_VERSION), symbolicName, (String) manifest.get(PROPERTY_QUALIFIER), repositoryVersions);
+			oldVersion = (String) manifest.get(Constants.BUNDLE_VERSION);
+			newVersion = QualifierReplacer.replaceQualifierInVersion(oldVersion, symbolicName, (String) manifest.get(PROPERTY_QUALIFIER), repositoryVersions);
 		} catch (BundleException e) {
 			//ignore
 		}
 		if (newVersion != null)
 			manifest.put(Constants.BUNDLE_VERSION, newVersion);
+		return oldVersion;
 	}
 
 	/**
