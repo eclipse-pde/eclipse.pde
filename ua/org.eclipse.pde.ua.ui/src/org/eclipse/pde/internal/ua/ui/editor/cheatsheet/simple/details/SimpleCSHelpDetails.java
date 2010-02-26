@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * SimpleCSHelpDetailsSection
- *
+ * 
  */
 public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
@@ -85,16 +85,24 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		fHelpSection = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#setData
+	 * (java.lang.Object)
 	 */
 	public void setData(ISimpleCSHelpObject object) {
 		// Set data
 		fHelpObject = object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#createDetails(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
+	 * #createDetails(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createDetails(Composite parent) {
 
@@ -106,24 +114,30 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 
 		// Create help section
-		fHelpSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
+		fHelpSection = toolkit.createSection(parent, Section.DESCRIPTION
+				| ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		fHelpSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fHelpSection.setText(SimpleDetailsMessages.SimpleCSHelpDetails_helpSectionText);
-		fHelpSection.setDescription(SimpleDetailsMessages.SimpleCSHelpDetails_helpSectionDesc);
-		fHelpSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		fHelpSection
+				.setText(SimpleDetailsMessages.SimpleCSHelpDetails_helpSectionText);
+		fHelpSection
+				.setDescription(SimpleDetailsMessages.SimpleCSHelpDetails_helpSectionDesc);
+		fHelpSection.setLayout(FormLayoutFactory
+				.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		fHelpSection.setLayoutData(data);
 
-		// Create container for help section		
+		// Create container for help section
 		Composite helpSectionClient = toolkit.createComposite(fHelpSection);
-		helpSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columnSpan));
+		helpSectionClient.setLayout(FormLayoutFactory
+				.createSectionClientGridLayout(false, columnSpan));
 
-		// Attribute: href		
+		// Attribute: href
 		// Attribute: contextId
-		label = toolkit.createLabel(helpSectionClient, SimpleDetailsMessages.SimpleCSHelpDetails_attrType, SWT.WRAP);
+		label = toolkit.createLabel(helpSectionClient,
+				SimpleDetailsMessages.SimpleCSHelpDetails_attrType, SWT.WRAP);
 		label.setForeground(foreground);
 
-		// Attribute: href		
+		// Attribute: href
 		// Attribute: contextId
 		fHelpCombo = new ComboPart();
 		fHelpCombo.createControl(helpSectionClient, toolkit, SWT.READ_ONLY);
@@ -135,18 +149,20 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		fHelpCombo.add(F_HELP_DOCUMENT_LINK);
 		fHelpCombo.setText(F_NO_HELP);
 
-		// Attribute: href		
+		// Attribute: href
 		// Attribute: contextId
-		fHelpLabel = toolkit.createLabel(helpSectionClient, SimpleDetailsMessages.SimpleCSHelpDetails_attrValue, SWT.WRAP);
+		fHelpLabel = toolkit.createLabel(helpSectionClient,
+				SimpleDetailsMessages.SimpleCSHelpDetails_attrValue, SWT.WRAP);
 		fHelpLabel.setForeground(foreground);
 
-		// Attribute: href		
+		// Attribute: href
 		// Attribute: contextId
 		fHelpText = toolkit.createText(helpSectionClient, null);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		fHelpText.setLayoutData(data);
 		// Browse Button
-		fHelpBrowse = toolkit.createButton(helpSectionClient, SimpleDetailsMessages.SimpleCSHelpDetails_browse, SWT.PUSH);
+		fHelpBrowse = toolkit.createButton(helpSectionClient,
+				SimpleDetailsMessages.SimpleCSHelpDetails_browse, SWT.PUSH);
 
 		// Bind widgets
 		toolkit.paintBordersFor(helpSectionClient);
@@ -155,13 +171,17 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		markDetailsPart(fHelpSection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#hookListeners()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
+	 * #hookListeners()
 	 */
 	public void hookListeners() {
 
-		// Attribute: href		
-		// Attribute: contextId		
+		// Attribute: href
+		// Attribute: contextId
 		fHelpCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Ensure data object is defined
@@ -172,12 +192,12 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 				if (selection.equals(F_NO_HELP) == false) {
 					// Help was selected
 					if (selection.equals(F_HELP_CONTEXT_ID)) {
-						// Help context ID was selected, clear the help 
+						// Help context ID was selected, clear the help
 						// document link value
 						fHelpObject.setHref(null);
 						fHelpBrowse.setEnabled(false);
 					} else {
-						// Help document link was selected, clear the help 
+						// Help document link was selected, clear the help
 						// context ID value
 						fHelpObject.setContextId(null);
 						fHelpBrowse.setEnabled(true);
@@ -204,8 +224,8 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 				}
 			}
 		});
-		// Attribute: href		
-		// Attribute: contextId		
+		// Attribute: href
+		// Attribute: contextId
 		fHelpText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				// Block UI updates
@@ -243,7 +263,9 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 	 */
 	private void handleButtonSelectedEventBrowse(SelectionEvent event) {
 		// Create the dialog
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getManagedForm().getForm().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
+				getManagedForm().getForm().getShell(),
+				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		// Disable multiple selection
 		dialog.setAllowMultiple(false);
 		// Title
@@ -263,7 +285,8 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		// Set the initial selection using the existing path (if any)
 		Path path = new Path(fHelpText.getText());
 		// Path must be non-empty, absolute and have at least two segments
-		if ((path.isEmpty() == false) && path.isAbsolute() && (path.segmentCount() > 1)) {
+		if ((path.isEmpty() == false) && path.isAbsolute()
+				&& (path.segmentCount() > 1)) {
 			IFile helpDocumentFile = root.getFile(path);
 			dialog.setInitialSelection(helpDocumentFile);
 		}
@@ -272,14 +295,10 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 			// Get the selection
 			Object result = dialog.getFirstResult();
 			// Ensure a file was selected
-			if ((result instanceof IFile) == false) {
+			if (!(result instanceof IFile)) {
 				return;
 			}
 			IFile file = (IFile) result;
-			// Ensure there was a selection
-			if (file == null) {
-				return;
-			}
 			// Get the absolute path
 			String absolutePath = file.getFullPath().toPortableString();
 			// Update the field
@@ -287,8 +306,12 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#updateFields()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails
+	 * #updateFields()
 	 */
 	public void updateFields() {
 		// Ensure data object is defined
@@ -302,7 +325,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		// Block model updates
 		fBlockListeners = true;
 		// Attribute: contextId
-		// Attribute: href		
+		// Attribute: href
 		if (PDETextHelper.isDefined(fHelpObject.getContextId())) {
 			fHelpText.setText(fHelpObject.getContextId());
 			fHelpText.setToolTipText(fHelpObject.getContextId());
@@ -327,7 +350,9 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		fHelpCombo.setEnabled(editable);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
 	public void commit(boolean onSave) {
