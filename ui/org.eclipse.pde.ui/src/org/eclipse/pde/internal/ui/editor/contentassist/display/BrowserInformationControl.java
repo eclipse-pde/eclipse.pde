@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.editor.contentassist.display;
 
 import java.io.IOException;
@@ -178,16 +177,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 
 		fBrowser.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		fBrowser.addKeyListener(new KeyListener() {
 
-			public void keyPressed(KeyEvent e) {
-				if (e.character == 0x1B) // ESC
-					fShell.dispose();
-			}
-
-			public void keyReleased(KeyEvent e) {
-			}
-		});
 		/*
 		 * XXX revisit when the Browser support is better 
 		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=107629. Choosing a link to a
@@ -351,8 +341,10 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
-		fTextLayout.dispose();
-		fTextLayout = null;
+		if (fTextLayout != null) {
+			fTextLayout.dispose();
+			fTextLayout = null;
+		}
 		fBoldStyle.font.dispose();
 		fBoldStyle = null;
 		if (fShell != null && !fShell.isDisposed())
@@ -365,6 +357,11 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 	 */
 	public void widgetDisposed(DisposeEvent event) {
+		if (fTextLayout != null) {
+			fTextLayout.dispose();
+			fTextLayout = null;
+		}
+
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
 
