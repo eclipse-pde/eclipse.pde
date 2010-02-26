@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
@@ -62,7 +59,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0
  */
-public final class ApiDescriptionManager implements IElementChangedListener, ISaveParticipant {
+public final class ApiDescriptionManager implements ISaveParticipant {
 	
 	/**
 	 * Singleton
@@ -85,7 +82,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 * Constructs an API description manager.
 	 */
 	private ApiDescriptionManager() {
-		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
 		ApiPlugin.getDefault().addSaveParticipant(this);
 	}
 
@@ -94,7 +90,6 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 */
 	public static void shutdown() {
 		if (fgDefault != null) {
-			JavaCore.removeElementChangedListener(fgDefault);
 			ApiPlugin.getDefault().removeSaveParticipant(fgDefault);
 		}
 	}
@@ -104,7 +99,7 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 	 * 
 	 * @return API description manager
 	 */
-	public synchronized static ApiDescriptionManager getDefault() {
+	public synchronized static ApiDescriptionManager getManager() {
 		if (fgDefault == null) {
 			fgDefault = new ApiDescriptionManager();
 		}
@@ -191,112 +186,11 @@ public final class ApiDescriptionManager implements IElementChangedListener, ISa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
-	 */
-	public void elementChanged(ElementChangedEvent event) {
-		IJavaElementDelta delta = event.getDelta();
-		processJavaElementDeltas(delta.getAffectedChildren(), null);
-	}
-	
-	/**
-	 * Remove projects that get closed or removed.
-	 * 
-	 * @param deltas
-	 */
-	private synchronized void processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject proj) {
-		IJavaElementDelta delta = null;
-		for(int i = 0; i < deltas.length; i++) {
-			delta = deltas[i];
-			switch(delta.getElement().getElementType()) {
-				case IJavaElement.JAVA_PROJECT: {
-					IJavaProject jproj = (IJavaProject) delta.getElement();
-					switch (delta.getKind()) {
-						case IJavaElementDelta.CHANGED:
-							int flags = delta.getFlags();
-							if((flags & IJavaElementDelta.F_CLOSED) != 0) {
-								clean(jproj, false, true);
-								flushElementCache(delta);
-							} else if((flags & (IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED
-									| IJavaElementDelta.F_CLASSPATH_CHANGED)) != 0) {
-								if (jproj != null) {
-									projectClasspathChanged(jproj);
-									flushElementCache(delta);
-								}
-							} else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
-								if (jproj != null) {
-									processJavaElementDeltas(delta.getAffectedChildren(), jproj);
-								}
-							} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-								processJavaElementDeltas(delta.getAffectedChildren(), jproj);
-							}
-							break;
-						case IJavaElementDelta.REMOVED:
-							clean(jproj, true, true);
-							flushElementCache(delta);
-							break;
-					}
-					break;
-				}
-				case IJavaElement.PACKAGE_FRAGMENT : {
-					int flags = delta.getFlags();
-					if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-						processJavaElementDeltas(delta.getAffectedChildren(), proj);
-					}
-					break;
-				}
-				case IJavaElement.PACKAGE_FRAGMENT_ROOT : {
-					int flags = delta.getFlags();
-					if ((flags & (IJavaElementDelta.F_ARCHIVE_CONTENT_CHANGED
-							| IJavaElementDelta.F_ADDED_TO_CLASSPATH
-							| IJavaElementDelta.F_REMOVED_FROM_CLASSPATH)) != 0) {
-						projectClasspathChanged(proj);
-					} else if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-						processJavaElementDeltas(delta.getAffectedChildren(), proj);
-					}
-					break;
-				}
-				case IJavaElement.COMPILATION_UNIT : {
-					int flags = delta.getFlags();
-					switch (delta.getKind()) {
-						case IJavaElementDelta.CHANGED: {
-							if ((flags & (IJavaElementDelta.F_CONTENT | 
-											IJavaElementDelta.F_FINE_GRAINED | 
-											IJavaElementDelta.F_PRIMARY_RESOURCE)) != 0){
-								if (proj != null) {
-									projectChanged(proj);
-									flushElementCache(delta);
-									continue;
-								}
-							}
-							break;
-						}
-						case IJavaElementDelta.ADDED :
-						case IJavaElementDelta.REMOVED : {
-							if (proj != null) {
-								projectChanged(proj);
-								flushElementCache(delta);
-								continue;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
 	/**
 	 * Flushes the changed element from the model cache
-	 * @param delta
+	 * @param element
 	 */
-	void flushElementCache(IJavaElementDelta delta) {
-		IJavaElement element = delta.getElement();
-		if((delta.getFlags() & IJavaElementDelta.F_MOVED_TO) > 0) {
-			element = delta.getMovedToElement();
-		}
-		if((delta.getFlags() & IJavaElementDelta.F_MOVED_FROM) > 0) {
-			element = delta.getMovedFromElement();
-		}
+	void flushElementCache(IJavaElement element) {
 		switch(element.getElementType()) {
 			case IJavaElement.COMPILATION_UNIT: {
 				ICompilationUnit unit = (ICompilationUnit) element;

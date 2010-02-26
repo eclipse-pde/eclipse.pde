@@ -36,3 +36,6 @@ org.eclipse.pde.api.tools/debug/apianalyzer=false
 
 #for api descriptions
 org.eclipse.pde.api.tools/debug/apidescription=false
+
+#for our workspace delta processor
+org.eclipse.pde.api.tools/debug/workspacedeltaprocessor=false

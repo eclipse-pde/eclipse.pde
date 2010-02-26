@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ProjectScope;
@@ -29,10 +30,13 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
+import org.eclipse.pde.api.tools.internal.WorkspaceDeltaProcessor;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.SessionManager;
 import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
@@ -167,6 +171,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String PROBLEM_DETECTOR_DEBUG = PLUGIN_ID + "/debug/problemdetector"; //$NON-NLS-1$
 	private static final String REFERENCE_RESOLVER_DEBUG = PLUGIN_ID + "/debug/refresolver"; //$NON-NLS-1$
 	private static final String API_DESCRIPTION = PLUGIN_ID + "/debug/apidescription"; //$NON-NLS-1$
+	private static final String WORKSPACE_DELTA_PROCESSOR = PLUGIN_ID + "/debug/workspacedeltaprocessor"; //$NON-NLS-1$
 
 	public final static String TRUE = "true"; //$NON-NLS-1$
 
@@ -261,6 +266,11 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * This is used outside the workbench.
 	 */
 	private static int LogBits= 0;
+	
+	/**
+	 * Standard delta processor for Java element changes
+	 */
+	private WorkspaceDeltaProcessor deltaProcessor = null;
 
 	private static final int RESOLUTION_LOG_BIT = 1;
 	private static final int BASELINE_DISPOSED_LOG_BIT = 2;
@@ -475,6 +485,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			super.start(context);
 		} finally {
 			ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, this);
+			deltaProcessor = new WorkspaceDeltaProcessor();
+			JavaCore.addElementChangedListener(deltaProcessor, ElementChangedEvent.POST_CHANGE);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(deltaProcessor, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_BUILD);
 			configurePluginDebugOptions();
 		}
 	}
@@ -488,6 +501,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			ApiBaselineManager.getManager().stop();
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(PLUGIN_ID);
 			FileManager.getManager().deleteFiles();
+			if(deltaProcessor != null) {
+				JavaCore.removeElementChangedListener(deltaProcessor);
+				ResourcesPlugin.getWorkspace().removeResourceChangeListener(deltaProcessor);
+			}
 		}
 		finally {
 			super.stop(context);
@@ -655,6 +672,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			option = Platform.getDebugOption(API_DESCRIPTION);
 			if(option != null) {
 				ApiDescription.setDebug(option.equals(TRUE));
+			}
+			option = Platform.getDebugOption(WORKSPACE_DELTA_PROCESSOR);
+			if(option != null) {
+				WorkspaceDeltaProcessor.setDebug(option.equals(TRUE));
 			}
 		}
 	}

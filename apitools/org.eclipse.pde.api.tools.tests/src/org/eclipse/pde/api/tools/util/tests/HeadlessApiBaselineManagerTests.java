@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,35 +166,6 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 				fManager.rollback(null);
 			}
 			catch(Exception e) {
-				fail(e.getMessage());
-			}
-		}
-	}
-	
-	/**
-	 * Tests that a call to the resourceChanged(..) method does not fail in 
-	 * headless mode
-	 */
-	public void testResourceChanged() {
-		if(!ApiPlugin.isRunningInFramework()) {
-			try {
-				fManager.resourceChanged(null);
-			}
-			catch(Exception e) {
-				fail(e.getMessage());
-			}
-		}
-	}
-	
-	/**
-	 * Tests that a call to elementChanged(..) does not fail in headless mode
-	 */
-	public void testElementChanged() {
-		if(!ApiPlugin.isRunningInFramework()) {
-			try {
-				fManager.elementChanged(null);
-			}
-			catch (Exception e) {
 				fail(e.getMessage());
 			}
 		}

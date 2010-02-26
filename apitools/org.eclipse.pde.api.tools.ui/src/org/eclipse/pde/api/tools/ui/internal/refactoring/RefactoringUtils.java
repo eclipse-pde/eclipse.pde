@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,9 @@ public class RefactoringUtils {
 			IResource resource = type.getUnderlyingResource();
 			if(resource != null) {
 				IApiFilterStore store = resolveFilterStore(resource.getProject());
+				if(store == null) {
+					return null;
+				}
 				IApiProblemFilter[] filters = store.getFilters(resource);
 				if(filters.length != 0) {
 					CompositeChange cchange = new CompositeChange(RefactoringMessages.RefactoringUtils_remove_usused_filters);
@@ -70,6 +73,9 @@ public class RefactoringUtils {
 			IResource resource = fragment.getUnderlyingResource();
 			if(resource != null) {
 				IApiFilterStore store = resolveFilterStore(resource.getProject());
+				if(store == null) {
+					return null;
+				}
 				IApiProblemFilter[] filters = collectAllAffectedFilters(store, collectAffectedTypes(fragment));
 				if(filters.length != 0) {
 					CompositeChange cchange = new CompositeChange(RefactoringMessages.RefactoringUtils_remove_usused_filters);

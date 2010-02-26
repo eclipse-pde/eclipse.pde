@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -48,14 +42,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jdt.core.ElementChangedEvent;
-import org.eclipse.jdt.core.IElementChangedListener;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaElementDelta;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -83,7 +69,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 1.0.0
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public final class ApiBaselineManager implements IApiBaselineManager, ISaveParticipant, IElementChangedListener, IResourceChangeListener {
+public final class ApiBaselineManager implements IApiBaselineManager, ISaveParticipant {
 	
 	/**
 	 * Constant used for controlling tracing in the API tool builder
@@ -162,8 +148,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	private ApiBaselineManager(boolean framework) {
 		if(framework) {
 			ApiPlugin.getDefault().addSaveParticipant(this);
-			JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 			savelocation = ApiPlugin.getDefault().getStateLocation().append(".api_profiles").addTrailingSeparator(); //$NON-NLS-1$
 		}
 	}
@@ -589,8 +573,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		finally {
 			if(ApiPlugin.isRunningInFramework()) {
 				ApiPlugin.getDefault().removeSaveParticipant(this);
-				JavaCore.removeElementChangedListener(this);
-				ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 			}
 		}
 	}
@@ -642,21 +624,19 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 		return null;
 	}	
-	
+
 	/**
-	 * Disposes the workspace profile such that a new one will be created
+	 * Disposes the workspace baseline such that a new one will be created
 	 * on the next request.
 	 */
-	private synchronized void disposeWorkspaceBaseline(IProject project) {
+	synchronized void disposeWorkspaceBaseline() {
 		if (workspacebaseline != null) {
-			if (acceptProject(project) || workspacebaseline.getApiComponent(project) != null) {
-				if(DEBUG) {
-					System.out.println("disposing workspace baseline"); //$NON-NLS-1$
-				}
-				workspacebaseline.dispose();
-				StubApiComponent.disposeAllCaches();
-				workspacebaseline = null;
+			if(DEBUG) {
+				System.out.println("disposing workspace baseline"); //$NON-NLS-1$
 			}
+			workspacebaseline.dispose();
+			StubApiComponent.disposeAllCaches();
+			workspacebaseline = null;
 		}
 	}
 
@@ -696,184 +676,4 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 		return baseline;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
-	 */
-	public void elementChanged(ElementChangedEvent event) {
-		if(!ApiPlugin.isRunningInFramework()) {
-			return;
-		}
-		Object obj = event.getSource();
-		if(obj instanceof IJavaElementDelta) {
-			processJavaElementDeltas(((IJavaElementDelta)obj).getAffectedChildren(), null);
-		}
-	}
-	
-	/**
-	 * Processes the java element deltas of interest
-	 * @param deltas
-	 */
-	private synchronized void processJavaElementDeltas(IJavaElementDelta[] deltas, IJavaProject project) {
-		try {
-			for(int i = 0; i < deltas.length; i++) {
-				IJavaElementDelta delta = deltas[i];
-				switch(delta.getElement().getElementType()) {
-					case IJavaElement.JAVA_PROJECT: {
-						IJavaProject proj = (IJavaProject) delta.getElement();
-						IProject pj = proj.getProject();
-						int flags = delta.getFlags();
-						switch (delta.getKind()) {
-							case IJavaElementDelta.CHANGED: {
-								if( (flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 ||
-									(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0 ||
-									(flags & IJavaElementDelta.F_CLOSED) != 0 ||
-									(flags & IJavaElementDelta.F_OPENED) != 0) {
-										if(DEBUG) {
-											System.out.println("--> processing CLASSPATH CHANGE/CLOSE/OPEN project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-										}
-										disposeWorkspaceBaseline(pj);
-								}
-								if (!acceptProject(pj)) {
-									return;
-								}
-								if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-									if(DEBUG) {
-										System.out.println("--> processing child deltas of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-									processJavaElementDeltas(delta.getAffectedChildren(), proj);
-								} else {
-									IResourceDelta[] resourcedeltas = delta.getResourceDeltas();
-									if(resourcedeltas != null) {
-										IResourceDelta rdelta = null;
-										for (int j = 0; j < resourcedeltas.length; j++) {
-											rdelta = resourcedeltas[j].findMember(new Path(Util.MANIFEST_NAME));
-											if(rdelta!= null && rdelta.getKind() == IResourceDelta.CHANGED && (rdelta.getFlags() & IResourceDelta.CONTENT) > 0) {
-												if(DEBUG) {
-													System.out.println("--> processing manifest delta"); //$NON-NLS-1$
-												}
-												disposeWorkspaceBaseline(pj);
-												break;
-											}
-										}
-									}
-								}
-								break;
-							}
-							case IJavaElementDelta.REMOVED: {
-								if((flags & IJavaElementDelta.F_MOVED_TO) != 0) {
-									if(DEBUG) {
-										System.out.println("--> processing PROJECT RENAME: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-									disposeWorkspaceBaseline(pj);
-								}
-								break;
-							}
-						}
-						break;
-					}
-					case IJavaElement.PACKAGE_FRAGMENT_ROOT: {
-						IPackageFragmentRoot root = (IPackageFragmentRoot) delta.getElement();
-						if(DEBUG) {
-							System.out.println("processed package fragment root delta: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-						switch(delta.getKind()) {
-							case IJavaElementDelta.CHANGED: {
-								if(DEBUG) {
-									System.out.println("processed children of CHANGED package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-								}
-								processJavaElementDeltas(delta.getAffectedChildren(), project);
-								break;
-							}
-						}
-						break;
-					}
-					case IJavaElement.PACKAGE_FRAGMENT: {
-						IPackageFragment fragment = (IPackageFragment) delta.getElement();
-						if(delta.getKind() == IJavaElementDelta.REMOVED) {
-							handlePackageRemoval(project.getProject(), fragment);
-						}
-						break;
-					}
-				}
-			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		}
-	}
-		
-	/**
-	 * Handles the specified {@link IPackageFragment} being removed.
-	 * When a packaged is removed, we:
-	 * <ol>
-	 * <li>Remove the package from the cache of resolved providers
-	 * 	of that package (in the API baseline)</li>
-	 * </ol>
-	 * @param project
-	 * @param fragment
-	 * @throws CoreException
-	 */
-	private void handlePackageRemoval(IProject project, IPackageFragment fragment) throws CoreException {
-		if(DEBUG) {
-			System.out.println("processed package fragment REMOVE delta: ["+fragment.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		((ApiBaseline)getWorkspaceBaseline()).clearPackage(fragment.getElementName());
-	}
-	
-	/**
-	 * Returns if we should care about the specified project
-	 * @param project
-	 * @return true if the project is an 'API aware' project, false otherwise
-	 */
-	private boolean acceptProject(IProject project) {
-		try {
-			return project.isAccessible() && project.hasNature(ApiPlugin.NATURE_ID);
-		}
-		catch(CoreException e) {
-			return false;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		if(!ApiPlugin.isRunningInFramework()) {
-			return;
-		}
-		// clean all API errors when a project description changes
-		IResourceDelta delta = event.getDelta();
-		if (delta != null) {
-			IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);
-			boolean dispose = false;
-			IResource resource = null;
-			IProject modifiedProject = null;
-			for (int i = 0; i < children.length; i++) {
-				resource = children[i].getResource();
-				if (children[i].getResource().getType() == IResource.PROJECT) {
-					if ((children[i].getFlags() & IResourceDelta.DESCRIPTION) != 0) {
-						IProject project = (IProject)resource;
-						if (project.isAccessible()) {
-							try {
-								if (!project.getDescription().hasNature(ApiPlugin.NATURE_ID)) {
-									IJavaProject jp = JavaCore.create(project);
-									if (jp.exists()) {
-										ApiDescriptionManager.getDefault().clean(jp, true, true);
-									}
-								}
-							} catch (CoreException e) {
-								ApiPlugin.log(e.getStatus());
-							}
-							modifiedProject = project;
-							dispose = true;
-						}
-					}
-				}
-			}
-			if(dispose) {
-				disposeWorkspaceBaseline(modifiedProject);
-			}
-		}
-	}
-
 }

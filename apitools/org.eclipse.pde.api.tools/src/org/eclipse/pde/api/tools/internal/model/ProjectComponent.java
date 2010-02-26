@@ -183,7 +183,7 @@ public class ProjectComponent extends BundleComponent {
 		if(Util.isApiProject(getJavaProject())) {
 			setHasApiDescription(true);
 		}
-		IApiDescription apiDesc = ApiDescriptionManager.getDefault().getApiDescription(this, getBundleDescription());
+		IApiDescription apiDesc = ApiDescriptionManager.getManager().getApiDescription(this, getBundleDescription());
 		if (DEBUG) {
 			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}

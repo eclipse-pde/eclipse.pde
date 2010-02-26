@@ -684,7 +684,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	void cleanupApiDescription(IProject project) {
 		if(project != null && project.exists()) {
-			ApiDescriptionManager.getDefault().clean(JavaCore.create(project), true, false);
+			ApiDescriptionManager.getManager().clean(JavaCore.create(project), true, false);
 		}
 	}
 	
