@@ -2859,5 +2859,6 @@ public class PDEUIMessages extends NLS {
 	public static String PDEJUnitLaunchConfigurationTab_Run_Tests_In_UI_Thread;
 
 	public static String VersionDialog_text;
+	public static String VersionDialog_title;
 
 }
