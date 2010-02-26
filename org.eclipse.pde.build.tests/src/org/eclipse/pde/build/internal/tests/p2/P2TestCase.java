@@ -205,7 +205,7 @@ public class P2TestCase extends PDETestCase {
 	}
 
 	public void assertRequires(IInstallableUnit iu, String namespace, String name) {
-		Collection/*<IRequirement>*/reqs = iu.getRequiredCapabilities();
+		Collection/*<IRequirement>*/reqs = iu.getRequirements();
 		for (Iterator iterator = reqs.iterator(); iterator.hasNext();) {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getNamespace().equals(namespace) && reqCap.getName().equals(name))
@@ -219,7 +219,7 @@ public class P2TestCase extends PDETestCase {
 		outer: for (Iterator iterator = requiredIUs.iterator(); iterator.hasNext();) {
 			IInstallableUnit reqIU = (IInstallableUnit) iterator.next();
 
-			Collection/*<IRequirement>*/reqs = iu.getRequiredCapabilities();
+			Collection/*<IRequirement>*/reqs = iu.getRequirements();
 			for (Iterator iterator2 = reqs.iterator(); iterator2.hasNext();) {
 				IRequiredCapability reqCap = (IRequiredCapability) iterator2.next();
 				if (reqCap.getNamespace().equals(IU_NAMESPACE) && reqCap.getName().equals(reqIU.getId()) && reqCap.getRange().isIncluded(reqIU.getVersion())) {

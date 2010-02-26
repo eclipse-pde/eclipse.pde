@@ -1583,7 +1583,7 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
-		Collection/*<IRequirement>*/required = iu.getRequiredCapabilities();
+		Collection/*<IRequirement>*/required = iu.getRequirements();
 		assertEquals(required.size(), 2);
 		Iterator it = required.iterator();
 		IRequiredCapability req0 = (IRequiredCapability) it.next();
@@ -1802,7 +1802,7 @@ public class PublishingTests extends P2TestCase {
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "foo");
-		Collection/*<IRequirement>*/required = iu.getRequiredCapabilities();
+		Collection/*<IRequirement>*/required = iu.getRequirements();
 		for (Iterator iterator = required.iterator(); iterator.hasNext();) {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getName().equals("a")) {
