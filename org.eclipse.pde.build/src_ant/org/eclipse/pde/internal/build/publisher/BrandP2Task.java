@@ -253,7 +253,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private static final String INSTALL = "install"; //$NON-NLS-1$
 	private static final String CONFIGURE = "configure"; //$NON-NLS-1$
 
-	private List/*<ITouchpointData>*/brandTouchpointData(List/*<ITouchpointData>*/data) {
+	private List/*<ITouchpointData>*/brandTouchpointData(Collection/*<ITouchpointData>*/data) {
 		ArrayList results = new ArrayList(data.size() + 1);
 		results.addAll(data);
 
