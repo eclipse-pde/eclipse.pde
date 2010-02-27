@@ -167,7 +167,7 @@ public class P2TestCase extends PDETestCase {
 		if (!queryResult.isEmpty())
 			unit = (IInstallableUnit) queryResult.iterator().next();
 		if (assertNotNull) {
-			assertEquals(queryResult.unmodifiableSet().size(), 1);
+			assertEquals(queryResult.toUnmodifiableSet().size(), 1);
 			assertNotNull(unit);
 		}
 		return unit;
