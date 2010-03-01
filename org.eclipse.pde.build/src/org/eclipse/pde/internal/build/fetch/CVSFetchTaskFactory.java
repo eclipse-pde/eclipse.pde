@@ -59,6 +59,9 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	private static final String PROP_FILETOCHECK = "fileToCheck"; //$NON-NLS-1$
 	private static final String PROP_ELEMENTNAME = "elementName"; //$NON-NLS-1$
 
+	//Associated repository provider
+	private static final String CVS_DIRECTIVES = ";type:=psf;provider:=\"org.eclipse.team.cvs.core.cvsnature\""; //$NON-NLS-1$
+
 	private void generateAuthentificationAntTask(Map entryInfos, IAntScript script) {
 		String password = (String) entryInfos.get(KEY_PASSWORD);
 		String cvsPassFileLocation = (String) entryInfos.get(KEY_CVSPASSFILE);
@@ -139,7 +142,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			String tag = (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG);
 			String cvsRoot = (String) entryInfos.get(KEY_CVSROOT);
 			String dest = "true".equalsIgnoreCase((String) entryInfos.get(KEY_PREBUILT)) ? destination.removeLastSegments(1).toString() : destination.toString(); //$NON-NLS-1$
-			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", Utils.getPropertyFormat(PROP_REALLYQUIET), null, null, "${fetch.failonerror}", script); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-5$
+			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", Utils.getPropertyFormat(PROP_REALLYQUIET), null, null, "${fetch.failonerror}", script); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"false\" />"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
@@ -180,6 +183,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			int index = arg.indexOf('=');
 			if (index == -1) {
 				legacyParseMapFileEntry(arguments, overrideTags, entryInfos);
+				addProjectReference(entryInfos);
 				return;
 			}
 			String key = arg.substring(0, index);
@@ -197,6 +201,64 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		entryInfos.put(KEY_PASSWORD, table.get(KEY_PASSWORD));
 		entryInfos.put(KEY_PATH, table.get(KEY_PATH));
 		entryInfos.put(KEY_PREBUILT, table.get(KEY_PREBUILT));
+		addProjectReference(entryInfos);
+	}
+
+	private void addProjectReference(Map entryInfos) {
+		String repoLocation = (String) entryInfos.get(KEY_CVSROOT);
+		String module = (String) entryInfos.get(KEY_PATH);
+		String projectName = (String) entryInfos.get(KEY_ELEMENT_NAME);
+		String tag = (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG);
+
+		if (repoLocation != null && projectName != null) {
+			String sourceURLs = asReference(repoLocation, module != null ? module : projectName, projectName, tag);
+			if (sourceURLs != null) {
+				entryInfos.put(Constants.KEY_SOURCE_REFERENCES, sourceURLs + CVS_DIRECTIVES);
+			}
+		}
+	}
+
+	/**
+	 * Creates an SCMURL reference to the associated source.
+	 * 
+	 * @param repoLocation
+	 * @param module
+	 * @param projectName
+	 * @return project reference string or <code>null</code> if none
+	 */
+	private String asReference(String repoLocation, String module, String projectName, String tagName) {
+		// parse protocol, host, repository root from repoLocation
+		String sep = repoLocation.substring(0, 1);
+		String[] split = repoLocation.substring(1).split(sep);
+		if (split.length == 3) {
+			String protocol = split[0];
+			String host = split[1];
+			int index = host.indexOf('@');
+			if (index >= 0 && index < host.length() - 2) {
+				host = host.substring(index + 1);
+			}
+			String root = split[2];
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("scm:cvs:"); //$NON-NLS-1$
+			buffer.append(protocol);
+			buffer.append(':');
+			buffer.append(host);
+			buffer.append(':');
+			buffer.append(root);
+
+			buffer.append(':');
+			buffer.append(module);
+
+			buffer.append(";project="); //$NON-NLS-1$
+			buffer.append(projectName);
+
+			if (tagName != null) {
+				buffer.append(";tag="); //$NON-NLS-1$
+				buffer.append(tagName);
+			}
+			return buffer.toString();
+		}
+		return null;
 	}
 
 	/**
