@@ -70,6 +70,8 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_FEATURE_VERSION_FILENAME_PREFIX = "finalFeaturesVersions"; //$NON-NLS-1$
 	public final static String PROPERTIES_FILE_SUFFIX = ".properties"; //$NON-NLS-1$
 
+	public final static String[] DEFAULT_SOURCE_FILE_EXTENSIONS = new String[] {"*.java"}; //$NON-NLS-1$
+
 	// Tag replaced in files
 	public final static String REPLACED_PLUGIN_ID = "PLUGIN_ID"; //$NON-NLS-1$
 	public final static String REPLACED_PLUGIN_VERSION = "PLUGIN_VERSION"; //$NON-NLS-1$

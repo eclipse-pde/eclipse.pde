@@ -30,11 +30,15 @@ public class JavacTask implements ITask {
 	protected String source;
 	protected String target;
 	protected String compileArgs;
+	protected String specificCompileArgs;
 	protected String compileArgsFile;
 	protected String encoding;
 	protected String logExtension;
 	protected String errorProperty;
 	protected String[] excludes;
+	protected String compilerAdapter;
+	private boolean adapterUseLog = false;
+	private boolean adapterUseArgFile = false;
 
 	/**
 	 * Default constructor for the class.
@@ -60,6 +64,7 @@ public class JavacTask implements ITask {
 		script.printAttribute("target", target, false); //$NON-NLS-1$
 		script.printAttribute("encoding", encoding, false); //$NON-NLS-1$
 		script.printAttribute("errorProperty", errorProperty, false); //$NON-NLS-1$
+		script.printAttribute("compiler", compilerAdapter, false); //$NON-NLS-1$
 		script.println(">"); //$NON-NLS-1$
 
 		script.indent++;
@@ -68,6 +73,13 @@ public class JavacTask implements ITask {
 			script.println("<compilerarg line=\"" + compileArgs + "\" compiler=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_BUILD_COMPILER) + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 
+		if (specificCompileArgs != null) {
+			script.printTabs();
+			script.print("<compilerarg"); //$NON-NLS-1$
+			script.printAttribute("line", specificCompileArgs, true); //$NON-NLS-1$
+			script.printAttribute("compiler", compilerAdapter, false); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
+		}
 		script.println("<classpath refid=\"" + classpathId + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		for (int i = 0; i < srcdir.length; i++) {
@@ -85,10 +97,25 @@ public class JavacTask implements ITask {
 		}
 
 		if (compileArgsFile != null) {
-			script.println("<compilerarg value=\"@" + compileArgsFile + "\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			script.printTabs();
+			script.print("<compilerarg"); //$NON-NLS-1$
+			script.printAttribute("value", "@" + compileArgsFile, true); //$NON-NLS-1$ //$NON-NLS-2$
+			if (compilerAdapter != null && adapterUseArgFile)
+				script.printAttribute("compiler", compilerAdapter, true); //$NON-NLS-1$
+			else
+				script.printAttribute("compiler", IXMLConstants.JDT_COMPILER_ADAPTER, true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
 		}
+
 		if (destdir != null) {
-			script.println("<compilerarg line=\"-log '" + destdir + logExtension + "'\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			script.printTabs();
+			script.print("<compilerarg"); //$NON-NLS-1$
+			script.printAttribute("line", "-log '" + destdir + logExtension + "'", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (compilerAdapter != null && adapterUseLog)
+				script.printAttribute("compiler", compilerAdapter, true); //$NON-NLS-1$
+			else
+				script.printAttribute("compiler", IXMLConstants.JDT_COMPILER_ADAPTER, true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
 		}
 		script.indent--;
 		script.printEndTag("javac"); //$NON-NLS-1$
@@ -209,6 +236,10 @@ public class JavacTask implements ITask {
 		this.compileArgs = args;
 	}
 
+	public void setSpecificCompileArgs(String args) {
+		this.specificCompileArgs = args;
+	}
+
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
@@ -223,5 +254,19 @@ public class JavacTask implements ITask {
 
 	public void setErrorProperty(String errorProperty) {
 		this.errorProperty = errorProperty;
+	}
+
+	public void setCompilerAdapter(String compilerAdapter) {
+		this.compilerAdapter = compilerAdapter;
+	}
+
+	public void setAdapterUseLog(boolean useLog) {
+		this.adapterUseLog = useLog;
+
+	}
+
+	public void setAdapterArgFile(boolean useFile) {
+		this.adapterUseArgFile = useFile;
+
 	}
 }

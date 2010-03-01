@@ -113,6 +113,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private String customCallbacksBuildpath = null;
 	private String customCallbacksFailOnError = null;
 	private String customCallbacksInheritAll = null;
+	// array of extensions of recognized source files (eg- *.java, *.aj, etc)
+	private String[] sourceFileExtensions;
 	//This list is initialized by the generateBuildJarsTarget
 	private ArrayList compiledJarNames;
 	private boolean dotOnTheClasspath = false;
@@ -201,6 +203,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		customCallbacksBuildpath = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_BUILDPATH, "."); //$NON-NLS-1$
 		customCallbacksFailOnError = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_FAILONERROR, FALSE);
 		customCallbacksInheritAll = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_INHERITALL);
+
+		// Bug 303960 determine all source files recognized in this bundle
+		String sourceFileExtensionsStr = properties.getProperty(PROPERTY_SOURCE_FILE_EXTENSIONS);
+		if (sourceFileExtensionsStr == null) {
+			sourceFileExtensions = DEFAULT_SOURCE_FILE_EXTENSIONS;
+		} else {
+			String[] sourceFileExtensionsArr = sourceFileExtensionsStr.split(","); //$NON-NLS-1$
+			sourceFileExtensions = new String[sourceFileExtensionsArr.length];
+			for (int i = 0; i < sourceFileExtensionsArr.length; i++) {
+				sourceFileExtensions[i] = sourceFileExtensionsArr[i].trim();
+			}
+		}
 
 		if (featureGenerator != null && featureGenerator.useWorkspaceBinaries() && havePDEUIState()) {
 			PDEUIStateWrapper wrapper = getSite(false).getSiteContentProvider().getInitialState();
@@ -1265,6 +1279,19 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (name.equals(EXPANDED_DOT))
 			name = DOT;
 
+		// Bug 303960 potentially use a custom compiler adapter
+		String compilerAdapter = properties.getProperty(PROPERTY_COMPILER_ADAPTER);
+		if (compilerAdapter != null) {
+			javac.setCompilerAdapter(compilerAdapter);
+			javac.setAdapterUseLog(Boolean.valueOf(properties.getProperty(PROPERTY_ADAPTER_USELOG, TRUE)).booleanValue());
+			javac.setAdapterArgFile(Boolean.valueOf(properties.getProperty(PROPERTY_ADAPTER_USEARGFILE, TRUE)).booleanValue());
+		}
+
+		// Bug 303960 get compilerArg property
+		String compilerArg = properties.getProperty(PROPERTY_JAVAC_COMPILERARG);
+		if (compilerArg != null)
+			javac.setSpecificCompileArgs(compilerArg);
+
 		String defaultEncodingVal = properties.getProperty(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + name);
 		if (defaultEncodingVal != null)
 			javac.setEncoding(defaultEncodingVal);
@@ -1415,7 +1442,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
 		FileSet[] fileSets = new FileSet[sources.length];
 		for (int i = 0; i < sources.length; i++) {
-			String excludes = "**/*.java, **/package.htm*"; //$NON-NLS-1$
+			String excludes = getFormattedSourceFileExtensions();
+			if (excludes.length() > 0) {
+				excludes += ", **/package.htm*"; //$NON-NLS-1$
+			} else {
+				excludes = "**/package.htm*"; //$NON-NLS-1$
+			}
 			String excludedFromJar = entry.getExcludedFromJar();
 			if (excludedFromJar != null)
 				excludes += ',' + excludedFromJar;
@@ -1548,7 +1580,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		int count = 0;
 		for (int i = 0; i < sources.length; i++) {
 			if (sources[i] != null)
-				fileSets[count++] = new FileSet(sources[i], null, "**/*.java", null, null, null, null); //$NON-NLS-1$
+				fileSets[count++] = new FileSet(sources[i], null, getFormattedSourceFileExtensions(), null, null, null, null);
 		}
 
 		String srcLocation = getSRCLocation(name);
@@ -1573,6 +1605,20 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printCopyTask(null, toDir, fileSets, true, true);
 		}
 		script.printTargetEnd();
+	}
+
+	/**
+	 * @return list of source extensions recognized by the bundle
+	 */
+	private String getFormattedSourceFileExtensions() {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < sourceFileExtensions.length; i++) {
+			if (i > 0) {
+				sb.append(", "); //$NON-NLS-1$
+			}
+			sb.append("**/").append(sourceFileExtensions[i]); //$NON-NLS-1$
+		}
+		return sb.toString();
 	}
 
 	private void filterNonExistingSourceFolders(String[] sources) {
