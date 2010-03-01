@@ -12,7 +12,8 @@ package org.eclipse.pde.internal.core.target;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.w3c.dom.*;
@@ -83,10 +84,6 @@ public class TargetPersistence35Helper {
 			definition.setName(name);
 		}
 
-		List bundleContainers = new ArrayList();
-		Set included = null;
-		Set optional = null;
-
 		NodeList list = root.getChildNodes();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
@@ -100,7 +97,7 @@ public class TargetPersistence35Helper {
 						if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element locationElement = (Element) locationNode;
 							if (locationElement.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
-								bundleContainers.add(deserializeBundleContainer(locationElement, included, optional));
+								deserializeBundleContainer(definition, locationElement);
 							}
 						}
 					}
@@ -159,14 +156,6 @@ public class TargetPersistence35Helper {
 				}
 			}
 		}
-		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
-		if (included != null) {
-			definition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
-		}
-		if (optional != null) {
-			definition.setOptional((NameVersionDescriptor[]) optional.toArray(new NameVersionDescriptor[optional.size()]));
-		}
-
 	}
 
 	/**
@@ -180,7 +169,7 @@ public class TargetPersistence35Helper {
 	 * @return bundle container instance
 	 * @throws CoreException
 	 */
-	private static IBundleContainer deserializeBundleContainer(Element location, Set included, Set optional) throws CoreException {
+	private static void deserializeBundleContainer(ITargetDefinition definition, Element location) throws CoreException {
 		String path = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);
 		String type = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);
 		if (type.length() == 0) {
@@ -255,23 +244,43 @@ public class TargetPersistence35Helper {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element) node;
 				if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES)) {
-					if (included == null) {
-						included = new HashSet();
+					NameVersionDescriptor[] included = deserializeBundles(element);
+					NameVersionDescriptor[] currentIncluded = definition.getIncluded();
+					if (currentIncluded == null || currentIncluded.length == 0) {
+						definition.setIncluded(included);
+					} else {
+						NameVersionDescriptor[] newIncluded = new NameVersionDescriptor[currentIncluded.length + included.length];
+						System.arraycopy(currentIncluded, 0, newIncluded, 0, currentIncluded.length);
+						System.arraycopy(included, 0, newIncluded, currentIncluded.length, included.length);
+						definition.setIncluded(newIncluded);
 					}
-					included.addAll(deserializeBundles(element));
 				} else if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.OPTIONAL_BUNDLES)) {
-					if (optional == null) {
-						optional = new HashSet();
+					NameVersionDescriptor[] optional = deserializeBundles(element);
+					NameVersionDescriptor[] currentOptional = definition.getIncluded();
+					if (currentOptional == null || currentOptional.length == 0) {
+						definition.setIncluded(optional);
+					} else {
+						NameVersionDescriptor[] newOptional = new NameVersionDescriptor[currentOptional.length + optional.length];
+						System.arraycopy(currentOptional, 0, newOptional, 0, currentOptional.length);
+						System.arraycopy(optional, 0, newOptional, currentOptional.length, optional.length);
+						definition.setIncluded(newOptional);
 					}
-					optional.addAll(deserializeBundles(element));
 				}
 			}
 		}
 
-		return container;
+		IBundleContainer[] currentContainers = definition.getBundleContainers();
+		if (currentContainers == null || currentContainers.length == 0) {
+			definition.setBundleContainers(new IBundleContainer[] {container});
+		} else {
+			IBundleContainer[] newContainers = new IBundleContainer[currentContainers.length + 1];
+			System.arraycopy(currentContainers, 0, newContainers, 0, currentContainers.length);
+			newContainers[currentContainers.length] = container;
+			definition.setBundleContainers(newContainers);
+		}
 	}
 
-	private static List deserializeBundles(Element bundleContainer) {
+	private static NameVersionDescriptor[] deserializeBundles(Element bundleContainer) {
 		NodeList nodes = bundleContainer.getChildNodes();
 		List bundles = new ArrayList(nodes.getLength());
 		for (int j = 0; j < nodes.getLength(); ++j) {
@@ -285,7 +294,7 @@ public class TargetPersistence35Helper {
 				}
 			}
 		}
-		return bundles;
+		return (NameVersionDescriptor[]) bundles.toArray(new NameVersionDescriptor[bundles.size()]);
 	}
 
 }
