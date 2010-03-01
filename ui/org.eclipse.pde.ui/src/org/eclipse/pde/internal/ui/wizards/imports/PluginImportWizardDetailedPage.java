@@ -13,31 +13,57 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SourcePluginFilter;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.framework.Version;
@@ -57,6 +83,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private VersionFilter fVersionFilter;
 	private AvailableFilter fAvailableFilter;
 	private SourcePluginFilter fSourceFilter;
+	private ViewerFilter fRepositoryFilter;
 	// fSelected is used to track the selection in a hash set so we can efficiently
 	// filter selected items out of the available item list
 	private Set fSelected;
@@ -70,6 +97,18 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private Button fFilterOldVersionButton;
 
 	private static final String SETTINGS_SHOW_LATEST = "showLatestPluginsOnly"; //$NON-NLS-1$
+
+	private class RepositoryFilter extends ViewerFilter {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (fPage1.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
+				return fPage1.repositoryModels.contains(element);
+			}
+			return true;
+		}
+	}
 
 	private class AvailableFilter extends ViewerFilter {
 		private Pattern fPattern;
@@ -201,6 +240,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			fAvailableListViewer.addFilter(fVersionFilter);
 		}
 		fAvailableListViewer.addFilter(fSourceFilter);
+		fRepositoryFilter = new RepositoryFilter();
+		fAvailableListViewer.addFilter(fRepositoryFilter);
 
 		fFilterJob = new WorkbenchJob("FilterJob") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -403,10 +444,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if (visible)
+		if (visible) {
 			fFilterText.setFocus();
-		setPageComplete(visible && fImportListViewer.getTable().getItemCount() > 0);
-
+			setPageComplete(fImportListViewer.getTable().getItemCount() > 0);
+		}
 	}
 
 	protected void refreshPage() {

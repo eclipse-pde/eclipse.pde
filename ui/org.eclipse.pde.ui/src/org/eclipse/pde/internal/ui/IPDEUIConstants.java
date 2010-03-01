@@ -50,4 +50,9 @@ public interface IPDEUIConstants extends IPDEConstants {
 	 */
 	String GENERATED_CONFIG = "pde.generated.config"; //$NON-NLS-1$
 
+	/**
+	 * Extension point identifier for <code>org.eclipse.pde.ui.bundleImportPages</code>.
+	 */
+	public static final String EXTENSION_POINT_BUNDLE_IMPORT_PAGES = PLUGIN_ID + ".bundleImportPages"; //$NON-NLS-1$
+
 }

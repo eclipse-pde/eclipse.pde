@@ -10,11 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
+import org.eclipse.pde.internal.core.importing.BundleImporterExtension;
+
+import org.eclipse.pde.core.importing.BundleImportDescription;
+import org.eclipse.pde.core.importing.IBundleImporter;
+
+import java.io.*;
+import java.util.*;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.Messages;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
 /**
@@ -25,7 +42,19 @@ import org.osgi.framework.Version;
  */
 public final class BundleProjectService implements IBundleProjectService {
 
+	/**
+	 * Property key used in {@link BundleImportDescription}s.
+	 */
+	public static final String BUNDLE_IMPORTER = "BUNDLE_IMPORTER"; //$NON-NLS-1$
+
+	/**
+	 * Property key used in {@link BundleImportDescription}s.
+	 */
+	public static final String PLUGIN = "PLUGIN"; //$NON-NLS-1$
+
 	private static IBundleProjectService fgDefault;
+
+	private List fProjectFactories;
 
 	/**
 	 * Returns the bundle project service.
@@ -145,5 +174,134 @@ public final class BundleProjectService implements IBundleProjectService {
 	 */
 	public void setBundleRoot(IProject project, IPath bundleRoot) throws CoreException {
 		PDEProject.setBundleRoot(project, project.getFolder(bundleRoot));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectService#getSourceReferenceHandler(java.lang.String)
+	 */
+	public IBundleImporter getSourceReferenceHandler(String id) {
+
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectService#getBundleImporters()
+	 */
+	public synchronized IBundleImporter[] getBundleImporters() {
+		if (fProjectFactories == null) {
+			fProjectFactories = new ArrayList();
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ICoreConstants.EXTENSION_POINT_BUNDLE_IMPORTERS);
+			if (point != null) {
+				IConfigurationElement[] infos = point.getConfigurationElements();
+				for (int i = 0; i < infos.length; i++) {
+					fProjectFactories.add(new BundleImporterExtension(infos[i]));
+				}
+			}
+		}
+		return (IBundleImporter[]) fProjectFactories.toArray(new IBundleImporter[fProjectFactories.size()]);
+	}
+
+	/**
+	 * Creates and returns a map of bundle import descriptions for the given bundles.
+	 * The map is of {@link IBundleImporter} -> arrays of {@link BundleImportDescription}.
+	 * Adds 'BUNDLE_IMPORTER' property to each description that maps to the importer that
+	 * created each description.
+	 * Adds 'PLUGIN' property that maps to the original plug-in model.
+	 * 
+	 * @param models plug-in models
+	 * @return import instructions
+	 * @exception CoreException if unable to read manifest
+	 */
+	public Map getImportDescriptions(IPluginModelBase[] models) throws CoreException {
+		// build manifests
+		List manifests = new ArrayList();
+		List plugins = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			String location = models[i].getInstallLocation();
+			if (location != null) {
+				Map manifest = loadManifest(new File(location));
+				if (manifest != null) {
+					manifests.add(manifest);
+					plugins.add(models[i]);
+				}
+			}
+		}
+		if (!manifests.isEmpty()) {
+			Map[] marray = (Map[]) manifests.toArray(new Map[manifests.size()]);
+			Map result = new HashMap();
+			IBundleImporter[] importers = getBundleImporters();
+			for (int i = 0; i < importers.length; i++) {
+				IBundleImporter importer = importers[i];
+				BundleImportDescription[] descriptions = importer.validateImport(marray);
+				List valid = new ArrayList();
+				for (int j = 0; j < descriptions.length; j++) {
+					BundleImportDescription description = descriptions[j];
+					if (description != null) {
+						valid.add(description);
+						description.setProperty(BUNDLE_IMPORTER, importer);
+						description.setProperty(PLUGIN, plugins.get(j));
+					}
+				}
+				result.put(importer, valid.toArray(new BundleImportDescription[valid.size()]));
+			}
+			return result;
+		}
+		return null;
+	}
+
+	/**
+	 * Parses a bunlde's manifest into a dictionary and returns the map
+	 * or <code>null</code> if none. The bundle may be in a jar
+	 * or in a directory at the specified location.
+	 * 
+	 * @param bundleLocation root location of the bundle
+	 * @return bundle manifest dictionary or <code>null</code>
+	 * @throws CoreException if manifest has invalid syntax or is missing
+	 */
+	private Map loadManifest(File bundleLocation) throws CoreException {
+		ZipFile jarFile = null;
+		InputStream manifestStream = null;
+		String extension = new Path(bundleLocation.getName()).getFileExtension();
+		try {
+			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
+				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
+				if (manifestEntry != null) {
+					manifestStream = jarFile.getInputStream(manifestEntry);
+				}
+			} else {
+				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
+				if (file.exists()) {
+					manifestStream = new FileInputStream(file);
+				}
+			}
+			if (manifestStream == null) {
+				return null;
+			}
+			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
+		} catch (BundleException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+		} finally {
+			closeZipFileAndStream(manifestStream, jarFile);
+		}
+	}
+
+	private void closeZipFileAndStream(InputStream stream, ZipFile jarFile) {
+		try {
+			if (stream != null) {
+				stream.close();
+			}
+		} catch (IOException e) {
+			PDECore.log(e);
+		}
+		try {
+			if (jarFile != null) {
+				jarFile.close();
+			}
+		} catch (IOException e) {
+			PDECore.log(e);
+		}
 	}
 }

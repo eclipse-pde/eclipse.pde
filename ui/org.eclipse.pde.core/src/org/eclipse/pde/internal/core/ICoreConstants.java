@@ -152,6 +152,7 @@ public interface ICoreConstants {
 	public static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
 	public static final String ECLIPSE_SYSTEM_BUNDLE = "Eclipse-SystemBundle"; //$NON-NLS-1$
 	public static final String ECLIPSE_BUNDLE_SHAPE = "Eclipse-BundleShape"; //$NON-NLS-1$
+	public static final String ECLIPSE_SOURCE_REFERENCES = "Eclipse-SourceReferences"; //$NON-NLS-1$
 	public static final String SERVICE_COMPONENT = "Service-Component"; //$NON-NLS-1$
 
 	// Equinox-specific system properties
@@ -192,6 +193,7 @@ public interface ICoreConstants {
 
 	// Extension point identifiers
 	public static final String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_BUNDLE_IMPORTERS = PDECore.PLUGIN_ID + ".bundleImporters"; //$NON-NLS-1$
 
 	// file extensions
 

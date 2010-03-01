@@ -14,26 +14,73 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.provisional.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.importing.BundleImportDescription;
+import org.eclipse.pde.core.importing.IBundleImporter;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.SourceLocationKey;
+import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.core.project.BundleProjectService;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
+import org.eclipse.pde.ui.IBundeImportWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
@@ -65,6 +112,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private Button binaryButton;
 	private Button binaryWithLinksButton;
 	private Button sourceButton;
+	private Button repositoryButton;
 
 	public static String TARGET_PLATFORM = "targetPlatform"; //$NON-NLS-1$
 	private IPluginModelBase[] models = new IPluginModelBase[0];
@@ -74,6 +122,26 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private SourceLocationManager alternateSource;
 	private PDEState state;
 	private boolean canceled = false;
+
+	/**
+	 * Models that can be imported from a repository
+	 */
+	protected Set repositoryModels = new HashSet();
+
+	/**
+	 * Maps bundle importers to import instructions
+	 */
+	private Map importerToInstructions = new HashMap();
+
+	/**
+	 * Map of bundle importer extension id to associated wizard page
+	 */
+	private Map importIdToWizardPage = new HashMap();
+
+	/**
+	 * Array of next wizard pages (in order)
+	 */
+	private List nextPages = new ArrayList();
 
 	public PluginImportWizardFirstPage(String name) {
 		super(name);
@@ -120,6 +188,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		binaryButton = SWTFactory.createRadioButton(options, PDEUIMessages.ImportWizard_FirstPage_binary);
 		binaryWithLinksButton = SWTFactory.createRadioButton(options, PDEUIMessages.ImportWizard_FirstPage_binaryLinks);
 		sourceButton = SWTFactory.createRadioButton(options, PDEUIMessages.ImportWizard_FirstPage_source);
+		repositoryButton = SWTFactory.createRadioButton(options, PDEUIMessages.PluginImportWizardFirstPage_3);
 	}
 
 	/**
@@ -156,8 +225,10 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			binaryButton.setSelection(true);
 		} else if (importType == PluginImportOperation.IMPORT_BINARY_WITH_LINKS) {
 			binaryWithLinksButton.setSelection(true);
-		} else {
+		} else if (importType == PluginImportOperation.IMPORT_WITH_SOURCE) {
 			sourceButton.setSelection(true);
+		} else {
+			repositoryButton.setSelection(true);
 		}
 
 		boolean scan = true;
@@ -384,7 +455,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (binaryWithLinksButton.getSelection()) {
 			return PluginImportOperation.IMPORT_BINARY_WITH_LINKS;
 		}
-
+		if (repositoryButton.getSelection()) {
+			return PluginImportOperation.IMPORT_FROM_REPOSITORY;
+		}
 		return PluginImportOperation.IMPORT_WITH_SOURCE;
 	}
 
@@ -481,13 +554,19 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 	/**
 	 * Resolves the target platform
+	 * @param type import type
 	 */
-	private void resolveTargetPlatform() {
+	private void resolveTargetPlatform(final int type) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				models = PluginRegistry.getExternalModels();
 				state = PDECore.getDefault().getModelManager().getState();
 				alternateSource = null;
+				try {
+					buildImportDescriptions(monitor, type);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 				monitor.done();
 			}
 		};
@@ -516,7 +595,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 			ITargetDefinition target = service.newTarget(); // temporary target
 			target.setBundleContainers(new IBundleContainer[] {container});
-			resolveTargetDefinition(target);
+			resolveTargetDefinition(target, getImportType());
 		}
 	}
 
@@ -524,10 +603,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * Resolves the plug-in locations for a target definition.
 	 * 
 	 * @param target target definition
+	 * @param type import operation type
 	 */
-	private void resolveTargetDefinition(final ITargetDefinition target) {
+	private void resolveTargetDefinition(final ITargetDefinition target, final int type) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				monitor.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
 				SubProgressMonitor pm = new SubProgressMonitor(monitor, 50);
 				target.resolve(pm);
@@ -567,6 +647,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					}
 				}
 				alternateSource = new AlternateSourceLocations((IPluginModelBase[]) sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), (IResolvedBundle[]) sourceBundles.toArray(new IResolvedBundle[sourceBundles.size()]));
+				try {
+					buildImportDescriptions(pm, type);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 				pm.done();
 				canceled = monitor.isCanceled();
 				monitor.done();
@@ -580,16 +665,182 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 	}
 
+	private void buildImportDescriptions(IProgressMonitor monitor, int type) throws CoreException {
+		// build import instructions
+		BundleProjectService service = (BundleProjectService) BundleProjectService.getDefault();
+		repositoryModels.clear();
+		importerToInstructions.clear();
+		nextPages.clear();
+		if (type == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
+			if (models != null) {
+				importerToInstructions = service.getImportDescriptions(models);
+				Iterator iterator = importerToInstructions.entrySet().iterator();
+				while (iterator.hasNext()) {
+					if (!monitor.isCanceled()) {
+						Entry entry = (Entry) iterator.next();
+						BundleImportDescription[] descriptions = (BundleImportDescription[]) entry.getValue();
+						for (int i = 0; i < descriptions.length; i++) {
+							repositoryModels.add(descriptions[i].getProperty(BundleProjectService.PLUGIN));
+						}
+					}
+				}
+			}
+			if (!monitor.isCanceled()) {
+				// contributed wizard pages
+				Iterator iterator = importerToInstructions.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Entry entry = (Entry) iterator.next();
+					IBundleImporter importer = (IBundleImporter) entry.getKey();
+					IBundeImportWizardPage page = (IBundeImportWizardPage) importIdToWizardPage.get(importer.getId());
+					if (page == null) {
+						page = getPage(importer.getId());
+						if (page != null) {
+							importIdToWizardPage.put(importer.getId(), page);
+							((Wizard) getWizard()).addPage(page);
+						}
+					}
+					if (page != null) {
+						nextPages.add(page);
+						page.setSelection((BundleImportDescription[]) entry.getValue());
+					}
+				}
+			}
+		}
+		if (monitor.isCanceled()) {
+			importerToInstructions.clear();
+			repositoryModels.clear();
+			nextPages.clear();
+		}
+	}
+
+	/**
+	 * Returns whether the contributed pages are complete.
+	 * 
+	 * @return whether the contributed pages are complete
+	 */
+	boolean arePagesComplete() {
+		Iterator iterator = nextPages.iterator();
+		while (iterator.hasNext()) {
+			IBundeImportWizardPage page = (IBundeImportWizardPage) iterator.next();
+			if (!page.isPageComplete()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Finishes contributed pages.
+	 * 
+	 * @return whether finish was successful
+	 */
+	boolean finishPages() {
+		Iterator iterator = nextPages.iterator();
+		while (iterator.hasNext()) {
+			IBundeImportWizardPage page = (IBundeImportWizardPage) iterator.next();
+			if (!page.finish()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns a map of importers to their bundle import descriptions to process.
+	 * 
+	 * @return map of bundle import descriptions to process, by importers
+	 */
+	Map getImportDescriptions() {
+		Map map = new HashMap();
+		if (getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
+			IBundleImporter[] importers = ((BundleProjectService) BundleProjectService.getDefault()).getBundleImporters();
+			for (int i = 0; i < importers.length; i++) {
+				IBundleImporter importer = importers[i];
+				if (importerToInstructions.containsKey(importer)) {
+					IBundeImportWizardPage page = (IBundeImportWizardPage) importIdToWizardPage.get(importer.getId());
+					if (page != null && nextPages.contains(page)) {
+						map.put(importer, page.getSelection());
+					}
+				}
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * Returns the next page to display or <code>null</code> if none.
+	 * 
+	 * @param page current page
+	 * @return next page or <code>null</code>
+	 */
+	IWizardPage getNextPage(IWizardPage page) {
+		if (nextPages.isEmpty()) {
+			return null;
+		}
+		if (page instanceof IBundeImportWizardPage) {
+			int index = nextPages.indexOf(page);
+			if (index >= 0 && index < (nextPages.size() - 2)) {
+				return (IWizardPage) nextPages.get(index + 1);
+			}
+		}
+		if (page instanceof PluginImportWizardDetailedPage) {
+			return (IWizardPage) nextPages.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the previous page to display or <code>null</code> if none.
+	 * 
+	 * @param page current page
+	 * @return previous page or <code>null</code>
+	 */
+	IWizardPage getPreviousPage(IWizardPage page) {
+		if (page instanceof IBundeImportWizardPage) {
+			int index = nextPages.indexOf(page);
+			if (index > 0) {
+				return (IWizardPage) nextPages.get(index - 1);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Creates and returns a wizard page associated with the given bundle importer extension identifier
+	 * or <code>null</code> of none.
+	 * 
+	 * @param importerId org.eclipse.pde.core.bundleImporters extension identifier
+	 * @return associated bundle import wizard page or <code>null</code>
+	 */
+	private IBundeImportWizardPage getPage(String importerId) {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(IPDEUIConstants.EXTENSION_POINT_BUNDLE_IMPORT_PAGES);
+		if (point != null) {
+			IConfigurationElement[] infos = point.getConfigurationElements();
+			for (int i = 0; i < infos.length; i++) {
+				IConfigurationElement element = infos[i];
+				String id = element.getAttribute("bundleImporter"); //$NON-NLS-1$
+				if (id != null && importerId.equals(id)) {
+					try {
+						return (IBundeImportWizardPage) element.createExecutableExtension("class"); //$NON-NLS-1$
+					} catch (CoreException e) {
+						PDEPlugin.log(e);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * @return the complete set of {@link IPluginModelBase}s for the given drop location
 	 */
 	public IPluginModelBase[] getModels() {
 		switch (getImportOrigin()) {
 			case FROM_ACTIVE_PLATFORM :
-				resolveTargetPlatform();
+				resolveTargetPlatform(getImportType());
 				break;
 			case FROM_TARGET_DEFINITION :
-				resolveTargetDefinition(getTargetDefinition());
+				resolveTargetDefinition(getTargetDefinition(), getImportType());
 				break;
 			case FROM_DIRECTORY :
 				resolveArbitraryLocation(getDropLocation());

@@ -10,20 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.SourceLocationManager;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -84,7 +92,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 				return false;
 
 		}
-		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0, page1.getAlternateSourceLocations());
+		// finish contributed pages
+		if (!page1.finishPages()) {
+			return false;
+		}
+		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0, page1.getAlternateSourceLocations(), page1.getImportDescriptions());
 		return true;
 	}
 
@@ -129,7 +141,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	}
 
 	public static void doImportOperation(Shell shell, int importType, IPluginModelBase[] models, boolean forceAutobuild) {
-		doImportOperation(shell, importType, models, forceAutobuild, false, null);
+		doImportOperation(shell, importType, models, forceAutobuild, false, null, null);
 	}
 
 	/**
@@ -143,8 +155,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	 * 	source locations should be used (from active target platform).
 	 *  
 	 */
-	private static void doImportOperation(Shell shell, int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource) {
+	private static void doImportOperation(Shell shell, int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map importerToDescriptions) {
 		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);
+		job.setImportDescriptions(importerToDescriptions);
 		job.setAlternateSource(alternateSource);
 		job.setPluginsInUse(launchedConfiguration);
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
@@ -159,14 +172,27 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			}
 			return page2;
 		}
+		if (page.equals(page3)) {
+			return page1.getNextPage(page);
+		}
 		return null;
 	}
 
 	public IWizardPage getPreviousPage(IWizardPage page) {
-		return page.equals(page1) ? null : page1;
+		if (page.equals(page1)) {
+			return null;
+		}
+		if (page.equals(page2) || page.equals(page3)) {
+			return page1;
+		}
+		IWizardPage prev = page1.getPreviousPage(page);
+		if (prev == null) {
+			return page3;
+		}
+		return prev;
 	}
 
 	public boolean canFinish() {
-		return !page1.isCurrentPage() && page1.getNextPage().isPageComplete();
+		return !page1.isCurrentPage() && page1.getNextPage().isPageComplete() && page1.arePagesComplete();
 	}
 }

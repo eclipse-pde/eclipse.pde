@@ -2304,6 +2304,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginImportWizardFirstPage_2;
 
+	public static String PluginImportWizardFirstPage_3;
+
 	public static String LauncherUtils_title;
 
 	public static String RemoveLazyLoadingDirectiveResolution_remove;
@@ -2545,6 +2547,12 @@ public class PDEUIMessages extends NLS {
 	public static String ProductExportWizardPage_exportOptionsGroup;
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
+
+	public static String CVSBundleImportPage_0;
+
+	public static String CVSBundleImportPage_1;
+
+	public static String CVSBundleImportPage_2;
 
 	public static String PluginsView_description;
 

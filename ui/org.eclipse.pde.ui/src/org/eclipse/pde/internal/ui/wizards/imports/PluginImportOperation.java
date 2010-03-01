@@ -12,21 +12,57 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.importing.BundleImportDescription;
+import org.eclipse.pde.core.importing.IBundleImporter;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -38,7 +74,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.wizards.datatransfer.*;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 import org.osgi.framework.BundleException;
 
 /**
@@ -51,6 +89,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	public static final int IMPORT_BINARY = 1;
 	public static final int IMPORT_BINARY_WITH_LINKS = 2;
 	public static final int IMPORT_WITH_SOURCE = 3;
+	public static final int IMPORT_FROM_REPOSITORY = 4;
 
 	private static final String DEFAULT_SOURCE_DIR = "src"; //$NON-NLS-1$
 	private static final String DEFAULT_LIBRARY_NAME = "."; //$NON-NLS-1$
@@ -59,6 +98,9 @@ public class PluginImportOperation extends WorkspaceJob {
 	private int fImportType;
 	private Hashtable fProjectClasspaths = new Hashtable();
 	private boolean fForceAutobuild;
+
+	// used when importing from a repository
+	private Map fImportDescriptions;
 
 	/**
 	 * Used to find source locations when not found in default locations.
@@ -117,28 +159,39 @@ public class PluginImportOperation extends WorkspaceJob {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
+			// TODO: more than one importer
 
-			for (int i = 0; i < fModels.length; i++) {
-				monitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, fModels[i].getPluginBase().getId()));
+			if (fImportType == IMPORT_FROM_REPOSITORY) {
+				Iterator iterator = fImportDescriptions.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Entry entry = (Entry) iterator.next();
+					IBundleImporter importer = (IBundleImporter) entry.getKey();
+					BundleImportDescription[] descriptions = (BundleImportDescription[]) entry.getValue();
+					importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
+				}
+			} else {
+				for (int i = 0; i < fModels.length; i++) {
+					monitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, fModels[i].getPluginBase().getId()));
+					try {
+						importPlugin(fModels[i], fImportType, new SubProgressMonitor(monitor, 1));
+					} catch (CoreException e) {
+						multiStatus.merge(e.getStatus());
+					}
+					if (monitor.isCanceled()) {
+						try {
+							setClasspaths(new SubProgressMonitor(monitor, 3));
+						} catch (JavaModelException e) {
+							/* Do nothing as we are already cancelled */
+						}
+						return Status.CANCEL_STATUS;
+					}
+				}
+				monitor.setTaskName(PDEUIMessages.PluginImportOperation_Set_up_classpaths);
 				try {
-					importPlugin(fModels[i], fImportType, new SubProgressMonitor(monitor, 1));
-				} catch (CoreException e) {
+					setClasspaths(new SubProgressMonitor(monitor, 1));
+				} catch (JavaModelException e) {
 					multiStatus.merge(e.getStatus());
 				}
-				if (monitor.isCanceled()) {
-					try {
-						setClasspaths(new SubProgressMonitor(monitor, 3));
-					} catch (JavaModelException e) {
-						/* Do nothing as we are already cancelled */
-					}
-					return Status.CANCEL_STATUS;
-				}
-			}
-			monitor.setTaskName(PDEUIMessages.PluginImportOperation_Set_up_classpaths);
-			try {
-				setClasspaths(new SubProgressMonitor(monitor, 1));
-			} catch (JavaModelException e) {
-				multiStatus.merge(e.getStatus());
 			}
 			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild)
 				runBuildJob();
@@ -166,9 +219,9 @@ public class PluginImportOperation extends WorkspaceJob {
 				ArrayList pluginsWithSameSymbolicName = (ArrayList) workspacePluginMap.get(symbolicName);
 				if (pluginsWithSameSymbolicName == null) {
 					pluginsWithSameSymbolicName = new ArrayList();
+					workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
 				}
 				pluginsWithSameSymbolicName.add(plugin);
-				workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
 			}
 			monitor.worked(1);
 
@@ -259,6 +312,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * environment is supported and also checks if the project already exists and 
 	 * needs to be replaced.
 	 * @param model model representing the plugin to import
+	 * @param instructions instructions for how to import from repository
 	 * @param monitor progress monitor
 	 * @throws CoreException if a problem occurs while importing a plugin
 	 */
@@ -1144,6 +1198,15 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private boolean isJARd(IPluginModelBase model) {
 		return new File(model.getInstallLocation()).isFile();
+	}
+
+	/**
+	 * Sets the import descriptions to use when importing from a repository.
+	 * 
+	 * @param descriptions map of {@link IBundleImporter} to arrays of {@link BundleImportDescription}.
+	 */
+	public void setImportDescriptions(Map descriptions) {
+		fImportDescriptions = descriptions;
 	}
 
 }
