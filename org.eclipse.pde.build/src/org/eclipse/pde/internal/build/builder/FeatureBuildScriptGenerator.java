@@ -328,7 +328,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.println("<eclipse.gatherFeature "); //$NON-NLS-1$
 		script.println("   metadataRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   artifactRepository=\"" + Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (customFeatureCallbacks != null && include != null)
+		if (customFeatureCallbacks != null)
 			script.println("   targetFolder=\"" + featureTemp + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			script.println("   buildResultFolder=\"" + featureTemp + "\""); //$NON-NLS-1$ //$NON-NLS-2$

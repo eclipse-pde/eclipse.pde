@@ -730,7 +730,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			File osgi = getOSGiLocation();
 			String[] sources = null;
 			if (osgi != null) {
-				if (eeSources != null && osgi != null) {
+				if (eeSources != null) {
 					sources = new String[eeSources.length + 1];
 					sources[0] = osgi.getAbsolutePath();
 					System.arraycopy(eeSources, 0, sources, 1, eeSources.length);

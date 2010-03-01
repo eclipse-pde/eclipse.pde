@@ -81,31 +81,28 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			return null;
 		}
 
-		if (include != null) {
-			GatheringComputer computer = new GatheringComputer();
+		GatheringComputer computer = new GatheringComputer();
 
-			FileSet fileSet = new FileSet();
-			fileSet.setProject(getProject());
-			fileSet.setDir(new File(buildResultFolder));
-			String[] splitIncludes = Utils.getArrayFromString(include);
-			for (int i = 0; i < splitIncludes.length; i++) {
-				String entry = splitIncludes[i];
-				if (entry.equals(ModelBuildScriptGenerator.DOT))
-					continue;
+		FileSet fileSet = new FileSet();
+		fileSet.setProject(getProject());
+		fileSet.setDir(new File(buildResultFolder));
+		String[] splitIncludes = Utils.getArrayFromString(include);
+		for (int i = 0; i < splitIncludes.length; i++) {
+			String entry = splitIncludes[i];
+			if (entry.equals(ModelBuildScriptGenerator.DOT))
+				continue;
 
-				NameEntry fileInclude = fileSet.createInclude();
-				fileInclude.setName(entry);
-			}
-
-			String[] splitExcludes = Utils.getArrayFromString(exclude);
-			for (int i = 0; i < splitExcludes.length; i++) {
-				NameEntry fileExclude = fileSet.createExclude();
-				fileExclude.setName(splitIncludes[i]);
-			}
-			computer.addFiles(buildResultFolder, fileSet.getDirectoryScanner().getIncludedFiles());
-			return computer;
+			NameEntry fileInclude = fileSet.createInclude();
+			fileInclude.setName(entry);
 		}
-		return null;
+
+		String[] splitExcludes = Utils.getArrayFromString(exclude);
+		for (int i = 0; i < splitExcludes.length; i++) {
+			NameEntry fileExclude = fileSet.createExclude();
+			fileExclude.setName(splitIncludes[i]);
+		}
+		computer.addFiles(buildResultFolder, fileSet.getDirectoryScanner().getIncludedFiles());
+		return computer;
 	}
 
 	private String reorderConfig(String config) {
