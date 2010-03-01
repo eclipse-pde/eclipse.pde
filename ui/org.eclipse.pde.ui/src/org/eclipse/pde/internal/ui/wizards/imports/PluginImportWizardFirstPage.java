@@ -177,6 +177,29 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Group importChoices = SWTFactory.createGroup(container, PDEUIMessages.ImportWizard_FirstPage_importGroup, 1, 1, GridData.FILL_HORIZONTAL);
 		scanButton = SWTFactory.createRadioButton(importChoices, PDEUIMessages.ImportWizard_FirstPage_scanAll);
 		importButton = SWTFactory.createRadioButton(importChoices, PDEUIMessages.ImportWizard_FirstPage_importPrereqs);
+		SelectionAdapter adapter = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateRepositoryOption();
+			}
+		};
+		scanButton.addSelectionListener(adapter);
+		importButton.addSelectionListener(adapter);
+	}
+
+	/**
+	 * For now, disable repository import when not scanning.
+	 * TODO: this should be supported in the future.
+	 */
+	private void updateRepositoryOption() {
+		if (importButton.getSelection()) {
+			repositoryButton.setEnabled(false);
+			if (repositoryButton.getSelection()) {
+				repositoryButton.setSelection(false);
+				binaryButton.setSelection(true);
+			}
+		} else {
+			repositoryButton.setEnabled(true);
+		}
 	}
 
 	/**
@@ -237,6 +260,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 		scanButton.setSelection(scan);
 		importButton.setSelection(!scan);
+		updateRepositoryOption();
 
 	}
 

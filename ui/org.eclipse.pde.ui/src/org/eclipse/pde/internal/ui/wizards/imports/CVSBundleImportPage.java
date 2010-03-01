@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.importing.BundleImportDescription;
 import org.eclipse.pde.internal.core.importing.CvsBundleImportDescription;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.ui.IBundeImportWizardPage;
 import org.eclipse.swt.layout.GridData;
@@ -60,11 +59,13 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 	 * @see org.eclipse.pde.ui.IBundeImportWizardPage#finish()
 	 */
 	public boolean finish() {
-		if (useHead.getSelection()) {
-			// modify tags on bundle import descriptions
-			for (int i = 0; i < descriptions.length; i++) {
-				CvsBundleImportDescription description = (CvsBundleImportDescription) descriptions[i];
-				description.setTag(null);
+		if (getControl() != null) {
+			if (useHead.getSelection()) {
+				// modify tags on bundle import descriptions
+				for (int i = 0; i < descriptions.length; i++) {
+					CvsBundleImportDescription description = (CvsBundleImportDescription) descriptions[i];
+					description.setTag(null);
+				}
 			}
 		}
 		return true;
