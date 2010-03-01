@@ -6,39 +6,54 @@
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
+*   IBM - Further improvements
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
-import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.Version;
 
-public class IUPackage implements IVersionedId {
+/**
+ * Wrapper containing a java package and the installable unit that represents it in the
+ * p2 metadata.
+ * 
+ * @since 3.6
+ */
+public class IUPackage {
 
 	private final IInstallableUnit iu;
 	private final String packageName;
 	private final Version version;
 
-	public IUPackage(IInstallableUnit iu, String packageName, Version version) {
-		this.iu = iu;
+	/**
+	 * Creates a new wrapper
+	 * 
+	 * @param packageName name of the package, must not be <code>null</code>
+	 * @param version version of the package, must not be <code>null</code>
+	 * @param iu installable unit associated with this package, must not be <code>null</code>
+	 */
+	public IUPackage(String packageName, Version version, IInstallableUnit iu) {
 		this.packageName = packageName;
 		this.version = version;
+		this.iu = iu;
 	}
 
 	/**
-	 * @return the iu
+	 * @return the iu representing this package
 	 */
 	public IInstallableUnit getIU() {
 		return iu;
 	}
 
 	/**
-	 * @return the version
+	 * @return the version of this package
 	 */
 	public Version getVersion() {
 		return version;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.internal.provisional.p2.metadata.IVersionedId#getId()
+	/**
+	 * @return the id of this package
 	 */
 	public String getId() {
 		return packageName;

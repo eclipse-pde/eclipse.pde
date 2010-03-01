@@ -13,7 +13,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
@@ -174,6 +175,9 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		return new IUItemsFilter();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractContentProvider, org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		// TODO clean up this code a bit...
 		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
@@ -195,7 +199,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			while (pcIter.hasNext()) {
 				IProvidedCapability pc = (IProvidedCapability) pcIter.next();
 				if (pc.getNamespace().equals("java.package")) { //$NON-NLS-1$
-					IUPackage pkg = new IUPackage(iu, pc.getName(), pc.getVersion());
+					IUPackage pkg = new IUPackage(pc.getName(), pc.getVersion(), iu);
 					contentProvider.add(pkg, itemsFilter);
 				}
 			}
@@ -203,57 +207,55 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getDialogSettings()
+	 */
 	protected IDialogSettings getDialogSettings() {
 		return new DialogSettings("org.eclipse.pde.internal.ui.search.dialogs.FilteredTargetRepoIUSelectionDialog"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
+	 */
 	public String getElementName(Object item) {
-		// TODO Auto-generated method stub
-
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
+	 */
 	protected Comparator getItemsComparator() {
 		return new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((IVersionedId) o1).getId().compareTo(((IVersionedId) o2).getId());
+				String id1 = null;
+				String id2 = null;
+
+				if (o1 instanceof IUPackage) {
+					id1 = ((IUPackage) o1).getId();
+				} else if (o1 instanceof IInstallableUnit) {
+					id1 = ((IInstallableUnit) o1).getId();
+				} else {
+					return 0;
+				}
+
+				if (o2 instanceof IUPackage) {
+					id2 = ((IUPackage) o2).getId();
+				} else if (o2 instanceof IInstallableUnit) {
+					id2 = ((IInstallableUnit) o2).getId();
+				} else {
+					return 0;
+				}
+
+				return id1.compareTo(id2);
 			}
 		};
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
+	 */
 	protected IStatus validateItem(Object item) {
 		return Status.OK_STATUS;
 	}
-
-//	private ITargetHandle[] getAvailableTargets() {
-//		List names = new ArrayList();
-//		ITargetHandle[] targetHandles = new ITargetHandle[0];
-//		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-//		if (service != null) {
-//			ITargetHandle[] handles = service.getTargets(null);
-//			List defs = new ArrayList();
-//			for (int i = 0; i < handles.length; i++) {
-//				try {
-//					defs.add(handles[i].getTargetDefinition());
-//				} catch (CoreException e) {
-//					// Suppress
-//				}
-//			}
-//			Collections.sort(defs, new Comparator() {
-//				public int compare(Object o1, Object o2) {
-//					ITargetDefinition d1 = (ITargetDefinition) o1;
-//					ITargetDefinition d2 = (ITargetDefinition) o2;
-//					return d1.getName().compareTo(d2.getName());
-//				}
-//			});
-//			targetHandles = new ITargetHandle[defs.size()];
-//			for (int i = 0; i < defs.size(); i++) {
-//				ITargetDefinition def = (ITargetDefinition) defs.get(i);
-//				targetHandles[i] = def.getHandle();
-//				names.add(def.getName());
-//			}
-//		}
-//		return targetHandles;
-//	}
 
 }

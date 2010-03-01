@@ -6,9 +6,11 @@
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
+*   IBM - Further improvements
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.commands.*;
@@ -18,11 +20,18 @@ import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.InstallIUIntoTarget;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+/**
+ * Command handler that pops up an IU selection dialog, the result of which is added to the active
+ *  target.
+ *  
+ *  @since 3.6
+ */
 public class TargetRepositorySearchHandler extends AbstractHandler implements IHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -45,16 +54,38 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 						set.add(result[i]);
 				}
 				IInstallableUnit[] units = (IInstallableUnit[]) set.toArray(new IInstallableUnit[set.size()]);
-				ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 				try {
-					ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
-					ITargetDefinition definition = currentTarget.getTargetDefinition();
-					InstallIUIntoTarget.install(definition, units, null);
+					installIntoActiveTarget(units, null);
 				} catch (CoreException e) {
-					e.printStackTrace();
+					PDEPlugin.log(e);
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Creates a new IUBundleContainer, adds it to the active target, then reloads the active target.
+	 * 
+	 * @param units new installable units to include in the container
+	 * @param repositories list of repositories the container can use as a context or <code>null</code> to use all available repos
+	 */
+	private static void installIntoActiveTarget(IInstallableUnit[] units, URI[] repositories) throws CoreException {
+		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
+		ITargetDefinition definition = currentTarget.getTargetDefinition();
+		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(units, repositories);
+		IBundleContainer[] oldContainers = definition.getBundleContainers();
+		if (oldContainers == null) {
+			definition.setBundleContainers(new IBundleContainer[] {container});
+		} else {
+			IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];
+			System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
+			newContainers[newContainers.length - 1] = container;
+			definition.setBundleContainers(newContainers);
+			service.saveTargetDefinition(definition);
+			LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(definition);
+			job.schedule();
+		}
 	}
 }
