@@ -365,7 +365,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		context.setArtifactRepositories(repositories);
 		IProvisioningPlan plan = engine.createPlan(profile, context);
 
-		Set querySet = queryResult.unmodifiableSet();
+		Set querySet = queryResult.toUnmodifiableSet();
 		Iterator itor = querySet.iterator();
 		while (itor.hasNext()) {
 			plan.addInstallableUnit((IInstallableUnit) itor.next());
