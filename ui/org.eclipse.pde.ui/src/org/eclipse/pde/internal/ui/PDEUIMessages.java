@@ -2490,6 +2490,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetDefinitionEnvironmentPage_5;
 
+	public static String FilteredIUSelectionDialog_title;
+	public static String FilteredIUSelectionDialog_message;
+	public static String FilteredIUSelectionDialog_showLatestVersionOnly;
+
 	public static String EditorUtilities_noImageData;
 
 	public static String EditorUtilities_pathNotValidImage;

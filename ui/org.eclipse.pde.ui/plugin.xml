@@ -538,7 +538,12 @@
             description="%addpluginstojavasearch.action.desc"
             id="org.eclipse.pde.ui.addAllPluginsToJavaSearch"
             name="%addpluginstojavasearch.action.name">
-      </command>   
+      </command>
+      <command
+            description="%target.reposearch.description"
+            id="org.eclipse.pde.ui.searchTargetRepositories"
+            name="%target.reposearch.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1370,6 +1375,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+A">
       </key>
+      <key
+            commandId="org.eclipse.pde.ui.searchTargetRepositories"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+M3+A">
+      </key>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
@@ -1856,6 +1867,10 @@
        </extension>
        <extension
              point="org.eclipse.ui.handlers">
+          <handler
+                class="org.eclipse.pde.internal.ui.search.dialogs.TargetRepositorySearchHandler"
+                commandId="org.eclipse.pde.ui.searchTargetRepositories">
+          </handler>
           <handler
                 class="org.eclipse.pde.internal.ui.search.dialogs.PluginArtifactSearchHandler"
                 commandId="org.eclipse.pde.ui.openPluginArtifact">
