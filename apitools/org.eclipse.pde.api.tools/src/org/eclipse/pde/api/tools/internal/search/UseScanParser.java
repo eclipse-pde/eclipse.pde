@@ -221,7 +221,7 @@ public class UseScanParser {
 							return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
 						}
 					});
-					if (xmlfiles != null) {
+					if (xmlfiles != null && xmlfiles.length > 0) {
 						xmlfiles = sort(xmlfiles); // sort to visit in determined order
 						for (int k = 0; k < xmlfiles.length; k++) {
 							try {
