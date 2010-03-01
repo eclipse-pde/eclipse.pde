@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.osgi.framework.Constants;
 
+
 /**
  * Utilities to read and write p2 files
  * 
@@ -334,7 +335,7 @@ public class P2Utils {
 		}
 
 		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
-		if (agent == null) {
+		if (registry == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
@@ -365,7 +366,7 @@ public class P2Utils {
 		}
 
 		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
-		if (agent == null) {
+		if (registry == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
