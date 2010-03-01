@@ -88,8 +88,9 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	private void removeBaseline(String name) {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
-		if (baseline != null) {
-			manager.removeApiBaseline(name);
+		if(baseline != null) {
+			assertEquals("The given name should be the default baseline name", baseline.getName(), name);
+			assertTrue("The baseline ["+name+"] should have been removed", manager.removeApiBaseline(name));
 		}
 	}
 	
@@ -277,7 +278,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	}
 	
 	/**
-	 * Tests that unused filters are not reported. This test adds the final modifier
+	 * Tests that unused filters are not reported because the workspace baseline has not been set - 
+	 * i.e. the build should short-circuit to not even check for filters. This test adds the final modifier
 	 * to a class that has a protected method leaking and internal type, with a filter for the problem, 
 	 * but no API baseline set
 	 * @param inc
@@ -286,7 +288,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		removeBaseline(BASELINE);
 		String testname = "test1";
 		String sourcename = "testUF1.java";
-		expectingNoProblems();
+		IPath path = new Path("usagetest/x/y/z").append(sourcename);
+		expectingNoProblemsFor(path);
 		deployTest(getBeforePath(testname, sourcename), 
 				getAfterPath(testname, sourcename), 
 				getFilterFilePath(testname), 

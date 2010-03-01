@@ -194,7 +194,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.IApiBaselineManager#removeApiProfile(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.IApiBaselineManager#removeApiBaseline(java.lang.String)
 	 */
 	public synchronized boolean removeApiBaseline(String name) {
 		if(name != null) {

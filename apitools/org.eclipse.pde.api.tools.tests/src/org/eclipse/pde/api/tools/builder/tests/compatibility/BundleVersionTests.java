@@ -53,7 +53,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 	
 	public static final String BASELINE = "before";
 
-	IApiBaseline profile;
 	IApiBaseline baseline;
 
 	/**
@@ -128,9 +127,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 		manager.setDefaultApiBaseline(null);
 		manager.removeApiBaseline(API_BASELINE);
 		this.baseline.dispose();
-		this.profile.dispose();
+		manager.getWorkspaceBaseline().dispose();
 		this.baseline = null;
-		this.profile = null;
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		for (int i = 0, length = projects.length; i < length; i++) {
 			getEnv().removeProject(projects[i].getFullPath());
@@ -159,13 +157,12 @@ public class BundleVersionTests extends ApiBuilderTest {
 		// import baseline projects
 		createExistingProjects(referenceBaselineLocation, true, true, false);
 		// create the API baseline
-		this.profile = manager.getWorkspaceBaseline();
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		int length = projects.length;
 		IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(referenceBaselineLocation);
 		for (int i = 0; i < length; i++) {
 			IProject currentProject = projects[i];
-			IApiComponent apiComponent = this.profile.getApiComponent(currentProject.getName());
+			IApiComponent apiComponent = manager.getWorkspaceBaseline().getApiComponent(currentProject.getName());
 			assertNotNull("Cannot be null", apiComponent);
 			exportApiComponent(
 					currentProject,

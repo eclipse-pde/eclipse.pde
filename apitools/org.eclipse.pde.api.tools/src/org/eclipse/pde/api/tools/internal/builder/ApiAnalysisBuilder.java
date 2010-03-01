@@ -147,10 +147,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	void cleanupUnsupportedTagMarkers(IResource resource) {
 		try {
-			if(DEBUG) {
-				System.out.println("cleaning unsupported tag problems"); //$NON-NLS-1$
+			if(resource != null && resource.isAccessible()) {
+				if(DEBUG) {
+					System.out.println("cleaning unsupported tag problems"); //$NON-NLS-1$
+				}
+				resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			}
-			resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			ApiPlugin.log(e.getStatus());
 		}
