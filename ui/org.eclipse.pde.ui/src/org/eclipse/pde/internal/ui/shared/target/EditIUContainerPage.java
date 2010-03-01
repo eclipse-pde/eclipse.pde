@@ -199,7 +199,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param parent parent composite
 	 */
 	private void createAvailableIUArea(Composite parent) {
-		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent);
+		int filterConstant = AvailableIUGroup.AVAILABLE_NONE;
+		if (!profileUI.getPolicy().getRepositoriesVisible())
+			filterConstant = AvailableIUGroup.AVAILABLE_ALL;
+		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent, parent.getFont(), fQueryContext, null, filterConstant);
 		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
