@@ -182,7 +182,18 @@ public class TargetLocationsGroup {
 		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new BundleContainerContentProvider());
 		fTreeViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
-		fTreeViewer.setComparator(new ViewerComparator());
+		fTreeViewer.setComparator(new ViewerComparator() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				// Status at the end of the list
+				if (e1 instanceof IStatus && !(e2 instanceof IStatus)) {
+					return 1;
+				}
+				if (e2 instanceof IStatus && !(e1 instanceof IStatus)) {
+					return -1;
+				}
+				return super.compare(viewer, e1, e2);
+			}
+		});
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
@@ -412,14 +423,21 @@ public class TargetLocationsGroup {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
+				boolean hasContainerStatus = false;
 				Collection result = new ArrayList();
 				IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
-				if (containers != null) {
-					result.addAll(Arrays.asList(containers));
+				for (int i = 0; i < containers.length; i++) {
+					result.add(containers[i]);
+					if (containers[i].getStatus() != null && !containers[i].getStatus().isOK()) {
+						hasContainerStatus = true;
+					}
 				}
-				IStatus status = ((ITargetDefinition) inputElement).getBundleStatus();
-				if (status != null && !status.isOK()) {
-					result.add(status);
+				// If a container has a problem, it is displayed as a child, if there is a status outside of the container status (missing bundle, etc.) put it as a separate item
+				if (!hasContainerStatus) {
+					IStatus status = ((ITargetDefinition) inputElement).getBundleStatus();
+					if (status != null && !status.isOK()) {
+						result.add(status);
+					}
 				}
 				return result.toArray();
 			} else if (inputElement instanceof String) {
