@@ -376,6 +376,10 @@ public class JavaResolutionFactory {
 		return createWrapper(change, type, relevance);
 	}
 
+	public static final IJavaCompletionProposal createSearchRepositoriesProposal(String packageName) {
+		return new SearchRepositoriesForIUProposal(packageName);
+	}
+
 	/**
 	 * Creates and returns a proposal which create an Export-Package entry in the MANIFEST.MF for the package represented by 
 	 * pkg.  The object will be of the type specified by the type argument.

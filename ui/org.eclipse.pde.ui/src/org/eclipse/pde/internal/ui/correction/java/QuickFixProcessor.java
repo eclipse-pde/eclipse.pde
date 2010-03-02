@@ -163,6 +163,10 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 
 				String className = ((ImportDeclaration) node).getName().getFullyQualifiedName();
 
+				// always add the search repositories proposal
+				String packageName = className.substring(0, className.lastIndexOf('.'));
+				result.add(JavaResolutionFactory.createSearchRepositoriesProposal(packageName));
+
 				// create a collector that will create IJavaCompletionProposals and load them into 'result'
 				AbstractClassResolutionCollector collector = createCollector(result);
 				IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project, className, collector);

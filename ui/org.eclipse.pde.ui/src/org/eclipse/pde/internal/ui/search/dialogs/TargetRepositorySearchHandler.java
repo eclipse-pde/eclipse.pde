@@ -42,6 +42,9 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		//IQuery query = QueryUtil.createIUAnyQuery();
 
 		FilteredIUSelectionDialog dialog = new FilteredIUSelectionDialog(window.getShell(), query);
+		String pattern = event.getParameter("org.eclipse.pde.ui.searchTargetRepositories.term"); //$NON-NLS-1$
+		if (pattern != null)
+			dialog.setInitialPattern(pattern);
 		int status = dialog.open();
 		if (status == Window.OK) {
 			Object[] result = dialog.getResult();
