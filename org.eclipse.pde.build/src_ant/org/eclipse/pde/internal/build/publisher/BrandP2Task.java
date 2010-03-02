@@ -9,6 +9,9 @@
 
 package org.eclipse.pde.internal.build.publisher;
 
+import org.eclipse.equinox.p2.metadata.MetadataFactory;
+import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -25,8 +28,6 @@ import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.p2.engine.phases.Collect;
 import org.eclipse.equinox.internal.p2.engine.phases.Install;
 import org.eclipse.equinox.internal.p2.metadata.*;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;

@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher.compatibility;
 
+import org.eclipse.equinox.p2.metadata.MetadataFactory;
+import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.publisher.*;
