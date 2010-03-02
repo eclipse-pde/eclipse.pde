@@ -60,7 +60,11 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 					if (delta.getKind() == IJavaElementDelta.REMOVED) {
 						fPluginIdSet.clear();
 					} else if (delta.getKind() == IJavaElementDelta.ADDED) {
-						initializeStates();
+						// We may be getting a queued delta from when the manager was initialized, ignore unless we don't already have data
+						if (fPluginIdSet == null || fPluginIdSet.size() == 0) {
+							// Something other than the manager created the project, check if it has a .searchable file to load from
+							initializeStates();
+						}
 					}
 				}
 				return true;
