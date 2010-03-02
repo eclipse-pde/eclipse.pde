@@ -200,7 +200,7 @@ public class RuntimeInstallJob extends Job {
 
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
 		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery(//
-				"requiredCapabilities.exists(rq | rq ~= $0 && rq.name == $1 && rq.range == $2",//$NON-NLS-1$
+				"requirements.exists(rq | rq ~= $0 && rq.name == $1 && rq.range == $2)",//$NON-NLS-1$
 				new Object[] {IRequiredCapability.class, id, new VersionRange(existingVersion, true, existingVersion, true)}), monitor);
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
