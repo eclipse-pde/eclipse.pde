@@ -42,7 +42,7 @@ public interface IBundleImporterDelegate {
 	 * can be imported into a workspace project. A <code>null</code> entry in the returned array
 	 * indicates the corresponding bundle cannot be imported by this delegate.
 	 * 
-	 * @param manifest manifest headers and values of the associated bundle
+	 * @param manifests array of maps containing manifest headers and values of the associated bundles
 	 * @return array of bundle import descriptions that may contain <code>null</code> entries
 	 */
 	public BundleImportDescription[] validateImport(Map[] manifests);
@@ -52,7 +52,6 @@ public interface IBundleImporterDelegate {
 	 * Reports progress to the given monitor, if not <code>null</code>.
 	 * 
 	 * @param descriptions description of bundles to import
-	 * @param options bundle import options to consider or <code>null</code> if none
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return collection of projects created in the workspace or <code>null</code> if none
 	 * @throws CoreException if unable to import projects

@@ -507,7 +507,7 @@ public interface IBundleProjectDescription {
 	 * <p>
 	 * This has no effect on existing projects.  This method is intended for use on descriptions
 	 * for new projects. To modify the bundle root of an existing project use
-	 * {@link Factory#setBundleRoot(IProject, IPath)}.
+	 * {@link IBundleProjectService#setBundleRoot(IProject, IPath)}.
 	 * </p>
 	 * <p>
 	 * The bundle root is the folder containing the <code>META-INF/</code> folder. When a project
