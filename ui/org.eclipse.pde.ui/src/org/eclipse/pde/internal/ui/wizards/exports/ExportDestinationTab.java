@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,11 @@ public class ExportDestinationTab extends AbstractExportTab {
 		initializeCombo(settings, S_DESTINATION, fDirectoryCombo);
 		initializeCombo(settings, S_ZIP_FILENAME, fArchiveCombo);
 		initializeCombo(settings, S_INSTALL_DESTINATION, fInstallCombo);
+		// Always add a default repo location to the install combo
+		String defaultRepo = PDEPlugin.getWorkspace().getRoot().getLocation() + "/.metadata/.plugins/org.eclipse.pde.core/install/";
+		if (fInstallCombo.indexOf(defaultRepo) == -1) {
+			fInstallCombo.add(defaultRepo);
+		}
 		hookListeners();
 	}
 
@@ -147,8 +152,8 @@ public class ExportDestinationTab extends AbstractExportTab {
 		fInstallButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateExportType();
-				if (fInstallCombo.getText().trim().length() == 0) {
-					fInstallCombo.setText(PDEPlugin.getWorkspace().getRoot().getLocation() + "/.metadata/.plugins/org.eclipse.pde.core/install/"); //$NON-NLS-1$
+				if (fInstallCombo.getText().trim().length() == 0 && fInstallCombo.getItemCount() > 0) {
+					fInstallCombo.select(0);
 				}
 			}
 		});
