@@ -321,7 +321,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		
 		}
 		catch (OperationCanceledException oce) {
-			//do nothing, just end and clean up
+			//do nothing, but don't forward it
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
+			if(DEBUG) {
+				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+			}
 		}
 		catch(CoreException e) {
 			IStatus status = e.getStatus();
@@ -330,33 +334,42 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 			ApiPlugin.log(e);
 		} finally {
-			Util.updateMonitor(localMonitor, 0);
-			if(this.analyzer != null) {
-				this.analyzer.dispose();
-				this.analyzer = null;
-			}
-			if(projects.length < 1) {
-				//if this build cycle indicates that more projects need to be built do not close 
-				//the baselines yet, they might be re-read by another build cycle
-				if(baseline != null) {
-					baseline.close();
+			try {
+				Util.updateMonitor(localMonitor, 0);
+				if(this.analyzer != null) {
+					this.analyzer.dispose();
+					this.analyzer = null;
 				}
-			}
-			Util.updateMonitor(localMonitor, 0);
-			if (this.buildstate != null) {
-				for(int i = 0, max = projects.length; i < max; i++) {
-					IProject project = projects[i];
-					if (Util.isApiProject(project)) {
-						this.buildstate.addApiToolingDependentProject(project.getName());
+				if(projects.length < 1) {
+					//if this build cycle indicates that more projects need to be built do not close 
+					//the baselines yet, they might be re-read by another build cycle
+					if(baseline != null) {
+						baseline.close();
 					}
 				}
-				this.buildstate.setBuildPathCRC(BuildState.computeBuildPathCRC(this.currentproject));
-				BuildState.saveBuiltState(this.currentproject, this.buildstate);
-				this.buildstate = null;
-				Util.updateMonitor(monitor, 0);
+				Util.updateMonitor(localMonitor, 0);
+				if (this.buildstate != null) {
+					for(int i = 0, max = projects.length; i < max; i++) {
+						IProject project = projects[i];
+						if (Util.isApiProject(project)) {
+							this.buildstate.addApiToolingDependentProject(project.getName());
+						}
+					}
+					this.buildstate.setBuildPathCRC(BuildState.computeBuildPathCRC(this.currentproject));
+					BuildState.saveBuiltState(this.currentproject, this.buildstate);
+					this.buildstate = null;
+					Util.updateMonitor(monitor, 0);
+				}
+				if(localMonitor != null) {
+					localMonitor.done();
+				}
 			}
-			if(localMonitor != null) {
-				localMonitor.done();
+			catch(OperationCanceledException oce) {
+				//do nothing, but don't forward it
+				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
+				if(DEBUG) {
+					System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+				}
 			}
 		}
 		if (DEBUG) {

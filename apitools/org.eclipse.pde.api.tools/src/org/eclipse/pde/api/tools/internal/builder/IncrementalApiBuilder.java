@@ -26,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
@@ -225,6 +226,13 @@ public class IncrementalApiBuilder {
 			}
 			buildContext(project, state, visitor.changes, depprojects);
 			build(project, baseline, wbaseline, state, buildstate, localmonitor.newChild(1));
+		}
+		catch(OperationCanceledException oce) {
+			//do nothing, but don't forward it
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
+			if(ApiAnalysisBuilder.DEBUG) {
+				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+			}
 		}
 		finally {
 			if(!localmonitor.isCanceled()) {

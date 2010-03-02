@@ -34,6 +34,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
@@ -266,6 +267,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			Util.updateMonitor(localMonitor);
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
+		}
+		catch(OperationCanceledException oce) {
+			//do nothing, but don't forward it
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
+			if(DEBUG) {
+				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+			}
 		}
 		finally {
 			localMonitor.done();
