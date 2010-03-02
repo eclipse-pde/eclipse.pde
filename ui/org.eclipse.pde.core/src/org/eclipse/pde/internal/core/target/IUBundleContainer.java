@@ -329,13 +329,22 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		IProgressMonitor loadMonitor = new SubProgressMonitor(subMonitor, 10);
 		loadMonitor.beginTask(null, repoCount * 10);
 		List metadataRepos = new ArrayList(repoCount);
+		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems loading repositories", null);
 		IMetadataRepositoryManager manager = getRepoManager();
-		for (int i = 0; i < repoCount; ++i)
-			metadataRepos.add(manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10)));
+		for (int i = 0; i < repoCount; ++i) {
+			try {
+				IMetadataRepository repo = manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10));
+				metadataRepos.add(repo);
+			} catch (ProvisionException e) {
+				repoStatus.add(e.getStatus());
+			}
+		}
 		loadMonitor.done();
 
 		IQueryable allMetadata;
-		if (repoCount == 1) {
+		if (repoCount == 0) {
+			throw new CoreException(repoStatus);
+		} else if (repoCount == 1) {
 			allMetadata = (IQueryable) metadataRepos.get(0);
 		} else {
 			allMetadata = QueryUtil.compoundQueryable(metadataRepos);
@@ -466,10 +475,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 					// try repositories
 					URI[] repositories = resolveRepositories();
 					for (int j = 0; j < repositories.length; j++) {
-						IMetadataRepository repository = getRepository(repositories[j]);
-						queryResult = repository.query(query, null);
-						if (!queryResult.isEmpty()) {
-							break;
+						try {
+							IMetadataRepository repository = getRepository(repositories[j]);
+							queryResult = repository.query(query, null);
+							if (!queryResult.isEmpty()) {
+								break;
+							}
+						} catch (ProvisionException e) {
+							// Ignore and move on to the next site
 						}
 					}
 				}
