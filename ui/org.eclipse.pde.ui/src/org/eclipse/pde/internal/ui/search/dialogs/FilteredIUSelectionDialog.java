@@ -6,6 +6,7 @@
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
+*   IBM - Ongoing development
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
@@ -49,7 +50,12 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private class IUWrapperLabelProvider extends LabelProvider implements DelegatingStyledCellLabelProvider.IStyledLabelProvider {
 
-		private PDELabelProvider labelProvider = PDEPlugin.getDefault().getLabelProvider();
+		private PDELabelProvider labelProvider;
+
+		public IUWrapperLabelProvider() {
+			labelProvider = PDEPlugin.getDefault().getLabelProvider();
+			labelProvider.connect(this);
+		}
 
 		public StyledString getStyledText(Object element) {
 			StyledString styledString = new StyledString();
@@ -91,6 +97,10 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		public String getText(Object element) {
 			StyledString string = getStyledText(element);
 			return string.getString();
+		}
+
+		public void dispose() {
+			labelProvider.disconnect(this);
 		}
 	}
 

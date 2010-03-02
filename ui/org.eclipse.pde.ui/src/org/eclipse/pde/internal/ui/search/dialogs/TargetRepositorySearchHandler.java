@@ -78,6 +78,8 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
 		ITargetDefinition definition = currentTarget.getTargetDefinition();
 		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(units, repositories);
+		// Force the target into slicer mode as all requirements may not be available
+		container.setIncludeAllRequired(false, definition);
 		IBundleContainer[] oldContainers = definition.getBundleContainers();
 		if (oldContainers == null) {
 			definition.setBundleContainers(new IBundleContainer[] {container});
