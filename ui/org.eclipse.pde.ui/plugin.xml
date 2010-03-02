@@ -545,7 +545,7 @@
             name="%target.reposearch.name">
          <commandParameter
                id="org.eclipse.pde.ui.searchTargetRepositories.term"
-               name="searchPattern"
+               name="%commandParameter.name"
                optional="true">
          </commandParameter>
       </command>

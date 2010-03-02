@@ -2875,4 +2875,7 @@ public class PDEUIMessages extends NLS {
 	public static String VersionDialog_text;
 	public static String VersionDialog_title;
 
+	public static String SearchRepositoriesForIUProposal_message;
+	public static String SearchRepositoriesForIUProposal_description;
+
 }
