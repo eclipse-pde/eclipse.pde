@@ -47,7 +47,10 @@ public class FeatureBlock {
 
 	class FeatureTreeLabelProvider extends PDELabelProvider {
 		public Image getColumnImage(Object obj, int index) {
-			return index == 0 ? super.getColumnImage(obj, index) : null;
+			if (index == 0 && obj instanceof String) {
+				return getImage(fModelProvider.getFeatureModel((String) obj));
+			}
+			return super.getColumnImage(obj, index);
 		}
 
 		public String getColumnText(Object obj, int index) {
@@ -317,20 +320,18 @@ public class FeatureBlock {
 	public void createControl(Composite parent, int span, int indent) {
 		fListener = new ButtonSelectionListener();
 
-		Composite treeComposite = SWTFactory.createComposite(parent, 2, span, GridData.FILL_BOTH, 0, 0);
-		createCheckBoxTree(treeComposite, indent);
-		createButtonContainer(treeComposite, 10);
+		Composite composite = SWTFactory.createComposite(parent, 1, span, GridData.FILL_BOTH, 0, 0);
 
-		Composite defaultsCombo = SWTFactory.createComposite(parent, 2, span, GridData.FILL_HORIZONTAL, 0, 0);
+		Group treeGroup = SWTFactory.createGroup(composite, PDEUIMessages.FeatureBlock_FeatureGroup, 2, 1, GridData.FILL_BOTH);
+		SWTFactory.createLabel(treeGroup, PDEUIMessages.FeatureBlock_FeatureGroupDescription, 2);
+		createCheckBoxTree(treeGroup);
+		createButtonContainer(treeGroup, 10);
 
-		Label label = SWTFactory.createLabel(defaultsCombo, PDEUIMessages.FeatureBlock_defaultFeatureLocation, 1);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent = indent;
-		label.setLayoutData(gd);
+		Group defaultsCombo = SWTFactory.createGroup(composite, PDEUIMessages.FeatureBlock_DefaultLocationGroup, 2, 1, GridData.FILL_HORIZONTAL);
+		SWTFactory.createLabel(defaultsCombo, PDEUIMessages.FeatureBlock_DefaultLocationGroupDescription, 2);
+		SWTFactory.createLabel(defaultsCombo, PDEUIMessages.FeatureBlock_defaultFeatureLocation, 1);
 		fDefaultFeatureLocationCombo = SWTFactory.createCombo(defaultsCombo, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore});
-
-		label = SWTFactory.createLabel(defaultsCombo, PDEUIMessages.FeatureBlock_defaultPluginResolution, 1);
-		label.setLayoutData(gd);
+		SWTFactory.createLabel(defaultsCombo, PDEUIMessages.FeatureBlock_defaultPluginResolution, 1);
 		fDefaultPluginResolutionCombo = SWTFactory.createCombo(defaultsCombo, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore});
 
 		fDefaultFeatureLocationCombo.addSelectionListener(fListener);
@@ -341,13 +342,12 @@ public class FeatureBlock {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
-	private void createCheckBoxTree(Composite parent, int indent) {
+	private void createCheckBoxTree(Composite parent) {
 		ITreeContentProvider contentProvider = new PluginContentProvider();
 		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, contentProvider, null, SWT.FULL_SELECTION);
 		tree.getPatternFilter().setIncludeLeadingWildcard(true);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalIndent = indent;
 		tree.setLayoutData(gd);
 		fTree = tree.getCheckboxTreeViewer();
 

@@ -68,6 +68,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_defaultFeatureLocation;
 
+	public static String FeatureBlock_DefaultLocationGroup;
+
+	public static String FeatureBlock_DefaultLocationGroupDescription;
+
 	public static String FeatureBlock_defaultPluginResolution;
 
 	public static String FeatureBlock_features;
@@ -77,6 +81,10 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureBlock_pluginResolution;
 
 	public static String FeatureBlock_externalBefore;
+
+	public static String FeatureBlock_FeatureGroup;
+
+	public static String FeatureBlock_FeatureGroupDescription;
 
 	public static String FeatureBlock_version;
 
