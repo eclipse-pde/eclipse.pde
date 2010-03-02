@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.core.importing.IBundleImporter;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -43,7 +45,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.importing.BundleImportDescription;
-import org.eclipse.pde.core.importing.IBundleImporter;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;

@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.core.importing;
+package org.eclipse.pde.internal.core.importing;
+
+import org.eclipse.pde.core.importing.IBundleImporterDelegate;
 
 /**
  * A bundle importer represents an instance of a bundle importer extension.
