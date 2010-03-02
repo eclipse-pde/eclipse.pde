@@ -2558,6 +2558,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CVSBundleImportPage_2;
 
+	public static String CVSBundleImportPage_3;
+
 	public static String PluginsView_description;
 
 	public static String LocationSection_0;
