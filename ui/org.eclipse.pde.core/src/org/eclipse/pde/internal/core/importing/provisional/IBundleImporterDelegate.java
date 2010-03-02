@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.core.importing;
+package org.eclipse.pde.internal.core.importing.provisional;
 
 import java.util.Map;
 import org.eclipse.core.resources.IProject;
@@ -31,6 +31,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * </p>
  * <p>
  * Clients contributing bundle importer extensions are intended to implement this interface.
+ * </p>
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the PDE team.
  * </p>
  * @since 3.6
  * @noextend This interface is not intended to be extended by clients.

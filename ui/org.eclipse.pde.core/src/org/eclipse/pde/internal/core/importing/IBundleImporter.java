@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.importing;
 
-import org.eclipse.pde.core.importing.IBundleImporterDelegate;
+import org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate;
 
 /**
  * A bundle importer represents an instance of a bundle importer extension.

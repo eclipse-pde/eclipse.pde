@@ -13,8 +13,9 @@ package org.eclipse.pde.internal.core.importing;
 import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.importing.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+import org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate;
 
 /**
  * A bundle importer extension.

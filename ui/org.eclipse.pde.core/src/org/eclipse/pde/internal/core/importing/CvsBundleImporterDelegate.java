@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.importing;
 
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+import org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.importing.BundleImportDescription;
-import org.eclipse.pde.core.importing.IBundleImporterDelegate;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.team.core.*;

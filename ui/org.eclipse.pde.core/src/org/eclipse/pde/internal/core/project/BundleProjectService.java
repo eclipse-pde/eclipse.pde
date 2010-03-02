@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+
 import org.eclipse.pde.internal.core.importing.IBundleImporter;
 
 import org.eclipse.pde.internal.core.importing.BundleImporterExtension;
 
-import org.eclipse.pde.core.importing.BundleImportDescription;
 
 import java.io.*;
 import java.util.*;

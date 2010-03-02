@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+
 import org.eclipse.pde.internal.core.importing.IBundleImporter;
 
 import java.io.File;
@@ -55,7 +57,6 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.importing.BundleImportDescription;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;

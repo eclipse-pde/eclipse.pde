@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.core.importing;
+package org.eclipse.pde.internal.core.importing.provisional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,12 @@ import java.util.Map;
  * implement model specific behavior and include model specific data in import
  * descriptions.
  * </p> 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the PDE team.
+ * </p>
  * @since 3.6
  */
 public class BundleImportDescription {

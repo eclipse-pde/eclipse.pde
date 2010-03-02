@@ -8,17 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui;
+package org.eclipse.pde.internal.ui.provisional;
 
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.core.importing.BundleImportDescription;
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 
 /**
  * A wizard page contributed by a <code>org.eclipse.pde.ui.bundleImportPages</code>
  * extension.
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the PDE team.
+ * </p>
  * @since 3.6
- *
  */
 public interface IBundeImportWizardPage extends IWizardPage {
 	/**

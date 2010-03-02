@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
+
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+
 import org.eclipse.pde.internal.core.importing.IBundleImporter;
 
 import java.io.File;
@@ -44,7 +48,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.importing.BundleImportDescription;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -67,7 +70,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
-import org.eclipse.pde.ui.IBundeImportWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;

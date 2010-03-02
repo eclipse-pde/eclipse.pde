@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
+
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -19,11 +23,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.importing.BundleImportDescription;
 import org.eclipse.pde.internal.core.importing.CvsBundleImportDescription;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
-import org.eclipse.pde.ui.IBundeImportWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;

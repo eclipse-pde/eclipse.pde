@@ -3,17 +3,20 @@
 <schema targetNamespace="org.eclipse.pde.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.pde.ui" id="bundleImportPages" name="%expoint.bundleImportPages.name"/>
+         <meta.schema plugin="org.eclipse.pde.ui" id="bundleImportPages" name="Bundle Import Pages"/>
       </appInfo>
       <documentation>
-         A bundle import page provides a wizard page that can be used in the Plug-in import wizard to configure settings for bundles to be imported by a &lt;code&gt;org.eclipse.pde.core.bundleImporters&lt;/code&gt; extension.
+         &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This extension point has been added as part of a work in progress. There is no guarantee that this API will work or that it will remain the same in future releases. Please do not use this API without consulting with the PDE team.
+&lt;p&gt;
+A bundle import page provides a wizard page that can be used in the Plug-in import wizard to configure settings for bundles to be imported by a &lt;code&gt;org.eclipse.pde.core.bundleImporters&lt;/code&gt; extension.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element />
+            <meta.element internal="true" />
          </appInfo>
       </annotation>
       <complexType>
@@ -59,10 +62,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Fully qualified name of a Java class providing an implementation of &lt;code&gt;org.eclipse.pde.ui.IBundeImportWizardPage&lt;/code&gt;.
+                  Fully qualified name of a Java class providing an implementation of &lt;code&gt;org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.ui.IBundeImportWizardPage"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -114,7 +117,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         Value of a page&apos;s &lt;b&gt;class&lt;/b&gt; attribute must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.pde.ui.IBundeImportWizardPage&lt;/b&gt;.
+         Value of a page&apos;s &lt;b&gt;class&lt;/b&gt; attribute must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage&lt;/b&gt;.
       </documentation>
    </annotation>
 

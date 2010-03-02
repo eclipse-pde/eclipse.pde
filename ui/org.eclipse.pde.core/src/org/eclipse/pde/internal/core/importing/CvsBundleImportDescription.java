@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.importing;
 
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+
 import java.util.Map;
-import org.eclipse.pde.core.importing.BundleImportDescription;
 
 /**
  * Describes a bundle to be imported by CVS.

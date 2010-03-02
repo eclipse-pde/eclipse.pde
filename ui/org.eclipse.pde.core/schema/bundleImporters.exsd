@@ -6,14 +6,17 @@
          <meta.schema plugin="org.eclipse.pde.core" id="bundleImporters" name="Bundle Importers"/>
       </appInfo>
       <documentation>
-         A bundle importer is capable of creating a project in the workspace based on specific entries contained in a bundle manifest. An importer can register for one or more bundle headers, identified by name. By default, a bundle importer is registered for the &apos;Eclipse-SourceReferences&apos; header.
+         &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This extension point has been added as part of a work in progress. There is no guarantee that this API will work or that it will remain the same in future releases. Please do not use this API without consulting with the PDE team.
+&lt;p&gt;
+A bundle importer is capable of creating a project in the workspace based on specific entries contained in a bundle manifest. An importer can register for one or more bundle headers, identified by name. By default, a bundle importer is registered for the &apos;Eclipse-SourceReferences&apos; header.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element />
+            <meta.element internal="true" />
          </appInfo>
       </annotation>
       <complexType>
@@ -52,10 +55,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Fully qualified name of a Java class providing an implementation of &lt;code&gt;org.eclipse.pde.core.importing.IBundleImporterDelegate&lt;/code&gt; for this handler.
+                  Fully qualified name of a Java class providing an implementation of &lt;code&gt;org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate&lt;/code&gt; for this handler.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.core.importing.IBundleImporterDelegate"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -123,7 +126,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         Value of a importer&apos;s &lt;b&gt;class&lt;/b&gt; attribute must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.pde.core.importing.IBundleImporterDelegate&lt;/b&gt;.
+         Value of a importer&apos;s &lt;b&gt;class&lt;/b&gt; attribute must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate&lt;/b&gt;.
       </documentation>
    </annotation>
 
