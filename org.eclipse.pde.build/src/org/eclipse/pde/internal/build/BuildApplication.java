@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,102 +12,30 @@ package org.eclipse.pde.internal.build;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.osgi.framework.Bundle;
 
 public class BuildApplication implements IApplication {
-
-	class ApplicationContext implements IApplicationContext {
-
-		IApplicationContext parent;
-		Map arguments;
-
-		ApplicationContext(IApplicationContext parent, Map arguments) {
-			this.parent = parent;
-			this.arguments = arguments;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#applicationRunning()
-		 */
-		public void applicationRunning() {
-			parent.applicationRunning();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#getArguments()
-		 */
-		public Map getArguments() {
-			return arguments;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#getBrandingApplication()
-		 */
-		public String getBrandingApplication() {
-			return parent.getBrandingApplication();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#getBrandingBundle()
-		 */
-		public Bundle getBrandingBundle() {
-			return parent.getBrandingBundle();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#getBrandingDescription()
-		 */
-		public String getBrandingDescription() {
-			return parent.getBrandingDescription();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#getBrandingId()
-		 */
-		public String getBrandingId() {
-			return parent.getBrandingId();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#getBrandingName()
-		 */
-		public String getBrandingName() {
-			return parent.getBrandingName();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.equinox.app.IApplicationContext#getBrandingProperty(java.lang.String)
-		 */
-		public String getBrandingProperty(String key) {
-			return parent.getBrandingProperty(key);
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	public Object start(IApplicationContext context) throws Exception {
-		Platform.endSplash();
+		//take down splash
+		context.applicationRunning();
+
 		IExtension extension = Platform.getExtensionRegistry().getExtension("org.eclipse.ant.core.antRunner"); //$NON-NLS-1$
 		if (extension == null)
 			return null;
 		IConfigurationElement element = extension.getConfigurationElements()[0];
 		Object ee = element.createExecutableExtension("run"); //$NON-NLS-1$
-		Object args = context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
-		args = updateArgs((String[]) args);
+		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		args = updateArgs(args);
 
-		if (ee instanceof IApplication) {
-			// create a copy of this context arguments
-			Map arguments = new HashMap(context.getArguments());
-			// add the updated args as a key for launching antRunner
-			arguments.put(IApplicationContext.APPLICATION_ARGS, args);
-			IApplicationContext appContext = new ApplicationContext(context, arguments);
-			return ((IApplication) ee).start(appContext);
+		if (ee instanceof AntRunner) {
+			return ((AntRunner) ee).run(args);
 		}
 		// else it is probably an old IPlatformRunnable
 		return doPlatformRunnable(ee, args);
@@ -125,7 +53,7 @@ public class BuildApplication implements IApplication {
 		return null;
 	}
 
-	private Object updateArgs(String[] args) throws IOException {
+	private String[] updateArgs(String[] args) throws IOException {
 		for (int i = 0; i < args.length; i++) {
 			String string = args[i];
 			if (string.equals("-f") || string.equals("-buildfile")) //$NON-NLS-1$ //$NON-NLS-2$
