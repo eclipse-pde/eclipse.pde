@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2010 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,7 +166,10 @@ public class ActiveMenuSection implements ISpySection {
 			toolkit.generatePluginDetailsText(bundle, null, "menu item", buffer, text); //$NON-NLS-1$
 
 		} catch (Exception e) {
-			createActionContributionItemText(object, buffer, toolkit, text, clazz.getSuperclass(), pluginAction);
+			Class superclass = clazz.getSuperclass();
+			if (superclass != null) {
+				createActionContributionItemText(object, buffer, toolkit, text, superclass, pluginAction);
+			}
 		}
 	}
 
