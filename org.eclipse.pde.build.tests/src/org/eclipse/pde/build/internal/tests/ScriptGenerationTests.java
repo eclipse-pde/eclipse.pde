@@ -4,7 +4,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: IBM Corporation - initial API and implementation
+ * Contributors: IBM Corporation - initial API and implementation <br>
+ * Andrew Eisenberg - bug 303960 tests
  ******************************************************************************/
 
 package org.eclipse.pde.build.internal.tests;
@@ -13,10 +14,11 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.tools.ant.*;
-import org.apache.tools.ant.taskdefs.Parallel;
+import org.apache.tools.ant.taskdefs.*;
 import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -1696,4 +1698,413 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 	}
 
+	// Tests sourceFileExtensions attribute in build.properties
+	public void test303960sourceFileExtensions1() throws Exception {
+		IFolder buildFolder = newTest("303960_sourceFileExtensions1");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Utils.writeBuffer(plugin.getFile("src/Foo.java"), new StringBuffer("public class Foo { int i; }"));
+		Utils.writeBuffer(plugin.getFile("src/Bar.aj"), new StringBuffer("public aspect Bar { int i; }"));
+
+		Properties props = new Properties();
+		props.put("sourceFileExtensions", "*.java,   *.aj, *.groovy");
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildScript = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildScript);
+
+		// check the excludes directive for copying files over
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
+		Enumeration rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		RuntimeConfigurable configurable = (RuntimeConfigurable) rc.nextElement();
+		assertEquals(configurable.getElementTag(), "exclude");
+		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.aj");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.groovy");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/package.htm*");
+		assertFalse("Should have only found 4 filter elements", rc.hasMoreElements());
+
+		// check the includes directive for copying source files
+		Target copySource = (Target) antProject.getTargets().get("copy.src.zip");
+		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
+		rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		configurable = (RuntimeConfigurable) rc.nextElement();
+		assertEquals(configurable.getElementTag(), "include");
+		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.aj");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.groovy");
+		assertFalse("Should have only found 3 filter elements", rc.hasMoreElements());
+
+		// check the includes directive for zipping source files
+		Target zipSource = (Target) antProject.getTargets().get("zip.src.zip");
+		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
+		rc = (Enumeration) ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		configurable = (RuntimeConfigurable) rc.nextElement();
+		assertEquals(configurable.getElementTag(), "include");
+		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.aj");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.groovy");
+		assertFalse("Should have only found 3 filter elements", rc.hasMoreElements());
+	}
+
+	// Tests sourceFileExtensions attribute in build.properties
+	public void test303960sourceFileExtensions2() throws Exception {
+		IFolder buildFolder = newTest("303960_sourceFileExtensions2");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Utils.writeBuffer(plugin.getFile("src/Foo.java"), new StringBuffer("public class Foo { int i; }"));
+		Utils.writeBuffer(plugin.getFile("src/Bar.aj"), new StringBuffer("public aspect Bar { int i; }"));
+
+		Properties props = new Properties();
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildScript = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildScript);
+
+		// check the excludes directive for copying files over
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
+		Enumeration rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/package.htm*");
+		assertFalse("Should have only found 2 filter elements", rc.hasMoreElements());
+
+		// check the includes directive for copying source files
+		Target copySource = (Target) antProject.getTargets().get("copy.src.zip");
+		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
+		rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
+		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
+
+		// check the includes directive for zipping source files
+		Target zipSource = (Target) antProject.getTargets().get("zip.src.zip");
+		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
+		rc = (Enumeration) ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
+		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
+	}
+
+	// Tests compilerAdapter attribute in build.properties
+	public void test303960compilerAdapter() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerAdapter");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+		Object compiler = javac.getRuntimeConfigurableWrapper().getAttributeMap().get("compiler");
+		assertEquals("Incorrect compiler adapter", "org.foo.someCompilerAdapter", compiler);
+	}
+
+	// Tests compilerAdapter.useLog attribute in build.properties
+	public void test303960compilerAdapterUseLog1() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerAdapterUseLog1");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+					return;
+				}
+			}
+		}
+		fail("Should have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
+	}
+
+	// Tests compilerAdapter.useLog attribute in build.properties
+	public void test303960compilerAdapterUseLog2() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerAdapterUseLog2");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		props.put("compilerAdapter.useLog", "true");
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+					return;
+				}
+			}
+		}
+		fail("Should have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
+	}
+
+	// Tests compilerAdapter.useLog attribute in build.properties
+	public void test303960compilerAdapterUseLog3() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerAdapterUseLog3");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		props.put("compilerAdapter.useLog", "false");
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+					fail("Should not have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
+				}
+			}
+		}
+	}
+
+	// Tests compilerAdapter.useArgFile attribute in build.properties
+	public void test303960compilerAdapterUseArgFile1() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile1");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		props.put("javacErrors..", "error"); // force writing an args file
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+					return;
+				}
+			}
+		}
+		fail("Should have found compiler log entry:\n@${basedir}/javaCompiler...args");
+	}
+
+	// Tests compilerAdapter.useArgFile attribute in build.properties
+	public void test303960compilerAdapterUseArgFile2() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile2");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		props.put("compilerAdapter.useArgFile", "true");
+		props.put("javacErrors..", "error"); // force writing an args file
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+					return;
+				}
+			}
+		}
+		fail("Should have found compiler log entry:\n@${basedir}/javaCompiler...args");
+	}
+
+	// Tests compilerAdapter.useArgFile attribute in build.properties
+	public void test303960compilerAdapterUseArgFile3() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile3");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		props.put("compilerAdapter.useArgFile", "false");
+		props.put("javacErrors..", "error"); // force writing an args file
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+					fail("Should not have found compiler log entry:\n@${basedir}/javaCompiler...args");
+				}
+			}
+		}
+	}
+
+	// Tests compilerArgs attribute in build.properties
+	public void test303960compilerArgs1() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerArgs1");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerArg", "-foo -bar baz");
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("line") && "-foo -bar baz".equals(rc.getAttributeMap().get("line"))) {
+					return;
+				}
+			}
+		}
+		fail("Should have found compiler log entry:\n-foo -bar baz");
+	}
+
+	// Tests compilerArgs attribute in build.properties
+	public void test303960compilerArgs2() throws Exception {
+		IFolder buildFolder = newTest("303960_compilerArgs2");
+		Utils.createFolder(buildFolder, "plugins");
+
+		//Create Plugin
+		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
+		plugin.create(true, true, null);
+		Utils.generateBundle(plugin, "Plugin");
+		Properties props = new Properties();
+		props.put("compilerAdapter", "org.foo.someCompilerAdapter");
+		props.put("compilerArg", "-foo -bar baz");
+		Utils.generatePluginBuildProperties(plugin, props);
+
+		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "Plugin"));
+
+		assertResourceFile(plugin, "build.xml");
+		IFile buildxml = plugin.getFile("build.xml");
+		Project antProject = assertValidAntScript(buildxml);
+		Target dot = (Target) antProject.getTargets().get("@dot");
+		Javac javac = (Javac) AntUtils.getFirstChildByName(dot, "javac");
+
+		// check that the build file contains the expected lines
+		Enumeration en = javac.getRuntimeConfigurableWrapper().getChildren();
+		while (en.hasMoreElements()) {
+			RuntimeConfigurable rc = (RuntimeConfigurable) en.nextElement();
+			if ("compilerarg".equals(rc.getElementTag())) {
+				if (rc.getAttributeMap().containsKey("line") && "-foo -bar baz".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+					return;
+				}
+			}
+		}
+		fail("Should have found compiler log entry:\n-foo -bar baz");
+	}
 }
