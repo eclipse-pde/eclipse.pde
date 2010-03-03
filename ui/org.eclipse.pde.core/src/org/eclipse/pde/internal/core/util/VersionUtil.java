@@ -74,7 +74,7 @@ public class VersionUtil {
 		if (version == null)
 			return true;
 		version = version.trim();
-		return version.isEmpty() || version.equals(Version.emptyVersion.toString());
+		return version.length() == 0 || version.equals(Version.emptyVersion.toString());
 	}
 
 	public static boolean isCompatibleWith(Version v1, Version v2) {
