@@ -236,20 +236,22 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			}
 			String root = split[2];
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("scm:cvs:"); //$NON-NLS-1$
+			buffer.append("scm:cvs"); //$NON-NLS-1$
+			buffer.append(sep);
 			buffer.append(protocol);
-			buffer.append(':');
+			buffer.append(sep);
 			buffer.append(host);
-			buffer.append(':');
+			buffer.append(sep);
 			buffer.append(root);
 
-			buffer.append(':');
+			buffer.append(sep);
 			buffer.append(module);
 
 			Path modulePath = new Path(module);
 			if (!modulePath.lastSegment().equals(projectName)) {
-				buffer.append(";project="); //$NON-NLS-1$
+				buffer.append(";project=\""); //$NON-NLS-1$
 				buffer.append(projectName);
+				buffer.append('"');
 			}
 
 			if (tagName != null) {
