@@ -115,6 +115,9 @@
          <description>
             %new.pluginProject.description
          </description>
+         <keywordReference
+               id="org.eclipse.pde.ui.pde">
+         </keywordReference>
       </wizard>
       <wizard
             category="org.eclipse.pde.PDE"
@@ -127,6 +130,9 @@
          <description>
             %new.pluginWithJarsProject.description
          </description>
+         <keywordReference
+               id="org.eclipse.pde.ui.pde">
+         </keywordReference>
       </wizard>
       <wizard
             name="%new.fragmentProject.name"
@@ -228,6 +234,9 @@
          <description>
             %PluginImportWizard.description
          </description>
+         <keywordReference
+               id="org.eclipse.pde.ui.pde">
+         </keywordReference>
       </wizard>
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
@@ -265,6 +274,9 @@
          <selection
                class="org.eclipse.core.resources.IProject">
          </selection>
+         <keywordReference
+               id="org.eclipse.pde.ui.pde">
+         </keywordReference>
       </wizard>
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
