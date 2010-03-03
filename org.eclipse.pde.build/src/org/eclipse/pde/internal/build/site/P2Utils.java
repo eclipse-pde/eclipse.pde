@@ -152,7 +152,7 @@ public class P2Utils {
 						info.setStartLevel(refactoredRuntime ? 4 : 2);
 						info.setMarkedAsStarted(true);
 					} else if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
-						info.setStartLevel(1);
+						info.setStartLevel(2);
 						info.setMarkedAsStarted(true);
 					} else {
 						info.setStartLevel(defaultStartLevel);

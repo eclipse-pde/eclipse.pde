@@ -401,7 +401,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				if ((style & CONFIG_INCLUDES_DS) > 0) {
 					//org.eclipse.equinox.ds@1:start
 					buffer.append(BUNDLE_DS);
-					buffer.append(START_LEVEL_1);
+					buffer.append(START_LEVEL_2);
 					buffer.append(',');
 				}
 				//org.eclipse.core.runtime
@@ -457,7 +457,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					if (BUNDLE_EQUINOX_COMMON.equals(id)) {
 						buffer.append(START_LEVEL_2);
 					} else if (BUNDLE_DS.equals(id)) {
-						buffer.append(START_LEVEL_1);
+						buffer.append(START_LEVEL_2);
 					} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
 						if ((style & CONFIG_STYLE_REFACTORED) > 0) {
 							buffer.append(START);
