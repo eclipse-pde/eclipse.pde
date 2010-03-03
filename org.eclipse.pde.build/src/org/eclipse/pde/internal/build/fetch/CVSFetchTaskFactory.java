@@ -59,9 +59,6 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	private static final String PROP_FILETOCHECK = "fileToCheck"; //$NON-NLS-1$
 	private static final String PROP_ELEMENTNAME = "elementName"; //$NON-NLS-1$
 
-	//Associated repository provider
-	private static final String CVS_DIRECTIVES = ";type:=psf;provider:=\"org.eclipse.team.cvs.core.cvsnature\""; //$NON-NLS-1$
-
 	private void generateAuthentificationAntTask(Map entryInfos, IAntScript script) {
 		String password = (String) entryInfos.get(KEY_PASSWORD);
 		String cvsPassFileLocation = (String) entryInfos.get(KEY_CVSPASSFILE);
@@ -213,7 +210,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		if (repoLocation != null && projectName != null) {
 			String sourceURLs = asReference(repoLocation, module != null ? module : projectName, projectName, tag);
 			if (sourceURLs != null) {
-				entryInfos.put(Constants.KEY_SOURCE_REFERENCES, sourceURLs + CVS_DIRECTIVES);
+				entryInfos.put(Constants.KEY_SOURCE_REFERENCES, sourceURLs);
 			}
 		}
 	}
@@ -249,8 +246,11 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			buffer.append(':');
 			buffer.append(module);
 
-			buffer.append(";project="); //$NON-NLS-1$
-			buffer.append(projectName);
+			Path modulePath = new Path(module);
+			if (!modulePath.lastSegment().equals(projectName)) {
+				buffer.append(";project="); //$NON-NLS-1$
+				buffer.append(projectName);
+			}
 
 			if (tagName != null) {
 				buffer.append(";tag="); //$NON-NLS-1$

@@ -87,9 +87,9 @@ public class FetchTests extends PDETestCase {
 		IFile sourceRefsFile = buildFolder.getFile(IPDEBuildConstants.DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR);
 		assertResourceFile(sourceRefsFile);
 		Properties sourceRefs = Utils.loadProperties(sourceRefsFile);
-		assertEquals(sourceRefs.get("org.eclipse.cvs,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;project=org.eclipse.cvs;tag=v20090520;type:=psf;provider:=\"org.eclipse.team.cvs.core.cvsnature\"");
-		assertEquals(sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;project=org.eclipse.team.cvs.core;tag=I20090430-0408;type:=psf;provider:=\"org.eclipse.team.cvs.core.cvsnature\"");
-		assertEquals(sourceRefs.get("org.eclipse.team.cvs.ssh2,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.ssh2;project=org.eclipse.team.cvs.ssh2;tag=I20090508-2000;type:=psf;provider:=\"org.eclipse.team.cvs.core.cvsnature\"");
+		assertEquals(sourceRefs.get("org.eclipse.cvs,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;tag=v20090520");
+		assertEquals(sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;tag=I20090430-0408");
+		assertEquals(sourceRefs.get("org.eclipse.team.cvs.ssh2,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.ssh2;tag=I20090508-2000");
 	}
 
 	public void testBug248767_2() throws Exception {
