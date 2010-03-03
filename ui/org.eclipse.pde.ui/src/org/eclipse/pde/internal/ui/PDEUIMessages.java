@@ -64,6 +64,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_addRequiredFeatues;
 
+	public static String FeatureBlock_validate;
+
 	public static String FeatureBlock_default;
 
 	public static String FeatureBlock_defaultFeatureLocation;

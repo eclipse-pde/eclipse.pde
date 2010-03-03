@@ -63,7 +63,7 @@ public class BundleLauncherHelper {
 				return map;
 			}
 
-			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true)) {
+			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
 				String value = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, ""); //$NON-NLS-1$
 				String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, LOCATION_WORKSPACE);
 				String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, LOCATION_WORKSPACE);

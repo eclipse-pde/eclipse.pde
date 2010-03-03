@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
@@ -29,6 +28,7 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.PluginsTab;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -82,12 +82,35 @@ public class FeatureBlock {
 				handleAddRequired();
 			} else if (source == fDefaultsButton) {
 				handleRestoreDefaults();
+			} else if (source == fValidateButton) {
+				handleValidate();
 			} else if (source == fDefaultFeatureLocationCombo) {
 				handleDefaultLocationChange();
 			} else if (source instanceof TreeColumn) {
 				handleColumn((TreeColumn) source, 0);
 			}
 			fTab.updateLaunchConfigurationDialog();
+		}
+
+		private void handleValidate() {
+			if (fOperation == null)
+				fOperation = new EclipsePluginValidationOperation(fLaunchConfig);
+			try {
+				fOperation.run(new NullProgressMonitor());
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+			}
+			if (fOperation.hasErrors()) {
+				PluginStatusDialog dialog = new PluginStatusDialog(getShell(), SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
+				dialog.setInput(fOperation.getInput());
+				dialog.open();
+				dialog = null;
+			} else if (fOperation.isEmpty()) {
+				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+			} else {
+				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
+			}
+
 		}
 
 		private void handleAddRequired() {
@@ -302,6 +325,7 @@ public class FeatureBlock {
 	private Button fDefaultsButton;
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
+	private Button fValidateButton;
 
 	private Combo fDefaultFeatureLocationCombo;
 	private Combo fDefaultPluginResolutionCombo;
@@ -310,6 +334,7 @@ public class FeatureBlock {
 	private ButtonSelectionListener fListener;
 	private AbstractLauncherTab fTab;
 	private CachedCheckboxTreeViewer fTree;
+	private LaunchValidationOperation fOperation;
 
 	public FeatureBlock(PluginsTab pluginsTab) {
 		Assert.isNotNull(pluginsTab);
@@ -411,23 +436,6 @@ public class FeatureBlock {
 			}
 		});
 		fTree.setAllChecked(true);
-
-		/*		TreeViewerColumn tvc = new TreeViewerColumn(fTree, column3);
-				tvc.setLabelProvider(new CellLabelProvider() {
-					public void update(ViewerCell cell) {
-						String id = (String) cell.getElement();
-						Display display = fTree.getTree().getDisplay();
-						Color gray = display.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-						Color white = display.getSystemColor(SWT.COLOR_WHITE);
-						if (fModelProvider.isCommon(id) && fTree.getChecked(id)) {
-							cell.setBackground(white);
-						} else {
-							cell.setBackground(gray);
-						}
-						FeatureTreeLabelProvider provider = (FeatureTreeLabelProvider) fTree.getLabelProvider();
-						cell.setText(provider.getColumnText(id, COLUMN_FEATURE_LOCATION));
-					}
-				});*/
 	}
 
 	private void createButtonContainer(Composite parent, int vOffset) {
@@ -448,6 +456,8 @@ public class FeatureBlock {
 		countComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
 		fCounter = new Label(countComp, SWT.NONE);
 		updateCounter();
+
+		fValidateButton = createButton(buttonComp, PDEUIMessages.FeatureBlock_validate, SWT.PUSH);
 	}
 
 	private Button createButton(Composite composite, String text, int style) {
@@ -458,11 +468,6 @@ public class FeatureBlock {
 		button.addSelectionListener(fListener);
 		return button;
 	}
-
-	/*	private Object getFeatures(String defaultLocation) {
-			fModelProvider = new FeatureLaunchModelProvider();
-			return fModelProvider.getIDArray();
-		}*/
 
 	private String getLocationConstant(String value) {
 		if (PDEUIMessages.FeatureBlock_workspaceBefore.equalsIgnoreCase(value)) {
@@ -570,5 +575,15 @@ public class FeatureBlock {
 			int total = fModelProvider.size();
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
 		}
+	}
+
+	protected Shell getShell() {
+		try {
+			Control c = fTab.getControl();
+			if (!c.isDisposed())
+				return c.getShell();
+		} catch (SWTException e) {
+		}
+		return PDEPlugin.getActiveWorkbenchShell();
 	}
 }
