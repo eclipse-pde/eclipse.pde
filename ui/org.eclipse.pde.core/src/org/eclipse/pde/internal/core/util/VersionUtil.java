@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,6 +60,21 @@ public class VersionUtil {
 		} catch (RuntimeException e) {
 		}
 		return version1.equals(version2);
+	}
+
+	/**
+	 * Returns true if the given version number is an empty version as
+	 * defined by {@link Version}. Used in cases where it would be
+	 * inappropriate to parse the actual version number.
+	 * 
+	 * @param version version string to check
+	 * @return true if empty version
+	 */
+	public static boolean isEmptyVersion(String version) {
+		if (version == null)
+			return true;
+		version = version.trim();
+		return version.isEmpty() || version.equals(Version.emptyVersion.toString());
 	}
 
 	public static boolean isCompatibleWith(Version v1, Version v2) {

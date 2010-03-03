@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import java.util.*;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Version;
@@ -131,20 +125,23 @@ public class FeatureModelManager {
 	 * Finds active model with a given id and version
 	 * 
 	 * @param id
-	 * @param version
+	 * @param version version number to find, newest version is returned for empty version.
 	 * @return one IFeature model or null
 	 */
 	public IFeatureModel findFeatureModel(String id, String version) {
 		init();
 		IFeatureModel[] models = fActiveModels.get(id, version);
+
+		if (VersionUtil.isEmptyVersion(version)) {
+			return findFeatureModel(id);
+		}
+
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].isValid()) {
 				return models[i];
 			}
 		}
-		if (models.length == 0 && "0.0.0".equals(version)) { //$NON-NLS-1$
-			return findFeatureModel(id);
-		}
+
 		return null;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -293,14 +294,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(IProductFeature obj) {
-		String name = obj.getId();
-		String version = obj.getVersion().length() > 0 ? obj.getVersion() : "0.0.0"; //$NON-NLS-1$
-		String text;
-		if (version != null && version.length() > 0)
-			text = name + ' ' + formatVersion(obj.getVersion());
-		else
-			text = name;
-		return preventNull(text);
+		String name = preventNull(obj.getId());
+		if (VersionUtil.isEmptyVersion(obj.getVersion()))
+			return name;
+		return name + ' ' + formatVersion(obj.getVersion());
 	}
 
 	public String getObjectText(ISiteFeature obj) {
