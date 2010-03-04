@@ -105,7 +105,9 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 	}
 
 	protected Publisher createPublisher(PublisherInfo publisherInfo) {
-		return new Publisher(publisherInfo, result);
+		if (result != null)
+			return new Publisher(publisherInfo, result);
+		return new Publisher(publisherInfo);
 	}
 
 	public void setAppend(boolean value) {

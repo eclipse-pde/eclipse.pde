@@ -809,4 +809,44 @@ public class P2Tests extends P2TestCase {
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
 	}
+
+	public void testBug304736() throws Exception {
+		IFolder buildFolder = newTest("304736");
+
+		StringBuffer customBuffer = new StringBuffer();
+		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/allElements.xml\"/>	\n");
+		customBuffer.append("   <target name=\"allElementsDelegator\">												\n");
+		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
+		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
+		customBuffer.append("         <property name=\"id\" value=\"F1\" />											\n");
+		customBuffer.append("      </ant>																			\n");
+		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
+		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
+		customBuffer.append("         <property name=\"id\" value=\"F2\" />											\n");
+		customBuffer.append("      </ant>																			\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("</project>																				\n");
+		Utils.writeBuffer(buildFolder.getFile("allElements.xml"), customBuffer);
+
+		Utils.generateFeature(buildFolder, "F1", null, new String[] {"A"});
+		Utils.generateFeature(buildFolder, "F2", null, new String[] {"B"});
+
+		IFolder A = Utils.createFolder(buildFolder, "plugins/a");
+		IFolder B = Utils.createFolder(buildFolder, "plugins/b");
+		Utils.generateBundle(A, "A");
+		Utils.generateBundle(B, "B");
+
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "yummy");
+		properties.put("p2.publish.artifacts", "false");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+		//test passes if there was no build failure
+	}
 }
