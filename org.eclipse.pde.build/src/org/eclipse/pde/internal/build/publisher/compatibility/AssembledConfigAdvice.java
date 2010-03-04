@@ -12,9 +12,11 @@ package org.eclipse.pde.internal.build.publisher.compatibility;
 
 import java.io.File;
 import java.util.*;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.core.helpers.CollectionUtils;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.DataLoader;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.*;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.ConfigData;
+import org.eclipse.equinox.internal.provisional.frameworkadmin.LauncherData;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.publisher.eclipse.IConfigAdvice;
 import org.eclipse.equinox.p2.publisher.eclipse.IExecutableAdvice;

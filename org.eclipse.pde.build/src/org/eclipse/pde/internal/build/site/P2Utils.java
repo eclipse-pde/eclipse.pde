@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.*;
 
@@ -25,11 +24,6 @@ import org.eclipse.pde.internal.build.*;
  * @since 3.4
  */
 public class P2Utils {
-
-	private static final String SRC_BUNDLE_TXT_FOLDER = "org.eclipse.equinox.source"; //$NON-NLS-1$
-	private static final String BUNDLE_TXT_FOLDER = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
-	private static final String SRC_BUNDLE_TXT_PATH = SRC_BUNDLE_TXT_FOLDER + "/source.info"; //$NON-NLS-1$
-	public static final String BUNDLE_TXT_PATH = BUNDLE_TXT_FOLDER + "/bundles.info"; //$NON-NLS-1$
 
 	/**
 	 * Returns bundles defined by the 'bundles.info' file in the
@@ -46,13 +40,14 @@ public class P2Utils {
 		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
 
 		File root = new File(platformHome);
-		File bundlesTxt = new File(root, "configuration/" + BUNDLE_TXT_PATH); //$NON-NLS-1$
-		File sourceTxt = new File(root, "configuration/" + SRC_BUNDLE_TXT_PATH); //$NON-NLS-1$
+		File bundlesTxt = new File(root, "configuration/" + SimpleConfiguratorManipulator.BUNDLES_INFO_PATH); //$NON-NLS-1$
+		File sourceTxt = new File(root, "configuration/" + SimpleConfiguratorManipulator.SOURCE_INFO_PATH); //$NON-NLS-1$
 
 		List infos = new ArrayList();
 		try {
-			infos.addAll(Arrays.asList(manipulator.loadConfiguration(bundlesTxt.toURL(), root)));
-			infos.addAll(Arrays.asList(manipulator.loadConfiguration(sourceTxt.toURL(), root)));
+			//streams are closed for us
+			infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(bundlesTxt), root.toURI())));
+			infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(sourceTxt), root.toURI())));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -166,8 +161,8 @@ public class P2Utils {
 			}
 		}
 
-		File bundlesTxt = new File(directory, BUNDLE_TXT_PATH);
-		File srcBundlesTxt = new File(directory, SRC_BUNDLE_TXT_PATH);
+		File bundlesTxt = new File(directory, SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
+		File srcBundlesTxt = new File(directory, SimpleConfiguratorManipulator.SOURCE_INFO_PATH);
 		File base = directory.getParentFile();
 
 		BundleInfo[] infos = (BundleInfo[]) bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
@@ -175,8 +170,8 @@ public class P2Utils {
 
 		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
 		try {
-			manipulator.saveConfiguration(infos, bundlesTxt, base);
-			manipulator.saveConfiguration(sources, srcBundlesTxt, base);
+			manipulator.saveConfiguration(infos, bundlesTxt, base.toURI());
+			manipulator.saveConfiguration(sources, srcBundlesTxt, base.toURI());
 		} catch (IOException e) {
 			return null;
 		}

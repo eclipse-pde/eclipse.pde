@@ -11,7 +11,8 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.build.site.*;
@@ -358,7 +359,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (bundlesTxt != null) {
 			buffer.append(SIMPLE_CONFIGURATOR_CONFIG_URL);
 			buffer.append("=file:"); //$NON-NLS-1$
-			buffer.append(P2Utils.BUNDLE_TXT_PATH);
+			buffer.append(SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
 			buffer.append("\n"); //$NON-NLS-1$
 		}
 	}

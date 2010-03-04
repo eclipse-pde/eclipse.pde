@@ -26,6 +26,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.equinox.p2.repository.tools;bundle-version="[2.0.0,3.0.0)";resolution:=optional,
  org.eclipse.equinox.p2.director.app;bundle-version="1.0.200"
 Import-Package: com.ibm.icu.util,
+ org.eclipse.equinox.frameworkadmin;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.internal.p2.core.helpers,
  org.eclipse.equinox.internal.p2.engine,
  org.eclipse.equinox.internal.p2.engine.phases,
@@ -33,13 +34,13 @@ Import-Package: com.ibm.icu.util,
  org.eclipse.equinox.internal.p2.updatesite;resolution:=optional,
  org.eclipse.equinox.internal.provisional.frameworkadmin,
  org.eclipse.equinox.internal.provisional.p2.core,
- org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator,
  org.eclipse.equinox.p2.core;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.metadata;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.query;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.repository;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.repository.artifact;version="[2.0.0,3.0.0)",
  org.eclipse.equinox.p2.repository.artifact.spi;version="[2.0.0,3.0.0)",
- org.eclipse.equinox.p2.repository.metadata;version="[2.0.0,3.0.0)"
+ org.eclipse.equinox.p2.repository.metadata;version="[2.0.0,3.0.0)",
+ org.eclipse.equinox.simpleconfigurator.manipulator;version="[2.0.0,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
