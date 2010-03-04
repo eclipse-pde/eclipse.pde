@@ -104,6 +104,8 @@ public interface IPDELauncherConstants {
 	 * The workspace must be set up properly for the feature-based self-hosting
 	 * to succeed.
 	 * Check the PDE Tips and Tricks section for how to set up feature-based self-hosting.
+	 * 
+	 * @deprecated As of 3.6 the feature-based self-hosting option is not supported
 	 */
 	String USEFEATURES = "usefeatures"; //$NON-NLS-1$
 
@@ -403,9 +405,14 @@ public interface IPDELauncherConstants {
 	String GENERATE_PROFILE = "generateProfile"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is a string specifying
-	 * a comma-separated list of IDs of features to launch with.
-	 * 
+	 * Launch configuration attribute key. The value is a List specifying the features
+	 * to include when launching (when {@link #USE_CUSTOM_FEATURES} is set to <code>true</code>.
+	 * The values in the List are strings that contain the id and plugin resolution value as follows:
+	 * <pre>
+	 * [feature_id]:[resolution]
+	 * </pre>
+	 * The resolution must be one of {@link #LOCATION_DEFAULT}, {@link #LOCATION_EXTERNAL}, {@link #LOCATION_WORKSPACE}
+	 *  
 	 * @since 3.6
 	 */
 	String SELECTED_FEATURES = "selected_features"; //$NON-NLS-1$
@@ -422,7 +429,8 @@ public interface IPDELauncherConstants {
 
 	/**
 	 * Launch configuration attribute key. The value is a String specifying
-	 * if the default location for a feature is workspace or external. 
+	 * if the default location for a feature is {@link #LOCATION_WORKSPACE} 
+	 * or {@link #LOCATION_EXTERNAL} 
 	 * 
 	 *  @since 3.6
 	 */
@@ -431,9 +439,38 @@ public interface IPDELauncherConstants {
 	/**
 	 * Launch configuration attribute key. The value is a String specifying
 	 * if the default plug-in resolution location for a feature 
-	 * is workspace or external. 
+	 * is {@link #LOCATION_WORKSPACE} or {@link #LOCATION_EXTERNAL} 
 	 * 
 	 *  @since 3.6
 	 */
 	String FEATURE_PLUGIN_RESOLUTION = "featurePluginResolution"; //$NON-NLS-1$
+
+	/**
+	 * Value for a launch configuration attribute used when the object should be
+	 * obtained from whatever the default location is for this works
+	 * 
+	 * @since 3.6
+	 * @see #FEATURE_PLUGIN_RESOLUTION
+	 */
+	String LOCATION_DEFAULT = "default"; //$NON-NLS-1$
+
+	/**
+	 * Value for a launch configuration attribute used when the object should
+	 * be obtained from an external location over the workspace.
+	 * 
+	 * @since 3.6
+	 * @see #FEATURE_DEFAULT_LOCATION
+	 * @see #FEATURE_PLUGIN_RESOLUTION
+	 */
+	String LOCATION_EXTERNAL = "external"; //$NON-NLS-1$
+
+	/**
+	 * Value for a launch configuration attribute used when the object should
+	 * be obtained from the workspace over an external location.
+	 * 
+	 * @since 3.6
+	 * @see #FEATURE_DEFAULT_LOCATION
+	 * @see #FEATURE_PLUGIN_RESOLUTION
+	 */
+	String LOCATION_WORKSPACE = "workspace"; //$NON-NLS-1$
 }

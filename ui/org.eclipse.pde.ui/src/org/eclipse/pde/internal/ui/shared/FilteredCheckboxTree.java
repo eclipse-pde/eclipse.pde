@@ -54,9 +54,21 @@ public class FilteredCheckboxTree extends FilteredTree {
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 */
 	public FilteredCheckboxTree(Composite parent, ITreeContentProvider contentProvider, FormToolkit toolkit, int treeStyle) {
+		this(parent, contentProvider, toolkit, treeStyle, new PatternFilter());
+	}
+
+	/**
+	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
+	 * 
+	 * @param parent parent composite
+	 * @param contentProvider Used to determine which elements are leaf nodes
+	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
+	 * @param filter pattern filter to use in the filter control
+	 */
+	public FilteredCheckboxTree(Composite parent, ITreeContentProvider contentProvider, FormToolkit toolkit, int treeStyle, PatternFilter filter) {
 		super(parent, true);
 		fToolkit = toolkit;
-		init(treeStyle, new PatternFilter());
+		init(treeStyle, filter);
 	}
 
 	/* (non-Javadoc)

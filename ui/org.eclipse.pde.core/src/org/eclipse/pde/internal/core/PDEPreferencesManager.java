@@ -147,7 +147,7 @@ public final class PDEPreferencesManager {
 	 * 
 	 * @param key key whose associated value is to be returned as an <code>int</code>.
 	 * @return the <code>int</code> value associated with <code>key</code>, or
-	 *         <code>null</code> if the associated value does not exist in either scope or cannot
+	 *         <code>0</code> if the associated value does not exist in either scope or cannot
 	 *         be interpreted as an <code>int</code>.
 	 * @see #setValue(String, int)
 	 * @see #setDefault(String, int)

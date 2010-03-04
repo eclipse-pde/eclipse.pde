@@ -11,7 +11,6 @@
 package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
@@ -39,7 +38,6 @@ public class PluginsTab extends AbstractLauncherTab {
 
 	private Image fImage;
 
-	private boolean fShowFeatures = true;
 	private Combo fSelectionCombo;
 	private BlockAdapter fPluginBlock;
 	private Combo fDefaultAutoStart;
@@ -49,7 +47,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int CUSTOM_SELECTION = 1;
 	private static final int CUSTOM_FEATURE_SELECTION = 2;
-	private static final int FEATURE_SELECTION = 3;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
@@ -75,7 +72,9 @@ public class PluginsTab extends AbstractLauncherTab {
 	 *
 	 */
 	public PluginsTab() {
-		this(true);
+		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
+		fPluginBlock = new BlockAdapter(new PluginBlock(this), new FeatureBlock(this));
+		fListener = new Listener();
 	}
 
 	/**
@@ -83,12 +82,10 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * 
 	 * @param showFeatures  a flag indicating if the tab should present the feature-based 
 	 * self-hosting option.
+	 * @deprecated As of 3.6 the feature-based workspace launch option is no longer available, so there is no need to set this flag
 	 */
 	public PluginsTab(boolean showFeatures) {
-		fShowFeatures = showFeatures;
-		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
-		fPluginBlock = new BlockAdapter(new PluginBlock(this), new FeatureBlock(this));
-		fListener = new Listener();
+		this();
 	}
 
 	/*
@@ -112,7 +109,7 @@ public class PluginsTab extends AbstractLauncherTab {
 
 		SWTFactory.createLabel(buttonComp, PDEUIMessages.PluginsTab_launchWith, 1);
 
-		fSelectionCombo = SWTFactory.createCombo(buttonComp, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_customFeatureMode, PDEUIMessages.PluginsTab_featureMode});
+		fSelectionCombo = SWTFactory.createCombo(buttonComp, SWT.READ_ONLY | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_customFeatureMode});
 		fSelectionCombo.select(DEFAULT_SELECTION);
 		fSelectionCombo.addSelectionListener(fListener);
 
@@ -152,8 +149,8 @@ public class PluginsTab extends AbstractLauncherTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			int index = DEFAULT_SELECTION;
-			if (fShowFeatures && configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-				index = FEATURE_SELECTION;
+			if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
+				index = CUSTOM_FEATURE_SELECTION;
 			} else if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
 				index = CUSTOM_FEATURE_SELECTION;
 			} else if (!configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
@@ -178,8 +175,8 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-		if (fShowFeatures)
-			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, false);
+		// The use features option was removed in 3.6
+		configuration.removeAttribute(IPDELauncherConstants.USEFEATURES);
 		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		fPluginBlock.setDefaults(configuration);
 	}
@@ -191,8 +188,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		int index = fSelectionCombo.getSelectionIndex();
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, index == DEFAULT_SELECTION);
-		if (fShowFeatures)
-			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, index == FEATURE_SELECTION);
 		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, index == CUSTOM_FEATURE_SELECTION);
 		fPluginBlock.performApply(configuration);
 		// clear default values for auto-start and start-level if default
@@ -237,13 +232,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void validateTab() {
 		String errorMessage = null;
-		if (fShowFeatures && fSelectionCombo.getSelectionIndex() == FEATURE_SELECTION) {
-			IPath workspacePath = PDEPlugin.getWorkspace().getRoot().getLocation();
-			IPath featurePath = workspacePath.removeLastSegments(1).append("features"); //$NON-NLS-1$
-			if (!workspacePath.lastSegment().equalsIgnoreCase("plugins") //$NON-NLS-1$
-					|| !featurePath.toFile().exists())
-				errorMessage = PDEUIMessages.AdvancedLauncherTab_error_featureSetup;
-		}
 		setErrorMessage(errorMessage);
 	}
 

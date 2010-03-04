@@ -26,9 +26,6 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 public class BundleLauncherHelper {
 
 	public static final char VERSION_SEPARATOR = '*';
-	private static final String LOCATION_DEFAULT = "Default"; //$NON-NLS-1$
-	private static final String LOCATION_EXTERNAL = "External"; //$NON-NLS-1$
-	private static final String LOCATION_WORKSPACE = "Workspace"; //$NON-NLS-1$
 
 	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
 		return getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.WORKSPACE_BUNDLES);
@@ -64,24 +61,11 @@ public class BundleLauncherHelper {
 			}
 
 			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
-				String value = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, ""); //$NON-NLS-1$
-				String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, LOCATION_WORKSPACE);
-				String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, LOCATION_WORKSPACE);
+				// Get the default location settings
+				String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+				String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 
-				HashMap featureLocationMap = new HashMap();
-				HashMap featurePluginResolutionMap = new HashMap();
-				if (value.length() != 0) {
-					String[] features = value.split(";"); //$NON-NLS-1$
-					if (features != null && features.length > 0) {
-						for (int i = 0; i < features.length; i++) {
-							String[] attributes = features[i].split(":"); //$NON-NLS-1$
-							String id = attributes[0];
-							featureLocationMap.put(id, attributes[1]);
-							featurePluginResolutionMap.put(id, attributes[2]);
-						}
-					}
-				}
-
+				// Get all available features
 				HashMap workspaceFeatureMap = new HashMap();
 				HashMap externalFeatureMap = new HashMap();
 
@@ -102,26 +86,42 @@ public class BundleLauncherHelper {
 				}
 				efmm.shutdown();
 
-				PluginModelManager pluginModelMgr = new PluginModelManager();
-				for (Iterator iterator = featureLocationMap.keySet().iterator(); iterator.hasNext();) {
-					String id = (String) iterator.next();
-					String location = (String) featureLocationMap.get(id);
-					IFeatureModel featureModel = null;
-					if (LOCATION_DEFAULT.equalsIgnoreCase(location)) {
-						location = defaultLocation;
+				// Get the selected features and their plugin resolution
+				Map featureResolutionMap = new HashMap();
+				Set selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set) null);
+				if (selectedFeatures != null) {
+					for (Iterator iterator = selectedFeatures.iterator(); iterator.hasNext();) {
+						String currentSelected = (String) iterator.next();
+						String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
+						if (attributes.length > 1) {
+							featureResolutionMap.put(attributes[0], attributes[1]);
+						}
 					}
-					if (LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
+				}
+
+				// Get the feature model for each selected feature id and resolve its plugins
+				Set launchPlugins = new HashSet();
+				PluginModelManager pluginModelMgr = new PluginModelManager();
+				for (Iterator iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
+					String id = (String) iterator.next();
+					String location = (String) featureResolutionMap.get(id);
+
+					IFeatureModel featureModel = null;
+					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
 						featureModel = (IFeatureModel) workspaceFeatureMap.get(id);
 					}
-					if (featureModel == null || LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
-						featureModel = (IFeatureModel) externalFeatureMap.get(id);
+					if (featureModel == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultLocation)) {
+						if (externalFeatureMap.containsKey(id)) {
+							featureModel = (IFeatureModel) externalFeatureMap.get(id);
+						}
 					}
 					if (featureModel == null) {
 						continue;
 					}
+
 					IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
-					String pluginResolution = (String) featurePluginResolutionMap.get(id);
-					if (LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
+					String pluginResolution = (String) featureResolutionMap.get(id);
+					if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
 						pluginResolution = defaultPluginResolution;
 					}
 
@@ -131,15 +131,15 @@ public class BundleLauncherHelper {
 							continue;
 						}
 						IPluginModelBase model = null;
-						if (LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
+						if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
 							model = getBestCandidateModel(modelEntry.getWorkspaceModels());
 						}
-						if (model == null || LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+						if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
 							model = getBestCandidateModel(modelEntry.getExternalModels());
 						}
 						if (model == null || map.containsKey(model))
 							continue;
-						addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
+						launchPlugins.add(model);
 					}
 
 					IFeatureImport[] featureImports = featureModel.getFeature().getImports();
@@ -150,19 +150,45 @@ public class BundleLauncherHelper {
 								continue;
 							}
 							IPluginModelBase model = null;
-							if (LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
+							if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
 								model = getBestCandidateModel(modelEntry.getWorkspaceModels());
-							} else if (LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+							} else if (IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
 								model = getBestCandidateModel(modelEntry.getExternalModels());
 							}
 
 							if (model == null || map.containsKey(model))
 								continue;
-							addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
+							launchPlugins.add(model);
 						}
 					}
 				}
 
+				// Get all required plugins
+				// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
+				Set additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+				Iterator it = additionalIds.iterator();
+				while (it.hasNext()) {
+					String id = (String) it.next();
+					ModelEntry modelEntry = pluginModelMgr.findEntry(id);
+					if (modelEntry == null) {
+						continue;
+					}
+					IPluginModelBase model = null;
+					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultPluginResolution)) {
+						model = getBestCandidateModel(modelEntry.getWorkspaceModels());
+					}
+					if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultPluginResolution)) {
+						model = getBestCandidateModel(modelEntry.getExternalModels());
+					}
+					if (model == null || map.containsKey(model))
+						continue;
+					launchPlugins.add(model);
+				}
+
+				// Create the start levels for the selected plugins and add them to the map
+				for (Iterator iterator = launchPlugins.iterator(); iterator.hasNext();) {
+					addBundleToMap(map, (IPluginModelBase) iterator.next(), "default:default"); //$NON-NLS-1$
+				}
 				return map;
 			}
 		}
@@ -339,7 +365,7 @@ public class BundleLauncherHelper {
 		StringBuffer buffer = new StringBuffer(id);
 
 		ModelEntry entry = PluginRegistry.findEntry(id);
-		if (entry.getActiveModels().length > 1) {
+		if (entry != null && entry.getActiveModels().length > 1) {
 			buffer.append(VERSION_SEPARATOR);
 			buffer.append(model.getPluginBase().getVersion());
 		}
@@ -447,44 +473,4 @@ public class BundleLauncherHelper {
 			wc.doSave();
 	}
 
-	public static String writeFeatureEntry(String id, String location, String resolution) {
-		StringBuffer buffer = new StringBuffer();
-
-		buffer.append(id);
-		buffer.append(':');
-		buffer.append(location);
-		buffer.append(':');
-		buffer.append(resolution);
-		buffer.append(';');
-
-		return buffer.toString();
-	}
-
-	public static ArrayList getFeatureMaps(ILaunchConfiguration config, HashMap featureVersionMap, HashMap featureLocationMap, HashMap pluginResolutionMap) throws CoreException {
-		HashMap versionMap = new HashMap();
-		HashMap locationMap = new HashMap();
-		HashMap resolutionMap = new HashMap();
-		ArrayList selectedFeatureList = new ArrayList();
-		String value = config.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, ""); //$NON-NLS-1$
-		if (value.length() != 0) {
-			String[] features = value.split(";"); //$NON-NLS-1$
-			if (features != null && features.length > 0) {
-				for (int i = 0; i < features.length; i++) {
-					String[] attributes = features[i].split(":"); //$NON-NLS-1$
-					selectedFeatureList.add(attributes[0]);
-					versionMap.put(attributes[0], attributes[1]);
-					locationMap.put(attributes[0], attributes[2]);
-					resolutionMap.put(attributes[0], attributes[3]);
-				}
-			}
-		}
-
-		if (featureVersionMap != null)
-			featureVersionMap.putAll(versionMap);
-		if (featureLocationMap != null)
-			featureLocationMap.putAll(locationMap);
-		if (resolutionMap != null)
-			pluginResolutionMap.putAll(resolutionMap);
-		return selectedFeatureList;
-	}
 }

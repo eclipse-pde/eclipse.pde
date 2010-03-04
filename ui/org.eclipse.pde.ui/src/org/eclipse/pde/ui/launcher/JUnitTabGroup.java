@@ -28,7 +28,7 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
-		tabs = new ILaunchConfigurationTab[] {new TestTab(), new PluginJUnitMainTab(), new JavaArgumentsTab(), new PluginsTab(false), new ConfigurationTab(true), new TracingTab(), new EnvironmentTab(), new CommonTab()};
+		tabs = new ILaunchConfigurationTab[] {new TestTab(), new PluginJUnitMainTab(), new JavaArgumentsTab(), new PluginsTab(), new ConfigurationTab(true), new TracingTab(), new EnvironmentTab(), new CommonTab()};
 		setTabs(tabs);
 	}
 

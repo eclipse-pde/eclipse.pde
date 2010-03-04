@@ -64,29 +64,19 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_addRequiredFeatues;
 
-	public static String FeatureBlock_validate;
-
 	public static String FeatureBlock_default;
-
-	public static String FeatureBlock_defaultFeatureLocation;
-
-	public static String FeatureBlock_DefaultLocationGroup;
-
-	public static String FeatureBlock_DefaultLocationGroupDescription;
 
 	public static String FeatureBlock_defaultPluginResolution;
 
 	public static String FeatureBlock_features;
 
-	public static String FeatureBlock_featureLocation;
-
 	public static String FeatureBlock_pluginResolution;
 
 	public static String FeatureBlock_externalBefore;
 
-	public static String FeatureBlock_FeatureGroup;
-
 	public static String FeatureBlock_FeatureGroupDescription;
+
+	public static String FeatureBlock_UseWorkspaceFeatures;
 
 	public static String FeatureBlock_version;
 
@@ -248,8 +238,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginSection_includeOptional;
 
 	public static String PluginsTab_allPlugins;
-
-	public static String PluginsTab_featureMode;
 
 	public static String PluginsTab_customFeatureMode;
 
@@ -903,7 +891,6 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedPluginExportPage_noPassword;
 	public static String AdvancedFeatureExportPage_createJNLP;
 	public static String AdvancedFeatureExportPage_jreVersion;
-	public static String AdvancedLauncherTab_error_featureSetup;
 	public static String AdvancedPluginExportPage_qualifier;
 
 	public static String TracingLauncherTab_name;
