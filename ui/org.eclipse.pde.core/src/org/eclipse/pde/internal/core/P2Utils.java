@@ -17,8 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.provisional.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.engine.*;
@@ -26,11 +25,11 @@ import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.VersionRange;
 import org.eclipse.equinox.p2.planner.ProfileInclusionRules;
+import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BundleHelper;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.osgi.framework.Constants;
 
@@ -40,11 +39,6 @@ import org.osgi.framework.Constants;
  * @since 3.4
  */
 public class P2Utils {
-
-	private static final String SRC_INFO_FOLDER = "org.eclipse.equinox.source"; //$NON-NLS-1$
-	private static final String BUNDLE_INFO_FOLDER = IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR;
-	private static final String SRC_INFO_PATH = SRC_INFO_FOLDER + File.separator + "source.info"; //$NON-NLS-1$
-	private static final String BUNDLE_INFO_PATH = BUNDLE_INFO_FOLDER + File.separator + "bundles.info"; //$NON-NLS-1$
 
 	public static final String P2_FLAVOR_DEFAULT = "tooling"; //$NON-NLS-1$
 
@@ -114,7 +108,7 @@ public class P2Utils {
 			return null;
 		}
 		try {
-			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), new File(configurationArea.getFile(), BUNDLE_INFO_PATH).getAbsolutePath());
+			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), new File(configurationArea.getFile(), SimpleConfiguratorManipulator.BUNDLES_INFO_PATH).getAbsolutePath());
 			File home = basePath.toFile();
 			BundleInfo bundles[] = getBundlesFromFile(bundlesTxt, home);
 			if (bundles == null || bundles.length == 0) {
@@ -147,7 +141,7 @@ public class P2Utils {
 		}
 		try {
 			File home = basePath.toFile();
-			URL srcBundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(SRC_INFO_PATH));
+			URL srcBundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(SimpleConfiguratorManipulator.SOURCE_INFO_PATH));
 			BundleInfo srcBundles[] = getBundlesFromFile(srcBundlesTxt, home);
 			if (srcBundles == null || srcBundles.length == 0) {
 				return null;
@@ -190,7 +184,8 @@ public class P2Utils {
 		if (manipulator == null) {
 			return null;
 		}
-		return manipulator.loadConfiguration(fileURL, home);
+		// the input stream will be buffered and closed for us
+		return manipulator.loadConfiguration(fileURL.openStream(), home.toURI());
 	}
 
 	/**
@@ -287,8 +282,8 @@ public class P2Utils {
 			}
 		}
 
-		File bundlesTxt = new File(directory, BUNDLE_INFO_PATH);
-		File srcBundlesTxt = new File(directory, SRC_INFO_PATH);
+		File bundlesTxt = new File(directory, SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
+		File srcBundlesTxt = new File(directory, SimpleConfiguratorManipulator.SOURCE_INFO_PATH);
 
 		BundleInfo[] infos = (BundleInfo[]) bundleInfo.toArray(new BundleInfo[bundleInfo.size()]);
 		BundleInfo[] sources = (BundleInfo[]) sourceInfo.toArray(new BundleInfo[sourceInfo.size()]);

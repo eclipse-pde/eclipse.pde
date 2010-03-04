@@ -10,24 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
-
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-
-
-
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
-
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
-
 import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class TargetDefinitionResolutionTests extends AbstractTargetTest {

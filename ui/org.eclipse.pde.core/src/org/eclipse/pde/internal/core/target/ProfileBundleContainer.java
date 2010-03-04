@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.P2Utils;

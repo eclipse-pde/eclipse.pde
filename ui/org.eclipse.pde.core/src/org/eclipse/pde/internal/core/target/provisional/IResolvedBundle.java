@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.core.target.provisional;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 
 /**
  * A resolved bundle contained in a bundle container of a target definition.

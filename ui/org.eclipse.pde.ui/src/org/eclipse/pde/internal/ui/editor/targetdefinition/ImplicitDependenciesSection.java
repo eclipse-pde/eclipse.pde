@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;

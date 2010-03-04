@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.core.runtime.Platform;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -19,7 +17,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.provisional.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
