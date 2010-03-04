@@ -69,8 +69,7 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_must_search_something;
 	public static String ApiUseScanTab_open_report;
 	public static String ApiUseScanTab_references_to;
-	public static String ApiUseScanTab_regex_problem_search_for;
-	public static String ApiUseScanTab_regex_problem_search_in;
+	public static String ApiUseScanTab_regex_problem;
 	public static String ApiUseScanTab_report_location;
 	public static String ApiUseScanTab_reporting;
 	public static String ApiUseScanTab_search_for;

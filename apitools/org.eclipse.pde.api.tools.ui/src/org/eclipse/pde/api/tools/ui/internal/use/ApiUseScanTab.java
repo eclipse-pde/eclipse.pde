@@ -654,7 +654,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			Pattern.compile(text);
 		}
 		catch(PatternSyntaxException pse) {
-			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem_search_in, pse.getDescription()));
+			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem, pse.getPattern()));
 			return false;
 		}
 		text = this.targetScope.getText().trim();
@@ -662,7 +662,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			Pattern.compile(text);
 		}
 		catch(PatternSyntaxException pse) {
-			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem_search_for, pse.getDescription()));
+			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem, pse.getPattern()));
 			return false;
 		}
 		return true;
