@@ -397,7 +397,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 								ResolverError[] errors = state.getState().getResolverErrors(bundle);
 								//ok if we didn't match the config
 								if (!BuildTimeSite.isConfigError(bundle, errors, configs)) {
-									BuildTimeSite.missingPlugin(bundle, errors, true); //throws CoreException
+									BuildTimeSite.missingPlugin(bundle, errors, null, true); //throws CoreException
 								}
 							} else {
 								//throw error

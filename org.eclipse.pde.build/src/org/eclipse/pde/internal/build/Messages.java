@@ -96,6 +96,7 @@ public class Messages extends NLS {
 	public static String feature_parse_emptyRequires;
 
 	public static String fetching_p2Repo;
+	public static String includedFromFeature;
 
 	static {
 		// load message values from bundle file

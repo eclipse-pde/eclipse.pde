@@ -182,10 +182,12 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		return state;
 	}
 
-	public IStatus missingPlugin(String id, String version, boolean throwException) throws CoreException {
+	public IStatus missingPlugin(String id, String version, Feature containingFeature, boolean throwException) throws CoreException {
 		BundleDescription bundle = state.getBundle(id, version, false);
 		if (bundle == null) {
 			String message = NLS.bind(Messages.exception_missingPlugin, id + "_" + version); //$NON-NLS-1$
+			if (containingFeature != null)
+				message = NLS.bind(Messages.includedFromFeature, containingFeature.getId(), message);
 			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
 			if (throwException)
 				throw new CoreException(status);
@@ -197,14 +199,16 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 			return null;
 
 		ResolverError[] resolutionErrors = state.getState().getResolverErrors(bundle);
-		return missingPlugin(bundle, resolutionErrors, throwException);
+		return missingPlugin(bundle, resolutionErrors, containingFeature, throwException);
 	}
 
-	public static IStatus missingPlugin(BundleDescription bundle, ResolverError[] resolutionErrors, boolean throwException) throws CoreException {
+	public static IStatus missingPlugin(BundleDescription bundle, ResolverError[] resolutionErrors, Feature containingFeature, boolean throwException) throws CoreException {
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(bundle);
 
 		String message = NLS.bind(Messages.exception_unresolvedPlugin, bundle.getSymbolicName() + '_' + bundle.getVersion().toString());
+		if (containingFeature != null)
+			message = NLS.bind(Messages.includedFromFeature, containingFeature.getId(), message);
 		message += ":\n" + BuildTimeSite.getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$
 		for (int j = 0; j < versionErrors.length; j++) {
 			message += '\t' + BuildTimeSite.getResolutionFailureMessage(versionErrors[j]) + '\n';

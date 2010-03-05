@@ -116,7 +116,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 				model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
 			}
 			if (model == null) {
-				getSite(false).missingPlugin(entry.getId(), versionRequested, true);
+				getSite(false).missingPlugin(entry.getId(), versionRequested, feature, true);
 			}
 
 			associateModelAndEntry(model, entry);

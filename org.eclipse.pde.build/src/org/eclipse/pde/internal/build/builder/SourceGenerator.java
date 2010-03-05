@@ -14,8 +14,7 @@ package org.eclipse.pde.internal.build.builder;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.jar.*;
 import java.util.jar.Attributes.Name;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -193,7 +192,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			} else if (extraEntries[i].startsWith("plugin@")) { //$NON-NLS-1$
 				model = getSite().getRegistry().getResolvedBundle((String) items.get(Utils.EXTRA_ID), ((Version) items.get(Utils.EXTRA_VERSION)).toString());
 				if (model == null) {
-					IStatus status = getSite().missingPlugin(id, version.toString(), false);
+					IStatus status = getSite().missingPlugin(id, version.toString(), null, false);
 					BundleHelper.getDefault().getLog().log(status);
 					continue;
 				}
@@ -583,7 +582,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	private FeatureEntry createSourceBundle(BuildTimeFeature sourceFeature, FeatureEntry pluginEntry) throws CoreException {
 		BundleDescription bundle = getSite().getRegistry().getBundle(pluginEntry.getId(), pluginEntry.getVersion(), true);
 		if (bundle == null) {
-			getSite().missingPlugin(pluginEntry.getId(), pluginEntry.getVersion(), true);
+			getSite().missingPlugin(pluginEntry.getId(), pluginEntry.getVersion(), null, true);
 		}
 
 		if (excludedEntries != null && excludedEntries.containsKey(bundle.getSymbolicName())) {
