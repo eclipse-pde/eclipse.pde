@@ -13,10 +13,12 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
+import junit.framework.AssertionFailedError;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
@@ -271,8 +273,11 @@ public class ProductTests extends PDETestCase {
 	public void testBug252246() throws Exception {
 		IFolder buildFolder = newTest("252246");
 
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
 		IFile product = buildFolder.getFile("foo.product");
-		Utils.generateProduct(product, null, "1.0.0", null, new String[] {"A", "org.eclipse.equinox.simpleconfigurator"}, false);
+		Utils.generateProduct(product, null, "1.0.0", null, new String[] {"A", "org.eclipse.equinox.simpleconfigurator", "org.eclipse.swt", "org.eclipse.swt.gtk.linux.x86"}, false);
 
 		IFolder A1 = Utils.createFolder(buildFolder, "plugins/A1");
 		IFolder A2 = Utils.createFolder(buildFolder, "plugins/A2");
@@ -285,11 +290,16 @@ public class ProductTests extends PDETestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
 		properties.put("includeLaunchers", "false");
-		properties.put("baseLocation", "");
-		properties.put("archivesFormat", "*,*,*-folder");
+		properties.put("configs", "win32,win32,x86 & linux,gtk,x86");
+		//properties.put("archivesFormat", "win32,win32,x86-folder");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
+
+		IFolder tmp = Utils.createFolder(buildFolder, "tmp");
+		FileUtils.unzipFile(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86.zip").getLocation().toFile(), tmp.getLocation().toFile());
 
 		File file = buildFolder.getFolder("tmp/eclipse/plugins").getLocation().toFile();
 		String[] a = file.list(new FilenameFilter() {
@@ -299,7 +309,22 @@ public class ProductTests extends PDETestCase {
 		});
 		assertTrue(a.length == 1);
 		String bundleString = a[0].substring(0, a[0].length() - 4); //trim .jar
-		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info"), bundleString);
+
+		//bug 218355
+		IFile info = buildFolder.getFile("tmp/eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info");
+		assertLogContainsLine(info, bundleString);
+		boolean swtNotThere = true;
+		try {
+			assertLogContainsLine(info, "org.eclipse.swt.gtk.linux.x86");
+			swtNotThere = false;
+		} catch (AssertionFailedError e) {
+			//good
+		}
+		assertTrue(swtNotThere);
+
+		IFile gtkInfo = buildFolder.getFile("gtk.info");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-linux.gtk.x86.zip", "eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info", gtkInfo);
+		assertLogContainsLine(gtkInfo, "org.eclipse.swt.gtk.linux.x86");
 	}
 
 	public void testBug265438() throws Exception {

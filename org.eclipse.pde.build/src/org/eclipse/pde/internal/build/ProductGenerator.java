@@ -328,6 +328,12 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	}
 
 	private List getBundlesFromProductFile(Config config) {
+		BundleHelper helper = BundleHelper.getDefault();
+		Dictionary environment = new Hashtable(3);
+		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
+		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
+		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
+
 		List pluginList = productFile.getProductEntries();
 		List results = new ArrayList(pluginList.size());
 		for (Iterator iter = pluginList.iterator(); iter.hasNext();) {
@@ -337,7 +343,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 			BundleDescription bundle = assembly.getPlugin(entry.getId(), entry.getVersion());
 			if (bundle != null) {
-				results.add(bundle);
+				Filter filter = helper.getFilter(bundle);
+				if (filter == null || filter.match(environment))
+					results.add(bundle);
 			}
 		}
 		return results;
