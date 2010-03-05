@@ -104,7 +104,6 @@ public class BundleLauncherHelper {
 				PluginModelManager pluginModelMgr = new PluginModelManager();
 				for (Iterator iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
 					String id = (String) iterator.next();
-					String location = (String) featureResolutionMap.get(id);
 
 					IFeatureModel featureModel = null;
 					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
