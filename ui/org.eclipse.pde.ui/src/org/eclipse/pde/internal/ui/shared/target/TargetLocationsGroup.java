@@ -426,10 +426,12 @@ public class TargetLocationsGroup {
 				boolean hasContainerStatus = false;
 				Collection result = new ArrayList();
 				IBundleContainer[] containers = ((ITargetDefinition) inputElement).getBundleContainers();
-				for (int i = 0; i < containers.length; i++) {
-					result.add(containers[i]);
-					if (containers[i].getStatus() != null && !containers[i].getStatus().isOK()) {
-						hasContainerStatus = true;
+				if (containers != null) {
+					for (int i = 0; i < containers.length; i++) {
+						result.add(containers[i]);
+						if (containers[i].getStatus() != null && !containers[i].getStatus().isOK()) {
+							hasContainerStatus = true;
+						}
 					}
 				}
 				// If a container has a problem, it is displayed as a child, if there is a status outside of the container status (missing bundle, etc.) put it as a separate item
