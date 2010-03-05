@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
+import java.util.ArrayList;
+
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.osgi.framework.Version;
 
 /**
  * The central access point for models representing plug-ins found in the workspace
@@ -28,6 +35,29 @@ import org.eclipse.pde.internal.core.PDECore;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PluginRegistry {
+
+	/**
+	 * Filter used when searching for plug-in models.
+	 * <p>
+	 * Clients may subclass this class to implement custom filters.
+	 * </p>
+	 * @see PluginRegistry#findBundle(String, String, int, PluginFilter)
+	 * @see PluginRegistry#findBundle(String, VersionRange, PluginFilter)
+	 * @since 3.6
+	 */
+	public static class PluginFilter {
+
+		/**
+		 * Returns whether the given model is accepted by this filter.
+		 * 
+		 * @param model plug-in model
+		 * @return whether accepted by this filter
+		 */
+		public boolean accept(IPluginModelBase model) {
+			return true;
+		}
+
+	}
 
 	/**
 	 * Returns a model entry containing all workspace and target plug-ins by the given ID
@@ -185,4 +215,170 @@ public class PluginRegistry {
 		return PDECore.getDefault().getModelManager().getExternalModels();
 	}
 
+	/**
+	 * Returns whether the given model matches the given id, version, and match rule.
+	 * 
+	 * @param base match candidate
+	 * @param id id to match
+	 * @param version version to match or <code>null</code>
+	 * @param match version match rule
+	 * @return whether the model is a match
+	 */
+	private static boolean isMatch(IPluginBase base, String id, String version, int match) {
+		// if version is null, then match any version with same ID
+		if (version == null)
+			return base.getId().equals(id);
+		return VersionUtil.compare(base.getId(), base.getVersion(), id, version, match);
+	}
+
+	/**
+	 * Returns a model matching the given id, version, match rule, and optional filter,
+	 * or <code>null</code> if none.
+	 * p>
+	 * A workspace plug-in is always preferably returned over a target plug-in.
+	 * A plug-in that is checked/enabled on the Target Platform preference page is always
+	 * preferably returned over a target plug-in that is unchecked/disabled.
+	 * </p>
+	 * <p>
+	 * In the case of a tie among workspace plug-ins or among target plug-ins,
+	 * the plug-in with the highest version is returned.
+	 * </p>
+	 * <p>
+	 * In the case of a tie among more than one suitable plug-in that have the same version, 
+	 * one of those plug-ins is randomly returned.
+	 * </p>
+	 * 
+	 * @param id symbolic name of a plug-in to find
+	 * @param version minimum version, or <code>null</code> to only match on symbolic name
+	 * @param match one of {@link IMatchRules#COMPATIBLE}, {@link IMatchRules#EQUIVALENT},
+	 *  {@link IMatchRules#GREATER_OR_EQUAL}, {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE}
+	 *  when a version is unspecified
+	 * @param filter a plug-in filter or <code>null</code> 
+	 * 
+	 * @return a matching model or <code>null</code>
+	 * @since 3.6
+	 */
+	public static IPluginModelBase findModel(String id, String version, int match, PluginFilter filter) {
+		return getMax(findModels(id, version, match, filter));
+	}
+
+	/**
+	 * Returns all models matching the given id, version, match rule, and optional filter.
+	 * <p>
+	 * Target (external) plug-ins/fragments with the same ID as workspace counterparts are not
+	 * considered.
+	 * </p>
+	 * <p>
+	 * Returns plug-ins regardless of whether they are checked/enabled or unchecked/disabled
+	 * on the Target Platform preference page.
+	 * </p>
+	 * @param id symbolic name of a plug-ins to find
+	 * @param version minimum version, or <code>null</code> to only match on symbolic name
+	 * @param match one of {@link IMatchRules#COMPATIBLE}, {@link IMatchRules#EQUIVALENT},
+	 *  {@link IMatchRules#GREATER_OR_EQUAL}, {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE}
+	 *  when a version is unspecified
+	 * @param filter a plug-in filter or <code>null</code> 
+	 * 
+	 * @return a matching models, possibly an empty collection
+	 * @since 3.6
+	 */
+	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
+		IPluginModelBase[] models = PluginRegistry.getAllModels();
+		List results = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if ((filter == null || filter.accept(model)) && isMatch(model.getPluginBase(), id, version, match))
+				results.add(model);
+		}
+		return (IPluginModelBase[]) results.toArray(new IPluginModelBase[results.size()]);
+	}
+
+	/**
+	 * Returns a model matching the given id, version range, and optional filter,
+	 * or <code>null</code> if none.
+	 * <p>
+	 * A workspace plug-in is always preferably returned over a target plug-in.
+	 * A plug-in that is checked/enabled on the Target Platform preference page is always
+	 * preferably returned over a target plug-in that is unchecked/disabled.
+	 * </p>
+	 * <p>
+	 * In the case of a tie among workspace plug-ins or among target plug-ins,
+	 * the plug-in with the highest version is returned.
+	 * </p>
+	 * <p>
+	 * In the case of a tie among more than one suitable plug-in that have the same version, 
+	 * one of those plug-ins is randomly returned.
+	 * </p>
+	 * @param id symbolic name of plug-in to find
+	 * @param range acceptable version range to match, or <code>null</code> for any range
+	 * @param filter a plug-in filter or <code>null</code>
+	 * 
+	 * @return a matching model or <code>null</code>
+	 * @since 3.6
+	 */
+	public static IPluginModelBase findModel(String id, VersionRange range, PluginFilter filter) {
+		return getMax(findModels(id, range, filter));
+	}
+
+	/**
+	 * Returns the plug-in with the highest version, or <code>null</code> if empty.
+	 * 
+	 * @param models models
+	 * @return plug-in with the highest version or <code>null</code>
+	 */
+	private static IPluginModelBase getMax(IPluginModelBase[] models) {
+		if (models.length == 0) {
+			return null;
+		}
+		if (models.length == 1) {
+			return models[0];
+		}
+		IPluginModelBase max = null;
+		Version maxV = null;
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if (max == null) {
+				max = model;
+				maxV = new Version(model.getPluginBase().getVersion());
+			} else {
+				Version version = new Version(model.getPluginBase().getVersion());
+				if (VersionUtil.isGreaterOrEqualTo(version, maxV)) {
+					max = model;
+					maxV = version;
+				}
+			}
+		}
+		return max;
+	}
+
+	/**
+	 * Returns all models matching the given id, version range, and optional filter.
+	 * <p>
+	 * Target (external) plug-ins/fragments with the same ID as workspace counterparts are not
+	 * considered.
+	 * </p>
+	 * <p>
+	 * Returns plug-ins regardless of whether they are checked/enabled or unchecked/disabled
+	 * on the Target Platform preference page.
+	 * </p>
+	 * @param id symbolic name of plug-ins to find
+	 * @param range acceptable version range to match, or <code>null</code> for any range
+	 * @param filter a plug-in filter or <code>null</code>
+	 * 
+	 * @return a matching models, possibly empty
+	 * @since 3.6
+	 */
+	public static IPluginModelBase[] findModels(String id, VersionRange range, PluginFilter filter) {
+		IPluginModelBase[] models = PluginRegistry.getAllModels();
+		List results = new ArrayList();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
+			if ((filter == null || filter.accept(model)) && id.equals(model.getPluginBase().getId())) {
+				if (range == null || range.isIncluded(new Version(model.getPluginBase().getVersion()))) {
+					results.add(model);
+				}
+			}
+		}
+		return (IPluginModelBase[]) results.toArray(new IPluginModelBase[results.size()]);
+	}
 }
