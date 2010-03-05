@@ -226,6 +226,12 @@ public class PluginRegistry {
 	 */
 	private static boolean isMatch(IPluginBase base, String id, String version, int match) {
 		// if version is null, then match any version with same ID
+		if (base == null) {
+			return false; // guard against invalid plug-ins
+		}
+		if (base.getId() == null) {
+			return false; // guard against invalid plug-ins
+		}
 		if (version == null)
 			return base.getId().equals(id);
 		return VersionUtil.compare(base.getId(), base.getVersion(), id, version, match);
