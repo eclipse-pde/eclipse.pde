@@ -436,7 +436,7 @@ public class PluginModelManager implements IModelProviderListener {
 		// Create a state that contains all bundles from the target and workspace
 		// If a workspace bundle has the same symbolic name as a target bundle,
 		// the target counterpart is subsequently removed from the state.
-		fState = new PDEState(fWorkspaceManager.getPluginPaths(), fExternalManager.getPluginPaths(), true, new NullProgressMonitor());
+		fState = new PDEState(fWorkspaceManager.getPluginPaths(), fExternalManager.getPluginPaths(), true, true, new NullProgressMonitor());
 
 		// initialize the enabled/disabled state of target models
 		// based on whether the bundle is checked/unchecked on the Target Platform

@@ -26,6 +26,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.eclipse.pde.internal.core.target.provisional.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class PDEState extends MinimalState {
@@ -88,10 +89,10 @@ public class PDEState extends MinimalState {
 	}
 
 	public PDEState(URL[] urls, boolean resolve, IProgressMonitor monitor) {
-		this(new URL[0], urls, resolve, monitor);
+		this(new URL[0], urls, resolve, false, monitor);
 	}
 
-	public PDEState(URL[] workspace, URL[] target, boolean resolve, IProgressMonitor monitor) {
+	public PDEState(URL[] workspace, URL[] target, boolean resolve, boolean removeTargetDuplicates, IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		fAuxiliaryState = new PDEAuxiliaryState();
 
@@ -100,6 +101,11 @@ public class PDEState extends MinimalState {
 		} else {
 			createNewTargetState(resolve, target, monitor);
 		}
+
+		if (removeTargetDuplicates) {
+			removeDuplicatesFromState(fState);
+		}
+
 		createTargetModels(fState.getBundles());
 
 		if (resolve && workspace.length > 0 && !fNewState && !"true".equals(System.getProperty("pde.nocache"))) //$NON-NLS-1$ //$NON-NLS-2$
@@ -162,7 +168,30 @@ public class PDEState extends MinimalState {
 		fAuxiliaryState.addAuxiliaryData(desc, manifest, hasBundleStructure);
 	}
 
-	public IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
+	/**
+	 * When creating a target state, having duplicates of certain bundles including core runtime cause problems when launching.  The
+	 * {@link LoadTargetDefinitionJob} removes duplicates for us, but on restart the state is created from preferences.  This method
+	 * search the state for bundles with the same ID/Version.  Where multiple bundles are found, all but one are removed from the state.
+	 * 
+	 * @param state state to search for duplicates in
+	 */
+	private void removeDuplicatesFromState(State state) {
+		BundleDescription[] bundles = state.getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			BundleDescription desc = bundles[i];
+			String id = desc.getSymbolicName();
+			BundleDescription[] conflicts = state.getBundles(id);
+			if (conflicts.length > 1) {
+				for (int j = 0; j < conflicts.length; j++) {
+					if (desc.getVersion().equals(conflicts[j].getVersion()) && desc.getBundleId() != conflicts[j].getBundleId()) {
+						fState.removeBundle(desc);
+					}
+				}
+			}
+		}
+	}
+
+	private IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
 		HashMap models = new HashMap((4 / 3) * bundleDescriptions.length + 1);
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			BundleDescription desc = bundleDescriptions[i];
