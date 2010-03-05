@@ -217,7 +217,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// execute the provisioning plan
-		IPhaseSet phases = DefaultPhaseSet.createExcluding(new String[] {DefaultPhaseSet.PHASE_CHECK_TRUST, DefaultPhaseSet.PHASE_CONFIGURE, DefaultPhaseSet.PHASE_UNCONFIGURE, DefaultPhaseSet.PHASE_UNINSTALL});
+		IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE, PhaseSetFactory.PHASE_UNINSTALL});
 		IEngine engine = getEngine();
 		plan.setProfileProperty(AbstractTargetHandle.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_PLANNER);
 		plan.setProfileProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(false));
@@ -387,7 +387,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		plan.setProfileProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
 
 		// execute the provisioning plan
-		IPhaseSet phases = DefaultPhaseSet.createExcluding(new String[] {DefaultPhaseSet.PHASE_CHECK_TRUST, DefaultPhaseSet.PHASE_CONFIGURE, DefaultPhaseSet.PHASE_UNCONFIGURE, DefaultPhaseSet.PHASE_UNINSTALL});
+		IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE, PhaseSetFactory.PHASE_UNINSTALL});
 		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
