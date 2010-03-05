@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jdt.launching.JavaRuntime;
 
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -70,6 +74,24 @@ public class ProjectCreationTests extends TestCase {
 		return new TestSuite(ProjectCreationTests.class);
 	}
 	
+	   /**
+     * Wait for builds to complete
+     */
+    public static void waitForBuild() {
+        boolean wasInterrupted = false;
+        do {
+            try {
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+                wasInterrupted = false;
+            } catch (OperationCanceledException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                wasInterrupted = true;
+            }
+        } while (wasInterrupted);
+    }	
+	
 	/**
 	 * Provides a project for the test case.
 	 * 
@@ -96,6 +118,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		
@@ -147,6 +170,7 @@ public class ProjectCreationTests extends TestCase {
 		IHostDescription host = service.newHost("some.host", null);
 		description.setHost(host);
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
@@ -199,6 +223,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"), new Path("frag.jar"));
 		description.setBundleClassath(new IBundleClasspathEntry[]{e1});
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
@@ -249,6 +274,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClassath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
@@ -308,6 +334,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClassath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
@@ -354,6 +381,7 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.setSingleton(true);
 		description.apply(null);
+		waitForBuild();
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
@@ -409,6 +437,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
@@ -465,12 +494,14 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
+		waitForBuild();
 		
 		// modify
 		IBundleProjectDescription modify = service.getDescription(project);
 		IHostDescription host = service.newHost("host." + project.getName(), new VersionRange("[1.0.0,2.0.0)"));
 		modify.setHost(host);
 		modify.apply(null);
+		waitForBuild();
 		
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -540,6 +571,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleVersion(new Version("2.0.0"));
 		description.setHeader(Constants.BUNDLE_VERSION, "3.2.1");
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
@@ -607,6 +639,7 @@ public class ProjectCreationTests extends TestCase {
 		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
 		description.apply(null);
+		waitForBuild();
 		
 		// modify the project
 		IBundleProjectDescription modify = service.getDescription(project);
@@ -619,6 +652,7 @@ public class ProjectCreationTests extends TestCase {
 		modify.setActivator("org.eclipse.foo.Activator");
 		modify.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		modify.apply(null);
+		waitForBuild();
 		
 		// verify attributes
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -676,6 +710,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setHeader("HeaderOne", "one"); // arbitrary header
 		description.setHost(host);
 		description.apply(null);
+		waitForBuild();
 		
 		//modify to a bundle and remove a header
 		IBundleProjectDescription modify = service.getDescription(project);
@@ -683,6 +718,7 @@ public class ProjectCreationTests extends TestCase {
 		modify.setHeader("HeaderOne", null);
 		modify.setHost(null);
 		modify.apply(null);
+		waitForBuild();
 		
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -742,6 +778,7 @@ public class ProjectCreationTests extends TestCase {
 		// create bogus jar files
 		createBogusJar(project.getFile("one.jar"));
 		createBogusJar(project.getFile(new Path("lib/two.jar")));
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
@@ -828,6 +865,7 @@ public class ProjectCreationTests extends TestCase {
 		// create folders
 		project.getFolder("bin1").create(false, true, null);
 		project.getFolder("bin2").create(false, true, null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		
@@ -883,6 +921,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setLaunchShortcuts(new String[]{"org.eclipse.jdt.debug.ui.javaAppletShortcut"});
 		description.setExportWizardId("org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints");
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		
@@ -951,6 +990,7 @@ public class ProjectCreationTests extends TestCase {
 		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
 		description.setPackageImports(new IPackageImportDescription[]{pi1});
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
@@ -1040,6 +1080,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
@@ -1106,6 +1147,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
@@ -1171,6 +1213,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
+		waitForBuild();
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
@@ -1313,6 +1356,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setPackageExports(new IPackageExportDescription[]{ex1, ex2, ex3});
 		IProject project = description.getProject();
 		description.apply(null);
+		waitForBuild();
 		
 		// should be 12 lines
 		IFile manifest = PDEProject.getManifest(project);
@@ -1325,6 +1369,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		d2.setBundleVersion(new Version("2.0.0"));
 		d2.apply(null);
+		waitForBuild();
 		
 		// should be 12 lines
 		manifest = PDEProject.getManifest(project);
@@ -1353,6 +1398,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setSymbolicName("test.non.bundle.to.bundle");
 		description.setNatureIds(new String[]{IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
 		description.apply(null);
+		waitForBuild();
 		
 		// validate
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(proj);
@@ -1404,6 +1450,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleClasspathEntry entry = getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, null);
 		description.setBundleClassath(new IBundleClasspathEntry[]{entry});
 		description.apply(null);
+		waitForBuild();
 		
 		// validate
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(proj);
