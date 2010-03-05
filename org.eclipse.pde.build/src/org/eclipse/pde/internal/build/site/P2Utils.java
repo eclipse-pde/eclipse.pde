@@ -46,8 +46,10 @@ public class P2Utils {
 		List infos = new ArrayList();
 		try {
 			//streams are closed for us
-			infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(bundlesTxt), root.toURI())));
-			infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(sourceTxt), root.toURI())));
+			if (bundlesTxt.exists())
+				infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(bundlesTxt), root.toURI())));
+			if (sourceTxt.exists())
+				infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(sourceTxt), root.toURI())));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
