@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
@@ -137,8 +136,8 @@ public class RuntimeInstallJob extends Job {
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
-					Version existingVersion = ((IInstallableUnit) queryMatches.iterator().next()).getVersion();
-					toInstall.add(createInstallableUnitPatch(id, newVersion, existingVersion, profile, monitor));
+					IInstallableUnit existingIU = (IInstallableUnit) queryMatches.iterator().next();
+					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, monitor));
 				}
 				monitor.worked(2);
 
@@ -172,15 +171,15 @@ public class RuntimeInstallJob extends Job {
 	 * Creates an installable unit patch that will change the version of
 	 * existing requirements with the given version.
 	 * 
-	 * @param id id of the installable unit that is having a version change
-	 * @param version the new version to require
-	 * @param existingVersion an existing version of the plug-in that this patch will replaced, used to generate lifecycle
+	 * @param existingIU an existing plug-in that this patch will replace, used to generate lifecycle
+	 * @param newVersion the new version to require
 	 * @param profile the profile we are installing in
 	 * @param monitor progress monitor
 	 * @return an installable unit patch
 	 */
-	private IInstallableUnitPatch createInstallableUnitPatch(final String id, final Version version, final Version existingVersion, IProfile profile, IProgressMonitor monitor) {
+	private IInstallableUnitPatch createInstallableUnitPatch(IInstallableUnit existingIU, Version newVersion, IProfile profile, IProgressMonitor monitor) {
 		InstallableUnitPatchDescription iuPatchDescription = new MetadataFactory.InstallableUnitPatchDescription();
+		String id = existingIU.getId();
 		iuPatchDescription.setId(id + ".patch"); //$NON-NLS-1$
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_NAME, NLS.bind(PDEUIMessages.RuntimeInstallJob_installPatchName, id));
 		iuPatchDescription.setProperty(IInstallableUnit.PROP_DESCRIPTION, PDEUIMessages.RuntimeInstallJob_installPatchDescription);
@@ -193,15 +192,14 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.addProvidedCapabilities(list);
 
 		IRequirement applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
-		IRequirement newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(version, true, version, true), null, false, false);
+		IRequirement newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(newVersion, true, newVersion, true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new IRequirementChange[] {MetadataFactory.createRequirementChange(applyTo, newValue)});
 
 		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
 
+		// Locate IU's that appoint the existing version of the IU that we are patching.
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery(//
-				"requirements.exists(rq | rq ~= $0 && rq.name == $1 && rq.range == $2)",//$NON-NLS-1$
-				new Object[] {IRequiredCapability.class, id, new VersionRange(existingVersion, true, existingVersion, true)}), monitor);
+		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", new Object[] {existingIU}), monitor);
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
