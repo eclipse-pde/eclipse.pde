@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -48,13 +45,9 @@ public class JavaSearchActionGroup extends ActionGroup {
 		public void run() {
 			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 			if (!add && store.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH)) {
-				MessageDialog dialog = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.JavaSearchActionGroup_RemoveJavaSearchTitle, null, PDEUIMessages.JavaSearchActionGroup_RemoveJavaSearchMessage, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
-				int result = dialog.open();
-				if (result == 0) {
+				boolean confirm = MessageDialog.openConfirm(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.JavaSearchActionGroup_RemoveJavaSearchTitle, PDEUIMessages.JavaSearchActionGroup_RemoveJavaSearchMessage);
+				if (confirm) {
 					store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, false);
-					handleJavaSearch(add);
-				}
-				if (result == 1) {
 					handleJavaSearch(add);
 				}
 			} else {
