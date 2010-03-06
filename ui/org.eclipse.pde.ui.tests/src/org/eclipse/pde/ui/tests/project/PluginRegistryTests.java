@@ -102,7 +102,14 @@ public class PluginRegistryTests extends TestCase {
 			 * @see org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter#accept(org.eclipse.pde.core.plugin.IPluginModelBase)
 			 */
 			public boolean accept(IPluginModelBase model) {
-				return model.getPluginBase().getId().startsWith("org.eclipse");
+				IPluginBase base = model.getPluginBase();
+				if (base != null) {
+					String id = base.getId();
+					if (id != null) {
+						return id.startsWith("org.eclipse");
+					}
+				}
+				return false;
 			}
 		};
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"), filter);
@@ -116,7 +123,14 @@ public class PluginRegistryTests extends TestCase {
 			 * @see org.eclipse.pde.core.plugin.PluginRegistry.PluginFilter#accept(org.eclipse.pde.core.plugin.IPluginModelBase)
 			 */
 			public boolean accept(IPluginModelBase model) {
-				return model.getPluginBase().getId().startsWith("xyz");
+				IPluginBase base = model.getPluginBase();
+				if (base != null) {
+					String id = base.getId();
+					if (id != null) {
+						return id.startsWith("xyz");
+					}
+				}
+				return false;
 			}
 		};
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", new VersionRange("[2.0.0,4.0.0)"), filter);
