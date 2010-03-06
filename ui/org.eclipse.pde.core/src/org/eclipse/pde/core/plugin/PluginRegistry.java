@@ -11,9 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import java.util.ArrayList;
-
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
@@ -41,8 +39,8 @@ public class PluginRegistry {
 	 * <p>
 	 * Clients may subclass this class to implement custom filters.
 	 * </p>
-	 * @see PluginRegistry#findBundle(String, String, int, PluginFilter)
-	 * @see PluginRegistry#findBundle(String, VersionRange, PluginFilter)
+	 * @see PluginRegistry#findModel(String, String, int, PluginFilter)
+	 * @see PluginRegistry#findModel(String, VersionRange, PluginFilter)
 	 * @since 3.6
 	 */
 	public static class PluginFilter {
