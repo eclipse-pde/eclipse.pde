@@ -15,11 +15,11 @@ import java.io.File;
 import java.util.Dictionary;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.publisher.IPublisherInfo;
 import org.eclipse.equinox.p2.publisher.IPublisherResult;
 import org.eclipse.equinox.p2.publisher.eclipse.*;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
+import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.Utils;
@@ -68,7 +68,7 @@ public class GatherBundleAction extends BundlesAction {
 				shape = Utils.guessUnpack(bundle, BundleHelper.getClasspath(manifest)) ? IBundleShapeAdvice.DIR : IBundleShapeAdvice.JAR;
 			}
 		}
-		BundleShapeAdvice advice = new BundleShapeAdvice(bundle.getSymbolicName(), Version.fromOSGiVersion(bundle.getVersion()), shape);
+		BundleShapeAdvice advice = new BundleShapeAdvice(bundle.getSymbolicName(), PublisherHelper.fromOSGiVersion(bundle.getVersion()), shape);
 		info.addAdvice(advice);
 	}
 

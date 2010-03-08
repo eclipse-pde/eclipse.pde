@@ -26,6 +26,7 @@ import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.Activator;
@@ -818,7 +819,7 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
 		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
 		//check up to the date on the timestamp, don't worry about hours/mins
-		assertTrue(Version.toOSGiVersion(productIu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
+		assertTrue(PublisherHelper.toOSGiVersion(productIu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
 		assertTouchpoint(productIu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
 
 		IInstallableUnit iu = getIU(finalRepo, "toolingorg.eclipse.equinox.common");
@@ -1807,8 +1808,8 @@ public class PublishingTests extends P2TestCase {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getName().equals("a")) {
 				VersionRange range = reqCap.getRange();
-				assertTrue(Version.toOSGiVersion(range.getMinimum()).getQualifier().startsWith("20"));
-				assertTrue(Version.toOSGiVersion(range.getMinimum()).getMajor() == 1 || Version.toOSGiVersion(range.getMinimum()).getMajor() == 2);
+				assertTrue(PublisherHelper.toOSGiVersion(range.getMinimum()).getQualifier().startsWith("20"));
+				assertTrue(PublisherHelper.toOSGiVersion(range.getMinimum()).getMajor() == 1 || PublisherHelper.toOSGiVersion(range.getMinimum()).getMajor() == 2);
 			}
 		}
 	}

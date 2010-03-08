@@ -19,10 +19,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
-import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
@@ -214,7 +216,7 @@ public class P2Tests extends P2TestCase {
 		iu = getIU(repository, "rcp.product");
 		assertRequires(iu, requiredIUs, true);
 		//check up to the date on the timestamp, don't worry about hours/mins
-		assertTrue(Version.toOSGiVersion(iu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
+		assertTrue(PublisherHelper.toOSGiVersion(iu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
 
 		IFolder installFolder = buildFolder.getFolder("install");
 		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
