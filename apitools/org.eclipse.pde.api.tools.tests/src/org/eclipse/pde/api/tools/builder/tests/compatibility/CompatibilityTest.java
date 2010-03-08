@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,10 +171,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			IApiComponent component = null;
 			for (int i = 0; i < projects.length; i++) {
 				component = profile.getApiComponent(projects[i].getName());
-					exportApiComponent(
-							projects[i],
-							component, 
-							baselineLocation);
+				assertNotNull("The project was not found in the workspace baseline: "+projects[i].getName(), component);
+				exportApiComponent(projects[i], component, baselineLocation);
 			}
 			baseline = ApiModelFactory.newApiBaseline("API-baseline");
 			IApiComponent[] components = new IApiComponent[projects.length];

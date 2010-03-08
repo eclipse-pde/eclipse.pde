@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,11 +163,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 		for (int i = 0; i < length; i++) {
 			IProject currentProject = projects[i];
 			IApiComponent apiComponent = manager.getWorkspaceBaseline().getApiComponent(currentProject.getName());
-			assertNotNull("Cannot be null", apiComponent);
-			exportApiComponent(
-					currentProject,
-					apiComponent, 
-					baselineLocation);
+			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), apiComponent);
+			exportApiComponent(currentProject, apiComponent, baselineLocation);
 		}
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
 		IApiComponent[] components = new IApiComponent[length];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,6 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	
 	public static final String BASELINE = "pre-split";
 
-	IApiBaseline profile;
 	IApiBaseline baseline;
 
 	/**
@@ -106,9 +105,11 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		manager.setDefaultApiBaseline(null);
 		manager.removeApiBaseline(API_BASELINE);
 		this.baseline.dispose();
-		this.profile.dispose();
 		this.baseline = null;
-		this.profile = null;
+		IApiBaseline wsbaseline = manager.getWorkspaceBaseline();
+		if(wsbaseline != null) {
+			wsbaseline.dispose();
+		}
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		for (int i = 0, length = projects.length; i < length; i++) {
 			getEnv().removeProject(projects[i].getFullPath());
@@ -339,16 +340,15 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// import baseline projects
 		createExistingProjects(referenceBaselineLocation, true, true, false);
 		// create the API baseline
-		this.profile = manager.getWorkspaceBaseline();
+		IApiBaseline wsbaseline = manager.getWorkspaceBaseline();
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		int length = projects.length;
 		IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(referenceBaselineLocation);
 		for (int i = 0; i < length; i++) {
 			IProject currentProject = projects[i];
-			exportApiComponent(
-					currentProject,
-					this.profile.getApiComponent(currentProject.getName()), 
-					baselineLocation);
+			IApiComponent component = wsbaseline.getApiComponent(currentProject.getName());
+			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), component);
+			exportApiComponent(currentProject, component, baselineLocation);
 		}
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
 		IApiComponent[] components = new IApiComponent[length];
