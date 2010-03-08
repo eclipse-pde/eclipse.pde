@@ -9,9 +9,6 @@
 
 package org.eclipse.pde.internal.build.publisher;
 
-import org.eclipse.equinox.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,13 +24,15 @@ import org.eclipse.equinox.internal.p2.engine.Phase;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.p2.engine.phases.Collect;
 import org.eclipse.equinox.internal.p2.engine.phases.Install;
-import org.eclipse.equinox.internal.p2.metadata.*;
+import org.eclipse.equinox.internal.p2.metadata.TouchpointData;
+import org.eclipse.equinox.internal.p2.metadata.TouchpointInstruction;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.IUDescription;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.Repo2RunnableTask;
 import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.spi.ArtifactDescriptor;
@@ -221,7 +220,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 			newIUDescription.addTouchpointData((ITouchpointData) data.get(i));
 		}
 
-		IArtifactKey key = new ArtifactKey(PublisherHelper.BINARY_ARTIFACT_CLASSIFIER, newIUDescription.getId(), newIUDescription.getVersion());
+		IArtifactKey key = artifactRepo.createArtifactKey(PublisherHelper.BINARY_ARTIFACT_CLASSIFIER, newIUDescription.getId(), newIUDescription.getVersion());
 		newIUDescription.setArtifacts(new IArtifactKey[] {key});
 
 		IInstallableUnit newIU = MetadataFactory.createInstallableUnit(newIUDescription);
