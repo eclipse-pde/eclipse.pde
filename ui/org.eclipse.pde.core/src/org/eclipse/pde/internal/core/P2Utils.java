@@ -412,7 +412,7 @@ public class P2Utils {
 		InstallableUnitDescription iu = new MetadataFactory.InstallableUnitDescription();
 		iu.setSingleton(bd.isSingleton());
 		iu.setId(bd.getSymbolicName());
-		iu.setVersion(Version.fromOSGiVersion(bd.getVersion()));
+		iu.setVersion(fromOSGiVersion(bd.getVersion()));
 		iu.setFilter(bd.getPlatformFilter());
 		iu.setTouchpointType(TOUCHPOINT_OSGI);
 
@@ -422,9 +422,9 @@ public class P2Utils {
 		BundleSpecification requiredBundles[] = bd.getRequiredBundles();
 		ArrayList reqsDeps = new ArrayList();
 		if (isFragment)
-			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getHost().getName(), VersionRange.fromOSGiVersionRange(bd.getHost().getVersionRange()), null, false, false));
+			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getHost().getName(), fromOSGiVersionRange(bd.getHost().getVersionRange()), null, false, false));
 		for (int j = 0; j < requiredBundles.length; j++)
-			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_OSGI_BUNDLE, requiredBundles[j].getName(), VersionRange.fromOSGiVersionRange(requiredBundles[j].getVersionRange()), null, requiredBundles[j].isOptional(), false));
+			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_OSGI_BUNDLE, requiredBundles[j].getName(), fromOSGiVersionRange(requiredBundles[j].getVersionRange()), null, requiredBundles[j].isOptional(), false));
 
 		// Process the import packages
 		ImportPackageSpecification osgiImports[] = bd.getImportPackages();
@@ -434,7 +434,7 @@ public class P2Utils {
 			String importPackageName = importSpec.getName();
 			if (importPackageName.indexOf('*') != -1)
 				continue;
-			VersionRange versionRange = VersionRange.fromOSGiVersionRange(importSpec.getVersionRange());
+			VersionRange versionRange = fromOSGiVersionRange(importSpec.getVersionRange());
 			//TODO this needs to be refined to take into account all the attribute handled by imports
 			boolean isOptional = importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC) || importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_OPTIONAL);
 			reqsDeps.add(MetadataFactory.createRequiredCapability(CAPABILITY_NS_JAVA_PACKAGE, importPackageName, versionRange, null, isOptional, false));
@@ -443,22 +443,35 @@ public class P2Utils {
 
 		// Create set of provided capabilities
 		ArrayList providedCapabilities = new ArrayList();
-		providedCapabilities.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, bd.getSymbolicName(), Version.fromOSGiVersion(bd.getVersion())));
-		providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getSymbolicName(), Version.fromOSGiVersion(bd.getVersion())));
+		providedCapabilities.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, bd.getSymbolicName(), fromOSGiVersion(bd.getVersion())));
+		providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getSymbolicName(), fromOSGiVersion(bd.getVersion())));
 
 		// Process the export package
 		ExportPackageDescription exports[] = bd.getExportPackages();
 		for (int i = 0; i < exports.length; i++) {
 			//TODO make sure that we support all the refinement on the exports
-			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_JAVA_PACKAGE, exports[i].getName(), Version.fromOSGiVersion(exports[i].getVersion())));
+			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_JAVA_PACKAGE, exports[i].getName(), fromOSGiVersion(exports[i].getVersion())));
 		}
 		// Here we add a bundle capability to identify bundles
 		providedCapabilities.add(BUNDLE_CAPABILITY);
 		if (isFragment)
-			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_FRAGMENT, bd.getHost().getName(), Version.fromOSGiVersion(bd.getVersion())));
+			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_FRAGMENT, bd.getHost().getName(), fromOSGiVersion(bd.getVersion())));
 
 		iu.setCapabilities((IProvidedCapability[]) providedCapabilities.toArray(new IProvidedCapability[providedCapabilities.size()]));
 		return MetadataFactory.createInstallableUnit(iu);
 	}
 
+	private static Version fromOSGiVersion(org.osgi.framework.Version version) {
+		if (version == null)
+			return null;
+		if (version.getMajor() == Integer.MAX_VALUE && version.getMicro() == Integer.MAX_VALUE && version.getMicro() == Integer.MAX_VALUE)
+			return Version.MAX_VERSION;
+		return Version.createOSGi(version.getMajor(), version.getMinor(), version.getMicro(), version.getQualifier());
+	}
+
+	private static VersionRange fromOSGiVersionRange(org.eclipse.osgi.service.resolver.VersionRange range) {
+		if (range.equals(org.eclipse.osgi.service.resolver.VersionRange.emptyRange))
+			return VersionRange.emptyRange;
+		return new VersionRange(fromOSGiVersion(range.getMinimum()), range.getIncludeMinimum(), fromOSGiVersion(range.getMaximum()), range.getIncludeMaximum());
+	}
 }
