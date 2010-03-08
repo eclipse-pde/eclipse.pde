@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -101,6 +102,7 @@ public class PatternSelectionPage extends WizardPage {
 				return ((PatternElement)e1).name.compareTo(((PatternElement)e2).name);
 			}
 		});
+		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 100;
 		this.viewer.getTable().setLayoutData(gd);
@@ -111,6 +113,9 @@ public class PatternSelectionPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 50;
 		this.description.setLayoutData(gd);
+		if(fgelements != null && fgelements.length > 0) {
+			this.viewer.setSelection(new StructuredSelection(this.viewer.getElementAt(0)), true);
+		}
 		setControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IApiToolsHelpContextIds.APITOOLS_PATTERN_SELECTION_WIZARD_PAGE);
 	}

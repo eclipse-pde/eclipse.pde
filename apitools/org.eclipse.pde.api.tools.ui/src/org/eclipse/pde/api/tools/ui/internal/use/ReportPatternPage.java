@@ -80,11 +80,11 @@ public class ReportPatternPage extends UsePatternPage {
 				ReportPatternPage.this.kind = Pattern.REPORT;
 			}
 		});
-		if(this.kind == Pattern.REPORT_TO) {
-			this.to.setSelection(true);
+		if(this.kind == Pattern.REPORT) {
+			this.from.setSelection(true);
 		}
 		else {
-			this.from.setSelection(true);
+			this.to.setSelection(true);
 		}
 		SWTFactory.createLabel(comp, Messages.ReportPatternPage_pattern, 1);
 		this.patterntext = SWTFactory.createSingleText(comp, 1);
