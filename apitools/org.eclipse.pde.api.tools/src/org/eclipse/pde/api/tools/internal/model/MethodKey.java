@@ -20,16 +20,20 @@ public class MethodKey {
 	private String fSelector;
 	private String fSig;
 	private String fTypename;
+	private boolean fConsiderTypename = false;
+	
 	/**
 	 * Constructs a new method key
-	 * @param typename
-	 * @param name method name
-	 * @param sig method signature
+	 * @param typename the name (fully qualified or otherwise) of the type the method is from
+	 * @param name method name the name of the method
+	 * @param sig method signature the signature of the method or <code>null</code>
+	 * @param considertypename if the given type name should be used when computing equality and hash codes
 	 */
-	public MethodKey(String typename, String name, String sig) {
+	public MethodKey(String typename, String name, String sig, boolean considertypename) {
 		fTypename = typename;
 		fSelector = name;
 		fSig = sig;
+		fConsiderTypename = considertypename;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -39,7 +43,7 @@ public class MethodKey {
 			MethodKey key = (MethodKey) obj;
 			return fSelector.equals(key.fSelector) &&
 			 signaturesEqual(fSig, key.fSig) &&
-			 fTypename.equals(key.fTypename);
+			 (fConsiderTypename ? fTypename.equals(key.fTypename) : true);
 		}
 		return false;
 	}
@@ -47,7 +51,7 @@ public class MethodKey {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fTypename.hashCode() + fSelector.hashCode() + (fSig == null ? 0 : fSig.hashCode());
+		return (fConsiderTypename ? fTypename.hashCode() : 0) + fSelector.hashCode() + (fSig == null ? 0 : fSig.hashCode());
 	}
 	
 	/**

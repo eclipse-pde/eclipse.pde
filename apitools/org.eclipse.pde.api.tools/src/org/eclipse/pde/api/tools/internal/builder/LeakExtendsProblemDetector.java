@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,14 +151,9 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	private void gatherVisibleMethods(IApiType type, Set members, int modifiers) {
 		IApiMethod[] methods = type.getMethods();
 		for (int i = 0; i < methods.length; i++) {
-			try {
-				IApiMethod method = methods[i];
-				if ((method.getModifiers() & modifiers) > 0 && !method.isConstructor() && !method.isSynthetic()) {
-					members.add(new MethodKey(method.getEnclosingType().getName(), method.getName(), method.getSignature()));
-				}
-			}
-			catch(CoreException ce) {
-				//do nothing just ignore the method
+			IApiMethod method = methods[i];
+			if ((method.getModifiers() & modifiers) > 0 && !method.isConstructor() && !method.isSynthetic()) {
+				members.add(new MethodKey(type.getName(), method.getName(), method.getSignature(), false));
 			}
 		}
 	}

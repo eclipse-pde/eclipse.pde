@@ -47,7 +47,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * @param componentId the component the type is located in
 	 */
 	void addIllegalMethod(IMethodDescriptor method, String componentId) {
-		fIllegalMethods.put(new MethodKey(method.getEnclosingType().getQualifiedName(), method.getName(), method.getSignature()), method);
+		fIllegalMethods.put(new MethodKey(method.getEnclosingType().getQualifiedName(), method.getName(), method.getSignature(), true), method);
 		fMethodComponents.put(method, componentId);
 	}	
 
@@ -55,7 +55,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) & fIllegalMethods.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature()))) {
+		if (super.considerReference(reference) & fIllegalMethods.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true))) {
 			retainReference(reference);
 			return true;
 		}

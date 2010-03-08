@@ -53,7 +53,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @param componentId the component the type is located in
 	 */
 	void addIllegalField(IFieldDescriptor field, String componentId) {
-		fIllegalFields.put(new MethodKey(field.getEnclosingType().getQualifiedName(), field.getName(), null), field);
+		fIllegalFields.put(new MethodKey(field.getEnclosingType().getQualifiedName(), field.getName(), null, true), field);
 		fFieldComponents.put(field, componentId);
 	}	
 	
@@ -61,7 +61,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) & fIllegalFields.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature()))) {
+		if (super.considerReference(reference) & fIllegalFields.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true))) {
 			retainReference(reference);
 			return true;
 		}

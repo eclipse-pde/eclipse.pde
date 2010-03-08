@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -485,6 +485,7 @@ public class ClassExtendsLeak extends LeakTest {
 	}
 	
 	private void x28(boolean inc) {
+		expectingNoProblems();
 		String typename = "test28";
 		deployLeakTest(typename+".java", inc);
 	}	
@@ -506,6 +507,7 @@ public class ClassExtendsLeak extends LeakTest {
 	}
 	
 	private void x29(boolean inc) {
+		expectingNoProblems();
 		String typename = "test29";
 		deployLeakTest(typename+".java", inc);
 	}	
@@ -529,5 +531,24 @@ public class ClassExtendsLeak extends LeakTest {
 		String typename = "test30";
 		setExpectedMessageArgs(new String[][] {{"outer30", typename}});
 		deployLeakTest(typename+".java", inc);
-	}			
+	}	
+	
+	public void testClassExtendsAndOverridesLeak31F() {
+		x32(false);
+	}
+	
+	public void testClassExtendsAndOverridesLeak31I() {
+		x32(true);
+	}
+	
+	/**
+	 * Tests that a class that extends an internal class but overrides all of its methods
+	 * is not reported as leaking.
+	 * @param inc
+	 */
+	private void x32(boolean inc) {
+		expectingNoProblems();
+		String typename = "test32";
+		deployLeakTest(typename+".java", inc);
+	}
 }

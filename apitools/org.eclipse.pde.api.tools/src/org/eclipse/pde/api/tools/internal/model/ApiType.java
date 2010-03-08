@@ -203,7 +203,7 @@ public class ApiType extends ApiMember implements IApiType {
 			fMethods = new LinkedHashMap();
 		}
 		ApiMethod method = new ApiMethod(this, name, signature, genericSig, modifiers, exceptions);
-		fMethods.put(new MethodKey(getName(), name, signature), method);
+		fMethods.put(new MethodKey(getName(), name, signature, true), method);
 		return method;
 	}
 
@@ -230,7 +230,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 */
 	public IApiMethod getMethod(String name, String signature) {
 		if (fMethods != null) {
-			return (IApiMethod) fMethods.get(new MethodKey(getName(), name, signature));
+			return (IApiMethod) fMethods.get(new MethodKey(getName(), name, signature, true));
 		}
 		return null;
 	}
