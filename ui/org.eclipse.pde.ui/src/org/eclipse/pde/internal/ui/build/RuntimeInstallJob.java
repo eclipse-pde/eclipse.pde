@@ -195,8 +195,8 @@ public class RuntimeInstallJob extends Job {
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
 		iuPatchDescription.addProvidedCapabilities(list);
 
-		IRequirement applyTo = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
-		IRequirement newValue = MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(newVersion, true, newVersion, true), null, false, false);
+		IRequirement applyTo = MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, id, null, null, false, false);
+		IRequirement newValue = MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, id, new VersionRange(newVersion, true, newVersion, true), null, false, false);
 		iuPatchDescription.setRequirementChanges(new IRequirementChange[] {MetadataFactory.createRequirementChange(applyTo, newValue)});
 
 		iuPatchDescription.setApplicabilityScope(new IRequirement[0][0]);
@@ -206,7 +206,7 @@ public class RuntimeInstallJob extends Job {
 		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", new Object[] {existingIU}), monitor); //$NON-NLS-1$
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
-			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
+			iuPatchDescription.setLifeCycle(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
 		}
 
 		iuPatchDescription.setProperty(InstallableUnitDescription.PROP_TYPE_PATCH, Boolean.TRUE.toString());
