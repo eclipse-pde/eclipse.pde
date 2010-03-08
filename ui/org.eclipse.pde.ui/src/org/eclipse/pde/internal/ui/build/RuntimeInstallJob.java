@@ -90,7 +90,11 @@ public class RuntimeInstallJob extends Job {
 
 			IMetadataRepository metaRepo = ui.loadMetadataRepository(destination, false, new SubProgressMonitor(monitor, 1));
 
-			IProfile profile = session.getProfileRegistry().getProfile(IProfileRegistry.SELF);
+			IProfileRegistry profileRegistry = (IProfileRegistry) session.getProvisioningAgent().getService(IProfileRegistry.SERVICE_NAME);
+			if (profileRegistry == null) {
+				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
+			}
+			IProfile profile = profileRegistry.getProfile(IProfileRegistry.SELF);
 			if (profile == null) {
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
@@ -199,7 +203,7 @@ public class RuntimeInstallJob extends Job {
 
 		// Locate IU's that appoint the existing version of the IU that we are patching.
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", new Object[] {existingIU}), monitor);
+		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", new Object[] {existingIU}), monitor); //$NON-NLS-1$
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequiredCapability(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
