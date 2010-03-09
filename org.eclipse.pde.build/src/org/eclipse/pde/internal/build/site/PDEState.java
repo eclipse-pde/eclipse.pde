@@ -119,10 +119,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private void rememberSourceReference(BundleDescription descriptor, String oldVersion) {
+		if (sourceReferences == null)
+			return;
+
 		String key = QualifierReplacer.getQualifierKey(descriptor.getSymbolicName(), oldVersion);
-		if (key == null)
+		if (key == null || !sourceReferences.containsKey(key))
 			key = descriptor.getSymbolicName() + ',' + Version.emptyVersion.toString();
-		if (sourceReferences != null && sourceReferences.containsKey(key)) {
+		if (sourceReferences.containsKey(key)) {
 			Properties bundleProperties = (Properties) descriptor.getUserObject();
 			if (bundleProperties == null) {
 				bundleProperties = new Properties();
