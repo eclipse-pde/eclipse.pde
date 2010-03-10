@@ -330,7 +330,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		IProgressMonitor loadMonitor = new SubProgressMonitor(subMonitor, 10);
 		loadMonitor.beginTask(null, repoCount * 10);
 		List metadataRepos = new ArrayList(repoCount);
-		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, "Problems loading repositories", null);
+		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (int i = 0; i < repoCount; ++i) {
 			try {

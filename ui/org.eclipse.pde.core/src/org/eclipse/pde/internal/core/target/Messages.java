@@ -39,6 +39,7 @@ public class Messages extends NLS {
 	public static String IUBundleContainer_5;
 	public static String IUBundleContainer_6;
 	public static String IUBundleContainer_7;
+	public static String IUBundleContainer_ProblemsLoadingRepositories;
 	public static String LoadTargetDefinitionJob_0;
 	public static String LoadTargetDefinitionJob_1;
 	public static String LoadTargetOperation_argsTaskName;
