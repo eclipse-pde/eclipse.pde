@@ -192,7 +192,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 		IPlanner planner = getPlanner();
 		URI[] repositories = resolveRepositories();
-		ProvisioningContext context = new ProvisioningContext(repositories);
+		ProvisioningContext context = new ProvisioningContext(getAgent());
+		context.setMetadataRepositories(repositories);
 		context.setArtifactRepositories(repositories);
 
 		if (subMonitor.isCanceled()) {
@@ -370,7 +371,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		IEngine engine = getEngine();
-		ProvisioningContext context = new ProvisioningContext(repositories);
+		ProvisioningContext context = new ProvisioningContext(getAgent());
+		context.setMetadataRepositories(repositories);
 		context.setArtifactRepositories(repositories);
 		IProvisioningPlan plan = engine.createPlan(profile, context);
 
@@ -590,14 +592,24 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException if none
 	 */
 	private IPlanner getPlanner() throws CoreException {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		if (agent == null)
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
-		IPlanner planner = (IPlanner) agent.getService(IPlanner.class.getName());
+		IPlanner planner = (IPlanner) getAgent().getService(IPlanner.class.getName());
 		if (planner == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_5));
 		}
 		return planner;
+	}
+
+	/**
+	 * Returns the provisioning agent.
+	 * 
+	 * @return provisioning agent
+	 * @throws CoreException if none
+	 */
+	private IProvisioningAgent getAgent() throws CoreException {
+		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent == null)
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
+		return agent;
 	}
 
 	/* (non-Javadoc)

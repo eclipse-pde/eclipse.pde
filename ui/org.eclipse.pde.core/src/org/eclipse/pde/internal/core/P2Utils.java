@@ -386,7 +386,7 @@ public class P2Utils {
 		}
 
 		// Add the metadata to the profile
-		ProvisioningContext context = new ProvisioningContext();
+		ProvisioningContext context = new ProvisioningContext(agent);
 		IProvisioningPlan plan = engine.createPlan(profile, context);
 		for (Iterator iter = ius.iterator(); iter.hasNext();) {
 			IInstallableUnit iu = (IInstallableUnit) iter.next();
