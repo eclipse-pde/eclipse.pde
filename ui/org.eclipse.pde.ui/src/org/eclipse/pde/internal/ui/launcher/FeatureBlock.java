@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -622,7 +620,7 @@ public class FeatureBlock {
 
 	private void updateCounter() {
 		if (fCounter != null) {
-			int checked = fTree.getCheckedElements().length;
+			int checked = fTree.getCheckedLeafCount();
 			int total = fFeatureModels.values().size();
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
 		}
