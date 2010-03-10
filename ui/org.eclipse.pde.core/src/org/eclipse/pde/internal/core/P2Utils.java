@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -185,7 +184,11 @@ public class P2Utils {
 			return null;
 		}
 		// the input stream will be buffered and closed for us
-		return manipulator.loadConfiguration(fileURL.openStream(), home.toURI());
+		try {
+			return manipulator.loadConfiguration(fileURL.openStream(), home.toURI());
+		} catch (FileNotFoundException e) {
+			return null;
+		}
 	}
 
 	/**
