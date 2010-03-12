@@ -521,7 +521,7 @@ public class TargetDefinition implements ITargetDefinition {
 		List list = (List) bundleMap.get(info.getSymbolicName());
 		if (list != null) {
 			String version = info.getVersion();
-			if (version == null) {
+			if (version == null || version.equals(BundleInfo.EMPTY_VERSION)) {
 				// select newest
 				if (list.size() > 1) {
 					// sort the list

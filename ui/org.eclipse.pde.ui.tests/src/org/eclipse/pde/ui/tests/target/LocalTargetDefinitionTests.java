@@ -183,7 +183,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			}
 		}
 		assertNotNull(v1);
+		assertFalse(v1.equals(BundleInfo.EMPTY_VERSION));
 		assertNotNull(v2);
+		assertFalse(v2.equals(BundleInfo.EMPTY_VERSION));
 		
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", v1),

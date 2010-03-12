@@ -167,7 +167,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		styledString.append(info.getSymbolicName());
 		if (fShowVersion) {
 			String version = info.getVersion();
-			if (version != null) {
+			if (version != null && !version.equals(BundleInfo.EMPTY_VERSION)) {
 				styledString.append(' ');
 				styledString.append('(', StyledString.QUALIFIER_STYLER);
 				styledString.append(version, StyledString.QUALIFIER_STYLER);

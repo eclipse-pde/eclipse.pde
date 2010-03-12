@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
+
 /**
  * Describes something with a name and version.
  */
@@ -24,18 +26,31 @@ public class NameVersionDescriptor {
 
 	/**
 	 * Constructs a descriptor with a type of 'plugin'
+	 * <p>
+	 * If the passed string version is equal to {@link BundleInfo#EMPTY_VERSION}, 
+	 * the version will be replaced with <code>null</code>.
+	 * </p>
 	 * 
 	 * @param id name identifier
 	 * @param version version identifier, can be <code>null</code>
 	 */
 	public NameVersionDescriptor(String id, String version) {
 		fId = id;
-		fVersion = version;
+		// If an empty version was passed to the constructor, treat it as if null was passed
+		if (version == null || version.equals(BundleInfo.EMPTY_VERSION)) {
+			fVersion = null;
+		} else {
+			fVersion = version;
+		}
 		fType = TYPE_PLUGIN;
 	}
 
 	/**
 	 * Constructs a descriptor of the given type
+	 * <p>
+	 * If the passed string version is equal to {@link BundleInfo#EMPTY_VERSION}, 
+	 * the version will be replaced with <code>null</code>.
+	 * </p>
 	 * 
 	 * @param id name identifier
 	 * @param version version identifier, can be <code>null</code>
@@ -43,7 +58,12 @@ public class NameVersionDescriptor {
 	 */
 	public NameVersionDescriptor(String id, String version, String type) {
 		fId = id;
-		fVersion = version;
+		// If an empty version was passed to the constructor, treat it as if null was passed
+		if (version == null || version.equals(BundleInfo.EMPTY_VERSION)) {
+			fVersion = null;
+		} else {
+			fVersion = version;
+		}
 		fType = type;
 	}
 
