@@ -467,7 +467,6 @@ public class PDECompilersConfigurationBlock {
 			folder = new TabFolder(fMainComp, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.heightHint = 375;
-			gd.widthHint = 400;
 			folder.setLayoutData(gd);
 		}
 
