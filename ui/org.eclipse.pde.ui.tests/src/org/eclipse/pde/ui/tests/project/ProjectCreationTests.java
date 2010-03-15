@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.pde.internal.core.ClasspathComputer;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
@@ -1474,9 +1476,10 @@ public class ProjectCreationTests extends TestCase {
 		
 		// raw class path should still be intact
 		IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
-		assertEquals("Wrong number of entries", 3, rawClasspath.length);
+		assertEquals("Wrong number of entries", 4, rawClasspath.length);
 		assertEquals("Wrong entry", entry1, rawClasspath[0]);
 		assertEquals("Wrong entry", entry2, rawClasspath[1]);
 		assertEquals("Wrong entry", entry3, rawClasspath[2]);
+		assertEquals("Missing Required Plug-ins Container", ClasspathComputer.createContainerEntry(), rawClasspath[3]);
 	}
 }
