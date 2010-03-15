@@ -12,8 +12,8 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Properties;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.ManifestElement;
@@ -61,14 +61,16 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 			// format headers
 			BundleModelFactory factory = new BundleModelFactory(this);
 			Map headers = fBundle.getHeaders();
-			Iterator it = headers.entrySet().iterator();
-			while (it.hasNext()) {
-				Entry entry = (Entry) it.next();
-				String key = (String) entry.getKey();
-				String value = (String) entry.getValue();
+			Object[] keys = headers.keySet().toArray();
+			for (int i = 0; i < keys.length; i++) {
+				String key = (String) keys[i];
+				String value = (String) headers.get(key);
 				IManifestHeader header = factory.createHeader(key, value);
 				header.update();
-				fBundle.setHeader(key, header.getValue());
+				String formatted = header.getValue();
+				if (formatted != null && formatted.trim().length() > 0) {
+					fBundle.setHeader(key, formatted);
+				}
 			}
 		} catch (BundleException e) {
 		} catch (IOException e) {
