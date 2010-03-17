@@ -152,7 +152,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
-		java.util.List result = Arrays.asList(fCheckboxTreeViewer.getCheckedElements());
+		java.util.List result = Arrays.asList(fCheckboxTreeViewer.getCheckedLeafElements());
 		setResult(result);
 	}
 
