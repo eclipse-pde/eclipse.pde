@@ -417,6 +417,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 					PDEPlugin.log(e);
 				}
 			}
+		}
+
+		if (settings != null) {
 			if (settings.get(SETTINGS_GROUP_BY_CATEGORY) != null) {
 				showCategories = settings.getBoolean(SETTINGS_GROUP_BY_CATEGORY);
 			}
