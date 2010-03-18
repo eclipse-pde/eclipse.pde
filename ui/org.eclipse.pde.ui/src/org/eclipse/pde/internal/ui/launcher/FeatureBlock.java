@@ -442,7 +442,6 @@ public class FeatureBlock {
 	}
 
 	private void createCheckBoxTree(Composite parent) {
-		ITreeContentProvider contentProvider = new PluginContentProvider();
 		PatternFilter filter = new PatternFilter() {
 			public boolean isElementVisible(Viewer viewer, Object element) {
 				if (element instanceof FeatureLaunchModel) {
@@ -452,7 +451,7 @@ public class FeatureBlock {
 			}
 		};
 		filter.setIncludeLeadingWildcard(true);
-		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, contentProvider, null, SWT.FULL_SELECTION, filter);
+		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, null, SWT.FULL_SELECTION, filter);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);
@@ -478,7 +477,7 @@ public class FeatureBlock {
 
 		fTree.getTree().setHeaderVisible(true);
 		fTree.setLabelProvider(new FeatureTreeLabelProvider());
-		fTree.setContentProvider(contentProvider);
+		fTree.setContentProvider(new PluginContentProvider());
 		fTree.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateCounter();
