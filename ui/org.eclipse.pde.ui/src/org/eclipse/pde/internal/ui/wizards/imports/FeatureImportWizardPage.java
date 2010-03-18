@@ -38,6 +38,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.UIJob;
 
@@ -143,8 +144,9 @@ public class FeatureImportWizardPage extends WizardPage {
 		Composite underTableComp = SWTFactory.createComposite(composite, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
 
 		fCounterLabel = SWTFactory.createLabel(underTableComp, "", 1); //$NON-NLS-1$
+		fCounterLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
 		Composite buttonComp = SWTFactory.createComposite(underTableComp, 2, 1, SWT.NONE, 0, 0);
-		buttonComp.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, true));
+		buttonComp.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.WizardCheckboxTablePart_selectAll, null);
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
@@ -366,16 +368,16 @@ public class FeatureImportWizardPage extends WizardPage {
 	public void createFeatureTable(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
 		layout.marginHeight = layout.marginWidth = 0;
 		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalIndent = 5;
 		gd.heightHint = gd.widthHint = 300;
 		container.setLayoutData(gd);
 
-		FilteredCheckboxTree tree = new FilteredCheckboxTree(container, null);
+		PatternFilter filter = new PatternFilter();
+		filter.setIncludeLeadingWildcard(true);
+		FilteredCheckboxTree tree = new FilteredCheckboxTree(container, null, SWT.NONE, filter);
 		fFeatureViewer = tree.getCheckboxTreeViewer();
 		fFeatureViewer.setContentProvider(new ITreeContentProvider() {
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
