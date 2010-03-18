@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,6 +108,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			if (node.getOffset() > -1) {
 				// this is an element that was of the form <element/>
 				// it now needs to be broken up into <element><new/></element>
+				// Note that the node here has the correct stored length (the previous value, not what will be written out during the write() call), see bug 293474
 				op = new ReplaceEdit(node.getOffset(), node.getLength(), node.write(false));
 			} else {
 				// try to insert after last sibling that has an offset
@@ -217,15 +218,18 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		Object changedObject = attr;
 		TextEdit op = null;
 		if (offset > -1) {
+			// Attribute exists, replace the old value with the new value
 			if (newValue == null || newValue.toString().length() == 0) {
 				int length = attr.getValueOffset() + attr.getValueLength() + 1 - attr.getNameOffset();
 				op = getAttributeDeleteEditOperation(attr.getNameOffset(), length);
 			} else {
-				op = new ReplaceEdit(offset, attr.getValueLength(), getWritableAttributeNodeValue(event.getNewValue().toString()));
+				int oldLength = ((String) event.getOldValue()).length();
+				op = new ReplaceEdit(offset, oldLength, getWritableAttributeNodeValue(event.getNewValue().toString()));
 			}
 		}
 
 		if (op == null) {
+			// Attribute doesn't exist, check if the parent exists and add the attribute to it
 			IDocumentElementNode node = attr.getEnclosingElement();
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			if (node.getOffset() > -1) {
@@ -233,6 +237,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				int len = getNextPosition(doc, node.getOffset(), '>');
 				op = new ReplaceEdit(node.getOffset(), len + 1, node.writeShallow(shouldTerminateElement(doc, node.getOffset() + len)));
 			} else {
+				// Parent doesn't exist in the doc, write out whole parent to the doc
 				insertNode(node, ops);
 				return;
 			}
