@@ -14,6 +14,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -25,23 +26,37 @@ import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
+import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
+import org.eclipse.pde.internal.ui.shared.target.Messages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.UIJob;
 
+/**
+ * Wizard page used when importing features.  Allows the user to choose a location (Default or a folder) to load features from
+ * then select one or more features to import into the workspace.
+ * 
+ * @see FeatureImportWizard
+ */
 public class FeatureImportWizardPage extends WizardPage {
 
 	private static final String SETTINGS_DROPLOCATION = "droplocation"; //$NON-NLS-1$
 	private static final String SETTINGS_DOOTHER = "doother"; //$NON-NLS-1$
 	private static final String SETTINGS_NOT_BINARY = "notbinary"; //$NON-NLS-1$
+
+	/**
+	 * How long to wait before validating the directory
+	 */
+	protected static final int TYPING_DELAY = 300;
 
 	private Label fOtherLocationLabel;
 	private Button fRuntimeLocationButton;
@@ -49,9 +64,12 @@ public class FeatureImportWizardPage extends WizardPage {
 	private Combo fDropLocation;
 	private boolean fSelfSetLocation;
 	private String fCurrDropLocation;
+	private Job fTextChangedJob;
+	private CachedCheckboxTreeViewer fFeatureViewer;
+	private Label fCounterLabel;
+	private Button fSelectAllButton;
+	private Button fDeselectAllButton;
 
-	private CheckboxTableViewer fFeatureViewer;
-	private TablePart fTablePart;
 	private IFeatureModel[] fModels;
 
 	private Button fBinaryButton;
@@ -64,29 +82,26 @@ public class FeatureImportWizardPage extends WizardPage {
 		}
 	}
 
-	class TablePart extends WizardCheckboxTablePart {
-		public TablePart() {
-			super(null, new String[] {PDEUIMessages.FeatureImportWizardPage_reload, PDEUIMessages.WizardCheckboxTablePart_selectAll, PDEUIMessages.WizardCheckboxTablePart_deselectAll});
-			setSelectAllIndex(1);
-			setDeselectAllIndex(2);
+	private class LocationChangedJob extends UIJob {
+		public LocationChangedJob(Display jobDisplay, String name) {
+			super(jobDisplay, name);
 		}
 
-		public void updateCounter(int count) {
-			super.updateCounter(count);
-			dialogChanged();
-		}
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 
-		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
-			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
-			viewer.setComparator(ListUtil.FEATURE_COMPARATOR);
-			return viewer;
-		}
+			validateDropLocation();
+			if (!fRuntimeLocationButton.getSelection()) {
+				String newLoc = fDropLocation.getText();
+				if (getMessageType() != WARNING && !newLoc.equals(fCurrDropLocation) && !fSelfSetLocation) {
+					handleReload();
+				}
+				fCurrDropLocation = newLoc;
+			}
 
-		protected void buttonSelected(Button button, int index) {
-			if (index == 0)
-				loadFeatureTable();
-			else
-				super.buttonSelected(button, index);
+			return Status.OK_STATUS;
 		}
 	}
 
@@ -94,7 +109,6 @@ public class FeatureImportWizardPage extends WizardPage {
 		super("FeatureImportWizardPage"); //$NON-NLS-1$
 		setTitle(PDEUIMessages.FeatureImportWizard_FirstPage_title);
 		setDescription(PDEUIMessages.FeatureImportWizard_FirstPage_desc);
-		fTablePart = new TablePart();
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -105,34 +119,57 @@ public class FeatureImportWizardPage extends WizardPage {
 		initializeDialogUnits(parent);
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(1, false));
 
 		fRuntimeLocationButton = new Button(composite, SWT.CHECK);
-		fillHorizontal(fRuntimeLocationButton, 3, false);
+		fillHorizontal(fRuntimeLocationButton, 1, false);
 		fRuntimeLocationButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_runtimeLocation);
 
-		fOtherLocationLabel = new Label(composite, SWT.NULL);
+		Composite otherLocationComposite = SWTFactory.createComposite(composite, 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
+
+		fOtherLocationLabel = new Label(otherLocationComposite, SWT.NULL);
 		fOtherLocationLabel.setText(PDEUIMessages.FeatureImportWizard_FirstPage_otherFolder);
 
-		fDropLocation = new Combo(composite, SWT.DROP_DOWN);
+		fDropLocation = new Combo(otherLocationComposite, SWT.DROP_DOWN);
 		fillHorizontal(fDropLocation, 1, true);
 
-		fBrowseButton = new Button(composite, SWT.PUSH);
+		fBrowseButton = new Button(otherLocationComposite, SWT.PUSH);
 		fBrowseButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_browse);
 		fBrowseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 
-		creatFeatureTable(composite);
+		createFeatureTable(composite);
 
-		fBinaryButton = new Button(composite, SWT.CHECK);
-		GridData gd = fillHorizontal(fBinaryButton, 3, false);
-		gd.verticalIndent = 5;
-		fBinaryButton.setText(PDEUIMessages.FeatureImportWizard_FirstPage_binaryImport);
+		Composite underTableComp = SWTFactory.createComposite(composite, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+
+		fCounterLabel = SWTFactory.createLabel(underTableComp, "", 1); //$NON-NLS-1$
+		Composite buttonComp = SWTFactory.createComposite(underTableComp, 2, 1, SWT.NONE, 0, 0);
+		buttonComp.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, true));
+
+		fSelectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.WizardCheckboxTablePart_selectAll, null);
+		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fFeatureViewer.setAllChecked(true);
+				updateCounter();
+				dialogChanged();
+			}
+		});
+		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.WizardCheckboxTablePart_deselectAll, null);
+		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fFeatureViewer.setAllChecked(false);
+				updateCounter();
+				dialogChanged();
+			}
+		});
+
+		fBinaryButton = SWTFactory.createCheckButton(composite, PDEUIMessages.FeatureImportWizard_FirstPage_binaryImport, null, true, 1);
 
 		initializeFields(getDialogSettings());
 		hookListeners();
 
 		setControl(composite);
+		updateCounter();
 		dialogChanged();
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.FEATURE_IMPORT_FIRST_PAGE);
@@ -148,29 +185,51 @@ public class FeatureImportWizardPage extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				setOtherEnabled(!fRuntimeLocationButton.getSelection());
 				setLocation(fRuntimeLocationButton.getSelection() ? getTargetHome() : fCurrDropLocation);
-				loadFeatureTable();
+				handleReload();
 			}
 		});
+
 		fDropLocation.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				validateDropLocation();
-				if (!fRuntimeLocationButton.getSelection()) {
-					String newLoc = fDropLocation.getText();
-					if (getMessageType() != WARNING && !newLoc.equals(fCurrDropLocation) && !fSelfSetLocation)
-						setMessage(PDEUIMessages.FeatureImportWizardPage_reloadLocation, WARNING);
-					fCurrDropLocation = newLoc;
+				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
+				boolean isItem = false;
+				String[] items = fDropLocation.getItems();
+				for (int i = 0; i < items.length; i++) {
+					if (fDropLocation.getText().equals(items[i])) {
+						isItem = true;
+						break;
+					}
 				}
+				locationChanged(isItem ? 0 : TYPING_DELAY);
 			}
 		});
+
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
 				if (chosen != null) {
 					setLocation(chosen.toOSString());
-					loadFeatureTable();
+					handleReload();
 				}
 			}
 		});
+	}
+
+	/**
+	 * Called whenever the location or another aspect of the container has changed
+	 * in the UI.  Will schedule a UIJob to verify and resolve the container 
+	 * reporting any problems to the user.  If a previous job is running or sleeping
+	 * it will be cancelled.
+	 * 
+	 * @param delay a delay to add to the job scheduling
+	 */
+	protected void locationChanged(long delay) {
+		if (fTextChangedJob == null) {
+			fTextChangedJob = new LocationChangedJob(getShell().getDisplay(), Messages.EditDirectoryContainerPage_3);
+		} else {
+			fTextChangedJob.cancel();
+		}
+		fTextChangedJob.schedule(delay);
 	}
 
 	private GridData fillHorizontal(Control control, int span, boolean grab) {
@@ -209,7 +268,7 @@ public class FeatureImportWizardPage extends WizardPage {
 
 		validateDropLocation();
 
-		loadFeatureTable();
+		handleReload();
 	}
 
 	private void setOtherEnabled(boolean enabled) {
@@ -263,7 +322,6 @@ public class FeatureImportWizardPage extends WizardPage {
 		}
 		setErrorMessage(errorMessage);
 		setPageComplete(errorMessage == null);
-		fTablePart.setButtonEnabled(0, errorMessage == null);
 	}
 
 	public boolean isBinary() {
@@ -281,34 +339,31 @@ public class FeatureImportWizardPage extends WizardPage {
 		return !fRuntimeLocationButton.getSelection();
 	}
 
-	private void loadFeatureTable() {
+	private void handleReload() {
 		IFeatureModel[] models = getModels();
-		fFeatureViewer.setInput(PDEPlugin.getDefault());
+		fFeatureViewer.setInput(models);
 		if (models != null) {
-			// warning had been issued for unreloaded location
-			if (getMessageType() == WARNING)
-				setMessage(null, WARNING);
 			if (!fRuntimeLocationButton.getSelection()) {
 				String currItem = fDropLocation.getText();
-				if (fDropLocation.indexOf(currItem) == -1) {
+				if (models.length > 0 && fDropLocation.indexOf(currItem) == -1) {
 					fDropLocation.add(currItem, 0);
 					if (fDropLocation.getItemCount() > 6)
 						fDropLocation.remove(6);
 					storeSettings(false);
 				}
+
+				// When the models are loaded, the entire contents of the combo get selected.  This can easily lead to overwriting the contents so we instead select the end.
+				fDropLocation.setSelection(new Point(fDropLocation.getText().length(), fDropLocation.getText().length()));
+
 			}
 			fFeatureViewer.setCheckedElements(models);
+
 		}
-		fTablePart.updateCounter(models != null ? models.length : 0);
-		fTablePart.getTableViewer().refresh();
-
-		fTablePart.setButtonEnabled(1, models != null && models.length > 0);
-		fTablePart.setButtonEnabled(2, models != null && models.length > 0);
-
+		updateCounter();
 		dialogChanged();
 	}
 
-	public void creatFeatureTable(Composite parent) {
+	public void createFeatureTable(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -320,10 +375,63 @@ public class FeatureImportWizardPage extends WizardPage {
 		gd.heightHint = gd.widthHint = 300;
 		container.setLayoutData(gd);
 
-		fTablePart.createControl(container);
-		fFeatureViewer = fTablePart.getTableViewer();
-		fFeatureViewer.setContentProvider(new ContentProvider());
+		FilteredCheckboxTree tree = new FilteredCheckboxTree(container, null);
+		fFeatureViewer = tree.getCheckboxTreeViewer();
+		fFeatureViewer.setContentProvider(new ITreeContentProvider() {
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+
+			public void dispose() {
+			}
+
+			public Object[] getElements(Object inputElement) {
+				if (inputElement instanceof Object[]) {
+					return (Object[]) inputElement;
+				}
+				return new Object[0];
+			}
+
+			public boolean hasChildren(Object element) {
+				return false;
+			}
+
+			public Object getParent(Object element) {
+				return null;
+			}
+
+			public Object[] getChildren(Object parentElement) {
+				return new Object[0];
+			}
+		});
 		fFeatureViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fFeatureViewer.setComparator(ListUtil.FEATURE_COMPARATOR);
+		fFeatureViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				updateCounter();
+				dialogChanged();
+			}
+		});
+		fFeatureViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISelection selection = fFeatureViewer.getSelection();
+				if (!selection.isEmpty()) {
+					Object selected = ((IStructuredSelection) selection).getFirstElement();
+					fFeatureViewer.setChecked(selected, !fFeatureViewer.getChecked(selected));
+					updateCounter();
+					dialogChanged();
+				}
+			}
+		});
+
+	}
+
+	private void updateCounter() {
+		int total = 0;
+		if (fModels != null) {
+			total = fModels.length;
+		}
+		int checked = fFeatureViewer.getCheckedLeafCount();
+		fCounterLabel.setText(NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, new String[] {new Integer(checked).toString(), new Integer(total).toString()}));
 	}
 
 	public void dispose() {
@@ -352,6 +460,7 @@ public class FeatureImportWizardPage extends WizardPage {
 				monitor.done();
 			}
 		};
+
 		IProgressService pservice = PlatformUI.getWorkbench().getProgressService();
 		try {
 			pservice.busyCursorWhile(runnable);
@@ -426,18 +535,19 @@ public class FeatureImportWizardPage extends WizardPage {
 
 	private void dialogChanged() {
 		String message = null;
-		if (fFeatureViewer != null && fFeatureViewer.getTable().getItemCount() == 0)
+		if (fFeatureViewer != null && (fModels == null || fModels.length == 0)) {
 			message = PDEUIMessages.FeatureImportWizard_messages_noFeatures;
+		}
 
 		setMessage(message, IMessageProvider.INFORMATION);
-		setPageComplete(fTablePart.getSelectionCount() > 0);
+		setPageComplete(fFeatureViewer.getCheckedLeafCount() > 0);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
 	public boolean isPageComplete() {
-		return fTablePart.getSelectionCount() > 0;
+		return fFeatureViewer.getCheckedLeafCount() > 0;
 	}
 
 	private void setLocation(String location) {
@@ -445,4 +555,5 @@ public class FeatureImportWizardPage extends WizardPage {
 		fDropLocation.setText(location);
 		fSelfSetLocation = false;
 	}
+
 }

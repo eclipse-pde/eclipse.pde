@@ -217,16 +217,14 @@ public class TargetContentsGroup {
 	 * @param style toolkit for form style or <code>null</code> for dialog style
 	 */
 	private TreeViewer createTree(Composite parent, FormToolkit toolkit) {
-		TreeContentProvider contentProvider = new TreeContentProvider();
-
-		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, contentProvider, toolkit);
+		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, toolkit);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.getPatternFilter().setIncludeLeadingWildcard(true);
 
 		fTree = tree.getCheckboxTreeViewer();
 		((GridData) fTree.getControl().getLayoutData()).heightHint = 300;
 		fTree.setUseHashlookup(true);
-		fTree.setContentProvider(contentProvider);
+		fTree.setContentProvider(new TreeContentProvider());
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {

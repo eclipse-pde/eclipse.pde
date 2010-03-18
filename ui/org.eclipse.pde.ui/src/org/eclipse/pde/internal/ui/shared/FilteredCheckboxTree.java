@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.shared;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -39,33 +38,30 @@ public class FilteredCheckboxTree extends FilteredTree {
 	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
 	 * 
 	 * @param parent parent composite
-	 * @param contentProvider Used to determine which elements are leaf nodes
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 */
-	public FilteredCheckboxTree(Composite parent, ITreeContentProvider contentProvider, FormToolkit toolkit) {
-		this(parent, contentProvider, toolkit, SWT.NONE);
+	public FilteredCheckboxTree(Composite parent, FormToolkit toolkit) {
+		this(parent, toolkit, SWT.NONE);
 	}
 
 	/**
 	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
 	 * 
 	 * @param parent parent composite
-	 * @param contentProvider Used to determine which elements are leaf nodes
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 */
-	public FilteredCheckboxTree(Composite parent, ITreeContentProvider contentProvider, FormToolkit toolkit, int treeStyle) {
-		this(parent, contentProvider, toolkit, treeStyle, new PatternFilter());
+	public FilteredCheckboxTree(Composite parent, FormToolkit toolkit, int treeStyle) {
+		this(parent, toolkit, treeStyle, new PatternFilter());
 	}
 
 	/**
 	 * Constructor that creates a tree with preset style bits and a CachedContainerCheckedTreeViewer for the tree.
 	 * 
 	 * @param parent parent composite
-	 * @param contentProvider Used to determine which elements are leaf nodes
 	 * @param toolkit optional toolkit to create UI elements with, required if the tree is being created in a form editor
 	 * @param filter pattern filter to use in the filter control
 	 */
-	public FilteredCheckboxTree(Composite parent, ITreeContentProvider contentProvider, FormToolkit toolkit, int treeStyle, PatternFilter filter) {
+	public FilteredCheckboxTree(Composite parent, FormToolkit toolkit, int treeStyle, PatternFilter filter) {
 		super(parent, true);
 		fToolkit = toolkit;
 		init(treeStyle, filter);

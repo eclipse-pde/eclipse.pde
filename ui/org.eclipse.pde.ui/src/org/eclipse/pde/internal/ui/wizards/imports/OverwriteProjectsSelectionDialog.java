@@ -189,7 +189,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	}
 
 	private void createTableArea(Composite parent) {
-		fFilteredTree = new FilteredCheckboxTree(parent, null, null);
+		fFilteredTree = new FilteredCheckboxTree(parent, null);
 		fFilteredTree.getPatternFilter().setIncludeLeadingWildcard(true);
 		fCheckboxTreeViewer = fFilteredTree.getCheckboxTreeViewer();
 		fCheckboxTreeViewer.setContentProvider(new PluginContentProvider());
