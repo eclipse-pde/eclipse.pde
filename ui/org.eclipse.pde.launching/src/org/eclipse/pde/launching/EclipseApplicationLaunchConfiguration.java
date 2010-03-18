@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,11 @@ import org.osgi.framework.Version;
  * <p>
  * Clients may subclass and instantiate this class.
  * </p>
- * @since 3.2
+ * <p>
+ * This class originally existed in 3.2 as
+ * <code>org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration</code>.
+ * </p>
+ * @since 3.6
  */
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
 

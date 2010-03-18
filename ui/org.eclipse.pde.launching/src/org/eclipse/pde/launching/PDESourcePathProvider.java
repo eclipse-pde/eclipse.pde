@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,7 +28,11 @@ import org.eclipse.pde.internal.launching.launcher.VMHelper;
  * <p>
  * Clients may subclass this class.
  * </p>
- * @since 3.3
+ * <p>
+ * This class originally existed in 3.3 as
+ * <code>org.eclipse.pde.ui.launcher.PDESourcePathProvider</code>.
+ * </p>
+ * @since 3.6
  */
 public class PDESourcePathProvider extends StandardSourcePathProvider {
 

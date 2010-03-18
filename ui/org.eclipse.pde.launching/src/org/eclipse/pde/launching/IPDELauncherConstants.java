@@ -15,7 +15,11 @@ package org.eclipse.pde.launching;
  * <p>
  * Constant definitions only; not to be implemented.
  * </p>
- * @since 3.2
+ * <p>
+ * This class originally existed in 3.2 as
+ * <code>org.eclipse.pde.ui.launcher.IPDELauncherConstants</code>.
+ * </p>
+ * @since 3.6
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
