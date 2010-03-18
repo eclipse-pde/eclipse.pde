@@ -33,8 +33,11 @@ import org.osgi.framework.Version;
 
 /**
  * A launch delegate for launching JUnit Plug-in tests.
- *
- * @since 3.3
+ * <p>
+ * This class originally existed in 3.3 as
+ * <code>org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate</code>.
+ * </p>
+ * @since 3.6
  */
 public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate {
 

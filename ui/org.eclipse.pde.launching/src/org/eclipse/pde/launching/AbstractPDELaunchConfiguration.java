@@ -32,7 +32,11 @@ import org.eclipse.pde.internal.launching.launcher.*;
  * <p>
  * Clients may subclass this class.
  * </p>
- * @since 3.2
+ * <p>
+ * This class originally existed in 3.2 as
+ * <code>org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration</code>.
+ * </p>
+ * @since 3.6
  */
 public abstract class AbstractPDELaunchConfiguration extends LaunchConfigurationDelegate {
 
