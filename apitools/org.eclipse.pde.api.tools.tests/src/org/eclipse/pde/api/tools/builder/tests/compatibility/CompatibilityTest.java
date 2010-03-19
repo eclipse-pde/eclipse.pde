@@ -165,12 +165,11 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
 		if (baseline == null) {
 			// create the API baseline
-			IApiBaseline profile = manager.getWorkspaceBaseline();
 			projects = getEnv().getWorkspace().getRoot().getProjects();
 			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(BASELINE);
 			IApiComponent component = null;
 			for (int i = 0; i < projects.length; i++) {
-				component = profile.getApiComponent(projects[i].getName());
+				component = manager.getWorkspaceComponent(projects[i].getName());
 				assertNotNull("The project was not found in the workspace baseline: "+projects[i].getName(), component);
 				exportApiComponent(projects[i], component, baselineLocation);
 			}

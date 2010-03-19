@@ -676,4 +676,15 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 		return baseline;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager#getWorkspaceComponent(java.lang.String)
+	 */
+	public synchronized IApiComponent getWorkspaceComponent(String symbolicName) {
+		IApiBaseline baseline = getWorkspaceBaseline();
+		if (baseline != null) {
+			return baseline.getApiComponent(symbolicName);
+		}
+		return null;
+	}
 }

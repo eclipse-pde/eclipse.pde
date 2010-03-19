@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 
 
 /**
@@ -89,4 +90,13 @@ public interface IApiBaselineManager {
 	 * @return the workspace baseline or <code>null</code>
 	 */
 	public IApiBaseline getWorkspaceBaseline();
+	
+	/**
+	 * Returns the API component the workspace baseline with the given symbolic name
+	 * or <code>null</code> if none.
+	 * 
+	 * @param symbolicName bundle symbolic name
+	 * @return API component from the workspace baseline or <code>null</code>
+	 */
+	public IApiComponent getWorkspaceComponent(String symbolicName);
 }
