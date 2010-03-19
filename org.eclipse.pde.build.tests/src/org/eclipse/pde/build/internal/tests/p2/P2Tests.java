@@ -261,6 +261,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.metadata.repo", repoLocation);
 		properties.put("p2.artifact.repo", repoLocation);
 		properties.put("p2.category.site", URIUtil.toUnencodedString(buildFolder.getFile("site.xml").getLocationURI()));
+		properties.put("p2.category.version", "1.2.3.456");
 		properties.put("p2.flavor", "tooling");
 		properties.put("p2.publish.artifacts", "true");
 		properties.put("p2.compress", "true");
@@ -273,7 +274,11 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(buildFolder, "repo/artifacts.jar");
 
 		IMetadataRepository metadata = loadMetadataRepository(repo.getLocationURI());
-		assertFalse(metadata.query(QueryUtil.createIUQuery("new_category_1"), null).isEmpty());
+		IQueryResult result = metadata.query(QueryUtil.createIUQuery("new_category_1"), null);
+		IInstallableUnit iu = (IInstallableUnit) result.iterator().next();
+		assertNotNull(iu);
+		assertEquals(iu.getId(), "new_category_1");
+		assertEquals(iu.getVersion().toString(), "1.2.3.456");
 	}
 
 	public void testBug237662() throws Exception {

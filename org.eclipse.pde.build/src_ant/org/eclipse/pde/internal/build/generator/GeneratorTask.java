@@ -231,4 +231,10 @@ public class GeneratorTask extends Task {
 			throw new IllegalArgumentException(NLS.bind(TaskMessages.error_locationNotURI, site));
 		}
 	}
+
+	public void setSiteVersion(String version) {
+		if (version == null || version.startsWith(ANT_PREFIX))
+			return;
+		getGenerator().setSiteVersion(version);
+	}
 }

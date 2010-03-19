@@ -32,6 +32,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 	private int operation = 0;
 	private IPublisherResult result = null;
 	private URI site = null;
+	private String siteVersion = null;
 	private String flavor;
 	private ProductFile product;
 	private String rootVersion;
@@ -58,8 +59,12 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 			case OPERATION_SOURCE :
 				actions.add(new FeaturesAction(new File[] {new File(sourceFile, "features")})); //$NON-NLS-1$
 				actions.add(new BundlesAction(new File[] {new File(sourceFile, "plugins")})); //$NON-NLS-1$
-				if (site != null)
-					actions.add(new SiteXMLAction(site, "")); //$NON-NLS-1$
+				if (site != null) {
+					SiteXMLAction siteAction = new SiteXMLAction(site, ""); //$NON-NLS-1$
+					if (siteVersion != null && siteVersion.length() > 0)
+						siteAction.setCategoryVersion(siteVersion);
+					actions.add(siteAction);
+				}
 				break;
 			case OPERATION_CONFIG :
 				String[] configs = info.getConfigurations();
@@ -166,5 +171,9 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 
 	public void setVersionAdvice(String advice) {
 		this.versionAdvice = advice;
+	}
+
+	public void setSiteVersion(String version) {
+		this.siteVersion = version;
 	}
 }
