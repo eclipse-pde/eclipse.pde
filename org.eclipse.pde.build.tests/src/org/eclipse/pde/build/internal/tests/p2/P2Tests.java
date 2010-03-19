@@ -22,6 +22,7 @@ import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
@@ -234,11 +235,24 @@ public class P2Tests extends P2TestCase {
 		assertLogContainsLine(installFolder.getFile("configuration/config.ini"), "org.eclipse.equinox.simpleconfigurator.configUrl=file\\:org.eclipse.equinox.simpleconfigurator");
 	}
 
-	public void testBug222962() throws Exception {
+	public void testBug222962_305837() throws Exception {
 		IFolder buildFolder = newTest("222962");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
 		Utils.generateFeature(buildFolder, "F", null, new String[] {OSGI + ";unpack=false", CORE_RUNTIME + ";unpack=false"});
+		Properties featureProperties = new Properties();
+		featureProperties.put("bin.includes", "feature.xml");
+		Utils.storeProperties(buildFolder.getFile("features/F/build.properties"), featureProperties);
+
+		StringBuffer site = new StringBuffer();
+		site.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>               	\n");
+		site.append("<site> 										          	\n");
+		site.append("    <feature id=\"F\" version=\"0.0.0\" >					\n");
+		site.append("       <category name=\"new_category_1\" />				\n");
+		site.append("    </feature>												\n");
+		site.append("    <category-def name=\"new_category_1\" label=\"Foo!\"/>	\n");
+		site.append("</site>        											\n");
+		Utils.writeBuffer(buildFolder.getFile("site.xml"), site);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
@@ -246,6 +260,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
 		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.category.site", URIUtil.toUnencodedString(buildFolder.getFile("site.xml").getLocationURI()));
 		properties.put("p2.flavor", "tooling");
 		properties.put("p2.publish.artifacts", "true");
 		properties.put("p2.compress", "true");
@@ -256,6 +271,9 @@ public class P2Tests extends P2TestCase {
 
 		assertResourceFile(buildFolder, "repo/content.jar");
 		assertResourceFile(buildFolder, "repo/artifacts.jar");
+
+		IMetadataRepository metadata = loadMetadataRepository(repo.getLocationURI());
+		assertFalse(metadata.query(QueryUtil.createIUQuery("new_category_1"), null).isEmpty());
 	}
 
 	public void testBug237662() throws Exception {

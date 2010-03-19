@@ -59,7 +59,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 				actions.add(new FeaturesAction(new File[] {new File(sourceFile, "features")})); //$NON-NLS-1$
 				actions.add(new BundlesAction(new File[] {new File(sourceFile, "plugins")})); //$NON-NLS-1$
 				if (site != null)
-					actions.add(new SiteXMLAction(site, null));
+					actions.add(new SiteXMLAction(site, "")); //$NON-NLS-1$
 				break;
 			case OPERATION_CONFIG :
 				String[] configs = info.getConfigurations();
