@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
+package d.e.f;
 
 /**
- * @since 1.1
+ * @since 1.0
  */
-public class ClassZ {
+public class ClassE extends a.b.c.core.ClassE {
+
 }

@@ -14,6 +14,7 @@ import java.io.File;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -30,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
 /**
@@ -73,7 +75,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		enableBaselineOptions(true);
 		enableCompatibilityOptions(true);
 		enableLeakOptions(false);
-		enableSinceTagOptions(false);
+		enableSinceTagOptions(true);
 		enableUsageOptions(false);
 		enableVersionNumberOptions(true);
 	}
@@ -323,6 +325,29 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
+	
+	/**
+	 * Tests that splitting a plug-in and re-exporting the base is compatible with
+	 * previous release when package changes name, and old types subclass new types.
+	 * There should be no since tags errors in this case since the new
+	 * types are in new packages and should contain the since tag corresponding
+	 * to the new bundle. Since the new bundle is not in the baseline, the tags
+	 * cannot be validated.
+	 * 
+	 * @throws Exception
+	 */
+	public void test010() throws Exception {
+		// setup the environment
+		setupTest("test10");
+		performMergeSplit();
+		// no problems should appear in an incremental build either
+		IProject project = getEnv().getProject("a.b.c.core");
+		IFile file = project.getFile(new Path("src").append("a").append("b").append("c").append("core").append("ClassD.java"));
+		IPath replacement = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(WORKSPACE_ROOT).append("test10").append("post-changes").append("ClassD.java");
+		updateWorkspaceFile(file.getFullPath(), replacement);
+		incrementalBuild();
+		assertProblems(getEnv().getProblems());
+	}	
 	private void performMergeSplit() throws CoreException {
 		fullBuild();
 		expectingNoJDTProblems();

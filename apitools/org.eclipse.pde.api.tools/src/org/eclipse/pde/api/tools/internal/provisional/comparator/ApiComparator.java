@@ -412,6 +412,7 @@ public class ApiComparator {
 	 * @param typeRoot2 the given class file that comes from the <code>component2</code>
 	 * @param component the given API component from the reference
 	 * @param component2 the given API component to compare with
+	 * @param reexporter the API component re-exporting component2, or <code>null</code> if none
 	 * @param referenceBaseline the given API baseline from which the given component <code>component</code> is coming from
 	 * @param baseline the given API baseline from which the given component <code>component2</code> is coming from
 	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
@@ -428,10 +429,10 @@ public class ApiComparator {
 			final IApiTypeRoot typeRoot2,
 			final IApiComponent component,
 			final IApiComponent component2,
+			final IApiComponent reexporter,
 			final IApiBaseline referenceBaseline,
-			final IApiBaseline baseline,
-			final int visibilityModifiers, 
-			final IProgressMonitor monitor) {
+			final IApiBaseline baseline, 
+			final int visibilityModifiers, final IProgressMonitor monitor) {
 		
 		if (typeRoot2 == null) {
 			throw new IllegalArgumentException("The given class file is null"); //$NON-NLS-1$
@@ -478,7 +479,7 @@ public class ApiComparator {
 							deltaComponentID,
 							IDelta.API_COMPONENT_ELEMENT_TYPE,
 							IDelta.ADDED,
-							IDelta.TYPE,
+							reexporter == null ? IDelta.TYPE : IDelta.REEXPORTED_TYPE,
 							elementDescription2 != null ? elementDescription2.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS,
 							0,
 							typeDescriptor2.getModifiers(),

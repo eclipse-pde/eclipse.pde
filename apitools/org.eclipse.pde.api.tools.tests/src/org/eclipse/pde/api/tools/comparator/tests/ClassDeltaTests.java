@@ -2871,7 +2871,7 @@ public class ClassDeltaTests extends DeltaTestSetup {
 			// ignore
 		}
 		assertNotNull("No p.Y", classFile);
-		delta = ApiComparator.compare(classFile, beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
+		delta = ApiComparator.compare(classFile, beforeApiComponent, afterApiComponent, null, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta);
 		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA);
 	}

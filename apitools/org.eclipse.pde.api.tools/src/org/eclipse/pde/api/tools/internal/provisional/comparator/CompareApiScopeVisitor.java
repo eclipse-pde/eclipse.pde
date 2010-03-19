@@ -151,9 +151,9 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 				root,
 				referenceComponent,
 				apiComponent,
+				null,
 				this.referenceBaseline,
-				baseline,
-				this.visibilityModifiers, null);
+				baseline, this.visibilityModifiers, null);
 		if (delta != null) {
 			delta.accept(new DeltaVisitor() {
 				public void endVisit(IDelta localDelta) {

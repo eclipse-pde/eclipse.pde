@@ -8,10 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
+package d.e.f;
+
 
 /**
- * @since 1.1
+ *
  */
-public class ClassZ {
+public class ClassD {
+
+	public void methodOne() {
+		System.out.println("methodOne()");
+	}
 }

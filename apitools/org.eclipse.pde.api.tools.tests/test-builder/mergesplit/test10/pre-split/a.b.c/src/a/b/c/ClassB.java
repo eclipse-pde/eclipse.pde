@@ -11,7 +11,11 @@
 package a.b.c;
 
 /**
- * @since 1.1
+ *
  */
-public class ClassZ {
+public class ClassB {
+
+	public void methodOne(ClassB arg) {
+		System.out.println(arg.getClass() + "methodOne()");
+	}
 }

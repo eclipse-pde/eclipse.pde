@@ -975,6 +975,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			IDelta delta = null;
 			IApiComponent provider = null;
+			boolean reexported = false;
 			if (classFile == null) {
 				String packageName = Signatures.getPackageName(typeName);
 				// check if the type is provided by a required component (it could have been moved/re-exported)
@@ -990,6 +991,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							classFile = p.findTypeRoot(typeName, id2);
 						}
 						if (classFile != null) {
+							IRequiredComponentDescription[] components = component.getRequiredComponents();
+							for (int i = 0; i < components.length; i++) {
+								IRequiredComponentDescription description = components[i];
+								if (description.getId().equals(p.getSymbolicName()) && description.isExported()) {
+									reexported = true;
+									break;
+								}
+							}
 							provider = p;
 						}
 					}
@@ -1053,7 +1062,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				fBuildState.cleanup(typeName);
 				long time = System.currentTimeMillis();
 				try {
-					delta = ApiComparator.compare(classFile, reference, provider, reference.getBaseline(), provider.getBaseline(), VisibilityModifiers.API, localmonitor.newChild(1));
+					IApiComponent exporter = null;
+					if (reexported) {
+						exporter = component;
+					}
+					delta = ApiComparator.compare(classFile, reference, provider, exporter, reference.getBaseline(), provider.getBaseline(), VisibilityModifiers.API, localmonitor.newChild(1));
 				} catch(Exception e) {
 					ApiPlugin.log(e);
 				} finally {

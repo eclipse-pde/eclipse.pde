@@ -13,5 +13,9 @@ package a.b.c;
 /**
  * @since 1.1
  */
-public class ClassZ {
+public class ClassAdded {
+
+	public void methodOne(ClassAdded arg) {
+		System.out.println(arg.getClass() + "methodOne()");
+	}
 }
