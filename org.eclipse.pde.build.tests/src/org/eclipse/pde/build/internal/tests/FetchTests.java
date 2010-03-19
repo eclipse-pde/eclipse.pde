@@ -12,6 +12,7 @@ package org.eclipse.pde.build.internal.tests;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
@@ -170,5 +171,35 @@ public class FetchTests extends PDETestCase {
 		runAntScript(buildXMLPath, new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
 
 		assertResourceFile(buildFolder, "plugins/aBundle_1.0.0.jar");
+	}
+
+	public void testBug306510() throws Exception {
+		IFolder buildFolder = newTest("306510");
+		Utils.generateFeature(buildFolder, "org.eclipse.pde.build.container.feature", null, new String[] {"org.eclipse.osgi.util;version=3.2.100.vR_qualifier"});
+
+		StringBuffer buffer = new StringBuffer("plugin@org.eclipse.osgi.util,3.2.100.vR_qualifier=v20100108,:pserver:anonymous@dev.eclipse.org:/cvsroot/rt,,org.eclipse.equinox/compendium/bundles/org.eclipse.osgi.util");
+		Utils.createFolder(buildFolder, "maps");
+		Utils.writeBuffer(buildFolder.getFile("maps/test.map"), buffer);
+
+		StringBuffer customBuffer = new StringBuffer();
+		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/customTargets.xml\"/>	\n");
+		customBuffer.append("   <target name=\"postFetch\">															\n");
+		customBuffer.append("      <replace file=\"${buildDirectory}/plugins/org.eclipse.osgi.util_3.2.100.vR_qualifier/META-INF/MANIFEST.MF\"  \n");
+		customBuffer.append("               token=\"qualifier\" value=\"vR_qualifier\" /> 							\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("</project>																				\n");
+		Utils.writeBuffer(buildFolder.getFile("customTargets.xml"), customBuffer);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "org.eclipse.pde.build.container.feature");
+		properties.put("archivesFormat", "*,*,*-folder");
+		properties.remove("skipFetch");
+
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		Manifest m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/org.eclipse.osgi.util_3.2.100.vR_v20100108/META-INF/MANIFEST.MF"));
+		assertEquals(m.getMainAttributes().getValue("Bundle-Version"), "3.2.100.vR_v20100108");
 	}
 }

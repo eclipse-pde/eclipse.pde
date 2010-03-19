@@ -625,7 +625,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			MapFileEntry aCandidate = (MapFileEntry) entry.getKey();
 			//Find the exact match
 			if (aCandidate.v.equals(version))
-				return new String[] {(String) entry.getValue(), version.toString()};
+				return new Object[] {(String) entry.getValue(), version};
 
 			if (bestMatch != null) {
 				if (((MapFileEntry) bestMatch.getKey()).v.compareTo(((MapFileEntry) entry.getKey()).v) < 1) {
