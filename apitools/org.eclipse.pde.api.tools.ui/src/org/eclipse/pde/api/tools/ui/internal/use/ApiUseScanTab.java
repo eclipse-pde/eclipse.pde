@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
@@ -66,7 +67,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 */
 	SelectionAdapter selectionadapter = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			updateLaunchConfigurationDialog();
+			updateDialog();
 		};
 	};
 	
@@ -75,7 +76,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 */
 	ModifyListener modifyadapter = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-			updateLaunchConfigurationDialog();
+			updateDialog();
 		}
 	};
 	
@@ -135,7 +136,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				if (bef >= 0) {
 					name = ApiUseScanTab.this.baseline.getItem(bef);
 				}
-				SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage", null); //$NON-NLS-1$
+				SWTFactory.showPreferencePage(getTabShell(), "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage", null); //$NON-NLS-1$
 				updateAvailableBaselines();
 				if (name != null) {
 					String[] items = ApiUseScanTab.this.baseline.getItems();
@@ -146,7 +147,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 						}
 					}
 				}
-				updateLaunchConfigurationDialog();
+				updateDialog();
 			}
 		});
 		
@@ -172,7 +173,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				if (index >= 0) {
 					handle = ApiUseScanTab.this.targetHandles[index];
 				}
-				SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.ui.TargetPlatformPreferencePage", null); //$NON-NLS-1$
+				SWTFactory.showPreferencePage(getTabShell(), "org.eclipse.pde.ui.TargetPlatformPreferencePage", null); //$NON-NLS-1$
 				updateAvailableTargets();
 				if (handle != null) {
 					for (int i = 0; i < targetHandles.length; i++) {
@@ -182,7 +183,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 						}
 					}
 				}
-				updateLaunchConfigurationDialog();
+				updateDialog();
 			}
 		});
 		
@@ -199,7 +200,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.installButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				handleFolderBrowse(ApiUseScanTab.this.installLocation, Messages.ApiUseScanTab_select_install_location);
-				updateLaunchConfigurationDialog();
+				updateDialog();
 			}
 		});
 		this.radioReportOnly = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_generate_html_only);
@@ -253,7 +254,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				boolean enabled = ((Button)e.widget).getSelection();
 				ApiUseScanTab.this.cleanhtmllocation.setEnabled(enabled);
 				ApiUseScanTab.this.openreport.setEnabled(enabled);
-				updateLaunchConfigurationDialog();
+				updateDialog();
 			}
 		});
 		this.cleanhtmllocation = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_clean_html_report_dir, null, false, 2);
@@ -275,6 +276,20 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * Avoid synthetic accessor
+	 */
+	void updateDialog() {
+		updateLaunchConfigurationDialog();
+	}
+	
+	/**
+	 * Avoid synthetic accessor
+	 */
+	Shell getTabShell() {
+		return getShell();
+	}
+	
+	/**
 	 * The selected target has changed (radio selection). Update control enabled state and dialog.
 	 */
 	void updateTarget() {
@@ -287,6 +302,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				installLocation.setEnabled(false);
 				installButton.setEnabled(false);
 				this.createhtml.setEnabled(true);
+				this.cleanreportlocation.setEnabled(true);
+				this.description.setEnabled(true);
 				setGroupEnablement(this.searchForGroup, true);
 				setGroupEnablement(this.searchInGroup, true);
 				break;
@@ -299,6 +316,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				installLocation.setEnabled(false);
 				installButton.setEnabled(false);
 				this.createhtml.setEnabled(true);
+				this.cleanreportlocation.setEnabled(true);
+				this.description.setEnabled(true);
 				setGroupEnablement(this.searchForGroup, true);
 				setGroupEnablement(this.searchInGroup, true);
 				break;
@@ -311,6 +330,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				installLocation.setEnabled(true);
 				installButton.setEnabled(true);
 				this.createhtml.setEnabled(true);
+				this.cleanreportlocation.setEnabled(true);
+				this.description.setEnabled(true);
 				setGroupEnablement(this.searchForGroup, true);
 				setGroupEnablement(this.searchInGroup, true);
 				break;
@@ -324,6 +345,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				installButton.setEnabled(false);
 				this.createhtml.setSelection(true);
 				this.createhtml.setEnabled(false);
+				this.cleanreportlocation.setEnabled(false);
+				this.description.setEnabled(false);
 				setGroupEnablement(this.searchForGroup, false);
 				setGroupEnablement(this.searchInGroup, false);
 				break;
