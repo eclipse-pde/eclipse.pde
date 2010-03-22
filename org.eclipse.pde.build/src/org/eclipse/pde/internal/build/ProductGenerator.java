@@ -152,7 +152,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		defaults[2] = new BundleInfo(BUNDLE_OSGI, null, null, -1, true);
 		defaults[3] = new BundleInfo(BUNDLE_UPDATE_CONFIGURATOR, null, null, 4, true);
 		defaults[4] = new BundleInfo(BUNDLE_CORE_RUNTIME, null, null, 4, true);
-		defaults[5] = new BundleInfo(BUNDLE_DS, null, null, 1, true);
+		defaults[5] = new BundleInfo(BUNDLE_DS, null, null, 2, true);
 		return defaults;
 	}
 
