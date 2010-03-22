@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.jface.window.Window;
@@ -38,7 +39,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		// create the query for packages, features and bundles
-		IQuery query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", new Object[] {QueryUtil.PROP_TYPE_GROUP}); //$NON-NLS-1$
+		IQuery query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", new Object[] {MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP}); //$NON-NLS-1$
 		//IQuery query = QueryUtil.createIUAnyQuery();
 
 		FilteredIUSelectionDialog dialog = new FilteredIUSelectionDialog(window.getShell(), query);
