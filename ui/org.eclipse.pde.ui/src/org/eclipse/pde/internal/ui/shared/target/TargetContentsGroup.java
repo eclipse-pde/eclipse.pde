@@ -481,7 +481,7 @@ public class TargetContentsGroup {
 				Object[] allChecked = fTree.getCheckedLeafElements();
 				Object[] required = null;
 				if (fFeaureModeButton.getSelection()) {
-					required = getRequiredFeatures(((TargetDefinition) fTargetDefinition).getFeatureModels(), allChecked);
+					required = getRequiredFeatures(((TargetDefinition) fTargetDefinition).getAllFeatures(), allChecked);
 				} else {
 					required = getRequiredPlugins(fAllBundles, allChecked);
 				}
@@ -891,7 +891,7 @@ public class TargetContentsGroup {
 
 		int total = fAllBundles.size();
 		if (fFeaureModeButton.getSelection()) {
-			total = ((TargetDefinition) fTargetDefinition).getFeatureModels().length;
+			total = ((TargetDefinition) fTargetDefinition).getAllFeatures().length;
 			total += ((TargetDefinition) fTargetDefinition).getOtherBundles().length;
 		}
 
@@ -1059,7 +1059,7 @@ public class TargetContentsGroup {
 
 			if (included == null || included.size() == 0) {
 				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
-			} else if (included.size() == ((TargetDefinition) fTargetDefinition).getFeatureModels().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
+			} else if (included.size() == ((TargetDefinition) fTargetDefinition).getAllFeatures().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
 				fTargetDefinition.setIncluded(null);
 			} else {
 				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
@@ -1134,9 +1134,9 @@ public class TargetContentsGroup {
 			if (inputElement instanceof ITargetDefinition) {
 				if (fFeaureModeButton.getSelection()) {
 					if (((TargetDefinition) fTargetDefinition).getOtherBundles().length == 0) {
-						return ((TargetDefinition) fTargetDefinition).getFeatureModels();
+						return ((TargetDefinition) fTargetDefinition).getAllFeatures();
 					}
-					IFeatureModel[] features = ((TargetDefinition) fTargetDefinition).getFeatureModels();
+					IFeatureModel[] features = ((TargetDefinition) fTargetDefinition).getAllFeatures();
 					Object[] result = new Object[features.length + 1];
 					System.arraycopy(features, 0, result, 0, features.length);
 					result[features.length] = OTHER_CATEGORY;

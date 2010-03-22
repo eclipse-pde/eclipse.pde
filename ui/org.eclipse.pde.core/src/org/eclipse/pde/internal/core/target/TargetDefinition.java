@@ -73,7 +73,10 @@ public class TargetDefinition implements ITargetDefinition {
 	public static final int MODE_PLUGIN = 0;
 	public static final int MODE_FEATURE = 1;
 
-	// internal caches for feature based targets
+	// cache of features found for a given location, maps a string path location to a array of IFeatureModels (IFeatureModel[])
+	private Map fFeaturesInLocation = new HashMap();
+
+	// internal cache for features.  A target managed by features will contain a set of features as well as a set of plug-ins that don't belong to a feature
 	private IFeatureModel[] fFeatureModels;
 	private IResolvedBundle[] fOtherBundles;
 
@@ -393,7 +396,7 @@ public class TargetDefinition implements ITargetDefinition {
 				included.add(filter[i]);
 			} else if (filter[i].getType() == NameVersionDescriptor.TYPE_FEATURE) {
 				containsFeatures = true;
-				IFeatureModel[] features = getFeatureModels();
+				IFeatureModel[] features = getAllFeatures();
 				IFeatureModel bestMatch = null;
 				for (int j = 0; j < features.length; j++) {
 					if (features[j].getFeature().getId().equals(filter[i].getId())) {
@@ -957,57 +960,74 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
+	 * Returns a set of feature models that exist in the provided location.  If
+	 * the locationPath is <code>null</code> the default target platform location
+	 * will be used.  The locationPath string may container string variables which
+	 * will be resolved.  This target definition may cache the feature models for
+	 * faster retrieval. 
+	 * 
+	 * TODO When to clear the cache
+	 * 
+	 * @param locationPath string path to the directory containing features.  May container string variables or be <code>null</code>
+	 * @return list of feature models found in the location, possible empty 
+	 * @param monitor progress monitor
+	 * @throws CoreException if there is a problem substituting a string variable
+	 */
+	public IFeatureModel[] getFeatureModels(String locationPath, IProgressMonitor monitor) throws CoreException {
+		String path = locationPath;
+		if (path == null) {
+			path = TargetPlatform.getDefaultLocation();
+		} else {
+			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+			path = manager.performStringSubstitution(path);
+		}
+
+		IFeatureModel[] models = null;
+		if (fFeaturesInLocation != null) {
+			models = (IFeatureModel[]) fFeaturesInLocation.get(path);
+		}
+
+		if (models != null) {
+			return models; /*(IFeatureModel[])models.toArray(new IFeatureModel[models.size()]);*/
+		}
+
+		models = ExternalFeatureModelManager.createModels(path, new ArrayList(), monitor);
+		fFeaturesInLocation.put(path, models);
+		return models;
+	}
+
+	/**
 	 * Returns the set of feature models available in this target, will return a cached copy if available
 	 * 
+	 * @see #getOtherBundles()
 	 * @return set of features available in this target, possibly empty.
 	 */
-	public IFeatureModel[] getFeatureModels() {
+	public IFeatureModel[] getAllFeatures() {
 		if (fFeatureModels != null) {
 			return fFeatureModels;
 		}
 
 		IBundleContainer[] containers = getBundleContainers();
 
-		String path = null;
-		if (containers != null && containers.length > 0) {
-			try {
-				path = ((AbstractBundleContainer) containers[0]).getLocation(true);
-			} catch (CoreException e) {
-				PDECore.log(e);
-				return new IFeatureModel[0];
-			}
-		}
-		if (path == null) {
-			path = TargetPlatform.getDefaultLocation();
-		} else {
-			try {
-				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-				path = manager.performStringSubstitution(path);
-			} catch (CoreException e) {
-				PDECore.log(e);
-				return new IFeatureModel[0];
-			}
-		}
-
-		ArrayList additional = new ArrayList();
+		ArrayList features = new ArrayList();
 		// secondary containers are considered additional
-		if (containers != null && containers.length > 1) {
-			for (int i = 1; i < containers.length; i++) {
-				try {
-					additional.add(((AbstractBundleContainer) containers[i]).getLocation(true));
-				} catch (CoreException e) {
-					PDECore.log(e);
+		if (containers != null && containers.length > 0) {
+			for (int i = 0; i < containers.length; i++) {
+				IFeatureModel[] currentFeatures = containers[i].getFeatures();
+				if (currentFeatures != null && currentFeatures.length > 0) {
+					features.addAll(Arrays.asList(currentFeatures));
 				}
 			}
 		}
 
-		fFeatureModels = ExternalFeatureModelManager.createModels(path, additional, null);
+		fFeatureModels = (IFeatureModel[]) features.toArray(new IFeatureModel[features.size()]);
 		return fFeatureModels;
 	}
 
 	/**
 	 * Returns the set of IResolvedBundle available in this target that are not part of any features, will return a cached copy if available
 	 * 
+	 * @see #getAllFeatures()
 	 * @return set of resolved bundles available in this target that don't belong to any features, possibly empty
 	 */
 	public IResolvedBundle[] getOtherBundles() {
@@ -1021,7 +1041,7 @@ public class TargetDefinition implements ITargetDefinition {
 			remaining.put(allBundles[i].getBundleInfo().getSymbolicName(), allBundles[i]);
 		}
 
-		IFeatureModel[] features = getFeatureModels();
+		IFeatureModel[] features = getAllFeatures();
 		for (int i = 0; i < features.length; i++) {
 			IFeaturePlugin[] plugins = features[i].getFeature().getPlugins();
 			for (int j = 0; j < plugins.length; j++) {
@@ -1039,7 +1059,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * target as well as any other included plug-ins as IResolvedBundles (that are not part 
 	 * of the features). Will return <code>null</code> if this target has not been resolved.
 	 * 
-	 * @see #getFeatureModels()
+	 * @see #getAllFeatures()
 	 * @see #getOtherBundles()
 	 * @return set of IFeatureModels and IResolvedBundles or <code>mull</code>
 	 */
@@ -1048,7 +1068,7 @@ public class TargetDefinition implements ITargetDefinition {
 			return null;
 		}
 
-		IFeatureModel[] allFeatures = getFeatureModels();
+		IFeatureModel[] allFeatures = getAllFeatures();
 		IResolvedBundle[] allExtraBundles = getOtherBundles();
 		NameVersionDescriptor[] included = getIncluded();
 		NameVersionDescriptor[] optional = getOptional();

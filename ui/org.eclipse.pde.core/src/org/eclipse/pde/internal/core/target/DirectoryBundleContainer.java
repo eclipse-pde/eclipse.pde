@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
@@ -92,6 +93,16 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			return (IResolvedBundle[]) bundles.toArray(new IResolvedBundle[bundles.size()]);
 		}
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		if (definition instanceof TargetDefinition) {
+			return ((TargetDefinition) definition).getFeatureModels(getLocation(false), monitor);
+		}
+		return new IFeatureModel[0];
 	}
 
 	/**

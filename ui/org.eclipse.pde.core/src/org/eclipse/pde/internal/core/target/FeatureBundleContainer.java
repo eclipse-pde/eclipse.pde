@@ -215,6 +215,24 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		// TODO Should match up with process in resolveBundles()
+		if (definition instanceof TargetDefinition) {
+			IFeatureModel[] allFeatures = ((TargetDefinition) definition).getFeatureModels(getLocation(false), monitor);
+			for (int i = 0; i < allFeatures.length; i++) {
+				if (allFeatures[i].getFeature().getId().equals(fId)) {
+					if (fVersion == null || allFeatures[i].getFeature().getVersion().equals(fVersion)) {
+						return new IFeatureModel[] {allFeatures[i]};
+					}
+				}
+			}
+		}
+		return new IFeatureModel[0];
+	}
+
 	/**
 	 * Returns whether the given target environment setting matches that of a fragments.
 	 * 

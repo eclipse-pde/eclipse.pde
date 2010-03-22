@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.target.provisional;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 /**
  * A collection of bundles. A bundle container abstracts the storage and location of the
@@ -58,7 +59,7 @@ public interface IBundleContainer {
 	public boolean isResolved();
 
 	/**
-	 * Returns the bundles in this container or <code>null</code> if this container is
+	 * Returns the bundles in this container or <code>null</code> if this container is not resolved
 	 * <p>
 	 * Some of the returned bundles may have non-OK statuses.  These bundles may be missing some
 	 * information (location, version, source target).  To get a bundle's status call
@@ -68,6 +69,18 @@ public interface IBundleContainer {
 	 * @return resolved bundles or <code>null</code>
 	 */
 	public IResolvedBundle[] getBundles();
+
+	/**
+	 * Returns all features available in this container or <code>null</code> if this container is
+	 * not resolved.
+	 * <p>
+	 * This method may return no features, even if the container has multiple bundles.  For all
+	 * returned features, the bundles that the features reference should be returned in the list
+	 * returned by {@link #getBundles()}
+	 * </p>
+	 * @return features or <code>null</code>
+	 */
+	public IFeatureModel[] getFeatures();
 
 	/**
 	 * Returns VM Arguments that are specified in the bundle container or <code>null</code> if none.

@@ -27,6 +27,7 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.osgi.framework.*;
 
@@ -41,6 +42,11 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * Resolved bundles or <code>null</code> if unresolved
 	 */
 	private IResolvedBundle[] fBundles;
+
+	/**
+	 * List of features contained in this bundle container or <code>null</code> if unresolved
+	 */
+	private IFeatureModel[] fFeatures;
 
 	/**
 	 * Status generated when this container was resolved, possibly <code>null</code>
@@ -86,9 +92,10 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#resolve(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 10);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 150);
 		try {
-			fBundles = resolveBundles(definition, subMonitor.newChild(10));
+			fBundles = resolveBundles(definition, subMonitor.newChild(100));
+			fFeatures = resolveFeatures(definition, subMonitor.newChild(50));
 			fResolutionStatus = Status.OK_STATUS;
 			if (subMonitor.isCanceled()) {
 				fBundles = null;
@@ -96,6 +103,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			}
 		} catch (CoreException e) {
 			fBundles = new IResolvedBundle[0];
+			fFeatures = new IFeatureModel[0];
 			fResolutionStatus = e.getStatus();
 		} finally {
 			if (fRegistry != null) {
@@ -130,8 +138,18 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getFeatures()
+	 */
+	public IFeatureModel[] getFeatures() {
+		if (isResolved()) {
+			return fFeatures;
+		}
+		return null;
+	}
+
 	/**
-	 * Resolves all source and executable bundles in this container regardless of any bundle restrictions.
+	 * Resolves all source and executable bundles in this container
 	 * <p>
 	 * Subclasses must implement this method.
 	 * </p><p>
@@ -139,10 +157,24 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * </p>
 	 * @param definition target context
 	 * @param monitor progress monitor
-	 * @return all source and executable bundles in this container regardless of any bundle restrictions
+	 * @return all source and executable bundles in this container
 	 * @throws CoreException if an error occurs
 	 */
 	protected abstract IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Collects all of the features in this container
+	 * <p>
+	 * Subclasses must implement this method.
+	 * </p><p>
+	 * <code>beginTask()</code> and <code>done()</code> will be called on the given monitor by the caller. 
+	 * </p>
+	 * @param definition target context
+	 * @param monitor progress monitor
+	 * @return all features in this container
+	 * @throws CoreException if an error occurs
+	 */
+	protected abstract IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns a string that identifies the type of bundle container.  This type is persisted to xml

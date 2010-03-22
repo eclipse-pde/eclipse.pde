@@ -31,6 +31,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
@@ -44,6 +45,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * Constant describing the type of bundle container 
 	 */
 	public static final String TYPE = "InstallableUnit"; //$NON-NLS-1$	
+
+	/**
+	 * Constant for the string that is appended to feature installable unit ids
+	 */
+	private static final String FEATURE_ID_SUFFIX = ".feature.group"; //$NON-NLS-1$
 
 	/**
 	 * IU identifiers.
@@ -60,6 +66,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * resolved.
 	 */
 	private IInstallableUnit[] fUnits;
+
+	/**
+	 * Cached id/version pairs listing the features that were downloaded to the bundle pool during resolution.  <code>null</code> if not resolved.
+	 */
+	private NameVersionDescriptor[] fFeatures;
 
 	/**
 	 * Repositories to consider, or <code>null</code> if default.
@@ -145,9 +156,41 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		if (fFeatures == null || fFeatures.length == 0 || !(definition instanceof TargetDefinition)) {
+			return new IFeatureModel[0];
+		}
+
+		// Note: By creating a map of the container features, we are limiting the user to only one version of a feature in this container
+
+		// Get all the features in the bundle pool
+		IFeatureModel[] allFeatures = ((TargetDefinition) definition).getFeatureModels(getLocation(false), monitor);
+
+		// Create a map of the container features for quick lookups
+		HashMap containerFeatures = new HashMap();
+		for (int i = 0; i < fFeatures.length; i++) {
+			containerFeatures.put(fFeatures[i].getId(), fFeatures[i]);
+		}
+
+		List includedFeatures = new ArrayList();
+		for (int i = 0; i < allFeatures.length; i++) {
+			NameVersionDescriptor candidate = (NameVersionDescriptor) containerFeatures.get(allFeatures[i].getFeature().getId());
+			if (candidate != null) {
+				if (candidate.getVersion().equals(allFeatures[i].getFeature().getVersion())) {
+					includedFeatures.add(allFeatures[i]);
+				}
+			}
+		}
+		return (IFeatureModel[]) includedFeatures.toArray(new IFeatureModel[includedFeatures.size()]);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		fFeatures = null; // Resolving may change the included features
 		if (fIncludeAllRequired) {
 			return resolveWithPlanner(definition, monitor);
 		}
@@ -166,7 +209,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private IResolvedBundle[] resolveWithPlanner(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-		subMonitor.beginTask(Messages.IUBundleContainer_0, 200);
+		subMonitor.beginTask(Messages.IUBundleContainer_0, 210);
 
 		// retrieve profile
 		IProfile profile = ((TargetDefinition) definition).getProfile();
@@ -247,10 +290,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
+		// Cache the feature list
+		queryForFeatures(slice);
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
-		Iterator iterator = queryResult.iterator();
-		while (iterator.hasNext()) {
+		for (Iterator iterator = queryResult.iterator(); iterator.hasNext();) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
 			Collection/*<IArtifactKey*/artifacts = unit.getArtifacts();
 			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
@@ -414,6 +463,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
+		// Cache the feature list
+		queryForFeatures(slice);
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
 		Map bundles = new LinkedHashMap();
 		IFileArtifactRepository repo = getBundlePool(profile);
 		Iterator iterator = queryResult.iterator();
@@ -457,6 +513,30 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		subMonitor.worked(10);
 		subMonitor.done();
 		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+	}
+
+	/**
+	 * Queries the given given queryable and finds all feature group IUs.  The feature id/versions of the features
+	 * are cached in {@link #fFeatures}.
+	 * 
+	 * @param queryable profile/slicer/etc. to query for features
+	 */
+	private void queryForFeatures(IQueryable queryable) {
+		// Query for features, cache the result for calls to resolveFeatures()
+		// Get any IU with the group property, this will return any feature groups
+		IQuery featureQuery = QueryUtil.createMatchQuery("properties[$0] == $1", new Object[] {MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP, Boolean.TRUE.toString()}); //$NON-NLS-1$
+		IQueryResult featureResult = queryable.query(featureQuery, null);
+		List features = new ArrayList();
+		for (Iterator iterator = featureResult.iterator(); iterator.hasNext();) {
+			IInstallableUnit unit = (IInstallableUnit) iterator.next();
+			String id = unit.getId();
+			if (id.endsWith(FEATURE_ID_SUFFIX)) {
+				id = id.substring(0, id.length() - FEATURE_ID_SUFFIX.length());
+			}
+			String version = unit.getVersion().toString();
+			features.add(new NameVersionDescriptor(id, version, NameVersionDescriptor.TYPE_FEATURE));
+		}
+		fFeatures = (NameVersionDescriptor[]) features.toArray(new NameVersionDescriptor[features.size()]);
 	}
 
 	/**
