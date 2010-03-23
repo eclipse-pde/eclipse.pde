@@ -11,10 +11,10 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -108,53 +108,6 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 		return new Path(resolveVariables(fHome));
 	}
 
-	/**
-	 * Resolves and returns the directory containing the feature.
-	 * 
-	 * @return feature directory
-	 * @throws CoreException if unable to resolve
-	 */
-	private File resolveFeatureLocation() throws CoreException {
-		IPath home = resolveHomeLocation();
-		File[] featurePaths = PluginPathFinder.getFeaturePaths(home.toOSString());
-		if (featurePaths.length == 0) {
-			// no features are included with the install/home location
-			IPath path = home.append("features"); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_0, path.toOSString())));
-		}
-		// if a specific version is specified, find it
-		if (fVersion != null) {
-			StringBuffer buf = new StringBuffer();
-			String name = buf.append(fId).append("_").append(fVersion).toString(); //$NON-NLS-1$
-			for (int i = 0; i < featurePaths.length; i++) {
-				File feature = featurePaths[i];
-				if (feature.getName().equals(name)) {
-					return feature;
-				}
-			}
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_1, fId)));
-		}
-		// use most recent version
-		List versions = new ArrayList();
-		StringBuffer buf = new StringBuffer();
-		String prefix = buf.append(fId).append("_").toString(); //$NON-NLS-1$
-		for (int i = 0; i < featurePaths.length; i++) {
-			String name = featurePaths[i].getName();
-			if (name.startsWith(prefix)) {
-				versions.add(featurePaths[i]);
-			}
-		}
-		if (versions.isEmpty()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_1, fId)));
-		}
-		Collections.sort(versions, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				return ((File) o1).getName().compareTo(((File) o2).getName());
-			}
-		});
-		return (File) versions.get(versions.size() - 1);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -164,7 +117,15 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			if (monitor.isCanceled()) {
 				return new IResolvedBundle[0];
 			}
-			File location = resolveFeatureLocation();
+
+			IFeatureModel[] features = resolveFeatures(definition, null);
+			if (features.length == 0) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_1, fId)));
+			}
+			File location = new File(features[0].getInstallLocation());
+			if (!location.exists()) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_0, location.toString())));
+			}
 			File manifest = new File(location, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_2, fId)));
@@ -207,7 +168,8 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			for (int i = 0; i < bundles.length; i++) {
 				bundles[i].setParentContainer(this);
 			}
-			return TargetDefinition.getMatchingBundles(bundles, (NameVersionDescriptor[]) matchInfos.toArray(new NameVersionDescriptor[matchInfos.size()]), null, this);
+			List result = TargetDefinition.getMatchingBundles(bundles, (NameVersionDescriptor[]) matchInfos.toArray(new NameVersionDescriptor[matchInfos.size()]), null, this);
+			return (IResolvedBundle[]) result.toArray(new IResolvedBundle[result.size()]);
 		} finally {
 			if (model != null) {
 				model.dispose();
@@ -219,7 +181,6 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		// TODO Should match up with process in resolveBundles()
 		if (definition instanceof TargetDefinition) {
 			IFeatureModel[] allFeatures = ((TargetDefinition) definition).getFeatureModels(getLocation(false), monitor);
 			for (int i = 0; i < allFeatures.length; i++) {

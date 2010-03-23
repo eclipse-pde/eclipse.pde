@@ -23,6 +23,7 @@ public class AllTargetTests {
 		suite.addTest(WorkspaceTargetDefinitionTests.suite());
 		suite.addTest(TargetDefinitionPersistenceTests.suite());
 		suite.addTest(TargetDefinitionResolutionTests.suite());
+		suite.addTest(TargetDefinitionFeatureResolutionTests.suite());
 		suite.addTest(IUBundleContainerTests.suite());
 		return suite;
 	}

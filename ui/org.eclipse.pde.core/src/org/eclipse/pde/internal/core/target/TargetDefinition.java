@@ -380,7 +380,8 @@ public class TargetDefinition implements ITargetDefinition {
 		if (filter == null) {
 			// All bundles are included, but still need to check for optional bundles
 			IBundleContainer parent = fContainers != null && fContainers.length > 0 ? fContainers[0] : null;
-			return getMatchingBundles(bundles, null, fOptional, parent);
+			List resolved = getMatchingBundles(bundles, null, fOptional, parent);
+			return (IResolvedBundle[]) resolved.toArray(new IResolvedBundle[resolved.size()]);
 		}
 		if (filter.length == 0) {
 			return new IResolvedBundle[0];
@@ -388,6 +389,9 @@ public class TargetDefinition implements ITargetDefinition {
 
 		// If there are features, don't set errors for missing bundles as they are caused by missing OS specific fragments
 		boolean containsFeatures = false;
+
+		// If there are any included features that are missing, add errors as resolved bundles (the same thing we would do for missing bundles)
+		List missingFeatures = new ArrayList();
 
 		List included = new ArrayList();
 		// For feature filters, get the list of included bundles, for bundle filters just add them to the list
@@ -429,13 +433,28 @@ public class TargetDefinition implements ITargetDefinition {
 					for (int j = 0; j < plugins.length; j++) {
 						included.add(new NameVersionDescriptor(plugins[j].getId(), plugins[j].getVersion()));
 					}
+				} else {
+					missingFeatures.add(filter[i]);
 				}
 			}
 		}
 
 		// Return matching bundles
 		IBundleContainer parent = fContainers != null && fContainers.length > 0 ? fContainers[0] : null;
-		return getMatchingBundles(bundles, (NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]), fOptional, containsFeatures ? null : parent);
+		List result = getMatchingBundles(bundles, (NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]), fOptional, containsFeatures ? null : parent);
+
+		// Add in missing bundles as resolved bundles with error statuses
+		if (containsFeatures && !missingFeatures.isEmpty()) {
+			for (Iterator iterator = missingFeatures.iterator(); iterator.hasNext();) {
+				NameVersionDescriptor missing = (NameVersionDescriptor) iterator.next();
+				BundleInfo info = new BundleInfo(missing.getId(), missing.getVersion(), null, BundleInfo.NO_LEVEL, false);
+				String message = NLS.bind("Required feature could not be found: {0}", missing.getId());
+				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null);
+				result.add(new ResolvedBundle(info, parent, status, null, false, false));
+			}
+		}
+
+		return (IResolvedBundle[]) result.toArray(new IResolvedBundle[result.size()]);
 	}
 
 	/**
@@ -452,11 +471,13 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @param optional optional bundles or <code>null</code> of no optional bundles
 	 * @param errorParentContainer 
 	 * 
-	 * @return bundles that match this container's restrictions
+	 * @return list of IResolvedBundle bundles that match this container's restrictions
 	 */
-	static IResolvedBundle[] getMatchingBundles(IResolvedBundle[] collection, NameVersionDescriptor[] included, NameVersionDescriptor[] optional, IBundleContainer errorParentContainer) {
+	static List getMatchingBundles(IResolvedBundle[] collection, NameVersionDescriptor[] included, NameVersionDescriptor[] optional, IBundleContainer errorParentContainer) {
 		if (included == null && optional == null) {
-			return collection;
+			ArrayList result = new ArrayList();
+			result.addAll(Arrays.asList(collection));
+			return result;
 		}
 		// map bundles names to available versions
 		Map bundleMap = new HashMap(collection.length);
@@ -501,7 +522,7 @@ public class TargetDefinition implements ITargetDefinition {
 				}
 			}
 		}
-		return (IResolvedBundle[]) resolved.toArray(new IResolvedBundle[resolved.size()]);
+		return resolved;
 	}
 
 	/**
@@ -1057,19 +1078,21 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Convenience method to return the set of IFeatureModels that are included in this
 	 * target as well as any other included plug-ins as IResolvedBundles (that are not part 
-	 * of the features). Will return <code>null</code> if this target has not been resolved.
+	 * of the features). Also returns any bundles with error statuses.  Will return <code>null</code> 
+	 * if this target has not been resolved.
 	 * 
 	 * @see #getAllFeatures()
 	 * @see #getOtherBundles()
-	 * @return set of IFeatureModels and IResolvedBundles or <code>mull</code>
+	 * @return set of IFeatureModels and IResolvedBundles or <code>null</code>
 	 */
-	public Object[] getFeaturesAndBundles() {
+	public Set getFeaturesAndBundles() {
 		if (!isResolved()) {
 			return null;
 		}
 
 		IFeatureModel[] allFeatures = getAllFeatures();
 		IResolvedBundle[] allExtraBundles = getOtherBundles();
+
 		NameVersionDescriptor[] included = getIncluded();
 		NameVersionDescriptor[] optional = getOptional();
 
@@ -1077,10 +1100,10 @@ public class TargetDefinition implements ITargetDefinition {
 			Set result = new HashSet();
 			result.addAll(Arrays.asList(allFeatures));
 			result.addAll(Arrays.asList(allExtraBundles));
-			return result.toArray();
+			return result;
 		}
 
-		List result = new ArrayList();
+		Set result = new HashSet();
 		for (int i = 0; i < included.length; i++) {
 			if (included[i].getType() == NameVersionDescriptor.TYPE_PLUGIN) {
 				for (int j = 0; j < allExtraBundles.length; j++) {
@@ -1107,7 +1130,7 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
-		return result.toArray();
+		return result;
 	}
 
 	public int getUIMode() {
