@@ -21,7 +21,6 @@ import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.publisher.eclipse.IConfigAdvice;
 import org.eclipse.equinox.p2.publisher.eclipse.IExecutableAdvice;
 import org.eclipse.osgi.service.environment.Constants;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 	private String configSpec = null;
@@ -72,17 +71,7 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 	private void initializeData(File configRoot) {
 		DataLoader loader = new DataLoader(new File(configRoot, "configuration/config.ini"), getLauncher(configRoot)); //$NON-NLS-1$
 		configData = loader.getConfigData();
-		normalizeBundleVersions(configData);
 		launcherData = loader.getLauncherData();
-	}
-
-	private void normalizeBundleVersions(ConfigData data) {
-		BundleInfo[] bundles = data.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			// If the bundle doesn't have a version set it to 0.0.0
-			if (bundles[i].getVersion() == null)
-				bundles[i].setVersion(IPDEBuildConstants.GENERIC_VERSION_NUMBER);
-		}
 	}
 
 	public String getExecutableName() {
