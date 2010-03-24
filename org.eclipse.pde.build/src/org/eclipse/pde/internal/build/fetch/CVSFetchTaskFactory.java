@@ -254,7 +254,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 				buffer.append('"');
 			}
 
-			if (tagName != null) {
+			if (tagName != null && !tagName.equals("HEAD")) { //$NON-NLS-1$
 				buffer.append(";tag="); //$NON-NLS-1$
 				buffer.append(tagName);
 			}
