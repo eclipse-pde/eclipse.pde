@@ -70,16 +70,18 @@ public class BrandingIron implements IXMLConstants {
 
 		if ("win32".equals(os)) //$NON-NLS-1$
 			brandWindows();
-		if ("linux".equals(os)) //$NON-NLS-1$
+		else if ("linux".equals(os)) //$NON-NLS-1$
 			brandLinux();
-		if ("solaris".equals(os)) //$NON-NLS-1$
+		else if ("solaris".equals(os)) //$NON-NLS-1$
 			brandSolaris();
-		if ("macosx".equals(os)) //$NON-NLS-1$
+		else if ("macosx".equals(os)) //$NON-NLS-1$
 			brandMac();
-		if ("aix".equals(os)) //$NON-NLS-1$
+		else if ("aix".equals(os)) //$NON-NLS-1$
 			brandAIX();
-		if ("hpux".equals(os)) //$NON-NLS-1$
+		else if ("hpux".equals(os)) //$NON-NLS-1$
 			brandHPUX();
+		else
+			renameLauncher();
 	}
 
 	private void brandAIX() {
