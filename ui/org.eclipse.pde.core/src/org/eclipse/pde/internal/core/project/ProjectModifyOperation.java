@@ -781,12 +781,11 @@ public class ProjectModifyOperation {
 	 */
 	private boolean fillBinIncludes(IProject project, IBuildEntry binEntry, IBundleProjectDescription description, IBundleProjectDescription before) throws CoreException {
 		boolean modified = false;
-//		binEntry.addToken(fData instanceof IFragmentFieldData ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		if (!binEntry.contains("META-INF/")) { //$NON-NLS-1$
 			modified = true;
 			binEntry.addToken("META-INF/"); //$NON-NLS-1$
 		}
-		// add bundle classpath entries
+		// add bundle class path entries
 		String[] names = getLibraryNames(description);
 		String[] prevNames = getLibraryNames(before);
 		if (!isEqual(names, prevNames)) {
@@ -804,7 +803,16 @@ public class ProjectModifyOperation {
 				for (int i = 0; i < names.length; i++) {
 					if (!binEntry.contains(names[i])) {
 						modified = true;
-						binEntry.addToken(names[i]);
+						// folders need trailing slash - see bug 306991
+						String name = names[i];
+						IPath path = new Path(names[i]);
+						String extension = path.getFileExtension();
+						if (extension == null) {
+							if (!name.endsWith("/")) { //$NON-NLS-1$
+								name = name + "/"; //$NON-NLS-1$
+							}
+						}
+						binEntry.addToken(name);
 					}
 				}
 			}

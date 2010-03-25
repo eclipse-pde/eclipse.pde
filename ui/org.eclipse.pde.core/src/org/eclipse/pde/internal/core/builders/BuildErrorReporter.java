@@ -577,6 +577,20 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				if (pattern.matcher(key).matches())
 					found = true;
 			}
+			// account for trailing slash on class file folders
+			if (!found) {
+				IPath path = new Path(key);
+				if (path.getFileExtension() == null) {
+					if (!key.endsWith("/")) { //$NON-NLS-1$
+						key = key + "/"; //$NON-NLS-1$
+						for (int j = 0; j < binIncludesTokens.length; j++) {
+							Pattern pattern = PatternConstructor.createPattern(binIncludesTokens[j], false);
+							if (pattern.matcher(key).matches())
+								found = true;
+						}
+					}
+				}
+			}
 			if (!found)
 				prepareError(PROPERTY_BIN_INCLUDES, key, NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key), PDEMarkerFactory.B_ADDDITION, fBinInclSeverity, PDEMarkerFactory.CAT_FATAL);
 		}

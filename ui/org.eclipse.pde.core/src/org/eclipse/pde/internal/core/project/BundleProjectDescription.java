@@ -283,6 +283,11 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						if (names != null) {
 							for (int i = 0; i < names.length; i++) {
 								strings.remove(names[i]);
+								// if the library is a folder, account for trailing slash - see bug 306991
+								IPath path = new Path(names[i]);
+								if (path.getFileExtension() == null) {
+									strings.remove(names[i] + "/"); //$NON-NLS-1$
+								}
 							}
 						}
 						// set left overs

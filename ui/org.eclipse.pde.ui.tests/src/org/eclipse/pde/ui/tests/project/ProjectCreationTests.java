@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.core.resources.IMarker;
+
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
+
+import org.eclipse.core.resources.IFile;
+
 import org.eclipse.pde.internal.core.ClasspathComputer;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -1482,4 +1488,71 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong entry", entry3, rawClasspath[2]);
 		assertEquals("Missing Required Plug-ins Container", ClasspathComputer.createContainerEntry(), rawClasspath[3]);
 	}
+	
+	/**
+	 * Tests creating a project that has a nested class file folders instead of a jar
+	 * 
+	 * @throws CoreException
+	 */
+	public void testClassFoldersNoJars() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		IBundleProjectService service = getBundleProjectService();
+		IBundleClasspathEntry one = service.newBundleClasspathEntry(new Path("src"), new Path("WebContent/WEB-INF/classes"), new Path("WebContent/WEB-INF/classes"));
+		description.setBundleClassath(new IBundleClasspathEntry[]{one});
+		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
+		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
+		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
+		description.setBundleVersion(new Version("1.0.0"));
+		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
+		description.apply(null);
+		waitForBuild();
+		
+		IBundleProjectDescription d2 = service.getDescription(project);
+		
+		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Wrong activation policy", d2.getActivationPolicy());
+		IPath[] binIncludes = d2.getBinIncludes();
+		assertNull("Wrong number of entries on bin.includes", binIncludes);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertNotNull("Wrong Bundle-Classpath", classpath);
+		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", one, classpath[0]);
+		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
+		assertEquals("Wrong version", new Version("1.0.0"), d2.getBundleVersion());
+		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		String[] ees = d2.getExecutionEnvironments();
+		assertNotNull("Wrong execution environments", ees);
+		assertEquals("Wrong number of execution environments", 1, ees.length);
+		assertEquals("Wrong execution environments", "J2SE-1.5", ees[0]);
+		assertNull("Wrong host", d2.getHost());
+		assertNull("Wrong localization", d2.getLocalization());
+		assertNull("Wrong project location URI", d2.getLocationURI());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		assertNull("Wrong imports", d2.getPackageImports());
+		IPackageExportDescription[] exports = d2.getPackageExports();
+		assertNotNull("Wrong exports", exports);
+		assertEquals("Wrong number of exports", 2, exports.length);
+		assertEquals("Wrong exports", exp1, exports[0]);
+		assertEquals("Wrong exports", exp2, exports[1]);
+		assertEquals("Wrong project", project, d2.getProject());
+		assertNull("Wrong required bundles", d2.getRequiredBundles());
+		assertNull("Wrong target version", d2.getTargetVersion());
+		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
+		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+		
+		// should be no warnings on build.properties
+		IFile file = PDEProject.getBuildProperties(project);
+		IMarker[] markers = file.findMarkers(PDEMarkerFactory.MARKER_ID, true, 0);
+		assertEquals("Should be no errors", 0, markers.length);
+	}	
+		
 }
