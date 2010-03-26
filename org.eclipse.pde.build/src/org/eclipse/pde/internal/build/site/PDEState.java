@@ -63,7 +63,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public PDEState() {
 		factory = Platform.getPlatformAdmin().getFactory();
 		state = factory.createState(false);
-		state.setResolver(Platform.getPlatformAdmin().getResolver());
+		state.setResolver(Platform.getPlatformAdmin().createResolver());
 		id = 0;
 		bundleClasspaths = new HashMap();
 		patchBundles = new HashMap();
