@@ -302,8 +302,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printTab();
 			script.print("\t<source"); //$NON-NLS-1$
 			script.printAttribute("location", URIUtil.toUnencodedString(context[i]), true); //$NON-NLS-1$
+			script.printAttribute("optional", TRUE, true); //$NON-NLS-1$
 			script.println("/>"); //$NON-NLS-1$
-
 		}
 
 		script.printTab();

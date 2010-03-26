@@ -102,16 +102,12 @@ public class BrandP2Task extends Repo2RunnableTask {
 		} catch (BuildException e) {
 			getProject().log(e.getMessage(), Project.MSG_WARN);
 		} finally {
-			try {
-				cleanupRepositories(metadataManager, artifactManager);
-			} catch (ProvisionException e) {
-				getProject().log(e.getMessage(), Project.MSG_WARN);
-			}
+			cleanupRepositories(metadataManager, artifactManager);
 			ius = null;
 		}
 	}
 
-	private void cleanupRepositories(IMetadataRepositoryManager metadataManager, IArtifactRepositoryManager artifactManager) throws ProvisionException {
+	private void cleanupRepositories(IMetadataRepositoryManager metadataManager, IArtifactRepositoryManager artifactManager) {
 		URI destination = new Path(getRootFolder()).toFile().toURI();
 
 		if (metadataManager != null) {
@@ -413,7 +409,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	public void setMetadataRepository(String location) {
 		try {
 			this.metadataURI = URIUtil.fromString(location);
-			super.addMetadataSourceRepository(metadataURI);
+			super.addMetadataSourceRepository(metadataURI, false);
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException("Metadata repository location (" + location + ") must be a URI."); //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -422,7 +418,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	public void setArtifactRepository(String location) {
 		try {
 			this.artifactURI = URIUtil.fromString(location);
-			super.addArtifactSourceRepository(artifactURI);
+			super.addArtifactSourceRepository(artifactURI, false);
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException("Artifact repository location (" + location + ") must be a URI."); //$NON-NLS-1$//$NON-NLS-2$
 		}
