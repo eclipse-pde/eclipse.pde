@@ -136,7 +136,9 @@ public class IncrementalApiBuilder {
 								// TODO: for now use structural change, but really, we just need to re-analyze API use in case of
 								//       required bundle API description changes
 								String typename = resolveTypeName(resource, CLASS_FILE);
-								changes.add(new Change(STRUCTURAL, delta.getKind(), resource, typename, CLASS_FILE));
+								if(typename != null) {
+									changes.add(new Change(STRUCTURAL, delta.getKind(), resource, typename, CLASS_FILE));
+								}
 							}
 						}
 						
