@@ -679,6 +679,15 @@ public class PublishingTests extends P2TestCase {
 		entries.clear();
 		entries.add("eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_" + iu.getVersion() + "/");
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", entries);
+
+		//bug 295282, bug 282652
+		IFile iniFile = buildFolder.getFile("branded.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/branded.app/Contents/MacOS/branded.ini", iniFile);
+		assertLogContainsLine(iniFile, "../../../plugins/org.eclipse.equinox.launcher");
+
+		IFile wrongFile = buildFolder.getFile("wrong.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/Branded.app/Contents/MacOS/branded.ini", wrongFile);
+		assertFalse(wrongFile.exists());
 	}
 
 	public void testAssemblePackage() throws Exception {

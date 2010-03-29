@@ -344,7 +344,7 @@ public class Utils {
 		}
 	}
 
-	public static void extractFromZip(IFolder buildFolder, String zipFile, String zipEntry, IFile outputFile) {
+	public static void extractFromZip(IFolder buildFolder, String zipFile, String zipEntry, IFile outputFile) throws CoreException {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, zipFile);
 		if (!archiveFile.exists())
@@ -369,6 +369,7 @@ public class Utils {
 				return;
 			}
 		}
+		outputFile.refreshLocal(IResource.DEPTH_ONE, null);
 	}
 
 	public static Properties loadProperties(IFile propertiesFile) throws CoreException {
