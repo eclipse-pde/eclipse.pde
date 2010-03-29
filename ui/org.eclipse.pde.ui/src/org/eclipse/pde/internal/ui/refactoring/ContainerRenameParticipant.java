@@ -82,15 +82,18 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						// don't update Bundle-SymbolicName if the id and project name don't match
 						if (!oldText.equals(calcProjectId))
 							return null;
-						// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that garuntee
+						// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that guarante
 						String newId = IdUtil.getValidId(newText);
 
 						header.setId(newId);
 						// at this point, neither the project or file will exist.  
 						// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
 						IProject newProject = ((IWorkspaceRoot) manifest.getProject().getParent()).getProject(newText);
+						// If the manifest is in a non-standard location the new project will keep that location, only the project will be changed
+						IPath oldManifest = manifest.getFullPath().removeFirstSegments(1);
+						IFile newManifest = newProject.getFile(oldManifest);
 
-						MovedTextFileChange change = new MovedTextFileChange("", PDEProject.getManifest(newProject), manifest); //$NON-NLS-1$
+						MovedTextFileChange change = new MovedTextFileChange("", newManifest, manifest); //$NON-NLS-1$
 						MultiTextEdit edit = new MultiTextEdit();
 						edit.addChildren(listener.getTextOperations());
 						change.setEdit(edit);
