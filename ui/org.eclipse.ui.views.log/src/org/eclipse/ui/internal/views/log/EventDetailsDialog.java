@@ -360,9 +360,11 @@ public class EventDetailsDialog extends TrayDialog {
 				stackTraceText.setText(Messages.EventDetailsDialog_noStack);
 			}
 
-			String session = logEntry.getSession().getSessionData();
-			if (session != null) {
-				sessionDataText.setText(session);
+			if (logEntry.getSession() != null) {
+				String session = logEntry.getSession().getSessionData();
+				if (session != null) {
+					sessionDataText.setText(session);
+				}
 			}
 
 		} else {
