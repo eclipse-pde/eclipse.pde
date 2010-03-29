@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -524,27 +524,11 @@ public class TestSuiteHelper {
 	 * @return true if the file was successfully deleted, false otherwise
 	 */
 	public static boolean delete(File f) {
-		if (!delete0(f)) {
+		if (!Util.delete(f)) {
 			System.err.println("Could not delete " + f.getAbsolutePath());
 			return false;
 		}
 		return true;
-	}
-	
-	private static boolean delete0(File f) {
-		if (f.isDirectory()) {
-			File[] files = f.listFiles();
-			for (int i = 0, max = files.length; i < max; i++) {
-				File file = files[i];
-				if (!delete0(file)) {
-					System.err.println("Could not delete " + file.getAbsolutePath());
-					return false;
-				}
-			}
-			return f.delete();
-		} else {
-			return f.delete();
-		}
 	}
 
 	/**

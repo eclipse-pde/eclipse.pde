@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -473,19 +473,15 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public void resetWorkspace() {
 		try {
 			if (fRevert) {
-				revertWorkspace();
-			} else {
-				super.resetWorkspace();
-				//clean up any left over projects from other tests
-				IProject[] projects = getWorkspace().getRoot().getProjects();
-				for(int i = 0; i < projects.length; i++) {
-					try {
-						projects[i].delete(true, new NullProgressMonitor());
-					}
-					catch(CoreException ce) {
-						
-					}
+				try {
+					revertWorkspace();
 				}
+				catch(Exception e) {
+					//in case we have an exception reverting a file, just toast it all
+					deleteWorkspace();
+				}
+			} else {
+				deleteWorkspace();
 			}
 		}
 		catch(Exception e) {
@@ -497,6 +493,25 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			fAdded.clear();
 			fChanged.clear();
 			fRemoved.clear();
+		}
+	}
+	
+	/**
+	 * Completely deletes the workspace
+	 * @since 1.1
+	 */
+	void deleteWorkspace() {
+		super.resetWorkspace();
+		//clean up any left over projects from other tests
+		IProject[] projects = getWorkspace().getRoot().getProjects();
+		for(int i = 0; i < projects.length; i++) {
+			try {
+				projects[i].delete(true, new NullProgressMonitor());
+			}
+			catch(CoreException ce) {
+				//help with debugging
+				ce.printStackTrace();
+			}
 		}
 	}
 	
