@@ -416,8 +416,8 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			public int compare(Object o1, Object o2) {
 				Map.Entry entry1 = (Map.Entry) o1;
 				Map.Entry entry2 = (Map.Entry) o2;
-				String path1 = ((IResource) entry1.getKey()).getProjectRelativePath().toOSString();
-				String path2 = ((IResource) entry2.getKey()).getProjectRelativePath().toOSString();
+				String path1 = ((IResource) entry1.getKey()).getFullPath().toOSString();
+				String path2 = ((IResource) entry2.getKey()).getFullPath().toOSString();
 				return path1.compareTo(path2);
 			}
 		});
@@ -460,9 +460,27 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				filtersList.addAll(filters);
 				Collections.sort(filtersList, new Comparator(){
 					public int compare(Object o1, Object o2) {
-						int problem1Id = ((IApiProblemFilter) o1).getUnderlyingProblem().getId();
-						int problem2Id = ((IApiProblemFilter) o2).getUnderlyingProblem().getId();
-						return problem1Id - problem2Id;
+						IApiProblem p1 = ((IApiProblemFilter) o1).getUnderlyingProblem();
+						IApiProblem p2 = ((IApiProblemFilter) o2).getUnderlyingProblem();
+						int problem1Id = p1.getId();
+						int problem2Id = p2.getId();
+						int ids = problem1Id - problem2Id;
+						if(ids == 0) {
+							//if we have the same ids further sort by message args 
+							//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304509
+							String[] args1 = p1.getMessageArguments();
+							String[] args2 = p2.getMessageArguments();
+							int length = (args1.length < args2.length ? args1.length : args2.length);
+							for (int i = 0; i < length; i++) {
+								int args = args1[i].compareTo(args2[i]);
+								if(args != 0) {
+									//return when they are not equal
+									return args;
+								}
+							}
+							return args1.length - args2.length;
+						}
+						return ids;
 					}
 				});
 				for(Iterator iterator2 = filtersList.iterator(); iterator2.hasNext(); ) {
