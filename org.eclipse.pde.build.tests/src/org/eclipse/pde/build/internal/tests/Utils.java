@@ -286,7 +286,7 @@ public class Utils {
 		};
 		String[] files = plugins.list(filter);
 
-		if (files.length > 0)
+		if (files != null && files.length > 0)
 			return baseLocation;
 
 		File delta = new File(baseLocation.getParent(), "deltapack/eclipse");
