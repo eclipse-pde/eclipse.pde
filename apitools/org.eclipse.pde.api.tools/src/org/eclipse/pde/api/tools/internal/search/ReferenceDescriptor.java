@@ -29,8 +29,9 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 	private int kind;
 	private int flags;
 	private int visibility;
+	private String[] messages = null;
 	
-	public ReferenceDescriptor(IComponentDescriptor from, IMemberDescriptor origin, int line, IComponentDescriptor to, IMemberDescriptor target, int kind, int flags, int vis) {
+	public ReferenceDescriptor(IComponentDescriptor from, IMemberDescriptor origin, int line, IComponentDescriptor to, IMemberDescriptor target, int kind, int flags, int vis, String[] messages) {
 		this.origin = origin;
 		this.target = target;
 		this.from = from;
@@ -39,6 +40,7 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 		this.kind = kind;
 		this.flags = flags;
 		this.visibility = vis;
+		this.messages = messages;
 	}
 	
 	/* (non-Javadoc)
@@ -129,5 +131,12 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 	 */
 	public int getVisibility() {
 		return visibility;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor#getProblemMessages()
+	 */
+	public String[] getProblemMessages() {
+		return this.messages;
 	}
 }

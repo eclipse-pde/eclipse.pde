@@ -82,4 +82,12 @@ public interface IReferenceDescriptor {
 	 */
 	public int getVisibility();
 	
+	/**
+	 * Returns the collection of reported problem messages for the original {@link IReference} or 
+	 * <code>null</code> if there are no messages.
+	 * 
+	 * @return the list of problem messages or <code>null</code>
+	 * @since 1.1
+	 */
+	public String[] getProblemMessages();
 }

@@ -626,10 +626,13 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#createProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	
+	/**
+	 * @param reference
+	 * @return
+	 * @throws CoreException
 	 */
-	protected IApiProblem createProblem(IReference reference) throws CoreException {
+	public IApiProblem createProblem(IReference reference) throws CoreException {
 		int lineNumber = reference.getLineNumber();
 		if (lineNumber > 0) {
 			lineNumber--;

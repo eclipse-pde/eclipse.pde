@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.builder.ProblemDetectorBuilder;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceAnalyzer;
@@ -191,7 +192,13 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		IApiProblemDetector[] detectors = fAnalyzer.getProblemDetectors(reference.getReferenceKind());
 		for (int i = 0; i < detectors.length; i++) {
 			if(detectors[i].considerReference(reference)) {
-				((Reference)reference).setFlags(IReference.F_ILLEGAL);
+				Reference ref = (Reference) reference;
+				ref.setFlags(IReference.F_ILLEGAL);
+				try {
+					ref.addProblems(((AbstractProblemDetector)detectors[i]).createProblem(reference));
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
 				return true;
 			}
 		}

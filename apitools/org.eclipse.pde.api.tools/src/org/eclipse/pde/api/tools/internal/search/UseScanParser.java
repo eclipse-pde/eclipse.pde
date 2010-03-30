@@ -176,12 +176,29 @@ public class UseScanParser {
 						targetMember, 
 						referenceKind, 
 						flgs, 
-						visibility));
+						visibility, 
+						parseMessages(attributes)));
 			} catch (NumberFormatException e) {
 				// TODO:
 				System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
 			}
 		}
+	}
+	
+	/**
+	 * Parses the problem messages from the attributes
+	 * 
+	 * @param attribs
+	 * @return the messages or an empty array never <code>null</code>
+	 * @since 1.1
+	 */
+	protected String[] parseMessages(Attributes attribs) {
+		String msgs = attribs.getValue(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS);
+		String[] messages = null;
+		if(msgs != null) {
+			messages = msgs.split("\\,"); //$NON-NLS-1$
+		}
+		return messages;
 	}
 	
 	/**

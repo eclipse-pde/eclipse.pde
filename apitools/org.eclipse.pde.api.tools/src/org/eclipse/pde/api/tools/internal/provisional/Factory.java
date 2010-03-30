@@ -126,11 +126,12 @@ public class Factory {
 	 * @param kind the kind of the reference. See {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference} for a complete list of kinds
 	 * @param flags the flags of the reference. See {@link org.eclipse.pde.api.tools.internal.provisional.builder.IReference} for a complete list of flags
 	 * @param visibility the visibility of the reference. See {@link VisibilityModifiers} for a complete list of visibilities
+	 * @param messages a listing of {@link IApiProblem} messages associated with this reference descriptor
 	 * @return a new {@link IReferenceDescriptor}
 	 * @since 1.1
 	 */
-	public static IReferenceDescriptor referenceDescriptor(IComponentDescriptor origincomponent, IMemberDescriptor originmember, int line, IComponentDescriptor targetcomponent, IMemberDescriptor targetmember, int kind, int flags, int visibility) {
-		return new ReferenceDescriptor(origincomponent, originmember, line, targetcomponent, targetmember, kind, flags, visibility);
+	public static IReferenceDescriptor referenceDescriptor(IComponentDescriptor origincomponent, IMemberDescriptor originmember, int line, IComponentDescriptor targetcomponent, IMemberDescriptor targetmember, int kind, int flags, int visibility, String[] messages) {
+		return new ReferenceDescriptor(origincomponent, originmember, line, targetcomponent, targetmember, kind, flags, visibility, messages);
 	}
 	
 	/**

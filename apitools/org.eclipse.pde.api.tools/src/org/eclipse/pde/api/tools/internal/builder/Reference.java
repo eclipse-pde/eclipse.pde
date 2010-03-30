@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
@@ -26,6 +29,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
 import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
@@ -87,6 +91,43 @@ public class Reference implements IReference {
 	 * Resolvable status
 	 */
 	private boolean fStatus = true;
+	
+	/**
+	 * List of problems that have been reported against this problem
+	 */
+	private List fProblems = null;
+	
+	/**
+	 * Adds the given collection of {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}s
+	 * to the backing listing.
+	 * 
+	 * @param problems the list of problems to add - <code>null</code> is not accepted.
+	 * @return <code>true</code> if the problems were all added, <code>false</code> otherwise
+	 * @since 1.1
+	 */
+	public boolean addProblems(IApiProblem problem) {
+		if(problem == null) {
+			return false;
+		}
+		if(fProblems == null) {
+			fProblems = new ArrayList(2);
+		}
+		if(fProblems.contains(problem)) {
+			return false;
+		}
+		return fProblems.add(problem);
+	}
+	
+	/**
+	 * Returns the complete listing of {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}s
+	 * recorded for this reference or <code>null</code> if none have been reported.
+	 * 
+	 * @return the listing of {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}s or <code>null</code>
+	 * @since 1.1
+	 */
+	public List getProblems() {
+		return fProblems;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getLineNumber()
@@ -699,6 +740,13 @@ public class Reference implements IReference {
 			//overflow for those references that cannot be resolved
 			visibility = VisibilityModifiers.ALL_VISIBILITIES;
 		}
+		String[] messages = null;
+		if(fProblems != null) {
+			messages = new String[fProblems.size()];
+			for (int i = 0; i < messages.length; i++) {
+				messages[i] = ((IApiProblem)fProblems.get(i)).getMessage();
+			}
+		}
 		return Factory.referenceDescriptor(
 				(IComponentDescriptor)mcomponent.getHandle(),
 				getMember().getHandle(),
@@ -707,6 +755,7 @@ public class Reference implements IReference {
 				res.getHandle(),
 				getReferenceKind(),
 				getReferenceFlags(),
-				visibility);
+				visibility,
+				messages);
 	}
 }

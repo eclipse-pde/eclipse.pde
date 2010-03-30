@@ -221,6 +221,25 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 	
+		/**
+		 * Formats the arrays of messages
+		 * @param messages
+		 * @return the formatted messages or <code>null</code>
+		 */
+		String formatMessages(String[] messages) {
+			if(messages != null) {
+				StringBuffer buffer = new StringBuffer();
+				for (int i = 0; i < messages.length; i++) {
+					buffer.append(messages[i]);
+					if(i < messages.length-1) {
+						buffer.append("\n"); //$NON-NLS-1$
+					}
+				}
+				return buffer.toString();
+			}
+			return null;
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
 		 */
@@ -239,7 +258,7 @@ public class UseReportConverter extends HTMLConvertor {
 				refs = new ArrayList();
 				this.currentmember.children.put(refname, refs);
 			}
-			refs.add(new Reference(fromMember, lineNumber, visibility));
+			refs.add(new Reference(fromMember, lineNumber, visibility, formatMessages(reference.getProblemMessages())));
 			switch(fromMember.getElementType()) {
 				case IElementDescriptor.TYPE: {
 					switch(visibility) {
@@ -440,10 +459,12 @@ public class UseReportConverter extends HTMLConvertor {
 	static class Reference {
 		IElementDescriptor desc = null;
 		int line = -1, vis = -1;
-		public Reference(IElementDescriptor desc, int line, int vis) {
+		String message = null;
+		public Reference(IElementDescriptor desc, int line, int vis, String message) {
 			this.desc = desc;
 			this.line = line;
 			this.vis = vis;
+			this.message = message;
 		}
 	}
 	
@@ -1313,7 +1334,7 @@ public class UseReportConverter extends HTMLConvertor {
 	String getReferencesTable(Member member) {
 		StringBuffer buffer = new StringBuffer();
 		Entry entry = null;
-		buffer.append("<table width=\"100%\" border=\"0\">\n"); //$NON-NLS-1$
+		buffer.append("<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"6\">\n"); //$NON-NLS-1$
 		ArrayList refs = null;
 		Reference ref = null;
 		for (Iterator iter = member.children.entrySet().iterator(); iter.hasNext();) {
@@ -1322,9 +1343,9 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("<td colspan=\"3\" bgcolor=\"#CCCCCC\">").append(OPEN_B).append(entry.getKey()).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 			buffer.append(CLOSE_TR);
 			buffer.append("<tr bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append("<td align=\"left\" width=\"92%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_location).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+			buffer.append("<td align=\"left\" width=\"84%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_location).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
 			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_line_number).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
-			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_kind).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ 
+			buffer.append("<td align=\"center\" width=\"8%\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_kind).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 			buffer.append(CLOSE_TR); 
 			refs = (ArrayList) entry.getValue();
 			Collections.sort(refs, compare);
@@ -1334,9 +1355,13 @@ public class UseReportConverter extends HTMLConvertor {
 					String name = getDisplayName(ref.desc, false, true);
 					buffer.append(OPEN_TR);
 					buffer.append(OPEN_TD).append(name).append(CLOSE_TD); 
-					buffer.append("<td align=\"center\">").append(ref.line).append(CLOSE_TD); //$NON-NLS-1$ 
-					buffer.append("<td align=\"center\">").append(VisibilityModifiers.getVisibilityName(ref.vis)).append(CLOSE_TD); //$NON-NLS-1$ 
-					buffer.append(CLOSE_TR); 
+					buffer.append("<td align=\"center\">").append(ref.line).append(CLOSE_TD); //$NON-NLS-1$
+					buffer.append("<td align=\"center\">").append("<span class=\"typeslnk\"");  //$NON-NLS-1$//$NON-NLS-2$
+					if(ref.message != null) {
+						buffer.append(" title=\"").append(ref.message).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					buffer.append(">").append(VisibilityModifiers.getVisibilityName(ref.vis)).append("</span>"); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append(CLOSE_TD).append(CLOSE_TR); 
 				}
 				catch(CoreException ce) {
 					ApiPlugin.log(ce);
@@ -1344,7 +1369,6 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 		buffer.append(CLOSE_TABLE); 
-		
 		return buffer.toString();
 	}
 	

@@ -182,7 +182,8 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 					targetMember, 
 					refKind, 
 					reference.getReferenceFlags(), 
-					reference.getVisibility()));
+					reference.getVisibility(),
+					null));
 		}
 	}
 	

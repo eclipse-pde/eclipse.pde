@@ -461,6 +461,10 @@ public class XmlReferenceDescriptorWriter {
 		Element relement = document.createElement(IApiXmlConstants.ATTR_REFERENCE);
 		IMemberDescriptor member = reference.getMember();
 		relement.setAttribute(IApiXmlConstants.ATTR_ORIGIN, getText(member));
+		String[] messages = reference.getProblemMessages();
+		if(messages != null) {
+			relement.setAttribute(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS, getText(messages));
+		}
 		// add detailed information about origin
 		addMemberDetails(relement, member);
 		member = reference.getReferencedMember();
@@ -468,6 +472,25 @@ public class XmlReferenceDescriptorWriter {
 			relement.setAttribute(IApiXmlConstants.ATTR_LINE_NUMBER, Integer.toString(reference.getLineNumber()));
 			kelement.appendChild(relement);
 		}
+	}
+	
+	/**
+	 * Gets the {@link String} value of the given array by calling {@link #toString()} on each of the elements
+	 * in the array.
+	 * 
+	 * @param array the array to convert to a string
+	 * @return the {@link String} or an empty {@link String} never <code>null</code>
+	 * @since 1.1
+	 */
+	String getText(Object[] array) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < array.length; i++) {
+			buffer.append(array[i].toString());
+			if(i < array.length-1) {
+				buffer.append(","); //$NON-NLS-1$
+			}
+		}
+		return buffer.toString();
 	}
 	
 	/**
