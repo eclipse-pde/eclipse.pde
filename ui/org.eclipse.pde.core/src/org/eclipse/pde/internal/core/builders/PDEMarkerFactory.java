@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,10 +51,11 @@ public class PDEMarkerFactory {
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
 	public static final int B_REMOVE_SLASH_FILE_ENTRY = 0x2002;
-	public static final int B_ADDDITION = 0x2003;
+	public static final int B_ADDITION = 0x2003;
 	public static final int B_SOURCE_ADDITION = 0x2004;
 	public static final int B_REMOVAL = 0x2005;
 	public static final int B_REPLACE = 0x2006;
+	public static final int B_JAVA_ADDDITION = 0x2007;
 
 	// plugin.xml fixes
 	public static final int P_ILLEGAL_XML_NODE = 0x3001;

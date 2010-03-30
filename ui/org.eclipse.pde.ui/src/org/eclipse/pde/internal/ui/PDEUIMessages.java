@@ -2683,6 +2683,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditorContributor_externStringsActionName;
 
+	public static String MultiFixResolution_JavaFixAll;
+
 	public static String MultiFixResolution_FixAll;
 
 	public static String SplashSection_progressBar;

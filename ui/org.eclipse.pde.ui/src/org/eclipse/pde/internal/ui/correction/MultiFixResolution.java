@@ -28,11 +28,16 @@ import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 public class MultiFixResolution extends WorkbenchMarkerResolution {
 
 	IMarker fMarker;
+	String fLabel;
 	// if quick fix is invoked from editor, then fix all related markers. If invoked from problem view, fix only the selected ones.
 	boolean problemViewQuickFix;
 
-	public MultiFixResolution(IMarker marker) {
+	public MultiFixResolution(IMarker marker, String label) {
 		fMarker = marker;
+		if (label != null)
+			fLabel = label;
+		else
+			fLabel = PDEUIMessages.MultiFixResolution_FixAll;
 		problemViewQuickFix = false;
 	}
 
@@ -60,7 +65,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 	}
 
 	public String getLabel() {
-		return PDEUIMessages.MultiFixResolution_FixAll;
+		return fLabel;
 	}
 
 	public void run(IMarker marker) {

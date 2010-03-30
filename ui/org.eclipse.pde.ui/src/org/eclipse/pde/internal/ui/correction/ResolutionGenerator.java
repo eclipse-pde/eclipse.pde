@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.osgi.framework.Constants;
@@ -78,8 +79,10 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY :
 				return new IMarkerResolution[] {new AppendSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
-			case PDEMarkerFactory.B_ADDDITION :
-				return getBuildEntryAdditionResolutions(marker);
+			case PDEMarkerFactory.B_ADDITION :
+				return getBuildEntryAdditionResolutions(marker, null);
+			case PDEMarkerFactory.B_JAVA_ADDDITION :
+				return getBuildEntryAdditionResolutions(marker, PDEUIMessages.MultiFixResolution_JavaFixAll);
 			case PDEMarkerFactory.B_SOURCE_ADDITION :
 				return new IMarkerResolution[] {new AddSourceBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.B_REMOVAL :
@@ -106,15 +109,16 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		return NO_RESOLUTIONS;
 	}
 
-	private IMarkerResolution[] getBuildEntryAdditionResolutions(IMarker marker) {
+	private IMarkerResolution[] getBuildEntryAdditionResolutions(IMarker marker, String multiFixDescription) {
 		ArrayList resolutions = new ArrayList(2);
 		resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker));
 		try {
 			String markerCategory = (String) marker.getAttribute(PDEMarkerFactory.CAT_ID);
+			int problemID = marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
 			IMarker[] relatedMarkers = marker.getResource().findMarkers(marker.getType(), true, IResource.DEPTH_INFINITE);
 			for (int i = 0; i < relatedMarkers.length; i++) {
-				if (markerCategory.equals(relatedMarkers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && !marker.equals(relatedMarkers[i])) {
-					resolutions.add(new MultiFixResolution(marker));
+				if (markerCategory.equals(relatedMarkers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && relatedMarkers[i].getAttribute("id", PDEMarkerFactory.NO_RESOLUTION) == problemID && !marker.equals(relatedMarkers[i])) { //$NON-NLS-1$
+					resolutions.add(new MultiFixResolution(marker, multiFixDescription));
 					break;
 				}
 			}

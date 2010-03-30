@@ -346,7 +346,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			String libName = (String) iter.next();
 			MissingOutputEntry errorEntry = (MissingOutputEntry) missingOutputEntryErrors.get(libName);
 			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.get(errorEntry.fSsrcFolders), PROPERTY_OUTPUT_PREFIX + libName);
-			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.get(errorEntry.fOutputFolders), message, PDEMarkerFactory.B_ADDDITION, fMissingOutputLibSeverity, PDEMarkerFactory.CAT_OTHER);
+			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.get(errorEntry.fOutputFolders), message, PDEMarkerFactory.B_ADDITION, fMissingOutputLibSeverity, PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 

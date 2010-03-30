@@ -52,6 +52,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public abstract class AbstractBuildValidationTest extends TestCase {
 
 	private static final String MARKER = "marker";
+	private static final String MULTIPLE_MARKERS = "multipleMarkers";
 	private int fBuildPropIndex;
 
 	/* (non-Javadoc)
@@ -60,7 +61,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	protected void setUp() throws Exception {
 		URL location = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties");
 		File projectFile = new File(FileLocator.toFileURL(location).getFile());
-		assertTrue("Could not find test zip files at " + projectFile,projectFile.isDirectory());
+		assertTrue("Could not find test zip files at " + projectFile, projectFile.isDirectory());
 		File[] zipFiles = projectFile.listFiles();
 		for (int i = 0; i < zipFiles.length; i++) {
 			int index = zipFiles[i].getName().lastIndexOf('.');
@@ -90,7 +91,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 			if (resGen.hasResolutions(markers[i])) {
 				String markerEntry = (String) markers[i].getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
 				IMarkerResolution[] resolutions = resGen.getResolutions(markers[i]);
-				String quickFixindex = getProperty(expectedValues,  markerEntry , "quickfix");
+				String quickFixindex = getProperty(expectedValues, markerEntry, "quickfix");
 				resolutions[new Integer(quickFixindex.trim()).intValue()].run(markers[i]);
 				buildProject(markers[i].getResource().getProject(), 0);
 				assertFalse("Quick fix verification failed for build.properties" + fBuildPropIndex, markers[i].exists());
@@ -125,17 +126,17 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 			default :
 				markerSeverity = IMarker.SEVERITY_INFO;
 		}
-		
+
 		for (int i = 0; i < markers.length; i++) {
 			message = "Marker severity for build.properties" + fBuildPropIndex;
 			String markerEntry = (String) markers[i].getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
-			assertEquals(message, markerSeverity, getIntAttribute(markers[i],IMarker.SEVERITY));
-			
+			assertEquals(message, markerSeverity, getIntAttribute(markers[i], IMarker.SEVERITY));
+
 			message = "Marker type for build.properties" + fBuildPropIndex;
 			String markerType = getProperty(expectedValues, markerEntry, PDEMarkerFactory.CAT_ID);
-			assertEquals(message, markerType, getStringAttribute(markers[i],PDEMarkerFactory.CAT_ID));
+			assertEquals(message, markerType, getStringAttribute(markers[i], PDEMarkerFactory.CAT_ID));
 
-			message = "Marker line number for build.properties" + fBuildPropIndex;			
+			message = "Marker line number for build.properties" + fBuildPropIndex;
 			int lineNumber;
 			try {
 				lineNumber = new Integer(getProperty(expectedValues, markerEntry, IMarker.LINE_NUMBER)).intValue();
@@ -143,15 +144,21 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 				message = "Could not read expected line number for build.properties" + fBuildPropIndex;
 				lineNumber = 0;
 			}
-			assertEquals(message, lineNumber, getIntAttribute(markers[i],IMarker.LINE_NUMBER));
+			assertEquals(message, lineNumber, getIntAttribute(markers[i], IMarker.LINE_NUMBER));
 
 			message = "Marker build entry token value for build.properties" + fBuildPropIndex;
+			String multipleMarkers = getProperty(expectedValues, markerEntry, MULTIPLE_MARKERS);
 			String tokenValue = getProperty(expectedValues, markerEntry, PDEMarkerFactory.BK_BUILD_TOKEN);
-			assertEquals(message, tokenValue, getStringAttribute(markers[i],PDEMarkerFactory.BK_BUILD_TOKEN));			
+			if (multipleMarkers.equalsIgnoreCase(Boolean.TRUE.toString())) {
+				boolean contains = tokenValue.indexOf(getStringAttribute(markers[i], PDEMarkerFactory.BK_BUILD_TOKEN)) >= 0;
+				assertTrue(message, contains);
+			} else {
+				assertEquals(message, tokenValue, getStringAttribute(markers[i], PDEMarkerFactory.BK_BUILD_TOKEN));
+			}
 		}
 
 	}
-	
+
 	private int getIntAttribute(IMarker marker, String property) {
 		Integer value;
 		try {
@@ -160,9 +167,9 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 			return 0;
 		}
 
-		if (value == null )
+		if (value == null)
 			return 0;
-		return value.intValue();		
+		return value.intValue();
 	}
 
 	private String getStringAttribute(IMarker marker, String property) {
@@ -175,9 +182,9 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 
 		if (value == null || value.equalsIgnoreCase("\"\""))
 			value = "";
-		return value.trim();		
+		return value.trim();
 	}
-	
+
 	private String getProperty(PropertyResourceBundle propertyBundle, String property) {
 		String value;
 		try {
@@ -187,11 +194,11 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		}
 		if (value == null || value.equalsIgnoreCase("\"\""))
 			value = "";
-		return value.trim();		
+		return value.trim();
 	}
-	
+
 	private String getProperty(PropertyResourceBundle propertyBundle, String entry, String property) {
-		return getProperty(propertyBundle, entry + '.' + property);		
+		return getProperty(propertyBundle, entry + '.' + property);
 	}
 
 	/**
@@ -305,7 +312,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		projectPrefs.flush();
 		projectPrefs.sync();
 	}
-	
+
 	/**
 	 * Find the project in workspace with the given id
 	 * @param id	project id
