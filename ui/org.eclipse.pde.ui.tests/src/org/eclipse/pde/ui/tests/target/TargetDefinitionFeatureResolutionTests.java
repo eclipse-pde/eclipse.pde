@@ -271,8 +271,8 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		definition.setIncluded(allFeatures);
 		IResolvedBundle[] bundles = definition.getBundles();
 		
-		assertNotNull("Target didn't resolve",definition.getBundles());
-		assertEquals("Wrong number of included bundles", 1, definition.getBundles().length);
+		assertNotNull("Target didn't resolve",bundles);
+		assertEquals("Wrong number of included bundles", 1, bundles.length);
 		
 		IStatus definitionStatus = definition.getBundleStatus();
 		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
