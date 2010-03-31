@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,17 +26,37 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
 	private String fComponentId = null;
 	private IApiProblem fProblem = null;
+	private String fComment = null;
 	
 	/**
 	 * Constructor
 	 * 
 	 * @param componentid
 	 * @param problem
+	 * @param comment
 	 */
-	public ApiProblemFilter(String componentid, IApiProblem problem) {
+	public ApiProblemFilter(String componentid, IApiProblem problem, String comment) {
 		fComponentId = componentid;
 		Assert.isNotNull(problem);
 		fProblem = problem;
+		fComment = comment;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter#getComment()
+	 */
+	public String getComment() {
+		return fComment;
+	}
+	
+	/**
+	 * Sets the comment for this filter.
+	 * 
+	 * @param comment the comment or <code>null</code> to remove the existing comment
+	 * @since 1.1
+	 */
+	public void setComment(String comment) {
+		fComment = comment;
 	}
 	
 	/* (non-Javadoc)
@@ -97,7 +117,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone() {
-		return new ApiProblemFilter(this.fComponentId, fProblem);
+		return new ApiProblemFilter(this.fComponentId, fProblem, fComment);
 	}
 
 	/* (non-Javadoc)

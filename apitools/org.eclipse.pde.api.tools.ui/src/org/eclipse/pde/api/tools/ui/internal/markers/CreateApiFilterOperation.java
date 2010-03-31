@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -25,14 +24,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -47,6 +50,7 @@ import org.eclipse.ui.progress.UIJob;
 public class CreateApiFilterOperation extends UIJob {
 
 	private IMarker[] fMarkers = null;
+	private boolean fAddingComment = false;
 	
 	/**
 	 * Constructor
@@ -55,9 +59,10 @@ public class CreateApiFilterOperation extends UIJob {
 	 * 
 	 * @see IApiProblemFilter#getKinds()
 	 */
-	public CreateApiFilterOperation(IMarker[] markers) {
+	public CreateApiFilterOperation(IMarker[] markers, boolean addingcomments) {
 		super(MarkerMessages.CreateApiFilterOperation_0);
 		fMarkers = markers;
+		this.fAddingComment = addingcomments;
 	}
 
 	/* (non-Javadoc)
@@ -68,10 +73,25 @@ public class CreateApiFilterOperation extends UIJob {
 			HashMap map = new HashMap(fMarkers.length);
 			IResource resource = null;
 			IProject project = null;
-			
+			String comment = null;
+			HashSet projects = new HashSet();
+			if(fAddingComment) {
+				InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+						MarkerMessages.CreateApiFilterOperation_add_filter_comment, 
+						MarkerMessages.CreateApiFilterOperation_filter_comment, 
+						null, 
+						null);
+				if(dialog.open() == IDialogConstants.OK_ID) {
+					comment = dialog.getValue();
+					if(comment != null && comment.length() < 1) {
+						comment = null;
+					}
+				}
+			}
 			IMarker marker = null;
 			IApiProblem problem = null;
-			HashSet problems = null;
+			HashSet filters = null;
+			IApiComponent component = null;
 			for (int i = 0; i < fMarkers.length; i++) {
 				marker = fMarkers[i];
 				resource = marker.getResource();
@@ -79,10 +99,15 @@ public class CreateApiFilterOperation extends UIJob {
 				if(project == null) {
 					return Status.CANCEL_STATUS;
 				}
-				problems = (HashSet) map.get(project);
-				if(problems == null) {
-					problems = new HashSet();
-					map.put(project, problems);
+				component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project);
+				if(component == null) {
+					return Status.CANCEL_STATUS;
+				}
+				projects.add(project);
+				filters = (HashSet) map.get(component);
+				if(filters == null) {
+					filters = new HashSet();
+					map.put(component, filters);
 				}
 				String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
 				problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
@@ -94,27 +119,20 @@ public class CreateApiFilterOperation extends UIJob {
 						marker.getAttribute(IMarker.CHAR_START, -1),
 						marker.getAttribute(IMarker.CHAR_END, -1), 
 						marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
-				problems.add(problem);
+				filters.add(ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, comment));
 				Util.touchCorrespondingResource(project, resource, typeNameFromMarker);
-				
 			}
-			IApiComponent component = null;
-			Set pjs = map.keySet();
-			for (Iterator iter = pjs.iterator(); iter.hasNext();) {
-				project = (IProject) iter.next();
-				component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project);
-				if(component == null) {
-					return Status.CANCEL_STATUS;
-				}
+			for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
+				component = (IApiComponent) iter.next();
 				IApiFilterStore store = component.getFilterStore();
-				problems = (HashSet) map.get(project);
-				if(problems == null) {
+				filters = (HashSet) map.get(component);
+				if(filters == null) {
 					continue;
 				}
-				store.addFiltersFor((IApiProblem[]) problems.toArray(new IApiProblem[problems.size()]));
+				store.addFilters((IApiProblemFilter[]) filters.toArray(new IApiProblemFilter[filters.size()]));
 			}
 			if(!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				Util.getBuildJob((IProject[]) pjs.toArray(new IProject[pjs.size()]), IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
+				Util.getBuildJob((IProject[]) projects.toArray(new IProject[projects.size()]), IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			}
 			return Status.OK_STATUS;
 		}

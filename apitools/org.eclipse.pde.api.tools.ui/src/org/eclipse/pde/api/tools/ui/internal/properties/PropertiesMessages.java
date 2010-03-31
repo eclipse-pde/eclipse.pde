@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,10 @@ public class PropertiesMessages extends NLS {
 	public static String ApiFiltersPropertyPage_57;
 	public static String ApiFiltersPropertyPage_58;
 	public static String ApiFiltersPropertyPage_59;
+	public static String ApiFiltersPropertyPage_comment;
+	public static String ApiFiltersPropertyPage_edit_button;
+	public static String ApiFiltersPropertyPage_edit_comment;
+	public static String ApiFiltersPropertyPage_edit_filter_comment;
 	
 	static {
 		// initialize resource bundle

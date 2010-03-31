@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ public class MarkerMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.markers.markermessages"; //$NON-NLS-1$
 	public static String ApiMarkerResolutionGenerator_api_problem_filters;
 	public static String CreateApiFilterOperation_0;
+	public static String CreateApiFilterOperation_add_filter_comment;
+	public static String CreateApiFilterOperation_filter_comment;
 	public static String DefaultApiProfileResolution_0;
 	public static String DefaultApiProfileResolution_1;
 	public static String DefaultApiProfileResolution_2;
@@ -30,6 +32,8 @@ public class MarkerMessages extends NLS {
 	public static String FilterProblemResolution_usage;
 	public static String FilterProblemResolution_version_number;
 	public static String FilterProblemResolution_api_component;
+	public static String FilterProblemWithCommentResolution_create_commented_filter;
+	public static String FilterProblemWithCommentResolution_create_commented_filters;
 	public static String OpenPropertyPageResolution_element_cannot_be_null;
 	public static String OpenPropertyPageResolution_open_the_property_page;
 	public static String OpenPropertyPageResolution_opening_property_page_job_name;

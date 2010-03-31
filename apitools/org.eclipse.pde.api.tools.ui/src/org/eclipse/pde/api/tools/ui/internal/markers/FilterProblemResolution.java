@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -154,7 +154,7 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 	 * @see org.eclipse.ui.views.markers.WorkbenchMarkerResolution#run(org.eclipse.core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
-		CreateApiFilterOperation op = new CreateApiFilterOperation(markers);
+		CreateApiFilterOperation op = new CreateApiFilterOperation(markers, false);
 		op.setSystem(true);
 		op.schedule();
 	}

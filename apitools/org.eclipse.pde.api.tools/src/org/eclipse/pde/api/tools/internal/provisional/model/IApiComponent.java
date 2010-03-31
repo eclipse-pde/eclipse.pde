@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
 /**
  * Describes the API of a software component. An API component
@@ -160,16 +158,6 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @throws CoreException if its baseline is disposed
 	 */
 	public IApiFilterStore getFilterStore() throws CoreException;
-	
-	/**
-	 * Creates and returns a new problem filter for the given 
-	 * {@link IApiProblem}
-	 * 
-	 * @param problem
-	 * @return new problem filter
-	 * @throws CoreException if its baseline is disposed
-	 */
-	public IApiProblemFilter newProblemFilter(IApiProblem problem) throws CoreException;
 	
 	/**
 	 * Returns whether this API component is a fragment.

@@ -53,8 +53,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
@@ -172,9 +170,6 @@ public class TestSuiteHelper {
 				return ApiModelFactory.newApiBaseline(baselinename);
 			}
 			public IApiFilterStore getFilterStore() {
-				return null;
-			}
-			public IApiProblemFilter newProblemFilter(IApiProblem problem) {
 				return null;
 			}
 			public boolean isSourceComponent() {

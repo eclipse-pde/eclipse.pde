@@ -21,6 +21,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -39,6 +40,18 @@ public class ApiProblemFactory {
 	 * The current mapping of problem id to message
 	 */
 	private static Hashtable fMessages = null;
+	
+	/**
+	 * Creates a new {@link IApiProblemFilter}
+	 * @param componentid
+	 * @param problem
+	 * @param comment
+	 * @return the new {@link IApiProblemFilter}
+	 * @since 1.1
+	 */
+	public static IApiProblemFilter newProblemFilter(String componentid, IApiProblem problem, String comment) {
+		return new ApiProblemFilter(componentid, problem, comment);
+	}
 	
 	/**
 	 * Creates a new {@link IApiProblem}

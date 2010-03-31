@@ -117,7 +117,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * Saves the .api_filters file for the component
 	 * @throws IOException 
 	 */
-	private void persistApiFilters() {
+	public void persistApiFilters() {
 		if(!fNeedsSaving) {
 			return;
 		}
@@ -231,9 +231,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
 		persistApiFilters();
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFilters(org.eclipse.pde.api.tools.internal.provisional.IApiProblem[])
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFiltersFor(org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem[])
 	 */
 	public synchronized void addFiltersFor(IApiProblem[] problems) {
 		if(problems == null) {
@@ -249,7 +249,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		initializeApiFilters();
-		internalAddFilters(problems, true);
+		internalAddFilters(problems, null, true);
 	}
 
 	/* (non-Javadoc)
@@ -484,10 +484,15 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					}
 				});
 				for(Iterator iterator2 = filtersList.iterator(); iterator2.hasNext(); ) {
-					IApiProblem problem = ((IApiProblemFilter) iterator2.next()).getUnderlyingProblem();
+					IApiProblemFilter filter = (IApiProblemFilter) iterator2.next();
+					IApiProblem problem = filter.getUnderlyingProblem();
 					typeName = problem.getTypeName();
 					Element filterElement = document.createElement(IApiXmlConstants.ELEMENT_FILTER);
 					filterElement.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));
+					String comment = filter.getComment();
+					if(comment != null) {
+						filterElement.setAttribute(IApiXmlConstants.ATTR_COMMENT, comment);
+					}
 					String[] messageArguments = problem.getMessageArguments();
 					int length = messageArguments.length;
 					if(length > 0) {
@@ -591,6 +596,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
 		NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
 		ArrayList newfilters = new ArrayList();
+		ArrayList comments = new ArrayList();
 		for(int i = 0; i < resources.getLength(); i++) {
 			Element element = (Element) resources.item(i);
 			String path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
@@ -627,25 +633,30 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					Element messageArgument = (Element) arguments.item(k);
 					messageargs[k] = messageArgument.getAttribute(IApiXmlConstants.ATTR_VALUE);
 				}
+				String comment = element.getAttribute(IApiXmlConstants.ATTR_COMMENT);
+				comments.add((comment.length() < 1 ? null : comment));
 				newfilters.add(ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 						typeName,
 						messageargs, null, null, -1, -1, -1, id));
 			}
 		}
-		internalAddFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]), false);
+		internalAddFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]), 
+				(String[]) comments.toArray(new String[comments.size()]), 
+				false);
 		newfilters.clear();
 	}
 	
 	/**
 	 * Internal use method that allows auto-persisting of the filter file to be turned on or off
 	 * @param problems the problems to add the the store
+	 * @param comments the comments associated with each problem
 	 * @param persist if the filters should be auto-persisted after they are added
 	 */
-	private synchronized void internalAddFilters(IApiProblem[] problems, boolean persist) {
+	private synchronized void internalAddFilters(IApiProblem[] problems, String[] comments, boolean persist) {
 		Set filters = null;
 		for(int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];
-			IApiProblemFilter filter = new ApiProblemFilter(fProject.getElementName(), problem);
+			IApiProblemFilter filter = new ApiProblemFilter(fProject.getElementName(), problem, (comments == null ? null : comments[i]));
 			String resourcePath = problem.getResourcePath();
 			if (resourcePath == null) {
 				continue;
@@ -677,6 +688,16 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			persistApiFilters();
 		}
 	}
+	
+	/**
+	 * Callback hook to tell the filter store it needs to be saved on the next cycle
+	 * 
+	 * @since 1.1
+	 */
+	public void needsSaving() {
+		fNeedsSaving = true;
+	}
+	
 	/**
 	 * Loads the specified integer attribute from the given xml element
 	 * @param element

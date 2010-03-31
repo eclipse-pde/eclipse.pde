@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,6 +209,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			}
 			NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
 			ArrayList newfilters = new ArrayList();
+			ArrayList comments = new ArrayList();
 			for(int i = 0; i < resources.getLength(); i++) {
 				Element element = (Element) resources.item(i);
 				String typeName = element.getAttribute(IApiXmlConstants.ATTR_TYPE);
@@ -229,6 +230,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					NodeList arguments = messageArguments.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT);
 					int length = arguments.getLength();
 					messageargs = new String[length];
+					String comment = element.getAttribute(IApiXmlConstants.ATTR_COMMENT);
+					comments.add((comment.length() < 1 ? null : comment));
 					for (int k = 0; k < length; k++) {
 						Element messageArgument = (Element) arguments.item(k);
 						messageargs[k] = messageArgument.getAttribute(IApiXmlConstants.ATTR_VALUE);
@@ -236,7 +239,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					newfilters.add(ApiProblemFactory.newApiProblem(null, typeName, messageargs, null, null, -1, -1, -1, id));
 				}
 			}
-			internalAddFilters(componentID, (IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]));
+			internalAddFilters(componentID, (IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]),
+					(String[]) comments.toArray(new String[comments.size()]));
 			newfilters.clear();
 		}
 
@@ -245,7 +249,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		 * @param problems the problems to add the the store
 		 * @param persist if the filters should be auto-persisted after they are added
 		 */
-		private void internalAddFilters(String componentID, IApiProblem[] problems) {
+		private void internalAddFilters(String componentID, IApiProblem[] problems, String[] comments) {
 			if(problems == null) {
 				if(this.debug) {
 					System.out.println("null problems array not addding filters"); //$NON-NLS-1$
@@ -254,7 +258,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			}
 			for(int i = 0; i < problems.length; i++) {
 				IApiProblem problem = problems[i];
-				IApiProblemFilter filter = new ApiProblemFilter(componentID, problem);
+				IApiProblemFilter filter = new ApiProblemFilter(componentID, problem, comments[i]);
 				String typeName = problem.getTypeName();
 				if (typeName == null) {
 					typeName = GLOBAL;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.problems;
-
-
 
 /**
  * Describes API problems that should be filtered. 
@@ -35,4 +33,13 @@ public interface IApiProblemFilter {
 	 * @return the underlying {@link IApiProblem} for this filter
 	 */
 	public IApiProblem getUnderlyingProblem();
+	
+	/**
+	 * Returns the comment associated with this filter or <code>null</code> if a comment has not
+	 * been added to the filter.
+	 * 
+	 * @return the comment for the filter or <code>null</code>
+	 * @since 1.1
+	 */
+	public String getComment();
 }

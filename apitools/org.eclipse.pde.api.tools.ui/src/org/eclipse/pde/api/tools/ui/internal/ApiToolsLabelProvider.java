@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,10 +93,9 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if(element instanceof IApiProblemFilter) {
 			IApiProblemFilter filter = (IApiProblemFilter) element;
 			IApiProblem problem = filter.getUnderlyingProblem();
-			Image image = getApiProblemElementImage(problem);
-			int flags = (problem.getSeverity() == ApiPlugin.SEVERITY_ERROR ? CompositeApiImageDescriptor.ERROR : CompositeApiImageDescriptor.WARNING);
-			CompositeApiImageDescriptor desc = new CompositeApiImageDescriptor(image, flags);
-			return ApiUIPlugin.getImage(desc);
+			/*int flags = (problem.getSeverity() == ApiPlugin.SEVERITY_ERROR ? CompositeApiImageDescriptor.ERROR : CompositeApiImageDescriptor.WARNING);
+			CompositeApiImageDescriptor desc = new CompositeApiImageDescriptor(image, flags);*/
+			return getApiProblemElementImage(problem);/*ApiUIPlugin.getImage(desc);*/
 		}
 		return null;
 	}
@@ -215,6 +214,9 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			buffer.append(path.removeLastSegments(1));
 			buffer.append(")"); //$NON-NLS-1$
 			return buffer.toString();
+		}
+		if(element instanceof String) {
+			return (String) element;
 		}
 		return "<unknown>"; //$NON-NLS-1$
 	}

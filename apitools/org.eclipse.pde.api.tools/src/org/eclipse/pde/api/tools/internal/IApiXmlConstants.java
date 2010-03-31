@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,12 @@ public interface IApiXmlConstants {
 	 * Value is: <code>elementkind</code>
 	 */
 	public static final String ATTR_ELEMENT_KIND = "elementkind"; //$NON-NLS-1$
+	/**
+	 * Constant representing the element attribute for a comment.
+	 * value is: <code>comment</code>
+	 * @since 1.1
+	 */
+	public static final String ATTR_COMMENT = "comment"; //$NON-NLS-1$
 	/**
 	 * Constant representing the element severity attribute of an {@link IApiProblem} in xml.
 	 * Value is: <code>severity</code>

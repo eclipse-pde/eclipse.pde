@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,16 +52,16 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
 			case IApiMarkerConstants.API_USAGE_MARKER_ID : 
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
-				return new IMarkerResolution[] {new FilterProblemResolution(marker)};
+				return new IMarkerResolution[] {new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
 			}
 			case IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID : {
 				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
 			}
 			case IApiMarkerConstants.SINCE_TAG_MARKER_ID : {
-				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker)};
+				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
 			}
 			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID : {
-				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker)};
+				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
 			}
 			case IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID: {
 				return new IMarkerResolution[] {new UnsupportedTagResolution(marker)};
