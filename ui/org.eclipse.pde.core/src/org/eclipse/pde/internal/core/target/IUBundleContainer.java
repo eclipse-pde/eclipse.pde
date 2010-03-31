@@ -410,6 +410,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			props.setProperty("osgi.ws", definition.getWS() != null ? definition.getWS() : Platform.getWS()); //$NON-NLS-1$
 			props.setProperty("osgi.arch", definition.getArch() != null ? definition.getArch() : Platform.getOSArch()); //$NON-NLS-1$
 			props.setProperty("osgi.nl", definition.getNL() != null ? definition.getNL() : Platform.getNL()); //$NON-NLS-1$
+			props.setProperty("org.eclipse.update.install.features", Boolean.TRUE.toString()); //$NON-NLS-1$
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
