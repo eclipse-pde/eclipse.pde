@@ -47,7 +47,10 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 public class FeatureBlock {
 
-	class FeatureTreeLabelProvider extends PDELabelProvider {
+	class FeatureTreeLabelProvider extends StyledCellLabelProvider {
+
+		PDELabelProvider pdeLabelProvider = new PDELabelProvider();
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.util.SharedLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
@@ -55,7 +58,7 @@ public class FeatureBlock {
 			// If there is a workspace feature available, display the workspace feature icon, even if the user has selected external
 			if (index == COLUMN_FEATURE_NAME) {
 				FeatureLaunchModel model = (FeatureLaunchModel) obj;
-				return getImage(model.getModel(true));
+				return pdeLabelProvider.getImage(model.getModel(true));
 			}
 			return null;
 		}
@@ -65,13 +68,36 @@ public class FeatureBlock {
 			switch (index) {
 				case COLUMN_FEATURE_NAME :
 					return model.getId();
-				case COLUMN_FEATURE_VERSION :
-					return model.getVersion();
 				case COLUMN_PLUGIN_RESOLUTION :
 					return model.getResolutionLabel();
 				default :
 					return ""; //$NON-NLS-1$
 			}
+		}
+
+		public void update(ViewerCell cell) {
+			switch (cell.getColumnIndex()) {
+				case COLUMN_FEATURE_NAME :
+					StyledString label = getStyledText(cell.getElement());
+					cell.setStyleRanges(label.getStyleRanges());
+					cell.setText(label.toString());
+					cell.setImage(getColumnImage(cell.getElement(), COLUMN_FEATURE_NAME));
+					break;
+				case COLUMN_PLUGIN_RESOLUTION :
+					cell.setText(getColumnText(cell.getElement(), COLUMN_PLUGIN_RESOLUTION));
+					break;
+			}
+			super.update(cell);
+		}
+
+		public StyledString getStyledText(Object element) {
+			FeatureLaunchModel model = (FeatureLaunchModel) element;
+			StyledString styledString = new StyledString(getColumnText(element, COLUMN_FEATURE_NAME));
+			styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+			String version = model.getVersion();
+			styledString.append(version.substring(0, version.indexOf('-')), StyledString.QUALIFIER_STYLER);
+			styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+			return styledString;
 		}
 	}
 
@@ -376,8 +402,7 @@ public class FeatureBlock {
 	}
 
 	private static final int COLUMN_FEATURE_NAME = 0;
-	private static final int COLUMN_FEATURE_VERSION = 1;
-	private static final int COLUMN_PLUGIN_RESOLUTION = 2;
+	private static final int COLUMN_PLUGIN_RESOLUTION = 1;
 
 	private static final String COLUMN_ID = "columnID"; //$NON-NLS-1$
 	private static final String PROPERTY_RESOLUTION = "resolution"; //$NON-NLS-1$
@@ -459,21 +484,15 @@ public class FeatureBlock {
 
 		TreeColumn column1 = new TreeColumn(fTree.getTree(), SWT.LEFT);
 		column1.setText(PDEUIMessages.FeatureBlock_features);
-		column1.setWidth(300);
+		column1.setWidth(400);
 		column1.addSelectionListener(fListener);
-		column1.setData(COLUMN_ID, new Integer(0));
+		column1.setData(COLUMN_ID, new Integer(COLUMN_FEATURE_NAME));
 
-		TreeColumn column2 = new TreeColumn(fTree.getTree(), SWT.LEFT);
-		column2.setText(PDEUIMessages.FeatureBlock_version);
-		column2.setWidth(250);
+		TreeColumn column2 = new TreeColumn(fTree.getTree(), SWT.CENTER);
+		column2.setText(PDEUIMessages.FeatureBlock_pluginResolution);
+		column2.setWidth(100);
 		column2.addSelectionListener(fListener);
-		column2.setData(COLUMN_ID, new Integer(1));
-
-		TreeColumn column3 = new TreeColumn(fTree.getTree(), SWT.CENTER);
-		column3.setText(PDEUIMessages.FeatureBlock_pluginResolution);
-		column3.setWidth(100);
-		column3.addSelectionListener(fListener);
-		column3.setData(COLUMN_ID, new Integer(3));
+		column2.setData(COLUMN_ID, new Integer(COLUMN_PLUGIN_RESOLUTION));
 
 		fTree.getTree().setHeaderVisible(true);
 		fTree.setLabelProvider(new FeatureTreeLabelProvider());
@@ -487,8 +506,8 @@ public class FeatureBlock {
 		String[] items = new String[] {PDEUIMessages.FeatureBlock_default, PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore};
 		ComboBoxCellEditor cellEditor = new ComboBoxCellEditor(fTree.getTree(), items);
 		cellEditor.getControl().pack();
-		fTree.setCellEditors(new CellEditor[] {null, null, cellEditor, cellEditor});
-		fTree.setColumnProperties(new String[] {null, null, PROPERTY_RESOLUTION});
+		fTree.setCellEditors(new CellEditor[] {null, cellEditor});
+		fTree.setColumnProperties(new String[] {null, PROPERTY_RESOLUTION});
 		fTree.setCellModifier(new LocationCellModifier());
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
