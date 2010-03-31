@@ -16,6 +16,9 @@ import java.util.HashSet;
 import java.util.Stack;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.internal.text.html.BrowserInformationControl;
+import org.eclipse.jface.internal.text.html.HTMLPrinter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.pde.core.IBaseModel;
@@ -26,11 +29,8 @@ import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
-import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.pde.internal.ui.util.TextUtil;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -518,13 +518,12 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 
 	public IInformationControlCreator getInformationControlCreator() {
-		if (!BrowserInformationControl.isAvailable(null))
-			return null;
-
 		if (fCreator == null) {
 			fCreator = new AbstractReusableInformationControlCreator() {
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE);
+					if (BrowserInformationControl.isAvailable(parent))
+						return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, false);
+					return new DefaultInformationControl(parent, false);
 				}
 			};
 		}

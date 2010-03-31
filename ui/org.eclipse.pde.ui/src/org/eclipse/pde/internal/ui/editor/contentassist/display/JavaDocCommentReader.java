@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,17 +12,23 @@ package org.eclipse.pde.internal.ui.editor.contentassist.display;
 
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.formatter.IndentManipulation;
+import org.eclipse.jface.internal.text.html.SingleCharReader;
 
 /**
  * Reads a java doc comment from a java doc comment. Skips star-character
- * on begin of line
+ * on begin of line.
+ * <p>
+ * XXX: copied from <code>org.eclipse.jdt.ui</code>.
+ * </p>
  */
 public class JavaDocCommentReader extends SingleCharReader {
 
 	private IBuffer fBuffer;
 
 	private int fCurrPos;
+
 	private int fStartPos;
+
 	private int fEndPos;
 
 	private boolean fWasNewLine;
@@ -81,6 +87,8 @@ public class JavaDocCommentReader extends SingleCharReader {
 
 	/**
 	 * Returns the offset of the last read character in the passed buffer.
+	 * 
+	 * @return the offset
 	 */
 	public int getOffset() {
 		return fCurrPos;
