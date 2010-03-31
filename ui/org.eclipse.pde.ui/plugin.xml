@@ -2065,5 +2065,13 @@
           class="org.eclipse.pde.internal.ui.wizards.imports.CVSBundleImportPage"
           id="org.eclipse.pde.ui.cvs.import.page">
     </page>
- </extension>	
+ </extension>
+ <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="org.eclipse.pde.internal.ui.util.OSGiConsoleFactory"
+            icon="$nl$/icons/eview16/osgiconsole.gif"
+            label="%consoleFactory.label">
+      </consoleFactory>
+   </extension>
 </plugin>
