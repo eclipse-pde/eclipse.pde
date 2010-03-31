@@ -1638,6 +1638,9 @@
          <showInPart
                id="org.eclipse.team.ui.GenericHistoryView">
          </showInPart>
+          <showInPart
+                id="org.eclipse.ui.navigator.ProjectExplorer">
+          </showInPart>
          <perspectiveShortcut
                id="org.eclipse.ui.resourcePerspective">
          </perspectiveShortcut>
