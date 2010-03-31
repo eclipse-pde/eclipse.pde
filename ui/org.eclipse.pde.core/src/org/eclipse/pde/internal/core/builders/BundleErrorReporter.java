@@ -357,7 +357,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 					IPath validPath = JavaRuntime.newJREContainerPath(env);
 					if (!validPath.equals(currentPath)) {
-						report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_conflict, bundleEnvs[0]), getLine(header, bundleEnvs[0]), sev, PDEMarkerFactory.M_MISMATCHED_EXEC_ENV, PDEMarkerFactory.CAT_EE);
+						// Check if the user is using a perfect match JRE
+						IVMInstall vm = JavaRuntime.getVMInstall(validPath);
+						if (vm == null || !env.isStrictlyCompatible(vm)) {
+							report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_conflict, bundleEnvs[0]), getLine(header, bundleEnvs[0]), sev, PDEMarkerFactory.M_MISMATCHED_EXEC_ENV, PDEMarkerFactory.CAT_EE);
+						}
 					}
 				}
 			} catch (JavaModelException e) {
