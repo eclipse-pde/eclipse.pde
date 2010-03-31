@@ -336,8 +336,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		updateButtons();
 
-		Group group = SWTFactory.createGroup(comp, PDEUIMessages.TargetPlatformPreferencePage2_25, 1, 1, GridData.FILL_HORIZONTAL);
-		fDetails = new TableViewer(group);
+		Composite detailsComposite = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		SWTFactory.createLabel(detailsComposite, PDEUIMessages.TargetPlatformPreferencePage2_25, 1);
+		fDetails = new TableViewer(detailsComposite);
 		fDetails.setLabelProvider(new StyledBundleLabelProvider(true, true));
 		fDetails.setContentProvider(new ArrayContentProvider());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
