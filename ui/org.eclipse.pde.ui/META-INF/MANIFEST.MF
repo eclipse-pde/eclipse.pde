@@ -80,7 +80,6 @@ Require-Bundle:
  org.eclipse.search;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.team.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.update.core;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.ui.forms;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ant.ui;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.jdt.junit;bundle-version="[3.2.0,4.0.0)",
@@ -107,7 +106,8 @@ Require-Bundle:
  org.eclipse.equinox.frameworkadmin;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.equinox.frameworkadmin.equinox;bundle-version="[1.0.100,2.0.0)",
  org.eclipse.pde.launching;bundle-version="[3.6.0,4.0.0)";visibility:=reexport,
- org.eclipse.ui.console;bundle-version="[3.5.0,4.0.0)"
+ org.eclipse.ui.console;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.equinox.simpleconfigurator;bundle-version="[1.0.200,2.0.0)"
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  org.eclipse.jdt.debug.core

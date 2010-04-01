@@ -32,7 +32,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.update.core.Utilities;
 
 public class ShowDescriptionAction extends Action {
 	private String fPointID;

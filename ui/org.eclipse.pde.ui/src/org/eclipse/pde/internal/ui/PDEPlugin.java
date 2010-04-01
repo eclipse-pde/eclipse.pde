@@ -188,6 +188,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			LogFilesManager.removeLogFileProvider(fLogFileProvider);
 			fLogFileProvider = null;
 		}
+		Utilities.shutdown();
 		super.stop(context);
 	}
 

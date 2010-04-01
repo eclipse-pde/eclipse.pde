@@ -1441,6 +1441,9 @@ public class PDEUIMessages extends NLS {
 	public static String SearchAction_Declaration;
 	public static String ShowDescriptionAction_label;
 	public static String ShowDescriptionAction_title;
+	public static String ShowSampleAction_installing;
+	public static String ShowSampleAction_title;
+	public static String ShowSampleAction_msgDesc;
 	public static String ShowSampleAction_msgTitle;
 	public static String DependencyExtent_singular;
 	public static String DependencyExtent_plural;
@@ -1763,8 +1766,6 @@ public class PDEUIMessages extends NLS {
 	public static String ReviewPage_desc;
 	public static String ReviewPage_descContent;
 	public static String ReviewPage_content;
-	public static String ShowSampleAction_title;
-	public static String ShowSampleAction_msgDesc;
 	public static String SelfHostingPropertyPage_label;
 	public static String SelfHostingPropertyPage_viewerLabel;
 	public static String RuntimePage_tabName;
