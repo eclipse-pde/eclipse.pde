@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,15 +90,18 @@ public abstract class AbstractPluginBlock {
 	private TreeEditor levelColumnEditor = null;
 	private TreeEditor autoColumnEditor = null;
 
-	class OSGiLabelProvider extends PDELabelProvider {
+	class OSGiLabelProvider extends StyledCellLabelProvider {
+
+		PDELabelProvider pdeLabelProvider = new PDELabelProvider();
+
 		public Image getColumnImage(Object obj, int index) {
-			return index == 0 ? super.getColumnImage(obj, index) : null;
+			return index == 0 ? pdeLabelProvider.getColumnImage(obj, index) : null;
 		}
 
 		public String getColumnText(Object obj, int index) {
 			switch (index) {
 				case 0 :
-					return super.getColumnText(obj, index);
+					return pdeLabelProvider.getColumnText(obj, index);
 				case 1 :
 					if (levelColumnCache != null && levelColumnCache.containsKey(obj))
 						return (String) levelColumnCache.get(obj);
@@ -110,6 +113,28 @@ public abstract class AbstractPluginBlock {
 				default :
 					return ""; //$NON-NLS-1$
 			}
+		}
+
+		public void update(ViewerCell cell) {
+
+			int cellIndex = cell.getColumnIndex();
+			if (cellIndex == 0) {
+				StyledString label = new StyledString(pdeLabelProvider.getText(cell.getElement()));
+				int start = label.toString().indexOf('(');
+				int end = label.toString().indexOf(')');
+				if (end > start && start > -1) {
+					label.setStyle(start, 1, StyledString.QUALIFIER_STYLER);
+					label.setStyle(end, 1, StyledString.QUALIFIER_STYLER);
+					label.setStyle(start + 1, end - start, StyledString.QUALIFIER_STYLER);
+				}
+				cell.setStyleRanges(label.getStyleRanges());
+				cell.setText(label.toString());
+				cell.setImage(getColumnImage(cell.getElement(), cellIndex));
+			} else {
+				cell.setText(getColumnText(cell.getElement(), cellIndex));
+			}
+
+			super.update(cell);
 		}
 	}
 
@@ -290,7 +315,7 @@ public abstract class AbstractPluginBlock {
 		return button;
 	}
 
-	protected ILabelProvider getLabelProvider() {
+	protected IBaseLabelProvider getLabelProvider() {
 		return new OSGiLabelProvider();
 	}
 

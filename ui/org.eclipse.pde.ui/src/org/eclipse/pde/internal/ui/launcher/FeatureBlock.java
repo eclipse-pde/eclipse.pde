@@ -90,12 +90,15 @@ public class FeatureBlock {
 			super.update(cell);
 		}
 
-		public StyledString getStyledText(Object element) {
+		private StyledString getStyledText(Object element) {
 			FeatureLaunchModel model = (FeatureLaunchModel) element;
 			StyledString styledString = new StyledString(getColumnText(element, COLUMN_FEATURE_NAME));
 			styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 			String version = model.getVersion();
-			styledString.append(version.substring(0, version.indexOf('-')), StyledString.QUALIFIER_STYLER);
+			int index = version.indexOf('-');
+			if (index > -1)
+				version = version.substring(0, index);
+			styledString.append(version, StyledString.QUALIFIER_STYLER);
 			styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 			return styledString;
 		}
