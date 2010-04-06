@@ -29,6 +29,7 @@ import org.osgi.framework.Version;
  * to retrieve plug-ins and features from a repository.
  */
 public class FetchScriptGenerator extends AbstractScriptGenerator {
+	private static final Object SAVE_LOCK = new Object();
 	private static final String FETCH_TASK_FACTORY = "internal.factory"; //$NON-NLS-1$
 	private static final String MATCHED_VERSION = "internal.matchedVersion"; //$NON-NLS-1$
 
@@ -130,27 +131,29 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void saveRepositoryTags(Properties properties, String fileName) throws CoreException {
-		try {
-			InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName));
+		synchronized (SAVE_LOCK) {
 			try {
-				properties.load(input);
-			} finally {
-				input.close();
+				InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName));
+				try {
+					properties.load(input);
+				} finally {
+					input.close();
+				}
+			} catch (IOException e) {
+				//ignore the exception, the same may not exist
 			}
-		} catch (IOException e) {
-			//ignore the exception, the same may not exist
-		}
 
-		try {
-			OutputStream os = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + fileName));
 			try {
-				properties.store(os, null);
-			} finally {
-				os.close();
+				OutputStream os = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + fileName));
+				try {
+					properties.store(os, null);
+				} finally {
+					os.close();
+				}
+			} catch (IOException e) {
+				String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + fileName);
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 			}
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + fileName);
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 	}
 
