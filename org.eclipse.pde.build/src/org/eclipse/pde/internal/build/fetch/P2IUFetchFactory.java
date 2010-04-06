@@ -205,9 +205,6 @@ public class P2IUFetchFactory implements IFetchFactory {
 	 */
 	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(rawEntry, SEPARATOR);
-		// we need an IU id, and repository
-		if (arguments.length < 2)
-			throwException(NLS.bind(Messages.error_incorrectDirectoryEntry, entryInfos.get(KEY_ELEMENT_NAME)), null);
 
 		// build up the table of arguments in the map file entry
 		Map table = new HashMap();
@@ -228,6 +225,10 @@ public class P2IUFetchFactory implements IFetchFactory {
 		else
 			entryInfos.put(KEY_VERSION, ""); //$NON-NLS-1$
 		entryInfos.put(KEY_REPOSITORY, table.get(KEY_REPOSITORY));
+
+		// we need an IU id, and repository
+		if (entryInfos.get(KEY_ID) == null || entryInfos.get(KEY_REPOSITORY) == null)
+			throwException(NLS.bind(Messages.error_directoryEntryRequiresIdAndRepo, entryInfos.get(KEY_ELEMENT_NAME)), null);
 	}
 
 }
