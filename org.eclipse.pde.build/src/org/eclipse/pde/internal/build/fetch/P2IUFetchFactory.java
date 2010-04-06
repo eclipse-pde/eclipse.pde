@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.fetch;
 
+import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
@@ -164,7 +165,39 @@ public class P2IUFetchFactory implements IFetchFactory {
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveFilesCall(java.util.Map, org.eclipse.core.runtime.IPath, java.lang.String[], org.eclipse.pde.build.IAntScript)
 	 */
 	public void generateRetrieveFilesCall(Map entryInfos, IPath destination, String[] files, IAntScript script) {
+		Map args = new HashMap();
+		args.put(ATTRIBUTE_SOURCE, entryInfos.get(KEY_REPOSITORY));
+		args.put(ATTRIBUTE_DESTINATION, destination.toOSString());
+		script.printStartTag(TASK_REPO2RUNNABLE, args);
+		script.incrementIdent();
+		args.clear();
+		args.put(ATTRIBUTE_ID, entryInfos.get(KEY_ID));
+		args.put(ATTRIBUTE_VERSION, entryInfos.get(KEY_VERSION));
+		script.printElement(TASK_IU, args);
+		script.decrementIdent();
+		script.printEndTag(TASK_REPO2RUNNABLE);
 		script.println();
+
+		//create a dummy build.properties file which will be overwritten if the feature actually contains one
+		args.clear();
+		args.put("message", "#empty"); //$NON-NLS-1$ //$NON-NLS-2$
+		args.put("file", new File(destination.toFile(), "build.properties").getAbsolutePath()); //$NON-NLS-1$//$NON-NLS-2$
+		script.printElement("echo", args); //$NON-NLS-1$
+
+		//move the files to the destination
+		args.clear();
+		args.put("todir", destination.toOSString()); //$NON-NLS-1$
+		args.put("flatten", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printStartTag("move", args); //$NON-NLS-1$
+		script.incrementIdent();
+		args.clear();
+		args.put("dir", destination.toOSString()); //$NON-NLS-1$
+		for (int i = 0; i < files.length; i++) {
+			args.put("includes", "features/*/" + files[i]); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printElement("fileset", args); //$NON-NLS-1$
+		}
+		script.decrementIdent();
+		script.printEndTag("move"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -172,8 +205,8 @@ public class P2IUFetchFactory implements IFetchFactory {
 	 */
 	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(rawEntry, SEPARATOR);
-		// we need an IU id, version, and repository
-		if (arguments.length < 3)
+		// we need an IU id, and repository
+		if (arguments.length < 2)
 			throwException(NLS.bind(Messages.error_incorrectDirectoryEntry, entryInfos.get(KEY_ELEMENT_NAME)), null);
 
 		// build up the table of arguments in the map file entry

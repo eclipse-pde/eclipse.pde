@@ -9,6 +9,7 @@
 
 package org.eclipse.pde.build.internal.tests;
 
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
@@ -91,6 +92,33 @@ public class FetchTests extends PDETestCase {
 		assertEquals(sourceRefs.get("org.eclipse.cvs,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;tag=v20090520");
 		assertEquals(sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;tag=I20090430-0408");
 		assertEquals(sourceRefs.get("org.eclipse.team.cvs.ssh2,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.ssh2;tag=I20090508-2000");
+	}
+
+	public void testFetchP2Feature() throws Exception {
+		IFolder buildFolder = newTest("p2.fetchFeature");
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("feature@org.eclipse.cvs=p2IU,id=org.eclipse.cvs.feature.jar,repository=http://eclipsebuildserv/3.6-I-builds/\n");
+		buffer.append("plugin@org.eclipse.cvs=p2IU,id=org.eclipse.cvs,repository=http://eclipsebuildserv/3.6-I-builds/\n");
+		buffer.append("plugin@org.eclipse.team.cvs.core=p2IU,id=org.eclipse.team.cvs.core,repository=http://eclipsebuildserv/3.6-I-builds/\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ssh2=p2IU,id=org.eclipse.team.cvs.ssh2,repository=http://eclipsebuildserv/3.6-I-builds/\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ui=p2IU,id=org.eclipse.team.cvs.ui,repository=http://eclipsebuildserv/3.6-I-builds/\n");
+		Utils.writeBuffer(buildFolder.getFile("directory.txt"), buffer);
+
+		Properties fetchProperties = new Properties();
+		fetchProperties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		fetchProperties.put("transformedRepoLocation", buildFolder.getLocation().toOSString());
+		fetchProperties.put("type", "feature");
+		fetchProperties.put("id", "org.eclipse.cvs");
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
+
+		File features = new File(buildFolder.getLocation().toFile(), "features");
+		File plugins = new File(buildFolder.getLocation().toFile(), "plugins");
+		assertEquals(features.list().length, 1);
+		assertEquals(plugins.list().length, 4);
 	}
 
 	public void testBug248767_2() throws Exception {
