@@ -10,6 +10,7 @@
 package org.eclipse.pde.build.internal.tests;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.*;
@@ -19,7 +20,10 @@ import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.pde.build.tests.Activator;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.FeatureGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
@@ -134,15 +138,15 @@ public class Utils {
 		outputStream.close();
 	}
 
-	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList) throws CoreException {
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList) throws CoreException, IOException {
 		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, null);
 	}
 
-	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String version) throws CoreException {
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String version) throws CoreException, IOException {
 		generateFeature(workingDirectory, id, featureList, pluginList, null, false, false, version);
 	}
 
-	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String product, boolean includeLaunchers, boolean verify, String version) throws CoreException {
+	static public void generateFeature(IFolder workingDirectory, String id, String[] featureList, String[] pluginList, String product, boolean includeLaunchers, boolean verify, String version) throws CoreException, IOException {
 		FeatureGenerator generator = new FeatureGenerator();
 		if (verify) {
 			FeatureGenerator.setConfigInfo("*,*,*");
@@ -275,9 +279,7 @@ public class Utils {
 		return folder;
 	}
 
-	public static File findDeltaPack() {
-		File baseLocation = new File(Platform.getInstallLocation().getURL().getPath());
-
+	private static File findExecutable(File baseLocation) {
 		File plugins = new File(baseLocation, "features");
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
@@ -288,14 +290,39 @@ public class Utils {
 
 		if (files != null && files.length > 0)
 			return baseLocation;
-
-		File delta = new File(baseLocation.getParent(), "deltapack/eclipse");
-		if (delta.exists()) {
-			files = new File(delta, "features").list(filter);
-			if (files.length > 0)
-				return delta;
-		}
 		return null;
+	}
+
+	static private File deltaLocation = null;
+
+	public static File findDeltaPack() throws IOException {
+		if (deltaLocation != null)
+			return deltaLocation;
+
+		File baseLocation = new File(Platform.getInstallLocation().getURL().getPath());
+
+		deltaLocation = findExecutable(baseLocation);
+		if (deltaLocation != null)
+			return deltaLocation;
+
+		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
+		if (manipulator != null) {
+			BundleInfo[] bundles = manipulator.loadConfiguration(BundleHelper.getDefault().getBundle().getBundleContext(), null);
+			//find a fragment for a platform we aren't
+			String id = "org.eclipse.equinox.launcher.win32.win32.x86" + (Platform.getOSArch().equals("x86") ? "_64" : "");
+			for (int i = 0; i < bundles.length; i++) {
+				if (bundles[i].getSymbolicName().equals(id)) {
+					URI location = bundles[i].getLocation();
+					deltaLocation = findExecutable(URIUtil.toFile(URIUtil.append(location, "../..")));
+					if (deltaLocation != null)
+						return deltaLocation;
+					break;
+				}
+			}
+		}
+
+		deltaLocation = findExecutable(new File(baseLocation.getParent(), "deltapack/eclipse"));
+		return deltaLocation;
 	}
 
 	public static void writeBuffer(IFile outputFile, StringBuffer buffer) throws IOException, CoreException {
