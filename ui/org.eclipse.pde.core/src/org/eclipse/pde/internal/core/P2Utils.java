@@ -442,7 +442,7 @@ public class P2Utils {
 			boolean isOptional = importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC) || importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_OPTIONAL);
 			reqsDeps.add(MetadataFactory.createRequirement(CAPABILITY_NS_JAVA_PACKAGE, importPackageName, versionRange, null, isOptional, false));
 		}
-		iu.setRequiredCapabilities((IRequirement[]) reqsDeps.toArray(new IRequirement[reqsDeps.size()]));
+		iu.setRequirements(((IRequirement[]) reqsDeps.toArray(new IRequirement[reqsDeps.size()])));
 
 		// Create set of provided capabilities
 		ArrayList providedCapabilities = new ArrayList();
