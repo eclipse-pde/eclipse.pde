@@ -151,7 +151,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		p2ConfigGenerator.initialize(directory, featureId);
 		p2ConfigGenerator.setSignJars(configScriptGenerator.isSigning());
 		p2ConfigGenerator.setVersionsList(versionsList);
-		p2ConfigGenerator.setContextMetadataRepositories(contextMetadata);
+		p2ConfigGenerator.setContextRepositories(contextMetadata);
 		p2ConfigGenerator.setProductQualifier(productQualifier);
 		p2ConfigGenerator.generate();
 

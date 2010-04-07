@@ -14,6 +14,10 @@ import java.io.*;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.core.IAgentLocation;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
@@ -305,6 +309,22 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		BuildTimeSite result = siteFactory.createSite();
 		if (platformProperties != null)
 			result.setPlatformPropeties(platformProperties);
+
+		File baseProfile = result.getSiteContentProvider().getBaseProfile();
+		if (baseProfile != null) {
+			List repos = getAssociatedRepositories(baseProfile);
+			if (repos.size() > 0) {
+				if (contextMetadata != null) {
+					Set set = new HashSet();
+					set.addAll(Arrays.asList(contextMetadata));
+					set.addAll(repos);
+					contextMetadata = (URI[]) set.toArray(new URI[set.size()]);
+				} else {
+					contextMetadata = (URI[]) repos.toArray(new URI[repos.size()]);
+				}
+			}
+		}
+
 		return result;
 	}
 
@@ -507,8 +527,67 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		filterP2Base = filter;
 	}
 
+	static private URI getDownloadCacheLocation(IProvisioningAgent agent) {
+		IAgentLocation location = (IAgentLocation) agent.getService(IAgentLocation.SERVICE_NAME);
+		if (location == null)
+			return null;
+		return URIUtil.append(location.getDataArea("org.eclipse.equinox.p2.core"), "cache/"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	public void setContextMetadataRepositories(URI[] uris) {
-		this.contextMetadata = uris;
+		Set uriSet = new HashSet();
+		uriSet.addAll(Arrays.asList(uris));
+
+		for (int i = 0; i < uris.length; i++) {
+			//try and find additional repos associated with a profile
+			File uriFile = URIUtil.toFile(uris[i]);
+			uriSet.addAll(getAssociatedRepositories(uriFile));
+		}
+
+		setContextRepositories((URI[]) uriSet.toArray(new URI[uriSet.size()]));
+	}
+
+	private List getAssociatedRepositories(File profileFile) {
+		if (profileFile == null || !profileFile.isDirectory() || !profileFile.getName().endsWith(".profile")) //$NON-NLS-1$
+			return Collections.EMPTY_LIST;
+
+		ArrayList result = new ArrayList();
+		URI dataArea = URIUtil.append(profileFile.toURI(), "../../.."); //$NON-NLS-1$
+		File areaFile = URIUtil.toFile(dataArea);
+		if (areaFile != null && areaFile.exists()) {
+			IProvisioningAgent agent = BundleHelper.getDefault().getProvisioningAgent(dataArea);
+			if (agent != null) {
+				IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+				Path profilePath = new Path(profileFile.getPath());
+				IProfile profile = registry.getProfile(profilePath.removeFileExtension().lastSegment());
+				if (profile != null) {
+					String cache = profile.getProperty(IProfile.PROP_CACHE);
+					if (cache != null)
+						result.add(new File(cache).toURI());
+					String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
+					if (sharedCache != null)
+						result.add(new File(cache).toURI());
+				}
+
+				//download cache
+				URI download = getDownloadCacheLocation(agent);
+				if (URIUtil.toFile(download).exists())
+					result.add(download);
+			}
+		}
+		return result;
+	}
+
+	public void setContextRepositories(URI[] uris) {
+		if (contextMetadata != null) {
+			//merge the lists
+			Set uriSet = new HashSet();
+			uriSet.addAll(Arrays.asList(contextMetadata));
+			uriSet.addAll(Arrays.asList(uris));
+			contextMetadata = (URI[]) uriSet.toArray(new URI[uriSet.size()]);
+		} else {
+			contextMetadata = uris;
+		}
 	}
 
 	public URI[] getContextMetadata() {

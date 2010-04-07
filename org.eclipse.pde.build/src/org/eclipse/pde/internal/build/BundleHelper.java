@@ -12,9 +12,11 @@ package org.eclipse.pde.internal.build;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.core.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
@@ -79,6 +81,30 @@ public class BundleHelper {
 
 	public Bundle getBundle() {
 		return bundle;
+	}
+
+	public IProvisioningAgent getProvisioningAgent(URI location) {
+		//Is there already an agent for this location?
+		String filter = "(locationURI=" + String.valueOf(location) + ")"; //$NON-NLS-1$//$NON-NLS-2$
+		ServiceReference[] serviceReferences = null;
+		try {
+			serviceReferences = context.getServiceReferences(IProvisioningAgent.SERVICE_NAME, filter);
+			if (serviceReferences != null) {
+				return (IProvisioningAgent) context.getService(serviceReferences[0]);
+			}
+		} catch (InvalidSyntaxException e) {
+			// ignore
+		} finally {
+			if (serviceReferences != null)
+				context.ungetService(serviceReferences[0]);
+		}
+
+		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) acquireService(IProvisioningAgentProvider.SERVICE_NAME);
+		try {
+			return provider.createAgent(location);
+		} catch (ProvisionException e) {
+			return null;
+		}
 	}
 
 	public Object acquireService(String serviceName) {

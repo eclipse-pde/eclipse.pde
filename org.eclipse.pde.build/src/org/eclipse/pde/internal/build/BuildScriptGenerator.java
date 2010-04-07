@@ -224,7 +224,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setProduct(product);
 			generator.setProductQualifier(productQualifier);
 			generator.setUseWorkspaceBinaries(workspaceBinaries);
-			generator.setContextMetadataRepositories(contextMetadata);
+			generator.setContextRepositories(contextMetadata);
 			generator.setGenerateSourceReferences(sourceReferences);
 		}
 
@@ -377,7 +377,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setBuildSiteFactory(factory);
 		assembler.setGroupConfigs(groupConfigs);
 		assembler.setVersionsList(generateVersionsList);
-		assembler.setContextMetadataRepositories(contextMetadata);
+		assembler.setContextRepositories(contextMetadata);
 		assembler.generate();
 	}
 
@@ -391,7 +391,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setBuildSiteFactory(factory);
 		assembler.setGroupConfigs(groupConfigs);
 		assembler.setVersionsList(generateVersionsList);
-		assembler.setContextMetadataRepositories(contextMetadata);
+		assembler.setContextRepositories(contextMetadata);
 		assembler.generate();
 	}
 

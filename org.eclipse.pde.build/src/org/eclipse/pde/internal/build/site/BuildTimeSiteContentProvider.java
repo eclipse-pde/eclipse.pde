@@ -14,6 +14,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.JarFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 
@@ -67,6 +69,33 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 				collectedElements.add(location[i]);
 		}
 		return collectedElements;
+	}
+
+	public File getBaseProfile() {
+		if (installedBaseURL == null)
+			return null;
+
+		File configurationFolder = new File(installedBaseURL, "configuration"); //$NON-NLS-1$
+		if (configurationFolder.exists()) {
+			try {
+				Properties config = AbstractScriptGenerator.readProperties(configurationFolder.getAbsolutePath(), "config.ini", IStatus.OK); //$NON-NLS-1$
+				String dataArea = config.getProperty("eclipse.p2.data.area"); //$NON-NLS-1$
+				String profileName = config.getProperty("eclipse.p2.profile"); //$NON-NLS-1$
+				if (dataArea != null && profileName != null) {
+					int idx = dataArea.indexOf("@config.dir"); //$NON-NLS-1$
+					if (idx != -1)
+						dataArea = dataArea.substring(0, idx) + configurationFolder.getAbsolutePath() + dataArea.substring(idx + 11);
+
+					File profileArea = new File(dataArea, "org.eclipse.equinox.p2.engine/profileRegistry/" + profileName + ".profile"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (profileArea.exists())
+						return profileArea;
+				}
+			} catch (CoreException e) {
+				//won't happend
+			}
+		}
+
+		return null;
 	}
 
 	public PDEUIStateWrapper getInitialState() {
