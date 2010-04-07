@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,8 @@ public class Bundle extends BundleObject implements IBundle {
 		if (fProperties == null)
 			fProperties = new HeaderMap();//TreeMap(new HeaderComparator());
 		Object oldValue = fProperties.get(key);
-		if (value == null || value.trim().length() == 0)
+		// an empty string removes the header whereas a non-zero length string with spaces is used to generate an empty header
+		if (value == null || value.length() == 0)
 			fProperties.remove(key);
 		else
 			fProperties.put(key, value);

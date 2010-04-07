@@ -671,6 +671,10 @@ public class ProjectModifyOperation {
 				Entry entry = (Entry) iterator.next();
 				String name = (String) entry.getKey();
 				String value = (String) entry.getValue();
+				// translate empty header to a single space to ensure inclusion of empty headers
+				if (value != null && value.trim().length() == 0) {
+					value = " "; //$NON-NLS-1$
+				}
 				if (!isEqual(value, bundle.getHeader(name))) {
 					bundle.setHeader(name, value);
 				}

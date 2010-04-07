@@ -590,6 +590,9 @@ public interface IBundleProjectDescription {
 	 * for the <code>Bundle-Name</code> header will override any value set via {@link #setBundleName(String)}.
 	 * This method is intended to be used to set the value of a header that does
 	 * not have explicit API.
+	 * </p><p>
+	 * To include an empty header <code>value.trim().length()</code> must equal zero (i.e an empty string or a string of
+	 * whitespace).
 	 * </p>
 	 * @param header header name
 	 * @param value header value or <code>null</code> to remove
@@ -598,7 +601,7 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Returns the value of the specified header from the bundle manifest, or <code>null</code>
-	 * if unspecified.
+	 * if unspecified. Note that an empty string is returned for a header that has an empty value.
 	 * 
 	 * @param header
 	 * @return header value or <code>null</code>

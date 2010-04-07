@@ -167,6 +167,59 @@ public class ProjectCreationTests extends TestCase {
 	}
 	
 	/**
+	 * Tests that a header can be written with an empty value.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testEmptyHeader() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		description.setHeader("Test-Empty-Value", "");
+		description.apply(null);
+		waitForBuild();
+		
+		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
+		
+		String value = d2.getHeader("Test-Empty-Value");
+		assertNotNull("Missing header 'Test-Empty-Value:'", value);
+		assertEquals("Should be an blank header", "", value);
+		assertNull("Should be no activator", d2.getActivator());
+		assertNull("Should be no activation policy", d2.getActivationPolicy());
+		IPath[] binIncludes = d2.getBinIncludes();
+		assertNull("Wrong number of entries on bin.includes", binIncludes);
+		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
+		assertNotNull("Wrong Bundle-Classpath", classpath);
+		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
+		assertEquals("Wrong Bundle-Classpath entry", DEFAULT_BUNDLE_CLASSPATH_ENTRY, classpath[0]);
+		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
+		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
+		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
+		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
+		assertNull("Wrong host", d2.getHost());
+		assertNull("Wrong localization", d2.getLocalization());
+		assertNull("Wrong project location URI", d2.getLocationURI());
+		String[] natureIds = d2.getNatureIds();
+		assertEquals("Wrong number of natures", 2, natureIds.length);
+		assertEquals("Wrong nature", IBundleProjectDescription.PLUGIN_NATURE, natureIds[0]);
+		assertTrue("Nature should be present", d2.hasNature(IBundleProjectDescription.PLUGIN_NATURE));
+		assertEquals("Wrong nature", JavaCore.NATURE_ID, natureIds[1]);
+		assertTrue("Nature should be present", d2.hasNature(JavaCore.NATURE_ID));
+		assertFalse("Should not have bogus nature", d2.hasNature("BOGUS_NATURE"));
+		assertNull("Wrong imports", d2.getPackageImports());
+		assertNull("Wrong exports", d2.getPackageExports());
+		assertEquals("Wrong project", project, d2.getProject());
+		assertNull("Wrong required bundles", d2.getRequiredBundles());
+		assertNull("Wrong target version", d2.getTargetVersion());
+		assertEquals("Wrong symbolic name", project.getName(), d2.getSymbolicName());
+		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
+		assertFalse("Wrong Equinox headers", d2.isEquinox());
+		assertFalse("Wrong singleton", d2.isSingleton());
+		assertNull("Wrong export wizard", d2.getExportWizardId());
+		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
+	}	
+	
+	/**
 	 * Minimal fragment project creation - set a symbolic name and host, and go.
 	 * 
 	 * @throws CoreException
