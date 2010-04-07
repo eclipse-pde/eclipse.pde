@@ -39,7 +39,6 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.extension.ExtensionEditorWizard;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
@@ -716,11 +715,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			Image customImage = getCustomImage(element);
 			if (customImage != null)
 				elementImage = customImage;
-			String bodyText = element.getText();
-			boolean hasBodyText = bodyText != null && bodyText.length() > 0;
-			if (hasBodyText) {
-				elementImage = PDEPlugin.getDefault().getLabelProvider().get(elementImage, SharedLabelProvider.F_EDIT);
-			}
 		}
 		return elementImage;
 	}
