@@ -149,7 +149,7 @@ public class PluginPathFinder {
 
 		if (filterP2Base) {
 			URL[] urls = P2Utils.readBundlesTxt(platformHome);
-			if (urls != null) {
+			if (urls != null && urls.length > 0) {
 				return Utils.asFile(urls);
 			}
 		}

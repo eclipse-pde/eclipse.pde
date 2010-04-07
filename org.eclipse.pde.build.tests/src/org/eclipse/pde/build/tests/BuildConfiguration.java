@@ -31,6 +31,7 @@ public class BuildConfiguration {
 		defaultBuildConfig.put("baseos", Platform.getOS());
 		defaultBuildConfig.put("basews", Platform.getWS());
 		defaultBuildConfig.put("basearch", Platform.getOSArch());
+		defaultBuildConfig.put("filterP2Base", TRUE);
 
 		defaultScriptConfig = (Properties) defaultBuildConfig.clone();
 		if (!defaultBuildConfig.containsKey("configs"))
