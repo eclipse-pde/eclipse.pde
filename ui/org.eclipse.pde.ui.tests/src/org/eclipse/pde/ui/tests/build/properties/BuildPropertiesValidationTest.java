@@ -99,4 +99,21 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			fail("Could not build the project '" + project.getName() + "'");
 		}
 	}
+	
+	public void testBuildPropertiesThree() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.three");
+		project.open(new NullProgressMonitor());
+		setPreferences(project, CompilerFlags.ERROR);
+		for (int i = 1; i <= 1; i++) {
+			if (buildProject(project, i)) {
+				IResource buildProperty = project.findMember("build.properties");
+				PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+
+				verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
+				verifyQuickFixes(buildProperty, expectedValues);
+			} else {
+				fail("Could not build the project '" + project.getName() + "'");
+			}
+		}
+	}
 }

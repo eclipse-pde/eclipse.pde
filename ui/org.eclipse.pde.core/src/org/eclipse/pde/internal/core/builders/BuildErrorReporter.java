@@ -678,6 +678,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	private void validateSourceEntries(ArrayList sourceEntries, IClasspathEntry[] cpes) {
+		if (sourceEntries == null || sourceEntries.size() == 0)
+			return;
 		String[] unlisted = PDEBuilderHelper.getUnlistedClasspaths(sourceEntries, fProject, cpes);
 		String name = ((IBuildEntry) sourceEntries.get(0)).getName();
 		String message = PDECoreMessages.BuildErrorReporter_classpathEntryMissing1;
