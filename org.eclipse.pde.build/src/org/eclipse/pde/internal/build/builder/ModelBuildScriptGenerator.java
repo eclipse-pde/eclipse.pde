@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
@@ -346,7 +347,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				if (Utils.isBinary(plugin)) {
 					// this plug-in wasn't compiled, take source from the previous source plug-in
 					if (previousSrcRoot != null) {
-						File previousSrc = new File(previousSrcRoot, plugin.getSymbolicName() + '_' + plugin.getVersion());
+						File previousSrc = new File(previousSrcRoot, getNormalizedName(plugin));
 						if (previousSrc.exists()) {
 							FileSet[] fileSets = new FileSet[1];
 							fileSets[0] = new FileSet(previousSrc.getAbsolutePath(), null, "**/*", null, null, null, null); //$NON-NLS-1$
@@ -981,7 +982,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 		script.printConditionIsSet(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION, PROPERTY_BUILD_TEMP);
 		script.printProperty(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BASEDIR));
-		script.printConditionIsSet(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + model.getSymbolicName() + '_' + model.getVersion(), PROPERTY_BUILD_TEMP);
+		script.printConditionIsSet(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + getNormalizedName(model), PROPERTY_BUILD_TEMP);
 		script.printProperty(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		script.printProperty(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
 		script.printProperty(PROPERTY_PLUGIN_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
@@ -1025,6 +1026,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_LOG_EXTENSION, ".log"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
+		script.printProperty(PROPERTY_PREREQ_COMPILE_LOG, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + "/prereqErrors.log"); //$NON-NLS-1$
 
 		if (javacSource == null)
 			script.printProperty(IXMLConstants.PROPERTY_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
@@ -1112,7 +1114,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			//if there were no build.properties, then it is a binary plugin
 			binaryPlugin = true;
 		} else {
-			getCompiledElements().add(model.getSymbolicName() + "_" + model.getVersion()); //$NON-NLS-1$
+			getCompiledElements().add(getNormalizedName(model));
 		}
 		Properties bundleProperties = (Properties) model.getUserObject();
 		if (bundleProperties == null) {
@@ -1228,13 +1230,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_JARS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		script.printTargetEnd();
-
 		script.println();
-		script.printTargetDeclaration(TARGET_CHECK_COMPILATION_RESULTS, null, PROPERTY_COMPILATION_ERROR, null, null);
-		script.printEchoTask(Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER), pluginModel.getSymbolicName() + " : " + PROPERTY_COMPILATION_ERROR + "=" + Utils.getPropertyFormat(PROPERTY_COMPILATION_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printTargetEnd();
 
-		script.println();
+		generateCheckCompilationTask(pluginModel);
+
 		script.printTargetDeclaration(TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
 		if (customBuildCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
@@ -1249,6 +1248,52 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		script.printTargetEnd();
+	}
+
+	private void generateCheckCompilationTask(BundleDescription pluginModel) throws CoreException {
+		script.printTargetDeclaration(TARGET_CHECK_COMPILATION_RESULTS, null, PROPERTY_COMPILATION_ERROR, null, null);
+		script.printEchoTask(Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER), getNormalizedName(pluginModel) + "${line.separator}" + PROPERTY_COMPILATION_ERROR + "=" + Utils.getPropertyFormat(PROPERTY_COMPILATION_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
+
+		Map arguments = new HashMap();
+		arguments.put("bundle", getNormalizedName(pluginModel)); //$NON-NLS-1$
+		arguments.put("log", Utils.getPropertyFormat(PROPERTY_PREREQ_COMPILE_LOG)); //$NON-NLS-1$
+		script.printStartTag("eclipse.logCompileError", arguments); //$NON-NLS-1$
+		script.incrementIdent();
+		arguments.clear();
+		for (Iterator iter = getPrequisitePaths().iterator(); iter.hasNext();) {
+			arguments.put("name", iter.next().toString()); //$NON-NLS-1$
+			script.printElement("include", arguments); //$NON-NLS-1$
+		}
+		script.decrementIdent();
+		script.printEndTag("eclipse.logCompileError"); //$NON-NLS-1$
+
+		script.printTargetEnd();
+		script.println();
+	}
+
+	private List getPrequisitePaths() throws CoreException {
+		Properties properties = (Properties) model.getUserObject();
+		List results = new ArrayList();
+		if (properties != null) {
+			String required = properties.getProperty(PROPERTY_REQUIRED_BUNDLE_IDS);
+			if (required != null) {
+				State state = getSite(false).getRegistry().getState();
+				String[] ids = Utils.getArrayFromString(required, ":"); //$NON-NLS-1$
+				for (int i = 0; i < ids.length; i++) {
+					try {
+						BundleDescription bundle = state.getBundle(new Long(ids[i]).longValue());
+						if (bundle != null && !Utils.isBinary(bundle)) {
+							Path bundleLocation = new Path(bundle.getLocation());
+							results.add(bundleLocation.append("compilation.problem")); //$NON-NLS-1$
+							results.add(Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + getNormalizedName(bundle) + "/compilation.problem"); //$NON-NLS-1$
+						}
+					} catch (NumberFormatException e) {
+						//ignore
+					}
+				}
+			}
+		}
+		return results;
 	}
 
 	/**

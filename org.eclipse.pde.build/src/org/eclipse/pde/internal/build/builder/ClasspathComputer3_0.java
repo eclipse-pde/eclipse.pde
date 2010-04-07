@@ -91,7 +91,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private Map visiblePackages = null;
 	private Map pathElements = null;
 	private boolean allowBinaryCycles = false;
-	private StringBuffer requiredIds = null;
+	private Set requiredIds = null;
 
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
@@ -113,7 +113,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		Set addedPlugins = new HashSet(10); //The set of all the plugins already added to the classpath (this allows for optimization)
 		pathElements = new HashMap();
 		visiblePackages = getVisiblePackages(model);
-		requiredIds = new StringBuffer();
+		requiredIds = new HashSet();
 		allowBinaryCycles = AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
 
 		//PREREQUISITE
@@ -135,7 +135,12 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			bundleProperties = new Properties();
 			model.setUserObject(bundleProperties);
 		}
-		bundleProperties.setProperty(PROPERTY_REQUIRED_BUNDLE_IDS, requiredIds.toString());
+		StringBuffer buffer = new StringBuffer();
+		for (Iterator iterator = requiredIds.iterator(); iterator.hasNext();) {
+			buffer.append(iterator.next().toString());
+			buffer.append(':');
+		}
+		bundleProperties.setProperty(PROPERTY_REQUIRED_BUNDLE_IDS, buffer.toString());
 	}
 
 	private Map getVisiblePackages(BundleDescription model) {
@@ -186,8 +191,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			allFragments = false;
 		}
 
-		requiredIds.append(plugin.getBundleId());
-		requiredIds.append(':');
+		requiredIds.add(new Long(plugin.getBundleId()));
 
 		addRuntimeLibraries(plugin, classpath, location);
 		addFragmentsLibraries(plugin, classpath, location, true, allFragments);
@@ -232,8 +236,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			if (matchFilter(fragments[i]) == false)
 				continue;
 
-			requiredIds.append(fragments[i].getBundleId());
-			requiredIds.append(':');
+			requiredIds.add(new Long(fragments[i].getBundleId()));
 
 			if (!afterPlugin && isPatchFragment(fragments[i])) {
 				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
