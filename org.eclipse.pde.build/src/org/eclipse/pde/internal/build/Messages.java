@@ -25,6 +25,7 @@ public class Messages extends NLS {
 	public static String error_pluginCycle;
 	public static String error_missingDirectoryEntry;
 	public static String error_incorrectDirectoryEntry;
+	public static String error_directoryEntryRequiresIdAndRepo;
 	public static String error_missingElement;
 	public static String error_missingFeatureId;
 	public static String error_cannotFetchNorFindFeature;
