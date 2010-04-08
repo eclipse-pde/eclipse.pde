@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 				} else if (MAIN_CLASS.equals(declaringTypeName)) {
 					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
 					if (model != null)
-						fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, sourcePath);
+						fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, sourcePath, true);
 				}
 			}
 		}
@@ -115,7 +115,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 			if (data != null) {
 				String location = getValue(data, "fileName"); //$NON-NLS-1$
 				String id = getValue(data, "symbolicName"); //$NON-NLS-1$
-				return getSourceElement(location, id, typeName);
+				return getSourceElement(location, id, typeName, true);
 			}
 		}
 		return null;
@@ -135,9 +135,8 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (manager != null) {
 			IJavaObject data = getObject(manager, "data", false); //$NON-NLS-1$
 			if (data != null) {
-				String id = getValue(data, "symbolicName"); //$NON-NLS-1$
 				// search manager's class path for location
-				Object result = searchClasspathEntries(manager, id, typeName);
+				Object result = searchClasspathEntries(manager, typeName);
 				if (result != null) {
 					return result;
 				}
@@ -149,7 +148,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 						IJavaObject fragment = (IJavaObject) fragments.getValue(i);
 						if (!fragment.isNull()) {
 							// search fragment class path
-							result = searchClasspathEntries(fragment, id, typeName);
+							result = searchClasspathEntries(fragment, typeName);
 							if (result != null) {
 								return result;
 							}
@@ -162,7 +161,16 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		return null;
 	}
 
-	private Object searchClasspathEntries(IJavaObject entriesOwner, String id, String typeName) throws CoreException {
+	/**
+	 * Search a bundle's class path entries for source for the type of given name.
+	 * This is used for 3.5 and greater.
+	 * 
+	 * @param entriesOwner
+	 * @param typeName
+	 * @return source object or <code>null</code>
+	 * @throws CoreException
+	 */
+	private Object searchClasspathEntries(IJavaObject entriesOwner, String typeName) throws CoreException {
 		IJavaObject cpeArray = getObject(entriesOwner, "entries", false); //$NON-NLS-1$
 		if (cpeArray instanceof IJavaArray) {
 			IJavaArray entries = (IJavaArray) cpeArray;
@@ -174,7 +182,8 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 						IJavaObject fileName = getObject(baseData, "fileName", false); //$NON-NLS-1$
 						if (fileName != null && !fileName.isNull()) {
 							String location = fileName.getValueString();
-							Object el = getSourceElement(location, id, typeName);
+							String symbolicName = getValue(baseData, "symbolicName"); //$NON-NLS-1$
+							Object el = getSourceElement(location, symbolicName, typeName, false);
 							if (el != null) {
 								return el;
 							}
@@ -201,28 +210,43 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (hostdata != null) {
 			String location = getValue(hostdata, "fileName"); //$NON-NLS-1$
 			String id = getValue(hostdata, "symbolicName"); //$NON-NLS-1$
-			return getSourceElement(location, id, typeName);
+			return getSourceElement(location, id, typeName, true);
 		}
 		return null;
 	}
 
-	private Object getSourceElement(String location, String id, String typeName) throws CoreException {
+	/**
+	 * Looks up source in the source containers associated with the bundle at the given location.
+	 * Searches associated fragments if source is not found in that location only if 
+	 * <code>chechFragments</code> is <code>true</code> (which should only be done when < 3.5, 
+	 * as this is just a guess in random order).
+	 * 
+	 * @param location location of bundle jar / class file folder
+	 * @param id symbolic name of bundle or fragment
+	 * @param typeName qualified name of source
+	 * @param checkFragments whether to guess at fragments
+	 * @return source element or <code>null</code>
+	 * @throws CoreException
+	 */
+	private Object getSourceElement(String location, String id, String typeName, boolean checkFragments) throws CoreException {
 		if (location != null && id != null) {
 			Object result = findSourceElement(getSourceContainers(location, id), typeName);
 			if (result != null)
 				return result;
 
 			// don't give up yet, search fragments attached to this host
-			State state = TargetPlatformHelper.getState();
-			BundleDescription desc = state.getBundle(id, null);
-			if (desc != null) {
-				BundleDescription[] fragments = desc.getFragments();
-				for (int i = 0; i < fragments.length; i++) {
-					location = fragments[i].getLocation();
-					id = fragments[i].getSymbolicName();
-					result = findSourceElement(getSourceContainers(location, id), typeName);
-					if (result != null)
-						return result;
+			if (checkFragments) {
+				State state = TargetPlatformHelper.getState();
+				BundleDescription desc = state.getBundle(id, null);
+				if (desc != null) {
+					BundleDescription[] fragments = desc.getFragments();
+					for (int i = 0; i < fragments.length; i++) {
+						location = fragments[i].getLocation();
+						id = fragments[i].getSymbolicName();
+						result = findSourceElement(getSourceContainers(location, id), typeName);
+						if (result != null)
+							return result;
+					}
 				}
 			}
 		}
