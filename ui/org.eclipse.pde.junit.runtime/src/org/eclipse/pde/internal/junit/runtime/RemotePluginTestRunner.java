@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ralf Ebert - Bug 307076 : JUnit Plug-in test runner exception "No Classloader found for plug-in ..." is confusing 
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
@@ -70,10 +71,11 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		return getClassLoader(pluginId);
 	}
 
-	public ClassLoader getClassLoader(final String pluginId) {
-		Bundle bundle = Platform.getBundle(pluginId);
-		if (bundle == null)
-			throw new IllegalArgumentException("No Classloader found for plug-in " + pluginId + " (plug-in was not resolved)"); //$NON-NLS-1$ //$NON-NLS-2$
+	public ClassLoader getClassLoader(final String bundleId) {
+		Bundle bundle = Platform.getBundle(bundleId);
+		if (bundle == null) {
+			throw new IllegalArgumentException("Bundle \"" + bundleId + "\" not found (not resolved). This often indicates missing dependencies."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return new BundleClassLoader(bundle);
 	}
 
