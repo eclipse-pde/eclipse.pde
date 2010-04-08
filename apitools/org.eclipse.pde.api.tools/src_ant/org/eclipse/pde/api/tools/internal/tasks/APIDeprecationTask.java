@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 /**
- * Ant task to run the API freeze check during Eclipse build.
+ * Ant task to retrieve all deprecation changes (addition or removal) between two api baselines
  */
-public class APIFreezeTask extends CommonUtilsTask {
+public class APIDeprecationTask extends CommonUtilsTask {
 	
 	private boolean debug;
 
@@ -127,7 +127,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			}
 			try {
 				writer = new BufferedWriter(new FileWriter(outputFile));
-				ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(this.excludeListLocation, ExcludeListDeltaVisitor.CHECK_OTHER);
+				ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(this.excludeListLocation, ExcludeListDeltaVisitor.CHECK_DEPRECATION);
 				delta.accept(visitor);
 				writer.write(visitor.getXML());
 				writer.flush();

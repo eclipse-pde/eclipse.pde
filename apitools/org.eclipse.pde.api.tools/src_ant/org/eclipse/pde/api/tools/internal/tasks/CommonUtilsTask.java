@@ -283,4 +283,32 @@ public abstract class CommonUtilsTask extends Task {
 		}
 		return (String[]) list.toArray(new String[list.size()]);
 	}
+
+	public static String convertToHtml(String s) {
+		char[] contents = s.toCharArray();
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0, max = contents.length; i < max; i++) {
+			char c = contents[i];
+			switch (c) {
+				case '<':
+					buffer.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>':
+					buffer.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '\"':
+					buffer.append("&quot;"); //$NON-NLS-1$
+					break;
+				case '&':
+					buffer.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '^':
+					buffer.append("&and;"); //$NON-NLS-1$
+					break;
+				default:
+					buffer.append(c);
+			}
+		}
+		return String.valueOf(buffer);
+	}
 }

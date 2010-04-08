@@ -94,6 +94,14 @@ public class Messages extends NLS {
 	public static String RemovedElement;
 	public static String ChangedElement;
 
+	public static String deprecationReportTask_componentEntry;
+	public static String deprecationReportTask_couldNotCreateSAXParser;
+	public static String deprecationReportTask_endComponentEntry;
+	public static String deprecationReportTask_entry;
+	public static String deprecationReportTask_footer;
+	public static String deprecationReportTask_header;
+	public static String deprecationReportTask_missingXmlFileLocation;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

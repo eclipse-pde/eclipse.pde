@@ -165,7 +165,7 @@ public class CompareTask extends CommonUtilsTask {
 				outputFile.delete();
 			}
 			writer = new BufferedWriter(new FileWriter(outputFile));
-			ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(this.excludeListLocation);
+			ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(this.excludeListLocation, ExcludeListDeltaVisitor.CHECK_ALL);
 			delta.accept(visitor);
 			writer.write(visitor.getXML());
 			writer.flush();

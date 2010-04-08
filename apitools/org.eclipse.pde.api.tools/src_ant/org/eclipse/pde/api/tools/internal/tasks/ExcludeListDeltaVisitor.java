@@ -30,14 +30,21 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * This class is used to exclude some deltas from the generated report.
  */
 public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
+	public static final int CHECK_DEPRECATION = 0x01;
+	public static final int CHECK_OTHER = 0x02;
+	public static final int CHECK_ALL = CHECK_DEPRECATION | CHECK_OTHER;
+
 	private Set excludedElement;
 	private String excludeListLocation;
 	private List nonExcludedElements;
+	
+	private int flags;
 
-	public ExcludeListDeltaVisitor(String excludeListLocation) throws CoreException {
+	public ExcludeListDeltaVisitor(String excludeListLocation, int flags) throws CoreException {
 		super();
 		this.excludeListLocation = excludeListLocation;
 		this.nonExcludedElements = new ArrayList();
+		this.flags = flags;
 	}
 	private boolean checkExclude(IDelta delta) {
 		if (this.excludedElement == null) {
@@ -112,58 +119,90 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 				case IDelta.ADDED :
 					int modifiers = delta.getNewModifiers();
 					if (Flags.isPublic(modifiers)) {
-						switch(delta.getFlags()) {
-							case IDelta.TYPE_MEMBER :
-							case IDelta.METHOD :
-							case IDelta.CONSTRUCTOR :
-							case IDelta.ENUM_CONSTANT :
-							case IDelta.METHOD_WITH_DEFAULT_VALUE :
-							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-							case IDelta.FIELD :
-							case IDelta.TYPE :
-							case IDelta.API_TYPE :
-							case IDelta.API_METHOD :
-							case IDelta.API_FIELD :
-							case IDelta.API_CONSTRUCTOR :
-							case IDelta.API_ENUM_CONSTANT :
-							case IDelta.REEXPORTED_TYPE :
-								if (!checkExclude(delta)) {
-									super.processLeafDelta(delta);
-								}
-								break;
+						if ((this.flags & CHECK_DEPRECATION) != 0) {
+							switch(delta.getFlags()) {
+								case IDelta.DEPRECATION :
+									if (!checkExclude(delta)) {
+										super.processLeafDelta(delta);
+									}
+							}
+						}
+						if ((this.flags & CHECK_OTHER) != 0) {
+							switch(delta.getFlags()) {
+								case IDelta.TYPE_MEMBER :
+								case IDelta.METHOD :
+								case IDelta.CONSTRUCTOR :
+								case IDelta.ENUM_CONSTANT :
+								case IDelta.METHOD_WITH_DEFAULT_VALUE :
+								case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+								case IDelta.FIELD :
+								case IDelta.TYPE :
+								case IDelta.API_TYPE :
+								case IDelta.API_METHOD :
+								case IDelta.API_FIELD :
+								case IDelta.API_CONSTRUCTOR :
+								case IDelta.API_ENUM_CONSTANT :
+								case IDelta.REEXPORTED_TYPE :
+									if (!checkExclude(delta)) {
+										super.processLeafDelta(delta);
+									}
+									break;
+							}
 						}
 					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
-						switch(delta.getFlags()) {
-							case IDelta.TYPE_MEMBER :
-							case IDelta.METHOD :
-							case IDelta.CONSTRUCTOR :
-							case IDelta.ENUM_CONSTANT :
-							case IDelta.FIELD :
-							case IDelta.TYPE :
-							case IDelta.API_TYPE :
-							case IDelta.API_METHOD :
-							case IDelta.API_FIELD :
-							case IDelta.API_CONSTRUCTOR :
-							case IDelta.API_ENUM_CONSTANT :
-							case IDelta.REEXPORTED_TYPE :
-								if (!checkExclude(delta)) {
-									super.processLeafDelta(delta);
-								}
-								break;
+						if ((this.flags & CHECK_DEPRECATION) != 0) {
+							switch(delta.getFlags()) {
+								case IDelta.DEPRECATION :
+									if (!checkExclude(delta)) {
+										super.processLeafDelta(delta);
+									}
+									break;
+							}
+						}
+						if ((this.flags & CHECK_OTHER) != 0) {
+							switch(delta.getFlags()) {
+								case IDelta.TYPE_MEMBER :
+								case IDelta.METHOD :
+								case IDelta.CONSTRUCTOR :
+								case IDelta.ENUM_CONSTANT :
+								case IDelta.FIELD :
+								case IDelta.TYPE :
+								case IDelta.API_TYPE :
+								case IDelta.API_METHOD :
+								case IDelta.API_FIELD :
+								case IDelta.API_CONSTRUCTOR :
+								case IDelta.API_ENUM_CONSTANT :
+								case IDelta.REEXPORTED_TYPE :
+									if (!checkExclude(delta)) {
+										super.processLeafDelta(delta);
+									}
+									break;
+							}
 						}
 					}
 					break;
 				case IDelta.CHANGED :
-					switch(delta.getFlags()) {
-						case IDelta.MAJOR_VERSION :
-						case IDelta.MINOR_VERSION :
-							if (!checkExclude(delta)) {
-								super.processLeafDelta(delta);
-							}
+					if ((this.flags & CHECK_OTHER) != 0) {
+						switch(delta.getFlags()) {
+							case IDelta.MAJOR_VERSION :
+							case IDelta.MINOR_VERSION :
+								if (!checkExclude(delta)) {
+									super.processLeafDelta(delta);
+								}
+						}
 					}
 					break;
+				case IDelta.REMOVED :
+					if ((this.flags & CHECK_DEPRECATION) != 0) {
+						switch(delta.getFlags()) {
+							case IDelta.DEPRECATION :
+								if (!checkExclude(delta)) {
+									super.processLeafDelta(delta);
+								}
+						}
+					}
 			}
-		} else {
+		} else if ((this.flags & CHECK_OTHER) != 0) {
 			switch(delta.getKind()) {
 				case IDelta.ADDED :
 					switch(delta.getFlags()) {
