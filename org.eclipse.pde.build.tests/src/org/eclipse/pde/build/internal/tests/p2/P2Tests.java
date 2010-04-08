@@ -953,5 +953,6 @@ public class P2Tests extends P2TestCase {
 		assertEquals(metaRepo.getName(), "BootStrapRepo");
 		IInstallableUnit iu = getIU(metaRepo, "bootstrap");
 		assertEquals(iu.getVersion().toString(), "1.2.0.12345");
+		assertResourceFile(installFolder, "eclipse.exe");
 	}
 }
