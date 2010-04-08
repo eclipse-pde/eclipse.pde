@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.target.provisional;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 /**
  * Defines a target platform. A target platform is a collection of bundles configured
@@ -215,6 +216,14 @@ public interface ITargetDefinition {
 	 * @return collection of resolved bundles or <code>null</code>
 	 */
 	public IResolvedBundle[] getAllBundles();
+
+	/**
+	 * Returns the list of feature models available in this target or <code>null</code> if
+	 * this target has not been resolved.
+	 * 
+	 * @return collection of feature models or <code>null</code>
+	 */
+	public IFeatureModel[] getAllFeatures();
 
 	/**
 	 * Resolves all bundles in this target definition by resolving each

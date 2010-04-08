@@ -14,15 +14,14 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.osgi.framework.Version;
 
-public class ExternalFeatureModelManager implements IEclipsePreferences.IPreferenceChangeListener {
+public class ExternalFeatureModelManager {
 
 	/**
 	 * Creates a feature model for the feature based on the given feature XML
@@ -46,80 +45,6 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 					stream.close();
 				} catch (IOException e) {
 				}
-			}
-		}
-		return null;
-	}
-
-	private static IFeatureModel[] createModels(URL[] featurePaths, IProgressMonitor monitor) {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
-		Map uniqueFeatures = new HashMap();
-		for (int i = 0; i < featurePaths.length; i++) {
-			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
-			if (!manifest.exists() || !manifest.isFile()) {
-				monitor.worked(1);
-				continue;
-			}
-			IFeatureModel model = createModel(manifest);
-			if (model != null && model.isLoaded()) {
-				IFeature feature = model.getFeature();
-				uniqueFeatures.put(feature.getId() + "_" + feature.getVersion(), model); //$NON-NLS-1$
-			}
-			monitor.worked(1);
-		}
-		Collection models = uniqueFeatures.values();
-		return (IFeatureModel[]) models.toArray(new IFeatureModel[models.size()]);
-	}
-
-	private ListenerList fListeners = new ListenerList();
-
-	private IFeatureModel[] fModels;
-
-	private String fPlatformHome;
-
-	private PDEPreferencesManager fPref;
-
-	public ExternalFeatureModelManager() {
-		fPref = PDECore.getDefault().getPreferencesManager();
-	}
-
-	public void addModelProviderListener(IModelProviderListener listener) {
-		fListeners.add(listener);
-	}
-
-	private boolean equalPaths(String path1, String path2) {
-		if (path1 == null) {
-			if (path2 == null) {
-				return true;
-			}
-			return false;
-		}
-		if (path2 == null) {
-			return false;
-		}
-		return new File(path1).equals(new File(path2));
-
-	}
-
-	private void fireModelProviderEvent(IModelProviderEvent e) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IModelProviderListener listener = (IModelProviderListener) listeners[i];
-			listener.modelsChanged(e);
-		}
-	}
-
-	/**
-	 * @param propertyValue
-	 * @return String or null
-	 */
-	private String getPathString(Object propertyValue) {
-		if (propertyValue != null && propertyValue instanceof String) {
-			String path = (String) propertyValue;
-			if (path.length() > 0) {
-				return path;
 			}
 		}
 		return null;
@@ -151,26 +76,114 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 		return new IFeatureModel[0];
 	}
 
+	private static IFeatureModel[] createModels(URL[] featurePaths, IProgressMonitor monitor) {
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
+		Map uniqueFeatures = new HashMap();
+		for (int i = 0; i < featurePaths.length; i++) {
+			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+			if (!manifest.exists() || !manifest.isFile()) {
+				monitor.worked(1);
+				continue;
+			}
+			IFeatureModel model = createModel(manifest);
+			if (model != null && model.isLoaded()) {
+				IFeature feature = model.getFeature();
+				uniqueFeatures.put(feature.getId() + "_" + feature.getVersion(), model); //$NON-NLS-1$
+			}
+			monitor.worked(1);
+		}
+		Collection models = uniqueFeatures.values();
+		return (IFeatureModel[]) models.toArray(new IFeatureModel[models.size()]);
+	}
+
+	private ListenerList fListeners = new ListenerList();
+
+	private IFeatureModel[] fModels;
+
+	private PDEPreferencesManager fPref;
+
+	public ExternalFeatureModelManager() {
+		fPref = PDECore.getDefault().getPreferencesManager();
+	}
+
+	public void addModelProviderListener(IModelProviderListener listener) {
+		fListeners.add(listener);
+	}
+
+	private void fireModelProviderEvent(IModelProviderEvent e) {
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IModelProviderListener listener = (IModelProviderListener) listeners[i];
+			listener.modelsChanged(e);
+		}
+	}
+
 	/**
-	 * Loads new feature models and notifies listeners.
-	 * 
-	 * @param platformHome new location of platform home
-	 * @param additionalLocations additional locations
-	 * @param force whether to force load models - <code>true</code> loads models, and 
-	 *  <code>false</code> only loads models if platform home location has actually changed
+	 * Loads new feature models from preferences and notifies listeners.
 	 */
-	private void loadModels(String platformHome, String additionalLocations, boolean force) {
+	public void initialize() {
+		// Load all features from the platform path and addditional locations then filter by the list of external features, if available
+		String platformHome = fPref.getString(ICoreConstants.PLATFORM_PATH);
+		String additionalLocations = fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+		String externalFeaturesString = fPref.getString(ICoreConstants.EXTERNAL_FEATURES);
+
 		IFeatureModel[] oldModels = null;
 		IFeatureModel[] newModels = null;
+		// Do the model loading in a synch block in case other changes cause the models to load
 		synchronized (this) {
-			if (!force) {
-				if (equalPaths(platformHome, fPlatformHome)) {
-					return;
-				}
-			}
 			oldModels = fModels != null ? fModels : new IFeatureModel[0];
-			fModels = createModels(platformHome, parseAdditionalLocations(additionalLocations), null);
-			fPlatformHome = platformHome;
+			IFeatureModel[] allModels = createModels(platformHome, parseAdditionalLocations(additionalLocations), null);
+			if (externalFeaturesString == null || externalFeaturesString.trim().length() == 0) {
+				fModels = allModels;
+			} else {
+				// To allow multiple versions of features, create a map of feature ids to a list of models
+				Map modelMap = new HashMap();
+				for (int i = 0; i < allModels.length; i++) {
+					String id = allModels[i].getFeature().getId();
+					if (modelMap.containsKey(id)) {
+						List list = (List) modelMap.get(id);
+						list.add(allModels[i]);
+					} else {
+						List list = new ArrayList();
+						list.add(allModels[i]);
+						modelMap.put(id, list);
+					}
+				}
+
+				// Loop through the filter list, finding an exact match in the available models or highest version match
+				Set filteredModels = new HashSet();
+				String[] entries = externalFeaturesString.split(","); //$NON-NLS-1$
+				for (int i = 0; i < entries.length; i++) {
+					String[] parts = entries[i].split("@"); //$NON-NLS-1$
+					if (parts.length > 0) {
+						String id = parts[0];
+						List possibilities = (List) modelMap.get(id);
+						if (possibilities != null) {
+							IFeatureModel candidate = null;
+							for (Iterator iterator = possibilities.iterator(); iterator.hasNext();) {
+								IFeatureModel current = (IFeatureModel) iterator.next();
+								if (candidate == null) {
+									candidate = current;
+								} else if (parts.length > 1 && parts[1].equals(current.getFeature().getVersion())) {
+									candidate = current;
+								} else {
+									Version currentVersion = Version.parseVersion(current.getFeature().getVersion());
+									Version candidateVersion = Version.parseVersion(candidate.getFeature().getVersion());
+									if (currentVersion.compareTo(candidateVersion) == 1) {
+										candidate = current;
+									}
+								}
+							}
+							if (candidate != null) {
+								filteredModels.add(candidate);
+							}
+						}
+					}
+				}
+				fModels = (IFeatureModel[]) filteredModels.toArray(new IFeatureModel[filteredModels.size()]);
+			}
 			newModels = new IFeatureModel[fModels.length];
 			System.arraycopy(fModels, 0, newModels, 0, fModels.length);
 		}
@@ -200,35 +213,8 @@ public class ExternalFeatureModelManager implements IEclipsePreferences.IPrefere
 
 	}
 
-	private void platformPathChanged(String newHome) {
-		loadModels(newHome, fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS), false);
-	}
-
-	public void preferenceChange(PreferenceChangeEvent event) {
-		if (!ICoreConstants.PLATFORM_PATH.equals(event.getKey())) {
-			return;
-		}
-		String newHome = getPathString(event.getNewValue());
-		platformPathChanged(newHome);
-	}
-
 	public void removeModelProviderListener(IModelProviderListener listener) {
 		fListeners.remove(listener);
-	}
-
-	public synchronized void shutdown() {
-		fPref.removePreferenceChangeListener(this);
-	}
-
-	public void startup() {
-		synchronized (this) {
-			fPref.addPreferenceChangeListener(this);
-		}
-		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS), true);
-	}
-
-	public void reload() {
-		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH), fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS), true);
 	}
 
 	public IFeatureModel[] getModels() {

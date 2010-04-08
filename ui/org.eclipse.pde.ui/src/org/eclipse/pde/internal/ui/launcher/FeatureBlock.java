@@ -666,7 +666,7 @@ public class FeatureBlock {
 
 		// If there is both a workspace and a target model with the same id, combine them into the same launch model
 		ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
-		efmm.startup();
+		efmm.initialize();
 		IFeatureModel[] externalModels = efmm.getModels();
 		for (int i = 0; i < externalModels.length; i++) {
 			String id = externalModels[i].getFeature().getId();
@@ -677,7 +677,6 @@ public class FeatureBlock {
 				featureModels.put(id, new FeatureLaunchModel(null, externalModels[i]));
 			}
 		}
-		efmm.shutdown();
 
 		fFeatureModels = featureModels;
 		tree.setInput(fFeatureModels.values());

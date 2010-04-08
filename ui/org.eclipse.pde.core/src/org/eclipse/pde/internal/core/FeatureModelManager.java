@@ -60,7 +60,6 @@ public class FeatureModelManager {
 			fWorkspaceManager.removeModelProviderListener(fProviderListener);
 		if (fExternalManager != null) {
 			fExternalManager.removeModelProviderListener(fProviderListener);
-			fExternalManager.shutdown();
 		}
 	}
 
@@ -68,7 +67,7 @@ public class FeatureModelManager {
 		if (fActiveModels != null) {
 			if (fReloadExternalNeeded) {
 				fReloadExternalNeeded = false;
-				fExternalManager.reload();
+				fExternalManager.initialize();
 			}
 			return;
 		}
@@ -93,7 +92,7 @@ public class FeatureModelManager {
 		fExternalManager = new ExternalFeatureModelManager();
 		fExternalManager.addModelProviderListener(fProviderListener);
 		fReloadExternalNeeded = false;
-		fExternalManager.startup();
+		fExternalManager.initialize();
 	}
 
 	/*

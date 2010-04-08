@@ -26,6 +26,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.*;
 
 /**
@@ -488,6 +489,19 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				}
 				pref.setValue(ICoreConstants.POOLED_BUNDLES, buf.toString());
 			}
+
+			// Save the feature list for the external feature model manager to EXTERNAL_FEATURES
+			StringBuffer featureList = new StringBuffer();
+			IFeatureModel[] features = fTarget.getAllFeatures();
+			for (int j = 0; j < features.length; j++) {
+				featureList.append(features[j].getFeature().getId());
+				featureList.append('@');
+				featureList.append(features[j].getFeature().getVersion());
+				if (j < features.length - 1) {
+					featureList.append(',');
+				}
+			}
+			pref.setValue(ICoreConstants.EXTERNAL_FEATURES, featureList.toString());
 
 			Job job = new TargetPlatformResetJob(state);
 			job.schedule();

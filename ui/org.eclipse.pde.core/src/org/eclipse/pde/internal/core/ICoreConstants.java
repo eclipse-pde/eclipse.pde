@@ -39,6 +39,13 @@ public interface ICoreConstants {
 	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
 	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
 	/**
+	 * List of feature ids and versions that are available in the target platform.  Features
+	 * are comma separated, with each entry taking the form of [id]@[version]
+	 * 
+	 * @since 3.6
+	 */
+	String EXTERNAL_FEATURES = "external_features"; //$NON-NLS-1$
+	/**
 	 * @since 3.6 - Bug 282708: [target] issues with two versions of the same bundle 
 	 */
 	String CHECKED_VERSION_PLUGINS = "checkedVersionPlugins"; //$NON-NLS-1$

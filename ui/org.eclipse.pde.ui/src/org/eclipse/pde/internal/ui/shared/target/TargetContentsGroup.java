@@ -492,7 +492,7 @@ public class TargetContentsGroup {
 				Object[] allChecked = fTree.getCheckedLeafElements();
 				Object[] required = null;
 				if (fFeaureModeButton.getSelection()) {
-					required = getRequiredFeatures(((TargetDefinition) fTargetDefinition).getAllFeatures(), allChecked);
+					required = getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked);
 				} else {
 					required = getRequiredPlugins(fAllBundles, allChecked);
 				}
@@ -902,7 +902,7 @@ public class TargetContentsGroup {
 
 		int total = fAllBundles.size();
 		if (fFeaureModeButton.getSelection()) {
-			total = ((TargetDefinition) fTargetDefinition).getAllFeatures().length;
+			total = fTargetDefinition.getAllFeatures().length;
 			total += ((TargetDefinition) fTargetDefinition).getOtherBundles().length;
 		}
 
@@ -1085,7 +1085,7 @@ public class TargetContentsGroup {
 
 			if (included == null || included.size() == 0) {
 				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
-			} else if (included.size() == ((TargetDefinition) fTargetDefinition).getAllFeatures().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
+			} else if (included.size() == fTargetDefinition.getAllFeatures().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
 				fTargetDefinition.setIncluded(null);
 			} else {
 				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
@@ -1160,7 +1160,7 @@ public class TargetContentsGroup {
 			if (inputElement instanceof ITargetDefinition) {
 				if (fFeaureModeButton.getSelection()) {
 					List result = new ArrayList();
-					IFeatureModel[] features = ((TargetDefinition) fTargetDefinition).getAllFeatures();
+					IFeatureModel[] features = fTargetDefinition.getAllFeatures();
 					result.addAll(Arrays.asList(features));
 
 					// Check if we need the other category

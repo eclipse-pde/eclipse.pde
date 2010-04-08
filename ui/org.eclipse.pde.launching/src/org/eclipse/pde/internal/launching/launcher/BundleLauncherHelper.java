@@ -78,13 +78,12 @@ public class BundleLauncherHelper {
 				fmm.shutdown();
 
 				ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
-				efmm.startup();
+				efmm.initialize();
 				IFeatureModel[] externalFeatureModels = efmm.getModels();
 				for (int i = 0; i < externalFeatureModels.length; i++) {
 					String id = externalFeatureModels[i].getFeature().getId();
 					externalFeatureMap.put(id, externalFeatureModels[i]);
 				}
-				efmm.shutdown();
 
 				// Get the selected features and their plugin resolution
 				Map featureResolutionMap = new HashMap();
