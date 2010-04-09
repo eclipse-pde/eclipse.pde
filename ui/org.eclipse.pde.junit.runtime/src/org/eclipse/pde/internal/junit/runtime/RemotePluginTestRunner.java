@@ -74,7 +74,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	public ClassLoader getClassLoader(final String bundleId) {
 		Bundle bundle = Platform.getBundle(bundleId);
 		if (bundle == null) {
-			throw new IllegalArgumentException("Bundle \"" + bundleId + "\" not found (not resolved). This often indicates missing dependencies."); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException("Bundle \"" + bundleId + "\" not found. This often indicates missing dependencies."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return new BundleClassLoader(bundle);
 	}
