@@ -13,7 +13,6 @@
 package org.eclipse.ui.internal.views.log;
 
 import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 import java.io.*;
 import java.text.Collator;
 import java.util.*;
@@ -87,7 +86,7 @@ public class EventDetailsDialog extends TrayDialog {
 	private Point dialogSize;
 	private int[] sashWeights;
 
-	private DateFormat dateFormat = new SimpleDateFormat();
+	private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 
 	/**
 	 * 
