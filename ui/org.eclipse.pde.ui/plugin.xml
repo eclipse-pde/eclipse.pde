@@ -312,6 +312,16 @@
                class="org.eclipse.core.resources.IContainer">
          </selection>
       </wizard>
+      <wizard
+            category="org.eclipse.pde.ui.PluginDevelopment"
+            class="org.eclipse.pde.internal.ui.wizards.exports.TargetDefinitionExportWizard"
+            icon="icons/obj16/target_profile_xml_obj.gif"
+            id="org.eclipse.pde.target.wizard"
+            name="%target.export.wizard.name">
+         <description>
+            %target.export.wizard.desc
+         </description>
+      </wizard>
       <category
             id="org.eclipse.pde.ui.PluginDevelopment"
             name="%PluginImportExport.category"/>
