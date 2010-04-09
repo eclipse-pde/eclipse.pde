@@ -71,7 +71,6 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		new Label(parent, SWT.NONE).setText(PDEUIMessages.ExportTargetChooseFolder);
 
 		destDirText = new Text(parent, SWT.BORDER);
-		destDirText.setEditable(false);
 		destDirText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		destDirText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
