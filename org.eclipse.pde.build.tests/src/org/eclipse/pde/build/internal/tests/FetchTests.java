@@ -94,6 +94,46 @@ public class FetchTests extends PDETestCase {
 		assertEquals(sourceRefs.get("org.eclipse.team.cvs.ssh2,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.ssh2;tag=I20090508-2000");
 	}
 
+	public void testFetch_308696() throws Exception {
+		IFolder buildFolder = newTest("308696");
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("feature@org.eclipse.cvs=v20090619,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,org.eclipse.cvs-feature\n");
+		buffer.append("plugin@org.eclipse.cvs=v20100407,user@dev.eclipse.org:/cvsroot/eclipse,,org.eclipse.sdk-feature/plugins/org.eclipse.cvs\n");
+		buffer.append("plugin@org.eclipse.team.cvs.core=I20100310-0800,user@dev.eclipse.org:/cvsroot/eclipse,\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ssh2=I20090508-2000,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ui=I20090521-1750,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,\n");
+		Utils.writeBuffer(buildFolder.getFile("directory.txt"), buffer);
+
+		StringBuffer script = new StringBuffer();
+		script.append("<project> 											\n");
+		script.append(" <target name=\"fetchElement\">						\n");
+		script.append("   <mkdir dir=\"${buildDirectory}/features\"/>		\n");
+		script.append("   <mkdir dir=\"${buildDirectory}/plugins\"/>		\n");
+		script.append("   <eclipse.fetch									\n");
+		script.append("      elements=\"feature@org.eclipse.cvs\"			\n");
+		script.append("      buildDirectory=\"${buildDirectory}\"			\n");
+		script.append("      directory=\"${buildDirectory}/directory.txt\"	\n");
+		//script.append("      baseLocation=\"${baseLocation}\"				\n");
+		script.append("   />												\n");
+		script.append(" </target>											\n");
+		script.append("</project>											\n");
+		IFile scriptFile = buildFolder.getFile("script.xml");
+		Utils.writeBuffer(scriptFile, script);
+
+		Properties fetchProperties = new Properties();
+		fetchProperties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		//fetchProperties.put("baseLocation", Platform.getInstallLocation().getURL().getPath());
+		runAntScript(scriptFile.getLocation().toOSString(), new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
+
+		IFile sourceRefsFile = buildFolder.getFile(IPDEBuildConstants.DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR);
+		assertResourceFile(sourceRefsFile);
+		Properties sourceRefs = Utils.loadProperties(sourceRefsFile);
+		assertEquals(sourceRefs.get("org.eclipse.cvs,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.sdk-feature/plugins/org.eclipse.cvs;tag=v20100407");
+		assertEquals(sourceRefs.get("org.eclipse.team.cvs.core,0.0.0"), "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.team.cvs.core;tag=I20100310-0800");
+
+	}
+
 	public void testFetchP2Feature() throws Exception {
 		IFolder buildFolder = newTest("p2.fetchFeature");
 

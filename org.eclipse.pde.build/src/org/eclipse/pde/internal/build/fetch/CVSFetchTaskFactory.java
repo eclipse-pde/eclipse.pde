@@ -225,42 +225,72 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	 */
 	private String asReference(String repoLocation, String module, String projectName, String tagName) {
 		// parse protocol, host, repository root from repoLocation
-		String sep = repoLocation.substring(0, 1);
-		String[] split = repoLocation.substring(1).split(sep);
-		if (split.length == 3) {
-			String protocol = split[0];
-			String host = split[1];
-			int index = host.indexOf('@');
-			if (index >= 0 && index < host.length() - 2) {
-				host = host.substring(index + 1);
+		String protocol = null;
+		String host = null;
+		String root = null;
+
+		int at = repoLocation.indexOf('@');
+		if (at < 0) {
+			// should be a local protocol
+			if (repoLocation.startsWith(":local:")) { //$NON-NLS-1$
+				protocol = "local"; //$NON-NLS-1$
+				root = repoLocation.substring(7);
 			}
-			String root = split[2];
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("scm:cvs"); //$NON-NLS-1$
-			buffer.append(sep);
-			buffer.append(protocol);
-			buffer.append(sep);
+		} else if (at < (repoLocation.length() - 2)) {
+			String serverRoot = repoLocation.substring(at + 1);
+			String protocolUserPass = repoLocation.substring(0, at);
+			int colon = serverRoot.indexOf(':');
+			if (colon > 0) {
+				host = serverRoot.substring(0, colon);
+				if (colon < (serverRoot.length() - 2)) {
+					root = serverRoot.substring(colon + 1);
+				}
+				if (protocolUserPass.startsWith(":")) { //$NON-NLS-1$
+					colon = protocolUserPass.indexOf(':', 1);
+					if (colon > 0) {
+						protocol = protocolUserPass.substring(1, colon);
+					}
+				} else {
+					// missing protocol, assume p-server
+					protocol = "pserver"; //$NON-NLS-1$
+				}
+			}
+		}
+
+		if (protocol == null || root == null) {
+			return null; // invalid syntax
+		}
+
+		// use '|' as separator if the root location uses a colon for a Windows path
+		String sep = ":"; //$NON-NLS-1$
+		if (root.indexOf(':') >= 0) {
+			sep = "|"; //$NON-NLS-1$
+		}
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("scm:cvs"); //$NON-NLS-1$
+		buffer.append(sep);
+		buffer.append(protocol);
+		buffer.append(sep);
+		if (host != null) {
 			buffer.append(host);
 			buffer.append(sep);
-			buffer.append(root);
-
-			buffer.append(sep);
-			buffer.append(module);
-
-			Path modulePath = new Path(module);
-			if (!modulePath.lastSegment().equals(projectName)) {
-				buffer.append(";project=\""); //$NON-NLS-1$
-				buffer.append(projectName);
-				buffer.append('"');
-			}
-
-			if (tagName != null && !tagName.equals("HEAD")) { //$NON-NLS-1$
-				buffer.append(";tag="); //$NON-NLS-1$
-				buffer.append(tagName);
-			}
-			return buffer.toString();
 		}
-		return null;
+		buffer.append(root);
+		buffer.append(sep);
+		buffer.append(module);
+
+		Path modulePath = new Path(module);
+		if (!modulePath.lastSegment().equals(projectName)) {
+			buffer.append(";project=\""); //$NON-NLS-1$
+			buffer.append(projectName);
+			buffer.append('"');
+		}
+
+		if (tagName != null && !tagName.equals("HEAD")) { //$NON-NLS-1$
+			buffer.append(";tag="); //$NON-NLS-1$
+			buffer.append(tagName);
+		}
+		return buffer.toString();
 	}
 
 	/**
