@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.core.exports;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.ant.core.*;
@@ -39,6 +38,7 @@ import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.eclipse.pde.internal.core.target.TargetMetadataCollector;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.*;
@@ -514,6 +514,26 @@ public class FeatureExportOperation extends Job {
 	}
 
 	/**
+	 * Returns a list of URI metadata repository locations that contain metadata for some 
+	 * or all of the target platform.  The repositories may not contain metadata for all
+	 * plugins in the target.  This method returns <code>null</code> if the target does not
+	 * have any repositories.
+	 * 
+	 * @return list of URI representing metadata repositories or <code>null</code>
+	 */
+	protected URI[] getMetadataContextFromTargetPlatform() {
+		try {
+			URI[] context = TargetMetadataCollector.getMetadataRepositories(null);
+			if (context.length > 0) {
+				return context;
+			}
+		} catch (CoreException e) {
+			return null;
+		}
+		return null;
+	}
+
+	/**
 	 * @return the location of the category definition file, or null if none is specified
 	 */
 	protected String getCategoryDefinition() {
@@ -692,6 +712,13 @@ public class FeatureExportOperation extends Job {
 			generator.setEESources(extraLocations);
 		}
 
+		// if we are exporting metadata, provide context repositories from the target if available and option is turned on
+		if (publishingP2Metadata()) {
+			URI[] contexts = getMetadataContextFromTargetPlatform();
+			if (contexts != null) {
+				generator.setContextMetadataRepositories(contexts);
+			}
+		}
 	}
 
 	protected State getState(String os, String ws, String arch) {

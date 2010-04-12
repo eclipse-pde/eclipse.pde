@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.P2Utils;
@@ -31,6 +31,17 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
  * @since 3.5 
  */
 public class ProfileBundleContainer extends AbstractBundleContainer {
+
+	// The following constants are duplicated from org.eclipse.equinox.internal.p2.core.Activator
+	private static final String CONFIG_INI = "config.ini"; //$NON-NLS-1$
+	private static final String PROP_AGENT_DATA_AREA = "eclipse.p2.data.area"; //$NON-NLS-1$
+	private static final String PROP_PROFILE = "eclipse.p2.profile"; //$NON-NLS-1$
+	private static final String PROP_CONFIG_DIR = "osgi.configuration.area"; //$NON-NLS-1$
+	private static final String PROP_USER_DIR = "user.dir"; //$NON-NLS-1$
+	private static final String PROP_USER_HOME = "user.home"; //$NON-NLS-1$
+	private static final String VAR_CONFIG_DIR = "@config.dir"; //$NON-NLS-1$
+	private static final String VAR_USER_DIR = "@user.dir"; //$NON-NLS-1$
+	private static final String VAR_USER_HOME = "@user.home"; //$NON-NLS-1$
 
 	/**
 	 * Constant describing the type of bundle container 
@@ -237,6 +248,111 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			return fHome.equals(pbc.fHome) && isNullOrEqual(fConfiguration, fConfiguration);
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the location of the profile file that describes the installation this container represents or <code>null</code>
+	 * if no profile file could be determined.  This method checks the configuration file for a p2 data area entry and profile name
+	 * to determine where the profile is located.
+	 * <p>
+	 * Note that when self hosting, the returned profile location will not have all running plug-ins installed unless the launch has generated
+	 * a complete profile.
+	 * </p>
+	 * 
+	 * @return the profile file or <code>null</code>
+	 */
+	public File getProfileFileLocation() throws CoreException {
+		// Get the configuration location
+		String home = resolveHomeLocation().toOSString();
+		if (!new File(home).isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
+		}
+		File configArea = null;
+		URL configURL = getConfigurationArea();
+		if (configURL != null) {
+			configArea = new File(configURL.getFile());
+		} else {
+			configArea = new File(home);
+		}
+		if (!configArea.isDirectory()) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, configArea)));
+		}
+
+		// Location of the profile
+		File p2DataArea = null;
+		String profileName = null;
+
+		// Load the config.ini to try and find the backing profile
+		File configIni = new File(configArea, CONFIG_INI);
+		if (configIni.isFile()) {
+			// Read config.ini
+			Properties configProps = new Properties();
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(configIni);
+				configProps.load(fis);
+				fis.close();
+			} catch (IOException e) {
+				PDECore.log(e);
+			} finally {
+				try {
+					if (fis != null)
+						fis.close();
+				} catch (IOException e) {
+				}
+			}
+
+			String p2Area = configProps.getProperty(PROP_AGENT_DATA_AREA);
+			if (p2Area != null) {
+				if (p2Area.startsWith(VAR_USER_HOME)) {
+					String base = substituteVar(configProps, p2Area, VAR_USER_HOME, PROP_USER_HOME, configArea);
+					p2Area = new Path(base).toFile().getAbsolutePath();
+				} else if (p2Area.startsWith(VAR_USER_DIR)) {
+					String base = substituteVar(configProps, p2Area, VAR_USER_DIR, PROP_USER_DIR, configArea);
+					p2Area = new Path(base).toFile().getAbsolutePath();
+				} else if (p2Area.startsWith(VAR_CONFIG_DIR)) {
+					String base = substituteVar(configProps, p2Area, VAR_CONFIG_DIR, PROP_CONFIG_DIR, configArea);
+					p2Area = new Path(base).toFile().getAbsolutePath();
+				}
+				p2DataArea = new File(p2Area);
+			}
+
+			profileName = configProps.getProperty(PROP_PROFILE);
+		}
+
+		if (p2DataArea == null || !p2DataArea.isDirectory()) {
+			p2DataArea = new File(configArea, "p2"); //$NON-NLS-1$
+		}
+
+		if (profileName == null || profileName.length() == 0) {
+			profileName = "SDKProfile"; //$NON-NLS-1$
+		}
+
+		IPath profilePath = new Path(p2DataArea.getAbsolutePath());
+		profilePath = profilePath.append(EngineActivator.ID).append("profileRegistry").append(profileName + ".profile"); //$NON-NLS-1$ //$NON-NLS-2$
+		File profile = profilePath.toFile();
+
+		if (profile.exists()) {
+			return profile;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Replaces a variable in config.ini
+	 * @param props properties containing entries from the 
+	 * @param source the string to replace the var in
+	 * @param var the variable to replace
+	 * @param prop the property to lookup for a replacement value
+	 * @param defaultValue value to use if the property can't be found
+	 * @return source string with the variable replaced with the proper value
+	 */
+	private String substituteVar(Properties props, String source, String var, String prop, File defaultValue) {
+		String value = props.getProperty(prop);
+		if (value == null)
+			value = defaultValue.getAbsolutePath();
+		return value + source.substring(var.length());
 	}
 
 	private boolean isNullOrEqual(Object o1, Object o2) {
