@@ -1464,7 +1464,13 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(CLOSE_HEAD); 
 			buffer.append(OPEN_BODY); 
 			buffer.append(OPEN_H3).append(getIndexHeader()).append(CLOSE_H3);
-			writeMetadataSummary(buffer);
+			try {
+				getMetadata();
+				writeMetadataSummary(buffer);
+			}
+			catch(Exception e) {
+				//do nothing, failed meta-data should not prevent the index from being written
+			}
 			buffer.append(OPEN_H4).append(SearchMessages.UseReportConvertor_additional_infos_section).append(CLOSE_H4); 
 			if(this.hasmissing) {
 				buffer.append(OPEN_P); 
@@ -1567,7 +1573,6 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	void writeMetadataSummary(StringBuffer buffer) throws Exception {
 		buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_scan_details).append(CLOSE_H4);
-		getMetadata();
 		if(this.metadata != null) {
 			buffer.append("<table border=\"0px\" title=\"").append(SearchMessages.UseReportConverter_scan_details).append("\"width=\"50%\">"); //$NON-NLS-1$ //$NON-NLS-2$ 
 			buffer.append(OPEN_TR);
