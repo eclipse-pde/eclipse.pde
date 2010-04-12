@@ -27,7 +27,6 @@ import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.PluginsTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -434,7 +433,7 @@ public class FeatureBlock {
 	 */
 	private Map fFeatureModels;
 
-	public FeatureBlock(PluginsTab pluginsTab) {
+	public FeatureBlock(AbstractLauncherTab pluginsTab) {
 		Assert.isNotNull(pluginsTab);
 		fTab = pluginsTab;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -446,6 +445,9 @@ public class FeatureBlock {
 		Composite composite = SWTFactory.createComposite(parent, 1, span, GridData.FILL_BOTH, 0, 0);
 
 		Composite treeGroup = SWTFactory.createComposite(composite, 2, 1, GridData.FILL_BOTH, 0, 0);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalIndent = indent;
+		treeGroup.setLayoutData(gd);
 		SWTFactory.createLabel(treeGroup, PDEUIMessages.FeatureBlock_FeatureGroupDescription, 2);
 		createCheckBoxTree(treeGroup);
 		createButtonContainer(treeGroup, 10);
@@ -457,6 +459,10 @@ public class FeatureBlock {
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite validatecomp = SWTFactory.createComposite(composite, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent = indent;
+		validatecomp.setLayoutData(gd);
+
 		fAutoValidate = SWTFactory.createCheckButton(validatecomp, NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH)), null, false, 1); //$NON-NLS-1$ //$NON-NLS-2$
 		fAutoValidate.addSelectionListener(fListener);
 		Composite rightAlignComp = SWTFactory.createComposite(validatecomp, 1, 1, SWT.NONE, 0, 0);

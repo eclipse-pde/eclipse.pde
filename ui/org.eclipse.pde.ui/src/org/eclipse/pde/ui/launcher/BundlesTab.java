@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
-import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkBlock;
+import org.eclipse.pde.internal.ui.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,12 +36,15 @@ import org.eclipse.ui.PlatformUI;
 public class BundlesTab extends AbstractLauncherTab {
 
 	private Image fImage;
-	private OSGiBundleBlock fPluginBlock;
+	private BlockAdapter fBlock;
 	OSGiFrameworkBlock fFrameworkBlock;
+
+	private static final int PLUGIN_SELECTION = 1;
+	private static final int FEATURE_SELECTION = 2;
 
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
-		fPluginBlock = new OSGiBundleBlock(this);
+		fBlock = new BlockAdapter(new OSGiBundleBlock(this), new FeatureBlock(this));
 		fFrameworkBlock = new OSGiFrameworkBlock(this);
 	}
 
@@ -52,7 +53,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		fPluginBlock.dispose();
+		fBlock.dispose();
 		fImage.dispose();
 		super.dispose();
 	}
@@ -66,7 +67,7 @@ public class BundlesTab extends AbstractLauncherTab {
 		composite.setLayout(new GridLayout(2, false));
 
 		fFrameworkBlock.createControl(composite);
-		fPluginBlock.createControl(composite, 2, 5);
+		fBlock.createControl(composite, 2, 5);
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -80,8 +81,15 @@ public class BundlesTab extends AbstractLauncherTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
+			int index = PLUGIN_SELECTION;
+			if (config.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
+				index = FEATURE_SELECTION;
+			} else {
+				index = PLUGIN_SELECTION;
+			}
+			fBlock.setActiveBlock(index);
 			fFrameworkBlock.initializeFrom(config);
-			fPluginBlock.initializeFrom(config);
+			fBlock.initializeFrom(config);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
@@ -92,7 +100,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		fPluginBlock.setDefaults(config);
+		fBlock.setDefaults(config);
 	}
 
 	/*
@@ -101,7 +109,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fFrameworkBlock.performApply(config);
-		fPluginBlock.performApply(config);
+		fBlock.performApply(config);
 	}
 
 	/*
@@ -139,6 +147,10 @@ public class BundlesTab extends AbstractLauncherTab {
 	 */
 	public String getId() {
 		return IPDELauncherConstants.TAB_BUNDLES_ID;
+	}
+
+	public void setActiveBlock(int index) {
+		fBlock.setActiveBlock(index);
 	}
 
 }

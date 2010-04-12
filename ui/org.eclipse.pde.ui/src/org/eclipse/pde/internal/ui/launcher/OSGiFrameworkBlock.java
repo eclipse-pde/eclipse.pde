@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -19,7 +17,10 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.BundlesTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -34,10 +35,14 @@ public class OSGiFrameworkBlock {
 	private Combo fLauncherCombo;
 	private Listener fListener;
 	private AbstractLauncherTab fTab;
+	private Combo fLaunchWithCombo;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 
 		public void widgetSelected(SelectionEvent e) {
+			if (e.widget == fLaunchWithCombo) {
+				setActiveIndex();
+			}
 			fTab.updateLaunchConfigurationDialog();
 		}
 
@@ -54,12 +59,22 @@ public class OSGiFrameworkBlock {
 
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(6, false);
+		GridLayout layout = new GridLayout(8, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		composite.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		composite.setLayoutData(gd);
+
+		Label launchLabel = new Label(composite, SWT.NONE);
+		launchLabel.setText(PDEUIMessages.PluginsTab_launchWith);
+		gd = new GridData();
+		gd.horizontalIndent = 5;
+		launchLabel.setLayoutData(gd);
+
+		fLaunchWithCombo = SWTFactory.createCombo(composite, SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.OSGiFrameworkBlock_selectedBundles, PDEUIMessages.PluginsTab_customFeatureMode});
+
+		fLaunchWithCombo.addSelectionListener(fListener);
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(PDEUIMessages.OSGiBundlesTab_frameworkLabel);
@@ -74,7 +89,7 @@ public class OSGiFrameworkBlock {
 
 		label = new Label(composite, SWT.NONE);
 		gd = new GridData();
-		gd.horizontalIndent = 20;
+		gd.horizontalIndent = 5;
 		label.setLayoutData(gd);
 		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultStart);
 
@@ -108,6 +123,10 @@ public class OSGiFrameworkBlock {
 	}
 
 	private void initializeFramework(ILaunchConfiguration config) throws CoreException {
+		boolean usePlugins = config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+		fLaunchWithCombo.select(usePlugins ? 0 : 1);
+		setActiveIndex();
+
 		OSGiFrameworkManager manager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
 		String id = config.getAttribute(IPDELauncherConstants.OSGI_FRAMEWORK_ID, manager.getDefaultFramework());
 
@@ -122,6 +141,8 @@ public class OSGiFrameworkBlock {
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(IPDELauncherConstants.USE_DEFAULT, fLaunchWithCombo.getSelectionIndex() == 0);
+		config.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, fLaunchWithCombo.getSelectionIndex() == 1);
 		config.setAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, Boolean.toString(true).equals(fDefaultAutoStart.getText()));
 		config.setAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, fDefaultStartLevel.getSelection());
 
@@ -137,5 +158,11 @@ public class OSGiFrameworkBlock {
 
 	public int getDefaultStartLevel() {
 		return fDefaultStartLevel.getSelection();
+	}
+
+	public void setActiveIndex() {
+		if (fTab instanceof BundlesTab) {
+			((BundlesTab) fTab).setActiveBlock(fLaunchWithCombo.getSelectionIndex() + 1); // +1 to match plug-ins tab combo indices
+		}
 	}
 }

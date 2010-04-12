@@ -417,6 +417,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OpenSchemaAction_titleExtensionPointSchema;
 
+	public static String OSGiFrameworkBlock_selectedBundles;
+
 	public static String OSGiFrameworkPreferencePage_default;
 
 	public static String OSGiFrameworkPreferencePage_installed;

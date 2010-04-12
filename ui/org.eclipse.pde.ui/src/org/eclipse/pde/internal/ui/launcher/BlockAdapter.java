@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
@@ -21,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class BlockAdapter {
 
-	private PluginBlock fPluginBlock;
+	private AbstractPluginBlock fPluginBlock;
 	private FeatureBlock fFeatureBlock;
 	private StackLayout fLayout;
 	private Composite fPluginBlockComposite;
@@ -29,12 +30,14 @@ public class BlockAdapter {
 	private Composite fParent;
 	private ILaunchConfiguration fLaunchConfig;
 	private int fActiveIndex;
+	private int fSpan = 1;
+	private int fIndent = 0;
 
 	// These constants MUST match the constants in PluginsTab
-	private static final int CUSTOM_SELECTION = 1;
-	private static final int CUSTOM_FEATURES_SELECTION = 2;
+	private static final int PLUGINS_BLOCK = 1; //CUSTOM_SELECTION
+	private static final int FEATURES_BLOCK = 2; //CUSTOM_FEATURES_SELECTION
 
-	public BlockAdapter(PluginBlock pluginBlock, FeatureBlock featureBlock) {
+	public BlockAdapter(AbstractPluginBlock pluginBlock, FeatureBlock featureBlock) {
 		Assert.isNotNull(pluginBlock);
 		Assert.isNotNull(featureBlock);
 		fPluginBlock = pluginBlock;
@@ -42,24 +45,37 @@ public class BlockAdapter {
 	}
 
 	public void createControl(Composite parent, int span, int indent) {
+		Composite blockComposite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		fSpan = span;
+		fIndent = indent;
 		fLayout = new StackLayout();
-		parent.setLayout(fLayout);
+		blockComposite.setLayout(fLayout);
 
 		fLayout.topControl = fPluginBlockComposite;
-		fParent = parent;
+		fParent = blockComposite;
 	}
 
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
 		fLaunchConfig = config;
-		if (fActiveIndex == CUSTOM_FEATURES_SELECTION) {
+		if (fActiveIndex == FEATURES_BLOCK) {
 			fFeatureBlock.initializeFrom(config);
 		} else {
 			fPluginBlock.initializeFrom(config, enableTable);
 		}
 	}
 
+	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
+		fLaunchConfig = config;
+		if (fActiveIndex == FEATURES_BLOCK) {
+			fFeatureBlock.initializeFrom(config);
+		} else {
+			if (fPluginBlock instanceof OSGiBundleBlock)
+				((OSGiBundleBlock) fPluginBlock).initializeFrom(config);
+		}
+	}
+
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		if (fActiveIndex == CUSTOM_FEATURES_SELECTION) {
+		if (fActiveIndex == FEATURES_BLOCK) {
 			fFeatureBlock.performApply(config);
 		} else {
 			fPluginBlock.performApply(config);
@@ -67,7 +83,7 @@ public class BlockAdapter {
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		if (fActiveIndex == CUSTOM_FEATURES_SELECTION) {
+		if (fActiveIndex == FEATURES_BLOCK) {
 			fFeatureBlock.setDefaults(config);
 		} else {
 			fPluginBlock.setDefaults(config);
@@ -83,33 +99,43 @@ public class BlockAdapter {
 	}
 
 	public void initialize(boolean enable) throws CoreException {
-		if (fActiveIndex == CUSTOM_FEATURES_SELECTION) {
+		if (fActiveIndex == FEATURES_BLOCK) {
 			fFeatureBlock.initialize();
 		} else {
-			fPluginBlock.initialize(enable);
+			if (fPluginBlock instanceof PluginBlock) {
+				((PluginBlock) fPluginBlock).initialize(enable);
+			}
 		}
 	}
 
-	public void setActiveBlock(int index) throws CoreException {
-		fActiveIndex = index;
-		if (index == CUSTOM_FEATURES_SELECTION) {
-			if (fFeatureBlockComposite == null) {
-				fFeatureBlockComposite = SWTFactory.createComposite(fParent, 7, 1, GridData.FILL_BOTH, 0, 0);
-				fFeatureBlock.createControl(fFeatureBlockComposite, 7, 10);
+	public void setActiveBlock(int index) {
+		try {
+			fActiveIndex = index;
+			if (index == FEATURES_BLOCK) {
+				if (fFeatureBlockComposite == null) {
+					fFeatureBlockComposite = SWTFactory.createComposite(fParent, 7, 1, GridData.FILL_BOTH, 0, 0);
+					fFeatureBlock.createControl(fFeatureBlockComposite, 6, 10);
+					if (fLaunchConfig != null) {
+						fFeatureBlock.initializeFrom(fLaunchConfig);
+					}
+				}
+				fLayout.topControl = fFeatureBlockComposite;
+				return;
+			} else if (fPluginBlockComposite == null) {
+				fPluginBlockComposite = SWTFactory.createComposite(fParent, fSpan, 1, GridData.FILL_BOTH, 0, 0);
+				fPluginBlock.createControl(fPluginBlockComposite, fSpan, fIndent);
 				if (fLaunchConfig != null) {
-					fFeatureBlock.initializeFrom(fLaunchConfig);
+					if (fPluginBlock instanceof PluginBlock) {
+						fPluginBlock.initializeFrom(fLaunchConfig, fActiveIndex == PLUGINS_BLOCK);
+					} else if (fPluginBlock instanceof OSGiBundleBlock) {
+						((OSGiBundleBlock) fPluginBlock).initializeFrom(fLaunchConfig);
+					}
 				}
 			}
-			fLayout.topControl = fFeatureBlockComposite;
-			return;
-		} else if (fPluginBlockComposite == null) {
-			fPluginBlockComposite = SWTFactory.createComposite(fParent, 7, 1, GridData.FILL_BOTH, 0, 0);
-			fPluginBlock.createControl(fPluginBlockComposite, 7, 10);
-			if (fLaunchConfig != null) {
-				fPluginBlock.initializeFrom(fLaunchConfig, fActiveIndex == CUSTOM_SELECTION);
-			}
+			fLayout.topControl = fPluginBlockComposite;
+		} catch (CoreException ex) {
+			PDEPlugin.log(ex);
 		}
-		fLayout.topControl = fPluginBlockComposite;
 
 	}
 

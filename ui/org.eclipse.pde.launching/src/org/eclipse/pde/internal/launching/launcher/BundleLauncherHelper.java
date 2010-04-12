@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.osgi.framework.Version;
 
 public class BundleLauncherHelper {
 
@@ -59,136 +60,136 @@ public class BundleLauncherHelper {
 				}
 				return map;
 			}
+		}
 
-			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
-				// Get the default location settings
-				String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
-				String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
+		if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
+			// Get the default location settings
+			String defaultLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+			String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 
-				// Get all available features
-				HashMap workspaceFeatureMap = new HashMap();
-				HashMap externalFeatureMap = new HashMap();
+			// Get all available features
+			HashMap workspaceFeatureMap = new HashMap();
+			HashMap externalFeatureMap = new HashMap();
 
-				FeatureModelManager fmm = new FeatureModelManager();
-				IFeatureModel[] workspaceFeatureModels = fmm.getWorkspaceModels();
-				for (int i = 0; i < workspaceFeatureModels.length; i++) {
-					String id = workspaceFeatureModels[i].getFeature().getId();
-					workspaceFeatureMap.put(id, workspaceFeatureModels[i]);
-				}
-				fmm.shutdown();
+			FeatureModelManager fmm = new FeatureModelManager();
+			IFeatureModel[] workspaceFeatureModels = fmm.getWorkspaceModels();
+			for (int i = 0; i < workspaceFeatureModels.length; i++) {
+				String id = workspaceFeatureModels[i].getFeature().getId();
+				workspaceFeatureMap.put(id, workspaceFeatureModels[i]);
+			}
+			fmm.shutdown();
 
-				ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
-				efmm.initialize();
-				IFeatureModel[] externalFeatureModels = efmm.getModels();
-				for (int i = 0; i < externalFeatureModels.length; i++) {
-					String id = externalFeatureModels[i].getFeature().getId();
-					externalFeatureMap.put(id, externalFeatureModels[i]);
-				}
+			ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
+			efmm.initialize();
+			IFeatureModel[] externalFeatureModels = efmm.getModels();
+			for (int i = 0; i < externalFeatureModels.length; i++) {
+				String id = externalFeatureModels[i].getFeature().getId();
+				externalFeatureMap.put(id, externalFeatureModels[i]);
+			}
 
-				// Get the selected features and their plugin resolution
-				Map featureResolutionMap = new HashMap();
-				Set selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set) null);
-				if (selectedFeatures != null) {
-					for (Iterator iterator = selectedFeatures.iterator(); iterator.hasNext();) {
-						String currentSelected = (String) iterator.next();
-						String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
-						if (attributes.length > 1) {
-							featureResolutionMap.put(attributes[0], attributes[1]);
-						}
+			// Get the selected features and their plugin resolution
+			Map featureResolutionMap = new HashMap();
+			Set selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set) null);
+			if (selectedFeatures != null) {
+				for (Iterator iterator = selectedFeatures.iterator(); iterator.hasNext();) {
+					String currentSelected = (String) iterator.next();
+					String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
+					if (attributes.length > 1) {
+						featureResolutionMap.put(attributes[0], attributes[1]);
 					}
 				}
+			}
 
-				// Get the feature model for each selected feature id and resolve its plugins
-				Set launchPlugins = new HashSet();
-				PluginModelManager pluginModelMgr = new PluginModelManager();
-				for (Iterator iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
-					String id = (String) iterator.next();
+			// Get the feature model for each selected feature id and resolve its plugins
+			Set launchPlugins = new HashSet();
+			PluginModelManager pluginModelMgr = new PluginModelManager();
+			for (Iterator iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
+				String id = (String) iterator.next();
 
-					IFeatureModel featureModel = null;
-					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
-						featureModel = (IFeatureModel) workspaceFeatureMap.get(id);
-					}
-					if (featureModel == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultLocation)) {
-						if (externalFeatureMap.containsKey(id)) {
-							featureModel = (IFeatureModel) externalFeatureMap.get(id);
-						}
-					}
-					if (featureModel == null) {
-						continue;
-					}
-
-					IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
-					String pluginResolution = (String) featureResolutionMap.get(id);
-					if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
-						pluginResolution = defaultPluginResolution;
-					}
-
-					for (int i = 0; i < featurePlugins.length; i++) {
-						ModelEntry modelEntry = pluginModelMgr.findEntry(featurePlugins[i].getId());
-						if (modelEntry == null) {
-							continue;
-						}
-						IPluginModelBase model = null;
-						if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
-							model = getBestCandidateModel(modelEntry.getWorkspaceModels());
-						}
-						if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
-							model = getBestCandidateModel(modelEntry.getExternalModels());
-						}
-						if (model == null || map.containsKey(model))
-							continue;
-						launchPlugins.add(model);
-					}
-
-					IFeatureImport[] featureImports = featureModel.getFeature().getImports();
-					for (int i = 0; i < featureImports.length; i++) {
-						if (featureImports[i].getType() == IFeatureImport.PLUGIN) {
-							ModelEntry modelEntry = pluginModelMgr.findEntry(featureImports[i].getId());
-							if (modelEntry == null) {
-								continue;
-							}
-							IPluginModelBase model = null;
-							if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
-								model = getBestCandidateModel(modelEntry.getWorkspaceModels());
-							} else if (IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
-								model = getBestCandidateModel(modelEntry.getExternalModels());
-							}
-
-							if (model == null || map.containsKey(model))
-								continue;
-							launchPlugins.add(model);
-						}
+				IFeatureModel featureModel = null;
+				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
+					featureModel = (IFeatureModel) workspaceFeatureMap.get(id);
+				}
+				if (featureModel == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultLocation)) {
+					if (externalFeatureMap.containsKey(id)) {
+						featureModel = (IFeatureModel) externalFeatureMap.get(id);
 					}
 				}
+				if (featureModel == null) {
+					continue;
+				}
 
-				// Get all required plugins
-				// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-				Set additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
-				Iterator it = additionalIds.iterator();
-				while (it.hasNext()) {
-					String id = (String) it.next();
-					ModelEntry modelEntry = pluginModelMgr.findEntry(id);
+				IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
+				String pluginResolution = (String) featureResolutionMap.get(id);
+				if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
+					pluginResolution = defaultPluginResolution;
+				}
+
+				for (int i = 0; i < featurePlugins.length; i++) {
+					ModelEntry modelEntry = pluginModelMgr.findEntry(featurePlugins[i].getId());
 					if (modelEntry == null) {
 						continue;
 					}
 					IPluginModelBase model = null;
-					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultPluginResolution)) {
-						model = getBestCandidateModel(modelEntry.getWorkspaceModels());
+					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
+						model = getBestCandidateModel(modelEntry.getWorkspaceModels(), featurePlugins[i].getVersion());
 					}
-					if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultPluginResolution)) {
-						model = getBestCandidateModel(modelEntry.getExternalModels());
+					if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+						model = getBestCandidateModel(modelEntry.getExternalModels(), featurePlugins[i].getVersion());
 					}
 					if (model == null || map.containsKey(model))
 						continue;
 					launchPlugins.add(model);
 				}
 
-				// Create the start levels for the selected plugins and add them to the map
-				for (Iterator iterator = launchPlugins.iterator(); iterator.hasNext();) {
-					addBundleToMap(map, (IPluginModelBase) iterator.next(), "default:default"); //$NON-NLS-1$
+				IFeatureImport[] featureImports = featureModel.getFeature().getImports();
+				for (int i = 0; i < featureImports.length; i++) {
+					if (featureImports[i].getType() == IFeatureImport.PLUGIN) {
+						ModelEntry modelEntry = pluginModelMgr.findEntry(featureImports[i].getId());
+						if (modelEntry == null) {
+							continue;
+						}
+						IPluginModelBase model = null;
+						if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
+							model = getBestCandidateModel(modelEntry.getWorkspaceModels(), featureImports[i].getVersion());
+						} else if (IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+							model = getBestCandidateModel(modelEntry.getExternalModels(), featureImports[i].getVersion());
+						}
+
+						if (model == null || map.containsKey(model))
+							continue;
+						launchPlugins.add(model);
+					}
 				}
-				return map;
 			}
+
+			// Get all required plugins
+			// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
+			Set additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+			Iterator it = additionalIds.iterator();
+			while (it.hasNext()) {
+				String id = (String) it.next();
+				ModelEntry modelEntry = pluginModelMgr.findEntry(id);
+				if (modelEntry == null) {
+					continue;
+				}
+				IPluginModelBase model = null;
+				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultPluginResolution)) {
+					model = getBestCandidateModel(modelEntry.getWorkspaceModels(), null);
+				}
+				if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultPluginResolution)) {
+					model = getBestCandidateModel(modelEntry.getExternalModels(), null);
+				}
+				if (model == null || map.containsKey(model))
+					continue;
+				launchPlugins.add(model);
+			}
+
+			// Create the start levels for the selected plugins and add them to the map
+			for (Iterator iterator = launchPlugins.iterator(); iterator.hasNext();) {
+				addBundleToMap(map, (IPluginModelBase) iterator.next(), "default:default"); //$NON-NLS-1$
+			}
+			return map;
 		}
 
 		String workspace = osgi == false ? IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.WORKSPACE_BUNDLES;
@@ -198,10 +199,11 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
-	private static IPluginModelBase getBestCandidateModel(IPluginModelBase[] models) {
+	private static IPluginModelBase getBestCandidateModel(IPluginModelBase[] models, String version) {
+		Version requiredVersion = version != null ? Version.parseVersion(version) : Version.emptyVersion;
 		IPluginModelBase model = null;
 		for (int i = 0; i < models.length; i++) {
-			if (models[i].getBundleDescription() == null)
+			if (models[i].getBundleDescription() == null || !models[i].isEnabled())
 				continue;
 
 			if (model == null) {
@@ -221,6 +223,11 @@ public class BundleLauncherHelper {
 				continue;
 			}
 
+			if (requiredVersion.compareTo(candidate.getVersion()) == 0) {
+				model = models[i];
+				break;
+			}
+			
 			if (current.getVersion().compareTo(candidate.getVersion()) < 0) {
 				model = models[i];
 			}

@@ -39,21 +39,21 @@ public class PluginsTab extends AbstractLauncherTab {
 	private Image fImage;
 
 	private Combo fSelectionCombo;
-	private BlockAdapter fPluginBlock;
+	private BlockAdapter fBlock;
 	private Combo fDefaultAutoStart;
 	private Spinner fDefaultStartLevel;
 	private Listener fListener;
 
 	private static final int DEFAULT_SELECTION = 0;
-	private static final int CUSTOM_SELECTION = 1;
-	private static final int CUSTOM_FEATURE_SELECTION = 2;
+	private static final int PLUGIN_SELECTION = 1;
+	private static final int FEATURE_SELECTION = 2;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 		public void widgetSelected(SelectionEvent e) {
 			int index = fSelectionCombo.getSelectionIndex();
 			try {
-				fPluginBlock.setActiveBlock(index);
-				fPluginBlock.initialize(index == CUSTOM_SELECTION);
+				fBlock.setActiveBlock(index);
+				fBlock.initialize(index == PLUGIN_SELECTION);
 			} catch (CoreException ex) {
 				PDEPlugin.log(ex);
 			}
@@ -73,7 +73,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public PluginsTab() {
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
-		fPluginBlock = new BlockAdapter(new PluginBlock(this), new FeatureBlock(this));
+		fBlock = new BlockAdapter(new PluginBlock(this), new FeatureBlock(this));
 		fListener = new Listener();
 	}
 
@@ -93,7 +93,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		fPluginBlock.dispose();
+		fBlock.dispose();
 		fImage.dispose();
 		super.dispose();
 	}
@@ -134,8 +134,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Composite blockComposite = SWTFactory.createComposite(composite, 1, 1, GridData.FILL_BOTH);
-		fPluginBlock.createControl(blockComposite, 7, 10);
+		fBlock.createControl(composite, 7, 10);
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -150,16 +149,16 @@ public class PluginsTab extends AbstractLauncherTab {
 		try {
 			int index = DEFAULT_SELECTION;
 			if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-				index = CUSTOM_FEATURE_SELECTION;
+				index = FEATURE_SELECTION;
 			} else if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
-				index = CUSTOM_FEATURE_SELECTION;
+				index = FEATURE_SELECTION;
 			} else if (!configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
-				index = CUSTOM_SELECTION;
+				index = PLUGIN_SELECTION;
 			}
 			fSelectionCombo.select(index);
-			fPluginBlock.setActiveBlock(index);
-			boolean custom = fSelectionCombo.getSelectionIndex() == CUSTOM_SELECTION;
-			fPluginBlock.initializeFrom(configuration, custom);
+			fBlock.setActiveBlock(index);
+			boolean custom = fSelectionCombo.getSelectionIndex() == PLUGIN_SELECTION;
+			fBlock.initializeFrom(configuration, custom);
 			boolean auto = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
 			fDefaultAutoStart.setText(Boolean.toString(auto));
 			int level = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
@@ -178,7 +177,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		// The use features option was removed in 3.6
 		configuration.removeAttribute(IPDELauncherConstants.USEFEATURES);
 		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
-		fPluginBlock.setDefaults(configuration);
+		fBlock.setDefaults(configuration);
 	}
 
 	/*
@@ -188,8 +187,8 @@ public class PluginsTab extends AbstractLauncherTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		int index = fSelectionCombo.getSelectionIndex();
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, index == DEFAULT_SELECTION);
-		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, index == CUSTOM_FEATURE_SELECTION);
-		fPluginBlock.performApply(configuration);
+		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, index == FEATURE_SELECTION);
+		fBlock.performApply(configuration);
 		// clear default values for auto-start and start-level if default
 		String autoText = fDefaultAutoStart.getText();
 		if (Boolean.toString(false).equals(autoText)) {
