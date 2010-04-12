@@ -1706,7 +1706,7 @@ public class UseReportConverter extends HTMLConvertor {
 				}
 				if(xml.exists()) {
 					String xmlstr = Util.getFileContentAsString(xml);
-					Element doc = Util.parseDocument(xmlstr);
+					Element doc = Util.parseDocument(xmlstr.trim());
 					this.metadata = new UseMetadata();
 					Element element = null;
 					String value = null, name = null;
