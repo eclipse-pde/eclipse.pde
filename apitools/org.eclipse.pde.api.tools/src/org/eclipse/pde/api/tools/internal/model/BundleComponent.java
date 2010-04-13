@@ -669,8 +669,7 @@ public class BundleComponent extends Component {
 						File tmpfolder = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
 						if(entry.isDirectory()) {
 							//extract the dir and all children
-							File dir = File.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
-							dir.deleteOnExit();
+							File dir = Util.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
 							//hack to create a temp directory
 							// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
 							if(dir.delete()) {

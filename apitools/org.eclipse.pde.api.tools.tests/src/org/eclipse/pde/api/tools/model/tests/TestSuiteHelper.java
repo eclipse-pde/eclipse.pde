@@ -324,7 +324,7 @@ public class TestSuiteHelper {
 			File fakeEEFile = null;
 			PrintWriter writer = null;
 			try {
-				fakeEEFile = File.createTempFile("eefile", ".ee");
+				fakeEEFile = Util.createTempFile("eefile", ".ee");
 				writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)));
 				writer.print("-Djava.home=");
 				writer.println(System.getProperty("java.home"));

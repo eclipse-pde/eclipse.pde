@@ -446,8 +446,7 @@ public final class Util {
 	 */
 	public static File createEEFile(IVMInstall jre, String eeid) throws IOException {
 		String string = Util.generateEEContents(jre, eeid);
-		File eeFile = File.createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-		eeFile.deleteOnExit();
+		File eeFile = createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
 		FileOutputStream outputStream = null;
 		try {
 			outputStream = new FileOutputStream(eeFile);
@@ -1701,8 +1700,7 @@ public final class Util {
 		File fakeEEFile = null;
 		PrintWriter writer = null;
 		try {
-			fakeEEFile = File.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-			fakeEEFile.deleteOnExit();
+			fakeEEFile = createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)));
 			writer.print("-Djava.home="); //$NON-NLS-1$
 			writer.println(System.getProperty("java.home")); //$NON-NLS-1$
@@ -1721,6 +1719,21 @@ public final class Util {
 		return fakeEEFile;
 	}
 
+	/**
+	 * Creates a new file in the users' <code>temp</code> directory
+	 * @param prefix
+	 * @param suffix
+	 * @return a new temp file
+	 * @throws IOException
+	 * @since 1.1
+	 */
+	public static File createTempFile(String prefix, String suffix) throws IOException {
+		File file = File.createTempFile(prefix, suffix);
+		file.deleteOnExit();
+		FileManager.getManager().recordTempFileRoot(file.getCanonicalPath());
+		return file;
+	}
+	
 	/**
 	 * @return a string representation of all of the libraries from the bootpath 
 	 * of the current default system VM.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,9 @@ public final class FileManager {
 			if(fFilePaths == null) {
 				fFilePaths = new HashSet(10);
 			}
-			fFilePaths.add(absolutepath);
+			synchronized (fFilePaths) {
+				fFilePaths.add(absolutepath);
+			}
 		}
 	}
 	
@@ -68,12 +70,18 @@ public final class FileManager {
 	public boolean deleteFiles() {
 		boolean success = true;
 		if(fFilePaths != null) {
-			File file = null;
-			for(Iterator iter = fFilePaths.iterator(); iter.hasNext();) {
-				file = new File((String) iter.next());
-				success &= Util.delete(file);
+			synchronized (fFilePaths) {
+				try {
+					File file = null;
+					for(Iterator iter = fFilePaths.iterator(); iter.hasNext();) {
+						file = new File((String) iter.next());
+						success &= Util.delete(file);
+					}
+				}
+				finally {
+					fFilePaths.clear();	
+				}
 			}
-			fFilePaths.clear();
 		}
 		return success;
 	}
