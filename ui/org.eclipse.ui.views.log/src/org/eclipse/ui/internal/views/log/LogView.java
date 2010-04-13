@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -497,12 +497,14 @@ public class LogView extends ViewPart implements ILogListener {
 					LogEntry logEntry = (LogEntry) element;
 					String message = logEntry.getMessage();
 					String plugin = logEntry.getPluginId();
-					String date = logEntry.getFormattedDate();
+					DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+					String date = dateFormat.format(logEntry.getDate());
 					return wordMatches(message) || wordMatches(plugin) || wordMatches(date);
 				}
 				return false;
 			}
 		};
+		filter.setIncludeLeadingWildcard(true);
 		fFilteredTree = new FilteredTree(parent, SWT.FULL_SELECTION, filter, true);
 		// need to give filter Textbox some space from the border
 		if (fFilteredTree.getFilterControl() != null) {
