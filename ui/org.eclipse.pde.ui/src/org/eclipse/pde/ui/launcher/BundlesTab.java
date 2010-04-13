@@ -45,7 +45,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
 		fBlock = new BlockAdapter(new OSGiBundleBlock(this), new FeatureBlock(this));
-		fFrameworkBlock = new OSGiFrameworkBlock(this);
+		fFrameworkBlock = new OSGiFrameworkBlock(this, fBlock);
 	}
 
 	/**
@@ -148,9 +148,4 @@ public class BundlesTab extends AbstractLauncherTab {
 	public String getId() {
 		return IPDELauncherConstants.TAB_BUNDLES_ID;
 	}
-
-	public void setActiveBlock(int index) {
-		fBlock.setActiveBlock(index);
-	}
-
 }

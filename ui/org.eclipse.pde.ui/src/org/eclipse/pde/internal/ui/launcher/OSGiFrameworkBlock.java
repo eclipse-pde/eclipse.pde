@@ -20,7 +20,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.BundlesTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -36,6 +35,7 @@ public class OSGiFrameworkBlock {
 	private Listener fListener;
 	private AbstractLauncherTab fTab;
 	private Combo fLaunchWithCombo;
+	private BlockAdapter fBlock;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 
@@ -51,8 +51,14 @@ public class OSGiFrameworkBlock {
 		}
 	}
 
-	public OSGiFrameworkBlock(AbstractLauncherTab tab) {
+	/**
+	 * Constructs a new instance of this block
+	 * @param tab parent launch config tab
+	 * @param block the content block that will contain the UI for modifying included bundles (block changes based on bundle/feature mode)
+	 */
+	public OSGiFrameworkBlock(AbstractLauncherTab tab, BlockAdapter block) {
 		fTab = tab;
+		fBlock = block;
 		fConfigElements = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks();
 		fListener = new Listener();
 	}
@@ -161,8 +167,8 @@ public class OSGiFrameworkBlock {
 	}
 
 	public void setActiveIndex() {
-		if (fTab instanceof BundlesTab) {
-			((BundlesTab) fTab).setActiveBlock(fLaunchWithCombo.getSelectionIndex() + 1); // +1 to match plug-ins tab combo indices
+		if (fBlock != null) {
+			fBlock.setActiveBlock(fLaunchWithCombo.getSelectionIndex() + 1); // +1 to match plug-ins tab combo indices
 		}
 	}
 }
