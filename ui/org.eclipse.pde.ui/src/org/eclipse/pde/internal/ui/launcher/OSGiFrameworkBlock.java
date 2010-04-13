@@ -78,7 +78,7 @@ public class OSGiFrameworkBlock {
 		gd.horizontalIndent = 5;
 		launchLabel.setLayoutData(gd);
 
-		fLaunchWithCombo = SWTFactory.createCombo(composite, SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_BEGINNING, new String[] {PDEUIMessages.OSGiFrameworkBlock_selectedBundles, PDEUIMessages.PluginsTab_customFeatureMode});
+		fLaunchWithCombo = SWTFactory.createCombo(composite, SWT.READ_ONLY, 1, SWT.NONE, new String[] {PDEUIMessages.OSGiFrameworkBlock_selectedBundles, PDEUIMessages.PluginsTab_customFeatureMode});
 
 		fLaunchWithCombo.addSelectionListener(fListener);
 
@@ -105,7 +105,7 @@ public class OSGiFrameworkBlock {
 
 		label = new Label(composite, SWT.NONE);
 		gd = new GridData();
-		gd.horizontalIndent = 20;
+		gd.horizontalIndent = 5;
 		label.setLayoutData(gd);
 		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultAuto);
 
@@ -113,10 +113,11 @@ public class OSGiFrameworkBlock {
 		fDefaultAutoStart.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
 		fDefaultAutoStart.select(0);
 		fDefaultAutoStart.addSelectionListener(fListener);
+		fDefaultAutoStart.setLayoutData(new GridData());
 
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 6;
+		gd.horizontalSpan = 8;
 		label.setLayoutData(gd);
 	}
 
