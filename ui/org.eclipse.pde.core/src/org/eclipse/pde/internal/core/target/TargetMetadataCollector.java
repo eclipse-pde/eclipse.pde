@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.provisional.*;
 
@@ -61,18 +62,16 @@ public class TargetMetadataCollector {
 						repos.add(profileLocation.toURI());
 					}
 				} else if (currentContainer instanceof IUBundleContainer) {
-					// TODO This profile may contains metadata for the downloaded plug-ins, however, it hasn't been persisted so we can't get a URI
-//					IProfile profile = ((TargetDefinition) definition).getProfile();
-//					String profileLoc = profile.getProperty(IProfile.PROP_CONFIGURATION_FOLDER);
-//					try {
-//						repos.add(new URI(profileLoc));
-//					} catch (URISyntaxException e) {
-//						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "", e)); //$NON-NLS-1$
-//					}
-				} else if (currentContainer instanceof DirectoryBundleContainer || currentContainer instanceof FeatureBundleContainer) {
-					// TODO We could check in the same directory for a contents.xml
+					// PDE Build only wants local repositories as downloading can take as long as publishing new metadata.  Currently no way to get cached/downloaded metadata.
+					URI[] locations = ((IUBundleContainer) currentContainer).getRepositories();
+					if (locations != null) {
+						for (int j = 0; j < locations.length; j++) {
+							if (URIUtil.isFileURI(locations[j])) {
+								repos.add(locations[j]);
+							}
+						}
+					}
 				}
-
 			}
 		}
 
