@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -23,12 +24,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.project.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.bundle.BundleFragment;
-import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.osgi.framework.*;
 
 /**
@@ -64,12 +60,11 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private IPackageImportDescription[] fImports;
 	private IPackageExportDescription[] fExports;
 	private IPath[] fBinIncludes;
-	private WorkspacePluginModelBase fModel;
 	private IBundleProjectService fService;
 	private String[] fLaunchShortcuts;
 	private String fExportWizard;
-	private IBundle fBundle;
 	private Map fHeaders = new HashMap();
+	private Map fReadHeaders = null;
 
 	/**
 	 * Constructs a bundle description for the specified project.
@@ -97,6 +92,60 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	}
 
 	/**
+	 * Returns the build model for the given project or <code>null</code>
+	 * if none.
+	 * 
+	 * @param project project
+	 * @return build model or <code>null</code>
+	 */
+	private IBuild getBuildModel(IProject project) {
+		IFile buildFile = PDEProject.getBuildProperties(project);
+		if (buildFile.exists()) {
+			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildFile);
+			buildModel.load();
+			return buildModel.getBuild();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the header value from the Map of ManifestElement's or <code>null</code> if none.
+	 * 
+	 * @param headers map of ManifestElement's
+	 * @param key header name
+	 * @return header value or <code>null</code>
+	 */
+	private String getHeaderValue(Map headers, String key) throws CoreException {
+		ManifestElement[] elements = parseHeader(headers, key);
+		if (elements != null) {
+			if (elements.length > 0) {
+				return elements[0].getValue();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Parses the specified header.
+	 * 
+	 * @param headers
+	 * @param key
+	 * @return elements or <code>null</code> if none
+	 * @throws CoreException
+	 */
+	private ManifestElement[] parseHeader(Map headers, String key) throws CoreException {
+		String value = (String) headers.get(key);
+		if (value != null) {
+			try {
+				return ManifestElement.parseHeader(key, value);
+			} catch (BundleException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Initialize settings from the given project.
 	 * 
 	 * @param project project
@@ -119,17 +168,21 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		setLocationURI(project.getDescription().getLocationURI());
 		setNatureIds(project.getDescription().getNatureIds());
 
-		IPluginModelBase model = PluginRegistry.findModel(project);
-		if (model != null) {
-			IPluginBase base = model.getPluginBase();
-			if (base instanceof IPlugin) {
-				IPlugin plugin = (IPlugin) base;
-				setActivator(plugin.getClassName());
+		IFile manifest = PDEProject.getManifest(project);
+		if (manifest.exists()) {
+			Map headers;
+			try {
+				headers = ManifestElement.parseBundleManifest(manifest.getContents(), null);
+				fReadHeaders = headers;
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+			} catch (BundleException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
 			}
-			IBuild build = ClasspathUtilCore.getBuild(model);
-			setBundleName(base.getName());
-			setBundleVendor(base.getProviderName());
-			String version = base.getVersion();
+			setActivator(getHeaderValue(headers, Constants.BUNDLE_ACTIVATOR));
+			setBundleName(getHeaderValue(headers, Constants.BUNDLE_NAME));
+			setBundleVendor(getHeaderValue(headers, Constants.BUNDLE_VENDOR));
+			String version = getHeaderValue(headers, Constants.BUNDLE_VERSION);
 			if (version != null) {
 				setBundleVersion(new Version(version));
 			}
@@ -137,136 +190,112 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			if (jp.exists()) {
 				setDefaultOutputFolder(jp.getOutputLocation().removeFirstSegments(1));
 			}
-			if (model.isFragmentModel()) {
-				IFragmentModel fragModel = (IFragmentModel) model;
-				IFragment frag = fragModel.getFragment();
-				if (frag instanceof BundleFragment) {
-					// use header since IFragment implementation returns 0.0.0 even when unspecified
-					BundleFragment bf = (BundleFragment) frag;
-					String header = bf.getBundle().getHeader(Constants.FRAGMENT_HOST);
-					ManifestElement[] elements;
-					try {
-						elements = ManifestElement.parseHeader(Constants.FRAGMENT_HOST, header);
-					} catch (BundleException e) {
-						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+			ManifestElement[] elements = parseHeader(headers, Constants.FRAGMENT_HOST);
+			if (elements != null && elements.length > 0) {
+				setHost(getBundleProjectService().newHost(elements[0].getValue(), getRange(elements[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE))));
+			}
+			String value = getHeaderValue(headers, Constants.BUNDLE_LOCALIZATION);
+			if (value != null) {
+				setLocalization(new Path(value));
+			}
+			elements = parseHeader(headers, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+			if (elements != null && elements.length > 0) {
+				String[] keys = new String[elements.length];
+				for (int i = 0; i < elements.length; i++) {
+					keys[i] = elements[i].getValue();
+				}
+				setExecutionEnvironments(keys);
+			}
+			IBuild build = getBuildModel(project);
+			elements = parseHeader(headers, Constants.BUNDLE_CLASSPATH);
+			IBundleClasspathEntry[] classpath = null;
+			if (elements != null && elements.length > 0) {
+				List collect = new ArrayList();
+				for (int i = 0; i < elements.length; i++) {
+					String libName = elements[i].getValue();
+					IBundleClasspathEntry[] entries = getClasspathEntries(project, build, libName);
+					if (entries != null) {
+						for (int j = 0; j < entries.length; j++) {
+							collect.add(entries[j]);
+						}
 					}
-					setHost(getBundleProjectService().newHost(frag.getPluginId(), getRange(elements[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE))));
-				} else {
-					setHost(getBundleProjectService().newHost(frag.getPluginId(), getRange(frag.getPluginVersion())));
+				}
+				classpath = (IBundleClasspathEntry[]) collect.toArray(new IBundleClasspathEntry[collect.size()]);
+			} else if (elements == null) {
+				// default bundle classpath of '.'
+				classpath = getClasspathEntries(project, build, "."); //$NON-NLS-1$
+			}
+			setBundleClassath(classpath);
+			elements = parseHeader(headers, Constants.BUNDLE_SYMBOLICNAME);
+			if (elements != null && elements.length > 0) {
+				setSymbolicName(elements[0].getValue());
+				String directive = elements[0].getDirective(Constants.SINGLETON_DIRECTIVE);
+				if (directive == null) {
+					directive = elements[0].getAttribute(Constants.SINGLETON_DIRECTIVE);
+				}
+				setSingleton("true".equals(directive)); //$NON-NLS-1$
+			}
+			elements = parseHeader(headers, Constants.IMPORT_PACKAGE);
+			if (elements != null && elements.length > 0) {
+				IPackageImportDescription[] imports = new IPackageImportDescription[elements.length];
+				for (int i = 0; i < elements.length; i++) {
+					boolean optional = Constants.RESOLUTION_OPTIONAL.equals(elements[i].getDirective(Constants.RESOLUTION_DIRECTIVE)) || "true".equals(elements[i].getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
+					String pv = elements[i].getAttribute(ICoreConstants.PACKAGE_SPECIFICATION_VERSION);
+					if (pv == null) {
+						pv = elements[i].getAttribute(Constants.VERSION_ATTRIBUTE);
+					}
+					imports[i] = getBundleProjectService().newPackageImport(elements[i].getValue(), getRange(pv), optional);
+				}
+				setPackageImports(imports);
+			}
+			elements = parseHeader(headers, Constants.EXPORT_PACKAGE);
+			if (elements != null && elements.length > 0) {
+				IPackageExportDescription[] exports = new IPackageExportDescription[elements.length];
+				for (int i = 0; i < elements.length; i++) {
+					ManifestElement exp = elements[i];
+					String pv = exp.getAttribute(ICoreConstants.PACKAGE_SPECIFICATION_VERSION);
+					if (pv == null) {
+						pv = exp.getAttribute(Constants.VERSION_ATTRIBUTE);
+					}
+					String directive = exp.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
+					boolean internal = "true".equals(exp.getDirective(ICoreConstants.INTERNAL_DIRECTIVE)) || directive != null; //$NON-NLS-1$
+					String[] friends = null;
+					if (directive != null) {
+						friends = ManifestElement.getArrayFromList(directive);
+					}
+					exports[i] = getBundleProjectService().newPackageExport(exp.getValue(), getVersion(pv), !internal, friends);
+				}
+				setPackageExports(exports);
+			}
+			elements = parseHeader(headers, Constants.REQUIRE_BUNDLE);
+			if (elements != null && elements.length > 0) {
+				IRequiredBundleDescription[] req = new IRequiredBundleDescription[elements.length];
+				for (int i = 0; i < elements.length; i++) {
+					ManifestElement rb = elements[i];
+					boolean reexport = Constants.VISIBILITY_REEXPORT.equals(rb.getDirective(Constants.VISIBILITY_DIRECTIVE)) || "true".equals(rb.getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
+					boolean optional = Constants.RESOLUTION_OPTIONAL.equals(rb.getDirective(Constants.RESOLUTION_DIRECTIVE)) || "true".equals(rb.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
+					req[i] = getBundleProjectService().newRequiredBundle(rb.getValue(), getRange(rb.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)), optional, reexport);
+				}
+				setRequiredBundles(req);
+			}
+			String lazy = getHeaderValue(headers, ICoreConstants.ECLIPSE_AUTOSTART);
+			if (lazy == null) {
+				lazy = getHeaderValue(headers, ICoreConstants.ECLIPSE_LAZYSTART);
+				if (lazy == null) {
+					setActivationPolicy(getHeaderValue(headers, Constants.BUNDLE_ACTIVATIONPOLICY));
 				}
 			}
-			if (base instanceof BundlePluginBase) {
-				IBundle bundle = ((BundlePluginBase) base).getBundle();
-				fBundle = bundle;
-				String value = bundle.getHeader(Constants.BUNDLE_LOCALIZATION);
-				if (value != null) {
-					setLocalization(new Path(value));
-				}
-				IManifestHeader header = createHeader(bundle, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-				if (header instanceof RequiredExecutionEnvironmentHeader) {
-					ExecutionEnvironment[] environments = ((RequiredExecutionEnvironmentHeader) header).getEnvironments();
-					if (environments != null && environments.length > 0) {
-						String[] keys = new String[environments.length];
-						for (int i = 0; i < keys.length; i++) {
-							keys[i] = environments[i].getName();
-						}
-						setExecutionEnvironments(keys);
-					}
-				}
-				header = createHeader(bundle, Constants.BUNDLE_CLASSPATH);
-				IBundleClasspathEntry[] classpath = null;
-				if (header instanceof BundleClasspathHeader) {
-					Vector libNames = ((BundleClasspathHeader) header).getElementNames();
-					if (!libNames.isEmpty()) {
-						List collect = new ArrayList();
-						Iterator iterator = libNames.iterator();
-						while (iterator.hasNext()) {
-							String libName = (String) iterator.next();
-							IBundleClasspathEntry[] entries = getClasspathEntries(project, build, libName);
-							if (entries != null) {
-								for (int i = 0; i < entries.length; i++) {
-									collect.add(entries[i]);
-								}
-							}
-						}
-						classpath = (IBundleClasspathEntry[]) collect.toArray(new IBundleClasspathEntry[collect.size()]);
-					}
-				} else if (header == null) {
-					// default bundle classpath of '.'
-					classpath = getClasspathEntries(project, build, "."); //$NON-NLS-1$
-				}
-				setBundleClassath(classpath);
-				header = createHeader(bundle, Constants.BUNDLE_SYMBOLICNAME);
-				if (header instanceof BundleSymbolicNameHeader) {
-					setSingleton(((BundleSymbolicNameHeader) header).isSingleton());
-				}
-				header = createHeader(bundle, Constants.IMPORT_PACKAGE);
-				if (header instanceof ImportPackageHeader) {
-					ImportPackageObject[] packages = ((ImportPackageHeader) header).getPackages();
-					if (packages != null && packages.length > 0) {
-						IPackageImportDescription[] imports = new IPackageImportDescription[packages.length];
-						for (int i = 0; i < packages.length; i++) {
-							ImportPackageObject pkg = packages[i];
-							imports[i] = getBundleProjectService().newPackageImport(pkg.getName(), getRange(pkg.getVersion()), pkg.isOptional());
-						}
-						setPackageImports(imports);
-					}
-				}
-				header = createHeader(bundle, Constants.EXPORT_PACKAGE);
-				if (header instanceof ExportPackageHeader) {
-					ExportPackageObject[] packages = ((ExportPackageHeader) header).getPackages();
-					if (packages != null && packages.length > 0) {
-						IPackageExportDescription[] exports = new IPackageExportDescription[packages.length];
-						for (int i = 0; i < packages.length; i++) {
-							ExportPackageObject exp = packages[i];
-							String[] friends = null;
-							PackageFriend[] pfs = exp.getFriends();
-							if (pfs != null && pfs.length > 0) {
-								friends = new String[pfs.length];
-								for (int j = 0; j < pfs.length; j++) {
-									friends[j] = pfs[j].getName();
-								}
-							}
-							exports[i] = getBundleProjectService().newPackageExport(exp.getName(), getVersion(exp.getVersion()), !exp.isInternal(), friends);
-						}
-						setPackageExports(exports);
-					}
-				}
-				header = createHeader(bundle, Constants.REQUIRE_BUNDLE);
-				if (header instanceof RequireBundleHeader) {
-					RequireBundleObject[] bundles = ((RequireBundleHeader) header).getRequiredBundles();
-					if (bundles != null && bundles.length > 0) {
-						IRequiredBundleDescription[] req = new IRequiredBundleDescription[bundles.length];
-						for (int i = 0; i < bundles.length; i++) {
-							RequireBundleObject rb = bundles[i];
-							req[i] = getBundleProjectService().newRequiredBundle(rb.getId(), getRange(rb.getVersion()), rb.isOptional(), rb.isReexported());
-						}
-						setRequiredBundles(req);
-					}
-				}
-				String policy = null;
-				header = createHeader(bundle, ICoreConstants.ECLIPSE_AUTOSTART);
-				if (header == null) {
-					header = createHeader(bundle, ICoreConstants.ECLIPSE_LAZYSTART);
-					if (header == null) {
-						header = createHeader(bundle, Constants.BUNDLE_ACTIVATIONPOLICY);
-					}
-				}
-				if (header instanceof LazyStartHeader) {
-					if (((LazyStartHeader) header).isLazyStart()) {
-						policy = Constants.ACTIVATION_LAZY;
-					}
-				}
-				setActivationPolicy(policy);
-			} else {
-				// not a bundle
-				setActivationPolicy(null);
+			if ("true".equals(lazy)) { //$NON-NLS-1$
+				setActivationPolicy(Constants.ACTIVATION_LAZY);
 			}
-			setSymbolicName(base.getId());
 			String latest = TargetPlatformHelper.getTargetVersionString();
-			String tv = TargetPlatformHelper.getTargetVersionForSchemaVersion(base.getSchemaVersion());
-			if (!tv.equals(latest)) {
-				setTargetVersion(tv);
+			IPluginModelBase model = PluginRegistry.findModel(project);
+			if (model != null) {
+				IPluginBase base = model.getPluginBase();
+				String tv = TargetPlatformHelper.getTargetVersionForSchemaVersion(base.getSchemaVersion());
+				if (!tv.equals(latest)) {
+					setTargetVersion(tv);
+				}
 			}
 			if (build != null) {
 				IBuildEntry entry = build.getEntry(IBuildEntry.BIN_INCLUDES);
@@ -384,22 +413,6 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	}
 
 	/**
-	 * Returns a structured header from a bundle model
-	 * 
-	 * @param bundle the bundle
-	 * @param header header name/key
-	 * @return header or <code>null</code>
-	 */
-	private IManifestHeader createHeader(IBundle bundle, String header) {
-		BundleModelFactory factory = new BundleModelFactory(bundle.getModel());
-		String headerValue = bundle.getHeader(header);
-		if (headerValue == null) {
-			return null;
-		}
-		return factory.createHeader(header, headerValue);
-	}
-
-	/**
 	 * Create and return a version range from the given string or <code>null</code>.
 	 * 
 	 * @param version version range string or <code>null</code>
@@ -431,17 +444,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	public void apply(IProgressMonitor monitor) throws CoreException {
 		ProjectModifyOperation operation = new ProjectModifyOperation();
 		operation.execute(monitor, this);
-		fModel = operation.getModel();
 		fService = null;
-	}
-
-	/**
-	 * Returns the model created by this operation.
-	 * 
-	 * @return model
-	 */
-	public WorkspacePluginModelBase getModel() {
-		return fModel;
 	}
 
 	/* (non-Javadoc)
@@ -829,9 +832,15 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		if (fHeaders.containsKey(header)) { // might be null so check contains
 			return (String) fHeaders.get(header);
 		}
-		// get the value from the model
-		if (fBundle != null) {
-			return fBundle.getHeader(header);
+		if (fReadHeaders != null) {
+			if (fReadHeaders.containsKey(header)) {
+				String value = (String) fReadHeaders.get(header);
+				if (value == null) {
+					// Return the empty string for present empty headers (instead of null - which means missing)
+					return ""; //$NON-NLS-1$
+				}
+				return value;
+			}
 		}
 		return null;
 	}
