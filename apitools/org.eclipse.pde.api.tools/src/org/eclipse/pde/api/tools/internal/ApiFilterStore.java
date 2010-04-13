@@ -60,6 +60,7 @@ import org.w3c.dom.NodeList;
  * @since 1.0.0
  */
 public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener {
+	
 	/**
 	 * Constant representing the name of the .settings folder
 	 */
@@ -121,6 +122,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(!fNeedsSaving) {
 			return;
 		}
+		final Map filters = new HashMap(fFilterMap);
 		WorkspaceJob job = new WorkspaceJob(Util.EMPTY_STRING) {
 			public IStatus runInWorkspace(IProgressMonitor monitor)	throws CoreException {
 				if(DEBUG) {
@@ -135,7 +137,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						}
 						return Status.CANCEL_STATUS;
 					}
-					String xml = getStoreAsXml();
+					String xml = getStoreAsXml(filters);
 					IFile file = project.getFile(getFilterFilePath(false));
 					if(xml == null) {
 						if(DEBUG) {
@@ -187,7 +189,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		job.setPriority(Job.INTERACTIVE);
 		job.schedule();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#addFilters(org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter[])
 	 */
@@ -313,6 +315,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#dispose()
 	 */
 	public void dispose() {
+		//if the store is about to be disposed and has pending changes save them asynchronously
+		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=299319
+		persistApiFilters();
 		clearFilters();
 		if(fUnusedFilters != null) {
 			fUnusedFilters.clear();
@@ -320,7 +325,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
  		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#getResources()
 	 */
@@ -387,18 +392,20 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	}
 	
 	/**
-	 * Converts the information contained in this filter store to an xml string
-	 * @return an xml string representation of this filter store
+	 * Converts the information contained in the given map to an XML string
+	 * 
+	 * @param filtermap the mapping of filters to convert to XML
+	 * @return an XML string representation of the given mapping of filters
 	 * @throws CoreException
 	 */
-	synchronized String getStoreAsXml() throws CoreException {
-		if(fFilterMap == null) {
+	synchronized String getStoreAsXml(Map filtermap) throws CoreException {
+		if(filtermap == null) {
 			if(DEBUG) {
 				System.out.println("no filter map returning null XML for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return null;
 		}
-		if(fFilterMap.isEmpty()) {
+		if(filtermap.isEmpty()) {
 			if(DEBUG) {
 				System.out.println("empty filter map returning null XML for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -409,7 +416,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		document.appendChild(root);
 		root.setAttribute(IApiXmlConstants.ATTR_ID, fProject.getElementName());
 		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_FILTER_STORE_CURRENT_VERSION);
-		Set allFiltersEntrySet = fFilterMap.entrySet();
+		Set allFiltersEntrySet = filtermap.entrySet();
 		List allFiltersEntries = new ArrayList(allFiltersEntrySet.size());
 		allFiltersEntries.addAll(allFiltersEntrySet);
 		Collections.sort(allFiltersEntries, new Comparator() {
