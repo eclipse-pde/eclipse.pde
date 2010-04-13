@@ -1550,7 +1550,7 @@ public class PublishingTests extends P2TestCase {
 		IFile product = rcp.getFile("rcp.product");
 		StringBuffer extra = new StringBuffer();
 		extra.append("<launcherArgs> 																				\n");
-		extra.append("   <programArgsMac>-showsplash org.eclipse.platform</programArgsMac>							\n");
+		extra.append("   <programArgsMac>-vm myVm -showsplash org.eclipse.platform</programArgsMac>							\n");
 		extra.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>	\n");
 		extra.append(" </launcherArgs>																				\n");
 		extra.append(" <configurations>																				\n");
@@ -1571,6 +1571,7 @@ public class PublishingTests extends P2TestCase {
 		IFile ini = buildFolder.getFile("eclipse.ini");
 		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
 
+		assertLogContainsLines(ini, new String[] {"-vm", "myVm"});
 		boolean duplicate = false;
 		try {
 			assertLogContainsLines(ini, new String[] {"-XstartOnFirstThread", "-XstartOnFirstThread"});
