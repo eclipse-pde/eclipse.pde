@@ -17,6 +17,7 @@ import java.nio.charset.*;
 import junit.framework.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.text.Document;
@@ -56,6 +57,24 @@ public class ProjectCreationTests extends TestCase {
 	public static Test suite() {
 		return new TestSuite(ProjectCreationTests.class);
 	}
+	
+	   /**
+     * Wait for builds to complete
+     */
+    public static void waitForBuild() {
+        boolean wasInterrupted = false;
+        do {
+            try {
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+                Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+                wasInterrupted = false;
+            } catch (OperationCanceledException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                wasInterrupted = true;
+            }
+        } while (wasInterrupted);
+    }	
 	
 	/**
 	 * Provides a project for the test case.
@@ -1036,6 +1055,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 		
 		// ensure proper header was generated
+		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		assertNotNull("Missing plugin model", model);
 		IPluginBase base = model.getPluginBase();
@@ -1117,6 +1137,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 		
 		// ensure header was *not* generated
+		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		assertNotNull("Missing plugin model", model);
 		IPluginBase base = model.getPluginBase();
@@ -1183,6 +1204,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 		
 		// ensure header was generated
+		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		assertNotNull("Missing plugin model", model);
 		IPluginBase base = model.getPluginBase();
@@ -1248,6 +1270,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 		
 		// ensure header was generated
+		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		assertNotNull("Missing plugin model", model);
 		IPluginBase base = model.getPluginBase();

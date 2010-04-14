@@ -112,6 +112,7 @@ public class BundleRootTests extends TestCase {
 		description.setLocalization(nls);
 		description.apply(null);
 		
+		ProjectCreationTests.waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		assertEquals("Wrong install location", project.getFolder(root).getLocation(), new Path(model.getInstallLocation()));
 	}
