@@ -90,7 +90,10 @@ public abstract class AbstractPluginBlock {
 	private TreeEditor levelColumnEditor = null;
 	private TreeEditor autoColumnEditor = null;
 
-	class OSGiLabelProvider extends StyledCellLabelProvider {
+	/**
+	 * Label provider for the tree.  Implements ILabelProvider so it can support the text filter (see PatternFilter)
+	 */
+	class OSGiLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
 		PDELabelProvider pdeLabelProvider = new PDELabelProvider();
 
@@ -135,6 +138,20 @@ public abstract class AbstractPluginBlock {
 			}
 
 			super.update(cell);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+		 */
+		public Image getImage(Object element) {
+			return getColumnImage(element, 0);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			return getColumnText(element, 0);
 		}
 	}
 

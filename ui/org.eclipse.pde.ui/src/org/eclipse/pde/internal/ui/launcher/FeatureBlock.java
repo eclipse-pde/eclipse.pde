@@ -46,7 +46,10 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 public class FeatureBlock {
 
-	class FeatureTreeLabelProvider extends StyledCellLabelProvider {
+	/**
+	 * Label provider for the tree.  Implements ILabelProvider so it can support the text filter (see PatternFilter)
+	 */
+	class FeatureTreeLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
 		PDELabelProvider pdeLabelProvider = new PDELabelProvider();
 
@@ -100,6 +103,20 @@ public class FeatureBlock {
 			styledString.append(version, StyledString.QUALIFIER_STYLER);
 			styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 			return styledString;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+		 */
+		public Image getImage(Object element) {
+			return getColumnImage(element, 0);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			return getColumnText(element, 0);
 		}
 	}
 
