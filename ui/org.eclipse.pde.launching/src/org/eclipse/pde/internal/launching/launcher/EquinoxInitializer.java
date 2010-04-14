@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,21 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer;
-
-
-
-import org.eclipse.pde.internal.launching.IPDEConstants;
-
 import java.util.*;
-
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEPreferencesManager;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer;
 
 public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 
@@ -40,7 +32,8 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	private void initializeProgramArguments(ILaunchConfigurationWorkingCopy configuration) {
 		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
 		if (buffer.length() > 0) {
-			if (buffer.indexOf("-console") == -1) { //$NON-NLS-1$
+			// Note that -console applies to the same indexof as -consoleLog
+			if (buffer.indexOf("-console ") == -1 && !buffer.toString().endsWith("-console")) { //$NON-NLS-1$ //$NON-NLS-2$
 				buffer.append(" -console"); //$NON-NLS-1$
 			}
 		} else {
