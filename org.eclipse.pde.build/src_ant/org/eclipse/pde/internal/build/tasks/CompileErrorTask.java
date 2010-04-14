@@ -51,6 +51,8 @@ public class CompileErrorTask extends Task {
 
 		if (problems.size() > 0) {
 			File log = new File(logFile);
+			if (!log.getParentFile().exists())
+				log.getParentFile().mkdirs();
 			synchronized (LOCK) {
 				FileWriter writer = null;
 				try {
