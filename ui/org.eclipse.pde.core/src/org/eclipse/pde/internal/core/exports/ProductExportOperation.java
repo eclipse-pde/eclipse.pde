@@ -100,7 +100,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 
-				createFeature(featureID, fFeatureLocation, configurations, true);
+				createFeature(featureID, fFeatureLocation, configurations, fProduct.includeLaunchers());
 				createBuildPropertiesFile(fFeatureLocation, configurations);
 				doExport(featureID, null, fFeatureLocation, configurations, new SubProgressMonitor(monitor, 8));
 			} catch (IOException e) {
@@ -167,7 +167,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() != null;
 		Properties properties = new Properties();
-		if (!hasLaunchers && configurations.length > 0) {
+		if (fProduct.includeLaunchers() && !hasLaunchers && configurations.length > 0) {
 			String rootPrefix = IBuildPropertiesConstants.ROOT_PREFIX + configurations[0][0] + "." + configurations[0][1] + "." + configurations[0][2]; //$NON-NLS-1$ //$NON-NLS-2$
 			properties.put(rootPrefix, getRootFileLocations(hasLaunchers));
 			if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
@@ -309,10 +309,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 	protected HashMap createAntBuildProperties(String[][] configs) {
 		HashMap properties = super.createAntBuildProperties(configs);
 		properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, getLauncherName());
-
-		if (fProduct.includeLaunchers()) {
-			properties.put("excludeLaunchers", IBuildPropertiesConstants.TRUE); //$NON-NLS-1$
-		}
 
 		ILauncherInfo info = fProduct.getLauncherInfo();
 		if (info != null) {
