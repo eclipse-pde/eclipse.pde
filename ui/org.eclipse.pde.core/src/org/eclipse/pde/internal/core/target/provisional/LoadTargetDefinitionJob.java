@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -412,7 +413,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			// generate URLs and save CHECKED_PLUGINS (which are missing), and add to master list of paths
 			StringBuffer checked = new StringBuffer();
 			StringBuffer versions = new StringBuffer();
-			int i = 0;
+			int count = 0;
 			iterator = missing.iterator();
 			Set missingDescriptions = new HashSet(missing.size());
 			while (iterator.hasNext()) {
@@ -424,11 +425,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				} catch (MalformedURLException e) {
 					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LoadTargetDefinitionJob_1, e));
 				}
-				if (i > 0) {
+				if (count > 0) {
 					checked.append(" "); //$NON-NLS-1$
 				}
 				checked.append(bi.getSymbolicName());
-				i++;
+				count++;
 				if (includedIds.contains(bi.getSymbolicName())) {
 					// multiple versions of the bundle are available and some are included - store version info of excluded bundles
 					if (versions.length() > 0) {
@@ -441,7 +442,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			URL[] urls = (URL[]) paths.toArray(new URL[paths.size()]);
 			PDEState state = new PDEState(urls, true, new SubProgressMonitor(monitor, 45));
 			IPluginModelBase[] models = state.getTargetModels();
-			for (i = 0; i < models.length; i++) {
+			for (int i = 0; i < models.length; i++) {
 				NameVersionDescriptor nv = new NameVersionDescriptor(models[i].getPluginBase().getId(), models[i].getPluginBase().getVersion());
 				models[i].setEnabled(!missingDescriptions.contains(nv));
 			}
@@ -493,14 +494,65 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			// Save the feature list for the external feature model manager to EXTERNAL_FEATURES
 			StringBuffer featureList = new StringBuffer();
 			IFeatureModel[] features = fTarget.getAllFeatures();
-			for (int j = 0; j < features.length; j++) {
-				featureList.append(features[j].getFeature().getId());
-				featureList.append('@');
-				featureList.append(features[j].getFeature().getVersion());
-				if (j < features.length - 1) {
-					featureList.append(',');
+
+			// If the target has includes, but only plug-ins are specified, just include all features
+
+			// If the target has feature includes, only add features that are included (bug 308693)
+			NameVersionDescriptor[] includes = fTarget.getIncluded();
+			boolean featuresFound = false; // If only plug-ins are specified, include all features
+			if (includes != null) {
+				for (int i = 0; i < includes.length; i++) {
+					if (includes[i].getType() == NameVersionDescriptor.TYPE_FEATURE) {
+						featuresFound = true;
+						IFeatureModel bestMatch = null;
+						for (int j = 0; j < features.length; j++) {
+							if (features[j].getFeature().getId().equals(includes[i].getId())) {
+								if (includes[i].getVersion() != null) {
+									// Try to find an exact feature match
+									if (includes[i].getVersion().equals(features[j].getFeature().getVersion())) {
+										// Exact match
+										bestMatch = features[j];
+										break;
+									}
+								} else if (bestMatch != null) {
+									// If no version specified take the highest version
+									Version v1 = Version.parseVersion(features[j].getFeature().getVersion());
+									Version v2 = Version.parseVersion(bestMatch.getFeature().getVersion());
+									if (v1.compareTo(v2) > 0) {
+										bestMatch = features[j];
+									}
+								}
+
+								if (bestMatch == null) {
+									// If we can't find a version match, just take any name match
+									bestMatch = features[j];
+								}
+							}
+						}
+						if (bestMatch != null) {
+							if (featureList.length() > 0) {
+								featureList.append(',');
+							}
+							featureList.append(bestMatch.getFeature().getId());
+							featureList.append('@');
+							featureList.append(bestMatch.getFeature().getVersion());
+						}
+					}
 				}
 			}
+
+			if (includes == null || !featuresFound) {
+				// Add all features to the list
+				for (int i = 0; i < features.length; i++) {
+					featureList.append(features[i].getFeature().getId());
+					featureList.append('@');
+					featureList.append(features[i].getFeature().getVersion());
+					if (i < features.length - 1) {
+						featureList.append(',');
+					}
+				}
+			}
+
 			pref.setValue(ICoreConstants.EXTERNAL_FEATURES, featureList.toString());
 
 			Job job = new TargetPlatformResetJob(state);
