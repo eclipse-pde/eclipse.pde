@@ -1017,13 +1017,14 @@ public class TargetDefinition implements ITargetDefinition {
 		return models;
 	}
 
-	/**
-	 * Returns the set of feature models available in this target, will return a cached copy if available
-	 * 
-	 * @see #getOtherBundles()
-	 * @return set of features available in this target, possibly empty.
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getAllFeatures()
 	 */
 	public IFeatureModel[] getAllFeatures() {
+		if (!isResolved()) {
+			return null;
+		}
+
 		if (fFeatureModels != null) {
 			return fFeatureModels;
 		}
@@ -1052,6 +1053,10 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @return set of resolved bundles available in this target that don't belong to any features, possibly empty
 	 */
 	public IResolvedBundle[] getOtherBundles() {
+		if (!isResolved()) {
+			return null;
+		}
+
 		if (fOtherBundles != null) {
 			return fOtherBundles;
 		}
