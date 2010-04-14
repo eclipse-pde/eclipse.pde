@@ -109,13 +109,18 @@ public class FeatureBlock {
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
-			return getColumnImage(element, 0);
+			// Only the name column gets an image, see getColumnImage()
+			return null;
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object element) {
+			// If the label provider implement ILabelProvider the ViewerComparator calls getText() with whatever was passed to it, in our case we are already passing the label text based on sort order
+			if (element instanceof String) {
+				return (String) element;
+			}
 			return getColumnText(element, 0);
 		}
 	}
