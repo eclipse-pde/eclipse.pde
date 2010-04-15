@@ -10,64 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
-
-import org.eclipse.pde.internal.core.importing.IBundleImporter;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ClasspathComputer;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.importing.IBundleImporter;
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -75,10 +40,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.*;
 import org.osgi.framework.BundleException;
 
 /**
@@ -99,6 +63,11 @@ public class PluginImportOperation extends WorkspaceJob {
 	private IPluginModelBase[] fModels;
 	private int fImportType;
 	private Hashtable fProjectClasspaths = new Hashtable();
+
+	/**
+	 * Maps project ids to a List of IWorkingSets, the map is filled when determining what projects to delete
+	 */
+	private Map fProjectWorkingSets = new HashMap();
 	private boolean fForceAutobuild;
 
 	// used when importing from a repository
@@ -208,7 +177,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * asking the user if they would like to delete those projects.  The projects are deleted before
 	 * the import continues so the individual imports can do a simple search for an allowed plug-in name.
 	 * 
-	 * 
+	 * @param monitor progress monitor, must not be null
 	 */
 	private void deleteConflictingProjects(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 5); //$NON-NLS-1$
@@ -267,6 +236,26 @@ public class PluginImportOperation extends WorkspaceJob {
 					return;
 				}
 				monitor.worked(1);
+
+				// collect working set information
+				IWorkingSetManager wsManager = PlatformUI.getWorkbench().getWorkingSetManager();
+				IWorkingSet[] sets = wsManager.getAllWorkingSets();
+				for (int i = 0; i < sets.length; i++) {
+					IAdaptable[] contents = sets[i].getElements();
+					for (int j = 0; j < contents.length; j++) {
+						IResource resource = (IResource) contents[j].getAdapter(IResource.class);
+						if (resource instanceof IProject) {
+							// TODO For now just list everything in the map
+							String id = ((IProject) resource).getName();
+							List workingSets = (List) fProjectWorkingSets.get(id);
+							if (workingSets == null) {
+								workingSets = new ArrayList();
+								fProjectWorkingSets.put(id, workingSets);
+							}
+							workingSets.add(sets[i]);
+						}
+					}
+				}
 
 				//delete the selected projects
 				for (int i = 0; i < overwriteProjectList.size(); i++) {
@@ -557,6 +546,25 @@ public class PluginImportOperation extends WorkspaceJob {
 			project.create(monitor);
 			if (!project.isOpen())
 				project.open(monitor);
+
+			// If we know that a previous project of the same name belonged to one or more working sets, add the new project to them
+			List workingSets = (List) fProjectWorkingSets.get(project.getName());
+			if (workingSets != null) {
+				for (Iterator iterator = workingSets.iterator(); iterator.hasNext();) {
+					IWorkingSet ws = (IWorkingSet) iterator.next();
+					IAdaptable newElement = project;
+					IAdaptable[] projectAdaptables = ws.adaptElements(new IAdaptable[] {project});
+					if (projectAdaptables.length > 0) {
+						newElement = projectAdaptables[0];
+					}
+					IAdaptable[] currentElements = ws.getElements();
+					IAdaptable[] newElements = new IAdaptable[currentElements.length + 1];
+					System.arraycopy(currentElements, 0, newElements, 0, currentElements.length);
+					newElements[currentElements.length] = newElement;
+					ws.setElements(newElements);
+				}
+			}
+
 			monitor.worked(1);
 
 			return project;
