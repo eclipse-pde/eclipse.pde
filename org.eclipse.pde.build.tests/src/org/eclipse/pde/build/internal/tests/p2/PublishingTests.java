@@ -1569,7 +1569,7 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		IFile ini = buildFolder.getFile("eclipse.ini");
-		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini);
 
 		assertLogContainsLines(ini, new String[] {"-vm", "myVm"});
 		boolean duplicate = false;
