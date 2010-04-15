@@ -1824,4 +1824,40 @@ public class PublishingTests extends P2TestCase {
 			}
 		}
 	}
+
+	public void testBug307157() throws Exception {
+		IFolder buildFolder = newTest("307157");
+
+		Utils.generateFeature(buildFolder, "F", new String[] {"F1", "F2"}, null);
+		Utils.generateFeature(buildFolder, "F1", null, null);
+		Utils.generateFeature(buildFolder, "F2", null, null);
+
+		Utils.writeBuffer(buildFolder.getFile("features/F1/file1.txt"), new StringBuffer("for feature 1"));
+		Utils.writeBuffer(buildFolder.getFile("features/F2/file2.txt"), new StringBuffer("for feature 2"));
+
+		Properties buildProperties = new Properties();
+		buildProperties.put("bin.includes", "feature.xml,file*");
+		Utils.storeBuildProperties(buildFolder.getFolder("features/F1"), buildProperties);
+		Utils.storeBuildProperties(buildFolder.getFolder("features/F2"), buildProperties);
+
+		buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+		buildProperties.put("topLevelElementId", "F");
+		buildProperties.put("p2.gathering", "true");
+		buildProperties.put("filteredDependencyCheck", "true");
+		buildProperties.put("archivesFormat", "group,group,group-folder");
+		buildProperties.put("feature.temp.folder", buildFolder.getFolder("temp").getLocation().toOSString());
+		Utils.storeBuildProperties(buildFolder, buildProperties);
+		runBuild(buildFolder);
+
+		Set entries = new HashSet();
+		entries.add("feature.xml");
+		entries.add("file1.txt");
+		assertZipContents(buildFolder, "tmp/eclipse/features/F1_1.0.0.jar", entries, true);
+
+		entries.add("feature.xml");
+		entries.add("file1.txt");
+		entries.add("file2.txt");
+		assertZipContents(buildFolder, "tmp/eclipse/features/F2_1.0.0.jar", entries, false);
+		assertTrue(entries.contains("file1.txt"));
+	}
 }

@@ -299,10 +299,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_PUBLISH_BIN_PARTS, TARGET_INIT, PROPERTY_P2_PUBLISH_PARTS, null, null);
 
-		String featureTemp = Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
+		String featureTemp = Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + '/' + featureFolderName;
+		script.printMkdirTask(featureTemp);
+
 		Map callbackParams = null;
 		if (customFeatureCallbacks != null) {
-			featureTemp += '/' + featureFullName;
 			callbackParams = new HashMap(1);
 			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, featureTemp);
@@ -314,8 +315,6 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			include = (include != null ? include + "," : "") + "feature.xml"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
-
-		script.printMkdirTask(featureTemp);
 
 		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 		script.printCopyTask(null, featureTemp, new FileSet[] {fileSet}, true, true);
