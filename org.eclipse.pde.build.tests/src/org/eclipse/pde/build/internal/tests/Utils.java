@@ -371,32 +371,33 @@ public class Utils {
 		}
 	}
 
-	public static void extractFromZip(IFolder buildFolder, String zipFile, String zipEntry, IFile outputFile) throws CoreException {
+	public static boolean extractFromZip(IFolder buildFolder, String zipFile, String zipEntry, IFile outputFile) throws CoreException {
 		File folder = new File(buildFolder.getLocation().toOSString());
 		File archiveFile = new File(folder, zipFile);
 		if (!archiveFile.exists())
-			return;
+			return false;
 
 		ZipFile zip = null;
 		try {
 			zip = new ZipFile(archiveFile);
 			ZipEntry entry = zip.getEntry(zipEntry);
 			if (entry == null)
-				return;
+				return false;
 			InputStream stream = new BufferedInputStream(zip.getInputStream(entry));
 			OutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile.getLocation().toFile()));
 			transferStreams(stream, out);
 		} catch (Exception e) {
-			return;
+			return false;
 		} finally {
 			try {
 				if (zip != null)
 					zip.close();
 			} catch (IOException e) {
-				return;
+				return false;
 			}
 		}
 		outputFile.refreshLocal(IResource.DEPTH_ONE, null);
+		return true;
 	}
 
 	public static Properties loadProperties(IFile propertiesFile) throws CoreException {
