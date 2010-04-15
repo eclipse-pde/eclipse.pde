@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
@@ -95,7 +96,9 @@ public class ProjectUtils {
 		description.setExtensionRegistry(true);
 		description.setEquinox(true);
 		description.setBundleVersion(new Version("1.0.0"));
-		description.apply(null);		
+		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
+		description.apply(null);	
+		AbstractApiTest.waitForAutoBuild();
 		return JavaCore.create(project);
 	}
 	
@@ -332,17 +335,35 @@ public class ProjectUtils {
 		list.add(service.newPackageExport(packagename, null, !internal, friends));
 		description.setPackageExports((IPackageExportDescription[]) list.toArray(new IPackageExportDescription[list.size()]));
 		description.apply(null);
+		AbstractApiTest.waitForAutoBuild();
 	}
 	
 	/**
 	 * Returns the {@link IPackageExportDescription}s for the given project or <code>null</code>
 	 * if none.
 	 * 
-	 * @param project the proejct
+	 * @param project the project
 	 * @return the {@link IPackageExportDescription}s for the given project or <code>null</code>
 	 */
 	public static IPackageExportDescription[] getExportedPackages(IProject project) throws CoreException {
 		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
 		return description.getPackageExports();
+	}
+	
+	/**
+	 * Adds an entry to the bundle class path header
+	 * 
+	 * @param project the project
+	 * @param entry the entry to append
+	 * @throws CoreException
+	 */
+	public static void addBundleClasspathEntry(IProject project, IBundleClasspathEntry entry) throws CoreException {
+		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
+		IBundleClasspathEntry[] classpath = description.getBundleClasspath();
+		IBundleClasspathEntry[] next = new IBundleClasspathEntry[classpath.length + 1];
+		System.arraycopy(classpath, 0, next, 0, classpath.length);
+		next[next.length - 1] = entry;
+		description.setBundleClassath(next);
+		description.apply(null);
 	}
 }

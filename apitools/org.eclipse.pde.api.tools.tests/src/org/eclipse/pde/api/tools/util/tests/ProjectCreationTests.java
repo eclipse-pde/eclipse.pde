@@ -23,8 +23,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
@@ -73,11 +71,6 @@ public class ProjectCreationTests extends AbstractApiTest {
 		assertNotNull("The java project must have been created", project);
 		srcroot = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
 		assertNotNull("the src root must have been created", srcroot);
-
-		// add rt.jar
-		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-		assertNotNull("No default JRE", vm);
-		ProjectUtils.addContainerEntry(project, new Path(JavaRuntime.JRE_CONTAINER));
 	}
 
 	/**

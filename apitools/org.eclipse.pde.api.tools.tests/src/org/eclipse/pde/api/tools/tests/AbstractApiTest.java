@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,14 +23,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -38,7 +34,6 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
-import org.eclipse.pde.api.tools.util.tests.JavaModelEventWaiter;
 import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
 import org.eclipse.pde.internal.core.natures.PDE;
 
@@ -132,14 +127,11 @@ public class AbstractApiTest extends TestCase {
 		if(name == null) {
 			return;
 		}
-		JavaModelEventWaiter waiter = new JavaModelEventWaiter(name, IJavaElementDelta.ADDED, 0, IJavaElement.JAVA_PROJECT);
         // create project and import source
         IJavaProject jproject = ProjectUtils.createPluginProject(name, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
-        Object obj = waiter.waitForEvent();
-        assertNotNull("the added event was not received", obj);
         assertNotNull("The java project must have been created", jproject);
-        IPackageFragmentRoot root = ProjectUtils.addSourceContainer(jproject, ProjectUtils.SRC_FOLDER);
-        assertNotNull("the src root must have been created", root);
+        IPackageFragmentRoot root = jproject.getPackageFragmentRoot(jproject.getProject().getFolder(ProjectUtils.SRC_FOLDER));
+        assertTrue("the src root must have been created", root.exists());
         if(packages != null) {
 	        IPackageFragment fragment = null;
 	        for (int i = 0; i < packages.length; i++) {
@@ -148,10 +140,6 @@ public class AbstractApiTest extends TestCase {
 			}
         }
          
-        // add rt.jar
-        IVMInstall vm = JavaRuntime.getDefaultVMInstall();
-        assertNotNull("No default JRE", vm);
-        ProjectUtils.addContainerEntry(jproject, new Path(JavaRuntime.JRE_CONTAINER));
         IApiBaseline baseline = getWorkspaceBaseline();
         assertNotNull("the workspace baseline cannot be null", baseline);
         IApiComponent component = baseline.getApiComponent(name);
