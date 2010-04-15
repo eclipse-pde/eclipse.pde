@@ -330,6 +330,7 @@ public class SourceTests extends PDETestCase {
 
 		entries.clear();
 		entries.add("about.html");
+		entries.add("plugin.properties");
 		assertZipContents(buildFolder, "bundleA.source_1.0.0.jar", entries);
 
 		IFile feature = buildFolder.getFile("features/rcp.source/feature.xml");
