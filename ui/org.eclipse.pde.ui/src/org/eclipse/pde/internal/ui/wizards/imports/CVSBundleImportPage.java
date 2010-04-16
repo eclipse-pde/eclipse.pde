@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.importing.CvsBundleImportDescription;
 import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -34,6 +35,7 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 	private BundleImportDescription[] descriptions;
 	private Button useHead;
 	private TableViewer bundlesViewer;
+	private Label counterLabel;
 
 	private static final String CVS_PAGE_USE_HEAD = "org.eclipse.pde.ui.cvs.import.page.head"; //$NON-NLS-1$
 
@@ -122,6 +124,8 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 		bundlesViewer.setLabelProvider(new CvsLabelProvider());
 		bundlesViewer.setContentProvider(new ArrayContentProvider());
 		bundlesViewer.setComparator(new ViewerComparator());
+		counterLabel = new Label(comp, SWT.NONE);
+		counterLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setControl(comp);
 		setPageComplete(true);
 
@@ -151,6 +155,7 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 
 		if (descriptions != null) {
 			bundlesViewer.setInput(descriptions);
+			updateCount();
 		}
 	}
 
@@ -207,7 +212,15 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 		// fill viewer
 		if (bundlesViewer != null) {
 			bundlesViewer.setInput(descriptions);
+			updateCount();
 		}
 	}
 
+	/**
+	 * Updates the count of bundles that will be imported
+	 */
+	private void updateCount() {
+		counterLabel.setText(NLS.bind(PDEUIMessages.ImportWizard_expressPage_total, new Integer(descriptions.length)));
+		counterLabel.getParent().layout();
+	}
 }
