@@ -15,6 +15,7 @@ import java.io.File;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -351,6 +352,28 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	private void performMergeSplit() throws CoreException {
 		cleanBuild();
 		fullBuild();
+		boolean errors = false;
+		int attempts = 1;
+		// for some reason we get JDT build errors sometimes... so try again until there are none
+		do {
+			errors = false;
+			IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(getEnv().getWorkspaceRootPath());
+			int length = jdtMarkers.length;
+			if (length != 0) {
+				for (int i = 0; i < length; i++) {
+					if (jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR) {
+						errors = true;
+						break;
+					}
+				}
+			}
+			if (errors) {
+				attempts++;
+				cleanBuild();
+				fullBuild();
+			}
+		} while (errors && attempts < 10);
+		
 		expectingNoJDTProblems();
 		//problems are now reported on the types from the fragment
 		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=289640
