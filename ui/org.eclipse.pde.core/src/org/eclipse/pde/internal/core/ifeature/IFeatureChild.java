@@ -22,6 +22,7 @@ public interface IFeatureChild extends IFeatureObject, IIdentifiable, IMatchRule
 	String P_OPTIONAL = "optional"; //$NON-NLS-1$
 	String P_NAME = "name"; //$NON-NLS-1$
 	String P_MATCH = "match"; //$NON-NLS-1$
+	String P_FILTER = "filter"; //$NON-NLS-1$
 	String P_SEARCH_LOCATION = "search-location"; //$NON-NLS-1$
 
 	int ROOT = 0;
@@ -48,4 +49,7 @@ public interface IFeatureChild extends IFeatureObject, IIdentifiable, IMatchRule
 
 	void setMatch(int match) throws CoreException;
 
+	String getFilter();
+
+	void setFilter(String filter) throws CoreException;
 }

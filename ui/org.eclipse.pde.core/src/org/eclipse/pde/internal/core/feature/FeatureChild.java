@@ -11,12 +11,10 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.w3c.dom.Node;
 
 public class FeatureChild extends IdentifiableObject implements IFeatureChild {
@@ -30,6 +28,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private String fWs;
 	private String fArch;
 	private String fNl;
+	private String fFilter;
 
 	protected void reset() {
 		super.reset();
@@ -42,6 +41,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fWs = null;
 		fArch = null;
 		fNl = null;
+		fFilter = null;
 	}
 
 	protected void parse(Node node) {
@@ -53,6 +53,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fWs = getNodeAttribute(node, "ws"); //$NON-NLS-1$
 		fArch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
 		fNl = getNodeAttribute(node, "nl"); //$NON-NLS-1$
+		fFilter = getNodeAttribute(node, "filter"); //$NON-NLS-1$
 		String matchName = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		if (matchName != null) {
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
@@ -120,6 +121,10 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 
 	public String getNL() {
 		return fNl;
+	}
+
+	public String getFilter() {
+		return fFilter;
 	}
 
 	public IFeature getReferencedFeature() {
@@ -196,6 +201,13 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		firePropertyChanged(P_NL, oldValue, nl);
 	}
 
+	public void setFilter(String filter) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.fFilter;
+		this.fFilter = filter;
+		firePropertyChanged(P_FILTER, oldValue, filter);
+	}
+
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion((String) newValue);
@@ -270,6 +282,12 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			String value = fSearchLocation == SELF ? "self" : "both"; //$NON-NLS-1$ //$NON-NLS-2$
 			writer.print(indent2 + "search-location=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
+		if (getFilter() != null) {
+			writer.println();
+			writer.print(indent2 + "filter=\"" + getFilter() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		writer.println("/>"); //$NON-NLS-1$
 	}
 }

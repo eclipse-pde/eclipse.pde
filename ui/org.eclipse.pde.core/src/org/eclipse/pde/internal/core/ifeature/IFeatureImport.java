@@ -35,4 +35,8 @@ public interface IFeatureImport extends IFeatureObject, IPluginReference {
 	int getIdMatch();
 
 	void setIdMatch(int idMatch) throws CoreException;
+
+	String getFilter();
+
+	void setFilter(String filter) throws CoreException;
 }

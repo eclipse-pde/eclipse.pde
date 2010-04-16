@@ -21,6 +21,7 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable {
 	String P_WS = "p_ws"; //$NON-NLS-1$
 	String P_NL = "p_nl"; //$NON-NLS-1$
 	String P_ARCH = "p_arch"; //$NON-NLS-1$
+	String P_FILTER = "p_filter"; //$NON-NLS-1$
 	String P_DOWNLOAD_SIZE = "p_download_size"; //$NON-NLS-1$
 	String P_INSTALL_SIZE = "p_install_size"; //$NON-NLS-1$
 
@@ -43,6 +44,11 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable {
 	 * Returns a comma-separated list of the architecture this plug-in supports.
 	 */
 	public String getArch();
+
+	/**
+	 * Returns an LDAP filter that must be satisfied for this entry 
+	 */
+	public String getFilter();
 
 	/**
 	 * 	Returns estimated download size of this plug-in.
@@ -73,6 +79,11 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable {
 	 * Sets a comma-separated list of the archiecture this plug-in supports.
 	 */
 	public void setArch(String arch) throws CoreException;
+
+	/**
+	 * Sets an LDAP filter on this plugin
+	 */
+	public void setFilter(String filter) throws CoreException;
 
 	/**
 	 * 	Sets the estimated download size of this plug-in.

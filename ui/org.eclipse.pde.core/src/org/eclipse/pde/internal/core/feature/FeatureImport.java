@@ -11,16 +11,10 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 
@@ -30,6 +24,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	private int fIdMatch = PERFECT;
 	private int fType = PLUGIN;
 	private boolean fPatch = false;
+	private String fFilter = null;
 
 	public FeatureImport() {
 	}
@@ -86,6 +81,7 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		fType = PLUGIN;
 		fMatch = NONE;
 		fIdMatch = PERFECT;
+		fFilter = null;
 	}
 
 	protected void parse(Node node) {
@@ -109,12 +105,12 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 			}
 		}
 		mvalue = getNodeAttribute(node, "id-match"); //$NON-NLS-1$
-
 		if (mvalue != null && mvalue.length() > 0) {
 			if (mvalue.equalsIgnoreCase(RULE_PREFIX))
 				fIdMatch = PREFIX;
 		}
 		fPatch = getBooleanAttribute(node, "patch"); //$NON-NLS-1$
+		fFilter = getNodeAttribute(node, "filter"); //$NON-NLS-1$
 	}
 
 	public void loadFrom(IFeature feature) {
@@ -193,6 +189,9 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		if (fPatch) {
 			writer.print(" patch=\"true\""); //$NON-NLS-1$
 		}
+		if (fFilter != null) {
+			writer.print(" filter=\"" + fFilter + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
@@ -204,5 +203,14 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		if (feature != null)
 			return feature.getLabel();
 		return getId();
+	}
+
+	public String getFilter() {
+		return fFilter;
+	}
+
+	public void setFilter(String filter) throws CoreException {
+		this.fFilter = filter;
+
 	}
 }

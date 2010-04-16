@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.File;
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.w3c.dom.Node;
@@ -23,6 +22,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	private String ws;
 	private String nl;
 	private String arch;
+	private String filter;
 	private long downloadSize;
 	private long installSize;
 
@@ -53,6 +53,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		ws = getNodeAttribute(node, "ws"); //$NON-NLS-1$
 		nl = getNodeAttribute(node, "nl"); //$NON-NLS-1$
 		arch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
+		filter = getNodeAttribute(node, "filter"); //$NON-NLS-1$
 		downloadSize = getIntegerAttribute(node, "download-size"); //$NON-NLS-1$
 		installSize = getIntegerAttribute(node, "install-size"); //$NON-NLS-1$
 	}
@@ -63,6 +64,7 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		writeAttribute("ws", getWS(), indent2, writer); //$NON-NLS-1$
 		writeAttribute("nl", getNL(), indent2, writer); //$NON-NLS-1$
 		writeAttribute("arch", getArch(), indent2, writer); //$NON-NLS-1$
+		writeAttribute("filter", getFilter(), indent2, writer); //$NON-NLS-1$
 		writer.println();
 		writer.print(indent2 + "download-size=\"" + getDownloadSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
@@ -162,6 +164,24 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		Object oldValue = this.arch;
 		this.arch = arch;
 		firePropertyChanged(P_ARCH, oldValue, arch);
+	}
+
+	/**
+	 * Get the LDAP filter
+	 * @return the filter or null
+	 */
+	public String getFilter() {
+		return filter;
+	}
+
+	/** Set the LDAP filter
+	 * @param filter The filter to set
+	 */
+	public void setFilter(String filter) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.filter;
+		this.filter = filter;
+		firePropertyChanged(P_FILTER, oldValue, filter);
 	}
 
 	/**

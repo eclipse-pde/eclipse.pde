@@ -110,7 +110,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					validateBoolean(plugin, attr);
 				} else if (!name.equals("os") && !name.equals("ws") && !name.equals("nl") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						&& !name.equals("arch") && !name.equals("download-size") //$NON-NLS-1$ //$NON-NLS-2$
-						&& !name.equals("install-size")) { //$NON-NLS-1$
+						&& !name.equals("install-size") && !name.equals("filter")) { //$NON-NLS-1$ //$NON-NLS-2$
 					reportUnknownAttribute(plugin, name, CompilerFlags.ERROR);
 				}
 			}
@@ -163,7 +163,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					} else {
 						validateBoolean(element, attr);
 					}
-				} else if (!name.equals("plugin") && !name.equals("feature")) { //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (!name.equals("plugin") && !name.equals("feature") && !name.equals("filter")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					reportUnknownAttribute(element, name, CompilerFlags.ERROR);
 				}
 			}
@@ -198,7 +198,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 						reportIllegalAttributeValue(include, attr);
 					}
 				} else if (!name.equals("id") && !name.equals("name") && !name.equals("os") && !name.equals("ws") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-						&& !name.equals("nl") && !name.equals("arch")) { //$NON-NLS-1$ //$NON-NLS-2$
+						&& !name.equals("nl") && !name.equals("arch") && !name.equals("filter")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					reportUnknownAttribute(include, name, CompilerFlags.ERROR);
 				}
 			}
