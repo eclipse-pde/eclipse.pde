@@ -35,6 +35,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	private static final String STATUS_SUBENTRY = "!SUBENTRY"; //$NON-NLS-1$
 	private static final String ECLIPSE_APP_MACOS = "Eclipse.app/Contents/MacOS"; //$NON-NLS-1$
 	private static final String ECLIPSE_APP_CONTENTS = "Eclipse.app/Contents"; //$NON-NLS-1$
+	private static final String MAC_JAVA_FRAMEWORK = "/System/Library/Frameworks/JavaVM.framework"; //$NON-NLS-1$
 	private String fFeatureLocation;
 	private String fRoot;
 	private IProduct fProduct;
@@ -189,6 +190,10 @@ public class ProductExportOperation extends FeatureExportOperation {
 		for (int i = 0; i < configurations.length; i++) {
 			String[] config = configurations[i];
 			File vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
+
+			if (config[0].equals("macosx") && vm.getPath().startsWith(MAC_JAVA_FRAMEWORK)) { //$NON-NLS-1$
+				continue;
+			}
 
 			if (vm != null) {
 				String rootPrefix = IBuildPropertiesConstants.ROOT_PREFIX + config[0] + "." + config[1] + //$NON-NLS-1$

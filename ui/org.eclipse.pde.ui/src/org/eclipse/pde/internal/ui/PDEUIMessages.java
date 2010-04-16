@@ -1898,6 +1898,7 @@ public class PDEUIMessages extends NLS {
 	public static String ProductJRESection_desc;
 	public static String ProductJRESection_eeName;
 	public static String ProductJRESection_browseEEs;
+	public static String ProdctJRESection_bundleJRE;
 
 	public static String Product_FeatureSection_remove;
 	public static String Product_FeatureSection_open;

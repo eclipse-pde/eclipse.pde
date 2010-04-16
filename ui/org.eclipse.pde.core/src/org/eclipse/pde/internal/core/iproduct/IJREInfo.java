@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,4 +44,17 @@ public interface IJREInfo extends IProductObject {
 	 */
 	public void setJREContainerPath(String os, IPath jreContainerPath);
 
+	/**
+	 * Returns whether or not the JRE for the given oOS should actually be bundled with the product
+	 * @param os
+	 * @return whether to include the JRE with the product
+	 */
+	public boolean includeJREWithProduct(String os);
+
+	/**
+	 * Set whether or not the JRE for the given OS should be included with the product
+	 * @param os
+	 * @param includeJRE
+	 */
+	public void setIncludeJREWithProduct(String os, boolean includeJRE);
 }

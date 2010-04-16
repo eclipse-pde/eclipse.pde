@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,8 +37,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.*;
 
 public class JRESection extends PDESection {
 
@@ -107,20 +106,9 @@ public class JRESection extends PDESection {
 		});
 		fTabFolder.setUnselectedImageVisible(false);
 
-		fEEButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_eeName, SWT.CHECK);
-		fEEButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fEEsCombo.setEnabled(fEEButton.getSelection());
-				if (fEEButton.getSelection()) {
-					updateWidgets();
-					if (fEEsCombo.getSelection() == null)
-						fEEsCombo.select(0);
-					else
-						setEE((IExecutionEnvironment) fEEsCombo.getSelection());
-				}
-			}
-		});
-		fEEButton.setEnabled(isEditable());
+		FormText text = toolkit.createFormText(client, false);
+		text.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		text.setText(PDEUIMessages.ProductJRESection_eeName, false, false);
 
 		fEEsCombo = new ComboViewerPart();
 		fEEsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
@@ -128,10 +116,13 @@ public class JRESection extends PDESection {
 		fEEsCombo.setLabelProvider(new EELabelProvider());
 		fEEsCombo.setComparator(new ViewerComparator());
 		fEEsCombo.setItems(VMUtil.getExecutionEnvironments());
+		fEEsCombo.addItem("", 0); //$NON-NLS-1$
 		fEEsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!fBlockChanges) {
-					setEE((IExecutionEnvironment) ((IStructuredSelection) event.getSelection()).getFirstElement());
+					Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
+					setEE(selection instanceof IExecutionEnvironment ? (IExecutionEnvironment) selection : null);
+					fEEButton.setEnabled(selection instanceof IExecutionEnvironment);
 				}
 			}
 		});
@@ -146,6 +137,17 @@ public class JRESection extends PDESection {
 			}
 		});
 		fExecutionEnvironmentsButton.setEnabled(isEditable());
+
+		fEEButton = toolkit.createButton(client, PDEUIMessages.ProdctJRESection_bundleJRE, SWT.CHECK);
+		GridData buttonLayout = new GridData(GridData.FILL_HORIZONTAL);
+		buttonLayout.horizontalSpan = 2;
+		fEEButton.setLayoutData(buttonLayout);
+		fEEButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getJVMLocations().setIncludeJREWithProduct(getOS(fLastTab), fEEButton.getSelection());
+			}
+		});
+		fEEButton.setEnabled(isEditable());
 
 		createTabs();
 		toolkit.paintBordersFor(client);
@@ -200,6 +202,7 @@ public class JRESection extends PDESection {
 	public void refresh() {
 		fBlockChanges = true;
 		fLastTab = fTabFolder.getSelectionIndex();
+		fEEButton.setSelection(getJVMLocations().includeJREWithProduct(getOS(fLastTab)));
 		IPath jrePath = getJVMLocations().getJREContainerPath(getOS(fLastTab));
 		if (jrePath != null) {
 			String eeID = JavaRuntime.getExecutionEnvironmentId(jrePath);
@@ -208,16 +211,13 @@ public class JRESection extends PDESection {
 				if (!fEEsCombo.getItems().contains(env))
 					fEEsCombo.addItem(env);
 				fEEsCombo.select(env);
-				fEEButton.setSelection(true);
 			} else {
 				IVMInstall install = JavaRuntime.getVMInstall(jrePath);
 				if (install != null) {
-					fEEButton.setSelection(false);
 					fEEsCombo.select(null);
 				}
 			}
 		} else {
-			fEEButton.setSelection(false);
 			fEEsCombo.select(null);
 		}
 		updateWidgets();
@@ -255,7 +255,7 @@ public class JRESection extends PDESection {
 	}
 
 	protected void updateWidgets() {
-		fEEsCombo.setEnabled(isEditable() && fEEButton.getSelection());
+		fEEButton.setEnabled(isEditable() && fEEsCombo.getSelection() instanceof IExecutionEnvironment);
 	}
 
 	/* (non-Javadoc)
