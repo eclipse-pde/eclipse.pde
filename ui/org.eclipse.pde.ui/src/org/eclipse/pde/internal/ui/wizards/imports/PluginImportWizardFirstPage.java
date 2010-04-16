@@ -10,80 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
-
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
-
-import org.eclipse.pde.internal.core.importing.IBundleImporter;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import java.util.List;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEPreferencesManager;
-import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.SourceLocationKey;
-import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.importing.IBundleImporter;
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
+import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
@@ -728,7 +683,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					}
 					if (page != null) {
 						nextPages.add(page);
-						page.setSelection((BundleImportDescription[]) entry.getValue());
+//						page.setSelection((BundleImportDescription[]) entry.getValue());
 					}
 				}
 			}
@@ -929,6 +884,48 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			case FROM_DIRECTORY :
 			default :
 				return getDropLocation();
+		}
+	}
+
+	/**
+	 * Notifies the contributed bundle import pages of the bundles to import.
+	 * 
+	 * @param models the models selected for import
+	 */
+	public void configureBundleImportPages(IPluginModelBase[] models) {
+		// make a set of the models to import for quick lookup
+		Set modelsSet = new HashSet();
+		for (int i = 0; i < models.length; i++) {
+			modelsSet.add(models[i]);
+		}
+		Map importerToImportees = new HashMap();
+		Iterator iterator = importerToInstructions.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry entry = (Entry) iterator.next();
+			IBundleImporter importer = (IBundleImporter) entry.getKey();
+			BundleImportDescription[] descriptions = (BundleImportDescription[]) entry.getValue();
+			for (int i = 0; i < descriptions.length; i++) {
+				IPluginModelBase model = (IPluginModelBase) descriptions[i].getProperty(BundleProjectService.PLUGIN);
+				if (modelsSet.contains(model)) {
+					List importees = (List) importerToImportees.get(importer);
+					if (importees == null) {
+						importees = new ArrayList();
+						importerToImportees.put(importer, importees);
+					}
+					importees.add(descriptions[i]);
+				}
+			}
+		}
+		iterator = importerToImportees.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry entry = (Entry) iterator.next();
+			IBundleImporter importer = (IBundleImporter) entry.getKey();
+			List list = (List) entry.getValue();
+			BundleImportDescription[] descriptions = (BundleImportDescription[]) list.toArray(new BundleImportDescription[list.size()]);
+			IBundeImportWizardPage page = (IBundeImportWizardPage) importIdToWizardPage.get(importer.getId());
+			if (page != null) {
+				page.setSelection(descriptions);
+			}
 		}
 	}
 }

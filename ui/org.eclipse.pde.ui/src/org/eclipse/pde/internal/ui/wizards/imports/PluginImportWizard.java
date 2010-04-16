@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,33 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.debug.core.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
-public class PluginImportWizard extends Wizard implements IImportWizard {
+public class PluginImportWizard extends Wizard implements IImportWizard, IPageChangingListener {
 
 	private static final String STORE_SECTION = "PluginImportWizard"; //$NON-NLS-1$
 
@@ -54,6 +46,18 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#createPageControls(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls(pageContainer);
+		IWizardContainer container = getContainer();
+		if (container instanceof WizardDialog) {
+			WizardDialog dialog = (WizardDialog) container;
+			dialog.addPageChangingListener(this);
+		}
 	}
 
 	public void addPages() {
@@ -91,6 +95,12 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			if (dialog.open() != IDialogConstants.OK_ID)
 				return false;
 
+		}
+		if (page1.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
+			if (getContainer().getCurrentPage() == page3) {
+				// ensure to set the models to import when finished is pressed without advancing to the repository pages
+				page1.configureBundleImportPages(models);
+			}
 		}
 		// finish contributed pages
 		if (!page1.finishPages()) {
@@ -194,5 +204,15 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	public boolean canFinish() {
 		return !page1.isCurrentPage() && page1.getNextPage().isPageComplete() && page1.arePagesComplete();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangingListener#handlePageChanging(org.eclipse.jface.dialogs.PageChangingEvent)
+	 */
+	public void handlePageChanging(PageChangingEvent event) {
+		if (event.getCurrentPage() == page3 && event.getTargetPage() instanceof IBundeImportWizardPage) {
+			IPluginModelBase[] models = getModelsToImport();
+			page1.configureBundleImportPages(models);
+		}
 	}
 }
