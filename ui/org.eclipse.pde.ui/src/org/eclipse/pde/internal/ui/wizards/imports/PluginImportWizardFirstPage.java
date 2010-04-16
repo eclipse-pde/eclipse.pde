@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,29 +135,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Group importChoices = SWTFactory.createGroup(container, PDEUIMessages.ImportWizard_FirstPage_importGroup, 1, 1, GridData.FILL_HORIZONTAL);
 		scanButton = SWTFactory.createRadioButton(importChoices, PDEUIMessages.ImportWizard_FirstPage_scanAll);
 		importButton = SWTFactory.createRadioButton(importChoices, PDEUIMessages.ImportWizard_FirstPage_importPrereqs);
-		SelectionAdapter adapter = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateRepositoryOption();
-			}
-		};
-		scanButton.addSelectionListener(adapter);
-		importButton.addSelectionListener(adapter);
-	}
-
-	/**
-	 * For now, disable repository import when not scanning.
-	 * TODO: this should be supported in the future.
-	 */
-	private void updateRepositoryOption() {
-		if (importButton.getSelection()) {
-			repositoryButton.setEnabled(false);
-			if (repositoryButton.getSelection()) {
-				repositoryButton.setSelection(false);
-				binaryButton.setSelection(true);
-			}
-		} else {
-			repositoryButton.setEnabled(true);
-		}
 	}
 
 	/**
@@ -218,7 +195,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 		scanButton.setSelection(scan);
 		importButton.setSelection(!scan);
-		updateRepositoryOption();
 
 	}
 
@@ -765,7 +741,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				return (IWizardPage) nextPages.get(index + 1);
 			}
 		}
-		if (page instanceof PluginImportWizardDetailedPage) {
+		if (page instanceof PluginImportWizardDetailedPage || page instanceof PluginImportWizardExpressPage) {
 			return (IWizardPage) nextPages.get(0);
 		}
 		return null;

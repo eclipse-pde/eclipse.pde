@@ -97,7 +97,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 
 		}
 		if (page1.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
-			if (getContainer().getCurrentPage() == page3) {
+			if (getContainer().getCurrentPage() instanceof BaseImportWizardSecondPage) {
 				// ensure to set the models to import when finished is pressed without advancing to the repository pages
 				page1.configureBundleImportPages(models);
 			}
@@ -182,7 +182,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 			}
 			return page2;
 		}
-		if (page.equals(page3)) {
+		if (page.equals(page2) || page.equals(page3)) {
 			return page1.getNextPage(page);
 		}
 		return null;
@@ -210,7 +210,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	 * @see org.eclipse.jface.dialogs.IPageChangingListener#handlePageChanging(org.eclipse.jface.dialogs.PageChangingEvent)
 	 */
 	public void handlePageChanging(PageChangingEvent event) {
-		if (event.getCurrentPage() == page3 && event.getTargetPage() instanceof IBundeImportWizardPage) {
+		if (event.getCurrentPage() instanceof BaseImportWizardSecondPage && event.getTargetPage() instanceof IBundeImportWizardPage) {
 			IPluginModelBase[] models = getModelsToImport();
 			page1.configureBundleImportPages(models);
 		}

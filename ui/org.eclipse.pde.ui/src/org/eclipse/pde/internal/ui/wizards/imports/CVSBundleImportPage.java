@@ -10,31 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
-
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.importing.CvsBundleImportDescription;
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
@@ -161,8 +149,9 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 		useHead.setSelection(head);
 		versions.setSelection(!head);
 
-		// fill viewer
-		bundlesViewer.setInput(descriptions);
+		if (descriptions != null) {
+			bundlesViewer.setInput(descriptions);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -215,6 +204,10 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 	 */
 	public void setSelection(BundleImportDescription[] descriptions) {
 		this.descriptions = descriptions;
+		// fill viewer
+		if (bundlesViewer != null) {
+			bundlesViewer.setInput(descriptions);
+		}
 	}
 
 }
