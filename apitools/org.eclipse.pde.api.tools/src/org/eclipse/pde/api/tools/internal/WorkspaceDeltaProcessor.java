@@ -227,7 +227,11 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 		switch(event.getType()) {
 			case IResourceChangeEvent.PRE_BUILD: {
 				if(DEBUG) {
-					System.out.println("processed PRE_BUILD delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (resource == null) {
+						System.out.println("processed PRE_BUILD delta for workspace."); //$NON-NLS-1$
+					} else {
+						System.out.println("processed PRE_BUILD delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				}
 				IResourceDelta delta = event.getDelta();
 				if (delta != null) {
