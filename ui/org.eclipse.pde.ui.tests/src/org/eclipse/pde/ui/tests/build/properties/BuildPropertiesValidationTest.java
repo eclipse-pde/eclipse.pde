@@ -48,6 +48,11 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 	public void testBuildPropertiesOne() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.one");
 		project.open(new NullProgressMonitor());
+		
+		// TODO Close the project and reopen to force natures data to refresh, remove if bug 297871 is fixed
+		project.close(new NullProgressMonitor());
+		project.open(new NullProgressMonitor());
+		
 		setPreferences(project, CompilerFlags.ERROR);
 		for (int i = 1; i <= 4; i++) {
 			if (buildProject(project, i)) {
@@ -69,6 +74,10 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
+		
+		// TODO Close the project and reopen to force natures data to refresh, remove if bug 297871 is fixed
+		project.close(new NullProgressMonitor());
+		project.open(new NullProgressMonitor());
 
 		if (buildProject(project, 1)) {
 			IResource buildProperty = project.findMember("build.properties");
@@ -88,6 +97,10 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.2");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
+		
+		// TODO Close the project and reopen to force natures data to refresh, remove if bug 297871 is fixed
+		project.close(new NullProgressMonitor());
+		project.open(new NullProgressMonitor());
 
 		if (buildProject(project, 2)) {
 			IResource buildProperty = project.findMember("build.properties");
@@ -104,16 +117,14 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.three");
 		project.open(new NullProgressMonitor());
 		setPreferences(project, CompilerFlags.ERROR);
-		for (int i = 1; i <= 1; i++) {
-			if (buildProject(project, i)) {
-				IResource buildProperty = project.findMember("build.properties");
-				PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+		if (buildProject(project, 1)) {
+			IResource buildProperty = project.findMember("build.properties");
+			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
 
-				verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
-				verifyQuickFixes(buildProperty, expectedValues);
-			} else {
-				fail("Could not build the project '" + project.getName() + "'");
-			}
+			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
+			verifyQuickFixes(buildProperty, expectedValues);
+		} else {
+			fail("Could not build the project '" + project.getName() + "'");
 		}
 	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
@@ -29,16 +30,14 @@ public class AllPDETests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
-		
-		// Removed for M5 due to problems running on linux
-//		suite.addTest(AllValidatorTests.suite());
-		
+				
 		suite.addTest(AllTargetTests.suite());
 		suite.addTest(AllNewProjectTests.suite());
 		suite.addTest(AllPreferenceTests.suite());
 		suite.addTest(AllImportTests.suite());
 		suite.addTest(AllBundleModelTests.suite());
 		suite.addTest(AllXMLModelTests.suite());
+		suite.addTest(AllValidatorTests.suite());
 		suite.addTest(AllNLSTests.suite());
 		suite.addTest(AllPDERuntimeTests.suite());
 		suite.addTest(ExportBundleTests.suite());
