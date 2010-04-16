@@ -278,6 +278,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		computeModelsToImport();
 		updateCount();
 		setPageComplete(fImportListViewer.getTable().getItemCount() > 0);
+		setMessage(PDEUIMessages.ImportWizard_expressPage_desc);
+		checkRepositoryAvailability();
 	}
 
 	private void updateCount() {

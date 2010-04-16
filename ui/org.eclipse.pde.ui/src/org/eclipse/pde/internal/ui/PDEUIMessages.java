@@ -1976,6 +1976,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CrossPlatformExportPage_desc;
 
+	public static String BaseImportWizardSecondPage_0;
+
 	public static String BaseImportWizardSecondPage_autobuild;
 
 	public static String ExportPackageVisibilitySection_unconditional;
