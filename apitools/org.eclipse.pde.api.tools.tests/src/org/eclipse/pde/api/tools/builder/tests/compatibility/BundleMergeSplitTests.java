@@ -349,6 +349,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		assertProblems(getEnv().getProblems());
 	}	
 	private void performMergeSplit() throws CoreException {
+		cleanBuild();
 		fullBuild();
 		expectingNoJDTProblems();
 		//problems are now reported on the types from the fragment
@@ -363,7 +364,9 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		String referenceBaselineLocation = getReferenceBaselineLocation(testName);
 
 		// import baseline projects
-		createExistingProjects(referenceBaselineLocation, true, true, false);
+		createExistingProjects(referenceBaselineLocation, false, true, false);
+		cleanBuild();
+		fullBuild();
 		// create the API baseline
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		int length = projects.length;
@@ -390,7 +393,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		}
 		// populate the workspace with initial plug-ins/projects
 		String currentBaselineLocation = getCurrentBaselineLocation(testName);
-		createExistingProjects(currentBaselineLocation, true, true, false);
+		createExistingProjects(currentBaselineLocation, false, true, false);
 	}
 
 	private String getCurrentBaselineLocation(String testName) {

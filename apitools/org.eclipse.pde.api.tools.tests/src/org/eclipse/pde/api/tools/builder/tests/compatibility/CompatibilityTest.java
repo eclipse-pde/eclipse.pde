@@ -84,7 +84,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			ConstructorCompatibilityTests.class,
 			SinceTagTest.class,
 			VersionTest.class,
-			//BundleMergeSplitTests.class,
+			BundleMergeSplitTests.class,
 			BundleVersionTests.class,
 		};
 		return classes;
