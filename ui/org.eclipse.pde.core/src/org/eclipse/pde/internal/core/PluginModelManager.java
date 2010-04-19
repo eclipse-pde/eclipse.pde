@@ -34,19 +34,14 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	class UpdateClasspathsJob extends Job {
 
-		private IJavaProject[] fProjects;
-		private IClasspathContainer[] fContianers;
+		private List fProjects = new ArrayList();
+		private List fContainers = new ArrayList();
 
 		/**
 		 * Constructs a new job.
-		 * 
-		 * @param projects Java projects
-		 * @param containers associated class path containers
 		 */
-		public UpdateClasspathsJob(IJavaProject[] projects, IClasspathContainer[] containers) {
+		public UpdateClasspathsJob() {
 			super(PDECoreMessages.PluginModelManager_1);
-			fProjects = projects;
-			fContianers = containers;
 		}
 
 		/* (non-Javadoc)
@@ -54,14 +49,60 @@ public class PluginModelManager implements IModelProviderListener {
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
-				JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, fProjects, fContianers, monitor);
+				boolean more = false;
+				do {
+					IJavaProject[] projects = null;
+					IClasspathContainer[] containers = null;
+					synchronized (fProjects) {
+						// exclude any closed/deleted projects since this happens asynchronously
+						ListIterator projectIter = fProjects.listIterator();
+						ListIterator containerIter = fContainers.listIterator();
+						while (projectIter.hasNext()) {
+							IJavaProject jp = (IJavaProject) projectIter.next();
+							containerIter.next(); // advance container pointer as well
+							if (!jp.getProject().isAccessible()) {
+								projectIter.remove(); // remove corresponding entries
+								containerIter.remove();
+							}
+						}
+						projects = (IJavaProject[]) fProjects.toArray(new IJavaProject[fProjects.size()]);
+						containers = (IClasspathContainer[]) fContainers.toArray(new IClasspathContainer[fContainers.size()]);
+						fProjects.clear();
+						fContainers.clear();
+					}
+					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, monitor);
+					synchronized (fProjects) {
+						more = !fProjects.isEmpty();
+					}
+				} while (more);
+
 			} catch (JavaModelException e) {
 				return e.getStatus();
 			}
 			return Status.OK_STATUS;
 		}
 
+		/**
+		 * Queues more projects/containers.
+		 * 
+		 * @param projects
+		 * @param containers
+		 */
+		void add(IJavaProject[] projects, IClasspathContainer[] containers) {
+			synchronized (fProjects) {
+				for (int i = 0; i < containers.length; i++) {
+					fProjects.add(projects[i]);
+					fContainers.add(containers[i]);
+				}
+			}
+		}
+
 	}
+
+	/**
+	 * Job used to update class path containers.
+	 */
+	private UpdateClasspathsJob fUpdateJob = new UpdateClasspathsJob();
 
 	/**
 	 * Subclass of ModelEntry
@@ -298,8 +339,8 @@ public class PluginModelManager implements IModelProviderListener {
 				containers[index] = (IClasspathContainer) entry.getValue();
 				index++;
 			}
-			UpdateClasspathsJob job = new UpdateClasspathsJob(projects, containers);
-			job.schedule();
+			fUpdateJob.add(projects, containers);
+			fUpdateJob.schedule();
 		}
 	}
 
