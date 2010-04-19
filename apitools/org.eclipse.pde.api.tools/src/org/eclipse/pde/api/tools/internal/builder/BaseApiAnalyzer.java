@@ -403,12 +403,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @since 1.1
 	 */
 	void removeUnusedProblemFilters(final IApiFilterStore store, final List filterlist, final IProgressMonitor monitor) throws CoreException {
-		IWorkspaceRunnable runner = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				store.removeFilters((IApiProblemFilter[]) filterlist.toArray(new IApiProblemFilter[filterlist.size()]));
-			}
-		};
-		ResourcesPlugin.getWorkspace().run(runner, null, IWorkspace.AVOID_UPDATE, monitor);
+		if(filterlist.size() > 0) {
+			IWorkspaceRunnable runner = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					store.removeFilters((IApiProblemFilter[]) filterlist.toArray(new IApiProblemFilter[filterlist.size()]));
+				}
+			};
+			ResourcesPlugin.getWorkspace().run(runner, null, IWorkspace.AVOID_UPDATE, monitor);
+		}
 	}
 	
 	/**

@@ -159,15 +159,17 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						return Status.CANCEL_STATUS;
 					}
 					try {
-						if(!file.exists()) {
-							IFolder folder = (IFolder) file.getParent();
-							if(!folder.exists()) {
-								folder.create(true, true, localmonitor);
+						if(file.getProject().isAccessible()) {
+							if(!file.exists()) {
+								IFolder folder = (IFolder) file.getParent();
+								if(!folder.exists()) {
+									folder.create(true, true, localmonitor);
+								}
+								file.create(xstream, true, localmonitor);
 							}
-							file.create(xstream, true, localmonitor);
-						}
-						else {
-							file.setContents(xstream, true, false, localmonitor);
+							else {
+								file.setContents(xstream, true, false, localmonitor);
+							}
 						}
 					}
 					finally {
