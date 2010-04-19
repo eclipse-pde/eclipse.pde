@@ -211,11 +211,20 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printAttribute("productFile", newProduct, true); //$NON-NLS-1$
 			script.println(">"); //$NON-NLS-1$
 
-			URI[] context = getContextMetadata();
-			for (int i = 0; context != null && i < context.length; i++) {
+			URI[] metadata = getContextMetadata();
+			URI[] artifacts = getContextArtifacts();
+			for (int i = 0; metadata != null && i < metadata.length; i++) {
 				script.printTab();
 				script.print("\t<contextRepository"); //$NON-NLS-1$
-				script.printAttribute("location", URIUtil.toUnencodedString(context[i]), true); //$NON-NLS-1$
+				script.printAttribute("location", URIUtil.toUnencodedString(metadata[i]), true); //$NON-NLS-1$
+				script.printAttribute("metadata", TRUE, true); //$NON-NLS-1$
+				script.println("/>"); //$NON-NLS-1$
+			}
+			for (int i = 0; artifacts != null && i < artifacts.length; i++) {
+				script.printTab();
+				script.print("\t<contextRepository"); //$NON-NLS-1$
+				script.printAttribute("location", URIUtil.toUnencodedString(artifacts[i]), true); //$NON-NLS-1$
+				script.printAttribute("artifact", TRUE, true); //$NON-NLS-1$
 				script.println("/>"); //$NON-NLS-1$
 			}
 
@@ -303,6 +312,16 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.print("\t<source"); //$NON-NLS-1$
 			script.printAttribute("location", URIUtil.toUnencodedString(context[i]), true); //$NON-NLS-1$
 			script.printAttribute("optional", TRUE, true); //$NON-NLS-1$
+			script.printAttribute("kind", "metadata", true); //$NON-NLS-1$ //$NON-NLS-2$
+			script.println("/>"); //$NON-NLS-1$
+		}
+		URI[] artifacts = getContextArtifacts();
+		for (int i = 0; artifacts != null && i < artifacts.length; i++) {
+			script.printTab();
+			script.print("\t<source"); //$NON-NLS-1$
+			script.printAttribute("location", URIUtil.toUnencodedString(artifacts[i]), true); //$NON-NLS-1$
+			script.printAttribute("optional", TRUE, true); //$NON-NLS-1$
+			script.printAttribute("kind", "artifact", true); //$NON-NLS-1$ //$NON-NLS-2$
 			script.println("/>"); //$NON-NLS-1$
 		}
 
@@ -427,7 +446,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		}
 
 		String repo = Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO);
-		script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) binaryBundles.toArray(new FileSet[binaryBundles.size()]), (FileSet[]) binaryFeatures.toArray(new FileSet[binaryFeatures.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_PREFIX), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_DEFINITION), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_VERSION), contextMetadata);
+		URI[] context = getContextMetadata();
+		script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) binaryBundles.toArray(new FileSet[binaryBundles.size()]), (FileSet[]) binaryFeatures.toArray(new FileSet[binaryFeatures.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_PREFIX), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_DEFINITION), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_VERSION), context);
 
 		script.printTargetEnd();
 		script.println();

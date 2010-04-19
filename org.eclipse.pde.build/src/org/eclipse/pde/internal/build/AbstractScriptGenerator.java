@@ -33,6 +33,19 @@ import org.osgi.framework.Version;
  * It contains basic informations like the script, the configurations, and a location 
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
+	private static final FilenameFilter METADATA_REPO_FILTER = new FilenameFilter() {
+		public boolean accept(File dir, String name) {
+			return name.startsWith("content.") || name.startsWith("compositeContent.") || //$NON-NLS-1$ //$NON-NLS-2$
+					name.endsWith(".profile") || name.endsWith(".profile.gz"); //$NON-NLS-1$//$NON-NLS-2$
+		}
+	};
+
+	private static final FilenameFilter ARTIFACT_REPO_FILTER = new FilenameFilter() {
+		public boolean accept(File dir, String name) {
+			return name.startsWith("artifacts.") || name.startsWith("compositeArtifacts."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	};
+
 	private static Properties immutableAntProperties = null;
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
@@ -40,6 +53,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
 	protected URI[] contextMetadata = null;
+	protected URI[] contextArtifacts = null;
 	protected AntScript script;
 	protected Properties platformProperties;
 	protected String productQualifier;
@@ -314,14 +328,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (baseProfile != null) {
 			List repos = getAssociatedRepositories(baseProfile);
 			if (repos.size() > 0) {
-				if (contextMetadata != null) {
-					Set set = new HashSet();
-					set.addAll(Arrays.asList(contextMetadata));
-					set.addAll(repos);
-					contextMetadata = (URI[]) set.toArray(new URI[set.size()]);
-				} else {
-					contextMetadata = (URI[]) repos.toArray(new URI[repos.size()]);
-				}
+				addContextRepos((URI[]) repos.toArray(new URI[repos.size()]));
 			}
 		}
 
@@ -534,6 +541,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return URIUtil.append(location.getDataArea("org.eclipse.equinox.p2.core"), "cache/"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	protected void setContextArtifacts(URI[] uris) {
+		contextArtifacts = uris;
+	}
+
+	protected void setContextMetadata(URI[] uris) {
+		contextMetadata = uris;
+	}
+
 	public void setContextMetadataRepositories(URI[] uris) {
 		Set uriSet = new HashSet();
 		uriSet.addAll(Arrays.asList(uris));
@@ -544,7 +559,49 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			uriSet.addAll(getAssociatedRepositories(uriFile));
 		}
 
-		setContextRepositories((URI[]) uriSet.toArray(new URI[uriSet.size()]));
+		addContextRepos((URI[]) uriSet.toArray(new URI[uriSet.size()]));
+	}
+
+	protected void addContextRepos(URI[] repos) {
+		List metadata = filterRepos(repos, METADATA_REPO_FILTER);
+		List artifacts = filterRepos(repos, ARTIFACT_REPO_FILTER);
+
+		if (contextMetadata != null) {
+			Set uriSet = new HashSet();
+			uriSet.addAll(Arrays.asList(contextMetadata));
+			uriSet.addAll(metadata);
+			contextMetadata = (URI[]) uriSet.toArray(new URI[uriSet.size()]);
+		} else {
+			contextMetadata = (URI[]) metadata.toArray(new URI[metadata.size()]);
+		}
+
+		if (contextArtifacts != null) {
+			Set uriSet = new HashSet();
+			uriSet.addAll(Arrays.asList(contextArtifacts));
+			uriSet.addAll(artifacts);
+			contextArtifacts = (URI[]) uriSet.toArray(new URI[uriSet.size()]);
+		} else {
+			contextArtifacts = (URI[]) artifacts.toArray(new URI[artifacts.size()]);
+		}
+	}
+
+	//return only the metadata repos, and also the ones we aren't sure about
+	private List filterRepos(URI[] contexts, FilenameFilter repoFilter) {
+		if (contexts == null)
+			return null;
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < contexts.length; i++) {
+			File repo = URIUtil.toFile(contexts[i]);
+			if (repo == null) {
+				//remote, not sure, just use it
+				result.add(contexts[i]);
+			} else {
+				String[] list = repo.list(repoFilter);
+				if (list != null && list.length > 0)
+					result.add(contexts[i]);
+			}
+		}
+		return result;
 	}
 
 	private List getAssociatedRepositories(File profileFile) {
@@ -552,7 +609,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return Collections.EMPTY_LIST;
 
 		ArrayList result = new ArrayList();
-		URI dataArea = URIUtil.append(profileFile.toURI(), "../../.."); //$NON-NLS-1$
+		URI profileURI = profileFile.toURI();
+		result.add(profileURI);
+		URI dataArea = URIUtil.append(profileURI, "../../.."); //$NON-NLS-1$
 		File areaFile = URIUtil.toFile(dataArea);
 		if (areaFile != null && areaFile.exists()) {
 			IProvisioningAgent agent = BundleHelper.getDefault().getProvisioningAgent(dataArea);
@@ -578,20 +637,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return result;
 	}
 
-	public void setContextRepositories(URI[] uris) {
-		if (contextMetadata != null) {
-			//merge the lists
-			Set uriSet = new HashSet();
-			uriSet.addAll(Arrays.asList(contextMetadata));
-			uriSet.addAll(Arrays.asList(uris));
-			contextMetadata = (URI[]) uriSet.toArray(new URI[uriSet.size()]);
-		} else {
-			contextMetadata = uris;
-		}
-	}
-
 	public URI[] getContextMetadata() {
 		return contextMetadata;
+	}
+
+	public URI[] getContextArtifacts() {
+		return contextArtifacts;
 	}
 
 	public void setProductQualifier(String value) {
