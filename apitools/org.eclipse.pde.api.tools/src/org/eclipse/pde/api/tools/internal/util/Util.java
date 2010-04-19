@@ -1486,7 +1486,7 @@ public final class Util {
 		try{
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-			stream = new ByteArrayInputStream(document.getBytes());
+			stream = new ByteArrayInputStream(document.getBytes(IApiCoreConstants.UTF_8));
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {
 			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
