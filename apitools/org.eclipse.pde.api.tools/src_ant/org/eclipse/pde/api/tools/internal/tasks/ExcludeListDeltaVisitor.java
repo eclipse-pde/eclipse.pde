@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
@@ -24,6 +23,7 @@ import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
+import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -34,22 +34,18 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 	public static final int CHECK_OTHER = 0x02;
 	public static final int CHECK_ALL = CHECK_DEPRECATION | CHECK_OTHER;
 
-	private Set excludedElement;
-	private String excludeListLocation;
+	private ExcludedElements excludedElements;
 	private List nonExcludedElements;
-	
+
 	private int flags;
 
-	public ExcludeListDeltaVisitor(String excludeListLocation, int flags) throws CoreException {
+	public ExcludeListDeltaVisitor(ExcludedElements excludedElements, int flags) throws CoreException {
 		super();
-		this.excludeListLocation = excludeListLocation;
+		this.excludedElements = excludedElements;
 		this.nonExcludedElements = new ArrayList();
 		this.flags = flags;
 	}
 	private boolean checkExclude(IDelta delta) {
-		if (this.excludedElement == null) {
-			this.excludedElement = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
-		}
 		return isExcluded(delta);
 	}
 	public String getPotentialExcludeList() {
@@ -68,7 +64,7 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 		StringBuffer buffer = new StringBuffer();
 		String componentId = delta.getComponentVersionId();
 		if (componentId != null) {
-			if (this.excludedElement.contains(componentId)) {
+			if (this.excludedElements.containsPartialMatch(componentId)) {
 				return true;
 			}
 			buffer.append(componentId).append(':');
@@ -107,7 +103,7 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 				break;
 		}
 		String excludeListKey = String.valueOf(buffer);
-		if (this.excludedElement.contains(excludeListKey)) {
+		if (this.excludedElements.containsExactMatch(excludeListKey)) {
 			return true;
 		}
 		this.nonExcludedElements.add(excludeListKey);

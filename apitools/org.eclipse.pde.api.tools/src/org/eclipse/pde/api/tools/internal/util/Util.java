@@ -2215,8 +2215,8 @@ public final class Util {
 	 * @param baseline
 	 * @return the list of bundles to be excluded
 	 */
-	public static Set initializeRegexExcludeList(String location, IApiBaseline baseline) {
-		HashSet list = new HashSet();
+	public static ExcludedElements initializeRegexExcludeList(String location, IApiBaseline baseline, boolean debug) {
+		ExcludedElements excludedElements = new ExcludedElements();
 		if (location != null) {
 			File file = new File(location);
 			if (file.exists()) {
@@ -2245,11 +2245,10 @@ public final class Util {
 							}
 							if(line.startsWith(REGULAR_EXPRESSION_START)) {
 								if(baseline != null) {
-									Util.collectRegexIds(line, list, baseline.getApiComponents());
+									Util.collectRegexIds(line, excludedElements, baseline.getApiComponents(), debug);
 								}
-							}
-							else {
-								list.add(line);
+							} else {
+								excludedElements.addExactMatch(line);
 							}
 						}
 					} 
@@ -2263,7 +2262,7 @@ public final class Util {
 				}
 			}
 		}
-		return list;
+		return excludedElements;
 	}
 
 	/**
@@ -2272,19 +2271,30 @@ public final class Util {
 	 * @param list
 	 * @param components
 	 */
-	public static void collectRegexIds(String line, Set list, IApiComponent[] components) throws Exception {
+	public static void collectRegexIds(String line, ExcludedElements excludedElements, IApiComponent[] components, boolean debug) throws Exception {
 		if (line.startsWith(REGULAR_EXPRESSION_START)) {
 			String componentname = line;
 			// regular expression
 			componentname = componentname.substring(2);
 			Pattern pattern = null;
 			try {
+				if (debug) {
+					System.out.println("Pattern to match : " + componentname); //$NON-NLS-1$
+				}
 				pattern = Pattern.compile(componentname);
 				String componentid = null;
 				for (int j = 0, max2 = components.length; j < max2; j++) {
 					componentid = components[j].getSymbolicName();
+					if (debug) {
+						System.out.println("component id : " + componentid); //$NON-NLS-1$
+					}
 					if (pattern.matcher(componentid).matches()) {
-						list.add(componentid);
+						if (debug) {
+							System.out.println(componentid + " matched the pattern " + componentname); //$NON-NLS-1$
+						}
+						excludedElements.addPartialMatch(componentid);
+					} else if (debug) {
+						System.out.println(componentid + " didn't match the pattern " + componentname); //$NON-NLS-1$
 					}
 				}
 			} catch (PatternSyntaxException e) {

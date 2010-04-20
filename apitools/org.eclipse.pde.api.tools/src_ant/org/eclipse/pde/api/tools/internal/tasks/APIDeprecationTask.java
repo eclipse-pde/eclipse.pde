@@ -26,6 +26,7 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
 
 /**
  * Ant task to retrieve all deprecation changes (addition or removal) between two api baselines
@@ -82,6 +83,13 @@ public class APIDeprecationTask extends CommonUtilsTask {
 		IApiBaseline referenceBaseline = createBaseline(REFERENCE_BASELINE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
 		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
 		
+		ExcludedElements excludedElements = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation, currentBaseline, this.debug);
+
+		if (this.debug) {
+			System.out.println("===================================================================================="); //$NON-NLS-1$
+			System.out.println("Excluded elements list:"); //$NON-NLS-1$
+			System.out.println(excludedElements);
+		}
 		IDelta delta = null;
 		if (this.debug) {
 			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -127,7 +135,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			}
 			try {
 				writer = new BufferedWriter(new FileWriter(outputFile));
-				ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(this.excludeListLocation, ExcludeListDeltaVisitor.CHECK_DEPRECATION);
+				ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(excludedElements, ExcludeListDeltaVisitor.CHECK_DEPRECATION);
 				delta.accept(visitor);
 				writer.write(visitor.getXML());
 				writer.flush();

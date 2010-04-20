@@ -12,10 +12,25 @@ package org.eclipse.pde.api.tools.util.tests;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
+import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
@@ -256,5 +271,328 @@ public class UtilTests extends TestCase {
 		assertEquals("wrong version string", "3.1", sinceTagVersion.getVersionString());
 		assertEquals("wrong prefix string", "abc1.0, was added in ", sinceTagVersion.prefixString());
 		assertEquals("wrong postfix string", " as private method", sinceTagVersion.postfixString());
+	}
+	
+	public void testRegexExcludeList() {
+		String line = "R:org\\.eclipse\\.swt[a-zA-Z_0-9\\.]*";
+		class LocalApiComponent implements IApiComponent {
+			String symbolicName;
+
+			public LocalApiComponent(String symbolicName) {
+				this.symbolicName = symbolicName;
+			}
+			public String[] getPackageNames() throws CoreException {
+				return null;
+			}
+			public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
+				return null;
+			}
+			public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
+				return null;
+			}
+			public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
+			}
+			public void close() throws CoreException {
+			}
+			public int getContainerType() {
+				return 0;
+			}
+			public String getName() {
+				return null;
+			}
+			public int getType() {
+				return 0;
+			}
+			public IApiElement getParent() {
+				return null;
+			}
+			public IApiElement getAncestor(int ancestorType) {
+				return null;
+			}
+			public IApiComponent getApiComponent() {
+				return null;
+			}
+			public String getSymbolicName() {
+				return this.symbolicName;
+			}
+			public IApiDescription getApiDescription() throws CoreException {
+				return null;
+			}
+			public boolean hasApiDescription() {
+				return false;
+			}
+			public String getVersion() {
+				return null;
+			}
+			public String[] getExecutionEnvironments() throws CoreException {
+				return null;
+			}
+			public IApiTypeContainer[] getApiTypeContainers() throws CoreException {
+				return null;
+			}
+			public IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
+				return null;
+			}
+			public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
+				return null;
+			}
+			public String getLocation() {
+				return null;
+			}
+			public boolean isSystemComponent() {
+				return false;
+			}
+			public boolean isSourceComponent() throws CoreException {
+				return false;
+			}
+			public void dispose() {
+			}
+			public IApiBaseline getBaseline() throws CoreException {
+				return null;
+			}
+			public IApiFilterStore getFilterStore() throws CoreException {
+				return null;
+			}
+			public boolean isFragment() throws CoreException {
+				return false;
+			}
+			public IApiComponent getHost() throws CoreException {
+				return null;
+			}
+			public boolean hasFragments() throws CoreException {
+				return false;
+			}
+			public String[] getLowestEEs() throws CoreException {
+				return null;
+			}
+			public ResolverError[] getErrors() throws CoreException {
+				return null;
+			}
+			public IElementDescriptor getHandle() {
+				return null;
+			}
+		}
+		List allComponents = new ArrayList();
+		String[] componentNames = new String[] {
+				"org.eclipse.swt",
+				"org.eclipse.equinox.simpleconfigurator.manipulator",
+				"org.eclipse.team.ui",
+				"org.eclipse.ecf",
+				"org.eclipse.core.commands",
+				"org.eclipse.equinox.util",
+				"org.eclipse.equinox.p2.jarprocessor",
+				"org.eclipse.equinox.security",
+				"org.eclipse.sdk",
+				"org.eclipse.help.ui",
+				"org.eclipse.jdt.doc.isv",
+				"org.eclipse.equinox.p2.core",
+				"org.eclipse.debug.ui",
+				"org.eclipse.ui.navigator",
+				"org.eclipse.update.core",
+				"javax.servlet.jsp",
+				"org.eclipse.ui.workbench",
+				"org.eclipse.equinox.event",
+				"org.eclipse.jdt.core",
+				"JavaSE-1.7",
+				"org.apache.commons.codec",
+				"org.apache.commons.logging",
+				"org.objectweb.asm",
+				"org.eclipse.core.filebuffers",
+				"org.eclipse.jsch.ui",
+				"org.eclipse.platform",
+				"org.eclipse.pde.ua.core",
+				"org.eclipse.help",
+				"org.eclipse.ecf.provider.filetransfer",
+				"org.eclipse.equinox.preferences",
+				"org.eclipse.equinox.p2.reconciler.dropins",
+				"org.eclipse.team.cvs.ui",
+				"org.eclipse.equinox.p2.metadata.generator",
+				"org.eclipse.equinox.registry",
+				"org.eclipse.update.ui",
+				"org.eclipse.swt",
+				"org.eclipse.ui.console",
+				"org.junit4",
+				"org.eclipse.ui.views.log",
+				"org.eclipse.equinox.p2.touchpoint.natives",
+				"org.eclipse.equinox.ds",
+				"org.eclipse.help.base",
+				"org.eclipse.equinox.frameworkadmin.equinox",
+				"org.eclipse.jdt",
+				"org.eclipse.osgi.util",
+				"org.sat4j.pb",
+				"org.hamcrest.core",
+				"org.eclipse.jdt.junit4.runtime",
+				"org.eclipse.equinox.p2.artifact.repository",
+				"org.eclipse.core.databinding.property",
+				"org.eclipse.core.databinding",
+				"org.eclipse.equinox.concurrent",
+				"org.eclipse.pde.ua.ui",
+				"org.eclipse.ui.navigator.resources",
+				"org.eclipse.equinox.http.servlet",
+				"org.eclipse.equinox.p2.ql",
+				"org.eclipse.jsch.core",
+				"javax.servlet",
+				"org.eclipse.jface",
+				"org.eclipse.equinox.p2.updatesite",
+				"org.eclipse.jface.databinding",
+				"org.eclipse.ui.browser",
+				"org.eclipse.ui",
+				"org.eclipse.core.databinding.beans",
+				"org.eclipse.search",
+				"org.eclipse.equinox.jsp.jasper.registry",
+				"org.eclipse.jdt.debug",
+				"org.eclipse.ecf.provider.filetransfer.ssl",
+				"org.eclipse.platform.doc.isv",
+				"org.eclipse.update.core.win32",
+				"org.eclipse.pde.api.tools",
+				"org.eclipse.ui.ide.application",
+				"org.eclipse.equinox.p2.metadata",
+				"org.eclipse.equinox.security.win32.x86",
+				"org.eclipse.core.contenttype",
+				"org.eclipse.equinox.p2.ui.sdk",
+				"org.eclipse.core.resources",
+				"org.eclipse.pde.launching",
+				"org.eclipse.ui.externaltools",
+				"org.eclipse.cvs",
+				"org.eclipse.equinox.p2.repository",
+				"org.eclipse.core.resources.win32.x86",
+				"org.eclipse.pde.ui",
+				"org.eclipse.core.databinding.observable",
+				"org.eclipse.pde.doc.user",
+				"org.eclipse.ui.editors",
+				"org.eclipse.jdt.compiler.tool",
+				"org.eclipse.jdt.apt.ui",
+				"org.eclipse.rcp",
+				"org.eclipse.ui.presentations.r21",
+				"org.eclipse.pde.runtime",
+				"org.eclipse.equinox.security.ui",
+				"org.eclipse.core.jobs",
+				"org.eclipse.update.configurator",
+				"org.eclipse.equinox.http.jetty",
+				"org.eclipse.pde.ds.ui",
+				"org.apache.lucene.analysis",
+				"org.eclipse.ui.views",
+				"org.eclipse.equinox.common",
+				"org.apache.lucene",
+				"org.eclipse.ecf.identity",
+				"org.eclipse.ui.workbench.texteditor",
+				"org.eclipse.equinox.p2.ui",
+				"org.eclipse.core.runtime.compatibility.auth",
+				"org.eclipse.ltk.core.refactoring",
+				"org.eclipse.ant.core",
+				"org.eclipse.ant.launching",
+				"com.jcraft.jsch",
+				"org.eclipse.ui.win32",
+				"org.eclipse.pde.core",
+				"org.eclipse.pde.build",
+				"org.eclipse.core.runtime.compatibility.registry",
+				"org.eclipse.ui.workbench.compatibility",
+				"org.eclipse.ltk.ui.refactoring",
+				"org.eclipse.jface.text",
+				"org.apache.commons.el",
+				"org.eclipse.compare.win32",
+				"org.eclipse.core.runtime",
+				"org.eclipse.jdt.ui",
+				"org.eclipse.compare",
+				"org.eclipse.ui.forms",
+				"org.eclipse.equinox.p2.extensionlocation",
+				"org.mortbay.jetty.util",
+				"org.eclipse.equinox.p2.director",
+				"org.eclipse.core.filesystem",
+				"org.eclipse.jdt.junit.core",
+				"org.eclipse.jdt.junit.runtime",
+				"org.eclipse.team.cvs.ssh2",
+				"org.eclipse.core.variables",
+				"org.eclipse.platform.doc.user",
+				"org.eclipse.equinox.p2.operations",
+				"org.eclipse.core.externaltools",
+				"org.eclipse.equinox.simpleconfigurator",
+				"org.eclipse.equinox.p2.touchpoint.eclipse",
+				"org.eclipse.equinox.p2.metadata.repository",
+				"org.eclipse.pde.ds.core",
+				"org.eclipse.jdt.apt.pluggable.core",
+				"org.eclipse.team.cvs.core",
+				"org.mortbay.jetty.server",
+				"org.eclipse.text",
+				"org.eclipse.jdt.compiler.apt",
+				"org.eclipse.equinox.p2.director.app",
+				"org.eclipse.jdt.debug.ui",
+				"org.eclipse.equinox.p2.repository.tools",
+				"org.apache.commons.httpclient",
+				"org.eclipse.equinox.p2.garbagecollector",
+				"org.eclipse.ui.ide",
+				"org.eclipse.equinox.p2.engine",
+				"org.apache.ant",
+				"org.eclipse.jdt.junit",
+				"org.eclipse.ecf.filetransfer",
+				"org.eclipse.core.filesystem.win32.x86",
+				"org.eclipse.core.net",
+				"org.eclipse.equinox.jsp.jasper",
+				"org.eclipse.equinox.p2.directorywatcher",
+				"org.eclipse.equinox.http.registry",
+				"org.junit",
+				"org.eclipse.pde.junit.runtime",
+				"org.eclipse.equinox.launcher",
+				"org.eclipse.jdt.launching",
+				"org.eclipse.core.expressions",
+				"org.eclipse.ui.intro",
+				"org.eclipse.team.core",
+				"org.eclipse.ui.intro.universal",
+				"org.eclipse.swt.win32.win32.x86",
+				"org.eclipse.osgi.services",
+				"org.eclipse.pde",
+				"org.eclipse.ui.views.properties.tabbed",
+				"org.eclipse.core.runtime.compatibility",
+				"org.eclipse.ant.ui",
+				"org.eclipse.ecf.provider.filetransfer.httpclient.ssl",
+				"org.eclipse.equinox.launcher.win32.win32.x86",
+				"org.eclipse.core.boot",
+				"org.apache.jasper",
+				"org.eclipse.help.webapp",
+				"org.sat4j.core",
+				"org.eclipse.pde.api.tools.ui",
+				"org.eclipse.equinox.p2.ui.sdk.scheduler",
+				"org.eclipse.debug.core",
+				"org.eclipse.jdt.core.manipulation",
+				"org.eclipse.osgi",
+				"org.eclipse.update.scheduler",
+				"org.eclipse.equinox.p2.updatechecker",
+				"org.eclipse.equinox.p2.console",
+				"org.eclipse.equinox.frameworkadmin",
+				"org.eclipse.compare.core",
+				"org.eclipse.jdt.apt.core",
+				"org.eclipse.help.appserver",
+				"org.eclipse.pde.ui.templates",
+				"org.eclipse.ecf.ssl",
+				"org.eclipse.ui.cheatsheets",
+				"com.ibm.icu",
+				"org.eclipse.core.net.win32.x86",
+				"org.eclipse.jdt.doc.user",
+				"org.eclipse.equinox.app",
+				"org.eclipse.ui.net",
+				"org.eclipse.equinox.p2.publisher",
+				"org.eclipse.ecf.provider.filetransfer.httpclient",
+		};
+		for (int i = 0, max = componentNames.length; i < max; i++) {
+			allComponents.add(new LocalApiComponent(componentNames[i]));
+		}
+		IApiComponent[] components = new IApiComponent[allComponents.size()];
+		allComponents.toArray(components);
+		ExcludedElements excludedElements = new ExcludedElements();
+		try {
+			Util.collectRegexIds(line, excludedElements, components, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertEquals("Wrong size", 2, excludedElements.getPartialMatches().size());
+		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core"));
+		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core"));
+	}
+	public void testRegexExcludeList2() {
+		ExcludedElements excludedElements = new ExcludedElements();
+		assertEquals("Wrong size", 0, excludedElements.getPartialMatches().size());
+		assertEquals("Wrong size", 0, excludedElements.getExactMatches().size());
+		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core"));
+		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core"));
 	}
 }

@@ -16,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -26,6 +25,7 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
 import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -220,10 +220,10 @@ public abstract class CommonUtilsTask extends Task {
 	 * @param excludeListLocation
 	 * @return the set of project names to be excluded
 	 */
-	protected static Set initializeExcludedElement(String excludeListLocation) {
-		return Util.initializeRegexExcludeList(excludeListLocation, null);
+	protected static ExcludedElements initializeExcludedElement(String excludeListLocation, IApiBaseline baseline, boolean debug) {
+		return Util.initializeRegexExcludeList(excludeListLocation, baseline, debug);
 	}
-	
+
 	/**
 	 * Saves the report with the given name in the report location in a child directory with 
 	 * the componentID name

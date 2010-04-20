@@ -49,6 +49,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -419,7 +420,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	private static final Summary[] NO_SUMMARIES = new Summary[0];
 	public static final String USAGE = "usage"; //$NON-NLS-1$
 
-	private Set excludedElement;
+	private ExcludedElements excludedElements;
 	private String filters;
 	private Properties properties;
 
@@ -457,7 +458,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			Summary summary = summaries[i];
 			String contents = null;
 			String componentID = summary.componentID;
-			if (this.excludedElement != null && this.excludedElement.contains(componentID)) {
+			if (this.excludedElements != null
+					&& (this.excludedElements.containsExactMatch(componentID)
+						|| this.excludedElements.containsPartialMatch(componentID))) {
 				continue;
 			}
 			try {
@@ -505,7 +508,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				
 				for (Iterator iterator = bundlesNames.iterator(); iterator.hasNext();) {
 					String bundleName = (String) iterator.next();
-					if (this.excludedElement == null || !this.excludedElement.contains(bundleName)) {
+					if (this.excludedElements == null || !this.excludedElements.containsPartialMatch(bundleName)) {
 						Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
 						bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
 						report.appendChild(bundle);
@@ -568,9 +571,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				System.out.println("No exclude list location"); //$NON-NLS-1$
 			}
 		}
-		if (this.excludeListLocation != null) {
-			this.excludedElement = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation);
-		}
 		// unzip reference
 		long time = 0;
 		if (this.debug) {
@@ -588,6 +588,14 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		IApiBaseline referenceBaseline = createBaseline(REFERENCE_BASELINE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
 		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
 		
+		if (this.excludeListLocation != null) {
+			this.excludedElements = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation, currentBaseline, this.debug);
+			if (this.debug) {
+				System.out.println("===================================================================================="); //$NON-NLS-1$
+				System.out.println("Excluded elements list:"); //$NON-NLS-1$
+				System.out.println(this.excludedElements);
+			}
+		}
 		if (this.debug) {
 			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();

@@ -31,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.internal.util.UtilMessages;
 
@@ -88,6 +89,13 @@ public class CompareTask extends CommonUtilsTask {
 		
 		IDelta delta = null;
 		
+		ExcludedElements excludedElements = CommonUtilsTask.initializeExcludedElement(this.excludeListLocation, currentBaseline, this.debug);
+		
+		if (this.debug) {
+			System.out.println("===================================================================================="); //$NON-NLS-1$
+			System.out.println("Excluded elements list:"); //$NON-NLS-1$
+			System.out.println(excludedElements);
+		}
 		ApiScope scope = new ApiScope();
 		if (this.componentsList != null) {
 			// needs to set up individual components
@@ -165,7 +173,8 @@ public class CompareTask extends CommonUtilsTask {
 				outputFile.delete();
 			}
 			writer = new BufferedWriter(new FileWriter(outputFile));
-			ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(this.excludeListLocation, ExcludeListDeltaVisitor.CHECK_ALL);
+
+			ExcludeListDeltaVisitor visitor = new ExcludeListDeltaVisitor(excludedElements, ExcludeListDeltaVisitor.CHECK_ALL);
 			delta.accept(visitor);
 			writer.write(visitor.getXML());
 			writer.flush();
