@@ -237,4 +237,22 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
+	 */
+	public void remove(Object[] elementsOrTreePaths) {
+		for (int i = 0; i < elementsOrTreePaths.length; i++) {
+			updateCheckState(elementsOrTreePaths, false);
+		}
+		super.remove(elementsOrTreePaths);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
+	 */
+	public void remove(Object elementsOrTreePaths) {
+		updateCheckState(elementsOrTreePaths, false);
+		super.remove(elementsOrTreePaths);
+	}
+
 }

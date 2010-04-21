@@ -11,26 +11,30 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
-import org.eclipse.pde.internal.launching.launcher.EclipsePluginValidationOperation;
-import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
+import org.eclipse.pde.internal.launching.launcher.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
+import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -59,22 +63,43 @@ public class FeatureBlock {
 		public Image getColumnImage(Object obj, int index) {
 			// If there is a workspace feature available, display the workspace feature icon, even if the user has selected external
 			if (index == COLUMN_FEATURE_NAME) {
-				FeatureLaunchModel model = (FeatureLaunchModel) obj;
-				return pdeLabelProvider.getImage(model.getModel(true));
+				if (obj instanceof FeatureLaunchModel) {
+					FeatureLaunchModel model = (FeatureLaunchModel) obj;
+					return pdeLabelProvider.getImage(model.getModel(true));
+				} else if (obj instanceof NamedElement) {
+					return ((NamedElement) obj).getImage();
+				} else if (obj instanceof PluginLaunchModel) {
+					IPluginModelBase pluginModelBase = ((PluginLaunchModel) obj).getPluginModelBase();
+					return pdeLabelProvider.getColumnImage(pluginModelBase, index);
+				}
 			}
 			return null;
 		}
 
 		public String getColumnText(Object obj, int index) {
-			FeatureLaunchModel model = (FeatureLaunchModel) obj;
-			switch (index) {
-				case COLUMN_FEATURE_NAME :
-					return model.getId();
-				case COLUMN_PLUGIN_RESOLUTION :
-					return model.getResolutionLabel();
-				default :
-					return ""; //$NON-NLS-1$
+			if (obj instanceof NamedElement && index == COLUMN_FEATURE_NAME)
+				return ((NamedElement) obj).getLabel();
+			if (obj instanceof PluginLaunchModel) {
+				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) obj;
+				switch (index) {
+					case COLUMN_FEATURE_NAME :
+						return pluginLaunchModel.getPluginModelId();
+					case COLUMN_PLUGIN_RESOLUTION :
+						return getResolutionLabel(pluginLaunchModel.getPluginResolution());
+				}
 			}
+			if (obj instanceof FeatureLaunchModel) {
+				FeatureLaunchModel model = (FeatureLaunchModel) obj;
+				switch (index) {
+					case COLUMN_FEATURE_NAME :
+						return model.getId();
+					case COLUMN_PLUGIN_RESOLUTION :
+						return getResolutionLabel(model.getResolutionValue());
+					default :
+						return ""; //$NON-NLS-1$
+				}
+			}
+			return null;
 		}
 
 		public void update(ViewerCell cell) {
@@ -93,15 +118,26 @@ public class FeatureBlock {
 		}
 
 		private StyledString getStyledText(Object element) {
-			FeatureLaunchModel model = (FeatureLaunchModel) element;
 			StyledString styledString = new StyledString(getColumnText(element, COLUMN_FEATURE_NAME));
-			styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
-			String version = model.getVersion();
-			int index = version.indexOf('-');
-			if (index > -1)
-				version = version.substring(0, index);
-			styledString.append(version, StyledString.QUALIFIER_STYLER);
-			styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+			if (element instanceof FeatureLaunchModel) {
+				FeatureLaunchModel featureModel = (FeatureLaunchModel) element;
+				styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				String version = featureModel.getVersion();
+				int index = version.indexOf('-');
+				if (index > -1)
+					version = version.substring(0, index);
+				styledString.append(version, StyledString.QUALIFIER_STYLER);
+				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+			} else if (element instanceof PluginLaunchModel) {
+				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) element;
+				styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				String version = pluginLaunchModel.getPluginModelBase().getPluginBase().getVersion();
+				int index = version.indexOf('-');
+				if (index > -1)
+					version = version.substring(0, index);
+				styledString.append(version, StyledString.QUALIFIER_STYLER);
+				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+			}
 			return styledString;
 		}
 
@@ -139,10 +175,88 @@ public class FeatureBlock {
 				handleRestoreDefaults();
 			} else if (source == fValidateButton) {
 				handleValidate();
+			} else if (source == fAddPluginButton) {
+				handleAddPlugin();
+			} else if (source == fRemovePluginButton) {
+				handleRemovePlugin();
 			} else if (source instanceof TreeColumn) {
 				handleColumn((TreeColumn) source, 0);
 			}
 			fTab.updateLaunchConfigurationDialog();
+		}
+
+		private void handleRemovePlugin() {
+			// Any changes here need to be reflected in the SWT.DEL key remove handling
+			IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
+			int index = fAdditionalPlugins.indexOf(selection.getFirstElement());
+			fAdditionalPlugins.removeAll(selection.toList());
+			fTree.remove(selection.toArray());
+			List input = (List) fTree.getInput();
+			input.removeAll(selection.toList());
+			if (fAdditionalPlugins.size() == 0) {
+				fTree.remove(fAdditionalPluginsParentElement);
+				input.remove(fAdditionalPluginsParentElement);
+			} else {
+				index--;
+				fTree.setSelection(new StructuredSelection(fAdditionalPlugins.get(index > 0 ? index : 0)), true);
+			}
+			fRemovePluginButton.setEnabled(false);
+			updateCounter();
+			fTab.updateLaunchConfigurationDialog();
+		}
+
+		private void handleAddPlugin() {
+			PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailablePlugins(), true);
+			dialog.create();
+			if (dialog.open() == Window.OK) {
+
+				Object[] models = dialog.getResult();
+				ArrayList modelList = new ArrayList(models.length);
+				for (int i = 0; i < models.length; i++) {
+					PluginLaunchModel pluginLaunchModel = new PluginLaunchModel((IPluginModelBase) models[i], IPDELauncherConstants.LOCATION_DEFAULT);
+					modelList.add(pluginLaunchModel);
+				}
+
+				List input = (List) fTree.getInput();
+				if (!input.contains(fAdditionalPluginsParentElement)) {
+					input.add(fAdditionalPluginsParentElement);
+				}
+				fAdditionalPlugins.addAll(modelList);
+				fTree.refresh(true);
+				for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
+					fTree.setChecked(iterator.next(), true);
+				}
+				fTree.setSelection(new StructuredSelection(modelList.get(modelList.size() - 1)), true);
+				fTree.getTree().setSortColumn(fTree.getTree().getSortColumn());
+				fTree.getTree().setSortDirection(fTree.getTree().getSortDirection());
+				updateCounter();
+			}
+		}
+
+		private IPluginModelBase[] getAvailablePlugins() {
+			IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
+			return plugins;
+			/*
+			HashMap pluginMap = new HashMap(plugins.length);
+			for (int i = 0; i < plugins.length; i++) {
+				pluginMap.put(plugins[i].getPluginBase().getId() + ':' + plugins[i].getPluginBase().getVersion(), plugins[i]);
+			}
+			for (Iterator iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
+				FeatureLaunchModel model = (FeatureLaunchModel) iterator.next();
+				IFeatureModel featureModel = model.getModel(true);
+				IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
+				for (int i = 0; i < featurePlugins.length; i++) {
+					pluginMap.remove(featurePlugins[i].getId() + ':' + featurePlugins[i].getVersion());
+				}
+			}
+
+			for (Iterator iterator = fUserAddedPlugins.iterator(); iterator.hasNext();) {
+				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) iterator.next();
+				pluginMap.values().remove(pluginLaunchModel.getPluginModelBase());
+			}
+
+			return (IPluginModelBase[]) pluginMap.values().toArray(new IPluginModelBase[pluginMap.size()]);
+			*/
 		}
 
 		private void handleValidate() {
@@ -243,6 +357,13 @@ public class FeatureBlock {
 		private void handleRestoreDefaults() {
 			fWorkspacePluginButton.setSelection(true);
 			fExternalPluginButton.setSelection(false);
+
+			List input = (List) fTree.getInput();
+			input.removeAll(fAdditionalPlugins);
+			input.remove(fAdditionalPluginsParentElement);
+			fAdditionalPlugins.clear();
+
+			fRemovePluginButton.setEnabled(false);
 			for (Iterator iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
 				FeatureLaunchModel model = (FeatureLaunchModel) iterator.next();
 				model.setPluginResolution(IPDELauncherConstants.LOCATION_DEFAULT);
@@ -250,6 +371,7 @@ public class FeatureBlock {
 			fTree.setAllChecked(true);
 			fTree.refresh();
 			updateCounter();
+			fTab.updateLaunchConfigurationDialog();
 		}
 
 		private void handleSelectAll(boolean state) {
@@ -265,38 +387,57 @@ public class FeatureBlock {
 
 		public Object getValue(Object element, String property) {
 			if (property == PROPERTY_RESOLUTION) {
-				String location = ((FeatureLaunchModel) element).getResolutionValue();
-				if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_DEFAULT)) {
-					return new Integer(0);
-				} else if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE)) {
-					return new Integer(1);
-				} else if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_EXTERNAL)) {
-					return new Integer(2);
+				if (element instanceof FeatureLaunchModel) {
+					String location = ((FeatureLaunchModel) element).getResolutionValue();
+					return getLocationIndex(location);
+				} else if (element instanceof PluginLaunchModel) {
+					String location = ((PluginLaunchModel) element).getPluginResolution();
+					return getLocationIndex(location);
 				}
+			}
+			return null;
+		}
+
+		private Object getLocationIndex(String location) {
+			if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_DEFAULT)) {
+				return new Integer(0);
+			} else if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE)) {
+				return new Integer(1);
+			} else if (location.equalsIgnoreCase(IPDELauncherConstants.LOCATION_EXTERNAL)) {
+				return new Integer(2);
 			}
 			return null;
 		}
 
 		public void modify(Object item, String property, Object value) {
 			if (property == PROPERTY_RESOLUTION) {
-				FeatureLaunchModel model = (FeatureLaunchModel) ((TreeItem) item).getData();
+				Object data = ((TreeItem) item).getData();
 				int comboIndex = ((Integer) value).intValue();
-				String location = null;
-				switch (comboIndex) {
-					case 0 :
-						location = IPDELauncherConstants.LOCATION_DEFAULT;
-						break;
-					case 1 :
-						location = IPDELauncherConstants.LOCATION_WORKSPACE;
-						break;
-					case 2 :
-						location = IPDELauncherConstants.LOCATION_EXTERNAL;
+				if (data instanceof FeatureLaunchModel) {
+					FeatureLaunchModel model = (FeatureLaunchModel) data;
+					model.setPluginResolution(getLocation(comboIndex));
+					fTree.refresh(model, true);
+					fTab.updateLaunchConfigurationDialog();
+				} else if (data instanceof PluginLaunchModel) {
+					PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) data;
+					pluginLaunchModel.setPluginResolution(getResolutionLabel(getLocation(comboIndex)));
 				}
-
-				model.setPluginResolution(location);
-				fTree.refresh(model, true);
-				fTab.updateLaunchConfigurationDialog();
 			}
+		}
+
+		private String getLocation(int comboIndex) {
+			String location = null;
+			switch (comboIndex) {
+				case 0 :
+					location = IPDELauncherConstants.LOCATION_DEFAULT;
+					break;
+				case 1 :
+					location = IPDELauncherConstants.LOCATION_WORKSPACE;
+					break;
+				case 2 :
+					location = IPDELauncherConstants.LOCATION_EXTERNAL;
+			}
+			return location;
 		}
 	}
 
@@ -319,14 +460,21 @@ public class FeatureBlock {
 		}
 
 		public Object[] getChildren(Object parentElement) {
+			if (parentElement == fAdditionalPluginsParentElement) {
+				return fAdditionalPlugins.toArray();
+			}
 			return new Object[0];
 		}
 
 		public Object getParent(Object element) {
+			if (element instanceof PluginLaunchModel)
+				return fAdditionalPluginsParentElement;
 			return null;
 		}
 
 		public boolean hasChildren(Object element) {
+			if (element instanceof NamedElement)
+				return true;
 			return false;
 		}
 	}
@@ -347,6 +495,37 @@ public class FeatureBlock {
 			FeatureTreeLabelProvider labelProvider = (FeatureTreeLabelProvider) fTree.getLabelProvider();
 			return sortOrder * super.compare(viewer, labelProvider.getColumnText(e1, sortColumn), labelProvider.getColumnText(e2, sortColumn));
 		}
+	}
+
+	class PluginLaunchModel {
+		private IPluginModelBase fPluginModelBase;
+		private String fPluginResolution;
+
+		public PluginLaunchModel(IPluginModelBase pluginModelBase, String pluginResolution) {
+			fPluginModelBase = pluginModelBase;
+			fPluginResolution = pluginResolution;
+		}
+
+		public IPluginModelBase getPluginModelBase() {
+			return fPluginModelBase;
+		}
+
+		public String getPluginResolution() {
+			return fPluginResolution;
+		}
+
+		public void setPluginResolution(String pluginResolution) {
+			fPluginResolution = pluginResolution;
+		}
+
+		public String getPluginModelId() {
+			return fPluginModelBase.getPluginBase().getId();
+		}
+
+		public String getPluginModelVersion() {
+			return fPluginModelBase.getPluginBase().getVersion();
+		}
+
 	}
 
 	class FeatureLaunchModel {
@@ -404,25 +583,25 @@ public class FeatureBlock {
 		}
 
 		/**
-		 * @return the translated string label for the current resolution value
-		 */
-		public String getResolutionLabel() {
-			if (fPluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_DEFAULT)) {
-				return PDEUIMessages.FeatureBlock_default;
-			} else if (fPluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE)) {
-				return PDEUIMessages.FeatureBlock_workspaceBefore;
-			} else if (fPluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_EXTERNAL)) {
-				return PDEUIMessages.FeatureBlock_externalBefore;
-			}
-			return ""; //$NON-NLS-1$
-		}
-
-		/**
 		 * @return resolution value that can be stored in the config, one of {@link IPDELauncherConstants#LOCATION_DEFAULT}, {@link IPDELauncherConstants#LOCATION_WORKSPACE} or {@link IPDELauncherConstants#LOCATION_EXTERNAL}
 		 */
 		public String getResolutionValue() {
 			return fPluginResolution;
 		}
+	}
+
+	/**
+	 * @return the translated string label for the current resolution value
+	 */
+	public String getResolutionLabel(String pluginResolution) {
+		if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_DEFAULT)) {
+			return PDEUIMessages.FeatureBlock_default;
+		} else if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE)) {
+			return PDEUIMessages.FeatureBlock_workspaceBefore;
+		} else if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_EXTERNAL)) {
+			return PDEUIMessages.FeatureBlock_externalBefore;
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	private static final int COLUMN_FEATURE_NAME = 0;
@@ -443,6 +622,8 @@ public class FeatureBlock {
 	private Button fFeatureWorkspaceButton;
 	private Button fAutoValidate;
 	private Button fValidateButton;
+	private Button fAddPluginButton;
+	private Button fRemovePluginButton;
 
 	private ILaunchConfiguration fLaunchConfig;
 	private ButtonSelectionListener fListener;
@@ -454,6 +635,8 @@ public class FeatureBlock {
 	 * Maps feature ID to the FeatureLaunchModel that represents the feature in the tree
 	 */
 	private Map fFeatureModels;
+	private List fAdditionalPlugins;
+	private NamedElement fAdditionalPluginsParentElement;
 
 	public FeatureBlock(AbstractLauncherTab pluginsTab) {
 		Assert.isNotNull(pluginsTab);
@@ -551,6 +734,46 @@ public class FeatureBlock {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
+		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
+				boolean allPlugins = true;
+				for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+					Object element = iterator.next();
+					if (!(element instanceof PluginLaunchModel)) {
+						allPlugins = false;
+					}
+				}
+				fRemovePluginButton.setEnabled(allPlugins);
+			}
+		});
+		fTree.getTree().addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				if (e.keyCode == SWT.DEL) {
+					// Any changes here need to be reflected in the remove button handling
+					IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
+					int index = fAdditionalPlugins.indexOf(selection.getFirstElement());
+					List input = (List) fTree.getInput();
+					for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+						Object element = iterator.next();
+						if (element instanceof PluginLaunchModel) {
+							fAdditionalPlugins.remove(element);
+							fTree.remove(element);
+							input.remove(element);
+						}
+					}
+					if (fAdditionalPlugins.size() == 0) {
+						input.remove(fAdditionalPluginsParentElement);
+					} else {
+						index--;
+						fTree.setSelection(new StructuredSelection(fAdditionalPlugins.get(index > 0 ? index : 0)), true);
+					}
+					fTree.refresh();
+					fTab.updateLaunchConfigurationDialog();
+				}
+			}
+		});
 	}
 
 	private void createButtonContainer(Composite parent, int vOffset) {
@@ -569,6 +792,11 @@ public class FeatureBlock {
 		fAddRequiredFeaturesButton.addSelectionListener(fListener);
 		fDefaultsButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.AdvancedLauncherTab_defaults, null);
 		fDefaultsButton.addSelectionListener(fListener);
+		fAddPluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName()), null);
+		fAddPluginButton.addSelectionListener(fListener);
+		fRemovePluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName()), null);
+		fRemovePluginButton.addSelectionListener(fListener);
+		fRemovePluginButton.setEnabled(false);
 
 		SWTFactory.createHorizontalSpacer(buttonComp, 1);
 
@@ -581,6 +809,9 @@ public class FeatureBlock {
 		Composite countComp = SWTFactory.createComposite(buttonComp, 1, 1, SWT.NONE, 0, 0);
 		countComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
 		fCounter = new Label(countComp, SWT.NONE);
+
+		Image siteImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_OBJ);
+		fAdditionalPluginsParentElement = new NamedElement(NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName()), siteImage);
 	}
 
 	public void initialize() throws CoreException {
@@ -588,11 +819,6 @@ public class FeatureBlock {
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
-		if (fLaunchConfig != null && fLaunchConfig.equals(config)) {
-			// Do nothing
-			return;
-		}
-
 		fLaunchConfig = config;
 
 		setInput(config, fTree);
@@ -616,13 +842,13 @@ public class FeatureBlock {
 			savePluginState((ILaunchConfigurationWorkingCopy) fLaunchConfig);
 		}
 
-		fTab.updateLaunchConfigurationDialog();
-
 		PDEPreferencesManager prefs = new PDEPreferencesManager(IPDEUIConstants.PLUGIN_ID);
 		int index = prefs.getInt(IPreferenceConstants.FEATURE_SORT_COLUMN);
 		TreeColumn column = fTree.getTree().getColumn(index == 0 ? COLUMN_FEATURE_NAME : index - 1);
 		fListener.handleColumn(column, prefs.getInt(IPreferenceConstants.FEATURE_SORT_ORDER));
+		fRemovePluginButton.setEnabled(false);
 		fTree.refresh(true);
+		fTab.updateLaunchConfigurationDialog();
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -637,16 +863,36 @@ public class FeatureBlock {
 
 	private void savePluginState(ILaunchConfigurationWorkingCopy config) {
 		Set featuresEntry = new HashSet(); // By using a set, debug will sort the attribute for us
-		Object[] checked = fTree.getCheckedElements();
-		for (int i = 0; i < checked.length; i++) {
-			FeatureLaunchModel model = (FeatureLaunchModel) checked[i];
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(model.getId());
-			buffer.append(':');
-			buffer.append(model.getResolutionValue());
-			featuresEntry.add(buffer.toString());
+		Set pluginsEntry = new HashSet();
+		ArrayList checkPluginLaunchModels = new ArrayList();
+
+		Object[] models = fTree.getCheckedElements();
+		for (int i = 0; i < models.length; i++) {
+			if (models[i] instanceof FeatureLaunchModel) {
+				FeatureLaunchModel featureModel = (FeatureLaunchModel) models[i];
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(featureModel.getId());
+				buffer.append(':');
+				buffer.append(featureModel.getResolutionValue());
+				featuresEntry.add(buffer.toString());
+			} else if (models[i] instanceof PluginLaunchModel) {
+				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) models[i];
+				String entry = BundleLauncherHelper.writeAdditionalPluginsEntry(pluginLaunchModel.getPluginModelBase(), pluginLaunchModel.getPluginResolution(), true);
+				pluginsEntry.add(entry);
+				checkPluginLaunchModels.add(pluginLaunchModel);
+			}
+		}
+
+		for (Iterator iterator = fAdditionalPlugins.iterator(); iterator.hasNext();) {
+			PluginLaunchModel uncheckedPluginLaunchModel = (PluginLaunchModel) iterator.next();
+			if (checkPluginLaunchModels.contains(uncheckedPluginLaunchModel))
+				continue;
+			String entry = BundleLauncherHelper.writeAdditionalPluginsEntry(uncheckedPluginLaunchModel.getPluginModelBase(), uncheckedPluginLaunchModel.getPluginResolution(), false);
+			pluginsEntry.add(entry);
 		}
 		config.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, featuresEntry);
+		config.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, pluginsEntry);
+
 	}
 
 	private void saveSortOrder() {
@@ -670,7 +916,7 @@ public class FeatureBlock {
 	private void updateCounter() {
 		if (fCounter != null) {
 			int checked = fTree.getCheckedLeafCount();
-			int total = fFeatureModels.values().size();
+			int total = fFeatureModels.values().size() + fAdditionalPlugins.size();
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
 		}
 	}
@@ -707,10 +953,30 @@ public class FeatureBlock {
 		}
 
 		fFeatureModels = featureModels;
-		tree.setInput(fFeatureModels.values());
-
-		// Loop through the saved config to determine location settings and selection
 		try {
+			fAdditionalPlugins = new ArrayList();
+			ArrayList checkedPluginLaunchModels = new ArrayList();
+			HashMap checkedPlugins = BundleLauncherHelper.resolveAddtionalPluginsEntry(config, true);
+			for (Iterator iterator = checkedPlugins.keySet().iterator(); iterator.hasNext();) {
+				IPluginModelBase model = (IPluginModelBase) iterator.next();
+				PluginLaunchModel pluginLaunchModel = new PluginLaunchModel(model, (String) checkedPlugins.get(model));
+				fAdditionalPlugins.add(pluginLaunchModel);
+				checkedPluginLaunchModels.add(pluginLaunchModel);
+			}
+
+			HashMap unCheckedPlugins = BundleLauncherHelper.resolveAddtionalPluginsEntry(config, false);
+			for (Iterator iterator = unCheckedPlugins.keySet().iterator(); iterator.hasNext();) {
+				IPluginModelBase model = (IPluginModelBase) iterator.next();
+				fAdditionalPlugins.add(new PluginLaunchModel(model, (String) unCheckedPlugins.get(model)));
+			}
+
+			List models = new ArrayList(fFeatureModels.values());
+			if (fAdditionalPlugins.size() > 0) {
+				models.add(fAdditionalPluginsParentElement);
+			}
+			tree.setInput(models);
+
+			// Loop through the saved config to determine location settings and selection
 			Set selected = config.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set) null);
 			if (selected == null) {
 				tree.setCheckedElements(fFeatureModels.values().toArray());
@@ -730,7 +996,10 @@ public class FeatureBlock {
 						}
 					}
 				}
-				tree.setCheckedElements(selectedFeatureList.toArray());
+				List checkedElements = new ArrayList();
+				checkedElements.addAll(selectedFeatureList);
+				checkedElements.addAll(checkedPluginLaunchModels);
+				tree.setCheckedElements(checkedElements.toArray());
 			}
 		} catch (CoreException e) {
 			PDELaunchingPlugin.log(e);

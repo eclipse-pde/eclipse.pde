@@ -477,4 +477,17 @@ public interface IPDELauncherConstants {
 	 * @see #FEATURE_PLUGIN_RESOLUTION
 	 */
 	String LOCATION_WORKSPACE = "workspace"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a List specifying the additional plug-ins that 
+	 * will be included along with the features in the list {@link #SELECTED_FEATURES}
+	 * when launching (when {@link #USE_CUSTOM_FEATURES} is set to <code>true</code>.
+	 * The values in the List are strings that contain the id and versions as follows:
+	 * <pre>
+	 * [plugin_id]:[version]
+	 * </pre>
+	 *  
+	 * @since 3.6
+	 */
+	String ADDITIONAL_PLUGINS = "additional_plugins"; //$NON-NLS-1$
 }

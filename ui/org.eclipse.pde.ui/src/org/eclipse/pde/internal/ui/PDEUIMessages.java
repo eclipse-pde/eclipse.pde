@@ -62,6 +62,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsProcessor_errorMessage;
 
+	public static String FeatureBlock_AdditionalPluginsEntry;
+
+	public static String FeatureBlock_AddPluginsLabel;
+
+	public static String FeatureBlock_RemovePluginsLabel;
+
 	public static String FeatureBlock_addRequiredFeatues;
 
 	public static String FeatureBlock_default;

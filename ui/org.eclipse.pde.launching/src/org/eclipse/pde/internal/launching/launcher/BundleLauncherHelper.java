@@ -137,7 +137,7 @@ public class BundleLauncherHelper {
 					if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
 						model = getBestCandidateModel(modelEntry.getExternalModels(), featurePlugins[i].getVersion());
 					}
-					if (model == null || map.containsKey(model))
+					if (model == null)
 						continue;
 					launchPlugins.add(model);
 				}
@@ -152,16 +152,20 @@ public class BundleLauncherHelper {
 						IPluginModelBase model = null;
 						if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
 							model = getBestCandidateModel(modelEntry.getWorkspaceModels(), featureImports[i].getVersion());
-						} else if (IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+						}
+						if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
 							model = getBestCandidateModel(modelEntry.getExternalModels(), featureImports[i].getVersion());
 						}
 
-						if (model == null || map.containsKey(model))
+						if (model == null)
 							continue;
 						launchPlugins.add(model);
 					}
 				}
 			}
+
+			HashMap additionalPlugins = resolveAddtionalPluginsEntry(configuration, true);
+			launchPlugins.addAll(additionalPlugins.keySet());
 
 			// Get all required plugins
 			// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
@@ -180,14 +184,35 @@ public class BundleLauncherHelper {
 				if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultPluginResolution)) {
 					model = getBestCandidateModel(modelEntry.getExternalModels(), null);
 				}
-				if (model == null || map.containsKey(model))
+				if (model == null)
 					continue;
 				launchPlugins.add(model);
 			}
 
-			// Create the start levels for the selected plugins and add them to the map
+			//remove conflicting duplicates - if they have same version or both are singleton
+			HashMap pluginMap = new HashMap();
+			List workspaceModels = null;
 			for (Iterator iterator = launchPlugins.iterator(); iterator.hasNext();) {
-				addBundleToMap(map, (IPluginModelBase) iterator.next(), "default:default"); //$NON-NLS-1$
+				IPluginModelBase model = (IPluginModelBase) iterator.next();
+				String id = model.getPluginBase().getId();
+				if (pluginMap.containsKey(id)) {
+					IPluginModelBase existing = (IPluginModelBase) pluginMap.get(id);
+					if (model.getPluginBase().getVersion().equalsIgnoreCase(existing.getPluginBase().getVersion()) || (isSingleton(model) && isSingleton(existing))) {
+						if (workspaceModels == null)
+							workspaceModels = Arrays.asList(PluginRegistry.getWorkspaceModels());
+						if (!workspaceModels.contains(existing)) { //if existing model is external 							
+							pluginMap.put(id, model); // launch the workspace model 
+							continue;
+						}
+					}
+				}
+				pluginMap.put(id, model);
+			}
+
+			// Create the start levels for the selected plugins and add them to the map
+			for (Iterator iterator = pluginMap.values().iterator(); iterator.hasNext();) {
+				IPluginModelBase model = (IPluginModelBase) iterator.next();
+				addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 			}
 			return map;
 		}
@@ -197,6 +222,13 @@ public class BundleLauncherHelper {
 		map = getWorkspaceBundleMap(configuration, set, workspace);
 		map.putAll(getTargetBundleMap(configuration, set, target));
 		return map;
+	}
+
+	private static boolean isSingleton(IPluginModelBase model) {
+		if (model.getBundleDescription() == null || model.getBundleDescription().isSingleton()) {
+			return true;
+		}
+		return false;
 	}
 
 	private static IPluginModelBase getBestCandidateModel(IPluginModelBase[] models, String version) {
@@ -218,6 +250,10 @@ public class BundleLauncherHelper {
 
 			BundleDescription current = model.getBundleDescription();
 			BundleDescription candidate = models[i].getBundleDescription();
+			if (current == null || candidate == null) {
+				continue;
+			}
+
 			if (!current.isResolved() && candidate.isResolved()) {
 				model = models[i];
 				continue;
@@ -227,7 +263,7 @@ public class BundleLauncherHelper {
 				model = models[i];
 				break;
 			}
-			
+
 			if (current.getVersion().compareTo(candidate.getVersion()) < 0) {
 				model = models[i];
 			}
@@ -478,4 +514,48 @@ public class BundleLauncherHelper {
 			wc.doSave();
 	}
 
+	public static String writeAdditionalPluginsEntry(IPluginModelBase model, String pluginResolution, boolean checked) {
+		IPluginBase base = model.getPluginBase();
+		String id = base.getId();
+		StringBuffer buffer = new StringBuffer(id);
+		buffer.append(':');
+		buffer.append(base.getVersion());
+		buffer.append(':');
+		buffer.append(pluginResolution);
+		buffer.append(':');
+		buffer.append(checked);
+		return buffer.toString();
+	}
+
+	public static HashMap resolveAddtionalPluginsEntry(ILaunchConfiguration config, boolean checkedOnly) throws CoreException {
+		HashMap resolvedAdditionalPlugins = new HashMap();
+		Set userAddedPlugins = config.getAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, (Set) null);
+		String defaultPluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
+		if (userAddedPlugins != null) {
+			for (Iterator iterator = userAddedPlugins.iterator(); iterator.hasNext();) {
+				String addedPlugin = (String) iterator.next();
+				String[] pluginData = addedPlugin.split(":"); //$NON-NLS-1$
+				boolean checked = Boolean.valueOf(pluginData[3]).booleanValue();
+				if (checked != checkedOnly)
+					continue;
+				String id = pluginData[0];
+				String version = pluginData[1];
+				String pluginResolution = pluginData[2];
+				ModelEntry pluginModelEntry = PluginRegistry.findEntry(id);
+				if (pluginModelEntry == null)
+					continue;
+				IPluginModelBase pluginModel = null;
+				if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution))
+					pluginResolution = defaultPluginResolution;
+				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
+					pluginModel = getBestCandidateModel(pluginModelEntry.getWorkspaceModels(), version);
+				}
+				if (pluginModel == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
+					pluginModel = getBestCandidateModel(pluginModelEntry.getExternalModels(), version);
+				}
+				resolvedAdditionalPlugins.put(pluginModel, pluginData[2]);
+			}
+		}
+		return resolvedAdditionalPlugins;
+	}
 }
