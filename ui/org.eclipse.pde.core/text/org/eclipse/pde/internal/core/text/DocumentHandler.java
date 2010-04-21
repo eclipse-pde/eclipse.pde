@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,8 +181,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 
 	private IRegion getAttributeRegion(String name, String value, int offset) throws BadLocationException {
 		FindReplaceDocumentAdapter fFindReplaceAdapter = new FindReplaceDocumentAdapter(getDocument());
-		IRegion nameRegion = fFindReplaceAdapter.find(offset, name + "\\s*=\\s*[\"\']", true, true, false, true); //$NON-NLS-1$
+		IRegion nameRegion = fFindReplaceAdapter.find(offset, "\\s" + name + "\\s*=\\s*\"", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 		if (nameRegion != null) {
+			nameRegion = new Region(nameRegion.getOffset() + 1, nameRegion.getLength() - 1);
 			if (getDocument().get(nameRegion.getOffset() + nameRegion.getLength(), value.length()).equals(value))
 				return new Region(nameRegion.getOffset(), nameRegion.getLength() + value.length() + 1);
 		}
