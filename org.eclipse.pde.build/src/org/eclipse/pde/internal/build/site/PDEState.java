@@ -218,14 +218,30 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public boolean addBundle(File bundleLocation) {
 		Dictionary manifest;
 		manifest = loadManifest(bundleLocation);
-		if (manifest == null)
-			return false;
+		if (manifest == null) {
+			return addFlexibleRoot(bundleLocation);
+		}
 		try {
 			hasQualifier(bundleLocation, manifest);
 		} catch (BundleException e) {
 			//should not happen since we know the header
 		}
 		return addBundle(manifest, bundleLocation);
+	}
+
+	private boolean addFlexibleRoot(File bundleLocation) {
+		if (!new File(bundleLocation, PDE_CORE_PREFS).exists())
+			return false;
+
+		try {
+			Properties properties = AbstractScriptGenerator.readProperties(bundleLocation.getAbsolutePath(), PDE_CORE_PREFS, IStatus.OK);
+			String root = properties.getProperty(BUNDLE_ROOT_PATH);
+			if (root != null)
+				return addBundle(new File(bundleLocation, root));
+		} catch (CoreException e) {
+			//ignore
+		}
+		return false;
 	}
 
 	private String updateVersionNumber(Dictionary manifest) {

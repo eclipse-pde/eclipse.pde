@@ -2107,4 +2107,28 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 		fail("Should have found compiler log entry:\n-foo -bar baz");
 	}
+
+	public void testBug309572() throws Exception {
+		IFolder buildFolder = newTest("309572");
+
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+		StringBuffer code = new StringBuffer();
+		code.append("package api;                					 \n");
+		code.append("import my.view.Activator;  					 \n");
+		code.append("public class A{            					 \n");
+		code.append("   public static Activator a = new Activator(); \n");
+		code.append("}                    					         \n");
+		Utils.writeBuffer(A.getFile("src/api/A.java"), code);
+
+		Attributes attributes = new Attributes();
+		attributes.put(new Attributes.Name("Require-Bundle"), "test.pluginmodelinstalllocation");
+		Utils.generateBundleManifest(A, "A", "1.0.0", attributes);
+		Utils.generatePluginBuildProperties(A, null);
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"A", "test.pluginmodelinstalllocation"});
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+	}
 }

@@ -64,9 +64,27 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 			} else if (new File(location[i], JarFile.MANIFEST_NAME).exists() || new File(location[i], Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() || new File(location[i], Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists()) {
 				collectedElements.add(location[i]);
 			} else if (location[i].isDirectory()) {
-				collectedElements.addAll(Arrays.asList(location[i].listFiles()));
-			} else if (location[i].isFile() && location[i].getName().endsWith(".jar")) //$NON-NLS-1$
+				//at this point Manifest, plugin.xml, feature.xml and fragment.xml don't exist here
+				//consider a project with "flexible root"
+				if (new File(location[i], PDE_CORE_PREFS).exists()) {
+					try {
+						Properties properties = AbstractScriptGenerator.readProperties(location[i].getAbsolutePath(), PDE_CORE_PREFS, IStatus.OK);
+						String root = properties.getProperty(BUNDLE_ROOT_PATH);
+						if (root != null) {
+							File actualRoot = new File(location[i], root);
+							if (actualRoot.exists())
+								collectedElements.add(actualRoot);
+						}
+					} catch (CoreException e) {
+						// nope
+					}
+				} else {
+					//a "workspace"
+					collectedElements.addAll(Arrays.asList(location[i].listFiles()));
+				}
+			} else if (location[i].isFile() && location[i].getName().endsWith(".jar")) {//$NON-NLS-1$
 				collectedElements.add(location[i]);
+			}
 		}
 		return collectedElements;
 	}
