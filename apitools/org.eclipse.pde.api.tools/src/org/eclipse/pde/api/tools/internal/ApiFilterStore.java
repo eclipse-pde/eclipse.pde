@@ -696,6 +696,11 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(persist) {
 			persistApiFilters();
 		}
+		else {
+			//need to reset the flag during initialization if we are not going to persist
+			//the filters, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=309635
+			fNeedsSaving = false;
+		}
 	}
 	
 	/**
