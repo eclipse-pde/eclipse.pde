@@ -60,6 +60,7 @@ public class CompilerFlags {
 	public static final String P_BUILD_SRC_INCLUDES = "compilers.p.build.src.includes"; //$NON-NLS-1$
 	public static final String P_BUILD_BIN_INCLUDES = "compilers.p.build.bin.includes"; //$NON-NLS-1$
 	public static final String P_BUILD_JAVA_COMPLIANCE = "compilers.p.build.java.compliance"; //$NON-NLS-1$
+	public static final String P_BUILD_JAVA_COMPILER = "compilers.p.build.java.compiler"; //$NON-NLS-1$
 	public static final String P_INCOMPATIBLE_ENV = "compilers.incompatible-environment"; //$NON-NLS-1$
 	public static final String P_MISSING_EXPORT_PKGS = "compilers.p.missing-packages"; //$NON-NLS-1$
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$

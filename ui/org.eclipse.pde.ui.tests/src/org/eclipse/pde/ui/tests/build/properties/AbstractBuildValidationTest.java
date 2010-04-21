@@ -293,6 +293,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		projectPrefs.putInt(CompilerFlags.P_BUILD_SRC_INCLUDES, severity);
 		projectPrefs.putInt(CompilerFlags.P_BUILD_BIN_INCLUDES, severity);
 		projectPrefs.putInt(CompilerFlags.P_BUILD_JAVA_COMPLIANCE, severity);
+		projectPrefs.putInt(CompilerFlags.P_BUILD_JAVA_COMPILER, severity);
 		projectPrefs.flush();
 		projectPrefs.sync();
 	}
