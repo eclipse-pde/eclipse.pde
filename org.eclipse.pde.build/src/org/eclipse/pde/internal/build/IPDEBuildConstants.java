@@ -146,4 +146,8 @@ public interface IPDEBuildConstants {
 	//container feature used in building .product files
 	public final static String CONTAINER_FEATURE = "org.eclipse.pde.build.container.feature"; //$NON-NLS-1$
 	public final static String UI_CONTAINER_FEATURE = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+
+	public final static String PDE_CORE_PREFS = ".settings/org.eclipse.pde.core.prefs"; //$NON-NLS-1$
+	public final static String JDT_CORE_PREFS = ".settings/org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
+	public final static String BUNDLE_ROOT_PATH = "BUNDLE_ROOT_PATH"; //$NON-NLS-1$
 }

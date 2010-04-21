@@ -37,6 +37,7 @@ public class JavacTask implements ITask {
 	protected String errorProperty;
 	protected String[] excludes;
 	protected String compilerAdapter;
+	protected String warningProperties;
 	private boolean adapterUseLog = false;
 	private boolean adapterUseArgFile = false;
 
@@ -93,6 +94,17 @@ public class JavacTask implements ITask {
 			script.printTab();
 			script.print("<exclude "); //$NON-NLS-1$
 			script.printAttribute("name", excludes[i], true); //$NON-NLS-1$
+			script.println("/>"); //$NON-NLS-1$
+		}
+
+		if (warningProperties != null) {
+			script.printTab();
+			script.print("<compilerarg"); //$NON-NLS-1$
+			script.printAttribute("line", "-properties '" + warningProperties + "'", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (compilerAdapter != null && adapterUseArgFile)
+				script.printAttribute("compiler", compilerAdapter, true); //$NON-NLS-1$
+			else
+				script.printAttribute("compiler", IXMLConstants.JDT_COMPILER_ADAPTER, true); //$NON-NLS-1$
 			script.println("/>"); //$NON-NLS-1$
 		}
 
@@ -268,5 +280,9 @@ public class JavacTask implements ITask {
 	public void setAdapterArgFile(boolean useFile) {
 		this.adapterUseArgFile = useFile;
 
+	}
+
+	public void setWarningProperties(String warningProperties) {
+		this.warningProperties = warningProperties;
 	}
 }

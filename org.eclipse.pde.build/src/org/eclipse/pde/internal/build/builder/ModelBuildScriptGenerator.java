@@ -114,6 +114,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private String customCallbacksBuildpath = null;
 	private String customCallbacksFailOnError = null;
 	private String customCallbacksInheritAll = null;
+	private String warningProperties = null;
 	// array of extensions of recognized source files (eg- *.java, *.aj, etc)
 	private String[] sourceFileExtensions;
 	//This list is initialized by the generateBuildJarsTarget
@@ -225,6 +226,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					workspaceOutputFolders = (Map) folders.get(model.getSymbolicName());
 				}
 			}
+		}
+
+		String projectWarningSettings = getBuildProperties().getProperty(PROPERTY_PROJECT_SETTINGS);
+		if (Boolean.valueOf(projectWarningSettings).booleanValue()) {
+			//find default prefs file
+			if (new File(model.getLocation(), JDT_CORE_PREFS).exists())
+				warningProperties = JDT_CORE_PREFS;
+		} else if (projectWarningSettings != null && !FALSE.equalsIgnoreCase(projectWarningSettings)) {
+			if (new File(model.getLocation(), projectWarningSettings).exists())
+				warningProperties = projectWarningSettings;
 		}
 	}
 
@@ -1475,6 +1486,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 			javac.setSrcdir(sources);
 			javac.setLogExtension(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
+			if (warningProperties != null)
+				javac.setWarningProperties(Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + warningProperties);
 			if (generateErrorPropertyAttribute)
 				javac.setErrorProperty(PROPERTY_COMPILATION_ERROR);
 			generateCompilerSettings(javac, entry, classpath);
