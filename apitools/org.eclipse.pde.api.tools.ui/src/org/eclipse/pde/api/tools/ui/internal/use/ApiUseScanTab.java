@@ -418,14 +418,27 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				public int compare(Object o1, Object o2) {
 					ITargetDefinition d1 = (ITargetDefinition) o1;
 					ITargetDefinition d2 = (ITargetDefinition) o2;
-					return d1.getName().compareTo(d2.getName());
+					
+					final String name1 = d1.getName();
+					final String name2 = d2.getName();
+					if (name1 == null) {
+						if (name2 == null) {
+							return d1.getHandle().toString().compareTo(d2.getHandle().toString());
+						}
+						return -1;
+					} else if (name2 == null) {
+						return 1;
+					}
+					return name1.compareTo(name2);
 				}
 			});
 			targetHandles = new ITargetHandle[defs.size()];
 			for (int i = 0; i < defs.size(); i++) {
 				ITargetDefinition def = (ITargetDefinition) defs.get(i);
-				targetHandles[i] = def.getHandle();
-				names.add(def.getName());
+				final ITargetHandle handle = def.getHandle();
+				targetHandles[i] = handle;
+				final String name = def.getName();
+				names.add(name == null ? handle.toString() : name);
 			}
 		}
 		this.targetCombo.setItems((String[]) names.toArray(new String[names.size()]));
