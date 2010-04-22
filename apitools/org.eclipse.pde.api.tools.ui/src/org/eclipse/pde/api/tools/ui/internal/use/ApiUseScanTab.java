@@ -251,9 +251,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.createhtml = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_create_html_report, null, false, 2);
 		this.createhtml.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
-				boolean enabled = ((Button)e.widget).getSelection();
-				ApiUseScanTab.this.cleanhtmllocation.setEnabled(enabled);
-				ApiUseScanTab.this.openreport.setEnabled(enabled);
+				updateReportOptions();
 				updateDialog();
 			}
 		});
@@ -352,7 +350,17 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				break;
 			}
 		}
+		updateReportOptions();
 		updateLaunchConfigurationDialog();
+	}
+	
+	/**
+	 * Updates the report options
+	 */
+	void updateReportOptions() {
+		boolean enabled = this.createhtml.getSelection();
+		this.openreport.setEnabled(enabled);
+		this.cleanhtmllocation.setEnabled(enabled);
 	}
 	
 	/**
