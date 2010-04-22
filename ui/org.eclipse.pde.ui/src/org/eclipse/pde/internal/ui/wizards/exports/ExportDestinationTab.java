@@ -94,7 +94,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		initializeCombo(settings, S_ZIP_FILENAME, fArchiveCombo);
 		initializeCombo(settings, S_INSTALL_DESTINATION, fInstallCombo);
 		// Always add a default repo location to the install combo
-		String defaultRepo = PDEPlugin.getWorkspace().getRoot().getLocation() + "/.metadata/.plugins/org.eclipse.pde.core/install/";
+		String defaultRepo = PDEPlugin.getWorkspace().getRoot().getLocation() + "/.metadata/.plugins/org.eclipse.pde.core/install/"; //$NON-NLS-1$
 		if (fInstallCombo.indexOf(defaultRepo) == -1) {
 			fInstallCombo.add(defaultRepo);
 		}
