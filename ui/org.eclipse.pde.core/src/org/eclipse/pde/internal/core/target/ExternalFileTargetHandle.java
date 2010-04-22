@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,14 +86,13 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_4, fFile.getName()), e));
 		}
-
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#exists()
 	 */
 	public boolean exists() {
-		return fFile.exists();
+		return fFile != null && fFile.exists();
 	}
 
 	/* (non-Javadoc)
@@ -113,6 +112,13 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 
 	public URI getLocation() {
 		return fURI;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return fURI.toString();
 	}
 
 }
