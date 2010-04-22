@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import org.eclipse.pde.internal.core.PDECoreMessages;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
@@ -20,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -315,11 +316,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				return;
 			}
 
-			ProjectScope projectContext = new ProjectScope(fProject);
-			IEclipsePreferences node = projectContext.getNode(JavaCore.PLUGIN_ID);
-			String projectComplianceLevel = node.get(JavaCore.COMPILER_COMPLIANCE, ""); //$NON-NLS-1$
+			String projectComplianceLevel = project.getOption(JavaCore.COMPILER_COMPLIANCE, false);
 
-			if (projectComplianceLevel.length() > 0) { //project has specific properties enabled 
+			if (projectComplianceLevel != null) {
+
 				IPluginModelBase model = PluginRegistry.findModel(fProject);
 				String[] execEnvs = null;
 				if (model != null) {
@@ -336,13 +336,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				//PDE Build uses top most entry to build the plug-in
 				String execEnv = execEnvs[0];
 
-				String projectSourceCompatibility = node.get(JavaCore.COMPILER_SOURCE, null);
-				String projectClassCompatibility = node.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, null);
+				String projectSourceCompatibility = project.getOption(JavaCore.COMPILER_SOURCE, false);
+				String projectClassCompatibility = project.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, false);
 				if (projectComplianceLevel.equals(findMatchingEE(projectSourceCompatibility, projectClassCompatibility, false)) && execEnv.equals(findMatchingEE(projectSourceCompatibility, projectClassCompatibility, true))) {
-					return; //The project compliance settings matches the manifest
+					return; //The project compliance settings matches the BREE
 				}
 
-				//project compliance does not matches EE
+				Map defaultComplianceOptions = new HashMap();
+				JavaCore.setComplianceOptions(projectComplianceLevel, defaultComplianceOptions);
+
+				//project compliance does not match the BREE
 				String projectJavaCompatibility = findMatchingEE(projectSourceCompatibility, projectClassCompatibility, true);
 				String message = null;
 				if (projectJavaCompatibility != null) {
@@ -356,22 +359,39 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						}
 					}
 				} else {
-					if (javacSourceEntry == null) {
-						message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
-						prepareError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+					// Check source level setting
+					if (projectSourceCompatibility.equals(defaultComplianceOptions.get(JavaCore.COMPILER_SOURCE))) {
+						if (javacSourceEntry != null) {
+							message = NLS.bind(PDECoreMessages.BuildErrorReporter_BuildEntryNotRequiredMatchesDefault, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
+							prepareError(PROPERTY_JAVAC_SOURCE, null, message, PDEMarkerFactory.B_REMOVAL, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						}
 					} else {
-						if (!projectSourceCompatibility.equalsIgnoreCase(javacSourceEntry.getTokens()[0])) {
-							message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
-							prepareError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_REPLACE, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						if (javacSourceEntry == null) {
+							message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
+							prepareError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						} else {
+							if (!projectSourceCompatibility.equalsIgnoreCase(javacSourceEntry.getTokens()[0])) {
+								message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_SOURCE, PDECoreMessages.BuildErrorReporter_SourceCompatibility);
+								prepareError(PROPERTY_JAVAC_SOURCE, projectSourceCompatibility, message, PDEMarkerFactory.B_REPLACE, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+							}
 						}
 					}
-					if (javacTargetEntry == null) {
-						message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
-						prepareError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+
+					// Check target level setting
+					if (projectClassCompatibility.equals(defaultComplianceOptions.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM))) {
+						if (javacTargetEntry != null) {
+							message = NLS.bind(PDECoreMessages.BuildErrorReporter_BuildEntryNotRequiredMatchesDefault, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
+							prepareError(PROPERTY_JAVAC_TARGET, null, message, PDEMarkerFactory.B_REMOVAL, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						}
 					} else {
-						if (!projectClassCompatibility.equalsIgnoreCase(javacTargetEntry.getTokens()[0])) {
-							message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
-							prepareError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_REPLACE, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						if (javacTargetEntry == null) {
+							message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
+							prepareError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						} else {
+							if (!projectClassCompatibility.equalsIgnoreCase(javacTargetEntry.getTokens()[0])) {
+								message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_TARGET, PDECoreMessages.BuildErrorReporter_GeneratedClassFilesCompatibility);
+								prepareError(PROPERTY_JAVAC_TARGET, projectClassCompatibility, message, PDEMarkerFactory.B_REPLACE, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+							}
 						}
 					}
 				}
@@ -381,7 +401,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					return;
 				}
 
-				checkJavaComplianceSettings(node, javacWarningsEntries, javacErrorsEntries, libraryNames);
+				checkJavaComplianceSettings(projectComplianceLevel, javacWarningsEntries, javacErrorsEntries, libraryNames);
 			}
 		}
 	}
@@ -392,97 +412,110 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * compiler settings are set on a per project basis, any special javacWarnings/javacErrors
 	 * must be set for each library.
 	 * 
-	 * @param node preferences node to check for the warnings settings
+	 * @param complianceLevel the compliance level to check settings against, used to get default values
 	 * @param javacWarningsEntries list of build entries with the java compiler warnings prefix javacWarnings.
 	 * @param javacErrorsEntries list of build entries with the java compiler errors prefix javacErrors.
 	 * @param libraryNames list of String library names
 	 */
-	private void checkJavaComplianceSettings(IEclipsePreferences node, ArrayList javacWarningsEntries, ArrayList javacErrorsEntries, List libraryNames) {
+	private void checkJavaComplianceSettings(String complianceLevel, ArrayList javacWarningsEntries, ArrayList javacErrorsEntries, List libraryNames) {
 		List complianceWarnSettings = new ArrayList(3);
 		List complianceErrorSettings = new ArrayList(3);
 
-		//look for assertIdentifier and enumIdentifier entries in javacWarnings. If any is present let it be, if not warn.
-		String assertIdentifier = node.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, ""); //$NON-NLS-1$
-		if (JavaCore.ERROR.equalsIgnoreCase(assertIdentifier)) {
-			complianceErrorSettings.add(ASSERT_IDENTIFIER);
-		} else if (JavaCore.WARNING.equalsIgnoreCase(assertIdentifier)) {
-			complianceWarnSettings.add(ASSERT_IDENTIFIER);
-		}
+		IJavaProject project = JavaCore.create(fProject);
+		if (project.exists()) {
 
-		String enumIdentifier = node.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, ""); //$NON-NLS-1$
-		if (JavaCore.ERROR.equalsIgnoreCase(enumIdentifier)) {
-			complianceErrorSettings.add(ENUM_IDENTIFIER);
-		} else if (JavaCore.WARNING.equalsIgnoreCase(enumIdentifier)) {
-			complianceWarnSettings.add(ENUM_IDENTIFIER);
-		}
+			Map defaultComplianceOptions = new HashMap();
+			JavaCore.setComplianceOptions(complianceLevel, defaultComplianceOptions);
 
-		// If a warnings entry is required, make sure there is one for each library with the correct content
-		if (complianceWarnSettings.size() > 0) {
-			for (Iterator iterator = libraryNames.iterator(); iterator.hasNext();) {
-				String libName = (String) iterator.next();
-				IBuildEntry matchingEntry = null;
-				for (Iterator iterator2 = javacWarningsEntries.iterator(); iterator2.hasNext();) {
-					IBuildEntry candidate = (IBuildEntry) iterator2.next();
-					if (candidate.getName().equals(PROPERTY_JAVAC_WARNINGS_PREFIX + libName)) {
-						matchingEntry = candidate;
-						break;
-					}
+			//look for assertIdentifier and enumIdentifier entries in javacWarnings. If any is present let it be, if not warn.
+			String assertIdentifier = project.getOption(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, false);
+			String defaultAssert = (String) defaultComplianceOptions.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
+			if (!assertIdentifier.equalsIgnoreCase(defaultAssert)) {
+				if (JavaCore.ERROR.equalsIgnoreCase(assertIdentifier)) {
+					complianceErrorSettings.add(ASSERT_IDENTIFIER);
+				} else if (JavaCore.WARNING.equalsIgnoreCase(assertIdentifier)) {
+					complianceWarnSettings.add(ASSERT_IDENTIFIER);
 				}
-				if (matchingEntry == null) {
-					String missingTokens = ""; //$NON-NLS-1$
-					for (Iterator iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
-						String currentIdentifier = (String) iterator2.next();
-						missingTokens = join(missingTokens, '-' + currentIdentifier);
-					}
-					String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
-					prepareError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
-				} else {
-					String missingTokens = ""; //$NON-NLS-1$
-					for (Iterator iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
-						String currentIdentifier = (String) iterator2.next();
-						if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
-							join(missingTokens, '-' + currentIdentifier);
+			}
+
+			String enumIdentifier = project.getOption(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, false);
+			String defaultEnum = (String) defaultComplianceOptions.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);
+			if (!enumIdentifier.equalsIgnoreCase(defaultEnum)) {
+				if (JavaCore.ERROR.equalsIgnoreCase(enumIdentifier)) {
+					complianceErrorSettings.add(ENUM_IDENTIFIER);
+				} else if (JavaCore.WARNING.equalsIgnoreCase(enumIdentifier)) {
+					complianceWarnSettings.add(ENUM_IDENTIFIER);
+				}
+			}
+
+			// If a warnings entry is required, make sure there is one for each library with the correct content
+			if (complianceWarnSettings.size() > 0) {
+				for (Iterator iterator = libraryNames.iterator(); iterator.hasNext();) {
+					String libName = (String) iterator.next();
+					IBuildEntry matchingEntry = null;
+					for (Iterator iterator2 = javacWarningsEntries.iterator(); iterator2.hasNext();) {
+						IBuildEntry candidate = (IBuildEntry) iterator2.next();
+						if (candidate.getName().equals(PROPERTY_JAVAC_WARNINGS_PREFIX + libName)) {
+							matchingEntry = candidate;
+							break;
 						}
 					}
-					if (missingTokens.length() > 0) {
-						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
+					if (matchingEntry == null) {
+						String missingTokens = ""; //$NON-NLS-1$
+						for (Iterator iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = (String) iterator2.next();
+							missingTokens = join(missingTokens, '-' + currentIdentifier);
+						}
+						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
 						prepareError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+					} else {
+						String missingTokens = ""; //$NON-NLS-1$
+						for (Iterator iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = (String) iterator2.next();
+							if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
+								join(missingTokens, '-' + currentIdentifier);
+							}
+						}
+						if (missingTokens.length() > 0) {
+							String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
+							prepareError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						}
 					}
 				}
 			}
-		}
 
-		// If a warnings entry is required, make sure there is one for each library with the correct content
-		if (complianceErrorSettings.size() > 0) {
-			for (Iterator iterator = libraryNames.iterator(); iterator.hasNext();) {
-				String libName = (String) iterator.next();
-				IBuildEntry matchingEntry = null;
-				for (Iterator iterator2 = javacErrorsEntries.iterator(); iterator2.hasNext();) {
-					IBuildEntry candidate = (IBuildEntry) iterator2.next();
-					if (candidate.getName().equals(PROPERTY_JAVAC_ERRORS_PREFIX + libName)) {
-						matchingEntry = candidate;
-						break;
-					}
-				}
-				if (matchingEntry == null) {
-					String missingTokens = ""; //$NON-NLS-1$
-					for (Iterator iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
-						String currentIdentifier = (String) iterator2.next();
-						missingTokens = join(missingTokens, '-' + currentIdentifier);
-					}
-					String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
-					prepareError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
-				} else {
-					String missingTokens = ""; //$NON-NLS-1$
-					for (Iterator iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
-						String currentIdentifier = (String) iterator2.next();
-						if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
-							missingTokens = join(missingTokens, '-' + currentIdentifier);
+			// If a warnings entry is required, make sure there is one for each library with the correct content
+			if (complianceErrorSettings.size() > 0) {
+				for (Iterator iterator = libraryNames.iterator(); iterator.hasNext();) {
+					String libName = (String) iterator.next();
+					IBuildEntry matchingEntry = null;
+					for (Iterator iterator2 = javacErrorsEntries.iterator(); iterator2.hasNext();) {
+						IBuildEntry candidate = (IBuildEntry) iterator2.next();
+						if (candidate.getName().equals(PROPERTY_JAVAC_ERRORS_PREFIX + libName)) {
+							matchingEntry = candidate;
+							break;
 						}
 					}
-					if (missingTokens.length() > 0) {
-						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
+					if (matchingEntry == null) {
+						String missingTokens = ""; //$NON-NLS-1$
+						for (Iterator iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = (String) iterator2.next();
+							missingTokens = join(missingTokens, '-' + currentIdentifier);
+						}
+						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
 						prepareError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+					} else {
+						String missingTokens = ""; //$NON-NLS-1$
+						for (Iterator iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = (String) iterator2.next();
+							if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
+								missingTokens = join(missingTokens, '-' + currentIdentifier);
+							}
+						}
+						if (missingTokens.length() > 0) {
+							String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
+							prepareError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
+						}
 					}
 				}
 			}
