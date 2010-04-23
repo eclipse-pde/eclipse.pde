@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,18 +162,19 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			}
 			//			superclass and interface
 			if (attInfo == null) {
+				initialValues.interfaceName = "org.osgi.framework.BundleActivator"; //$NON-NLS-1$
+				initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
 				IEclipsePreferences prefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 				if (prefs != null && !prefs.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true)) {
-					initialValues.interfaceName = "org.osgi.framework.BundleActivator"; //$NON-NLS-1$
-					initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
 					return;
 				}
-				initialValues.superClassName = "org.eclipse.core.runtime.Plugin"; //$NON-NLS-1$
 				if (model != null) {
 					IPluginImport[] imports = model.getPluginBase().getImports();
 					for (int i = 0; i < imports.length; i++) {
 						if (imports[i].getId().equals("org.eclipse.ui")) { //$NON-NLS-1$
 							initialValues.superClassName = "org.eclipse.ui.plugin.AbstractUIPlugin"; //$NON-NLS-1$
+							initialValues.interfaceName = null;
+							initialValues.interfaceType = null;
 							break;
 						}
 					}

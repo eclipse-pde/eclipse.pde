@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.ui.templates.PluginReference;
+
 public class PluginClassCodeGenerator {
 	private PluginFieldData fPluginData;
 	private IProject fProject;
@@ -47,7 +48,8 @@ public class PluginClassCodeGenerator {
 		IFile file = fProject.getFile(path.append(className + ".java")); //$NON-NLS-1$
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		if (fPluginData.getOSGiFramework() != null) {
+		// only generate/extend plug-in classes if it's a IU plug-in
+		if (fPluginData.getOSGiFramework() != null || !fPluginData.isUIPlugin()) {
 			generateActivatorClass(packageName, className, writer);
 		} else {
 			generatePluginClass(packageName, className, writer);
@@ -162,18 +164,26 @@ public class PluginClassCodeGenerator {
 		writer.println();
 		writer.println("public class " + className + " implements BundleActivator {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
+		writer.println("\tprivate static BundleContext context;"); //$NON-NLS-1$
+		writer.println();
+		writer.println("\tstatic BundleContext getContext() {"); //$NON-NLS-1$
+		writer.println("\t\treturn context;"); //$NON-NLS-1$
+		writer.println("\t}"); //$NON-NLS-1$
+		writer.println();
 		writer.println("\t/*"); //$NON-NLS-1$
 		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
 		writer.println("\t * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer.println("\tpublic void start(BundleContext bundleContext) throws Exception {"); //$NON-NLS-1$
+		writer.println("\t\t" + className + ".context = bundleContext;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 		writer.println("\t/*"); //$NON-NLS-1$
 		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
 		writer.println("\t * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
+		writer.println("\tpublic void stop(BundleContext bundleContext) throws Exception {"); //$NON-NLS-1$
+		writer.println("\t\t" + className + ".context = null;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 		writer.println("}"); //$NON-NLS-1$		
