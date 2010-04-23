@@ -71,6 +71,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putInt(CompilerFlags.P_BUILD_BIN_INCLUDES, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_BUILD_JAVA_COMPLIANCE, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_BUILD_JAVA_COMPILER, CompilerFlags.IGNORE);
+		prefs.putInt(CompilerFlags.P_BUILD_ENCODINGS, CompilerFlags.IGNORE);
 
 		prefs.putInt(CompilerFlags.P_INCOMPATIBLE_ENV, CompilerFlags.WARNING);
 		prefs.putInt(CompilerFlags.P_MISSING_EXPORT_PKGS, CompilerFlags.IGNORE);

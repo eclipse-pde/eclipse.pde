@@ -114,6 +114,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	protected int fMissingOutputLibSeverity;
 	protected int fSrcLibSeverity;
 	protected int fOututLibSeverity;
+	protected int fEncodingSeverity;
 
 	public BuildErrorReporter(IFile buildFile) {
 		super(buildFile);
@@ -126,6 +127,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		fJavaCompilerSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_JAVA_COMPILER);
 		fSrcInclSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_SRC_INCLUDES);
 		fBinInclSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_BIN_INCLUDES);
+		fEncodingSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD_ENCODINGS);
 	}
 
 	public void validate(IProgressMonitor monitor) {
@@ -228,7 +230,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				IClasspathEntry[] cpes = jp.getRawClasspath();
 				validateMissingLibraries(sourceEntryKeys, cpes);
 				validateSourceEntries(sourceEntries, cpes);
-				SourceEntryErrorReporter srcEntryErrReporter = new SourceEntryErrorReporter(fFile);
+				SourceEntryErrorReporter srcEntryErrReporter = new SourceEntryErrorReporter(fFile, build);
 				srcEntryErrReporter.initialize(sourceEntries, outputEntries, cpes, fProject);
 				srcEntryErrReporter.validate();
 				ArrayList problems = srcEntryErrReporter.getProblemList();
@@ -246,26 +248,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		validateBinIncludes(binIncludes);
 		validateExecutionEnvironment(javacSource, javacTarget, jreCompilationProfile, javacWarnings, javacErrors, getSourceLibraries(sourceEntries));
 		validateJavaCompilerSettings(javaProjectWarnings);
-		//validateDefaultEncoding(sourceEntries, encodingEntries);
 	}
-
-//	private void validateDefaultEncoding(ArrayList sourceEntries, Map encodingEntries) {
-//		String defaultEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
-//		for (int i = 0; i < sourceEntries.size(); i++) {
-//			try {
-//				String name = ((IBuildEntry) sourceEntries.get(i)).getName();
-//				String library = name.substring(name.indexOf('.') + 1, name.length());
-//				String encoding = fProject.getDefaultCharset(false);
-//				String encodingId = PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + library;
-//				String libraryEncoding = (String) encodingEntries.get(encodingId);
-//				if (encoding != null && !defaultEncoding.equalsIgnoreCase(encoding) && libraryEncoding == null) {
-//					prepareError(encodingId, encoding, NLS.bind(PDECoreMessages.BuildErrorReporter_defaultEncodingMissing, new Object[] {defaultEncoding, encoding}), PDEMarkerFactory.B_ADDDITION, PDEMarkerFactory.CAT_OTHER);
-//				}
-//			} catch (CoreException e) {
-//				PDECore.logException(e);
-//			}
-//		}
-//	}
 
 	/**
 	 * Given a list of source library entries, returns the list of library names.

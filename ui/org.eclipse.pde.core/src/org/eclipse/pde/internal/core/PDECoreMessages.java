@@ -301,6 +301,18 @@ public class PDECoreMessages extends NLS {
 
 	public static String SearchablePluginsManager_createProjectTaskName;
 
+	public static String SourceEntryErrorReporter_0;
+	public static String SourceEntryErrorReporter_1;
+	public static String SourceEntryErrorReporter_10;
+	public static String SourceEntryErrorReporter_2;
+	public static String SourceEntryErrorReporter_3;
+	public static String SourceEntryErrorReporter_4;
+	public static String SourceEntryErrorReporter_5;
+	public static String SourceEntryErrorReporter_6;
+	public static String SourceEntryErrorReporter_7;
+	public static String SourceEntryErrorReporter_8;
+	public static String SourceEntryErrorReporter_9;
+
 	public static String SourceEntryErrorReporter_DifferentTargetLibrary;
 	public static String SourceEntryErrorReporter_DupeOutputFolder;
 	public static String SourceEntryErrorReporter_DupeSourceFolder;
