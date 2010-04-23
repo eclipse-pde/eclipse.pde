@@ -301,14 +301,14 @@ public class IncrementalApiBuilder {
 			return;
 		}
 		if ((STRUCTURAL & kind) > 0) {
-			if(!this.context.containsStructuralChange(type) && !this.context.containsStructuralDependent(type)) {
+			if(!this.context.containsStructuralChange(type)) {
 				this.builder.cleanupCompatibilityMarkers(file);
-				this.context.recordStructuralDependent(type);
 			}
 		}
 		if ((DESCRIPTION & kind) > 0) {
 			if(!this.context.containsDescriptionChange(type) && !this.context.containsDescriptionDependent(type)) {
 				this.builder.cleanupUsageMarkers(file);
+				this.builder.cleanUnusedFilterMarkers(file);
 				this.context.recordDescriptionDependent(type);
 			}
 		}
@@ -328,11 +328,6 @@ public class IncrementalApiBuilder {
 			String typename = null;
 			for (int i = 0; i < types.length; i++) {
 				typename = types[i].getFullyQualifiedName('$');
-				if ((STRUCTURAL & kind) > 0) {
-					if (!this.context.containsStructuralChange(typename) && !this.context.containsStructuralDependent(typename)) {
-						this.context.recordStructuralDependent(typename);
-					}
-				}
 				if ((DESCRIPTION & kind) > 0) {
 					if (!this.context.containsDescriptionChange(typename) && !this.context.containsDescriptionDependent(typename)) {
 						this.context.recordDescriptionDependent(typename);
@@ -546,7 +541,7 @@ public class IncrementalApiBuilder {
 				String tname = null; 
 				for (int i = 0; i < markers.length; i++) {
 					tname = Util.getTypeNameFromMarker(markers[i]);
-					if(this.context.containsStructuralDependent(tname) || this.context.containsStructuralChange(tname)) {
+					if(this.context.containsStructuralChange(tname)) {
 						markers[i].delete();
 					}
 				}
@@ -556,7 +551,7 @@ public class IncrementalApiBuilder {
 				markers = resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 				for (int i = 0; i < markers.length; i++) {
 					tname = Util.getTypeNameFromMarker(markers[i]);
-					if(this.context.containsStructuralDependent(tname) || this.context.containsStructuralChange(tname)) {
+					if(this.context.containsStructuralChange(tname)) {
 						markers[i].delete();
 					}
 				}

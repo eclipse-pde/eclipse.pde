@@ -23,7 +23,6 @@ public class BuildContext implements IBuildContext {
 	private static final String[] NO_TYPES = new String[0];
 	
 	private StringSet structualChanges = null;
-	private StringSet structuralDependents = null;
 	private StringSet removedTypes = null;
 	private StringSet descriptionChanges = null;
 	private StringSet descriptionDepedents = null;
@@ -64,16 +63,6 @@ public class BuildContext implements IBuildContext {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#getDependentTypes()
-	 */
-	public String[] getStructuralDependentTypes() {
-		if(this.structuralDependents == null) {
-			return NO_TYPES;
-		}
-		return this.structuralDependents.values;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#hasChangedTypes()
 	 */
 	public boolean hasStructuralChanges() {
@@ -88,14 +77,10 @@ public class BuildContext implements IBuildContext {
 	public boolean hasDescriptionChanges() {
 		return (this.descriptionChanges == null ? 0 : this.descriptionChanges.elementSize) > 0;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#hasDependentTypes()
-	 */
-	public boolean hasStructuralDependents() {
-		return (this.structuralDependents == null ? 0 : this.structuralDependents.elementSize) > 0;
-	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#hasDescriptionDependents()
+	 */
 	public boolean hasDescriptionDependents() {
 		return (this.descriptionDepedents == null ? 0 : this.descriptionDepedents.elementSize) > 0;
 	}
@@ -161,22 +146,6 @@ public class BuildContext implements IBuildContext {
 	 * 
 	 * @param typename the type to add a dependent of
 	 */
-	public void recordStructuralDependent(String typename) {
-		if(typename == null) {
-			return;
-		}
-		if(this.structuralDependents == null) {
-			this.structuralDependents = new StringSet(16);
-		}
-		this.structuralDependents.add(typename.replace('/', '.'));
-	}
-	
-	/**
-	 * Adds the given type name to the collection of dependent type names. Does
-	 * nothing if <code>null</code> is passed in as the type name.
-	 * 
-	 * @param typename the type to add a dependent of
-	 */
 	public void recordDescriptionDependent(String typename) {
 		if(typename == null) {
 			return;
@@ -195,9 +164,17 @@ public class BuildContext implements IBuildContext {
 			this.structualChanges.clear();
 			this.structualChanges = null;
 		}
-		if(this.structuralDependents != null) {
-			this.structuralDependents.clear();
-			this.structuralDependents = null;
+		if(this.removedTypes != null) {
+			this.removedTypes.clear();
+			this.removedTypes = null;
+		}
+		if(this.descriptionChanges != null) {
+			this.descriptionChanges.clear();
+			this.descriptionChanges = null;
+		}
+		if(this.descriptionDepedents != null) {
+			this.descriptionDepedents.clear();
+			this.descriptionDepedents = null;
 		}
 	}
 
@@ -205,7 +182,7 @@ public class BuildContext implements IBuildContext {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#hasTypes()
 	 */
 	public boolean hasTypes() {
-		return hasStructuralChanges() || hasRemovedTypes() || hasDescriptionChanges() || hasDescriptionDependents() || hasStructuralDependents();
+		return hasStructuralChanges() || hasRemovedTypes() || hasDescriptionChanges() || hasDescriptionDependents();
 	}
 
 	/* (non-Javadoc)
@@ -236,16 +213,6 @@ public class BuildContext implements IBuildContext {
 			return false;
 		}
 		return descriptionDepedents != null && descriptionDepedents.includes(typename.replace('/', '.'));
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext#containsDependentType(java.lang.String)
-	 */
-	public boolean containsStructuralDependent(String typename) {
-		if(typename == null) {
-			return false;
-		}
-		return structuralDependents != null && structuralDependents.includes(typename.replace('/', '.'));
 	}
 
 	/* (non-Javadoc)

@@ -831,6 +831,16 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		return NO_FILTERS;
 	}
 	
+	/**
+	 * Collects the complete set of problem filters from the given set whose
+	 * underlying problem categories do not match any from the given array and whose
+	 * type name matches the underlying problem type name.
+	 *   
+	 * @param filters
+	 * @param typename
+	 * @param collector
+	 * @param categories
+	 */
 	private void collectFilterFor(Set filters, String typename, Set collector, int[] categories) {
 		ApiProblemFilter filter = null;
 		for (Iterator iter = filters.iterator(); iter.hasNext();) {

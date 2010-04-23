@@ -107,6 +107,10 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class BaseApiAnalyzer implements IApiAnalyzer {
 	private static final String QUALIFIER = "qualifier"; //$NON-NLS-1$
+	/**
+	 * @since 1.1
+	 */
+	static final String[] NO_TYPES = new String[0];
 	private static class ReexportedBundleVersionInfo {
 		String componentID;
 		int kind;
@@ -323,7 +327,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			IApiProblemFilter[] filters = null;
 			if(context.hasTypes()) {
 				IResource resource = null;
-				String[] types = context.getStructurallyChangedTypes();
+				String[] types = getApiUseTypes(context);
 				for (int i = 0; i < types.length; i++) {
 					if(types[i] == null) {
 						continue;
@@ -338,7 +342,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						createUnusedApiFilterProblems(filters);
 					}
 				}
-				types = context.getStructuralDependentTypes();
+				/*types = context.getStructuralDependentTypes();
 				for (int i = 0; i < types.length; i++) {
 					if(types[i] == null) {
 						continue;
@@ -355,7 +359,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						}
 						createUnusedApiFilterProblems(filters);
 					}
-				}
+				}*/
 				if(autoremove) {
 					removeUnusedProblemFilters(store, toremove, monitor);
 				}
@@ -892,35 +896,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} 
 		IApiTypeContainer scope = null;
 		if(context.hasTypes()) {
-			String[] deptypes = null;
-			int size = 0;
-			if (context.hasDescriptionDependents()) {
-				// only check dependents if there were description changes
-				deptypes = context.getDescriptionDependentTypes();
-				size += deptypes.length;
-			}
-			String[] structtypes = context.getStructurallyChangedTypes();
-			HashSet typenames = new HashSet(size + structtypes.length); // TODO: better sizing
-			if (deptypes != null) {
-				for (int i = 0; i < deptypes.length; i++) {
-					if(deptypes[i] == null) {
-						continue;
-					}
-					typenames.add(deptypes[i]);
-				}
-			}
-			for (int i = 0; i < structtypes.length; i++) {
-				if(structtypes[i] == null) {
-					continue;
-				}
-				typenames.add(structtypes[i]);
-			}
-			if (typenames.isEmpty()) {
-				// nothing to analyze
+			String[] typenames = getApiUseTypes(context);
+			if(typenames.length < 1) {
 				monitor.done();
 				return;
 			}
-			scope = getSearchScope(component, (String[]) typenames.toArray(new String[typenames.size()]));
+			scope = getSearchScope(component, typenames);
 		} else {
 			scope = getSearchScope(component, null); // entire component
 		}
@@ -949,6 +930,42 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				monitor.done();
 			}
 		}
+	}
+	
+	/**
+	 * Returns the collection of type names to be built
+	 * @param context
+	 * @return the complete listing of type names to build or an empty array, never <code>null</code>
+	 * @since 1.1
+	 */
+	String[] getApiUseTypes(IBuildContext context) {
+		if(context.hasTypes()) {
+			String[] deptypes = null;
+			int size = 0;
+			if (context.hasDescriptionDependents()) {
+				// only check dependents if there were description changes
+				deptypes = context.getDescriptionDependentTypes();
+				size += deptypes.length;
+			}
+			String[] structtypes = context.getStructurallyChangedTypes();
+			HashSet typenames = new HashSet(size + structtypes.length); // TODO: better sizing
+			if (deptypes != null) {
+				for (int i = 0; i < deptypes.length; i++) {
+					if(deptypes[i] == null) {
+						continue;
+					}
+					typenames.add(deptypes[i]);
+				}
+			}
+			for (int i = 0; i < structtypes.length; i++) {
+				if(structtypes[i] == null) {
+					continue;
+				}
+				typenames.add(structtypes[i]);
+			}
+			return (String[]) typenames.toArray(new String[typenames.size()]);
+		}
+		return NO_TYPES;
 	}
 	
 	/**

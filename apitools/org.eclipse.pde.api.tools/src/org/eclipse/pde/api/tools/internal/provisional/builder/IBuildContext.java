@@ -43,15 +43,6 @@ public interface IBuildContext {
 	public String[] getRemovedTypes();
 	
 	/**
-	 * Returns the complete collection of types dependent the structurally changed types reported from the
-	 * {@link org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder}.
-	 * If no types have been reported as dependent an empty array is returned, never <code>null</code>.
-	 * 
-	 * @return the complete collection of types dependent on structural changes or an empty array
-	 */
-	public String[] getStructuralDependentTypes();
-	
-	/**
 	 * Returns the complete collection of types dependent the description changed types reported from the
 	 * {@link org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder}.
 	 * If no types have been reported as dependent an empty array is returned, never <code>null</code>.
@@ -81,16 +72,6 @@ public interface IBuildContext {
 	 * @return whether any types have API description changes
 	 */
 	public boolean hasDescriptionChanges();
-	
-	/**
-	 * Returns if the build context has any structurally dependent types. 
-	 * 
-	 * Has better performance impact than getting the collection of dependent
-	 * type names to ask for the size.
-	 * 
-	 * @return true if there are dependent type names recorded, false otherwise
-	 */
-	public boolean hasStructuralDependents();
 	
 	/**
 	 * Returns whether this build context has any type dependent on API description changes.
@@ -143,15 +124,6 @@ public interface IBuildContext {
 	 * @return true if this context contains the given type name, false otherwise
 	 */
 	public boolean containsStructuralChange(String typename);
-	
-	/**
-	 * Returns if this build context contains the given type name
-	 * in its dependent types collection
-	 * 
-	 * @param typename
-	 * @return true if this context contains the given type name, false otherwise
-	 */
-	public boolean containsStructuralDependent(String typename);
 	
 	/**
 	 * Returns if this build context contains the given type name 
