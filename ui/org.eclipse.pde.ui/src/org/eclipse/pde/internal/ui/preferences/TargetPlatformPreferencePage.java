@@ -275,6 +275,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				try {
 					fTargets.add(targets[i].getTargetDefinition());
 				} catch (CoreException e) {
+					PDECore.log(e);
 					setErrorMessage(e.getMessage());
 				}
 			}

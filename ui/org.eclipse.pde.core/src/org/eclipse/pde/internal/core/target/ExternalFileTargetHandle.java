@@ -49,11 +49,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	 */
 	protected ExternalFileTargetHandle(URI uri) {
 		fURI = uri;
-		try {
-			fFile = new File(fURI.toURL().getFile());
-		} catch (MalformedURLException e) {
-			fFile = null;
-		}
+		fFile = URIUtil.toFile(fURI);
 	}
 
 	/* (non-Javadoc)
