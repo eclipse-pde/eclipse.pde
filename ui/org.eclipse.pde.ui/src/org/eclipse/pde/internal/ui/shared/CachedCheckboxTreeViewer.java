@@ -242,7 +242,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	 */
 	public void remove(Object[] elementsOrTreePaths) {
 		for (int i = 0; i < elementsOrTreePaths.length; i++) {
-			updateCheckState(elementsOrTreePaths, false);
+			updateCheckState(elementsOrTreePaths[i], false);
 		}
 		super.remove(elementsOrTreePaths);
 	}

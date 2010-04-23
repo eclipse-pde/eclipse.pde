@@ -196,11 +196,12 @@ public class FeatureBlock {
 			if (fAdditionalPlugins.size() == 0) {
 				fTree.remove(fAdditionalPluginsParentElement);
 				input.remove(fAdditionalPluginsParentElement);
+				fRemovePluginButton.setEnabled(false);
 			} else {
 				index--;
 				fTree.setSelection(new StructuredSelection(fAdditionalPlugins.get(index > 0 ? index : 0)), true);
+				fRemovePluginButton.setEnabled(true);
 			}
-			fRemovePluginButton.setEnabled(false);
 			updateCounter();
 			fTab.updateLaunchConfigurationDialog();
 		}
@@ -235,28 +236,21 @@ public class FeatureBlock {
 
 		private IPluginModelBase[] getAvailablePlugins() {
 			IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
-			return plugins;
-			/*
-			HashMap pluginMap = new HashMap(plugins.length);
-			for (int i = 0; i < plugins.length; i++) {
-				pluginMap.put(plugins[i].getPluginBase().getId() + ':' + plugins[i].getPluginBase().getVersion(), plugins[i]);
+			if (fAdditionalPlugins.isEmpty()) {
+				return plugins;
 			}
-			for (Iterator iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
-				FeatureLaunchModel model = (FeatureLaunchModel) iterator.next();
-				IFeatureModel featureModel = model.getModel(true);
-				IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
-				for (int i = 0; i < featurePlugins.length; i++) {
-					pluginMap.remove(featurePlugins[i].getId() + ':' + featurePlugins[i].getVersion());
+			Set additionalPlugins = new HashSet();
+			for (Iterator iterator = fAdditionalPlugins.iterator(); iterator.hasNext();) {
+				PluginLaunchModel model = (PluginLaunchModel) iterator.next();
+				additionalPlugins.add(model.getPluginModelBase());
+			}
+			List result = new ArrayList();
+			for (int i = 0; i < plugins.length; i++) {
+				if (!additionalPlugins.contains(plugins[i])) {
+					result.add(plugins[i]);
 				}
 			}
-
-			for (Iterator iterator = fUserAddedPlugins.iterator(); iterator.hasNext();) {
-				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) iterator.next();
-				pluginMap.values().remove(pluginLaunchModel.getPluginModelBase());
-			}
-
-			return (IPluginModelBase[]) pluginMap.values().toArray(new IPluginModelBase[pluginMap.size()]);
-			*/
+			return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 		}
 
 		private void handleValidate() {
@@ -348,7 +342,7 @@ public class FeatureBlock {
 				}
 			}
 			tree.setSortDirection(sortDirn);
-			int sortOrder = sortDirn == SWT.UP ? 1 : -1;
+			int sortOrder = sortDirn == SWT.UP ? -1 : 1;
 			int sortColumn = ((Integer) tc.getData(COLUMN_ID)).intValue();
 			fTree.setSorter(new TreeSorter(sortColumn, sortOrder));
 			saveSortOrder();
@@ -492,6 +486,12 @@ public class FeatureBlock {
 		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (e1 == fAdditionalPluginsParentElement) {
+				return 1;
+			}
+			if (e2 == fAdditionalPluginsParentElement) {
+				return -1;
+			}
 			FeatureTreeLabelProvider labelProvider = (FeatureTreeLabelProvider) fTree.getLabelProvider();
 			return sortOrder * super.compare(viewer, labelProvider.getColumnText(e1, sortColumn), labelProvider.getColumnText(e2, sortColumn));
 		}
@@ -765,11 +765,14 @@ public class FeatureBlock {
 					}
 					if (fAdditionalPlugins.size() == 0) {
 						input.remove(fAdditionalPluginsParentElement);
+						fRemovePluginButton.setEnabled(false);
 					} else {
 						index--;
 						fTree.setSelection(new StructuredSelection(fAdditionalPlugins.get(index > 0 ? index : 0)), true);
+						fRemovePluginButton.setEnabled(true);
 					}
 					fTree.refresh();
+					updateCounter();
 					fTab.updateLaunchConfigurationDialog();
 				}
 			}
@@ -792,9 +795,9 @@ public class FeatureBlock {
 		fAddRequiredFeaturesButton.addSelectionListener(fListener);
 		fDefaultsButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.AdvancedLauncherTab_defaults, null);
 		fDefaultsButton.addSelectionListener(fListener);
-		fAddPluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName()), null);
+		fAddPluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
 		fAddPluginButton.addSelectionListener(fListener);
-		fRemovePluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName()), null);
+		fRemovePluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
 		fRemovePluginButton.addSelectionListener(fListener);
 		fRemovePluginButton.setEnabled(false);
 
@@ -811,7 +814,7 @@ public class FeatureBlock {
 		fCounter = new Label(countComp, SWT.NONE);
 
 		Image siteImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_OBJ);
-		fAdditionalPluginsParentElement = new NamedElement(NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName()), siteImage);
+		fAdditionalPluginsParentElement = new NamedElement(NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName().replaceAll("&", "")), siteImage); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void initialize() throws CoreException {
@@ -847,6 +850,8 @@ public class FeatureBlock {
 		TreeColumn column = fTree.getTree().getColumn(index == 0 ? COLUMN_FEATURE_NAME : index - 1);
 		fListener.handleColumn(column, prefs.getInt(IPreferenceConstants.FEATURE_SORT_ORDER));
 		fRemovePluginButton.setEnabled(false);
+		fTree.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		fTree.expandAll();
 		fTree.refresh(true);
 		fTab.updateLaunchConfigurationDialog();
 	}
