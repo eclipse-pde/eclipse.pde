@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import org.eclipse.pde.internal.core.PDECoreMessages;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
@@ -413,7 +411,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			//look for assertIdentifier and enumIdentifier entries in javacWarnings. If any is present let it be, if not warn.
 			String assertIdentifier = project.getOption(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, false);
 			String defaultAssert = (String) defaultComplianceOptions.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
-			if (!assertIdentifier.equalsIgnoreCase(defaultAssert)) {
+			if (assertIdentifier != null && !assertIdentifier.equalsIgnoreCase(defaultAssert)) {
 				if (JavaCore.ERROR.equalsIgnoreCase(assertIdentifier)) {
 					complianceErrorSettings.add(ASSERT_IDENTIFIER);
 				} else if (JavaCore.WARNING.equalsIgnoreCase(assertIdentifier)) {
@@ -423,7 +421,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 			String enumIdentifier = project.getOption(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, false);
 			String defaultEnum = (String) defaultComplianceOptions.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);
-			if (!enumIdentifier.equalsIgnoreCase(defaultEnum)) {
+			if (enumIdentifier != null && !enumIdentifier.equalsIgnoreCase(defaultEnum)) {
 				if (JavaCore.ERROR.equalsIgnoreCase(enumIdentifier)) {
 					complianceErrorSettings.add(ENUM_IDENTIFIER);
 				} else if (JavaCore.WARNING.equalsIgnoreCase(enumIdentifier)) {
