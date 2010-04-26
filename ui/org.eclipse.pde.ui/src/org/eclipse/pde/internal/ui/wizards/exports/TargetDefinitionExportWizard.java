@@ -15,6 +15,7 @@ import java.io.File;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -26,6 +27,7 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 	public TargetDefinitionExportWizard() {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.ExportActiveTargetDefinition);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
 	}
 
 	public void addPages() {
