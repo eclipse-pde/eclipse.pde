@@ -28,17 +28,8 @@ public class ExportTargetMetadata {
 	IProvisioningAgent agent = null;
 	public static ExportTargetMetadata instance = null;
 
-	public void start() {
-		instance = this;
-	}
-
-	public void stop() {
-		instance = null;
-
-	}
-
-	public static ExportTargetMetadata getDefault() {
-		return instance;
+	public ExportTargetMetadata(IProvisioningAgent agent) {
+		this.agent = agent;
 	}
 
 	public synchronized void clearExporedRepository(URI destination) {

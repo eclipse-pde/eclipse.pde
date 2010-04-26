@@ -15,6 +15,7 @@ import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -65,11 +66,18 @@ public class ExportActiveTargetJob extends Job {
 			if (fclearDestinationDirectory) {
 				monitor.subTask(PDEUIMessages.ExportTargetDeleteOldData); //Deleting old data...
 			}
+			IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+			ExportTargetMetadata component = null;
 
+			if (agent != null) {
+				component = new ExportTargetMetadata(agent);
+			}
 			try {
 				if (fclearDestinationDirectory) {
-					ExportTargetMetadata.getDefault().clearExporedRepository(fDestination);
-
+					if (component != null) {
+						// If p2 is available, clear the existing repositories
+						component.clearExporedRepository(fDestination);
+					}
 					if (featureDir.fetchInfo().exists()) {
 						featureDir.delete(EFS.NONE, new NullProgressMonitor());
 					}
@@ -111,12 +119,16 @@ public class ExportActiveTargetJob extends Job {
 			}
 
 			try {
-				TargetDefinition definition = ((TargetDefinition) TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition());
-				IProfile profile = definition.getProfile();
-				ExportTargetMetadata component = ExportTargetMetadata.getDefault();
-				IStatus status = component.exportMetadata(profile, fDestination, definition.getName());
-				if (status.isOK())
-					return status;
+				if (component != null) {
+					// If p2 is available, export the metadata
+					TargetDefinition definition = ((TargetDefinition) TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition());
+					IProfile profile = definition.getProfile();
+					IStatus status = component.exportMetadata(profile, fDestination, definition.getName());
+					if (status.isOK()) {
+						return status;
+					}
+					return Status.OK_STATUS;
+				}
 			} catch (CoreException e) {
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), "Failed to export the target", e); //$NON-NLS-1$ 
 			}

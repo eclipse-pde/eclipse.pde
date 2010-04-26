@@ -1694,6 +1694,7 @@ public class PDEUIMessages extends NLS {
 	public static String ExportTargetExportFeatures;
 	public static String ExportTargetExportPlugins;
 	public static String ExportActiveTargetDefinition;
+	public static String ExportActiveTargetDefinition_message;
 	public static String ExportTargetCurrentTarget;
 	public static String ExportTargetChooseFolder;
 	public static String ExportTargetBrowse;
@@ -1701,6 +1702,7 @@ public class PDEUIMessages extends NLS {
 	public static String ExportTargetSpecifyDestination;
 	public static String ExportTargetClearDestination;
 	public static String ExportTargetError_ChooseDestination;
+	public static String ExportTargetError_validPath;
 
 	public static String CategoryDetails_title;
 	public static String CategoryDetails_sectionDescription;

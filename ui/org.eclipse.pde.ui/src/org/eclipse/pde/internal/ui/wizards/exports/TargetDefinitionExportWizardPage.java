@@ -11,13 +11,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
+import java.io.IOException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -27,14 +31,15 @@ import org.eclipse.swt.widgets.*;
 public class TargetDefinitionExportWizardPage extends WizardPage {
 
 	private static final String PAGE_ID = "org.eclipse.pde.target.exportPage"; //$NON-NLS-1$
-	private Button browseButton = null;
-	private Text destDirText = null;
-	private Button clearDestinationDirCheck = null;
+	private Button fBrowseButton = null;
+	private Combo fDestinationCombo = null;
+	private Button fClearDestinationButton = null;
 
 	protected TargetDefinitionExportWizardPage() {
 		super(PAGE_ID);
 		setPageComplete(false);
 		setTitle(PDEUIMessages.ExportActiveTargetDefinition);
+		setMessage(PDEUIMessages.ExportActiveTargetDefinition_message);
 		// TODO setImage(...)
 	}
 
@@ -43,12 +48,9 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		GridLayout layout = new GridLayout(1, false);
 		container.setLayout(layout);
 		createExportDirectoryControl(container);
-
-		//TODO initSettings();
-
-		Dialog.applyDialogFont(container);
 		setControl(container);
-		setPageComplete(validate());
+		// TODO set help
+		Dialog.applyDialogFont(container);
 	}
 
 	private void createExportDirectoryControl(Composite parent) {
@@ -70,44 +72,45 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		l.setLayoutData(gd);
 		new Label(parent, SWT.NONE).setText(PDEUIMessages.ExportTargetChooseFolder);
 
-		destDirText = new Text(parent, SWT.BORDER);
-		destDirText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		destDirText.addModifyListener(new ModifyListener() {
+		fDestinationCombo = SWTFactory.createCombo(parent, SWT.BORDER, 1, null);
+		fDestinationCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				controlChanged();
 			}
 		});
-		browseButton = new Button(parent, SWT.PUSH);
-		browseButton.setText(PDEUIMessages.ExportTargetBrowse);
-		browseButton.addSelectionListener(new SelectionAdapter() {
+
+		fBrowseButton = new Button(parent, SWT.PUSH);
+		fBrowseButton.setText(PDEUIMessages.ExportTargetBrowse);
+		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(PDEUIMessages.ExportTargetSelectDestination);
 				dialog.setMessage(PDEUIMessages.ExportTargetSpecifyDestination);
-				String dir = destDirText.getText();
+				String dir = fDestinationCombo.getText();
 				dialog.setFilterPath(dir);
 				dir = dialog.open();
 				if (dir == null || dir.equals("")) { //$NON-NLS-1$
 					return;
 				}
-				destDirText.setText(dir);
+				fDestinationCombo.setText(dir);
 				controlChanged();
 			}
 		});
 
-		clearDestinationDirCheck = new Button(parent, SWT.CHECK);
-		clearDestinationDirCheck.setText(PDEUIMessages.ExportTargetClearDestination);
+		fClearDestinationButton = new Button(parent, SWT.CHECK);
+		fClearDestinationButton.setText(PDEUIMessages.ExportTargetClearDestination);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		clearDestinationDirCheck.setLayoutData(gd);
+		gd.horizontalIndent = 15;
+		fClearDestinationButton.setLayoutData(gd);
 	}
 
 	public String getDestinationDirectory() {
-		return destDirText.getText();
+		return fDestinationCombo.getText();
 	}
 
 	public boolean isClearDestinationDirectory() {
-		return clearDestinationDirCheck.getSelection();
+		return fClearDestinationButton.getSelection();
 	}
 
 	public void controlChanged() {
@@ -117,8 +120,45 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 	protected boolean validate() {
 		setMessage(null);
 
-		if (destDirText.getText().equals("")) { //$NON-NLS-1$
-			setMessage(PDEUIMessages.ExportTargetError_ChooseDestination, IStatus.WARNING);
+		if (fDestinationCombo.getText().equals("")) { //$NON-NLS-1$
+			setMessage(PDEUIMessages.ExportTargetError_ChooseDestination, IStatus.ERROR);
+			return false;
+		} else if (!isValidLocation(fDestinationCombo.getText().trim())) {
+			setMessage(PDEUIMessages.ExportTargetError_validPath, IStatus.ERROR);
+			return false;
+		}
+
+		return true;
+	}
+
+	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
+		for (int i = 0; i < 6; i++) {
+			String curr = settings.get(key + String.valueOf(i));
+			if (curr != null && combo.indexOf(curr) == -1) {
+				combo.add(curr);
+			}
+		}
+		if (combo.getItemCount() > 0)
+			combo.setText(combo.getItem(0));
+	}
+
+	protected void saveCombo(IDialogSettings settings, String key, Combo combo) {
+		if (combo.getText().trim().length() > 0) {
+			settings.put(key + String.valueOf(0), combo.getText().trim());
+			String[] items = combo.getItems();
+			int nEntries = Math.min(items.length, 5);
+			for (int i = 0; i < nEntries; i++) {
+				settings.put(key + String.valueOf(i + 1), items[i].trim());
+			}
+		}
+	}
+
+	protected boolean isValidLocation(String location) {
+		try {
+			String destinationPath = new File(location).getCanonicalPath();
+			if (destinationPath == null || destinationPath.length() == 0)
+				return false;
+		} catch (IOException e) {
 			return false;
 		}
 
