@@ -315,7 +315,7 @@
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.TargetDefinitionExportWizard"
-            icon="icons/obj16/target_profile_xml_obj.gif"
+            icon="icons/etool16/export_target.gif"
             id="org.eclipse.pde.target.wizard"
             name="%target.export.wizard.name">
          <description>
