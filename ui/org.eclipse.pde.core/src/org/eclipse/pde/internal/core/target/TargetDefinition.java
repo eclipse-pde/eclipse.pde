@@ -448,7 +448,7 @@ public class TargetDefinition implements ITargetDefinition {
 			for (Iterator iterator = missingFeatures.iterator(); iterator.hasNext();) {
 				NameVersionDescriptor missing = (NameVersionDescriptor) iterator.next();
 				BundleInfo info = new BundleInfo(missing.getId(), missing.getVersion(), null, BundleInfo.NO_LEVEL, false);
-				String message = NLS.bind("Required feature could not be found: {0}", missing.getId());
+				String message = NLS.bind(Messages.TargetDefinition_RequiredFeatureCouldNotBeFound, missing.getId());
 				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null);
 				result.add(new ResolvedBundle(info, parent, status, null, false, false));
 			}
