@@ -13,10 +13,9 @@ package org.eclipse.pde.internal.core;
 
 import java.util.*;
 import java.util.Map.Entry;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
@@ -50,27 +49,48 @@ public class PluginModelManager implements IModelProviderListener {
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				boolean more = false;
+				IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
 				do {
+					List copyProjects = null;
+					List copyContainers = null;
+					synchronized (fProjects) {
+						copyProjects = fProjects;
+						copyContainers = fContainers;
+						fProjects = new ArrayList();
+						fContainers = new ArrayList();
+					}
+					// build multi-rule
+					ISchedulingRule[] rules = new ISchedulingRule[copyProjects.size()];
+					int index = 0;
+					Iterator iterator = copyProjects.iterator();
+					while (iterator.hasNext()) {
+						IJavaProject project = (IJavaProject) iterator.next();
+						rules[index++] = factory.modifyRule(project.getProject());
+					}
+					MultiRule multiRule = new MultiRule(rules);
+					// lock the projects
+					getJobManager().beginRule(multiRule, monitor);
+
+					// remove closed projects now that we have them locked
 					IJavaProject[] projects = null;
 					IClasspathContainer[] containers = null;
-					synchronized (fProjects) {
-						// exclude any closed/deleted projects since this happens asynchronously
-						ListIterator projectIter = fProjects.listIterator();
-						ListIterator containerIter = fContainers.listIterator();
-						while (projectIter.hasNext()) {
-							IJavaProject jp = (IJavaProject) projectIter.next();
-							containerIter.next(); // advance container pointer as well
-							if (!jp.getProject().isAccessible()) {
-								projectIter.remove(); // remove corresponding entries
-								containerIter.remove();
-							}
+					ListIterator projectIter = copyProjects.listIterator();
+					ListIterator containerIter = copyContainers.listIterator();
+					while (projectIter.hasNext()) {
+						IJavaProject jp = (IJavaProject) projectIter.next();
+						containerIter.next(); // advance container pointer as well
+						if (!jp.getProject().isAccessible()) {
+							projectIter.remove(); // remove corresponding entries
+							containerIter.remove();
 						}
-						projects = (IJavaProject[]) fProjects.toArray(new IJavaProject[fProjects.size()]);
-						containers = (IClasspathContainer[]) fContainers.toArray(new IClasspathContainer[fContainers.size()]);
-						fProjects.clear();
-						fContainers.clear();
 					}
+					projects = (IJavaProject[]) copyProjects.toArray(new IJavaProject[copyProjects.size()]);
+					containers = (IClasspathContainer[]) copyContainers.toArray(new IClasspathContainer[copyContainers.size()]);
+					// unlock
+					getJobManager().endRule(multiRule);
+
 					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, monitor);
+
 					synchronized (fProjects) {
 						more = !fProjects.isEmpty();
 					}
