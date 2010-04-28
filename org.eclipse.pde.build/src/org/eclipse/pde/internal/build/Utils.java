@@ -84,7 +84,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static VersionRange createVersionRange(String versionId) {
 		VersionRange range = null;
-		if (versionId == null || GENERIC_VERSION_NUMBER.equals(versionId))
+		if (versionId == null || versionId.length() == 0 || GENERIC_VERSION_NUMBER.equals(versionId))
 			range = VersionRange.emptyRange;
 		else {
 			int qualifierIdx = versionId.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER);
