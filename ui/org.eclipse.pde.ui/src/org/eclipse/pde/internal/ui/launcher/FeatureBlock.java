@@ -376,7 +376,10 @@ public class FeatureBlock {
 
 	class LocationCellModifier implements ICellModifier {
 		public boolean canModify(Object element, String property) {
-			return fTree.getChecked(element);
+			if (element instanceof FeatureLaunchModel || element instanceof PluginLaunchModel) {
+				return fTree.getChecked(element);
+			}
+			return false;
 		}
 
 		public Object getValue(Object element, String property) {
