@@ -80,6 +80,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_externalBefore;
 
+	public static String FeatureBlock_ExternalResolutionLabel;
+
 	public static String FeatureBlock_FeatureGroupDescription;
 
 	public static String FeatureBlock_UseWorkspaceFeatures;
@@ -87,6 +89,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureBlock_version;
 
 	public static String FeatureBlock_workspaceBefore;
+
+	public static String FeatureBlock_WorkspaceResolutionLabel;
 
 	public static String FeatureEditor_exportTooltip;
 

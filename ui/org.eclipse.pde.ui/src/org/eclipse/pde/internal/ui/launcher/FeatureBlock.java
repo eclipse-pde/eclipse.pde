@@ -597,11 +597,11 @@ public class FeatureBlock {
 		if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_DEFAULT)) {
 			return PDEUIMessages.FeatureBlock_default;
 		} else if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE)) {
-			return PDEUIMessages.FeatureBlock_workspaceBefore;
+			return PDEUIMessages.FeatureBlock_WorkspaceResolutionLabel;
 		} else if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_EXTERNAL)) {
-			return PDEUIMessages.FeatureBlock_externalBefore;
+			return PDEUIMessages.FeatureBlock_ExternalResolutionLabel;
 		}
-		return ""; //$NON-NLS-1$
+		return "";
 	}
 
 	private static final int COLUMN_FEATURE_NAME = 0;
@@ -717,7 +717,7 @@ public class FeatureBlock {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
-		String[] items = new String[] {PDEUIMessages.FeatureBlock_default, PDEUIMessages.FeatureBlock_workspaceBefore, PDEUIMessages.FeatureBlock_externalBefore};
+		String[] items = new String[] {PDEUIMessages.FeatureBlock_default, PDEUIMessages.FeatureBlock_WorkspaceResolutionLabel, PDEUIMessages.FeatureBlock_ExternalResolutionLabel};
 		ComboBoxCellEditor cellEditor = new ComboBoxCellEditor(fTree.getTree(), items);
 		cellEditor.getControl().pack();
 		fTree.setCellEditors(new CellEditor[] {null, cellEditor});
