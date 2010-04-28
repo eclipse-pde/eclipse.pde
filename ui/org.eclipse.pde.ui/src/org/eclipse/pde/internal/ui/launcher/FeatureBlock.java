@@ -411,11 +411,12 @@ public class FeatureBlock {
 					FeatureLaunchModel model = (FeatureLaunchModel) data;
 					model.setPluginResolution(getLocation(comboIndex));
 					fTree.refresh(model, true);
-					fTab.updateLaunchConfigurationDialog();
 				} else if (data instanceof PluginLaunchModel) {
 					PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) data;
 					pluginLaunchModel.setPluginResolution(getResolutionLabel(getLocation(comboIndex)));
+					fTree.refresh(pluginLaunchModel, true);
 				}
+				fTab.updateLaunchConfigurationDialog();
 			}
 		}
 
@@ -601,7 +602,7 @@ public class FeatureBlock {
 		} else if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_EXTERNAL)) {
 			return PDEUIMessages.FeatureBlock_ExternalResolutionLabel;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	private static final int COLUMN_FEATURE_NAME = 0;
