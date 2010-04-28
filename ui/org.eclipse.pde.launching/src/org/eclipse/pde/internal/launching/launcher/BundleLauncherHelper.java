@@ -553,7 +553,9 @@ public class BundleLauncherHelper {
 				if (pluginModel == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
 					pluginModel = getBestCandidateModel(pluginModelEntry.getExternalModels(), version);
 				}
-				resolvedAdditionalPlugins.put(pluginModel, pluginData[2]);
+				if (pluginModel != null) {
+					resolvedAdditionalPlugins.put(pluginModel, pluginData[2]);
+				}
 			}
 		}
 		return resolvedAdditionalPlugins;
