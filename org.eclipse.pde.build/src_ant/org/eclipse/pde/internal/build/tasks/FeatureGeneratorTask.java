@@ -161,4 +161,8 @@ public class FeatureGeneratorTask extends Task {
 		if (nested != null && !nested.startsWith(ANT_PREFIX))
 			generator.setNestedInclusions(nested);
 	}
+
+	public void setFilterP2Base(boolean value) {
+		generator.setFilterP2Base(value);
+	}
 }

@@ -65,6 +65,7 @@
 		includeLaunchers="${includeLaunchers}"
 		buildPropertiesFile="${generatedBuildProperties}"
 		nestedInclusions="${nestedInclusions}"
+		filterP2Base="${filterP2Base}"
 	/>
 </target>
 
