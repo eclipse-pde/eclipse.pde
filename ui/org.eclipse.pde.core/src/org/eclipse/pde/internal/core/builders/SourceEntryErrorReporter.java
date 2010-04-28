@@ -502,17 +502,20 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			while (iterator.hasNext()) {
 				SourceFolder sourceFolder = (SourceFolder) iterator.next();
 				IPath sourcePath = sourceFolder.getPath();
-				IFolder folder = fProject.getFolder(sourcePath);
+				IContainer container = fProject;
+				if (!sourcePath.isEmpty() && !sourcePath.isRoot()) {
+					container = container.getFolder(sourcePath);
+				}
 				try {
 					ArrayList list = sourceFolder.getLibs();
 					String[] libs = (String[]) list.toArray(new String[list.size()]);
-					String encoding = getExplicitEncoding(folder);
+					String encoding = getExplicitEncoding(container);
 					if (encoding != null) {
 						for (int i = 0; i < libs.length; i++) {
 							fDefaultLibraryEncodings.put(libs[i], encoding);
 						}
 					}
-					folder.accept(new Visitor(sourceFolder));
+					container.accept(new Visitor(sourceFolder));
 				} catch (CoreException e) {
 					// Can't validate if unable to retrieve encoding
 					PDECore.log(e);
