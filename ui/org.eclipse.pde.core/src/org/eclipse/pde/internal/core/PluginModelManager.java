@@ -54,17 +54,6 @@ public class PluginModelManager implements IModelProviderListener {
 					IJavaProject[] projects = null;
 					IClasspathContainer[] containers = null;
 					synchronized (fProjects) {
-						// exclude any closed/deleted projects since this happens asynchronously
-						ListIterator projectIter = fProjects.listIterator();
-						ListIterator containerIter = fContainers.listIterator();
-						while (projectIter.hasNext()) {
-							IJavaProject jp = (IJavaProject) projectIter.next();
-							containerIter.next(); // advance container pointer as well
-							if (!jp.getProject().isAccessible()) {
-								projectIter.remove(); // remove corresponding entries
-								containerIter.remove();
-							}
-						}
 						projects = (IJavaProject[]) fProjects.toArray(new IJavaProject[fProjects.size()]);
 						containers = (IClasspathContainer[]) fContainers.toArray(new IClasspathContainer[fContainers.size()]);
 						fProjects.clear();
