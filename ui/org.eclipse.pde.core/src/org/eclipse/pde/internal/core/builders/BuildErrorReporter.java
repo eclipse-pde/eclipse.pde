@@ -911,27 +911,51 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					boolean entryCorrect = false;
 					String[] tokens = useJavaProjectSettings.getTokens();
 					if (tokens != null && tokens.length == 1) {
-						IPath prefFile = new Path(tokens[0]);
-						if (prefFile.isAbsolute()) {
-							entryCorrect = prefFile.toFile().exists();
+						if (Boolean.TRUE.toString().equalsIgnoreCase(tokens[0])) {
+							// True is valid if the bundle root is the default (the project)
+							entryCorrect = fProject.equals(PDEProject.getBundleRoot(fProject));
 						} else {
-							IContainer root = PDEProject.getBundleRoot(fProject);
-							entryCorrect = root.getFile(prefFile).exists();
+							IPath prefFile = null;
+							prefFile = new Path(tokens[0]);
+							if (prefFile.isAbsolute()) {
+								entryCorrect = prefFile.toFile().exists();
+							} else {
+								IContainer root = PDEProject.getBundleRoot(fProject);
+								entryCorrect = root.getFile(prefFile).exists();
+							}
 						}
 					}
 					if (!entryCorrect) {
+						String token = null;
+						String message = null;
 						IContainer root = PDEProject.getBundleRoot(fProject);
-						IPath prefFile = fProject.getFullPath().append(".settings").append(JavaCore.PLUGIN_ID + ".prefs"); //$NON-NLS-1$ //$NON-NLS-2$
-						prefFile = prefFile.makeRelativeTo(root.getFullPath());
-						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryMissingValidPath, PROPERTY_PROJECT_SETTINGS);
-						prepareError(PROPERTY_PROJECT_SETTINGS, prefFile.toString(), message, PDEMarkerFactory.B_REPLACE, fJavaCompilerSeverity, PDEMarkerFactory.CAT_EE);
+						if (fProject.equals(root)) {
+							// Default project root, just use 'true'
+							token = Boolean.TRUE.toString();
+							message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryMissingValidPath, PROPERTY_PROJECT_SETTINGS);
+						} else {
+							// Non default bundle root, make a relative path
+							IPath prefFile = fProject.getFullPath().append(".settings").append(JavaCore.PLUGIN_ID + ".prefs"); //$NON-NLS-1$ //$NON-NLS-2$
+							prefFile = prefFile.makeRelativeTo(root.getFullPath());
+							token = prefFile.toString();
+							message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryMissingValidRelativePath, PROPERTY_PROJECT_SETTINGS);
+						}
+						prepareError(PROPERTY_PROJECT_SETTINGS, token, message, PDEMarkerFactory.B_REPLACE, fJavaCompilerSeverity, PDEMarkerFactory.CAT_EE);
 					}
 				} else {
+					String token = null;
 					IContainer root = PDEProject.getBundleRoot(fProject);
-					IPath prefFile = fProject.getFullPath().append(".settings").append(JavaCore.PLUGIN_ID + ".prefs"); //$NON-NLS-1$ //$NON-NLS-2$
-					prefFile = prefFile.makeRelativeTo(root.getFullPath());
+					if (fProject.equals(root)) {
+						// Default project root, just use 'true'
+						token = Boolean.TRUE.toString();
+					} else {
+						// Non default bundle root, make a relative path
+						IPath prefFile = fProject.getFullPath().append(".settings").append(JavaCore.PLUGIN_ID + ".prefs"); //$NON-NLS-1$ //$NON-NLS-2$
+						prefFile = prefFile.makeRelativeTo(root.getFullPath());
+						token = prefFile.toString();
+					}
 					String message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryMissingProjectSpecificSettings, PROPERTY_PROJECT_SETTINGS);
-					prepareError(PROPERTY_PROJECT_SETTINGS, prefFile.toString(), message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaCompilerSeverity, PDEMarkerFactory.CAT_EE);
+					prepareError(PROPERTY_PROJECT_SETTINGS, token, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaCompilerSeverity, PDEMarkerFactory.CAT_EE);
 				}
 			} else if (useJavaProjectSettings != null) {
 				String message = NLS.bind(PDECoreMessages.BuildErrorReporter_buildEntryInvalidWhenNoProjectSettings, PROPERTY_PROJECT_SETTINGS);
