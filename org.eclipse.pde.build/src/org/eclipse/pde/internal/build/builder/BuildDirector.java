@@ -555,21 +555,24 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(BuildTimeFeature featureToCollect) throws CoreException {
-		if (assemblyData == null)
+		if (assemblyData == null || featureToCollect == null)
 			return;
 
-		/* collect binary features */
-		if (featureToCollect != null && featureToCollect.isBinary()) {
+		String binIncludes = getBuildProperties(featureToCollect).getProperty(PROPERTY_BIN_INCLUDES);
+
+		/* collect binary features, and any feature defining bin.includes */
+		if (featureToCollect.isBinary() || (binIncludes != null && binIncludes.length() > 0)) {
 			basicCollectElementToAssemble(featureToCollect);
 			return;
 		}
 
-		// don't collect the generated containers
-		if (featureToCollect.getId().equals(CONTAINER_FEATURE) || featureToCollect.getId().equals(UI_CONTAINER_FEATURE))
+		//at this point, we have a non-binary feature with empty bin includes
+		//when building p2, containers (features without bin.includes) need to be collected, 
+		//with the exception of the pde generated containers.
+		if (!BuildDirector.p2Gathering)
 			return;
 
-		// don't collect if bin.includes is empty, except if we are publishing p2 metadata
-		if (!BuildDirector.p2Gathering && getBuildProperties(featureToCollect).get(PROPERTY_BIN_INCLUDES) == null)
+		if (featureToCollect.getId().equals(CONTAINER_FEATURE) || featureToCollect.getId().equals(UI_CONTAINER_FEATURE))
 			return;
 
 		basicCollectElementToAssemble(featureToCollect);
