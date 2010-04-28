@@ -31,7 +31,6 @@ public abstract class HTMLConvertor {
 	public static final String HTML_HEADER = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"; //$NON-NLS-1$
 	/**
 	 * Meta tag for default HTML content type
-	 * iso-8859-1
 	 */
 	public static final String CONTENT_TYPE_META = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"; //$NON-NLS-1$
 	/**
