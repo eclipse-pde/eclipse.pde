@@ -12,7 +12,6 @@ package org.eclipse.pde.ui.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
@@ -37,7 +36,8 @@ public class AllPDETests {
 		suite.addTest(AllImportTests.suite());
 		suite.addTest(AllBundleModelTests.suite());
 		suite.addTest(AllXMLModelTests.suite());
-		suite.addTest(AllValidatorTests.suite());
+		// Disabled for M7 due to intermittent failures on Windows, bug 311053
+//		suite.addTest(AllValidatorTests.suite());
 		suite.addTest(AllNLSTests.suite());
 		suite.addTest(AllPDERuntimeTests.suite());
 		suite.addTest(ExportBundleTests.suite());
