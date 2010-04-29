@@ -407,19 +407,26 @@ public class FeatureBlock {
 		}
 
 		public void modify(Object item, String property, Object value) {
-			if (property == PROPERTY_RESOLUTION) {
+			if (property == PROPERTY_RESOLUTION && value != null) {
 				Object data = ((TreeItem) item).getData();
 				int comboIndex = ((Integer) value).intValue();
+				String location = getLocation(comboIndex);
 				if (data instanceof FeatureLaunchModel) {
 					FeatureLaunchModel model = (FeatureLaunchModel) data;
-					model.setPluginResolution(getLocation(comboIndex));
-					fTree.refresh(model, true);
+					if (!location.equalsIgnoreCase(model.getResolutionValue())) {
+						model.setPluginResolution(location);
+						fTree.refresh(model, true);
+						fTab.updateLaunchConfigurationDialog();
+					}
 				} else if (data instanceof PluginLaunchModel) {
 					PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) data;
-					pluginLaunchModel.setPluginResolution(getResolutionLabel(getLocation(comboIndex)));
-					fTree.refresh(pluginLaunchModel, true);
+					if (!location.equalsIgnoreCase(pluginLaunchModel.getPluginResolution())) {
+						pluginLaunchModel.setPluginResolution(location);
+						fTree.refresh(pluginLaunchModel, true);
+						fTab.updateLaunchConfigurationDialog();
+					}
 				}
-				fTab.updateLaunchConfigurationDialog();
+
 			}
 		}
 
@@ -876,6 +883,7 @@ public class FeatureBlock {
 		ArrayList checkPluginLaunchModels = new ArrayList();
 
 		Object[] models = fTree.getCheckedElements();
+
 		for (int i = 0; i < models.length; i++) {
 			if (models[i] instanceof FeatureLaunchModel) {
 				FeatureLaunchModel featureModel = (FeatureLaunchModel) models[i];
