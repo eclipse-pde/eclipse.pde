@@ -246,7 +246,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 			// trigger a classpath update for all workspace plug-ins affected by the
 			// processed batch of changes
-			updateAffectedEntries(stateDelta);
+			updateAffectedEntries(stateDelta, e);
 			fireStateDelta(stateDelta);
 
 		}
@@ -261,8 +261,9 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 
 	 * @param delta  a state delta containing a list of bundles affected by the processed
 	 * 				changes
+	 * @param event event that triggered this update
 	 */
-	private void updateAffectedEntries(StateDelta delta) {
+	private void updateAffectedEntries(StateDelta delta, IModelProviderEvent event) {
 		Map map = new HashMap();
 		if (delta == null) {
 			// if the delta is null, then the entire target changed.
@@ -328,8 +329,18 @@ public class PluginModelManager implements IModelProviderListener {
 				containers[index] = (IClasspathContainer) entry.getValue();
 				index++;
 			}
-			fUpdateJob.add(projects, containers);
-			fUpdateJob.schedule();
+			int types = event.getEventTypes();
+			if (types == IModelChangedEvent.REMOVE || types == IModelChangedEvent.INSERT) {
+				// if added or removed update synchronously as before, else schedule a job to avoid blocking
+				// the UI (@see bug 276135)
+				try {
+					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, null);
+				} catch (JavaModelException e) {
+				}
+			} else {
+				fUpdateJob.add(projects, containers);
+				fUpdateJob.schedule();
+			}
 		}
 	}
 
