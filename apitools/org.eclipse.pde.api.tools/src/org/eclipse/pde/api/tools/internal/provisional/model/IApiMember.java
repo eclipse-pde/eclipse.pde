@@ -32,7 +32,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescrip
 public interface IApiMember extends IApiElement {
 	
 	/**
-	 * Returns a the type this member is declared in or <code>null</code>
+	 * Returns the type this member is declared in or <code>null</code>
 	 * if none.
 	 * 
 	 * @return enclosing type or <code>null</code>
