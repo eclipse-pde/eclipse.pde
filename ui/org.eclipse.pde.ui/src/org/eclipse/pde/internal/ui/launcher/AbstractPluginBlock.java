@@ -91,20 +91,18 @@ public abstract class AbstractPluginBlock {
 	private TreeEditor autoColumnEditor = null;
 
 	/**
-	 * Label provider for the tree.  Implements ILabelProvider so it can support the text filter (see PatternFilter)
+	 * Label provider for the tree.
 	 */
-	class OSGiLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
-
-		PDELabelProvider pdeLabelProvider = new PDELabelProvider();
+	class OSGiLabelProvider extends PDELabelProvider {
 
 		public Image getColumnImage(Object obj, int index) {
-			return index == 0 ? pdeLabelProvider.getColumnImage(obj, index) : null;
+			return index == 0 ? super.getColumnImage(obj, index) : null;
 		}
 
 		public String getColumnText(Object obj, int index) {
 			switch (index) {
 				case 0 :
-					return pdeLabelProvider.getColumnText(obj, index);
+					return super.getColumnText(obj, index);
 				case 1 :
 					if (levelColumnCache != null && levelColumnCache.containsKey(obj))
 						return (String) levelColumnCache.get(obj);
@@ -116,42 +114,6 @@ public abstract class AbstractPluginBlock {
 				default :
 					return ""; //$NON-NLS-1$
 			}
-		}
-
-		public void update(ViewerCell cell) {
-
-			int cellIndex = cell.getColumnIndex();
-			if (cellIndex == 0) {
-				StyledString label = new StyledString(pdeLabelProvider.getText(cell.getElement()));
-				int start = label.toString().indexOf('(');
-				int end = label.toString().indexOf(')');
-				if (end > start && start > -1) {
-					label.setStyle(start, 1, StyledString.QUALIFIER_STYLER);
-					label.setStyle(end, 1, StyledString.QUALIFIER_STYLER);
-					label.setStyle(start + 1, end - start, StyledString.QUALIFIER_STYLER);
-				}
-				cell.setStyleRanges(label.getStyleRanges());
-				cell.setText(label.toString());
-				cell.setImage(getColumnImage(cell.getElement(), cellIndex));
-			} else {
-				cell.setText(getColumnText(cell.getElement(), cellIndex));
-			}
-
-			super.update(cell);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
-		public Image getImage(Object element) {
-			return getColumnImage(element, 0);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
-		public String getText(Object element) {
-			return getColumnText(element, 0);
 		}
 	}
 
@@ -332,7 +294,7 @@ public abstract class AbstractPluginBlock {
 		return button;
 	}
 
-	protected IBaseLabelProvider getLabelProvider() {
+	protected ILabelProvider getLabelProvider() {
 		return new OSGiLabelProvider();
 	}
 
