@@ -240,6 +240,9 @@ public class BundleLauncherHelper {
 
 			if (model == null) {
 				model = models[i];
+				if (requiredVersion.compareTo(model.getBundleDescription().getVersion()) == 0) {
+					break;
+				}
 				continue;
 			}
 
