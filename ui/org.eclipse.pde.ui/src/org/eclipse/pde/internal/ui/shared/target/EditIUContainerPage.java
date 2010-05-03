@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -83,6 +84,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 	private RepositorySelectionGroup fRepoSelector;
 	private AvailableIUGroup fAvailableIUGroup;
+	private Label fSelectionCount;
 	private Button fPropertiesButton;
 	private IAction fPropertyAction;
 	private Button fShowCategoriesButton;
@@ -207,8 +209,14 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
 				if (units.length > 0) {
+					if (units.length == 1) {
+						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemSelected, Integer.toString(units.length)));
+					} else {
+						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(units.length)));
+					}
 					fSelectedIUStatus = Status.OK_STATUS;
 				} else {
+					fSelectionCount.setText(""); //$NON-NLS-1$
 					fSelectedIUStatus = BAD_IU_SELECTION;
 				}
 				pageChanged();
@@ -224,6 +232,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		fAvailableIUGroup.setUseBoldFontForFilteredItems(true);
 		GridData data = (GridData) fAvailableIUGroup.getStructuredViewer().getControl().getLayoutData();
 		data.heightHint = 200;
+
+		fSelectionCount = SWTFactory.createLabel(parent, "", 1); //$NON-NLS-1$
 	}
 
 	/**
@@ -488,6 +498,13 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
 				if (units.length > 0) {
 					fAvailableIUGroup.getCheckboxTreeViewer().setSelection(new StructuredSelection(units[0]), true);
+					if (units.length == 1) {
+						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemSelected, Integer.toString(units.length)));
+					} else {
+						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(units.length)));
+					}
+				} else {
+					fSelectionCount.setText(""); //$NON-NLS-1$
 				}
 				fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
 

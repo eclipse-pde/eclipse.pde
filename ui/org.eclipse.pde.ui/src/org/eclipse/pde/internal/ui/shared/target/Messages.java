@@ -90,6 +90,8 @@ public class Messages extends NLS {
 	public static String EditIUContainerPage_7;
 	public static String EditIUContainerPage_8;
 	public static String EditIUContainerPage_9;
+	public static String EditIUContainerPage_itemSelected;
+	public static String EditIUContainerPage_itemsSelected;
 	public static String EditProfileContainerPage_1;
 	public static String EditProfileContainerPage_2;
 	public static String EditProfileContainerPage_3;
