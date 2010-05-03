@@ -231,6 +231,16 @@ public class BundleLauncherHelper {
 		return false;
 	}
 
+	/**
+	 * Returns model from the given list that is a 'best match' to the given bundle version or
+	 * <code>null</code> if no enabled models were in the provided list.  The best match will
+	 * be an exact version match if one is found.  Otherwise a model that is resolved in the
+	 * OSGi state with the highest version is returned.
+	 * 
+	 * @param models list of candidate models to choose from
+	 * @param version the bundle version to find a match for
+	 * @return best candidate model from the list of models or <code>null</code> if no there were no acceptable models in the list
+	 */
 	private static IPluginModelBase getBestCandidateModel(IPluginModelBase[] models, String version) {
 		Version requiredVersion = version != null ? Version.parseVersion(version) : Version.emptyVersion;
 		IPluginModelBase model = null;
