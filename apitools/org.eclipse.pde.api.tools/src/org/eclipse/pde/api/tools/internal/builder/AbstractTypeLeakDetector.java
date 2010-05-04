@@ -51,7 +51,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	public boolean considerReference(IReference reference) {
 		// consider the reference if the location the reference is made from is visible:
 		// i.e. a public or protected class in an API package
-		if (super.considerReference(reference) & isNonAPIReference(reference)) {
+		if (super.considerReference(reference) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			int modifiers = member.getModifiers();
 			if (((Flags.AccPublic | Flags.AccProtected) & modifiers) > 0) {

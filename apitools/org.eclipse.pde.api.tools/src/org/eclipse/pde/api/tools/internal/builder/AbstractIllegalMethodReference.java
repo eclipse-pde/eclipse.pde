@@ -55,7 +55,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) & fIllegalMethods.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true))) {
+		if (super.considerReference(reference) && fIllegalMethods.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true))) {
 			retainReference(reference);
 			return true;
 		}
@@ -72,7 +72,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 		IApiMember method = reference.getResolvedReference();
 		String componentId = (String) fMethodComponents.get(method.getHandle());
 		// TODO: would it be faster to store component objects and use identity instead of equals?
-		return componentId != null && method.getApiComponent().getSymbolicName().equals(componentId);
+		return isReferenceFromComponent(reference, componentId);
 	}
 	
 	/* (non-Javadoc)

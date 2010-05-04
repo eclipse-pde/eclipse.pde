@@ -418,7 +418,23 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return true;
 	}
-	
+	protected boolean isReferenceFromComponent(IReference reference,
+			Object componentId) {
+		if (componentId != null) {
+			final IApiComponent apiComponent = reference.getResolvedReference().getApiComponent();
+			// API component is either component id itself or one of its fragment
+			if (apiComponent.getSymbolicName().equals(componentId)) {
+				return true;
+			}
+			try {
+				final IApiComponent host = apiComponent.getHost();
+				return host != null && host.getSymbolicName().equals(componentId);
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+		return false;
+	}
 	/**
 	 * Tries to find the given {@link IApiMethod} in the given {@link IType}. If a matching method is not
 	 * found <code>null</code> is returned 

@@ -150,7 +150,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) & isNonAPIReference(reference)) {
+		if (super.considerReference(reference) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			if (member != null && matchesSourceModifiers(member) && matchesSourceApiRestrictions(member)) {
 				retainReference(reference);
