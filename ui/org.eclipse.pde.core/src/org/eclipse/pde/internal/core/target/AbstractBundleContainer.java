@@ -206,6 +206,13 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	public abstract boolean isContentEqual(AbstractBundleContainer container);
 
 	/**
+	 * Sets the resolution status to null.  This container will be considered unresolved.
+	 */
+	protected void clearResolutionStatus() {
+		fResolutionStatus = null;
+	}
+
+	/**
 	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
 	 * or in a directory at the specified location.
 	 * 

@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.shared.target.TargetLocationsGroup.IUWrapper;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
@@ -140,6 +141,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				styledString.append(repos[0].toString());
 			}
 			appendBundleCount(styledString, container);
+		} else if (element instanceof IUWrapper) {
+			styledString = getStyledString(((IUWrapper) element).getIU());
 		} else if (element instanceof IInstallableUnit) {
 			IInstallableUnit iu = (IInstallableUnit) element;
 			String name = fTranslations.getIUProperty(iu, IInstallableUnit.PROP_NAME);
@@ -272,6 +275,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			} else if (element instanceof IUBundleContainer) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REPOSITORY_OBJ, flag);
 			}
+		} else if (element instanceof IUWrapper) {
+			return getImage(((IUWrapper) element).getIU());
 		} else if (element instanceof IInstallableUnit) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_NOREF_FEATURE_OBJ);
 		}

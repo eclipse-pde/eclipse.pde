@@ -11,8 +11,10 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -278,6 +280,8 @@ public class TargetLocationsGroup {
 			IBundleContainer oldContainer = null;
 			if (selected instanceof IBundleContainer) {
 				oldContainer = (IBundleContainer) selected;
+			} else if (selected instanceof IUWrapper) {
+				oldContainer = ((IUWrapper) selected).getParent();
 			} else if (selected instanceof IResolvedBundle) {
 				TreeItem[] treeSelection = fTreeViewer.getTree().getSelection();
 				if (treeSelection.length > 0) {
@@ -320,40 +324,64 @@ public class TargetLocationsGroup {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		IBundleContainer[] containers = fTarget.getBundleContainers();
 		if (!selection.isEmpty() && containers != null && containers.length > 0) {
-			Set newContainers = new HashSet();
-			newContainers.addAll(Arrays.asList(fTarget.getBundleContainers()));
-			Iterator iterator = selection.iterator();
+			List toRemove = new ArrayList();
 			boolean removedSite = false;
-			while (iterator.hasNext()) {
+			boolean removedContainer = false;
+			for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
 				Object currentSelection = iterator.next();
 				if (currentSelection instanceof IBundleContainer) {
 					if (currentSelection instanceof IUBundleContainer) {
 						removedSite = true;
 					}
-					newContainers.remove(currentSelection);
+					removedContainer = true;
+					toRemove.add(currentSelection);
+				}
+				if (currentSelection instanceof IUWrapper) {
+					toRemove.add(currentSelection);
 				}
 			}
-			if (newContainers.size() > 0) {
-				fTarget.setBundleContainers((IBundleContainer[]) newContainers.toArray(new IBundleContainer[newContainers.size()]));
-			} else {
-				fTarget.setBundleContainers(null);
-			}
 
-			// If we remove a site container, the content change update must force a re-resolve bug 275458 / bug 275401
-			contentsChanged(removedSite);
-			fTreeViewer.refresh(false);
-			updateButtons();
+			if (removedContainer) {
+				Set newContainers = new HashSet();
+				newContainers.addAll(Arrays.asList(fTarget.getBundleContainers()));
+				newContainers.removeAll(toRemove);
+				if (newContainers.size() > 0) {
+					fTarget.setBundleContainers((IBundleContainer[]) newContainers.toArray(new IBundleContainer[newContainers.size()]));
+				} else {
+					fTarget.setBundleContainers(null);
+				}
+
+				// If we remove a site container, the content change update must force a re-resolve bug 275458 / bug 275401
+				contentsChanged(removedSite);
+				fTreeViewer.refresh(false);
+				updateButtons();
+			} else {
+				for (Iterator iterator = toRemove.iterator(); iterator.hasNext();) {
+					Object current = iterator.next();
+					if (current instanceof IUWrapper) {
+						((IUWrapper) current).getParent().removeInstallableUnit(((IUWrapper) current).getIU());
+					}
+				}
+				contentsChanged(removedSite);
+				fTreeViewer.refresh(true);
+				updateButtons();
+			}
 		}
 	}
 
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		fEditButton.setEnabled(!selection.isEmpty() && selection.getFirstElement() instanceof IBundleContainer);
+		fEditButton.setEnabled(!selection.isEmpty() && (selection.getFirstElement() instanceof IBundleContainer || selection.getFirstElement() instanceof IUWrapper));
 		// If any container is selected, allow the remove (the remove ignores non-container entries)
 		boolean removeAllowed = false;
 		Iterator iter = selection.iterator();
 		while (iter.hasNext()) {
-			if (iter.next() instanceof IBundleContainer) {
+			Object current = iter.next();
+			if (current instanceof IBundleContainer) {
+				removeAllowed = true;
+				break;
+			}
+			if (current instanceof IUWrapper) {
 				removeAllowed = true;
 				break;
 			}
@@ -400,7 +428,13 @@ public class TargetLocationsGroup {
 						// TODO See if we can get the profile using API
 						try {
 							IProfile profile = ((TargetDefinition) fTarget).getProfile();
-							return ((IUBundleContainer) parentElement).getInstallableUnits(profile);
+							IInstallableUnit[] units = ((IUBundleContainer) parentElement).getInstallableUnits(profile);
+							// Wrap the units so that they remember their parent container
+							List wrappedUnits = new ArrayList(units.length);
+							for (int i = 0; i < units.length; i++) {
+								wrappedUnits.add(new IUWrapper(units[i], (IUBundleContainer) parentElement));
+							}
+							return wrappedUnits.toArray();
 						} catch (CoreException e) {
 							return new Object[] {e.getStatus()};
 						}
@@ -413,6 +447,9 @@ public class TargetLocationsGroup {
 		}
 
 		public Object getParent(Object element) {
+			if (element instanceof IUWrapper) {
+				return ((IUWrapper) element).getParent();
+			}
 			return null;
 		}
 
@@ -454,6 +491,28 @@ public class TargetLocationsGroup {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+	}
+
+	/**
+	 * Wraps an installable unit so that it knows what bundle container parent it belongs to
+	 * in the tree.
+	 */
+	class IUWrapper {
+		private IInstallableUnit fIU;
+		private IUBundleContainer fParent;
+
+		public IUWrapper(IInstallableUnit unit, IUBundleContainer parent) {
+			fIU = unit;
+			fParent = parent;
+		}
+
+		public IInstallableUnit getIU() {
+			return fIU;
+		}
+
+		public IUBundleContainer getParent() {
+			return fParent;
+		}
 	}
 
 }

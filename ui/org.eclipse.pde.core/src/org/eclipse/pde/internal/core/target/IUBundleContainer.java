@@ -843,6 +843,29 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
+	 * Removes an installable unit from this container.  The container will no longer be resolved.
+	 *  
+	 * @param unit unit to remove from the list of root IUs
+	 */
+	public void removeInstallableUnit(IInstallableUnit unit) {
+		List newUnits = new ArrayList(fUnits.length);
+		for (int i = 0; i < fUnits.length; i++) {
+			if (!fUnits[i].equals(unit)) {
+				newUnits.add(fUnits[i]);
+			}
+		}
+		fUnits = (IInstallableUnit[]) newUnits.toArray(new IInstallableUnit[newUnits.size()]);
+		fIds = new String[fUnits.length];
+		fVersions = new Version[fUnits.length];
+		for (int i = 0; i < fUnits.length; i++) {
+			fIds[i] = fUnits[i].getId();
+			fVersions[i] = fUnits[i].getVersion();
+		}
+		// Need to mark the container as unresolved
+		clearResolutionStatus();
+	}
+
+	/**
 	 * Returns installable unit identifiers.
 	 * 
 	 * @return IU id's
