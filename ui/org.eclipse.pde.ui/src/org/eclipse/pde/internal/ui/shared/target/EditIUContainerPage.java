@@ -216,7 +216,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 					}
 					fSelectedIUStatus = Status.OK_STATUS;
 				} else {
-					fSelectionCount.setText(""); //$NON-NLS-1$
+					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
 					fSelectedIUStatus = BAD_IU_SELECTION;
 				}
 				pageChanged();
@@ -233,7 +233,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		GridData data = (GridData) fAvailableIUGroup.getStructuredViewer().getControl().getLayoutData();
 		data.heightHint = 200;
 
-		fSelectionCount = SWTFactory.createLabel(parent, "", 1); //$NON-NLS-1$
+		fSelectionCount = SWTFactory.createLabel(parent, NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)), 1);
 	}
 
 	/**
@@ -504,7 +504,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(units.length)));
 					}
 				} else {
-					fSelectionCount.setText(""); //$NON-NLS-1$
+					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0))); //$NON-NLS-1$
 				}
 				fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
 
