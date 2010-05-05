@@ -191,11 +191,12 @@ public class ProductExportOperation extends FeatureExportOperation {
 			String[] config = configurations[i];
 			File vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
 
-			if (config[0].equals("macosx") && vm.getPath().startsWith(MAC_JAVA_FRAMEWORK)) { //$NON-NLS-1$
-				continue;
-			}
-
 			if (vm != null) {
+
+				if (config[0].equals("macosx") && vm.getPath().startsWith(MAC_JAVA_FRAMEWORK)) { //$NON-NLS-1$
+					continue;
+				}
+
 				String rootPrefix = IBuildPropertiesConstants.ROOT_PREFIX + config[0] + "." + config[1] + //$NON-NLS-1$
 						"." + config[2]; //$NON-NLS-1$
 				properties.put(rootPrefix + ".folder.jre", "absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
