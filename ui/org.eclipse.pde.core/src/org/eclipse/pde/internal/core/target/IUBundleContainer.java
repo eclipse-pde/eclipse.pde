@@ -392,9 +392,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		loadMonitor.done();
 
 		IQueryable allMetadata;
-		if (repoCount == 0) {
+		if (metadataRepos.size() == 0) {
 			throw new CoreException(repoStatus);
-		} else if (repoCount == 1) {
+		} else if (metadataRepos.size() == 1) {
 			allMetadata = (IQueryable) metadataRepos.get(0);
 		} else {
 			allMetadata = QueryUtil.compoundQueryable(metadataRepos);
