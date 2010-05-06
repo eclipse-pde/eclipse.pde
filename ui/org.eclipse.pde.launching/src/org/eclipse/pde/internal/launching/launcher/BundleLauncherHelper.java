@@ -127,44 +127,27 @@ public class BundleLauncherHelper {
 
 				for (int i = 0; i < featurePlugins.length; i++) {
 					ModelEntry modelEntry = pluginModelMgr.findEntry(featurePlugins[i].getId());
-					if (modelEntry == null) {
-						continue;
+					if (modelEntry != null) {
+						IPluginModelBase model = findModel(modelEntry, featurePlugins[i].getVersion(), pluginResolution);
+						if (model != null)
+							launchPlugins.add(model);
 					}
-					IPluginModelBase model = null;
-					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
-						model = getBestCandidateModel(modelEntry.getWorkspaceModels(), featurePlugins[i].getVersion());
-					}
-					if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
-						model = getBestCandidateModel(modelEntry.getExternalModels(), featurePlugins[i].getVersion());
-					}
-					if (model == null)
-						continue;
-					launchPlugins.add(model);
 				}
 
 				IFeatureImport[] featureImports = featureModel.getFeature().getImports();
 				for (int i = 0; i < featureImports.length; i++) {
 					if (featureImports[i].getType() == IFeatureImport.PLUGIN) {
 						ModelEntry modelEntry = pluginModelMgr.findEntry(featureImports[i].getId());
-						if (modelEntry == null) {
-							continue;
+						if (modelEntry != null) {
+							IPluginModelBase model = findModel(modelEntry, featureImports[i].getVersion(), pluginResolution);
+							if (model != null)
+								launchPlugins.add(model);
 						}
-						IPluginModelBase model = null;
-						if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
-							model = getBestCandidateModel(modelEntry.getWorkspaceModels(), featureImports[i].getVersion());
-						}
-						if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
-							model = getBestCandidateModel(modelEntry.getExternalModels(), featureImports[i].getVersion());
-						}
-
-						if (model == null)
-							continue;
-						launchPlugins.add(model);
 					}
 				}
 			}
 
-			HashMap additionalPlugins = resolveAddtionalPluginsEntry(configuration, true);
+			HashMap additionalPlugins = getAdditionalPlugins(configuration, true);
 			launchPlugins.addAll(additionalPlugins.keySet());
 
 			// Get all required plugins
@@ -174,19 +157,11 @@ public class BundleLauncherHelper {
 			while (it.hasNext()) {
 				String id = (String) it.next();
 				ModelEntry modelEntry = pluginModelMgr.findEntry(id);
-				if (modelEntry == null) {
-					continue;
+				if (modelEntry != null) {
+					IPluginModelBase model = findModel(modelEntry, null, defaultPluginResolution);
+					if (model != null)
+						launchPlugins.add(model);
 				}
-				IPluginModelBase model = null;
-				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultPluginResolution)) {
-					model = getBestCandidateModel(modelEntry.getWorkspaceModels(), null);
-				}
-				if (model == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultPluginResolution)) {
-					model = getBestCandidateModel(modelEntry.getExternalModels(), null);
-				}
-				if (model == null)
-					continue;
-				launchPlugins.add(model);
 			}
 
 			//remove conflicting duplicates - if they have same version or both are singleton
@@ -222,6 +197,28 @@ public class BundleLauncherHelper {
 		map = getWorkspaceBundleMap(configuration, set, workspace);
 		map.putAll(getTargetBundleMap(configuration, set, target));
 		return map;
+	}
+
+	/**
+	 * Finds the best candidate model from the <code>resolution</code> location. If the model is not found there, 
+	 * alternate location is explored before returning <code>null</code>.
+	 * @param modelEntry
+	 * @param version
+	 * @param location
+	 * @return model
+	 */
+	private static IPluginModelBase findModel(ModelEntry modelEntry, String version, String location) {
+		IPluginModelBase model = null;
+		if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
+			model = getBestCandidateModel(modelEntry.getWorkspaceModels(), version);
+		}
+		if (model == null) {
+			model = getBestCandidateModel(modelEntry.getExternalModels(), version);
+		}
+		if (model == null && IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(location)) {
+			model = getBestCandidateModel(modelEntry.getWorkspaceModels(), version);
+		}
+		return model;
 	}
 
 	private static boolean isSingleton(IPluginModelBase model) {
@@ -540,7 +537,21 @@ public class BundleLauncherHelper {
 		return buffer.toString();
 	}
 
-	public static HashMap resolveAddtionalPluginsEntry(ILaunchConfiguration config, boolean checkedOnly) throws CoreException {
+	/**
+	 * Returns a map of IPluginModelBase to their associated String resolution setting. Reads the 
+	 * additional plug-ins attribute of the given launch config and returns a map of plug-in models
+	 * to their resolution.  The attribute stores the id, version, enablement and resolution of each plug-in.
+	 * The models to be returned are determined by trying to find a model with a matching name, matching version
+	 * (or highest) in the resolution location (falling back on other locations if the chosen option is unavailable).
+	 * The includeDisabled option allows the returned list to contain only plug-ins that are enabled (checked) in
+	 * the config.
+	 * 
+	 * @param config launch config to read attribute from
+	 * @param onlyEnabled whether all plug-ins in the attribute should be returned or just the ones marked as enabled/checked
+	 * @return map of IPluginModelBase to String resolution setting
+	 * @throws CoreException if there is a problem reading the launch config
+	 */
+	public static HashMap getAdditionalPlugins(ILaunchConfiguration config, boolean onlyEnabled) throws CoreException {
 		HashMap resolvedAdditionalPlugins = new HashMap();
 		Set userAddedPlugins = config.getAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, (Set) null);
 		String defaultPluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
@@ -549,25 +560,20 @@ public class BundleLauncherHelper {
 				String addedPlugin = (String) iterator.next();
 				String[] pluginData = addedPlugin.split(":"); //$NON-NLS-1$
 				boolean checked = Boolean.valueOf(pluginData[3]).booleanValue();
-				if (checked != checkedOnly)
-					continue;
-				String id = pluginData[0];
-				String version = pluginData[1];
-				String pluginResolution = pluginData[2];
-				ModelEntry pluginModelEntry = PluginRegistry.findEntry(id);
-				if (pluginModelEntry == null)
-					continue;
-				IPluginModelBase pluginModel = null;
-				if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution))
-					pluginResolution = defaultPluginResolution;
-				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginResolution)) {
-					pluginModel = getBestCandidateModel(pluginModelEntry.getWorkspaceModels(), version);
-				}
-				if (pluginModel == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginResolution)) {
-					pluginModel = getBestCandidateModel(pluginModelEntry.getExternalModels(), version);
-				}
-				if (pluginModel != null) {
-					resolvedAdditionalPlugins.put(pluginModel, pluginData[2]);
+				if (!onlyEnabled || checked) {
+					String id = pluginData[0];
+					String version = pluginData[1];
+					String pluginResolution = pluginData[2];
+					ModelEntry pluginModelEntry = PluginRegistry.findEntry(id);
+					if (pluginModelEntry != null) {
+						if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
+							pluginResolution = defaultPluginResolution;
+						}
+						IPluginModelBase model = findModel(pluginModelEntry, version, pluginResolution);
+						if (model != null) {
+							resolvedAdditionalPlugins.put(model, pluginData[2]);
+						}
+					}
 				}
 			}
 		}

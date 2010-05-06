@@ -19,8 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
@@ -39,6 +38,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PatternFilter;
 
 /**
@@ -71,6 +72,21 @@ public class FeatureBlock {
 				} else if (obj instanceof PluginLaunchModel) {
 					IPluginModelBase pluginModelBase = ((PluginLaunchModel) obj).getPluginModelBase();
 					return pdeLabelProvider.getColumnImage(pluginModelBase, index);
+				}
+			} else if (index == COLUMN_PLUGIN_RESOLUTION) {
+				if (obj instanceof PluginLaunchModel) {
+					PluginLaunchModel pluginLaunchModel = ((PluginLaunchModel) obj);
+					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginLaunchModel.getPluginResolution())) {
+						ModelEntry modelEntry = PluginRegistry.findEntry(pluginLaunchModel.getPluginModelId());
+						if (!modelEntry.hasWorkspaceModels()) {
+							return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+						}
+					} else if (IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(pluginLaunchModel.getPluginResolution())) {
+						ModelEntry modelEntry = PluginRegistry.findEntry(pluginLaunchModel.getPluginModelId());
+						if (!modelEntry.hasExternalModels()) {
+							return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+						}
+					}
 				}
 			}
 			return null;
@@ -112,6 +128,7 @@ public class FeatureBlock {
 					break;
 				case COLUMN_PLUGIN_RESOLUTION :
 					cell.setText(getColumnText(cell.getElement(), COLUMN_PLUGIN_RESOLUTION));
+					cell.setImage(getColumnImage(cell.getElement(), COLUMN_PLUGIN_RESOLUTION));
 					break;
 			}
 			super.update(cell);
@@ -972,19 +989,16 @@ public class FeatureBlock {
 		fFeatureModels = featureModels;
 		try {
 			fAdditionalPlugins = new ArrayList();
-			ArrayList checkedPluginLaunchModels = new ArrayList();
-			HashMap checkedPlugins = BundleLauncherHelper.resolveAddtionalPluginsEntry(config, true);
-			for (Iterator iterator = checkedPlugins.keySet().iterator(); iterator.hasNext();) {
+			List checkedAdditionalPlugins = new ArrayList();
+			HashMap allAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, false);
+			HashMap checkedAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, true);
+			for (Iterator iterator = allAdditionalMap.keySet().iterator(); iterator.hasNext();) {
 				IPluginModelBase model = (IPluginModelBase) iterator.next();
-				PluginLaunchModel pluginLaunchModel = new PluginLaunchModel(model, (String) checkedPlugins.get(model));
-				fAdditionalPlugins.add(pluginLaunchModel);
-				checkedPluginLaunchModels.add(pluginLaunchModel);
-			}
-
-			HashMap unCheckedPlugins = BundleLauncherHelper.resolveAddtionalPluginsEntry(config, false);
-			for (Iterator iterator = unCheckedPlugins.keySet().iterator(); iterator.hasNext();) {
-				IPluginModelBase model = (IPluginModelBase) iterator.next();
-				fAdditionalPlugins.add(new PluginLaunchModel(model, (String) unCheckedPlugins.get(model)));
+				PluginLaunchModel launchModel = new PluginLaunchModel(model, (String) allAdditionalMap.get(model));
+				fAdditionalPlugins.add(launchModel);
+				if (checkedAdditionalMap.containsKey(model)) {
+					checkedAdditionalPlugins.add(launchModel);
+				}
 			}
 
 			List models = new ArrayList(fFeatureModels.values());
@@ -1015,7 +1029,7 @@ public class FeatureBlock {
 				}
 				List checkedElements = new ArrayList();
 				checkedElements.addAll(selectedFeatureList);
-				checkedElements.addAll(checkedPluginLaunchModels);
+				checkedElements.addAll(checkedAdditionalPlugins);
 				tree.setCheckedElements(checkedElements.toArray());
 			}
 		} catch (CoreException e) {
