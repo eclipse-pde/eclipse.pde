@@ -98,6 +98,35 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	}
 
+	public void generateEclipseProduct() throws CoreException {
+		initialize();
+
+		if (productFile == null)
+			return;
+
+		String location = DEFAULT_PRODUCT_ROOT_FILES_DIR + "/ANY.ANY.ANY"; //$NON-NLS-1$
+		String rootLocation = root + location;
+		File rootDir = new File(rootLocation);
+		if ((!rootDir.exists() && !rootDir.mkdirs()) || rootDir.isFile())
+			return; //we will fail trying to create the files,
+
+		if (buildProperties == null)
+			buildProperties = new Properties();
+
+		String fileList = buildProperties.getProperty(ROOT, ""); //$NON-NLS-1$
+		fileList += (fileList.length() > 0) ? ',' + location : location;
+		buildProperties.put(ROOT, fileList);
+
+		//need to actually write the property changes out to disk
+		try {
+			Utils.writeProperties(buildProperties, new File(root, IPDEBuildConstants.PROPERTIES_FILE), ""); //$NON-NLS-1$
+		} catch (IOException e) {
+			return;
+		}
+
+		createEclipseProductFile(rootLocation);
+	}
+
 	public boolean generateP2Info() throws CoreException {
 		initialize();
 

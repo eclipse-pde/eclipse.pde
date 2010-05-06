@@ -400,8 +400,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
-		String product = generateProductFiles ? director.getProduct() : null;
-		if (product != null && !BuildDirector.p2Gathering) {
+		boolean generateEclipseProduct = Boolean.valueOf(getBuildProperties().getProperty(IBuildPropertiesConstants.PROPERTY_GENERATE_ECLIPSEPRODUCT)).booleanValue();
+		String product = (generateProductFiles || generateEclipseProduct) ? director.getProduct() : null;
+		if (product != null) {
 			ProductGenerator generator = new ProductGenerator();
 			generator.setProduct(product);
 			generator.setBuildSiteFactory(siteFactory);
@@ -410,7 +411,10 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setWorkingDirectory(getWorkingDirectory());
 			generator.setAssemblyInfo(director.getAssemblyData());
 			try {
-				generator.generate();
+				if (!BuildDirector.p2Gathering && generateProductFiles)
+					generator.generate();
+				else if (generateEclipseProduct)
+					generator.generateEclipseProduct();
 			} catch (CoreException e) {
 				//problem with the .product file
 				//TODO Log warning/error

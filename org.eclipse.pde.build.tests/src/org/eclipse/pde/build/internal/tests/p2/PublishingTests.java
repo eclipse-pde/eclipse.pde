@@ -1703,13 +1703,15 @@ public class PublishingTests extends P2TestCase {
 		IFolder productFolder = buildFolder.getFolder("features/org.eclipse.pde.build.container.feature/product");
 		//check we copied the config.ini file
 		assertResourceFile(productFolder.getFile("bundle/config.ini"));
-		//check that build didn't generate default CUs
-		IFile p2Inf = productFolder.getFile("p2.inf");
-		assertEquals(p2Inf.getLocation().toFile().length(), 0);
 
 		URI repoURI = URIUtil.fromString("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 
+		IFile eclipseProduct = buildFolder.getFile("tmp/eclipse/.eclipseproduct");
+		assertResourceFile(eclipseProduct);
+		Properties properties = Utils.loadProperties(eclipseProduct);
+		assertEquals(properties.getProperty("name"), "bundle.product");
+		assertEquals(properties.getProperty("id"), "bundle.product");
 		IFile config = buildFolder.getFile("tmp/eclipse/configuration/config.ini");
 		IInstallableUnit iu = getIU(metadata, EQUINOX_COMMON);
 		String line = "org.eclipse.equinox.common_" + iu.getVersion() + ".jar@2\\:start";
@@ -1786,6 +1788,7 @@ public class PublishingTests extends P2TestCase {
 
 		runProductBuild(buildFolder);
 
+		assertResourceFile(buildFolder.getFile("tmp/eclipse/.eclipseproduct"));
 		IMetadataRepository meta = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(meta, "foo");
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "f.feature.group");

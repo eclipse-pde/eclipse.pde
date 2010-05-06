@@ -170,8 +170,15 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		if (nestedInclusions == null || nestedInclusions.equalsIgnoreCase(FALSE))
 			return false;
 
+		if (product != null) {
+			//will need to generate a .eclipseproduct file
+			if (buildProperties == null)
+				buildProperties = new Properties();
+			buildProperties.put(IBuildPropertiesConstants.PROPERTY_GENERATE_ECLIPSEPRODUCT, TRUE);
+		}
+
 		//make sure there's actually something to nest
-		if ((pluginList == null || pluginList.length == 0) && (fragmentList == null || fragmentList.length == 0) && (featureList == null || featureList.length == 0) && (buildProperties != null || buildProperties.size() == 0))
+		if ((pluginList == null || pluginList.length == 0) && (fragmentList == null || fragmentList.length == 0) && (featureList == null || featureList.length == 0) && (buildProperties == null || buildProperties.size() == 0))
 			return false;
 
 		// use the product-id to generate a name if nestedRequirements==true

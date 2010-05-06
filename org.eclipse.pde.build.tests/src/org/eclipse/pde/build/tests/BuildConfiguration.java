@@ -32,7 +32,7 @@ public class BuildConfiguration {
 		defaultBuildConfig.put("basews", Platform.getWS());
 		defaultBuildConfig.put("basearch", Platform.getOSArch());
 		defaultBuildConfig.put("filterP2Base", TRUE);
-
+		defaultBuildConfig.put("bootclasspath", System.getProperty("sun.boot.class.path"));
 		defaultScriptConfig = (Properties) defaultBuildConfig.clone();
 		if (!defaultBuildConfig.containsKey("configs"))
 			defaultScriptConfig.put("configs", "*,*,*");
