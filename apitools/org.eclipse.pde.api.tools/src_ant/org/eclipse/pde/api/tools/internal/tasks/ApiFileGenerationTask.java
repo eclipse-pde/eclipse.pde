@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -164,9 +166,11 @@ public class ApiFileGenerationTask extends Task {
 	/**
 	 * Set the extra manifest files' locations.
 	 * 
-	 * <br><br>This is a list of extra MANIFEST.MF files' locations that can be set to provide more api
-	 * packages to scan. They are separated by the platform path separator. Each entry must exist.
-	 * <br><br>They should be specified using absolute paths.
+	 * <p>This is a list of extra MANIFEST.MF files' locations that can be set to provide more api
+	 * packages to scan. They are separated by the platform path separator. Each entry must exist.</p>
+	 * <p>If the path is not absolute, it will be resolved relative to the current working directory.</p>
+	 * <p>Jar files can be specified instead of MANIFEST.MF file. If a jar file is specified, its MANIFEST.MF file
+	 * will be read if it exists.</p>
 	 *
 	 * @param manifests the given extra manifest files' locations
 	 */
@@ -299,10 +303,21 @@ public class ApiFileGenerationTask extends Task {
 					Set currentApiPackages = null;
 					if (currentManifest.exists()) {
 						BufferedInputStream inputStream = null;
+						ZipFile zipFile = null;
 						try {
-							inputStream = new BufferedInputStream(new FileInputStream(currentManifest));
-							manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
-							currentApiPackages = collectApiPackageNames(manifestMap);
+							if (isZipJarFile(currentManifest.getName())) {
+								zipFile = new ZipFile(currentManifest);
+								final ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+								if (entry != null) {
+									inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
+								}
+							} else {
+								inputStream = new BufferedInputStream(new FileInputStream(currentManifest));
+							}
+							if (inputStream != null) {
+								manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
+								currentApiPackages = collectApiPackageNames(manifestMap);
+							}
 						} catch (FileNotFoundException e) {
 							ApiPlugin.log(e);
 						} catch (IOException e) {
@@ -314,7 +329,17 @@ public class ApiFileGenerationTask extends Task {
 								try {
 									inputStream.close();
 								} 
-								catch(IOException e) {}
+								catch(IOException e) {
+									// ignore
+								}
+							}
+							if (zipFile != null) {
+								try {
+									zipFile.close();
+								} 
+								catch(IOException e) {
+									// ignore
+								}
 							}
 						}
 					}
