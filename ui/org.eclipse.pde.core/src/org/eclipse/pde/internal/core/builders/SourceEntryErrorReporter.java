@@ -18,11 +18,14 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class SourceEntryErrorReporter extends BuildErrorReporter {
+
+	private static final String DEF_OUTPUT_ENTRY = PROPERTY_OUTPUT_PREFIX + '.';
 
 	public SourceEntryErrorReporter(IFile file, IBuild model) {
 		super(file);
@@ -288,11 +291,11 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				IPath sourcePath = cpes[i].getPath().removeFirstSegments(1).addTrailingSeparator();
+				IPath sourcePath = getPath(cpes[i]);
 				IPath outputLocation = cpes[i].getOutputLocation();
 				if (outputLocation == null)
 					outputLocation = defaultOutputLocation;
-				IPath outputPath = outputLocation.removeFirstSegments(1).addTrailingSeparator();
+				IPath outputPath = getPath(outputLocation);
 
 				OutputFolder outputFolder = (OutputFolder) fOutputFolderMap.get(outputPath);
 				if (outputFolder == null) {
@@ -312,11 +315,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				IPackageFragmentRoot[] roots = javaProject.findPackageFragmentRoots(entry);
 				IPath outputPath = null;
 				if (roots.length == 1) { // should only be one entry for a library
-					if (roots[0].getResource() != null) { // in the workspace
-						outputPath = entry.getPath().removeFirstSegments(1).addTrailingSeparator();
-					} else { // external
-						outputPath = entry.getPath();
-					}
+					outputPath = getPath(entry);
 				}
 				OutputFolder outputFolder = new OutputFolder(outputPath, true);
 				fOutputFolderMap.put(outputPath, outputFolder);
@@ -360,6 +359,23 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		}
 	}
 
+	private IPath getPath(Object entry) {
+		IPath path = null;
+		if (entry instanceof IClasspathEntry) {
+			IClasspathEntry cpes = (IClasspathEntry) entry;
+			path = cpes.getPath();
+		} else if (entry instanceof IPath) {
+			path = (IPath) entry;
+		}
+		if (path.matchingFirstSegments(fProject.getFullPath()) > 0) {
+			path = path.removeFirstSegments(1);
+		}
+		if (path != null) {
+			return path.addTrailingSeparator();
+		}
+		return null;
+	}
+
 	public void validate() {
 
 		for (Iterator iterator = fOutputFolderMap.keySet().iterator(); iterator.hasNext();) {
@@ -380,6 +396,19 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 						else
 							message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_InvalidOutputFolder, outputPath.toString());
 						prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
+					}
+				} else {
+					if (outputFolderLibs.size() == 0) {
+						//class folder does not have an output.<library> entry
+						IPluginModelBase model = PluginRegistry.findModel(fProject);
+						IPluginLibrary[] libs = model.getPluginBase().getLibraries();
+						String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputLibForClassFolder, outputPath.toString());
+						if (libs.length > 0) {
+							prepareError(PROPERTY_OUTPUT_PREFIX, null, message, PDEMarkerFactory.NO_RESOLUTION, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
+						} else {
+							prepareError(DEF_OUTPUT_ENTRY, outputPath.toString(), message, PDEMarkerFactory.B_ADDITION, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
+						}
+
 					}
 				}
 			} else {

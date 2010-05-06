@@ -703,6 +703,17 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	private void validateMissingLibraries(ArrayList sourceEntryKeys, IClasspathEntry[] cpes) {
+		boolean srcFolderExists = false;
+		// no need to flag anything if the project contains no source folders.
+		for (int j = 0; j < cpes.length; j++) {
+			if (cpes[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				srcFolderExists = true;
+				break;
+			}
+		}
+		if (!srcFolderExists)
+			return;
+
 		IPluginModelBase model = PluginRegistry.findModel(fProject);
 		if (model == null)
 			return;
@@ -710,12 +721,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			IBundleModel bm = ((IBundlePluginModelBase) model).getBundleModel();
 			IManifestHeader mh = bm.getBundle().getManifestHeader(Constants.BUNDLE_CLASSPATH);
 			if ((mh == null || mh.getValue() == null)) {
-				for (int i = 0; i < cpes.length; i++) {
-					if (cpes[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
-							prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
-						break;
-					}
+				if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
+					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
 			}
 		}
@@ -723,15 +730,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		for (int i = 0; i < libraries.length; i++) {
 			String libname = libraries[i].getName();
 			if (libname.equals(".")) { //$NON-NLS-1$
-				// no need to flag anything if the project contains no source folders.
-				for (int j = 0; j < cpes.length; j++) {
-					if (cpes[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
-							prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
-						break;
-					}
+				if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
+					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
+					continue;
 				}
-				continue;
 			} else if (fProject.findMember(libname) != null) {
 				// non "." library entries that exist in the workspace
 				// don't have to be referenced in the build properties
