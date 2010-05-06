@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,10 +55,23 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 				}
 			} else {
 				String configType = fLaunchConfiguration.getType().getIdentifier();
-				String attribute = configType.equals(IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE) ? IPDELauncherConstants.APPLICATION : IPDELauncherConstants.APP_TO_TEST;
-				String application = fLaunchConfiguration.getAttribute(attribute, TargetPlatform.getDefaultApplication());
-				if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
-					validateExtension(application);
+				if (configType.equals(IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE)) {
+					String application = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
+					if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
+						validateExtension(application);
+					}
+				} else {
+					// Junit launch configs can have the core test application set in either the 'app to test' or the 'application' attribute
+					String application = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String) null);
+					if (application == null) {
+						application = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
+					}
+					if (application == null) {
+						application = TargetPlatform.getDefaultApplication();
+					}
+					if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
+						validateExtension(application);
+					}
 				}
 			}
 		} catch (CoreException e) {
