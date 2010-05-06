@@ -111,7 +111,15 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			programArgs.add(configuration.getAttribute(IPDELauncherConstants.PRODUCT, "")); //$NON-NLS-1$
 		} else {
 			// Specify the application to test
-			String defaultApplication = IPDEConstants.CORE_TEST_APPLICATION.equals(application) ? null : TargetPlatform.getDefaultApplication();
+			String defaultApplication = TargetPlatform.getDefaultApplication();
+			if (IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
+				// If we are launching the core test application we don't need a test app
+				defaultApplication = null;
+			} else if (IPDEConstants.NON_UI_THREAD_APPLICATION.equals(application)) {
+				// When running in a non-UI thread, run the core test app to avoid opening the workbench
+				defaultApplication = IPDEConstants.CORE_TEST_APPLICATION;
+			}
+
 			String testApplication = configuration.getAttribute(IPDELauncherConstants.APP_TO_TEST, defaultApplication);
 			if (testApplication != null) {
 				programArgs.add("-testApplication"); //$NON-NLS-1$
