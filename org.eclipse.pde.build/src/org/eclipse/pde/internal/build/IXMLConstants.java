@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -170,6 +170,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_GENERATE_API_DESCRIPTION = "generateAPIDescription"; //$NON-NLS-1$
 	public static final String PROPERTY_BINARY_FOLDERS = "binary.folders"; //$NON-NLS-1$
 	public static final String PROPERTY_LAUNCHER_JAR = "equinoxLauncherJar"; //$NON-NLS-1$
+	public static final String PROPERTY_EXTRA_MANIFESTS = "extraManifests"; //$NON-NLS-1$
 
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$

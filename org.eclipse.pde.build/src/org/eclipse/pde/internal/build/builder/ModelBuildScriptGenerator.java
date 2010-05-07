@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,8 +13,7 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
@@ -569,6 +568,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printAttribute("project", Utils.getPropertyFormat(PROPERTY_PROJECT_LOCATION), true); //$NON-NLS-1$
 		script.printAttribute("binary", Utils.getPropertyFormat(PROPERTY_BINARY_FOLDERS), true); //$NON-NLS-1$
 		script.printAttribute("target", Utils.getPropertyFormat(PROPERTY_TARGET_FOLDER), true); //$NON-NLS-1$
+		script.printAttribute("extramanifests", Utils.getPropertyFormat(PROPERTY_EXTRA_MANIFESTS), true); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
@@ -602,11 +602,32 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				}
 			}
 		}
+
 		Map params = new HashMap();
 		params.put(PROPERTY_PROJECT_NAME, Utils.getPropertyFormat(PROPERTY_BUNDLE_ID) + "_" + Utils.getPropertyFormat(PROPERTY_BUNDLE_VERSION)); //$NON-NLS-1$
 		params.put(PROPERTY_PROJECT_LOCATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		params.put(PROPERTY_BINARY_FOLDERS, binaryFolders.toString());
 		params.put(PROPERTY_TARGET_FOLDER, target);
+
+		HostSpecification host = model.getHost();
+		if (host != null && host.getSupplier() != null) {
+			BundleDescription hostBundle = host.getSupplier().getSupplier();
+			String hostLocation = hostBundle.getLocation();
+			String modelLocation = model.getLocation();
+			if (hostLocation != null && modelLocation != null) {
+				IPath location = null;
+				if (new File(hostLocation).isFile()) {
+					location = Utils.makeRelative(new Path(hostLocation), new Path(modelLocation));
+				} else {
+					IPath hostPath = new Path(hostLocation);
+					location = Utils.makeRelative(hostPath.append(JarFile.MANIFEST_NAME), new Path(modelLocation));
+				}
+				if (location.isAbsolute())
+					params.put(PROPERTY_EXTRA_MANIFESTS, location.toString());
+				else
+					params.put(PROPERTY_EXTRA_MANIFESTS, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location.toString());
+			}
+		}
 		script.printAntCallTask(TARGET_API_GENERATION, true, params);
 	}
 
