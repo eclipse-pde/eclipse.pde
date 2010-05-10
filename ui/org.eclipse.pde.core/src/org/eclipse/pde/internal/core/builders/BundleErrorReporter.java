@@ -53,7 +53,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 
 		validateFragmentHost();
-		validateRequiredHeader(Constants.BUNDLE_NAME);
 		validateBundleVersion();
 		validateRequiredExecutionEnvironment();
 
