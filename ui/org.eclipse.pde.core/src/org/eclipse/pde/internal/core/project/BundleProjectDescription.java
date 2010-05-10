@@ -136,11 +136,15 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private ManifestElement[] parseHeader(Map headers, String key) throws CoreException {
 		String value = (String) headers.get(key);
 		if (value != null) {
-			try {
-				return ManifestElement.parseHeader(key, value);
-			} catch (BundleException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+			if (value.trim().length() > 0) {
+				try {
+					return ManifestElement.parseHeader(key, value);
+				} catch (BundleException e) {
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+				}
 			}
+			// empty header
+			return new ManifestElement[0];
 		}
 		return null;
 	}
@@ -236,17 +240,22 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				setSingleton("true".equals(directive)); //$NON-NLS-1$
 			}
 			elements = parseHeader(headers, Constants.IMPORT_PACKAGE);
-			if (elements != null && elements.length > 0) {
-				IPackageImportDescription[] imports = new IPackageImportDescription[elements.length];
-				for (int i = 0; i < elements.length; i++) {
-					boolean optional = Constants.RESOLUTION_OPTIONAL.equals(elements[i].getDirective(Constants.RESOLUTION_DIRECTIVE)) || "true".equals(elements[i].getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
-					String pv = elements[i].getAttribute(ICoreConstants.PACKAGE_SPECIFICATION_VERSION);
-					if (pv == null) {
-						pv = elements[i].getAttribute(Constants.VERSION_ATTRIBUTE);
+			if (elements != null) {
+				if (elements.length > 0) {
+					IPackageImportDescription[] imports = new IPackageImportDescription[elements.length];
+					for (int i = 0; i < elements.length; i++) {
+						boolean optional = Constants.RESOLUTION_OPTIONAL.equals(elements[i].getDirective(Constants.RESOLUTION_DIRECTIVE)) || "true".equals(elements[i].getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
+						String pv = elements[i].getAttribute(ICoreConstants.PACKAGE_SPECIFICATION_VERSION);
+						if (pv == null) {
+							pv = elements[i].getAttribute(Constants.VERSION_ATTRIBUTE);
+						}
+						imports[i] = getBundleProjectService().newPackageImport(elements[i].getValue(), getRange(pv), optional);
 					}
-					imports[i] = getBundleProjectService().newPackageImport(elements[i].getValue(), getRange(pv), optional);
+					setPackageImports(imports);
+				} else {
+					// empty header - should be maintained
+					setHeader(Constants.IMPORT_PACKAGE, ""); //$NON-NLS-1$
 				}
-				setPackageImports(imports);
 			}
 			elements = parseHeader(headers, Constants.EXPORT_PACKAGE);
 			if (elements != null && elements.length > 0) {

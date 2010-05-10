@@ -194,6 +194,34 @@ public class ProjectCreationTests extends TestCase {
 	}	
 	
 	/**
+	 * Tests that an empty package import header can be tolerated (see bug 312291)
+	 * 
+	 * @throws CoreException
+	 */
+	public void testEmptyPackageImportHeader() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		description.setHeader(Constants.IMPORT_PACKAGE, "");
+		description.apply(null);
+		
+		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
+		
+		String value = d2.getHeader(Constants.IMPORT_PACKAGE);
+		assertNotNull("Missing header 'Import-Package:'", value);
+		assertEquals("Should be a blank header", "", value);
+		
+		d2.setBundleName("EmptyTest");
+		d2.apply(null);
+		
+		IBundleProjectDescription d3 = getBundleProjectService().getDescription(project);
+		value = d3.getHeader(Constants.IMPORT_PACKAGE);
+		assertNotNull("Missing header 'Import-Package:'", value);
+		assertEquals("Should be a blank header", "", value);
+		assertEquals("Wrong bundle name", "EmptyTest", d3.getBundleName());
+		
+	}		
+	
+	/**
 	 * Minimal fragment project creation - set a symbolic name and host, and go.
 	 * 
 	 * @throws CoreException
