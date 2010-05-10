@@ -1036,7 +1036,6 @@ public class PDEUIMessages extends NLS {
 	public static String ContentPage_noid;
 	public static String ContentPage_invalidId;
 	public static String ContentPage_badversion;
-	public static String ContentPage_noname;
 	public static String ContentPage_nopid;
 	public static String ContentPage_pluginNotFound;
 	public static String ContentPage_illegalCharactersInID;

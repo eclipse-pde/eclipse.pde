@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,12 +103,6 @@ public abstract class ContentPage extends WizardPage {
 			return errorMessage;
 		}
 
-		// Validate Name
-		errorMessage = validateName();
-		if (errorMessage != null) {
-			return errorMessage;
-		}
-
 		return null;
 	}
 
@@ -120,15 +114,6 @@ public abstract class ContentPage extends WizardPage {
 			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);
 		} else if (!isVersionValid(text.getText().trim())) {
 			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
-		}
-		return null;
-	}
-
-	/**
-	 */
-	private String validateName() {
-		if (fNameText.getText().trim().length() == 0) {
-			return PDEUIMessages.ContentPage_noname;
 		}
 		return null;
 	}

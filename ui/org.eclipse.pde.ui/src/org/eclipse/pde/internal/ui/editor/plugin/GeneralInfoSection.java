@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,6 +34,9 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.Constants;
 
+/**
+ * Provides the first section of the manifest editor describing the bundle id/name/version/etc.
+ */
 public abstract class GeneralInfoSection extends PDESection {
 	private static String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 
@@ -106,7 +109,6 @@ public abstract class GeneralInfoSection extends PDESection {
 	 * a different model instance from the one used by the bundle error
 	 * reporter.  Things get out of sync between the form validator and 
 	 * source validator
-	 * @return
 	 */
 	protected IPluginModelBase getModelBase() {
 		// Find the model only on the first call
@@ -154,9 +156,6 @@ public abstract class GeneralInfoSection extends PDESection {
 		};
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validateIdEntry() {
 		// Value must be specified
 		return ControlValidationUtility.validateRequiredField(fIdEntry.getText().getText(), fIdEntryValidator, IMessageProvider.ERROR);
@@ -182,9 +181,6 @@ public abstract class GeneralInfoSection extends PDESection {
 		};
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validateVersionEntry() {
 		// Value must be specified
 		if (ControlValidationUtility.validateRequiredField(fVersionEntry.getText().getText(), fVersionEntryValidator, IMessageProvider.ERROR) == false) {
@@ -214,14 +210,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		};
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validateNameEntry() {
-		// Value must be specified
-		if (ControlValidationUtility.validateRequiredField(fNameEntry.getText().getText(), fNameEntryValidator, IMessageProvider.ERROR) == false) {
-			return false;
-		}
 		// Value must be externalized
 		return ControlValidationUtility.validateTranslatableField(fNameEntry.getText().getText(), fNameEntryValidator, getModelBase(), getProject());
 	}
@@ -246,9 +235,6 @@ public abstract class GeneralInfoSection extends PDESection {
 		};
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validateProviderEntry() {
 		// No validation required for an optional field
 		if (fProviderEntry.getText().getText().length() == 0) {
@@ -274,9 +260,6 @@ public abstract class GeneralInfoSection extends PDESection {
 		};
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validatePlatformEntry() {
 		// No validation required for an optional field
 		if (fPlatformFilterEntry.getText().getText().length() == 0) {
