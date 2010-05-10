@@ -31,7 +31,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 	public static Test suite() {
 		return new TestSuite(MethodDeltaTests.class);
 //		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-//		suite.addTest(new MethodDeltaTests("test123"));
+//		suite.addTest(new MethodDeltaTests("test126"));
 //		return suite;
 	}
 
@@ -2792,5 +2792,42 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong flag", IDelta.DEPRECATION, child.getFlags());
 		assertEquals("Wrong element type", IDelta.METHOD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+	}
+	/**
+	 * Added public method into protected member interface inside a class tagged as noextend
+	 */
+	public void test125() {
+		deployBundles("test125");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
+		assertTrue("Not no delta", delta == ApiComparator.NO_DELTA);
+	}
+	/**
+	 * Added public method into protected member interface inside a class tagged as noextend
+	 */
+	public void test126() {
+		deployBundles("test126");
+		IApiBaseline before = getBeforeState();
+		IApiBaseline after = getAfterState();
+		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", beforeApiComponent);
+		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
+		assertNotNull("no api component", afterApiComponent);
+		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
+		assertNotNull("No delta", delta);
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType());
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
+		assertTrue("Not noextend", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
 	}
 }

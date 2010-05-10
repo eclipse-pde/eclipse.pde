@@ -3002,9 +3002,9 @@ public class ClassFileComparator {
 			// we ignore synthetic method
 			return;
 		}
-		if ((this.visibilityModifiers == VisibilityModifiers.API) && component2.hasApiDescription()) {
+		IApiDescription apiDescription = null;
+		if (((this.visibilityModifiers & VisibilityModifiers.API) != 0) && component2.hasApiDescription()) {
 			// check if this method should be removed because it is tagged as @noreference
-			IApiDescription apiDescription = null;
 			int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
 			try {
 				apiDescription = this.component2.getApiDescription();
@@ -3018,7 +3018,7 @@ public class ClassFileComparator {
 				}
 			}
 			// check if this method should be removed because it is tagged as @noreference
-			if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+			if (this.visibilityModifiers == VisibilityModifiers.API && RestrictionModifiers.isReferenceRestriction(restrictions)) {
 				// such a method is not seen as an API method
 				return;
 			}
@@ -3027,6 +3027,38 @@ public class ClassFileComparator {
 		int restrictionsForMethodAddition = this.currentDescriptorRestrictions;
 		if (Flags.isFinal(this.type2.getModifiers())) {
 			restrictionsForMethodAddition |= RestrictionModifiers.NO_EXTEND;
+		}
+		if (apiDescription != null) {
+			if (this.type2.isMemberType() && Flags.isProtected(this.type2.getModifiers())) {
+				// protected member - check restriction on the enclosing type
+				IApiType enclosingType = this.type2;
+				try {
+					do {
+						if (enclosingType != null) {
+							final IApiAnnotations memberTypeAnnotations = apiDescription.resolveAnnotations(enclosingType.getHandle());
+							if (memberTypeAnnotations != null) {
+								int restrictions = memberTypeAnnotations.getRestrictions();
+								if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
+									restrictionsForMethodAddition |= RestrictionModifiers.NO_REFERENCE;
+								}
+								if (RestrictionModifiers.isExtendRestriction(restrictions)) {
+									// @noextend on a class that contains a protected member means that it cannot be referenced
+									restrictionsForMethodAddition |= RestrictionModifiers.NO_EXTEND;
+									if (this.visibilityModifiers == VisibilityModifiers.API) {
+										return;
+									}
+								}
+								if (RestrictionModifiers.isImplementRestriction(restrictions)) {
+									restrictionsForMethodAddition |= RestrictionModifiers.NO_IMPLEMENT;
+								}
+							}
+						}
+						enclosingType = enclosingType.getEnclosingType();
+					} while (enclosingType != null);
+				} catch (CoreException e) {
+					reportStatus(e);
+				}
+			}
 		}
 		if (Flags.isPublic(access) || Flags.isProtected(access)) {
 			if (method.isConstructor()) {
