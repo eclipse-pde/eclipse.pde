@@ -305,18 +305,18 @@ public class FeatureBlock {
 				Object[] features = fTree.getCheckedElements();
 				Set requiredFeatureIDs = new HashSet();
 				for (int i = 0; i < features.length; i++) {
-					requiredFeatureIDs.add(((FeatureLaunchModel) features[i]).getId());
-					getFeatureDependencies(((FeatureLaunchModel) features[i]).getModel(fFeatureWorkspaceButton.getSelection()), requiredFeatureIDs);
+					if (features[i] instanceof FeatureLaunchModel) {
+						requiredFeatureIDs.add(((FeatureLaunchModel) features[i]).getId());
+						getFeatureDependencies(((FeatureLaunchModel) features[i]).getModel(fFeatureWorkspaceButton.getSelection()), requiredFeatureIDs);
+					}
 				}
 
-				Set toCheck = new HashSet();
 				for (Iterator iterator = requiredFeatureIDs.iterator(); iterator.hasNext();) {
 					Object featureModel = fFeatureModels.get(iterator.next());
 					if (featureModel != null) {
-						toCheck.add(featureModel);
+						fTree.setChecked(featureModel, true);
 					}
 				}
-				fTree.setCheckedElements(toCheck.toArray());
 			}
 		}
 
