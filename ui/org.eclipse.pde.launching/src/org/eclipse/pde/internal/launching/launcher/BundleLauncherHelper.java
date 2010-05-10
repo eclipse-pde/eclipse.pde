@@ -306,15 +306,19 @@ public class BundleLauncherHelper {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getWorkspaceModels();
+				Set versions = new HashSet();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
+					String v = base.getVersion();
+					if (versions.add(v)) { // don't add exact same version more than once
 
-					// match only if...
-					// a) if we have the same version
-					// b) no version
-					// c) all else fails, if there's just one bundle available, use it
-					if (base.getVersion().equals(version) || version == null || models.length == 1)
-						addBundleToMap(map, models[i], token.substring(index + 1));
+						// match only if...
+						// a) if we have the same version
+						// b) no version
+						// c) all else fails, if there's just one bundle available, use it
+						if (base.getVersion().equals(version) || version == null || models.length == 1)
+							addBundleToMap(map, models[i], token.substring(index + 1));
+					}
 				}
 			}
 		}
