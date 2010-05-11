@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.build.packager;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -25,6 +24,18 @@ import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 	private Properties packagingProperties;
+	private Collection archiveRootProviders = Collections.EMPTY_LIST;
+
+	public void initialize(String directoryName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection allFeaturesList, Collection rootProviders) throws CoreException {
+		/* package scripts require the root file providers for creating the file archive, but don't want them for other rootfile
+		 * stuff done by the assembly scripts, so keep them separate here */
+		super.initialize(directoryName, feature, configurationInformation, elementList, featureList, allFeaturesList, Collections.EMPTY_SET);
+		archiveRootProviders = rootProviders != null ? rootProviders : Collections.EMPTY_LIST;
+	}
+
+	protected Collection getArchiveRootFileProviders() {
+		return archiveRootProviders;
+	}
 
 	private String getFinalName(BundleDescription bundle, String shape) {
 		final String JAR = "jar"; //$NON-NLS-1$

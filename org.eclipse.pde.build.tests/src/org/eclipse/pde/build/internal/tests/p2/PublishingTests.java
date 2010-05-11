@@ -9,8 +9,7 @@
 
 package org.eclipse.pde.build.internal.tests.p2;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -1569,8 +1568,30 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		IFile ini = buildFolder.getFile("eclipse.ini");
-		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini))
+		boolean lowerCase = true;
+		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
+			lowerCase = false;
 			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
+		}
+
+		if (Platform.getOS().equals("linux")) {
+			IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.carbon.ppc.zip");
+
+			String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
+			String[] command = new String[] {"unzip", "-qq", zip.getLocation().toOSString(), exeString, "-d", buildFolder.getLocation().toOSString()};
+			Process proc = Runtime.getRuntime().exec(command);
+			proc.waitFor();
+
+			IFile executable = buildFolder.getFile(exeString);
+			assertResourceFile(executable);
+
+			command = new String[] {"ls", "-la", executable.getLocation().toOSString()};
+			proc = Runtime.getRuntime().exec(command);
+			Utils.transferStreams(proc.getInputStream(), new FileOutputStream(buildFolder.getFile("ls.out").getLocation().toFile()));
+			proc.waitFor();
+
+			assertLogContainsLine(buildFolder.getFile("ls.out"), "-rwxr-xr-x");
+		}
 
 		assertLogContainsLines(ini, new String[] {"-vm", "myVm"});
 		boolean duplicate = false;

@@ -45,7 +45,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	}
 
 	protected Collection[] getConfigInfos(Config aConfig) {
-		return new Collection[] {assemblageInformation.getBinaryPlugins(aConfig), assemblageInformation.getBinaryFeatures(aConfig), assemblageInformation.getFeatures(aConfig), new HashSet(0)};
+		return new Collection[] {assemblageInformation.getBinaryPlugins(aConfig), assemblageInformation.getBinaryFeatures(aConfig), assemblageInformation.getFeatures(aConfig), BuildDirector.p2Gathering ? assemblageInformation.getRootFileProviders(aConfig) : new HashSet(0)};
 	}
 
 	protected void generateP2ConfigFileTargetCall() {
