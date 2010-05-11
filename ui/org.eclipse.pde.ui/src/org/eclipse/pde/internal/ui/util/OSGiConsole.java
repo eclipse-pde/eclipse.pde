@@ -12,10 +12,13 @@ package org.eclipse.pde.internal.ui.util;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.framework.console.ConsoleSession;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.console.IOConsole;
+import org.osgi.framework.BundleContext;
 
 public class OSGiConsole extends IOConsole {
 
@@ -23,7 +26,7 @@ public class OSGiConsole extends IOConsole {
 	private final ConsoleSession session;
 
 	public OSGiConsole(final OSGiConsoleFactory factory) {
-		super(PDEUIMessages.OSGiConsole_name, TYPE, null, true);
+		super(NLS.bind(PDEUIMessages.OSGiConsole_name, Platform.getInstallLocation().getURL().getPath()), TYPE, null, true);
 		session = new ConsoleSession() {
 
 			public OutputStream getOutput() {
@@ -41,7 +44,8 @@ public class OSGiConsole extends IOConsole {
 	}
 
 	protected void init() {
-		PDEPlugin.getDefault().getBundle().getBundleContext().registerService(ConsoleSession.class.getName(), session, null);
+		BundleContext context = PDEPlugin.getDefault().getBundle().getBundleContext();
+		context.registerService(ConsoleSession.class.getName(), session, null);
 		super.init();
 	}
 

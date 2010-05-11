@@ -2911,5 +2911,6 @@ public class PDEUIMessages extends NLS {
 	public static String SearchRepositoriesForIUProposal_description;
 
 	public static String OSGiConsole_name;
+	public static String OSGiConsoleFactory_title;
 
 }

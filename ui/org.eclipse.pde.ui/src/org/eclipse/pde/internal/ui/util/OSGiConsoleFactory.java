@@ -10,29 +10,39 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.console.*;
 
 public class OSGiConsoleFactory implements IConsoleFactory {
 	private IConsoleManager fConsoleManager = null;
+	private IOConsole fConsole = null;
 
 	public OSGiConsoleFactory() {
 		fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
+		fConsole = new OSGiConsole(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
 	 */
 	public void openConsole() {
-		openConsole(null);
+		openConsole(PDEUIMessages.OSGiConsoleFactory_title);
 	}
 
 	public void openConsole(String initialText) {
-		IOConsole fConsole = new OSGiConsole(this);
-		fConsoleManager.addConsoles(new IConsole[] {fConsole});
-		if (initialText != null) {
+		if (fConsole != null) {
+			IConsole[] existing = fConsoleManager.getConsoles();
+			boolean exists = false;
+			for (int i = 0; i < existing.length; i++) {
+				if (fConsole == existing[i])
+					exists = true;
+			}
+			if (!exists)
+				fConsoleManager.addConsoles(new IConsole[] {fConsole});
+			fConsoleManager.showConsoleView(fConsole);
 			fConsole.getDocument().set(initialText);
 		}
-		fConsoleManager.showConsoleView(fConsole);
+		fConsoleManager.addConsoles(new IConsole[] {fConsole});
 	}
 
 	void closeConsole(OSGiConsole console) {
