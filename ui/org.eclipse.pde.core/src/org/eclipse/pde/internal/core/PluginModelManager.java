@@ -525,6 +525,23 @@ public class PluginModelManager implements IModelProviderListener {
 
 		// Create default target platform definition if required
 		initDefaultTargetPlatformDefinition();
+
+		// re-load the target if the corrupt POOLED_BUNDLES preference was being used
+		PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
+		String pooled = pref.getString(ICoreConstants.POOLED_BUNDLES);
+		if (pooled != null && pooled.trim().length() > 0) {
+			if (!ICoreConstants.VALUE_SAVED_NONE.equals(pooled.trim())) {
+				ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+				if (service != null) {
+					try {
+						ITargetHandle handle = service.getWorkspaceTargetHandle();
+						LoadTargetDefinitionJob.load(handle.getTargetDefinition());
+					} catch (CoreException e) {
+						PDECore.log(e);
+					}
+				}
+			}
+		}
 	}
 
 	/**

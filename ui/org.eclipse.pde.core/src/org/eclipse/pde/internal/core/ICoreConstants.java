@@ -37,7 +37,19 @@ public interface ICoreConstants {
 	String GROUP_PLUGINS_VIEW = "group_plugins"; //$NON-NLS-1$
 	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
 	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
+
+	/**
+	 * This preference was only used during 3.5, it has been replaced in 3.6
+	 * with POOLED_URLS.
+	 * 
+	 * @deprecated
+	 */
 	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
+	/**
+	 * Comma separated list of bundle URLs used from the bundle pool.
+	 * @since 3.6
+	 */
+	String POOLED_URLS = "pooled_urls"; //$NON-NLS-1$
 	/**
 	 * List of feature ids and versions that are available in the target platform.  Features
 	 * are comma separated, with each entry taking the form of [id]@[version]

@@ -11,10 +11,10 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.target.AbstractTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
@@ -63,38 +63,6 @@ public class ExternalModelManager extends AbstractModelManager {
 				}
 			}
 		}
-		// enable pooled bundles properly (only if part of the profile)
-		String pooled = pref.getString(ICoreConstants.POOLED_BUNDLES);
-		if (pooled != null && pooled.trim().length() > 0) {
-			if (ICoreConstants.VALUE_SAVED_NONE.equals(pooled)) {
-				// all pooled bundles are disabled
-				for (int i = 0; i < fModels.length; i++) {
-					if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(fModels[i].getInstallLocation()))) {
-						fModels[i].setEnabled(false);
-					}
-				}
-			} else {
-				StringTokenizer tokenizer = new StringTokenizer(pooled, ","); //$NON-NLS-1$
-				Set enabled = new HashSet();
-				while (tokenizer.hasMoreTokens()) {
-					String id = tokenizer.nextToken();
-					if (tokenizer.hasMoreTokens()) {
-						String ver = tokenizer.nextToken();
-						if (ICoreConstants.VALUE_SAVED_NONE.equals(ver)) { // indicates null version
-							ver = null;
-						}
-						enabled.add(new NameVersionDescriptor(id, ver));
-					}
-				}
-				for (int i = 0; i < fModels.length; i++) {
-					if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(fModels[i].getInstallLocation()))) {
-						IPluginBase base = fModels[i].getPluginBase();
-						NameVersionDescriptor desc = new NameVersionDescriptor(base.getId(), base.getVersion());
-						fModels[i].setEnabled(enabled.contains(desc));
-					}
-				}
-			}
-		}
 	}
 
 	public void setModels(IPluginModelBase[] models) {
@@ -111,24 +79,55 @@ public class ExternalModelManager extends AbstractModelManager {
 		if (tokenizer.countTokens() == 0)
 			return base;
 
-		File[] extraLocations = new File[tokenizer.countTokens()];
-		for (int i = 0; i < extraLocations.length; i++) {
+		List extraLocations = new ArrayList(tokenizer.countTokens());
+		boolean addPool = false;
+		while (tokenizer.hasMoreTokens()) {
 			String location = tokenizer.nextToken();
-			File dir = new File(location, "plugins"); //$NON-NLS-1$
-			if (!dir.exists() || !dir.isDirectory())
-				dir = new File(location);
-			extraLocations[i] = dir;
+			if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(location))) {
+				addPool = true;
+			} else {
+				File dir = new File(location, "plugins"); //$NON-NLS-1$
+				if (!dir.exists() || !dir.isDirectory())
+					dir = new File(location);
+				extraLocations.add(dir);
+			}
 		}
-		URL[] additional = PluginPathFinder.scanLocations(extraLocations);
+		URL[] additional = PluginPathFinder.scanLocations((File[]) extraLocations.toArray(new File[extraLocations.size()]));
+		URL[] result = append(base, additional);
 
-		if (additional.length == 0)
-			return base;
-
-		URL[] result = new URL[base.length + additional.length];
-		System.arraycopy(base, 0, result, 0, base.length);
-		System.arraycopy(additional, 0, result, base.length, additional.length);
+		// add pooled bundles (only if part of the profile)
+		if (addPool) {
+			String pooled = pref.getString(ICoreConstants.POOLED_URLS);
+			if (pooled != null && pooled.trim().length() > 0) {
+				if (ICoreConstants.VALUE_SAVED_NONE.equals(pooled)) {
+					// none
+				} else {
+					tokenizer = new StringTokenizer(pooled, ","); //$NON-NLS-1$
+					List urls = new ArrayList(tokenizer.countTokens());
+					while (tokenizer.hasMoreTokens()) {
+						String fileName = tokenizer.nextToken();
+						try {
+							urls.add(AbstractTargetHandle.BUNDLE_POOL.append("plugins").append(fileName).toFile().toURL()); //$NON-NLS-1$
+						} catch (MalformedURLException e) {
+							PDECore.log(e);
+						}
+					}
+					additional = (URL[]) urls.toArray(new URL[urls.size()]);
+					result = append(result, additional);
+				}
+			}
+		}
 
 		return result;
 	}
 
+	private URL[] append(URL[] base, URL[] additional) {
+		if (additional.length == 0) {
+			return base;
+		}
+		URL[] result = new URL[base.length + additional.length];
+		System.arraycopy(base, 0, result, 0, base.length);
+		System.arraycopy(additional, 0, result, base.length, additional.length);
+		return result;
+	}
 }
