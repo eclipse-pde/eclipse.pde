@@ -292,6 +292,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 				IPath sourcePath = getPath(cpes[i]);
+				if (sourcePath == null)
+					continue;
+
 				IPath outputLocation = cpes[i].getOutputLocation();
 				if (outputLocation == null)
 					outputLocation = defaultOutputLocation;
@@ -315,10 +318,12 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				IPackageFragmentRoot[] roots = javaProject.findPackageFragmentRoots(entry);
 				IPath outputPath = null;
 				if (roots.length == 1) { // should only be one entry for a library
-					outputPath = getPath(entry);
+					if (!roots[0].isArchive()) {
+						outputPath = getPath(entry);
+						OutputFolder outputFolder = new OutputFolder(outputPath, true);
+						fOutputFolderMap.put(outputPath, outputFolder);
+					}
 				}
-				OutputFolder outputFolder = new OutputFolder(outputPath, true);
-				fOutputFolderMap.put(outputPath, outputFolder);
 			}
 		}
 
