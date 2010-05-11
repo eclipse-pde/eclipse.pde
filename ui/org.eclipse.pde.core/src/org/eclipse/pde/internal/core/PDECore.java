@@ -14,8 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Hashtable;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -263,6 +262,26 @@ public class PDECore extends Plugin {
 
 		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable());
 		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable());
+
+		// use save participant to clean orphaned profiles.
+		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
+			public void saving(ISaveContext saveContext) throws CoreException {
+				ITargetPlatformService tps = (ITargetPlatformService) acquireService(ITargetPlatformService.class.getName());
+				if (tps instanceof TargetPlatformService) {
+					((TargetPlatformService) tps).cleanOrphanedTargetDefinitionProfiles();
+				}
+			}
+
+			public void rollback(ISaveContext saveContext) {
+			}
+
+			public void prepareToSave(ISaveContext saveContext) throws CoreException {
+			}
+
+			public void doneSaving(ISaveContext saveContext) {
+			}
+		});
+
 	}
 
 	public BundleContext getBundleContext() {
@@ -270,11 +289,6 @@ public class PDECore extends Plugin {
 	}
 
 	public void stop(BundleContext context) throws CoreException {
-
-		ITargetPlatformService tps = (ITargetPlatformService) acquireService(ITargetPlatformService.class.getName());
-		if (tps instanceof TargetPlatformService) {
-			((TargetPlatformService) tps).cleanOrphanedTargetDefinitionProfiles();
-		}
 
 		if (fPreferenceManager != null) {
 			fPreferenceManager.savePluginPreferences();
@@ -318,6 +332,8 @@ public class PDECore extends Plugin {
 			fBundleProjectService.unregister();
 			fBundleProjectService = null;
 		}
+
+		ResourcesPlugin.getWorkspace().removeSaveParticipant(PLUGIN_ID);
 	}
 
 	/**
