@@ -1081,6 +1081,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param project
 	 */
 	public void bundleRootChanged(IProject project) {
+		fWorkspaceManager.initialize();
 		fWorkspaceManager.removeModel(project);
 		if (fWorkspaceManager.isInterestingProject(project)) {
 			fWorkspaceManager.createModel(project, false);
