@@ -23,7 +23,8 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
-import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -272,7 +273,14 @@ public class FeatureBlock {
 
 		private void handleValidate() {
 			if (fOperation == null)
-				fOperation = new EclipsePluginValidationOperation(fLaunchConfig);
+				// Unlike PluginBlock, we don't want to validate the application/product requirements because we will grab them automatically at launch time
+				fOperation = new LaunchValidationOperation(fLaunchConfig) {
+					protected IPluginModelBase[] getModels() throws CoreException {
+						// The feature block is used in both the OSGi config and Eclipse configs, use the tab id to determine which we are using
+						boolean isOSGiTab = fTab.getId().equals(IPDELauncherConstants.TAB_BUNDLES_ID);
+						return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration, isOSGiTab);
+					}
+				};
 			try {
 				fOperation.run(new NullProgressMonitor());
 			} catch (CoreException e) {

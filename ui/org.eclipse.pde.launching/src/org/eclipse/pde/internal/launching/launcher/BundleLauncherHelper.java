@@ -150,6 +150,19 @@ public class BundleLauncherHelper {
 			HashMap additionalPlugins = getAdditionalPlugins(configuration, true);
 			launchPlugins.addAll(additionalPlugins.keySet());
 
+			// Get any plug-ins required by the application/product set on the config
+			if (!osgi) {
+				String[] applicationIds = RequirementHelper.getApplicationRequirements(configuration);
+				for (int i = 0; i < applicationIds.length; i++) {
+					ModelEntry modelEntry = pluginModelMgr.findEntry(applicationIds[i]);
+					if (modelEntry != null) {
+						IPluginModelBase model = findModel(modelEntry, null, defaultPluginResolution);
+						if (model != null)
+							launchPlugins.add(model);
+					}
+				}
+			}
+
 			// Get all required plugins
 			// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
 			Set additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$

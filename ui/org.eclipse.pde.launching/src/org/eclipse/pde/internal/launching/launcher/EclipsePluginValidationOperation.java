@@ -17,10 +17,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.launching.*;
-import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class EclipsePluginValidationOperation extends LaunchValidationOperation {
 	public static final int CREATE_EXTENSION_ERROR_CODE = 1000;
@@ -32,10 +30,16 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 		super(configuration);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#getModels()
+	 */
 	protected IPluginModelBase[] getModels() throws CoreException {
 		return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration, false);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		super.run(monitor);
 		if (fExtensionErrors.size() > 0)
@@ -45,33 +49,19 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 
 	private void validateExtensions() {
 		try {
-			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-				String product = fLaunchConfiguration.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
-				if (product != null) {
-					validateExtension(product);
-					String application = getApplication(product);
-					if (application != null)
-						validateExtension(application);
-				}
-			} else {
-				String configType = fLaunchConfiguration.getType().getIdentifier();
-				if (configType.equals(IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE)) {
-					String application = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
-					if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
-						validateExtension(application);
-					}
-				} else {
-					// Junit launch configs can have the core test application set in either the 'app to test' or the 'application' attribute
-					String application = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String) null);
-					if (application == null) {
-						application = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
-					}
-					if (application == null) {
-						application = TargetPlatform.getDefaultApplication();
-					}
-					if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
-						validateExtension(application);
-					}
+			String[] required = RequirementHelper.getApplicationRequirements(fLaunchConfiguration);
+			for (int i = 0; i < required.length; i++) {
+				BundleDescription bundle = getState().getBundle(required[i], null);
+				if (bundle == null) {
+					String message = NLS.bind(PDEMessages.EclipsePluginValidationOperation_pluginMissing, required[i]);
+					Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, CREATE_EXTENSION_ERROR_CODE, message, null);
+					IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
+					Object extensionError = null;
+					if (statusHandler == null)
+						extensionError = status.getMessage();
+					else
+						extensionError = statusHandler.handleStatus(status, required[i]);
+					fExtensionErrors.put(extensionError, EMPTY);
 				}
 			}
 		} catch (CoreException e) {
@@ -79,59 +69,16 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 		}
 	}
 
-	private String getApplication(String product) {
-		String bundleID = product;
-		int index = product.lastIndexOf('.');
-		if (index >= 0) {
-			bundleID = product.substring(0, product.lastIndexOf('.'));
-		}
-		BundleDescription bundle = getState().getBundle(bundleID, null);
-		if (bundle != null) {
-			IPluginModelBase model = PluginRegistry.findModel(bundle);
-			if (model != null) {
-				IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IPluginExtension ext = extensions[i];
-					String point = ext.getPoint();
-					if ("org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
-							&& product.equals(IdUtil.getFullId(ext))) {
-						if (ext.getChildCount() == 1) {
-							IPluginElement prod = (IPluginElement) ext.getChildren()[0];
-							if (prod.getName().equals("product")) { //$NON-NLS-1$
-								IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
-								return attr != null ? attr.getValue() : null;
-							}
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	private void validateExtension(String id) throws CoreException {
-		int index = id.lastIndexOf('.');
-		if (index == -1)
-			return;
-		String bundleID = id.substring(0, index);
-		BundleDescription bundle = getState().getBundle(bundleID, null);
-		if (bundle == null) {
-			String message = NLS.bind(PDEMessages.EclipsePluginValidationOperation_pluginMissing, bundleID);
-			Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, CREATE_EXTENSION_ERROR_CODE, message, null);
-			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
-			Object extensionError = null;
-			if (statusHandler == null)
-				extensionError = status.getMessage();
-			else
-				extensionError = statusHandler.handleStatus(status, id);
-			fExtensionErrors.put(extensionError, EMPTY);
-		}
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#hasErrors()
+	 */
 	public boolean hasErrors() {
 		return super.hasErrors() || fExtensionErrors.size() >= 1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation#getInput()
+	 */
 	public Map getInput() {
 		Map map = super.getInput();
 		map.putAll(fExtensionErrors);

@@ -139,7 +139,7 @@ public abstract class AbstractPluginBlock {
 			} else if (source == fWorkingSetButton) {
 				handleWorkingSets();
 			} else if (source == fAddRequiredButton) {
-				computeSubset();
+				addRequiredPlugins();
 			} else if (source == fDefaultsButton) {
 				handleRestoreDefaults();
 			}
@@ -736,7 +736,11 @@ public abstract class AbstractPluginBlock {
 		fFilterButton.setSelection(config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
 	}
 
-	protected void computeSubset() {
+	/**
+	 * Looks at the currently checked plugins and finds any plug-ins required by them.  The required plug-ins are
+	 * then also checked in the tree
+	 */
+	protected void addRequiredPlugins() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
 		ArrayList toCheck = new ArrayList(checked.length);
 		for (int i = 0; i < checked.length; i++)
@@ -772,28 +776,6 @@ public abstract class AbstractPluginBlock {
 		adjustGroupState();
 	}
 
-	protected void setCheckedElements(Object[] checked) {
-		fPluginTreeViewer.setCheckedElements(checked);
-		updateGroup(fWorkspacePlugins);
-		updateGroup(fExternalPlugins);
-	}
-
-	private void updateGroup(Object group) {
-		Widget item = fPluginTreeViewer.testFindItem(group);
-		if (item instanceof TreeItem) {
-			TreeItem[] items = ((TreeItem) item).getItems();
-			for (int i = 0; i < items.length; i++) {
-				TreeItem child = items[i];
-				if (child.getChecked() == (child.getText(1).length() == 0)) {
-					Object model = items[i].getData();
-					if (model instanceof IPluginModelBase) {
-						resetText((IPluginModelBase) model);
-					}
-				}
-			}
-		}
-	}
-
 	protected IPluginModelBase findPlugin(String id) {
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {
@@ -815,6 +797,28 @@ public abstract class AbstractPluginBlock {
 			return null;
 		}
 		return null;
+	}
+
+	protected void setCheckedElements(Object[] checked) {
+		fPluginTreeViewer.setCheckedElements(checked);
+		updateGroup(fWorkspacePlugins);
+		updateGroup(fExternalPlugins);
+	}
+
+	private void updateGroup(Object group) {
+		Widget item = fPluginTreeViewer.testFindItem(group);
+		if (item instanceof TreeItem) {
+			TreeItem[] items = ((TreeItem) item).getItems();
+			for (int i = 0; i < items.length; i++) {
+				TreeItem child = items[i];
+				if (child.getChecked() == (child.getText(1).length() == 0)) {
+					Object model = items[i].getData();
+					if (model instanceof IPluginModelBase) {
+						resetText((IPluginModelBase) model);
+					}
+				}
+			}
+		}
 	}
 
 	protected void adjustGroupState() {

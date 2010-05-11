@@ -16,13 +16,12 @@ import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
-import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 
 public class PluginBlock extends AbstractPluginBlock {
 
@@ -200,71 +199,27 @@ public class PluginBlock extends AbstractPluginBlock {
 		}
 	}
 
-	protected void computeSubset() {
-		validateExtensions();
-		super.computeSubset();
-	}
-
-	private void validateExtensions() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#addRequiredPlugins()
+	 */
+	protected void addRequiredPlugins() {
+		// Check that the application or product we are launching has its requirements included
 		try {
-			if (fLaunchConfig.getAttribute(IPDELauncherConstants.USE_PRODUCT, true)) {
-				String product = fLaunchConfig.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
-				if (product != null) {
-					validateLaunchId(product);
-					String application = getApplication(product);
-					if (application != null)
-						validateLaunchId(application);
-				}
-			} else {
-				String configType = fLaunchConfig.getType().getIdentifier();
-				String attribute = configType.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE) ? IPDELauncherConstants.APPLICATION : IPDELauncherConstants.APP_TO_TEST;
-				String application = fLaunchConfig.getAttribute(attribute, TargetPlatform.getDefaultApplication());
-				if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application))
-					validateLaunchId(application);
-			}
-		} catch (CoreException e) {
-		}
-	}
-
-	private void validateLaunchId(String launchId) {
-		if (launchId != null) {
-			int index = launchId.lastIndexOf('.');
-			if (index > 0) {
-				String pluginId = launchId.substring(0, index);
+			String[] requiredIds = RequirementHelper.getApplicationRequirements(fLaunchConfig);
+			for (int i = 0; i < requiredIds.length; i++) {
 				// see if launcher plugin is already included
-				IPluginModelBase base = findPlugin(pluginId);
+				IPluginModelBase base = findPlugin(requiredIds[i]);
 				if (base == null) {
-					base = PluginRegistry.findModel(pluginId);
+					base = PluginRegistry.findModel(requiredIds[i]);
 					if (base != null) {
 						fPluginTreeViewer.setChecked(base, true);
 					}
 				}
 			}
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
 		}
-	}
-
-	private String getApplication(String product) {
-		String bundleID = product.substring(0, product.lastIndexOf('.'));
-		IPluginModelBase model = findPlugin(bundleID);
-
-		if (model != null) {
-			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				IPluginExtension ext = extensions[i];
-				String point = ext.getPoint();
-				if ("org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
-						&& product.equals(IdUtil.getFullId(ext))) {
-					if (ext.getChildCount() == 1) {
-						IPluginElement prod = (IPluginElement) ext.getChildren()[0];
-						if (prod.getName().equals("product")) { //$NON-NLS-1$
-							IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
-							return attr != null ? attr.getValue() : null;
-						}
-					}
-				}
-			}
-		}
-		return null;
+		super.addRequiredPlugins();
 	}
 
 	protected LaunchValidationOperation createValidationOperation() {
