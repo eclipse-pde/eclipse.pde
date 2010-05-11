@@ -85,8 +85,8 @@ public class P2Tests extends P2TestCase {
 		getIU(repository, "toolingtest.product.ini." + p2Config);
 
 		iu = getIU(repository, "toolingtest.product.config." + p2Config);
-		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:test.application);");
-		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:test.product);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application,propValue:test.application);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product,propValue:test.product);");
 		assertProvides(iu, "toolingtest.product", "test.product.config");
 
 		//some launcher stuff
@@ -831,8 +831,8 @@ public class P2Tests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "uid.product");
 
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
-		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
-		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application,propValue:my.app);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product,propValue:rcp.product);");
 	}
 
 	public void testBug304736() throws Exception {

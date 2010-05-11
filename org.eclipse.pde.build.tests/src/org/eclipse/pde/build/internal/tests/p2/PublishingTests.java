@@ -1072,8 +1072,8 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
 
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
-		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application, propValue:my.app);");
-		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product, propValue:rcp.product);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application,propValue:my.app);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product,propValue:rcp.product);");
 		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
 
 		iu = getIU(metadata, "toolingorg.eclipse.equinox.simpleconfigurator");
