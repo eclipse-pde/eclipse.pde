@@ -618,14 +618,18 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			if (agent != null) {
 				IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 				Path profilePath = new Path(profileFile.getPath());
-				IProfile profile = registry.getProfile(profilePath.removeFileExtension().lastSegment());
-				if (profile != null) {
-					String cache = profile.getProperty(IProfile.PROP_CACHE);
-					if (cache != null)
-						result.add(new File(cache).toURI());
-					String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
-					if (sharedCache != null)
-						result.add(new File(cache).toURI());
+				try {
+					IProfile profile = registry.getProfile(profilePath.removeFileExtension().lastSegment());
+					if (profile != null) {
+						String cache = profile.getProperty(IProfile.PROP_CACHE);
+						if (cache != null)
+							result.add(new File(cache).toURI());
+						String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
+						if (sharedCache != null)
+							result.add(new File(cache).toURI());
+					}
+				} catch (IllegalStateException e) {
+					//unable to read profile, may be read only
 				}
 
 				//download cache
