@@ -335,6 +335,24 @@
          </describer>
       </content-type>
     </extension>
+    <!-- Make sure that the web-tools don't create the document:
+         https://bugs.eclipse.org/bugs/show_bug.cgi?id=307524 -->
+    <extension point="org.eclipse.core.filebuffers.documentCreation">
+      <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
+               contentTypeId="org.eclipse.pde.pluginManifest"/>
+      <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
+               contentTypeId="org.eclipse.pde.fragmentManifest"/>
+      <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
+               contentTypeId="org.eclipse.pde.featureManifest"/>
+      <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
+               contentTypeId="org.eclipse.pde.siteManifest"/>
+      <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
+               contentTypeId="org.eclipse.pde.productFile"/>
+      <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
+               contentTypeId="org.eclipse.pde.targetFile"/>
+      <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
+               contentTypeId="org.eclipse.pde.schema"/>
+    </extension>
    <extension
          point="org.eclipse.pde.core.bundleImporters">
       <importer
