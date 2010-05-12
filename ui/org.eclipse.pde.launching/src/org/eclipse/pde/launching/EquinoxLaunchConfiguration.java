@@ -78,6 +78,16 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 		String bundles = null;
 		if (fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
+
+			// If update configurator is set to its default start level, override it as simple/update configurators should not be autostarted together
+			Object updateConfiguratorBundle = fAllBundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
+			if (updateConfiguratorBundle != null) {
+				String startLevel = (String) fModels.get(updateConfiguratorBundle);
+				if (startLevel != null && startLevel.equals(BundleLauncherHelper.DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL)) {
+					fModels.put(updateConfiguratorBundle, "4:false"); //$NON-NLS-1$
+				}
+			}
+
 			// If simple configurator is being used, we need to write out the bundles.txt instead of writing out the list in the config.ini
 			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration), null);
 			if (bundlesTxt != null) {

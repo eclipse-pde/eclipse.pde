@@ -129,6 +129,15 @@ public class LaunchConfigurationHelper {
 		// Special processing for launching with p2
 		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 
+			// If update configurator is set to its default start level, override it as simple/update configurators should not be autostarted together
+			Object updateConfiguratorBundle = bundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
+			if (updateConfiguratorBundle != null) {
+				String startLevel = (String) bundlesWithStartLevels.get(updateConfiguratorBundle);
+				if (startLevel != null && startLevel.equals(BundleLauncherHelper.DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL)) {
+					bundlesWithStartLevels.put(updateConfiguratorBundle, "4:false"); //$NON-NLS-1$
+				}
+			}
+
 			// Write out P2 files (bundles.txt)
 			URL bundlesTxt = null;
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);

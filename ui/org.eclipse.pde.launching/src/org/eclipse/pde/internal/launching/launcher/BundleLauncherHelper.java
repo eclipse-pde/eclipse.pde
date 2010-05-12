@@ -26,6 +26,14 @@ import org.osgi.framework.Version;
 
 public class BundleLauncherHelper {
 
+	/**
+	 * When creating a mapping of bundles to their start levels, update configurator is set
+	 * to auto start at level three.  However, if at launch time we are launching with both
+	 * simple configurator and update configurator, we change the start level as they 
+	 * shouldn't be started together.
+	 */
+	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL = "3:true"; //$NON-NLS-1$
+
 	public static final char VERSION_SEPARATOR = '*';
 
 	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
@@ -375,7 +383,7 @@ public class BundleLauncherHelper {
 			} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
 				map.put(bundle, "-1:true"); //$NON-NLS-1$
 			} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
-				map.put(bundle, "3:true"); //$NON-NLS-1$
+				map.put(bundle, DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL);
 			} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
 				if (TargetPlatformHelper.getTargetVersion() > 3.1) {
 					map.put(bundle, "default:true"); //$NON-NLS-1$
