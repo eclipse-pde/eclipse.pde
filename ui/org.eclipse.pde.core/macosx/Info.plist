@@ -6,7 +6,7 @@
 	<key>CFBundleExecutable</key>
 		<string>eclipse</string>
 	<key>CFBundleGetInfoString</key>
-		<string>Eclipse 3.3 for Mac OS X, Copyright IBM Corp. and others 2002, 2007. All rights reserved.</string>
+		<string>Eclipse 3.6 for Mac OS X, Copyright IBM Corp. and others 2002, 2010. All rights reserved.</string>
 	<key>CFBundleIconFile</key>
 		<string>Eclipse.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -18,11 +18,39 @@
 	<key>CFBundlePackageType</key>
 		<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-		<string>3.3</string>
+		<string>3.6</string>
 	<key>CFBundleSignature</key>
 		<string>????</string>
 	<key>CFBundleVersion</key>
-		<string>3.3</string>
+		<string>3.6</string>
+	<key>CFBundleLocalizations</key>
+		<array>
+			<string>ar</string>
+			<string>cs</string>
+			<string>da</string>
+			<string>el</string>
+			<string>en</string>
+			<string>es</string>
+			<string>de</string>
+			<string>fi</string>
+			<string>fr</string>
+			<string>hu</string>
+			<string>it</string>
+			<string>iw</string>
+			<string>ja</string>
+			<string>ko</string>
+			<string>nl</string>
+			<string>no</string>
+			<string>pl</string>
+			<string>pt_BR</string>
+			<string>pt</string>
+			<string>ru</string>
+			<string>sv</string>
+			<string>tr</string>
+			<string>zh_HK</string>
+			<string>zh_TW</string>
+			<string>zh</string>
+		</array>
 		
 	<key>Eclipse</key>
 		<array>
