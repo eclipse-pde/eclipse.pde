@@ -220,6 +220,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing;
 
+	public static String BundleValidationOperation_multiple_singletons;
+
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
 
 	public static String BuildErrorReporter_missingEntry;

@@ -15,6 +15,7 @@ import java.util.Locale;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -119,6 +120,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof Locale) {
 			return getObjectText((Locale) obj);
+		}
+		if (obj instanceof IStatus) {
+			return getObjectText((IStatus) obj);
 		}
 		return super.getText(obj);
 	}
@@ -333,6 +337,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return preventNull(obj.getName());
 	}
 
+	private String getObjectText(IStatus status) {
+		return status.getMessage();
+	}
+
 	public Image getImage(Object obj) {
 		if (obj instanceof IPlugin) {
 			return getObjectImage((IPlugin) obj);
@@ -443,7 +451,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof Locale) {
 			return get(PDEPluginImages.DESC_DISCOVERY);
 		}
-
+		if (obj instanceof IStatus) {
+			return getObjectImage((IStatus) obj);
+		}
 		return super.getImage(obj);
 	}
 
@@ -739,6 +749,18 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public Image getObjectImage(PackageObject obj) {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+	}
+
+	private Image getObjectImage(IStatus status) {
+		int sev = status.getSeverity();
+		switch (sev) {
+			case IStatus.ERROR :
+				return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
+			case IStatus.WARNING :
+				return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
+			default :
+				return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_INFO_TSK);
+		}
 	}
 
 	public boolean isFullNameModeEnabled() {
