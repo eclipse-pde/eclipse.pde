@@ -520,7 +520,7 @@ public abstract class AbstractPluginBlock {
 		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet, SWT.PUSH);
 		fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName()), SWT.PUSH);
 		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults, SWT.PUSH);
-		fFilterButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_selectedBundles, fTab.getName().toLowerCase()), SWT.CHECK);
+		fFilterButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectedBundles, SWT.CHECK);
 		GridData filterButtonGridData = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_END);
 		fFilterButton.setLayoutData(filterButtonGridData);
 

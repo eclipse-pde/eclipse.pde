@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -26,6 +28,7 @@ import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
@@ -42,6 +45,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Provides the UI that is displayed in the Plug-ins tab of PDE launch configs when the user
@@ -182,8 +186,23 @@ public class FeatureBlock {
 	class ButtonSelectionListener extends SelectionAdapter {
 
 		public void widgetSelected(SelectionEvent e) {
+			fTree.getTree().setRedraw(false);
+
 			Object source = e.getSource();
-			if (source == fSelectAllButton) {
+			boolean resetFilterButton = false;
+			if (fFilterButton.getSelection()) {
+				fFilterButton.setSelection(false);
+				handleFilterButton();
+				resetFilterButton = true;
+			}
+
+			if (source == fValidateButton) {
+				handleValidate();
+			} else if (source == fSelectFeaturesButton) {
+				handleSelectFeatures();
+			} else if (source == fAddPluginButton) {
+				handleAddPlugin();
+			} else if (source == fSelectAllButton) {
 				handleSelectAll(true);
 			} else if (source == fDeselectAllButton) {
 				handleSelectAll(false);
@@ -191,16 +210,52 @@ public class FeatureBlock {
 				handleAddRequired();
 			} else if (source == fDefaultsButton) {
 				handleRestoreDefaults();
-			} else if (source == fValidateButton) {
-				handleValidate();
-			} else if (source == fAddPluginButton) {
-				handleAddPlugin();
+				resetFilterButton = false; // restore the filter button to false
 			} else if (source == fRemovePluginButton) {
 				handleRemovePlugin();
+			} else if (source == fFilterButton && fFilterButton.getSelection() == false) {
+				handleFilterButton();
 			} else if (source instanceof TreeColumn) {
 				handleColumn((TreeColumn) source, 0);
 			}
+
+			if (resetFilterButton) {
+				resetFilterButton = false;
+				fFilterButton.setSelection(true);
+				handleFilterButton();
+			}
+
+			fTree.getTree().setRedraw(true);
 			fTab.updateLaunchConfigurationDialog();
+		}
+
+		private void handleSelectFeatures() {
+			ArrayList featureModels = new ArrayList();
+			for (Iterator iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
+				FeatureLaunchModel featureLaunchModel = (FeatureLaunchModel) iterator.next();
+				if (!fTree.getChecked(featureLaunchModel)) {
+					featureModels.add(featureLaunchModel.getModel(true));
+				}
+			}
+			FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), (IFeatureModel[]) featureModels.toArray(new IFeatureModel[featureModels.size()]), true);
+			dialog.create();
+			if (dialog.open() == Window.OK) {
+				Object[] selectedModels = dialog.getResult();
+				for (int i = 0; i < selectedModels.length; i++) {
+					String id = ((IFeatureModel) selectedModels[i]).getFeature().getId();
+					fTree.setChecked(fFeatureModels.get(id), true);
+				}
+				updateCounter();
+			}
+		}
+
+		private void handleFilterButton() {
+			if (fFilterButton.getSelection()) {
+				fTree.addFilter(fSelectedOnlyFilter);
+			} else {
+				fTree.removeFilter(fSelectedOnlyFilter);
+			}
+			fTree.expandAll();
 		}
 
 		private void handleRemovePlugin() {
@@ -396,6 +451,7 @@ public class FeatureBlock {
 		private void handleSelectAll(boolean state) {
 			fTree.setAllChecked(state);
 			updateCounter();
+			fTab.updateLaunchConfigurationDialog();
 		}
 	}
 
@@ -624,6 +680,19 @@ public class FeatureBlock {
 		public String getResolutionValue() {
 			return fPluginResolution;
 		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			if (fWorkspaceModel != null) {
+				return fWorkspaceModel.getFeature().getId() + " " + fPluginResolution; //$NON-NLS-1$
+			}
+			if (fTargetModel != null) {
+				return fTargetModel.getFeature().getId() + " " + fPluginResolution; //$NON-NLS-1$
+			}
+			return fPluginResolution;
+		}
 	}
 
 	/**
@@ -653,11 +722,13 @@ public class FeatureBlock {
 
 	private Button fWorkspacePluginButton;
 	private Button fExternalPluginButton;
+	private Button fFilterButton;
 	private Label fCounter;
 
 	private Button fFeatureWorkspaceButton;
 	private Button fAutoValidate;
 	private Button fValidateButton;
+	private Button fSelectFeaturesButton;
 	private Button fAddPluginButton;
 	private Button fRemovePluginButton;
 
@@ -666,6 +737,8 @@ public class FeatureBlock {
 	private AbstractLauncherTab fTab;
 	private CachedCheckboxTreeViewer fTree;
 	private LaunchValidationOperation fOperation;
+
+	private ViewerFilter fSelectedOnlyFilter;
 
 	/**
 	 * Maps feature ID to the FeatureLaunchModel that represents the feature in the tree
@@ -682,6 +755,11 @@ public class FeatureBlock {
 
 	public void createControl(Composite parent, int span, int indent) {
 		fListener = new ButtonSelectionListener();
+		fSelectedOnlyFilter = new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return fTree.getChecked(element);
+			}
+		};
 
 		Composite composite = SWTFactory.createComposite(parent, 1, span, GridData.FILL_BOTH, 0, 0);
 
@@ -721,12 +799,38 @@ public class FeatureBlock {
 			public boolean isElementVisible(Viewer viewer, Object element) {
 				if (element instanceof FeatureLaunchModel) {
 					return super.isElementVisible(viewer, ((FeatureLaunchModel) element).getId());
+				} else if (element instanceof PluginLaunchModel) {
+					return super.isElementVisible(viewer, ((PluginLaunchModel) element).getPluginModelId());
 				}
 				return super.isElementVisible(viewer, element);
 			}
 		};
 		filter.setIncludeLeadingWildcard(true);
-		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, null, SWT.FULL_SELECTION, filter);
+		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, null, SWT.FULL_SELECTION, filter) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree#doCreateRefreshJob()
+			 */
+			protected WorkbenchJob doCreateRefreshJob() {
+				// If we are only showing selected items, we need to redo the filter after text filtering is applied.  The only selected filter uses the tree's check state, which hasn't been restored correctly at filter time. 
+				WorkbenchJob job = super.doCreateRefreshJob();
+				job.addJobChangeListener(new JobChangeAdapter() {
+					public void done(IJobChangeEvent event) {
+						if (event.getResult().isOK()) {
+							getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									fTree.getControl().setRedraw(false);
+									fTree.removeFilter(fSelectedOnlyFilter);
+									fTree.restoreLeafCheckState();
+									fTree.addFilter(fSelectedOnlyFilter);
+									fTree.getControl().setRedraw(true);
+								}
+							});
+						}
+					}
+				});
+				return job;
+			}
+		};
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);
@@ -827,17 +931,17 @@ public class FeatureBlock {
 		fSelectAllButton.addSelectionListener(fListener);
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.AdvancedLauncherTab_deselectAll, null);
 		fDeselectAllButton.addSelectionListener(fListener);
+		fSelectFeaturesButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.FeatureBlock_SelectFeatures, null);
+		fSelectFeaturesButton.addSelectionListener(fListener);
 		fAddRequiredFeaturesButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.FeatureBlock_addRequiredFeatues, null);
 		fAddRequiredFeaturesButton.addSelectionListener(fListener);
-		fDefaultsButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.AdvancedLauncherTab_defaults, null);
-		fDefaultsButton.addSelectionListener(fListener);
 		fAddPluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
 		fAddPluginButton.addSelectionListener(fListener);
 		fRemovePluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
 		fRemovePluginButton.addSelectionListener(fListener);
 		fRemovePluginButton.setEnabled(false);
-
-		SWTFactory.createHorizontalSpacer(buttonComp, 1);
+		fDefaultsButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.AdvancedLauncherTab_defaults, null);
+		fDefaultsButton.addSelectionListener(fListener);
 
 		SWTFactory.createLabel(buttonComp, PDEUIMessages.FeatureBlock_defaultPluginResolution, 1);
 		fWorkspacePluginButton = SWTFactory.createRadioButton(buttonComp, PDEUIMessages.FeatureBlock_workspaceBefore);
@@ -847,6 +951,10 @@ public class FeatureBlock {
 
 		Composite countComp = SWTFactory.createComposite(buttonComp, 1, 1, SWT.NONE, 0, 0);
 		countComp.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true));
+
+		fFilterButton = SWTFactory.createCheckButton(countComp, NLS.bind(PDEUIMessages.AdvancedLauncherTab_selectedBundles, ""), null, false, 1); //$NON-NLS-1$
+		fFilterButton.addSelectionListener(fListener);
+
 		fCounter = new Label(countComp, SWT.NONE);
 
 		Image siteImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_OBJ);
@@ -886,6 +994,10 @@ public class FeatureBlock {
 		TreeColumn column = fTree.getTree().getColumn(index == 0 ? COLUMN_FEATURE_NAME : index - 1);
 		fListener.handleColumn(column, prefs.getInt(IPreferenceConstants.FEATURE_SORT_ORDER));
 		fRemovePluginButton.setEnabled(false);
+		fFilterButton.setSelection(config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
+		if (fFilterButton.getSelection()) {
+			fTree.addFilter(fSelectedOnlyFilter);
+		}
 		fTree.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fTree.expandAll();
 		fTree.refresh(true);
@@ -893,7 +1005,7 @@ public class FeatureBlock {
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false);
+		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, fFilterButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, fFeatureWorkspaceButton.getSelection() ? IPDELauncherConstants.LOCATION_WORKSPACE : IPDELauncherConstants.LOCATION_EXTERNAL);
 		config.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, fWorkspacePluginButton.getSelection() ? IPDELauncherConstants.LOCATION_WORKSPACE : IPDELauncherConstants.LOCATION_EXTERNAL);
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
@@ -961,6 +1073,7 @@ public class FeatureBlock {
 			int total = fFeatureModels.values().size() + fAdditionalPlugins.size();
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
 		}
+		fSelectFeaturesButton.setEnabled(fTree.getCheckedLeafCount() < fFeatureModels.size());
 	}
 
 	/**
