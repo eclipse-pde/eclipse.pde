@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
@@ -434,30 +435,41 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle);
 		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage);
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
+		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 		HashSet set = new HashSet();
-		for (int i = 0; i < libraries.length; i++)
-			set.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
+		for (int i = 0; i < libraries.length; i++) {
+			IPath bundlePath = new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName()));
+			IPath buildPath = PDEProject.getBundleRoot(project).getProjectRelativePath().append(bundlePath);
+			set.add(buildPath);
+		}
 
 		dialog.addFilter(new LibraryFilter(set));
-		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 		dialog.setInput(project);
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		dialog.create();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.ADD_LIBRARY);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
-			String[] filePaths = new String[elements.length];
+			String[] bundlePaths = new String[elements.length];
+			String[] buildPaths = new String[elements.length];
 			IPluginModelBase model = getModel();
 			ArrayList list = new ArrayList();
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
-				IPath path = elem.getProjectRelativePath();
-				if (elem instanceof IFolder)
-					path = path.addTrailingSeparator();
-				filePaths[i] = path.toString();
+				IContainer bundleRoot = PDEProject.getBundleRoot(project);
+				IPath rootPath = bundleRoot.getFullPath();
+				// make path relative to bundle root
+				IPath bundlePath = elem.getFullPath().makeRelativeTo(rootPath);
+				IPath buildPath = elem.getProjectRelativePath();
+				if (elem instanceof IFolder) {
+					bundlePath = bundlePath.addTrailingSeparator();
+					buildPath = buildPath.addTrailingSeparator();
+				}
+				bundlePaths[i] = bundlePath.toString();
+				buildPaths[i] = buildPath.toString();
 				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				try {
-					library.setName(filePaths[i]);
+					library.setName(bundlePaths[i]);
 					library.setExported(true);
 					model.getPluginBase().add(library);
 					list.add(library);
@@ -466,9 +478,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				}
 			}
 			checkSourceRootEntry();
-			updateBuildProperties(new String[filePaths.length], filePaths, false);
+			updateBuildProperties(new String[bundlePaths.length], bundlePaths, false);
 			if (updateClasspath[0])
-				updateJavaClasspathLibs(new String[filePaths.length], filePaths);
+				updateJavaClasspathLibs(new String[buildPaths.length], buildPaths);
 			fLibraryTable.setSelection(new StructuredSelection(list.toArray()));
 			fLibraryTable.getTable().setFocus();
 		}
