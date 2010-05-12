@@ -91,9 +91,9 @@ public class TargetContentsGroup {
 	private Map fFileBundleMapping;
 
 	/**
-	 * List of IResolvedBundles that are being used to display error statuses for missing features, possibly <code>null</code>
+	 * List of IResolvedBundles that are being used to display error statuses for missing plug-ins/features, possibly <code>null</code>
 	 */
-	private List fMissingFeatures;
+	private List fMissing;
 
 	private static final NameVersionDescriptor OTHER_CATEGORY = new NameVersionDescriptor(Messages.TargetContentsGroup_OtherPluginsParent, null);
 
@@ -902,8 +902,12 @@ public class TargetContentsGroup {
 
 		int total = fAllBundles.size();
 		if (fFeaureModeButton.getSelection()) {
-			total = fTargetDefinition.getAllFeatures().length;
-			total += ((TargetDefinition) fTargetDefinition).getOtherBundles().length;
+			if (fTargetDefinition == null) {
+				total = 0;
+			} else {
+				total = fTargetDefinition.getAllFeatures().length;
+				total += ((TargetDefinition) fTargetDefinition).getOtherBundles().length;
+			}
 		}
 
 		fSelectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != total);
@@ -960,21 +964,18 @@ public class TargetContentsGroup {
 	}
 
 	private void updateCheckState() {
+		List result = new ArrayList();
+		// Checked error statuses
+		if (fMissing != null) {
+			result.addAll(fMissing);
+		}
 		if (fFeaureModeButton.getSelection()) {
-			List result = new ArrayList();
-
 			// Checked features and plugins
 			result.addAll(((TargetDefinition) fTargetDefinition).getFeaturesAndBundles());
-
-			// Checked error statuses
-			if (fMissingFeatures != null) {
-				result.addAll(fMissingFeatures);
-			}
-
-			fTree.setCheckedElements(result.toArray());
 		} else {
-			fTree.setCheckedElements(fTargetDefinition.getBundles());
+			result.addAll(Arrays.asList(fTargetDefinition.getBundles()));
 		}
+		fTree.setCheckedElements(result.toArray());
 	}
 
 	/**
@@ -1075,7 +1076,9 @@ public class TargetContentsGroup {
 				}
 				if (checked[i] instanceof IResolvedBundle) {
 					// Missing features are included as IResolvedBundles, save them as features instead
-					if (((IResolvedBundle) checked[i]).getStatus().getCode() == IResolvedBundle.STATUS_DOES_NOT_EXIST) {
+					if (((IResolvedBundle) checked[i]).getStatus().getCode() == IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST) {
+						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_PLUGIN));
+					} else if (((IResolvedBundle) checked[i]).getStatus().getCode() == IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
 						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_FEATURE));
 					} else {
 						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null));
@@ -1158,8 +1161,23 @@ public class TargetContentsGroup {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
+				List result = new ArrayList();
+
+				// Check if there are any errors for missing features/bundles to display
+				if (fMissing == null) {
+					fMissing = new ArrayList();
+				} else {
+					fMissing.clear();
+				}
+				IResolvedBundle[] bundles = fTargetDefinition.getBundles();
+				for (int i = 0; i < bundles.length; i++) {
+					if (!bundles[i].getStatus().isOK()) {
+						fMissing.add(bundles[i]);
+						result.add(bundles[i]);
+					}
+				}
+
 				if (fFeaureModeButton.getSelection()) {
-					List result = new ArrayList();
 					IFeatureModel[] features = fTargetDefinition.getAllFeatures();
 					result.addAll(Arrays.asList(features));
 
@@ -1167,29 +1185,14 @@ public class TargetContentsGroup {
 					if (((TargetDefinition) fTargetDefinition).getOtherBundles().length > 0) {
 						result.add(OTHER_CATEGORY);
 					}
-
-					// Check if there are any errors to display
-					if (fMissingFeatures == null) {
-						fMissingFeatures = new ArrayList();
-					} else {
-						fMissingFeatures.clear();
-					}
-					IResolvedBundle[] bundles = fTargetDefinition.getBundles();
-					for (int i = 0; i < bundles.length; i++) {
-						if (!bundles[i].getStatus().isOK()) {
-							fMissingFeatures.add(bundles[i]);
-							result.add(bundles[i]);
-						}
-					}
-
-					return result.toArray();
 				} else if (fGrouping == GROUP_BY_CONTAINER) {
-					return fTargetDefinition.getBundleContainers();
+					result.addAll(Arrays.asList(fTargetDefinition.getBundleContainers()));
 				} else if (fGrouping == GROUP_BY_NONE) {
-					return fTargetDefinition.getAllBundles();
+					result.addAll(Arrays.asList(fTargetDefinition.getAllBundles()));
 				} else {
-					return getFileBundleMapping().keySet().toArray();
+					result.addAll(Arrays.asList(getFileBundleMapping().keySet().toArray()));
 				}
+				return result.toArray();
 			}
 			return new Object[] {inputElement};
 		}

@@ -146,7 +146,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -195,7 +195,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be missing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -244,7 +244,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -280,7 +280,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		IStatus[] children = definitionStatus.getChildren();
 		assertEquals("Wrong number of statuses", 1, children.length);
 		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals(IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
 		
 		// Check that removing the included bundles and resolving removes the errors.
 		definition.setIncluded(null);
@@ -325,7 +325,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -363,7 +363,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		IStatus[] children = definitionStatus.getChildren();
 		assertEquals("Wrong number of statuses", 1, children.length);
 		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals(IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
 		
 		// Check that removing the included bundles and resolving removes the errors.
 		definition.setIncluded(null);

@@ -49,7 +49,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		IStatus[] children = definitionStatus.getChildren();
 		assertEquals("Wrong number of statuses", 2, children.length);
 		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals(IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, children[0].getCode());
 		assertEquals("Wrong severity", IStatus.ERROR, children[1].getSeverity());
 		assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
 		
@@ -78,7 +78,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		IStatus[] children = definitionStatus.getChildren();
 		assertEquals("Wrong number of statuses", 2, children.length);
 		assertEquals("Wrong severity", IStatus.INFO, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals(IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, children[0].getCode());
 		assertEquals("Wrong severity", IStatus.INFO, children[1].getSeverity());
 		assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
 		

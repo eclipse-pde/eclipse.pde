@@ -614,7 +614,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}

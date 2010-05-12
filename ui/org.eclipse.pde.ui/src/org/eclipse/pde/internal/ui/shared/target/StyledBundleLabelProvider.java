@@ -220,6 +220,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 */
 	public Image getImage(Object element) {
 		if (element instanceof IResolvedBundle) {
+
 			IResolvedBundle bundle = (IResolvedBundle) element;
 			int flag = 0;
 			if (bundle.getStatus().getSeverity() == IStatus.WARNING || bundle.getStatus().getSeverity() == IStatus.INFO) {
@@ -228,7 +229,10 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				flag = SharedLabelProvider.F_ERROR;
 			}
 
-			if (bundle.isFragment()) {
+			if (bundle.getStatus().getSeverity() == IStatus.ERROR && bundle.getStatus().getCode() == IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
+				// Missing features are represented by resolved bundles in the tree
+				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ, flag);
+			} else if (bundle.isFragment()) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FRAGMENT_OBJ, flag);
 			} else if (bundle.isSourceBundle()) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_MF_OBJ, flag);

@@ -570,7 +570,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 					// it's not in the state... if it's not really in the target either (missing) this
 					// is not an error
 					IStatus status = bundle.getStatus();
-					if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
+					if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
 						// its in the target, missing in the state
 						IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
 						multi.add(s);

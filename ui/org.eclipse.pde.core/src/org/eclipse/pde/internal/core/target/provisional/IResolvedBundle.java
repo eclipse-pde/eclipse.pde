@@ -25,7 +25,12 @@ public interface IResolvedBundle {
 	/**
 	 * Status code indicating that a required bundle does not exist.
 	 */
-	public static final int STATUS_DOES_NOT_EXIST = 100;
+	public static final int STATUS_PLUGIN_DOES_NOT_EXIST = 100;
+
+	/**
+	 * Status code indicating that a required bundle does not exist.
+	 */
+	public static final int STATUS_FEATURE_DOES_NOT_EXIST = 110;
 
 	/**
 	 * Status code indicating that a required bundle version does not exist (a bundle

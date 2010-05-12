@@ -209,7 +209,13 @@ public class TargetDefinition implements ITargetDefinition {
 		if (containers != null && containers.length == 0) {
 			containers = null;
 		}
+
 		fContainers = containers;
+
+		if (containers == null) {
+			fIncluded = null;
+			fOptional = null;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -443,13 +449,13 @@ public class TargetDefinition implements ITargetDefinition {
 		IBundleContainer parent = fContainers != null && fContainers.length > 0 ? fContainers[0] : null;
 		List result = getMatchingBundles(bundles, (NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]), fOptional, containsFeatures ? null : parent);
 
-		// Add in missing bundles as resolved bundles with error statuses
+		// Add in missing features as resolved bundles with error statuses
 		if (containsFeatures && !missingFeatures.isEmpty()) {
 			for (Iterator iterator = missingFeatures.iterator(); iterator.hasNext();) {
 				NameVersionDescriptor missing = (NameVersionDescriptor) iterator.next();
 				BundleInfo info = new BundleInfo(missing.getId(), missing.getVersion(), null, BundleInfo.NO_LEVEL, false);
 				String message = NLS.bind(Messages.TargetDefinition_RequiredFeatureCouldNotBeFound, missing.getId());
-				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null);
+				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST, message, null);
 				result.add(new ResolvedBundle(info, parent, status, null, false, false));
 			}
 		}
@@ -592,7 +598,7 @@ public class TargetDefinition implements ITargetDefinition {
 			sev = IStatus.INFO;
 			message = NLS.bind(Messages.AbstractBundleContainer_4, info.getSymbolicName());
 		}
-		return new ResolvedBundle(info, errorParentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_DOES_NOT_EXIST, message, null), null, optional, false);
+		return new ResolvedBundle(info, errorParentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, message, null), null, optional, false);
 	}
 
 	/* (non-Javadoc)
