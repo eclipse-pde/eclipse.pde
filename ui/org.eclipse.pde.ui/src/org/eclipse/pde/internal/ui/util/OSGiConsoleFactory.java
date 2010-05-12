@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <caniszczyk@gmail.com> - initial API and implementation
+ *     IBM Corporation - ongoing enhancements and bug fixes
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
@@ -14,12 +15,11 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.console.*;
 
 public class OSGiConsoleFactory implements IConsoleFactory {
-	private IConsoleManager fConsoleManager = null;
+	private final IConsoleManager fConsoleManager;
 	private IOConsole fConsole = null;
 
 	public OSGiConsoleFactory() {
 		fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
-		fConsole = new OSGiConsole(this);
 	}
 
 	/* (non-Javadoc)
@@ -30,22 +30,33 @@ public class OSGiConsoleFactory implements IConsoleFactory {
 	}
 
 	public void openConsole(String initialText) {
-		if (fConsole != null) {
-			IConsole[] existing = fConsoleManager.getConsoles();
-			boolean exists = false;
-			for (int i = 0; i < existing.length; i++) {
-				if (fConsole == existing[i])
-					exists = true;
-			}
-			if (!exists)
-				fConsoleManager.addConsoles(new IConsole[] {fConsole});
-			fConsoleManager.showConsoleView(fConsole);
-			fConsole.getDocument().set(initialText);
+		IOConsole console = getConsole();
+
+		IConsole[] existing = fConsoleManager.getConsoles();
+		boolean exists = false;
+		for (int i = 0; i < existing.length; i++) {
+			if (console == existing[i])
+				exists = true;
 		}
-		fConsoleManager.addConsoles(new IConsole[] {fConsole});
+		if (!exists)
+			fConsoleManager.addConsoles(new IConsole[] {console});
+		fConsoleManager.showConsoleView(console);
+		console.getDocument().set(initialText);
+	}
+
+	private synchronized IOConsole getConsole() {
+		if (fConsole != null)
+			return fConsole;
+		fConsole = new OSGiConsole(this);
+		return fConsole;
 	}
 
 	void closeConsole(OSGiConsole console) {
+		synchronized (this) {
+			if (console != fConsole)
+				throw new IllegalArgumentException("Wrong console instance!"); //$NON-NLS-1$
+			fConsole = null;
+		}
 		fConsoleManager.removeConsoles(new IConsole[] {console});
 	}
 }
