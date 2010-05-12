@@ -722,7 +722,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			IManifestHeader mh = bm.getBundle().getManifestHeader(Constants.BUNDLE_CLASSPATH);
 			if ((mh == null || mh.getValue() == null)) {
 				if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
-					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
+					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
 			}
 		}
@@ -731,7 +731,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String libname = libraries[i].getName();
 			if (libname.equals(".")) { //$NON-NLS-1$
 				if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY)) {
-					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcInclSeverity, PDEMarkerFactory.CAT_OTHER);
+					prepareError(DEF_SOURCE_ENTRY, null, PDECoreMessages.BuildErrorReporter_sourceMissing, PDEMarkerFactory.NO_RESOLUTION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
 					continue;
 				}
 			} else if (fProject.findMember(libname) != null) {

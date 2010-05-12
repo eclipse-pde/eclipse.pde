@@ -262,6 +262,20 @@ public class ClasspathHelper {
 					else {
 						if (libraries.length == 0) {
 							IPath[] paths = findLibrary(DOT, project, classpathMap, build);
+							if (paths.length == 0) {
+								// No mapping for default library, if there are source folders just add their corresponding output folders to the build path.
+								// This likely indicates an error in the build.properties, but to be friendly we should add the output folders so running/debugging
+								// works (see bug 237025)
+								if (!classpathMap.isEmpty()) {
+									Iterator iterator = classpathMap.values().iterator();
+									List collect = new ArrayList();
+									while (iterator.hasNext()) {
+										ArrayList list = (ArrayList) iterator.next();
+										collect.addAll(list);
+									}
+									paths = (IPath[]) collect.toArray(new IPath[collect.size()]);
+								}
+							}
 							for (int j = 0; j < paths.length; j++)
 								addPath(result, project, paths[j]);
 						} else {
