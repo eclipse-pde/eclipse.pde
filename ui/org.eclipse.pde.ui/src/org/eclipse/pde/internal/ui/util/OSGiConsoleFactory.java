@@ -11,9 +11,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.console.*;
 
+/**
+ * Console factory extension used to create a "Host OSGi Console".
+ * 
+ * @since 3.6
+ */
 public class OSGiConsoleFactory implements IConsoleFactory {
 	private final IConsoleManager fConsoleManager;
 	private IOConsole fConsole = null;
@@ -26,10 +30,6 @@ public class OSGiConsoleFactory implements IConsoleFactory {
 	 * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
 	 */
 	public void openConsole() {
-		openConsole(PDEUIMessages.OSGiConsoleFactory_title);
-	}
-
-	public void openConsole(String initialText) {
 		IOConsole console = getConsole();
 
 		IConsole[] existing = fConsoleManager.getConsoles();
@@ -41,7 +41,6 @@ public class OSGiConsoleFactory implements IConsoleFactory {
 		if (!exists)
 			fConsoleManager.addConsoles(new IConsole[] {console});
 		fConsoleManager.showConsoleView(console);
-		console.getDocument().set(initialText);
 	}
 
 	private synchronized IOConsole getConsole() {
