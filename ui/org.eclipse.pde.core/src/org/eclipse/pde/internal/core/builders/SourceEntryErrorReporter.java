@@ -242,7 +242,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				case IResource.FILE :
 					IFile file = (IFile) resource;
 					// only worry about .java files
-					if (file.getFileExtension().equals("java")) { //$NON-NLS-1$
+					if (file.getFileExtension() != null && file.getFileExtension().equals("java")) { //$NON-NLS-1$
 						encoding = file.getCharset(false);
 					}
 					break;
