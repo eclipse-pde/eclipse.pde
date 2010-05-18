@@ -1059,12 +1059,20 @@ public class PluginModelManager implements IModelProviderListener {
 	public void shutdown() {
 		fWorkspaceManager.shutdown();
 		fExternalManager.shutdown();
-		if (fState != null)
-			fState.shutdown();
 		if (fListeners != null)
 			fListeners.clear();
 		if (fStateListeners != null)
 			fStateListeners.clear();
+	}
+
+	/**
+	 * Called as part of save participant. Save's PDE model state.
+	 */
+	public void save() {
+		if (fState != null) {
+			fState.saveExternalState();
+			fState.saveWorkspaceState();
+		}
 	}
 
 	public void addExtensionDeltaListener(IExtensionDeltaListener listener) {

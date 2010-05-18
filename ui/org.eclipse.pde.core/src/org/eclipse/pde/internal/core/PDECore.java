@@ -270,6 +270,9 @@ public class PDECore extends Plugin {
 				if (tps instanceof TargetPlatformService) {
 					((TargetPlatformService) tps).cleanOrphanedTargetDefinitionProfiles();
 				}
+				if (fModelManager != null) {
+					fModelManager.save();
+				}
 			}
 
 			public void rollback(ISaveContext saveContext) {
