@@ -787,7 +787,24 @@ public class FeatureExportOperation extends Job {
 	}
 
 	protected String[] getPaths() {
-		return TargetPlatformHelper.getFeaturePaths();
+		Map map = new HashMap(); // merge workspace and external features using workspace over external
+		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
+		IFeatureModel[] models = fmm.getExternalModels();
+		for (int i = 0; i < models.length; i++) {
+			map.put(models[i].getFeature().getId(), models[i].getInstallLocation());
+		}
+		// remove anything that we have in the workspace models
+		models = fmm.getWorkspaceModels();
+		String[] locations = new String[models.length];
+		for (int i = 0; i < models.length; i++) {
+			map.remove(models[i].getFeature().getId());
+			locations[i] = models[i].getInstallLocation();
+		}
+		// add all workspace models
+		String[] paths = new String[map.size() + models.length];
+		paths = (String[]) map.values().toArray(paths);
+		System.arraycopy(locations, 0, paths, map.size(), models.length);
+		return paths;
 	}
 
 	protected void cleanup(String[] config, IProgressMonitor monitor) {
