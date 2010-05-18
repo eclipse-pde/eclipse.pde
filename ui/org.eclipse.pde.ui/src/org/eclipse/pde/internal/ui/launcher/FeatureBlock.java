@@ -1084,7 +1084,7 @@ public class FeatureBlock {
 	protected void setInput(ILaunchConfiguration config, CheckboxTreeViewer tree) {
 		// Maps feature IDs to their models
 		Map featureModels = new HashMap();
-		FeatureModelManager fmm = new FeatureModelManager();
+		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] workspaceModels = fmm.getWorkspaceModels();
 		for (int i = 0; i < workspaceModels.length; i++) {
 			String id = workspaceModels[i].getFeature().getId();
@@ -1093,9 +1093,7 @@ public class FeatureBlock {
 		fmm.shutdown();
 
 		// If there is both a workspace and a target model with the same id, combine them into the same launch model
-		ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
-		efmm.initialize();
-		IFeatureModel[] externalModels = efmm.getModels();
+		IFeatureModel[] externalModels = fmm.getExternalModels();
 		for (int i = 0; i < externalModels.length; i++) {
 			String id = externalModels[i].getFeature().getId();
 			if (featureModels.containsKey(id)) {
