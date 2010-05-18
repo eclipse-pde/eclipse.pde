@@ -967,9 +967,8 @@ public class FeatureBlock {
 
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
 		fLaunchConfig = config;
-
+		fTree.removeFilter(fSelectedOnlyFilter);
 		setInput(config, fTree);
-		updateCounter();
 
 		// Setup other buttons
 		String pluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
