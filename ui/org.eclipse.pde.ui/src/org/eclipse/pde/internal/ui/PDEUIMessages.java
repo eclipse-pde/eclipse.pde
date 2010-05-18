@@ -66,6 +66,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_AddPluginsLabel;
 
+	public static String FeatureBlock_AllFeatureSelected;
+
 	public static String FeatureBlock_RemovePluginsLabel;
 
 	public static String FeatureBlock_addRequiredFeatues;

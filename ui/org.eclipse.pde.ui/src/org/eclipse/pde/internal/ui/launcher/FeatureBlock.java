@@ -237,6 +237,10 @@ public class FeatureBlock {
 					featureModels.add(featureLaunchModel.getModel(true));
 				}
 			}
+			if (featureModels.size() == 0) {
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureSelectionDialog_title, PDEUIMessages.FeatureBlock_AllFeatureSelected);
+				return;
+			}
 			FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), (IFeatureModel[]) featureModels.toArray(new IFeatureModel[featureModels.size()]), true);
 			dialog.create();
 			if (dialog.open() == Window.OK) {
@@ -1072,7 +1076,6 @@ public class FeatureBlock {
 			int total = fFeatureModels.values().size() + fAdditionalPlugins.size();
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
 		}
-		fSelectFeaturesButton.setEnabled(fTree.getCheckedLeafCount() < fFeatureModels.size());
 	}
 
 	/**
