@@ -110,9 +110,20 @@ public class FeatureModelManager {
 		return (IFeatureModel[]) valid.toArray(new IFeatureModel[valid.size()]);
 	}
 
+	/**
+	 * @return all models in the workspace model manager
+	 */
 	public IFeatureModel[] getWorkspaceModels() {
 		init();
 		return fWorkspaceManager.getFeatureModels();
+	}
+
+	/**
+	 * @return all models in the external model manager
+	 */
+	public IFeatureModel[] getExternalModels() {
+		init();
+		return fExternalManager.getModels();
 	}
 
 	public IFeatureModel getFeatureModel(IProject project) {
@@ -218,10 +229,6 @@ public class FeatureModelManager {
 		}
 	}
 
-	/**
-	 * @param e
-	 * @return
-	 */
 	private synchronized IFeatureModelDelta processEvent(IModelProviderEvent e) {
 		FeatureModelDelta delta = new FeatureModelDelta();
 		/*

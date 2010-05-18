@@ -1090,7 +1090,6 @@ public class FeatureBlock {
 			String id = workspaceModels[i].getFeature().getId();
 			featureModels.put(id, new FeatureLaunchModel(workspaceModels[i], null));
 		}
-		fmm.shutdown();
 
 		// If there is both a workspace and a target model with the same id, combine them into the same launch model
 		IFeatureModel[] externalModels = fmm.getExternalModels();
