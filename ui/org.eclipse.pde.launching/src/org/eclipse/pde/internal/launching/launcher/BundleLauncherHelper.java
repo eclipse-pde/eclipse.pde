@@ -79,17 +79,14 @@ public class BundleLauncherHelper {
 			HashMap workspaceFeatureMap = new HashMap();
 			HashMap externalFeatureMap = new HashMap();
 
-			FeatureModelManager fmm = new FeatureModelManager();
+			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel[] workspaceFeatureModels = fmm.getWorkspaceModels();
 			for (int i = 0; i < workspaceFeatureModels.length; i++) {
 				String id = workspaceFeatureModels[i].getFeature().getId();
 				workspaceFeatureMap.put(id, workspaceFeatureModels[i]);
 			}
-			fmm.shutdown();
 
-			ExternalFeatureModelManager efmm = new ExternalFeatureModelManager();
-			efmm.initialize();
-			IFeatureModel[] externalFeatureModels = efmm.getModels();
+			IFeatureModel[] externalFeatureModels = fmm.getExternalModels();
 			for (int i = 0; i < externalFeatureModels.length; i++) {
 				String id = externalFeatureModels[i].getFeature().getId();
 				externalFeatureMap.put(id, externalFeatureModels[i]);
