@@ -186,16 +186,7 @@ public class FeatureBlock {
 	class ButtonSelectionListener extends SelectionAdapter {
 
 		public void widgetSelected(SelectionEvent e) {
-			fTree.getTree().setRedraw(false);
-
 			Object source = e.getSource();
-			boolean resetFilterButton = false;
-			if (fFilterButton.getSelection()) {
-				fFilterButton.setSelection(false);
-				handleFilterButton();
-				resetFilterButton = true;
-			}
-
 			if (source == fValidateButton) {
 				handleValidate();
 			} else if (source == fSelectFeaturesButton) {
@@ -210,22 +201,14 @@ public class FeatureBlock {
 				handleAddRequired();
 			} else if (source == fDefaultsButton) {
 				handleRestoreDefaults();
-				resetFilterButton = false; // restore the filter button to false
 			} else if (source == fRemovePluginButton) {
 				handleRemovePlugin();
-			} else if (source == fFilterButton && fFilterButton.getSelection() == false) {
+			} else if (source == fFilterButton) {
 				handleFilterButton();
 			} else if (source instanceof TreeColumn) {
 				handleColumn((TreeColumn) source, 0);
 			}
 
-			if (resetFilterButton) {
-				resetFilterButton = false;
-				fFilterButton.setSelection(true);
-				handleFilterButton();
-			}
-
-			fTree.getTree().setRedraw(true);
 			fTab.updateLaunchConfigurationDialog();
 		}
 
@@ -244,11 +227,17 @@ public class FeatureBlock {
 			FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), (IFeatureModel[]) featureModels.toArray(new IFeatureModel[featureModels.size()]), true);
 			dialog.create();
 			if (dialog.open() == Window.OK) {
+				fTree.getControl().setRedraw(false);
+				fTree.removeFilter(fSelectedOnlyFilter);
 				Object[] selectedModels = dialog.getResult();
 				for (int i = 0; i < selectedModels.length; i++) {
 					String id = ((IFeatureModel) selectedModels[i]).getFeature().getId();
 					fTree.setChecked(fFeatureModels.get(id), true);
 				}
+				if (fFilterButton.getSelection()) {
+					fTree.addFilter(fSelectedOnlyFilter);
+				}
+				fTree.getControl().setRedraw(true);
 				updateCounter();
 			}
 		}
@@ -280,12 +269,10 @@ public class FeatureBlock {
 				fRemovePluginButton.setEnabled(true);
 			}
 			updateCounter();
-			fTab.updateLaunchConfigurationDialog();
 		}
 
 		private void handleAddPlugin() {
 			PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailablePlugins(), true);
-			dialog.create();
 			if (dialog.open() == Window.OK) {
 
 				Object[] models = dialog.getResult();
@@ -300,13 +287,20 @@ public class FeatureBlock {
 					input.add(fAdditionalPluginsParentElement);
 				}
 				fAdditionalPlugins.addAll(modelList);
-				fTree.refresh(true);
+
+				fTree.getControl().setRedraw(false);
+				fTree.removeFilter(fSelectedOnlyFilter);
+				fTree.refresh();
 				for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
 					fTree.setChecked(iterator.next(), true);
 				}
 				fTree.setSelection(new StructuredSelection(modelList.get(modelList.size() - 1)), true);
 				fTree.getTree().setSortColumn(fTree.getTree().getSortColumn());
 				fTree.getTree().setSortDirection(fTree.getTree().getSortDirection());
+				if (fFilterButton.getSelection()) {
+					fTree.addFilter(fSelectedOnlyFilter);
+				}
+				fTree.getControl().setRedraw(true);
 				updateCounter();
 			}
 		}
@@ -378,12 +372,19 @@ public class FeatureBlock {
 					}
 				}
 
+				fTree.getControl().setRedraw(false);
+				fTree.removeFilter(fSelectedOnlyFilter);
 				for (Iterator iterator = requiredFeatureIDs.iterator(); iterator.hasNext();) {
 					Object featureModel = fFeatureModels.get(iterator.next());
 					if (featureModel != null) {
 						fTree.setChecked(featureModel, true);
 					}
 				}
+				if (fFilterButton.getSelection()) {
+					fTree.addFilter(fSelectedOnlyFilter);
+				}
+				fTree.getControl().setRedraw(true);
+				updateCounter();
 			}
 		}
 
@@ -446,16 +447,28 @@ public class FeatureBlock {
 				FeatureLaunchModel model = (FeatureLaunchModel) iterator.next();
 				model.setPluginResolution(IPDELauncherConstants.LOCATION_DEFAULT);
 			}
-			fTree.setAllChecked(true);
+
+			fTree.getControl().setRedraw(false);
+			fTree.removeFilter(fSelectedOnlyFilter);
+			fTree.setCheckedElements(new Object[0]); // Make sure the check state cache is cleared
 			fTree.refresh();
+			fTree.setAllChecked(true);
+			if (fFilterButton.getSelection()) {
+				fTree.addFilter(fSelectedOnlyFilter);
+			}
+			fTree.getControl().setRedraw(true);
 			updateCounter();
-			fTab.updateLaunchConfigurationDialog();
 		}
 
 		private void handleSelectAll(boolean state) {
+			fTree.getControl().setRedraw(false);
+			fTree.removeFilter(fSelectedOnlyFilter);
 			fTree.setAllChecked(state);
+			if (fFilterButton.getSelection()) {
+				fTree.addFilter(fSelectedOnlyFilter);
+			}
+			fTree.getControl().setRedraw(true);
 			updateCounter();
-			fTab.updateLaunchConfigurationDialog();
 		}
 	}
 
@@ -911,6 +924,7 @@ public class FeatureBlock {
 						}
 					}
 					if (fAdditionalPlugins.size() == 0) {
+						fTree.remove(fAdditionalPluginsParentElement);
 						input.remove(fAdditionalPluginsParentElement);
 						fRemovePluginButton.setEnabled(false);
 					} else {
@@ -918,7 +932,6 @@ public class FeatureBlock {
 						fTree.setSelection(new StructuredSelection(fAdditionalPlugins.get(index > 0 ? index : 0)), true);
 						fRemovePluginButton.setEnabled(true);
 					}
-					fTree.refresh();
 					updateCounter();
 					fTab.updateLaunchConfigurationDialog();
 				}
