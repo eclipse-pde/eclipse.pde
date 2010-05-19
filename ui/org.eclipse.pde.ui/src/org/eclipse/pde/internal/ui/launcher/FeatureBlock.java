@@ -840,6 +840,9 @@ public class FeatureBlock {
 		tree.setLayoutData(gd);
 		fTree = tree.getCheckboxTreeViewer();
 
+		fTree.getControl().setFont(parent.getFont());
+		tree.getFilterControl().setFont(parent.getFont());
+
 		TreeColumn column1 = new TreeColumn(fTree.getTree(), SWT.LEFT);
 		column1.setText(PDEUIMessages.FeatureBlock_features);
 		column1.setWidth(400);
@@ -924,7 +927,7 @@ public class FeatureBlock {
 	}
 
 	private void createButtonContainer(Composite parent, int vOffset) {
-		Composite buttonComp = new Composite(parent, SWT.NONE);
+		Composite buttonComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_VERTICAL);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		layout.marginTop = vOffset;
@@ -959,7 +962,7 @@ public class FeatureBlock {
 		fFilterButton = SWTFactory.createCheckButton(countComp, NLS.bind(PDEUIMessages.AdvancedLauncherTab_selectedBundles, ""), null, false, 1); //$NON-NLS-1$
 		fFilterButton.addSelectionListener(fListener);
 
-		fCounter = new Label(countComp, SWT.NONE);
+		fCounter = SWTFactory.createLabel(countComp, "", 1); //$NON-NLS-1$
 
 		Image siteImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_OBJ);
 		fAdditionalPluginsParentElement = new NamedElement(NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName().replaceAll("&", "")), siteImage); //$NON-NLS-1$ //$NON-NLS-2$

@@ -290,7 +290,7 @@ public abstract class AbstractPluginBlock {
 		gd.horizontalIndent = indent;
 		button.setLayoutData(gd);
 		button.addSelectionListener(fListener);
-
+		button.setFont(parent.getFont());
 		return button;
 	}
 
@@ -401,6 +401,9 @@ public abstract class AbstractPluginBlock {
 		column3.setWidth(80);
 		tree.setHeaderVisible(true);
 
+		tree.setFont(composite.getFont());
+		fPluginFilteredTree.getFilterControl().setFont(composite.getFont());
+
 		createEditors();
 	}
 
@@ -508,7 +511,7 @@ public abstract class AbstractPluginBlock {
 	}
 
 	private void createButtonContainer(Composite parent, int vOffset) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_VERTICAL);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
 		layout.marginTop = vOffset;
@@ -524,7 +527,7 @@ public abstract class AbstractPluginBlock {
 		GridData filterButtonGridData = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_END);
 		fFilterButton.setLayoutData(filterButtonGridData);
 
-		fCounter = new Label(composite, SWT.NONE);
+		fCounter = SWTFactory.createLabel(composite, "", 1); //$NON-NLS-1$
 		fCounter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 		updateCounter();
 	}
