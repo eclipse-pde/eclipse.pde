@@ -236,11 +236,6 @@ public class PDECore extends Plugin {
 	public SearchablePluginsManager getSearchablePluginsManager() {
 		if (fSearchablePluginsManager == null) {
 			fSearchablePluginsManager = new SearchablePluginsManager();
-			try {
-				getWorkspace().addSaveParticipant(inst.getBundle().getSymbolicName(), fSearchablePluginsManager);
-			} catch (CoreException e) {
-				log(e);
-			}
 		}
 		return fSearchablePluginsManager;
 	}
@@ -270,15 +265,27 @@ public class PDECore extends Plugin {
 				if (tps instanceof TargetPlatformService) {
 					((TargetPlatformService) tps).cleanOrphanedTargetDefinitionProfiles();
 				}
+				if (fSearchablePluginsManager != null) {
+					fSearchablePluginsManager.saving(saveContext);
+				}
 			}
 
 			public void rollback(ISaveContext saveContext) {
+				if (fSearchablePluginsManager != null) {
+					fSearchablePluginsManager.rollback(saveContext);
+				}
 			}
 
 			public void prepareToSave(ISaveContext saveContext) throws CoreException {
+				if (fSearchablePluginsManager != null) {
+					fSearchablePluginsManager.prepareToSave(saveContext);
+				}
 			}
 
 			public void doneSaving(ISaveContext saveContext) {
+				if (fSearchablePluginsManager != null) {
+					fSearchablePluginsManager.doneSaving(saveContext);
+				}
 			}
 		});
 
@@ -307,7 +314,6 @@ public class PDECore extends Plugin {
 			fTargetProfileManager = null;
 		}
 		if (fSearchablePluginsManager != null) {
-			getWorkspace().removeSaveParticipant(inst.getBundle().getSymbolicName());
 			fSearchablePluginsManager.shutdown();
 			fSearchablePluginsManager = null;
 		}
