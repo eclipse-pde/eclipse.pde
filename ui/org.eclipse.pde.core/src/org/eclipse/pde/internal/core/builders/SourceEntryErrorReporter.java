@@ -462,14 +462,41 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		HashMap missingOutputEntryErrors = new HashMap(4);
 		class MissingOutputEntry {
-			public StringBuffer fSsrcFolders = new StringBuffer();
-			public StringBuffer fOutputFolders = new StringBuffer();
+			private List fSrcFolders = new ArrayList(1);
+			private List fOutputFolders = new ArrayList(1);
 
-			public String get(StringBuffer field) {
-				if (field.charAt(field.length() - 1) == ',') {
-					field.deleteCharAt(field.length() - 1);
+			public String getOutputList() {
+				return generateList(fOutputFolders);
+			}
+
+			public String getSourceList() {
+				return generateList(fSrcFolders);
+			}
+
+			private String generateList(List strings) {
+				StringBuffer buffer = new StringBuffer();
+				Iterator iterator = strings.iterator();
+				while (iterator.hasNext()) {
+					String next = (String) iterator.next();
+					buffer.append(next);
+					if (iterator.hasNext()) {
+						buffer.append(',');
+						buffer.append(' ');
+					}
 				}
-				return field.toString().trim();
+				return buffer.toString();
+			}
+
+			public void addSrcFolder(String sourcePath) {
+				if (!fSrcFolders.contains(sourcePath)) {
+					fSrcFolders.add(sourcePath);
+				}
+			}
+
+			public void addOutputFolder(String outputPath) {
+				if (!fOutputFolders.contains(outputPath)) {
+					fOutputFolders.add(outputPath);
+				}
 			}
 		}
 
@@ -502,13 +529,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					if (errorEntry == null)
 						errorEntry = new MissingOutputEntry();
 
-					if (errorEntry.fSsrcFolders.indexOf(sourcePath.toString() + ',') < 0) {
-						errorEntry.fSsrcFolders.append(' ' + sourcePath.toString() + ',');
-					}
+					errorEntry.addSrcFolder(sourcePath.toString());
+					errorEntry.addOutputFolder(outputFolder.getToken());
 
-					if (errorEntry.fOutputFolders.indexOf(outputFolder.getToken() + ',') < 0) {
-						errorEntry.fOutputFolders.append(' ' + outputFolder.getToken() + ',');
-					}
 					missingOutputEntryErrors.put(libName, errorEntry);
 				}
 
@@ -524,8 +547,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		for (Iterator iter = missingOutputEntryErrors.keySet().iterator(); iter.hasNext();) {
 			String libName = (String) iter.next();
 			MissingOutputEntry errorEntry = (MissingOutputEntry) missingOutputEntryErrors.get(libName);
-			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.get(errorEntry.fSsrcFolders), PROPERTY_OUTPUT_PREFIX + libName);
-			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.get(errorEntry.fOutputFolders), message, PDEMarkerFactory.B_ADDITION, fMissingOutputLibSeverity, PDEMarkerFactory.CAT_OTHER);
+			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.getSourceList(), PROPERTY_OUTPUT_PREFIX + libName);
+			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.getOutputList(), message, PDEMarkerFactory.B_ADDITION, fMissingOutputLibSeverity, PDEMarkerFactory.CAT_OTHER);
 		}
 
 		// validate workspace encodings with those specified in build.properties
