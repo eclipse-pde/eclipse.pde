@@ -161,7 +161,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		createDetailsArea(composite);
 		createCheckboxArea(composite);
 
-		setPageComplete(false);
 		restoreWidgetState();
 		setControl(composite);
 		setPageComplete(false);
@@ -397,6 +396,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	void pageChanged() {
 		if (fSelectedIUStatus.getSeverity() == IStatus.ERROR) {
 			setErrorMessage(fSelectedIUStatus.getMessage());
+			setPageComplete(false);
+		} else if (fAvailableIUGroup != null && fAvailableIUGroup.getCheckedLeafIUs().length == 0) {
+			// On page load and when sites are selected, we might not have an error status, but we want finish to remain disabled
 			setPageComplete(false);
 		} else {
 			setErrorMessage(null);
