@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.test.performance.Performance;
 
 /**
  * SchemaLoaderPerfTest
@@ -35,6 +36,7 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 	 * @throws Exception
 	 */
 	public void testSchemaUnabbreviated() throws Exception {
+		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "Degradation starting in build I20090825-1032 is due to the addition of an include statement in the test schema.");
 		fAbbreviated = false;
 		fTestIterations = 5;
 		fWarmupIterations = 50;
@@ -46,6 +48,7 @@ public class SchemaLoaderPerfTest extends AbstractSchemaPerfTest {
 	 * @throws Exception
 	 */
 	public void testSchemaAbbreviated() throws Exception {
+		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "Degradation starting in build I20090825-1032 is due to the addition of an include statement in the test schema.");
 		fAbbreviated = true;
 		fTestIterations = 5;
 		fWarmupIterations = 50;
