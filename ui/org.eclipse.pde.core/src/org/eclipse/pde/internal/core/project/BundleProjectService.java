@@ -10,13 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
-
-import org.eclipse.pde.internal.core.importing.IBundleImporter;
-
-import org.eclipse.pde.internal.core.importing.BundleImporterExtension;
-
-
 import java.io.*;
 import java.util.*;
 import java.util.jar.JarFile;
@@ -31,6 +24,9 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.importing.BundleImporterExtension;
+import org.eclipse.pde.internal.core.importing.IBundleImporter;
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.osgi.framework.BundleException;
@@ -244,11 +240,13 @@ public final class BundleProjectService implements IBundleProjectService {
 						description.setProperty(PLUGIN, plugins.get(j));
 					}
 				}
-				result.put(importer, valid.toArray(new BundleImportDescription[valid.size()]));
+				if (!valid.isEmpty()) {
+					result.put(importer, valid.toArray(new BundleImportDescription[valid.size()]));
+				}
 			}
 			return result;
 		}
-		return null;
+		return new HashMap();
 	}
 
 	/**

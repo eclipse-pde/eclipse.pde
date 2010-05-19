@@ -106,7 +106,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		if (!page1.finishPages()) {
 			return false;
 		}
-		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0, page1.getAlternateSourceLocations(), page1.getImportDescriptions());
+		doImportOperation(page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0, page1.getAlternateSourceLocations(), page1.getImportDescriptions());
 		return true;
 	}
 
@@ -151,21 +151,23 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	}
 
 	public static void doImportOperation(Shell shell, int importType, IPluginModelBase[] models, boolean forceAutobuild) {
-		doImportOperation(shell, importType, models, forceAutobuild, false, null, null);
+		doImportOperation(importType, models, forceAutobuild, false, null, null);
 	}
 
 	/**
+	 * Performs the import.
 	 * 
-	 * @param shell
-	 * @param importType
-	 * @param models
-	 * @param forceAutobuild
-	 * @param launchedConfiguration
+	 * @param importType one of the import operation types
+	 * @param models models being imported
+	 * @param forceAutobuild whether to force a build after the import
+	 * @param launchedConfiguration if there is a launched target currently running 
 	 * @param alternateSource used to locate source attachments or <code>null</code> if default
 	 * 	source locations should be used (from active target platform).
+	 * @param importerToDescriptions map of bundle importers to import descriptions if importing
+	 *  from a repository, else <code>null</code>
 	 *  
 	 */
-	private static void doImportOperation(Shell shell, int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map importerToDescriptions) {
+	public static void doImportOperation(int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map importerToDescriptions) {
 		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);
 		job.setImportDescriptions(importerToDescriptions);
 		job.setAlternateSource(alternateSource);

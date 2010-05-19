@@ -393,7 +393,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImportActionGroup_binaryWithLinkedContent;
 
+	public static String ImportActionGroup_cannot_import;
+
 	public static String ImportActionGroup_importContributingPlugin;
+
+	public static String ImportActionGroup_Repository_project;
 
 	public static String InformationSection_0;
 

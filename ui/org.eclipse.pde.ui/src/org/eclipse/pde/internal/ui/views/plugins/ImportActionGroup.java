@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+import org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate;
+import org.eclipse.pde.internal.core.project.BundleProjectService;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
+import org.eclipse.pde.internal.ui.wizards.imports.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -41,6 +47,9 @@ public class ImportActionGroup extends ActionGroup {
 					break;
 				case PluginImportOperation.IMPORT_WITH_SOURCE :
 					setText(PDEUIMessages.PluginsView_asSourceProject);
+					break;
+				case PluginImportOperation.IMPORT_FROM_REPOSITORY :
+					setText(PDEUIMessages.ImportActionGroup_Repository_project);
 					break;
 			}
 		}
@@ -64,6 +73,7 @@ public class ImportActionGroup extends ActionGroup {
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_BINARY, sSelection));
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_BINARY_WITH_LINKS, sSelection));
 			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_WITH_SOURCE, sSelection));
+			importMenu.add(new ImportAction(PluginImportOperation.IMPORT_FROM_REPOSITORY, sSelection));
 			menu.add(importMenu);
 		}
 	}
@@ -79,8 +89,39 @@ public class ImportActionGroup extends ActionGroup {
 		if (display == null)
 			display = Display.getDefault();
 		IPluginModelBase[] models = (IPluginModelBase[]) externalModels.toArray(new IPluginModelBase[externalModels.size()]);
+		if (importType == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
+			Map importMap = getImportDescriptions(display.getActiveShell(), models);
+			if (importMap != null) {
+				RepositoryImportWizard wizard = new RepositoryImportWizard(importMap);
+				WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
+				dialog.open();
+			}
+		} else {
+			PluginImportWizard.doImportOperation(display.getActiveShell(), importType, models, false);
+		}
+	}
 
-		PluginImportWizard.doImportOperation(display.getActiveShell(), importType, models, false);
+	/**
+	 * Return a map of {@link IBundleImporterDelegate} > Array of {@link BundleImportDescription} to be imported.
+	 * 
+	 * @param shell shell to open message dialogs on, if required
+	 * @param models candidate models
+	 * @return  map of importer delegates to import descriptions
+	 */
+	private Map getImportDescriptions(Shell shell, IPluginModelBase[] models) {
+		BundleProjectService service = (BundleProjectService) BundleProjectService.getDefault();
+		try {
+			Map descriptions = service.getImportDescriptions(models); // all possible descriptions
+			if (!descriptions.isEmpty()) {
+				return descriptions;
+			}
+			// no applicable importers for selected models
+			MessageDialog.openInformation(shell, PDEUIMessages.ImportWizard_title, PDEUIMessages.ImportActionGroup_cannot_import);
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+			MessageDialog.openError(shell, PDEUIMessages.ImportWizard_title, e.getMessage());
+		}
+		return null;
 	}
 
 	public static boolean canImport(IStructuredSelection selection) {
