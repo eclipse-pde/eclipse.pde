@@ -666,8 +666,22 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys, IBuild build) {
 		if (binIncludes == null)
 			return;
+		List pluginLibraryNames = new ArrayList(1);
+		IPluginModelBase pluginModel = PluginRegistry.findModel(fProject);
+		if (pluginModel != null) {
+			IPluginLibrary[] pluginLibraries = pluginModel.getPluginBase().getLibraries();
+			for (int i = 0; i < pluginLibraries.length; i++) {
+				pluginLibraryNames.add(pluginLibraries[i].getName());
+			}
+		}
+		if (!pluginLibraryNames.contains(".")) { //$NON-NLS-1$
+			pluginLibraryNames.add("."); //$NON-NLS-1$)
+		}
 		for (int i = 0; i < sourceEntryKeys.size(); i++) {
 			String key = (String) sourceEntryKeys.get(i);
+			if (!pluginLibraryNames.contains(key)) {
+				return; // do not report error for folders if the library itself does not exists on plug-in classpath
+			}
 			// We don't want to flag source.. = . as in  bug 146042 comment 1
 			if (DEF_SOURCE_ENTRY.equals(key)) {
 				IBuildEntry entry = build.getEntry(DEF_SOURCE_ENTRY);

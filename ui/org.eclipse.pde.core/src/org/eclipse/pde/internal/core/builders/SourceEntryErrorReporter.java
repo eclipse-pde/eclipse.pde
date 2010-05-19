@@ -289,6 +289,17 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		} catch (JavaModelException e) {
 		}
 
+		List pluginLibraryNames = new ArrayList(1);
+		IPluginModelBase pluginModel = PluginRegistry.findModel(fProject);
+		if (pluginModel != null) {
+			IPluginLibrary[] pluginLibraries = pluginModel.getPluginBase().getLibraries();
+			for (int i = 0; i < pluginLibraries.length; i++) {
+				pluginLibraryNames.add(pluginLibraries[i].getName());
+			}
+		}
+		if (!pluginLibraryNames.contains(".")) { //$NON-NLS-1$
+			pluginLibraryNames.add("."); //$NON-NLS-1$)
+		}
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 				IPath sourcePath = getPath(cpes[i]);
@@ -330,6 +341,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		for (Iterator iterator = sourceEntries.iterator(); iterator.hasNext();) {
 			IBuildEntry sourceEntry = (IBuildEntry) iterator.next();
 			String libName = sourceEntry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
+			if (!pluginLibraryNames.contains(libName)) {
+				prepareError(sourceEntry.getName(), null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName), PDEMarkerFactory.B_REMOVAL, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
+			}
 			String[] tokens = sourceEntry.getTokens();
 			for (int i = 0; i < tokens.length; i++) {
 				IPath path = new Path(tokens[i]).addTrailingSeparator();
@@ -346,6 +360,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		for (Iterator iterator = outputEntries.iterator(); iterator.hasNext();) {
 			IBuildEntry outputEntry = (IBuildEntry) iterator.next();
 			String libName = outputEntry.getName().substring(PROPERTY_OUTPUT_PREFIX.length());
+			if (!pluginLibraryNames.contains(libName)) {
+				prepareError(outputEntry.getName(), null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName), PDEMarkerFactory.B_REMOVAL, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
+			}
 			String[] tokens = outputEntry.getTokens();
 			for (int i = 0; i < tokens.length; i++) {
 				IPath path = new Path(tokens[i]).addTrailingSeparator();

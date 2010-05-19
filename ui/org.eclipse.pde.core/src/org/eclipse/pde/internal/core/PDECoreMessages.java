@@ -323,6 +323,8 @@ public class PDECoreMessages extends NLS {
 	public static String SourceEntryErrorReporter_ExtraOutputFolder;
 	public static String SourceEntryErrorReporter_InvalidOutputFolder;
 	public static String SourceEntryErrorReporter_InvalidSourceFolder;
+	public static String SourceEntryErrorReporter_MissingLibrary;
+
 	public static String SourceEntryErrorReporter_MissingOutputEntry;
 	public static String SourceEntryErrorReporter_MissingOutputLibForClassFolder;
 
