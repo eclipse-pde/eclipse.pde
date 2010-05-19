@@ -120,7 +120,11 @@ public class PDEState extends MinimalState {
 		File dir = new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
 		if ((fState = readStateCache(dir)) == null || !fAuxiliaryState.readPluginInfoCache(dir)) {
 			createNewTargetState(true, urls, monitor);
+			if (!dir.exists())
+				dir.mkdirs();
+			fAuxiliaryState.savePluginInfo(dir);
 			resolveState(false);
+			saveState(dir);
 		} else {
 			// get the system bundle from the State
 			if (fState.getPlatformProperties() != null && fState.getPlatformProperties().length > 0) {
@@ -343,35 +347,7 @@ public class PDEState extends MinimalState {
 		return (IPluginModelBase[]) fWorkspaceModels.toArray(new IPluginModelBase[fWorkspaceModels.size()]);
 	}
 
-	/**
-	 * Saves state associated with the external PDE target. 
-	 */
-	public void saveExternalState() {
-		IPluginModelBase[] models = PluginRegistry.getExternalModels();
-		URL[] urls = new URL[models.length];
-		for (int i = 0; i < urls.length; i++) {
-			try {
-				urls[i] = new File(models[i].getInstallLocation()).toURL();
-			} catch (MalformedURLException e) {
-				return;
-			}
-		}
-		long timestamp = computeTimestamp(urls);
-		File dir = new File(DIR, Long.toString(timestamp) + ".target"); //$NON-NLS-1$
-		boolean osgiStateExists = dir.exists() && dir.isDirectory();
-		boolean auxStateExists = fAuxiliaryState.exists(dir);
-		if (!osgiStateExists || !auxStateExists) {
-			if (!dir.exists())
-				dir.mkdirs();
-			fAuxiliaryState.savePluginInfo(dir);
-			saveState(dir);
-		}
-	}
-
-	/**
-	 * Save state associated with workspace models
-	 */
-	public void saveWorkspaceState() {
+	public void shutdown() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		long timestamp = 0;
 		if (!"true".equals(System.getProperty("pde.nocache")) && shouldSaveState(models)) { //$NON-NLS-1$ //$NON-NLS-2$

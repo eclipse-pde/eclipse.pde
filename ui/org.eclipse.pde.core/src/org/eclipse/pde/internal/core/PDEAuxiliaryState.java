@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,17 +12,32 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.w3c.dom.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Stores additional information from the manifest files of plugins and stores
@@ -247,17 +262,6 @@ public class PDEAuxiliaryState {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Returns whether the auxiliary state exists in the given directory.
-	 * 
-	 * @param dir parent directory
-	 * @return whether the state file exist
-	 */
-	protected boolean exists(File dir) {
-		File file = new File(dir, CACHE_EXTENSION);
-		return file.exists() && file.isFile();
 	}
 
 	/**
