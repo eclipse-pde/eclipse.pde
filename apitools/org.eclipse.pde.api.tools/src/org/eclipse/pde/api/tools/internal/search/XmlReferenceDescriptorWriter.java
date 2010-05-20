@@ -14,8 +14,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -363,7 +365,7 @@ public class XmlReferenceDescriptorWriter {
 					}
 				}
 				root.setAttribute(IApiXmlConstants.ATTR_REFERENCE_COUNT, Integer.toString(count));
-				writer = new BufferedWriter(new FileWriter(out));
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(out), IApiCoreConstants.UTF_8));
 				writer.write(Util.serializeDocument(doc));
 				writer.flush();
 			}

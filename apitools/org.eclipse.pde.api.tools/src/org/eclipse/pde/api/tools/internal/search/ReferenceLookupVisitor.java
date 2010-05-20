@@ -13,13 +13,15 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -230,7 +232,7 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 			doc.appendChild(root);
 			addMissingComponents(missingComponents, SearchMessages.ReferenceLookupVisitor_0, doc, root);
 			addMissingComponents(skippedComponents, SearchMessages.SkippedComponent_component_was_excluded, doc, root);
-			writer = new BufferedWriter(new FileWriter(file));
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
 		}
@@ -238,12 +240,11 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		catch(IOException ioe) {}
 		catch(CoreException ce) {}
 		finally {
-			try {
-				if(writer != null) {
+			if(writer != null) {
+				try {
 					writer.close();
-				}
-			} 
-			catch (IOException e) {}
+				} catch (IOException e) {}
+			}
 		}
 	}
 	

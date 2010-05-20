@@ -13,8 +13,9 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -133,7 +135,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 				comp.setAttribute(IApiXmlConstants.SKIPPED_DETAILS, component.getErrorDetails());
 				root.appendChild(comp);
 			}
-			writer = new BufferedWriter(new FileWriter(file));
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
 		}
@@ -141,12 +143,11 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		catch(IOException ioe) {}
 		catch(CoreException ce) {}
 		finally {
-			try {
-				if(writer != null) {
+			if(writer != null) {
+				try {
 					writer.close();
-				}
-			} 
-			catch (IOException e) {}
+				} catch (IOException e) {}
+			}
 		}
 	}
 
