@@ -20,8 +20,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
-import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.PerformanceTestCase;
+import org.eclipse.test.performance.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
@@ -115,6 +114,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	 * @throws Exception
 	 */
 	public void testEditorOpenXML() throws Exception {
+		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "Delta for degradataion is < 100 ms and will not have any significant impact on the user experience.  PDE was unable to find any reason for the degradations in PDE code.");
 		tagAsSummary("Open Plug-in Editor: plugin.xml", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		executeTestRun(fPluginFile);
 	}
