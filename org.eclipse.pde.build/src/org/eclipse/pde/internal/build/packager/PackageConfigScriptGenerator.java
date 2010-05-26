@@ -29,12 +29,14 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	public void initialize(String directoryName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection allFeaturesList, Collection rootProviders) throws CoreException {
 		/* package scripts require the root file providers for creating the file archive, but don't want them for other rootfile
 		 * stuff done by the assembly scripts, so keep them separate here */
-		super.initialize(directoryName, feature, configurationInformation, elementList, featureList, allFeaturesList, Collections.EMPTY_SET);
+		super.initialize(directoryName, feature, configurationInformation, elementList, featureList, allFeaturesList, new ArrayList(0));
 		archiveRootProviders = rootProviders != null ? rootProviders : Collections.EMPTY_LIST;
 	}
 
 	protected Collection getArchiveRootFileProviders() {
-		return archiveRootProviders;
+		if (archiveRootProviders.size() > 0)
+			return archiveRootProviders;
+		return super.getArchiveRootFileProviders();
 	}
 
 	private String getFinalName(BundleDescription bundle, String shape) {
