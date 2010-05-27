@@ -16,8 +16,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.importing.CvsBundleImportDescription;
 import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -157,6 +156,8 @@ public class CVSBundleImportPage extends WizardPage implements IBundeImportWizar
 			bundlesViewer.setInput(descriptions);
 			updateCount();
 		}
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.PLUGIN_IMPORT_CVS_PAGE);
 	}
 
 	/* (non-Javadoc)

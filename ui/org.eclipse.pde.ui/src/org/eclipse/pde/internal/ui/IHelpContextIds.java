@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ public interface IHelpContextIds {
 	public static final String PLUGIN_IMPORT_SECOND_PAGE = PREFIX + "plugin_import_second_page"; //$NON-NLS-1$
 	public static final String PLUGIN_IMPORT_EXPRESS_PAGE = PREFIX + "plugin_import_express_page"; //$NON-NLS-1$
 	public static final String PLUGIN_IMPORT_OVERWRITE_DIALOG = PREFIX + "plugin_import_overwrite_dialog"; //$NON-NLS-1$
+	public static final String PLUGIN_IMPORT_CVS_PAGE = PREFIX + "plugin_import_cvs_page"; //$NON-NLS-1$
 
 	public static final String FEATURE_IMPORT_FIRST_PAGE = PREFIX + "feature_import_first_page"; //$NON-NLS-1$
 	public static final String FEATURE_IMPORT_SECOND_PAGE = PREFIX + "feature_import_second_page"; //$NON-NLS-1$
@@ -84,6 +85,7 @@ public interface IHelpContextIds {
 	public static final String PLUGIN_EXPORT_WIZARD = PREFIX + "plugin_export_wizard"; //$NON-NLS-1$
 	public static final String FEATURE_EXPORT_WIZARD = PREFIX + "feature_export_wizard"; //$NON-NLS-1$
 	public static final String PRODUCT_EXPORT_WIZARD = PREFIX + "product_export_wizard"; //$NON-NLS-1$
+	public static final String TARGET_EXPORT_WIZARD = PREFIX + "target_export_wizard"; //$NON-NLS-1$
 
 	public static final String TEMPLATE_SELECTION = PREFIX + "template_selection"; //$NON-NLS-1$
 	public static final String TEMPLATE_EDITOR = PREFIX + "template_editor"; //$NON-NLS-1$

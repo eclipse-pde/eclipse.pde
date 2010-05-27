@@ -20,13 +20,13 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 
 public class TargetDefinitionExportWizardPage extends WizardPage {
 
@@ -40,7 +40,6 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		setPageComplete(false);
 		setTitle(PDEUIMessages.ExportActiveTargetDefinition);
 		setMessage(PDEUIMessages.ExportActiveTargetDefinition_message);
-		// TODO setImage(...)
 	}
 
 	public void createControl(Composite parent) {
@@ -49,8 +48,8 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		container.setLayout(layout);
 		createExportDirectoryControl(container);
 		setControl(container);
-		// TODO set help
 		Dialog.applyDialogFont(container);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_EXPORT_WIZARD);
 	}
 
 	private void createExportDirectoryControl(Composite parent) {
