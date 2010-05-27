@@ -330,16 +330,17 @@ public class PluginModelManager implements IModelProviderListener {
 				index++;
 			}
 			int types = event.getEventTypes();
-			if (types == IModelChangedEvent.REMOVE || types == IModelChangedEvent.INSERT) {
-				// if added or removed update synchronously as before, else schedule a job to avoid blocking
-				// the UI (@see bug 276135)
+			if (types == IModelProviderEvent.MODELS_CHANGED) {
+				// when a model (manifest) is changed schedule a job to avoid blocking
+				// the UI thread (@see bug 276135)
+				fUpdateJob.add(projects, containers);
+				fUpdateJob.schedule();
+			} else {
+				// else update synchronously
 				try {
 					JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, projects, containers, null);
 				} catch (JavaModelException e) {
 				}
-			} else {
-				fUpdateJob.add(projects, containers);
-				fUpdateJob.schedule();
 			}
 		}
 	}
