@@ -107,7 +107,6 @@ public class BundleLauncherHelper {
 
 			// Get the feature model for each selected feature id and resolve its plugins
 			Set launchPlugins = new HashSet();
-			PluginModelManager pluginModelMgr = new PluginModelManager();
 			for (Iterator iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
 				String id = (String) iterator.next();
 
@@ -131,7 +130,7 @@ public class BundleLauncherHelper {
 				}
 
 				for (int i = 0; i < featurePlugins.length; i++) {
-					ModelEntry modelEntry = pluginModelMgr.findEntry(featurePlugins[i].getId());
+					ModelEntry modelEntry = PluginRegistry.findEntry(featurePlugins[i].getId());
 					if (modelEntry != null) {
 						IPluginModelBase model = findModel(modelEntry, featurePlugins[i].getVersion(), pluginResolution);
 						if (model != null)
@@ -142,7 +141,7 @@ public class BundleLauncherHelper {
 				IFeatureImport[] featureImports = featureModel.getFeature().getImports();
 				for (int i = 0; i < featureImports.length; i++) {
 					if (featureImports[i].getType() == IFeatureImport.PLUGIN) {
-						ModelEntry modelEntry = pluginModelMgr.findEntry(featureImports[i].getId());
+						ModelEntry modelEntry = PluginRegistry.findEntry(featureImports[i].getId());
 						if (modelEntry != null) {
 							IPluginModelBase model = findModel(modelEntry, featureImports[i].getVersion(), pluginResolution);
 							if (model != null)
@@ -159,7 +158,7 @@ public class BundleLauncherHelper {
 			if (!osgi) {
 				String[] applicationIds = RequirementHelper.getApplicationRequirements(configuration);
 				for (int i = 0; i < applicationIds.length; i++) {
-					ModelEntry modelEntry = pluginModelMgr.findEntry(applicationIds[i]);
+					ModelEntry modelEntry = PluginRegistry.findEntry(applicationIds[i]);
 					if (modelEntry != null) {
 						IPluginModelBase model = findModel(modelEntry, null, defaultPluginResolution);
 						if (model != null)
@@ -174,7 +173,7 @@ public class BundleLauncherHelper {
 			Iterator it = additionalIds.iterator();
 			while (it.hasNext()) {
 				String id = (String) it.next();
-				ModelEntry modelEntry = pluginModelMgr.findEntry(id);
+				ModelEntry modelEntry = PluginRegistry.findEntry(id);
 				if (modelEntry != null) {
 					IPluginModelBase model = findModel(modelEntry, null, defaultPluginResolution);
 					if (model != null)
