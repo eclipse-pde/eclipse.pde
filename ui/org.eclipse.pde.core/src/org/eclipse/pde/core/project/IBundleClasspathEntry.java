@@ -14,7 +14,8 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Specifies the origin of source, class files, and/or archive for an entry
- * on the Bundle-Classpath header.
+ * on the Bundle-Classpath header. Instances of this class can be created
+ * via {@link IBundleProjectService#newBundleClasspathEntry(IPath, IPath, IPath)}.
  * 
  * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.

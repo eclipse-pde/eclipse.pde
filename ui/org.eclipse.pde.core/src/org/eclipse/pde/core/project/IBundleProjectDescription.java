@@ -22,7 +22,8 @@ import org.osgi.framework.Version;
 
 /**
  * Describes a project representing an OSGi bundle. Used to create or modify
- * artifacts associated with a bundle project.
+ * artifacts associated with a bundle project. A bundle project description can be
+ * created for an {@link IProject} via {@link IBundleProjectService#getDescription(IProject)}.
  * 
  * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.

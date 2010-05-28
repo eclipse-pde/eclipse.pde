@@ -13,7 +13,8 @@ package org.eclipse.pde.core.project;
 import org.eclipse.osgi.service.resolver.VersionRange;
 
 /**
- * Describes a fragment host.
+ * Describes a fragment host. Instances of this class can be created
+ * via {@link IBundleProjectService#newHost(String, VersionRange)}.
  * 
  * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.

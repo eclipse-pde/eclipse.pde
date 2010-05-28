@@ -13,7 +13,8 @@ package org.eclipse.pde.core.project;
 import org.eclipse.osgi.service.resolver.VersionRange;
 
 /**
- * Describes a package import.
+ * Describes a package import. Instances of this class can be created
+ * via {@link IBundleProjectService#newPackageImport(String, VersionRange, boolean)}.
  * 
  * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.

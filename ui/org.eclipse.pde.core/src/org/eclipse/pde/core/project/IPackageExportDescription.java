@@ -13,7 +13,8 @@ package org.eclipse.pde.core.project;
 import org.osgi.framework.Version;
 
 /**
- * Describes a package export.
+ * Describes a package export. Instances of this class can be created
+ * via {@link IBundleProjectService#newPackageExport(String, Version, boolean, String[])}.
  * 
  * @since 3.6
  * @noextend This interface is not intended to be extended by clients.
