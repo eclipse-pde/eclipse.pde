@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-     Copyright (c) 2005, 2009 IBM Corporation and others.
+     Copyright (c) 2005, 2010 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -61,11 +61,8 @@
                skip="false"/>
       <subitem label="Select the &quot;Yes&quot; radio button under the &quot;Rich Client Application&quot; heading on the &quot;Plug-in Content&quot; page and click &quot;Next &gt;&quot;" 
                skip="false"/>
-      <subitem label="Select the &quot;Hello RCP&quot; template from the list of &quot;Available Templates&quot; and click &quot;Next&quot;" 
+      <subitem label="Select the &quot;Hello RCP&quot; template from the list of &quot;Available Templates&quot; and click &quot;Finish&quot;" 
                skip="false"/>
-      <subitem
-            label="Select the &quot;Add branding&quot; check box and click &quot;Finish&quot;">
-      </subitem>           
    </item>
 
    <!-- Item -->
@@ -96,8 +93,8 @@
          dialog="true"
          skip="false">
       <description>
-         In this step, we want to modify the <b>Hello RCP</b> text in
-         the window title bar of our RCP application to <b>Hello Eclipse</b>.
+         In this step, we want to suppress the <b>Hello RCP</b> text in
+         the window title bar of our RCP application.
          <br/>
          <br/>
          To modify the plug-in source accordingly, 
@@ -107,7 +104,7 @@
                skip="false">                                                    
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/src/com/example/rcpapp/ApplicationWorkbenchWindowAdvisor.java)" required="false" translate="" />
       </subitem>
-      <subitem label="Add &apos;configurer.setTitle(&quot;Hello Eclipse&quot;);&apos; in end of the &quot;preWindowOpen()&quot; method" 
+      <subitem label="Comment out &apos;configurer.setTitle(&quot;Hello RCP&quot;);&apos; in the &quot;preWindowOpen()&quot; method" 
                skip="false"/>
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>
@@ -129,7 +126,7 @@
       </subitem>               
       <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>
-      <subitem label="Verify that you see an empty window with a window title of &quot;Hello Eclipse&quot;" 
+      <subitem label="Verify that you see an empty window with no window title" 
                skip="true"/>
       <subitem label="Exit the RCP application" 
                skip="false"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-     Copyright (c) 2005, 2009 IBM Corporation and others.
+     Copyright (c) 2005, 2010 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -124,8 +124,8 @@
                skip="true"/>
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>
-      <subitem label="Note:  Eclipse expects a file called &quot;splash.bmp&quot; to be located in the root of the specified plug-in. Verify that the root folder of &quot;com.example.rcpapp&quot; plug-in has the &quot;splash.bmp&apos;." 
-               skip="true"/>
+      <subitem label="Note:  Eclipse expects a file called &quot;splash.bmp&quot; to be located in the root of the specified plug-in. Verify that the root folder of &quot;com.example.rcpapp&quot; plug-in has the &quot;splash.bmp&quot;." 
+               skip="false"/>
    </item>   
 
    <!-- Item -->
@@ -167,7 +167,7 @@
                skip="false"/>
       <subitem label="Select the &quot;win32&quot; tab under the &quot;Program Launcher&quot; heading" 
                skip="true"/>
-      <subitem label="Select the &quot;Use a single ICO file containing 7 images as specified above&quot; radio button" 
+      <subitem label="Select the &quot;Use a single ICO file containing 6 images as specified above&quot; radio button" 
                skip="true"/>
       <subitem label="Click the &quot;Browse...&quot; button adjacent to the &quot;File&quot; text box" 
                skip="true"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-     Copyright (c) 2005, 2009 IBM Corporation and others.
+     Copyright (c) 2005, 2010 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@
                skip="false"/>
       <subitem label="Input &quot;rcpapp.product&quot; into the &quot;File name&quot; text box" 
                skip="false"/>
-      <subitem label="Select the &quot;Use a launch configuration&quot; radio button inside the &quot;Initialize the file content&quot; group and click &quot;Finish&quot;" 
+      <subitem label="Select the &quot;Use a launch configuration&quot; radio button inside the &quot;Initialize the file content&quot; group and verify that &quot;com.example.rcpapp.application&quot; is selected in the  combo box. Click &quot;Finish&quot;" 
                skip="false"/>
    </item>
 
@@ -94,13 +94,13 @@
       <description>
          To define the product, perform the following steps:
       </description>
-      <subitem label="Input &quot;RCP Application&quot; into the &quot;Name&quot; text box on the &quot;General Information&quot; section" 
+      <subitem label="Click the &quot;New...&quot; button next to the &quot;Product ID&quot; drop down menu to open the &quot;New Product Definition&quot; dialog box" 
                skip="false"/>
-      <subitem label="Click the &quot;New...&quot; button next to the &quot;Product&quot; drop down menu to open the &quot;New Product Definition&quot; dialog box" 
+      <subitem label="Input &quot;RCP Application&quot; into the &quot;Product Name&quot; text box" 
                skip="false"/>
-      <subitem label="Verify &quot;com.example.rcpapp&quot; is the inputted value for the &quot;Defining Plug-in&quot; text box" 
+      <subitem label="Verify &quot;com.example.rcpapp&quot; is the value entered for the &quot;Defining Plug-in&quot; text box" 
                skip="true"/>        
-      <subitem label="Verify &quot;product&quot; is the inputted value for the &quot;Product ID&quot; text box" 
+      <subitem label="Verify &quot;product&quot; is the value entered for the &quot;Product ID&quot; text box" 
                skip="true"/>        
       <subitem label="Accept the defaults and click &quot;Finish&quot;" 
                skip="false"/>        

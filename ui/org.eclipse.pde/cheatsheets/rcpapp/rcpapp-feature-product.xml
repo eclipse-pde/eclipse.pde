@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-     Copyright (c) 2005, 2009 IBM Corporation and others.
+     Copyright (c) 2005, 2010 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -89,7 +89,7 @@
       </description>
       <subitem label="Select the &quot;Dependencies&quot; tab to display the &quot;Dependencies&quot; page" 
                skip="false"/>
-      <subitem label="Select the &quot;New Feature...&quot; button under the &quot;Features&quot; heading" 
+      <subitem label="Select the &quot;New Feature...&quot; tool button in the &quot;Features&quot; section." 
                skip="false"/>
       <subitem label="Input &quot;com.example.feature&quot; into the &quot;Project Name&quot; text box on the &quot;Feature Properties&quot; page" 
                skip="false"/>
