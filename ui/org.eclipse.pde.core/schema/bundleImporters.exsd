@@ -8,7 +8,7 @@
       <documentation>
          &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This extension point has been added as part of a work in progress. There is no guarantee that this API will work or that it will remain the same in future releases. Please do not use this API without consulting with the PDE team.
 &lt;p&gt;
-A bundle importer is capable of creating a project in the workspace based on specific entries contained in a bundle manifest. An importer can register for one or more bundle headers, identified by name. By default, a bundle importer is registered for the &apos;Eclipse-SourceReferences&apos; header.
+A bundle importer is capable of creating a project in the workspace based on a bundle manifest. For example, the CVS bundle importer leverages the &apos;Eclipse-SourceReferences&apos; header to import projects from CVS.
 &lt;/p&gt;
       </documentation>
    </annotation>

@@ -8,7 +8,7 @@
       <documentation>
          &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This extension point has been added as part of a work in progress. There is no guarantee that this API will work or that it will remain the same in future releases. Please do not use this API without consulting with the PDE team.
 &lt;p&gt;
-A bundle import page provides a wizard page that can be used in the Plug-in import wizard to configure settings for bundles to be imported by a &lt;code&gt;org.eclipse.pde.core.bundleImporters&lt;/code&gt; extension.
+A bundle import page provides an optional wizard page used to configure settings for bundles to be imported by a &lt;code&gt;org.eclipse.pde.core.bundleImporters&lt;/code&gt; extension.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -126,7 +126,7 @@ A bundle import page provides a wizard page that can be used in the Plug-in impo
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         PDE provides a wizard page for editing properties of bundles that can be imported by the CVS bundle importer.
+         PDE provides a wizard page for editing properties of bundles that can be imported by the CVS bundle importer. The page allows users to import specific bundle versions or from HEAD.
       </documentation>
    </annotation>
 
