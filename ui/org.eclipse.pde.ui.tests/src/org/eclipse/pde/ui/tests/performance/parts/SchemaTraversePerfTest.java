@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.ui.tests.performance.parts;
 
+import org.eclipse.test.performance.Performance;
+
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -19,15 +21,8 @@ import org.eclipse.pde.internal.core.schema.EditableSchema;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 
-/**
- * SchemaLoaderPerfTest
- *
- */
 public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 
-	/**
-	 * @return
-	 */
 	public static Test suite() {
 		return new TestSuite(SchemaTraversePerfTest.class);
 	}
@@ -45,6 +40,7 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 	 * @throws Exception
 	 */
 	public void testSchemaTraverse() throws Exception {
+		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "Degradation starting in build I20090825-1032 is due to the addition of an include statement in the test schema.");
 		executeTestRun();
 	}
 
