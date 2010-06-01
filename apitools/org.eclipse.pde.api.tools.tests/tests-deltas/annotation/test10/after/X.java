@@ -1,5 +1,0 @@
-/**
- * @deprecated
- */
-public @interface X {
-}
