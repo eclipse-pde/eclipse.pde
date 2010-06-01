@@ -63,7 +63,7 @@
       </subitem>
       <subitem label="Accept the rest of the default preloaded values on the &quot;Plug-in Project&quot; page and click &quot;Next &gt;&quot;" skip="false">
       </subitem>
-      <subitem label="Accept the default preloaded values on the &quot;Plug-in Content&quot; page and click &quot;Next &gt;&quot;" skip="false">
+      <subitem label="Accept the default preloaded values on the &quot;Content&quot; page. Verify that  &quot;Rich Client Applications&quot; section marks No. Click &quot;Next &gt;&quot;" skip="false">
       </subitem>
       <subitem label="Select the &quot;Hello, World&quot; template from the list of &quot;Available Templates&quot; and click &quot;Finish&quot;" skip="false">
       </subitem>
@@ -86,11 +86,11 @@
       </subitem>
       <subitem label="Select the &quot;Sample Menu&quot; entry" skip="false">
       </subitem>
-      <subitem label="Replace the content of the &quot;label&quot; text box under the &quot;Extension Element Details&quot; heading with &quot;Hello!&quot;" skip="false">
+      <subitem label="Replace the content of the &quot;label&quot; text box under the &quot;Extension Element Details&quot; heading with &quot;Hello Menu&quot;" skip="false">
       </subitem>
       <subitem label="Select the &quot;Sample Action&quot; entry under the &quot;All Extensions&quot; heading" skip="false">
       </subitem>
-      <subitem label="Replace the content of the &quot;label&quot; text box under the &quot;Extension Element Details&quot; heading with &quot;Display Hello World!&quot;" skip="false">
+      <subitem label="Replace the content of the &quot;label&quot; text box under the &quot;Extension Element Details&quot; heading with &quot;Display Hello World&quot;" skip="false">
       </subitem>
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" skip="false">
       </subitem>
@@ -108,18 +108,22 @@
                serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)">
          </command>
       </subitem>
-      <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" skip="false">
+      <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading." skip="false">
       </subitem>
-      <subitem label="Note the &quot;Hello!&quot; entry in the main menu in the newly launched Eclipse platform" skip="true">
+      <subitem label="Note the &quot;Hello Menu&quot; entry in the main menu in the newly launched Eclipse platform." skip="true">
       </subitem>
-      <subitem label="Select &quot;Hello!-&gt;Display Hello World!&quot; from the main menu" skip="false">
+      <subitem label="Select &quot;Hello Menu-&gt;Display Hello World&quot; from the main menu." skip="false">
+      </subitem>
+      <subitem label="Verify that a dialog box is displayed with the title &quot;Helloworld&quot; and message as &quot;Hello, Eclipse world&quot;. Click &quot;OK&quot; to close it." skip="false">
       </subitem>
       <subitem label="Click on the &quot;Workbench&quot;  icon to close the &quot;Welcome&quot; view and go to the Eclipse workbench." skip="true">
       </subitem>
-      <subitem label="Note the icon with the Eclipse logo in the main toolbar in the newly launched Eclipse platform" skip="true">
+      <subitem label="Note the icon with the Eclipse logo in the main toolbar in the newly launched Eclipse platform." skip="true">
       </subitem>
-      <subitem label="Click the icon with the Eclipse logo in the main toolbar" skip="false">
+      <subitem label="Click the icon with the Eclipse logo in the main toolbar." skip="false">
       </subitem>
+      <subitem label="Verify that a dialog box is displayed with the title &quot;Helloworld&quot; and message as &quot;Hello, Eclipse world&quot;. Click &quot;OK&quot; to close it." skip="false">
+      </subitem>      
       <subitem label="Select &quot;File-&gt;Exit&quot; from the main menu to exit the target Eclipse platform" skip="false">
       </subitem>
    </item>
