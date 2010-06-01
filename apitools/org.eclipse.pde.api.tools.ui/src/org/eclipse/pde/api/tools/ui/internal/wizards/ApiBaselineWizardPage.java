@@ -643,7 +643,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 	}
 	
 	/**
-	 * Cleans up the working copy if the page is cancelled
+	 * Cleans up the working copy if the page is canceled
 	 */
 	public void cancel() {
 		if(fProfile != null) {
