@@ -51,7 +51,7 @@ public interface IAntScript {
 	public void println();
 
 	/**
-	 * Print an ant call task as defined by <a href="http://ant.apache.org/manual/CoreTasks/antcall.html">AntCall</a>}.
+	 * Print an ant call task as defined by <a href="http://ant.apache.org/manual/Tasks/antcall.html">AntCall</a>}.
 	 * @param target the target executed by the call. This value can not be <code>null</code>.
 	 * @param inheritAll If true, pass all properties to the new Ant project.
 	 * @param params Specifies as key / value pairs, the properties to set before running the specified target. This value can be <code>null</code>
@@ -128,7 +128,7 @@ public interface IAntScript {
 	public void printTargetEnd();
 
 	/**
-	 * Print an <a href="http://ant.apache.org/manual/CoreTasks/echo.html">echo</a> task
+	 * Print an <a href="http://ant.apache.org/manual/Tasks/echo.html">echo</a> task
 	 * @param file - file to write the message to (or null)
 	 * @param message - the message to echo
 	 * @param level - the level to report the message (ie, "error", "warning", "info"), "warning" is the default if null is passed.
@@ -137,7 +137,7 @@ public interface IAntScript {
 	public void printEchoTask(String file, String message, String level);
 
 	/**
-	 * Print the beginning of a <a href="http://ant.apache.org/manual/CoreTasks/macrodef.html">macro definition</a>
+	 * Print the beginning of a <a href="http://ant.apache.org/manual/Tasks/macrodef.html">macro definition</a>
 	 * @param macroName
 	 * @param attributes
 	 * @since 3.6
