@@ -12,11 +12,12 @@
 package org.eclipse.pde.build.internal.tests;
 
 import java.io.File;
+import java.net.URL;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 
@@ -199,5 +200,79 @@ public class AssembleTests extends PDETestCase {
 		runBuild(buildFolder);
 		assertResourceFile(buildFolder, "tmp/e4/plugins/A_1.0.0.jar");
 		assertResourceFile(buildFolder, "tmp/e4/plugins/B_1.0.0/META-INF/MANIFEST.MF");
+	}
+
+	public void testPackager_bug315710() throws Exception {
+		IFolder buildFolder = newTest("315710");
+
+		Utils.generateFeature(buildFolder, "F1", null, new String[] {"org.eclipse.swt;unpack=\"false\""});
+		Utils.generateFeature(buildFolder, "F2", null, new String[] {"org.eclipse.osgi;unpack=\"false\""});
+		Utils.writeBuffer(buildFolder.getFile("features/F1/notice.html"), new StringBuffer("be nice to clowns\n"));
+		Utils.writeBuffer(buildFolder.getFile("features/F1/build.properties"), new StringBuffer("bin.includes=feature.xml\nroot=file:notice.html\n"));
+		Utils.writeBuffer(buildFolder.getFile("features/F2/build.properties"), new StringBuffer("bin.includes=feature.xml\n"));
+
+		StringBuffer customBuffer = new StringBuffer();
+		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/allElements.xml\"/>	\n");
+		customBuffer.append("   <target name=\"allElementsDelegator\">												\n");
+		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
+		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
+		customBuffer.append("         <property name=\"id\" value=\"F1\" />											\n");
+		customBuffer.append("      </ant>																			\n");
+		customBuffer.append("      <ant antfile=\"${genericTargets}\" target=\"${target}\">							\n");
+		customBuffer.append("         <property name=\"type\" value=\"feature\" />									\n");
+		customBuffer.append("         <property name=\"id\" value=\"F2\" />											\n");
+		customBuffer.append("      </ant>																			\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("</project>																				\n");
+		Utils.writeBuffer(buildFolder.getFile("allElements.xml"), customBuffer);
+
+		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
+		runBuild(buildFolder);
+
+		IFile f1zip = buildFolder.getFile("I.TestBuild/F1-TestBuild.zip");
+		IFile f2zip = buildFolder.getFile("I.TestBuild/F2-TestBuild.zip");
+
+		assertResourceFile(f1zip);
+		assertResourceFile(f2zip);
+
+		IFolder packageFolder = Utils.createFolder(buildFolder, "packager");
+
+		Properties properties = new Properties();
+		properties.put("F1-TestBuild.zip", URIUtil.toUnencodedString(buildFolder.getFolder("I.TestBuild").getLocationURI()) + "/|||stuff|components");
+		properties.put("F2-TestBuild.zip", URIUtil.toUnencodedString(buildFolder.getFolder("I.TestBuild").getLocationURI()) + "/|||stuff|other");
+		Utils.storeProperties(packageFolder.getFile("packager.map"), properties);
+
+		URL templates = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/templates/packager"), null);
+		Utils.copy(new File(FileLocator.toFileURL(templates).getPath()), new File(packageFolder.getLocationURI()));
+		packageFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+
+		properties = Utils.loadProperties(packageFolder.getFile("packager.properties"));
+		properties.put("baseDirectory", packageFolder.getLocation().toOSString());
+		properties.put("featureList", "F1, F2");
+		properties.put("componentFilter", "*");
+		properties.put("contentFilter", "");
+		properties.put("packagerMapURL", URIUtil.toUnencodedString(packageFolder.getFile("packager.map").getLocationURI()));
+		properties.put("config", "win32,win32,x86");
+		properties.remove("prefilledTarget");
+		Utils.storeProperties(packageFolder.getFile("packager.properties"), properties);
+
+		Utils.writeBuffer(packageFolder.getFile("packaging.properties"), new StringBuffer("root=notice.html\n"));
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/package.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		properties.clear();
+		properties.put("packagingInfo", packageFolder.getLocation().toOSString());
+		runAntScript(buildXMLPath, new String[] {"main"}, packageFolder.getLocation().toOSString(), properties);
+
+		properties = Utils.loadProperties(buildFolder.getFile("finalPluginsVersions.properties"));
+
+		Set set = new HashSet();
+		set.add("eclipse/notice.html");
+		set.add("eclipse/features/F1_1.0.0/feature.xml");
+		set.add("eclipse/features/F2_1.0.0/feature.xml");
+		set.add("eclipse/plugins/org.eclipse.osgi_" + properties.get("org.eclipse.osgi") + ".jar");
+		set.add("eclipse/plugins/org.eclipse.swt_" + properties.get("org.eclipse.swt") + ".jar");
+		assertZipContents(packageFolder, "workingPlace/I.MyProduct/MyProduct-win32.win32.win32.zip", set);
 	}
 }
