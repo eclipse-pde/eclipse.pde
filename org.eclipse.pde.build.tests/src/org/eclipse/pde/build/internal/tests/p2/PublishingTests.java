@@ -737,6 +737,38 @@ public class PublishingTests extends P2TestCase {
 		HashSet entries = new HashSet();
 		entries.add("license.html");
 		assertZipContents(buildFolder, "untarred/binary/f_root_1.0.0", entries);
+
+		StringBuffer buffer = new StringBuffer();
+		buffer = new StringBuffer();
+		buffer.append("<site>																\n");
+		buffer.append("   <feature url=\"features/f_1.0.0.jar\" id=\"f\" version=\"1.0.0\">	\n");
+		buffer.append("      <category name=\"new_category_1\"/>							\n");
+		buffer.append("   </feature>														\n");
+		buffer.append("   <category-def name=\"new_category_1\" label=\"New Category 1\"/>	\n");
+		buffer.append("</site>																\n");
+		IFile siteXML = buildFolder.getFile("site.xml");
+		Utils.writeBuffer(siteXML, buffer);
+
+		String repoLocation = URIUtil.toUnencodedString(buildFolder.getFolder("untarred").getLocationURI());
+		buffer = new StringBuffer();
+		buffer.append("<project name=\"test\" default=\"noDefault\">			\n");
+		buffer.append("   <target name=\"category\">							\n");
+		buffer.append("      <eclipse.publish.featuresAndBundles 				\n");
+		buffer.append("          artifactrepository=\"" + repoLocation + "\" 	\n");
+		buffer.append("          metadatarepository=\"" + repoLocation + "\" 	\n");
+		buffer.append("          site=\"" + URIUtil.toUnencodedString(siteXML.getLocationURI()) + "\"	\n");
+		buffer.append("          compress=\"true\" />							\n");
+		buffer.append("   </target>												\n");
+		buffer.append("</project>												\n");
+		IFile script = buildFolder.getFile("append.xml");
+		Utils.writeBuffer(script, buffer);
+
+		runAntScript(script.getLocation().toOSString(), new String[] {"category"}, buildFolder.getLocation().toOSString(), null);
+
+		assertResourceFile(buildFolder, "untarred/artifacts.jar");
+		assertResourceFile(buildFolder, "untarred/content.jar");
+		IMetadataRepository repo = loadMetadataRepository(repoLocation);
+		getIU(repo, "new_category_1");
 	}
 
 	public void testPublishAndRunSimpleProduct() throws Exception {

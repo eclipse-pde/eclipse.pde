@@ -135,6 +135,7 @@ public abstract class AbstractPublisherTask extends Task {
 		application.setMetadataLocation(metadataLocation);
 		application.setArtifactLocation(artifactLocation);
 		application.setAppend(append);
+		application.setCompress(compress);
 
 		URI[] metadata = (URI[]) contextMetadataRepositories.toArray(new URI[contextMetadataRepositories.size()]);
 		URI[] artifacts = (URI[]) contextArtifactRepositories.toArray(new URI[contextArtifactRepositories.size()]);
