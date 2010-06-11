@@ -1024,7 +1024,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printConditionStart(PROPERTY_COMPILE_PROBLEM_MARKER_EXISTS, TRUE, null);
 		script.printStartTag("and"); //$NON-NLS-1$
 		script.printAvailableTask(null, Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER));
-		script.printIsFalse(PROPERTY_P2_PUBLISHONERROR);
+		script.printIsFalse(Utils.getPropertyFormat(PROPERTY_P2_PUBLISHONERROR));
 		script.printEndTag("and"); //$NON-NLS-1$
 		script.printEndCondition();
 
