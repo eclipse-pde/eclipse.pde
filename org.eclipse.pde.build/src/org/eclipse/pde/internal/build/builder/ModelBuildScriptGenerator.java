@@ -576,19 +576,36 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateAPIToolsCall(String[] binaries, boolean dotIncluded, String target) throws CoreException {
 		Set classpathEntries = new HashSet(Arrays.asList(getClasspathEntries(model)));
 		StringBuffer binaryFolders = new StringBuffer();
-		for (int i = 0; i < binaries.length; i++) {
-			if (binaries[i] != null) {
-				if (i > 0)
-					binaryFolders.append(File.pathSeparator);
-				binaryFolders.append(target + '/' + binaries[i]);
-				classpathEntries.remove(binaries[i]);
+		if (workspaceOutputFolders != null && workspaceOutputFolders.size() > 0) {
+			for (Iterator iterator = workspaceOutputFolders.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				Set paths = (Set) workspaceOutputFolders.get(key);
+				for (Iterator iterator2 = paths.iterator(); iterator2.hasNext();) {
+					IPath path = (IPath) iterator2.next();
+					if (binaryFolders.length() > 0)
+						binaryFolders.append(File.pathSeparator);
+					binaryFolders.append(Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + path.toString());
+				}
+				if (key.equals(DOT))
+					classpathEntries.remove(EXPANDED_DOT);
+				else
+					classpathEntries.remove(key);
 			}
-		}
-		if (dotIncluded) {
-			if (binaryFolders.length() > 0)
-				binaryFolders.append(File.pathSeparator);
-			binaryFolders.append(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT);
-			classpathEntries.remove(EXPANDED_DOT);
+		} else {
+			for (int i = 0; i < binaries.length; i++) {
+				if (binaries[i] != null) {
+					if (i > 0)
+						binaryFolders.append(File.pathSeparator);
+					binaryFolders.append(target + '/' + binaries[i]);
+					classpathEntries.remove(binaries[i]);
+				}
+			}
+			if (dotIncluded) {
+				if (binaryFolders.length() > 0)
+					binaryFolders.append(File.pathSeparator);
+				binaryFolders.append(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + EXPANDED_DOT);
+				classpathEntries.remove(EXPANDED_DOT);
+			}
 		}
 		for (Iterator iterator = classpathEntries.iterator(); iterator.hasNext();) {
 			String entry = (String) iterator.next();
