@@ -85,6 +85,7 @@ public class ReportPatternPage extends UsePatternPage {
 		}
 		else {
 			this.to.setSelection(true);
+			this.kind = Pattern.REPORT_TO;
 		}
 		SWTFactory.createLabel(comp, Messages.ReportPatternPage_pattern, 1);
 		this.patterntext = SWTFactory.createSingleText(comp, 1);
