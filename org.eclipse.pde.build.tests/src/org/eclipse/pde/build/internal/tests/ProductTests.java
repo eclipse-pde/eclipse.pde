@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Copyright (c) 2007, 2010 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.pde.build.internal.tests;
@@ -16,8 +14,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
 import junit.framework.AssertionFailedError;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Target;
+import org.apache.tools.ant.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
@@ -133,6 +130,11 @@ public class ProductTests extends PDETestCase {
 		assertNotNull(delta);
 
 		Utils.generateFeature(buildFolder, "F", null, new String[] {"rcp"});
+		Properties featureProperties = new Properties();
+		featureProperties.put("root", "file:myFile.txt");
+		featureProperties.put("bin.includes", "feature.xml");
+		Utils.storeBuildProperties(buildFolder.getFolder("features/F"), featureProperties);
+		Utils.writeBuffer(buildFolder.getFile("features/F/myFile.txt"), new StringBuffer("Please sir, may I have another?\n"));
 
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F");
 		properties.put("product", "/rcp/rcp.product");
@@ -151,6 +153,11 @@ public class ProductTests extends PDETestCase {
 		assertNotNull(brand);
 
 		assertTrue(brand.icons.indexOf("mail.ico") > 0);
+
+		//bug 178928
+		Target gather = (Target) antProject.getTargets().get("gather.bin.parts");
+		Task[] subTasks = gather.getTasks();
+		assertEquals(subTasks.length, 2);
 	}
 
 	public void test186224() throws Exception {
