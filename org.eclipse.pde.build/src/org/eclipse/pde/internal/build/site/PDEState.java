@@ -358,6 +358,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			manifest.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
 	}
 
+	private void enforceVersion(Dictionary manifest) {
+		String version = (String) manifest.get(Constants.BUNDLE_VERSION);
+		if (version == null)
+			manifest.put(Constants.BUNDLE_VERSION, "0.0.0"); //$NON-NLS-1$
+	}
+
 	private Dictionary loadManifest(File bundleLocation) {
 		Dictionary manifest = basicLoadManifest(bundleLocation);
 		if (manifest == null)
@@ -366,6 +372,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		// require a Bundle-SymbolicName
 		if (!enforceSymbolicName(bundleLocation, manifest))
 			return null;
+		enforceVersion(manifest);
 		enforceClasspath(manifest);
 		return manifest;
 	}

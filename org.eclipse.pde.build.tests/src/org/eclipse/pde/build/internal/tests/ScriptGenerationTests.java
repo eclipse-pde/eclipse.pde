@@ -2132,4 +2132,27 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 	}
+
+	public void testBug265771() throws Exception {
+		IFolder buildFolder = newTest("265771");
+
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+		Utils.generateBundle(A, "A", "0.0.0");
+		StringBuffer manifest = new StringBuffer();
+		manifest.append("Bundle-ManifestVersion: 2\n");
+		manifest.append("Bundle-Name: Test Bundle\n");
+		manifest.append("Bundle-SymbolicName: A\n");
+		Utils.writeBuffer(A.getFile("META-INF/MANIFEST.MF"), manifest);
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"A"});
+		Utils.writeBuffer(buildFolder.getFile("features/f/build.properties"), new StringBuffer("bin.includes=feature.xml\n"));
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "f");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+	}
 }
