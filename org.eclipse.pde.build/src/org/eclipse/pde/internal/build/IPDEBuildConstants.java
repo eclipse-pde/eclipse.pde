@@ -150,4 +150,8 @@ public interface IPDEBuildConstants {
 	public final static String PDE_CORE_PREFS = ".settings/org.eclipse.pde.core.prefs"; //$NON-NLS-1$
 	public final static String JDT_CORE_PREFS = ".settings/org.eclipse.jdt.core.prefs"; //$NON-NLS-1$
 	public final static String BUNDLE_ROOT_PATH = "BUNDLE_ROOT_PATH"; //$NON-NLS-1$
+	
+	public static final String PROPERTY_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
+	public static final String PROPERTY_RESOLVE_OPTIONAL = "osgi.resolveOptional"; //$NON-NLS-1$
+	public static final String VALUE_DEVELOPMENT = "development"; //$NON-NLS-1$
 }

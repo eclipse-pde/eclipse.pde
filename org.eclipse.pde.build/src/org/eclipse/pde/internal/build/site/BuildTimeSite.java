@@ -91,8 +91,8 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 	private Dictionary getUIPlatformProperties() {
 		Dictionary result = new Hashtable();
-		result.put(IBuildPropertiesConstants.PROPERTY_RESOLVE_OPTIONAL, IBuildPropertiesConstants.TRUE);
-		result.put(IBuildPropertiesConstants.PROPERTY_RESOLVER_MODE, IBuildPropertiesConstants.VALUE_DEVELOPMENT);
+		result.put(IPDEBuildConstants.PROPERTY_RESOLVE_OPTIONAL, IBuildPropertiesConstants.TRUE);
+		result.put(IPDEBuildConstants.PROPERTY_RESOLVER_MODE, IPDEBuildConstants.VALUE_DEVELOPMENT);
 		return result;
 	}
 
