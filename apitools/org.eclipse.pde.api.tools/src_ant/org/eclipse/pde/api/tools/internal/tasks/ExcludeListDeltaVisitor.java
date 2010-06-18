@@ -176,6 +176,16 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 							}
 						}
 					}
+					if (delta.getElementType() == IDelta.API_BASELINE_ELEMENT_TYPE) {
+						switch(delta.getKind()) {
+							case IDelta.ADDED :
+								if (delta.getFlags() == IDelta.API_COMPONENT) {
+									if (!checkExclude(delta)) {
+										super.processLeafDelta(delta);
+									}
+								}
+						}
+					}
 					break;
 				case IDelta.CHANGED :
 					if ((this.flags & CHECK_OTHER) != 0) {
@@ -244,6 +254,11 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 								if (!checkExclude(delta)) {
 									super.processLeafDelta(delta);
 								}
+							}
+							break;
+						case IDelta.API_COMPONENT :
+							if (!checkExclude(delta)) {
+								super.processLeafDelta(delta);
 							}
 					}
 				break;
