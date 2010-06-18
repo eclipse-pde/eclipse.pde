@@ -1916,4 +1916,32 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "tmp/eclipse/features/F2_1.0.0.jar", entries, false);
 		assertTrue(entries.contains("file1.txt"));
 	}
+
+	public void testBug271373() throws Exception {
+		IFolder buildFolder = newTest("271373_publisher");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"A;os=win32,linux;unpack=false"});
+
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"), "(| (osgi.os=win32) (osgi.os=linux))");
+		Utils.generateBundleManifest(A, "A", "1.0.0", manifestAdditions);
+		Utils.generatePluginBuildProperties(A, null);
+		Utils.writeBuffer(A.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
+
+		IFile product = buildFolder.getFile("foo.product");
+		Utils.generateProduct(product, "foo.product", "1.0.0", new String[] {"F"}, true);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("p2.gathering", "true");
+		properties.put("configs", "win32,win32,x86");
+		properties.put("baseLocation", "");
+		properties.put("includeLaunchers", "false");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runProductBuild(buildFolder);
+
+		assertResourceFile(buildFolder, "tmp/eclipse/plugins/A_1.0.0.jar");
+	}
 }

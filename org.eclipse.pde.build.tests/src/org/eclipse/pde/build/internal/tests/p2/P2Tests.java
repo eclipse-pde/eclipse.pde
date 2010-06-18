@@ -1,17 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Copyright (c) 2008, 2010 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.pde.build.internal.tests.p2;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
@@ -875,6 +874,54 @@ public class P2Tests extends P2TestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 		//test passes if there was no build failure
+	}
+
+	public void testBug271373() throws Exception {
+		IFolder buildFolder = newTest("271373_generator");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"A;os=win32,linux;unpack=false"});
+		Utils.writeBuffer(buildFolder.getFile("features/F/build.properties"), new StringBuffer("bin.includes=feature.xml\n"));
+
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+		Attributes manifestAdditions = new Attributes();
+		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"), "(| (osgi.os=win32) (osgi.os=linux))");
+		Utils.generateBundleManifest(A, "A", "1.0.0", manifestAdditions);
+		Utils.generatePluginBuildProperties(A, null);
+		Utils.writeBuffer(A.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
+
+		IFile product = buildFolder.getFile("foo.product");
+		Utils.generateProduct(product, "foo.product", "1.0.0", new String[] {"F"}, true);
+
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+		URI repoLocation = repo.getLocationURI();
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", URIUtil.toUnencodedString(repoLocation));
+		properties.put("p2.artifact.repo", URIUtil.toUnencodedString(repoLocation));
+		properties.put("p2.flavor", "gingerbread");
+		properties.put("configs", "win32,win32,x86");
+		properties.put("baseLocation", "");
+		properties.put("includeLaunchers", "false");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		properties.put("p2.publish.artifacts", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runProductBuild(buildFolder);
+
+		IFolder installFolder = buildFolder.getFolder("install");
+		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
+		properties.put("p2.repo", URIUtil.toUnencodedString(repoLocation));
+		properties.put("p2.director.iu", "foo.product");
+		properties.put("os", "win32");
+		properties.put("ws", "win32");
+		properties.put("arch", "x86");
+		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
+
+		assertResourceFile(installFolder, "plugins/A_1.0.0.jar");
 	}
 
 	public void testMetadataGenerator_BootStrap() throws Exception {

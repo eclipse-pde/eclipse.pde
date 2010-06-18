@@ -589,23 +589,27 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		//The plugin for which we are generating the classpath and target are not platform independent
 		Dictionary properties = new Hashtable(3);
 		if (os != null) {
-			properties.put(OSGI_OS, os);
+			Object value = os.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(os, ",") : os; //$NON-NLS-1$
+			properties.put(OSGI_OS, value);
 		} else {
 			properties.put(OSGI_OS, CatchAllValue.singleton);
 		}
-		if (ws != null)
-			properties.put(OSGI_WS, ws);
-		else
+		if (ws != null) {
+			Object value = ws.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(ws, ",") : ws; //$NON-NLS-1$
+			properties.put(OSGI_WS, value);
+		} else
 			properties.put(OSGI_WS, CatchAllValue.singleton);
 
-		if (arch != null)
-			properties.put(OSGI_ARCH, arch);
-		else
+		if (arch != null) {
+			Object value = arch.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(arch, ",") : arch; //$NON-NLS-1$
+			properties.put(OSGI_ARCH, value);
+		} else
 			properties.put(OSGI_ARCH, CatchAllValue.singleton);
 
-		if (nl != null)
-			properties.put(OSGI_NL, nl);
-		else
+		if (nl != null) {
+			Object value = nl.indexOf(',') > -1 ? (Object) Utils.getArrayFromString(nl, ",") : nl; //$NON-NLS-1$
+			properties.put(OSGI_NL, value);
+		} else
 			properties.put(OSGI_NL, CatchAllValue.singleton);
 
 		return filter.match(properties);
