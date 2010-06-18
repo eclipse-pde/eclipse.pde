@@ -133,7 +133,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	private IPath savelocation = null;
 	
 	/**
-	 * If the cache of profiles needs to be saved or not.
+	 * If the cache of baselines needs to be saved or not.
 	 */
 	private boolean fNeedsSaving = false;
 	
@@ -199,9 +199,9 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	public synchronized boolean removeApiBaseline(String name) {
 		if(name != null) {
 			initializeStateCache();
-			IApiBaseline profile = (IApiBaseline) baselinecache.remove(name);
-			if(profile != null) {
-				profile.dispose();
+			IApiBaseline baseline = (IApiBaseline) baselinecache.remove(name);
+			if(baseline != null) {
+				baseline.dispose();
 				boolean success = true;
 				if(savelocation == null) {
 					return success;
@@ -214,7 +214,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				fNeedsSaving = true;
 				
 				//flush the model cache
-				ApiModelCache.getCache().removeElementInfo(profile);
+				ApiModelCache.getCache().removeElementInfo(baseline);
 				return success;
 			}
 		}
@@ -223,8 +223,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	
 	/**
 	 * Loads the infos for the given baseline from persisted storage (the *.profile file)
-	 * @param baseline
-	 * @throws CoreException
+	 * @param baseline the given baseline
+	 * @throws CoreException if an exception occurs while loading baseline infos
 	 */
 	public void loadBaselineInfos(IApiBaseline baseline) throws CoreException {
 		initializeStateCache();
@@ -256,7 +256,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/**
-	 * Initializes the profile cache lazily. Only performs work
+	 * Initializes the baseline cache lazily. Only performs work
 	 * if the current cache has not been created yet
 	 * @throws FactoryConfigurationError 
 	 * @throws ParserConfigurationException 
@@ -305,7 +305,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	
 	/**
 	 * Persists all of the cached elements to individual xml files named 
-	 * with the id of the API profile
+	 * with the id of the API baseline
 	 * @throws IOException 
 	 */
 	private void persistStateCache() throws CoreException, IOException {
@@ -341,6 +341,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				try {
 					fout = new FileOutputStream(file);
 					writeBaselineDescription(baseline, fout);
+					// need to save the api baseline state in order to be able to reload it later
+					handlecache.put(baseline.getName(), file.getAbsolutePath());
 					fout.flush();
 				}
 				finally {
@@ -368,24 +370,24 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	/**
-	 * Returns an XML description of the given profile.
+	 * Returns an XML description of the given baseline.
 	 * 
-	 * @param profile API profile
-	 * @return XML
-	 * @throws CoreException
+	 * @param baseline the given API baseline
+	 * @return XML string representation of the given baseline
+	 * @throws CoreException if an exception occurs while retrieving the xml string representation
 	 */
-	private String getProfileXML(IApiBaseline profile) throws CoreException {
+	private String getProfileXML(IApiBaseline baseline) throws CoreException {
 		Document document = Util.newDocument();
 		Element root = document.createElement(IApiXmlConstants.ELEMENT_APIPROFILE);
 		document.appendChild(root);
-		root.setAttribute(IApiXmlConstants.ATTR_NAME, profile.getName());
+		root.setAttribute(IApiXmlConstants.ATTR_NAME, baseline.getName());
 		root.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_PROFILE_CURRENT_VERSION);
-		String location = profile.getLocation();
+		String location = baseline.getLocation();
 		if (location != null) {
 			root.setAttribute(IApiXmlConstants.ATTR_LOCATION, location);
 		}
 		Element celement = null;
-		IApiComponent[] components = profile.getApiComponents();
+		IApiComponent[] components = baseline.getApiComponents();
 		for(int i = 0, max = components.length; i < max; i++) {
 			IApiComponent comp = components[i];
 			if (!comp.isSystemComponent()) {
@@ -412,11 +414,11 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}	
 	
 	/**
-	 * Constructs and returns a profile from the given input stream (persisted profile).
+	 * Restore a baseline from the given input stream (persisted baseline).
 	 * 
-	 * @param stream input stream
-	 * @return API profile
-	 * @throws CoreException if unable to restore the profile
+	 * @param baseline the given baseline to restore
+	 * @param stream the given input stream
+	 * @throws CoreException if unable to restore the baseline
 	 */
 	private void restoreBaseline(IApiBaseline baseline, InputStream stream) throws CoreException {
 		long start = System.currentTimeMillis();
@@ -492,10 +494,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			}
 		}
 		if (baseline == null) {
-			abort("Invalid profile description", null); //$NON-NLS-1$
+			abort("Invalid baseline description", null); //$NON-NLS-1$
 		}
 		if(DEBUG) {
-			System.out.println("Time to restore a persisted profile : " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Time to restore a persisted baseline : " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -533,9 +535,9 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 	
 	/**
-	 * Returns if the given name is an existing profile name
+	 * Returns if the given name is an existing baseline name
 	 * @param name
-	 * @return true if the given name is an existing profile name, false otherwise
+	 * @return true if the given name is an existing baseline name, false otherwise
 	 */
 	public boolean isExistingProfileName(String name) {
 		if(baselinecache == null) {
@@ -550,10 +552,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	public void stop() {
 		try {
 			if(baselinecache != null) {
-				// we should first dispose all existing profiles
+				// we should first dispose all existing baselines
 				for (Iterator iterator = this.baselinecache.values().iterator(); iterator.hasNext();) {
-					IApiBaseline profile = (IApiBaseline) iterator.next();
-					profile.dispose();
+					IApiBaseline baseline = (IApiBaseline) iterator.next();
+					baseline.dispose();
 				}
 				this.baselinecache.clear();
 			}
