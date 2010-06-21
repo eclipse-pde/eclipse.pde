@@ -136,6 +136,7 @@ public interface IHelpContextIds {
 	public static final String LOCATION_ADD_SITE_WIZARD = PREFIX + "location_add_site_wizard"; //$NON-NLS-1$
 	public static final String LOCATION_EDIT_SITE_WIZARD = PREFIX + "location_edit_site_wizard"; //$NON-NLS-1$
 	public static final String TOC_PAGE = PREFIX + "toc_page"; //$NON-NLS-1$
+	public static final String NEW_CTX_HLP_PAGE = PREFIX + "new_context_help_page"; //$NON-NLS-1$
 
 	public static final String XHTML_CONVERSION_PAGE = PREFIX + "xhtml_conversion_page"; //$NON-NLS-1$
 
