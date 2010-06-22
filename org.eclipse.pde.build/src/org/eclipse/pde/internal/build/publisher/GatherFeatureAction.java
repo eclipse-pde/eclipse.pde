@@ -103,7 +103,7 @@ public class GatherFeatureAction extends FeaturesAction {
 			//boo!
 		}
 
-		ArtifactDescriptor ad = (ArtifactDescriptor) PublisherHelper.createArtifactDescriptor(publisherInfo.getArtifactRepository(), (IArtifactKey) artifacts.iterator().next(), null);
+		ArtifactDescriptor ad = (ArtifactDescriptor) PublisherHelper.createArtifactDescriptor(publisherInfo, (IArtifactKey) artifacts.iterator().next(), null);
 		processArtifactPropertiesAdvice(featureIU, ad, publisherInfo);
 		ad.setProperty(IArtifactDescriptor.DOWNLOAD_CONTENTTYPE, IArtifactDescriptor.TYPE_ZIP);
 
