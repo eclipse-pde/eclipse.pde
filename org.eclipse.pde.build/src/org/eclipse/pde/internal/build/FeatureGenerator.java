@@ -196,9 +196,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		String nestedVersion = null;
 		String productKey = null;
 		if (product != null) {
-			nestedId = product.getProductId() + ".root.feature"; //$NON-NLS-1$
+			nestedId = product.getId() + ".root.feature"; //$NON-NLS-1$
 			nestedVersion = product.getVersion();
-			productKey = PRODUCT_PREFIX + product.getProductId();
+			productKey = PRODUCT_PREFIX + product.getId();
 		} else {
 			nestedId = nestedInclusions;
 			nestedVersion = version != null ? version : "1.0.0.qualifier"; //$NON-NLS-1$

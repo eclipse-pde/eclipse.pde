@@ -1740,7 +1740,7 @@ public class PublishingTests extends P2TestCase {
 		extra.append("   <macosx>/bundle/config.ini</macosx>\n");
 		extra.append("</configIni>\n");
 		String[] entries = new String[] {EQUINOX_COMMON, OSGI, EQUINOX_APP, EQUINOX_REGISTRY};
-		Utils.generateProduct(product, "bundle.product", "1.0.0", null, entries, false, extra);
+		Utils.generateProduct(product, "bun.dle.pro.duct", "bundle.product", "1.0.0", null, null, entries, false, extra);
 
 		String configString = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
