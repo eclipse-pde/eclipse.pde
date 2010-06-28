@@ -38,6 +38,9 @@ public interface IPDEBuildConstants {
 	public final static String MANIFEST_FOLDER = "META-INF"; //$NON-NLS-1$
 	public final static String MANIFEST = "MANIFEST.MF"; //$NON-NLS-1$
 
+	public static final String FILE_SCHEME = "file"; //$NON-NLS-1$
+	public static final String PROFILE = "profile"; //$NON-NLS-1$
+
 	// default values
 	public final static String PROPERTY_GENERIC_TARGETS = "genericTargets"; //$NON-NLS-1$
 	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml"; //$NON-NLS-1$

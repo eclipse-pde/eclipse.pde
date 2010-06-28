@@ -12,8 +12,10 @@ package org.eclipse.pde.internal.build;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.engine.SimpleProfileRegistry;
 import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.IProfile;
@@ -605,21 +607,33 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	private List getAssociatedRepositories(File profileFile) {
-		if (profileFile == null || !profileFile.isDirectory() || !profileFile.getName().endsWith(".profile")) //$NON-NLS-1$
+		if (profileFile == null || !profileFile.exists() || !profileFile.getName().endsWith(".profile")) //$NON-NLS-1$
 			return Collections.EMPTY_LIST;
 
 		ArrayList result = new ArrayList();
 		URI profileURI = profileFile.toURI();
 		result.add(profileURI);
-		URI dataArea = URIUtil.append(profileURI, "../../.."); //$NON-NLS-1$
-		File areaFile = URIUtil.toFile(dataArea);
-		if (areaFile != null && areaFile.exists()) {
-			IProvisioningAgent agent = BundleHelper.getDefault().getProvisioningAgent(dataArea);
+
+		Map profileInfo = extractProfileInformation(profileFile);
+		if (profileInfo == null)
+			return result;
+
+		File areaFile = new File((String) profileInfo.get(PROFILE_DATA_AREA));
+		if (areaFile.exists()) {
+			IProvisioningAgent agent = BundleHelper.getDefault().getProvisioningAgent(areaFile.toURI());
 			if (agent != null) {
 				IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
-				Path profilePath = new Path(profileFile.getPath());
 				try {
-					IProfile profile = registry.getProfile(profilePath.removeFileExtension().lastSegment());
+					long timestamp = ((Long) profileInfo.get(PROFILE_TIMESTAMP)).longValue();
+					String profileId = (String) profileInfo.get(PROFILE_ID);
+					if (timestamp == -1L) {
+						long[] timestamps = registry.listProfileTimestamps(profileId);
+						timestamp = timestamps[timestamps.length - 1];
+					}
+
+					//specifying the timestamp avoids attempting to lock the profile registry
+					//which could be a problem if it is read only.
+					IProfile profile = registry.getProfile(profileId, timestamp);
 					if (profile != null) {
 						String cache = profile.getProperty(IProfile.PROP_CACHE);
 						if (cache != null)
@@ -627,6 +641,18 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 						String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
 						if (sharedCache != null)
 							result.add(new File(cache).toURI());
+						String dropinRepositories = profile.getProperty("org.eclipse.equinox.p2.cache.extensions"); //$NON-NLS-1$
+						if (dropinRepositories != null) {
+							// #filterRepos will remove any dropin folders that require synchronization
+							StringTokenizer tokenizer = new StringTokenizer(dropinRepositories, "|"); //$NON-NLS-1$
+							while (tokenizer.hasMoreTokens()) {
+								try {
+									result.add(new URI(tokenizer.nextToken()));
+								} catch (URISyntaxException e) {
+									//skip
+								}
+							}
+						}
 					}
 				} catch (IllegalStateException e) {
 					//unable to read profile, may be read only
@@ -639,6 +665,51 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			}
 		}
 		return result;
+	}
+
+	private static String PROFILE_TIMESTAMP = "timestamp"; //$NON-NLS-1$
+	private static String PROFILE_ID = "profileId"; //$NON-NLS-1$
+	private static String PROFILE_DATA_AREA = "dataArea"; //$NON-NLS-1$
+
+	private static Map extractProfileInformation(File target) {
+		if (target == null || !target.exists())
+			return null;
+
+		IPath path = new Path(target.getAbsolutePath());
+		if (!PROFILE.equals(path.getFileExtension()))
+			return null;
+
+		//expect at least "p2/org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile"
+		if (path.segmentCount() < 4)
+			return null;
+
+		Map results = new HashMap();
+		results.put(PROFILE_TIMESTAMP, new Long(-1));
+
+		String profileId = path.removeFileExtension().lastSegment();
+		if (target.isFile()) {
+			//p2/org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile/12345.profile
+			if (path.segmentCount() < 5)
+				return null;
+
+			try {
+				results.put(PROFILE_TIMESTAMP, new Long(profileId));
+			} catch (NumberFormatException e) {
+				//not a timestamp?
+			}
+
+			path = path.removeLastSegments(1);
+			profileId = path.removeFileExtension().lastSegment();
+		}
+
+		profileId = SimpleProfileRegistry.unescape(profileId);
+		results.put(PROFILE_ID, profileId);
+
+		//removing "org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile"
+		path = path.removeLastSegments(3);
+		results.put(PROFILE_DATA_AREA, path.toOSString());
+
+		return results;
 	}
 
 	public URI[] getContextMetadata() {
