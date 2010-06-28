@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,14 @@
 package org.eclipse.pde.internal.ua.ui.wizards.ctxhelp;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Wizard page to create a new context help xml file.
+ * 
  * @since 3.4
  * @see NewCtxHelpWizard
  */
@@ -38,8 +41,8 @@ public class NewCtxHelpWizardPage extends PDEWizardNewFileCreationPage {
 
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		// TODO Add help context
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TOC_PAGE);
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_CTX_HLP_PAGE);
 	}
 
 }
