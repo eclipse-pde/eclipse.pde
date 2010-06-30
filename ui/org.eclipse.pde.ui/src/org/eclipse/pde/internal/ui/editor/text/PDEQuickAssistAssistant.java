@@ -199,7 +199,18 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 			int offset = invocationContext.getOffset();
 			Iterator it = amodel.getAnnotationIterator();
-			ArrayList list = new ArrayList();
+			TreeSet proposalSet = new TreeSet(new Comparator() {
+
+				public int compare(Object o1, Object o2) {
+					if (o1 instanceof ICompletionProposal && o2 instanceof ICompletionProposal) {
+						ICompletionProposal proposal1 = (ICompletionProposal) o1;
+						ICompletionProposal proposal2 = (ICompletionProposal) o2;
+						return proposal1.getDisplayString().compareToIgnoreCase(proposal2.getDisplayString());
+					}
+					return 0;
+				}
+
+			});
 			while (it.hasNext()) {
 				Object key = it.next();
 				if (!(key instanceof SimpleMarkerAnnotation)) {
@@ -208,7 +219,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 						if (amodel.getPosition(annotation).overlapsWith(offset, 1)) {
 							ICompletionProposal[] proposals = annotation.getSpellingProblem().getProposals();
 							for (int index = 0; index < proposals.length; index++) {
-								list.add(proposals[index]);
+								proposalSet.add(proposals[index]);
 							}
 						}
 					}
@@ -231,8 +242,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 						if (offset >= start && offset <= end) {
 							for (int i = 0; i < mapping.length; i++) {
 								PDECompletionProposal proposal = new PDECompletionProposal(mapping[i], pos, marker);
-								if (!list.contains(proposal)) {
-									list.add(proposal);
+								if (!proposalSet.contains(proposal)) {
+									proposalSet.add(proposal);
 								}
 							}
 						}
@@ -241,7 +252,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 				}
 			}
-			return (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);
+
+			return (ICompletionProposal[]) proposalSet.toArray(new ICompletionProposal[proposalSet.size()]);
 		}
 	}
 

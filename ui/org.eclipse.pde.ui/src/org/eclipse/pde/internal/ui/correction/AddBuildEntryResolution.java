@@ -22,6 +22,12 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 		super(type, marker);
 	}
 
+	public AddBuildEntryResolution(int type, IMarker marker, String entry, String value) {
+		super(type, marker);
+		fEntry = entry;
+		fToken = value;
+	}
+
 	public String getLabel() {
 		return NLS.bind(PDEUIMessages.AddBuildEntryResolution_add, fToken, fEntry);
 	}

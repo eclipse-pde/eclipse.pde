@@ -112,6 +112,18 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	private IMarkerResolution[] getBuildEntryAdditionResolutions(IMarker marker, String multiFixDescription) {
 		ArrayList resolutions = new ArrayList(2);
 		resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker));
+		for (int i = 0;; i++) {
+			try {
+				String entry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY + '.' + i);
+				if (entry == null)
+					break;
+				String value = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN + '.' + i);
+				resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker, entry, value));
+
+			} catch (CoreException e) {
+				break;
+			}
+		}
 		try {
 			String markerCategory = (String) marker.getAttribute(PDEMarkerFactory.CAT_ID);
 			int problemID = marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
@@ -124,6 +136,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			}
 		} catch (CoreException e) {
 		}
+
 		return (IMarkerResolution[]) resolutions.toArray(new IMarkerResolution[resolutions.size()]);
 	}
 

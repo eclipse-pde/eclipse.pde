@@ -63,6 +63,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String fCategory;
 		int fFixId;
 		int fSeverity;
+		HashMap attributes;
+		int fExtraBuntryEntryIndex;
 
 		BuildProblem(String name, String token, String message, int fixId, int severity, String category) {
 			fEntryName = name;
@@ -71,6 +73,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			fFixId = fixId;
 			fSeverity = severity;
 			fCategory = category;
+			fExtraBuntryEntryIndex = 0;
 		}
 
 		public boolean equals(Object obj) {
@@ -84,6 +87,24 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (fFixId != bp.fFixId)
 				return false;
 			return true;
+		}
+
+		public void addExtraBuildEntryTokenAttribute(String entry, String value) {
+			addAttribute(PDEMarkerFactory.BK_BUILD_ENTRY + '.' + fExtraBuntryEntryIndex, entry);
+			addAttribute(PDEMarkerFactory.BK_BUILD_TOKEN + '.' + fExtraBuntryEntryIndex, value);
+			fExtraBuntryEntryIndex++;
+		}
+
+		public void addAttribute(String attributeName, String value) {
+			if (attributes == null)
+				attributes = new HashMap(1);
+			attributes.put(attributeName, value);
+		}
+
+		public void addAttributes(HashMap attributes) {
+			if (attributes == null)
+				attributes = new HashMap(1);
+			attributes.putAll(attributes);
 		}
 	}
 
@@ -227,7 +248,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (jp.exists()) {
 				IClasspathEntry[] cpes = jp.getRawClasspath();
 				validateMissingLibraries(sourceEntryKeys, cpes);
-				validateSourceEntries(sourceEntries, cpes);
+				validateSourceEntries(sourceEntries, srcExcludes, cpes);
 				SourceEntryErrorReporter srcEntryErrReporter = new SourceEntryErrorReporter(fFile, build);
 				srcEntryErrReporter.initialize(sourceEntries, outputEntries, cpes, fProject);
 				srcEntryErrReporter.validate();
@@ -799,10 +820,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return false;
 	}
 
-	private void validateSourceEntries(ArrayList sourceEntries, IClasspathEntry[] cpes) {
+	private void validateSourceEntries(ArrayList sourceEntries, IBuildEntry srcExcludes, IClasspathEntry[] cpes) {
 		if (sourceEntries == null || sourceEntries.size() == 0)
 			return;
 		String[] unlisted = PDEBuilderHelper.getUnlistedClasspaths(sourceEntries, fProject, cpes);
+		List excludeList = new ArrayList(0);
+		if (srcExcludes != null && srcExcludes.getTokens().length > 0) {
+			excludeList = Arrays.asList(srcExcludes.getTokens());
+		}
 		String name = ((IBuildEntry) sourceEntries.get(0)).getName();
 		String message = PDECoreMessages.BuildErrorReporter_classpathEntryMissing1;
 		if (sourceEntries.size() > 1) {
@@ -810,9 +835,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			message = PDECoreMessages.BuildErrorReporter_classpathEntryMissing;
 		}
 		for (int i = 0; i < unlisted.length; i++) {
-			if (unlisted[i] == null)
-				break;
-			prepareError(name, unlisted[i], NLS.bind(message, unlisted[i], name), PDEMarkerFactory.B_ADDITION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
+			if (unlisted[i] == null || excludeList.contains(unlisted[i]))
+				continue;
+			BuildProblem error = prepareError(name, unlisted[i], NLS.bind(message, unlisted[i], name), PDEMarkerFactory.B_ADDITION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
+			error.addExtraBuildEntryTokenAttribute(PROPERTY_SRC_EXCLUDES, unlisted[i]);
 		}
 	}
 
@@ -1033,8 +1059,18 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				// issue with a particular entry
 				lineNum = getLineNumber(buildEntry, bp.fEntryToken);
 
-			if (lineNum > 0)
-				report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity, bp.fCategory);
+			if (lineNum > 0) {
+				IMarker marker = report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity, bp.fCategory);
+				if (bp.attributes != null) {
+					for (Iterator iterator = bp.attributes.keySet().iterator(); iterator.hasNext();) {
+						String attribute = (String) iterator.next();
+						try {
+							marker.setAttribute(attribute, bp.attributes.get(attribute));
+						} catch (CoreException e) {
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -1094,29 +1130,35 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return 0;
 	}
 
-	protected void prepareError(String name, String token, String message, int fixId, String category) {
-		prepareError(name, token, message, fixId, fBuildSeverity, category);
+	protected BuildProblem prepareError(String name, String token, String message, int fixId, String category) {
+		return prepareError(name, token, message, fixId, fBuildSeverity, category);
 	}
 
-	protected void prepareError(String name, String token, String message, int fixId, int severity, String category) {
+	protected BuildProblem prepareError(String name, String token, String message, int fixId, int severity, String category) {
 		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity, category);
 		for (int i = 0; i < fProblemList.size(); i++) {
 			BuildProblem listed = (BuildProblem) fProblemList.get(i);
-			if (listed.equals(bp))
-				return;
+			if (listed.equals(bp)) {
+				if (bp.attributes != null) {
+					listed.addAttributes(bp.attributes);
+				}
+				return listed;
+			}
 		}
 		fProblemList.add(bp);
+		return bp;
 	}
 
-	private void report(String message, int line, int problemID, String buildEntry, String buildToken, int severity, String category) {
+	private IMarker report(String message, int line, int problemID, String buildEntry, String buildToken, int severity, String category) {
 		IMarker marker = report(message, line, severity, problemID, category);
-		if (marker == null)
-			return;
-		try {
-			marker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, buildEntry);
-			marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
-		} catch (CoreException e) {
+		if (marker != null) {
+			try {
+				marker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, buildEntry);
+				marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
+			} catch (CoreException e) {
+			}
 		}
+		return marker;
 	}
 
 	public boolean isCustomBuild() {
