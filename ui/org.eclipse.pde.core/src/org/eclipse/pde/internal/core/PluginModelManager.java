@@ -28,6 +28,8 @@ import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class PluginModelManager implements IModelProviderListener {
 
+	private static PluginModelManager fModelManager;
+
 	/**
 	 * Job to update class path containers asynchronously. Avoids blocking the UI thread
 	 * while saving the manifest editor.
@@ -155,11 +157,22 @@ public class PluginModelManager implements IModelProviderListener {
 	 * Initialize the workspace and external (target) model manager
 	 * and add listeners to each one
 	 */
-	public PluginModelManager() {
+	private PluginModelManager() {
 		fWorkspaceManager = new WorkspacePluginModelManager();
 		fExternalManager = new ExternalModelManager();
 		fExternalManager.addModelProviderListener(this);
 		fWorkspaceManager.addModelProviderListener(this);
+	}
+
+	/**
+	 * Provides the instance of PluginModelManager. If one doesn't exists already than a new one is created and 
+	 * the workspace and external (target) model manager are initialized with listeners added to each one
+	 */
+	public static PluginModelManager getInstance() {
+		if (fModelManager == null) {
+			fModelManager = new PluginModelManager();
+		}
+		return fModelManager;
 	}
 
 	/**
