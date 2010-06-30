@@ -18,7 +18,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.osgi.service.prefs.BackingStoreException;
@@ -45,17 +44,11 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		fOneTimeSetupComplete = true;
 	}
 
-	public void testBuildPropertiesOne() throws CoreException, BackingStoreException, IOException {
-		IProject project = findProject("org.eclipse.pde.tests.build.properties.one");
-		project.open(new NullProgressMonitor());
-		
-		// TODO Close the project and reopen to force natures data to refresh, remove if bug 297871 is fixed
-		project.close(new NullProgressMonitor());
-		project.open(new NullProgressMonitor());
-		
-		setPreferences(project, CompilerFlags.ERROR);
-		for (int i = 1; i <= 4; i++) {
-			if (buildProject(project, i)) {
+	public void testSourceFolder() throws CoreException, BackingStoreException, IOException {
+		for (int i = 1; i <= 5; i++) {
+			IProject project = findProject("org.eclipse.pde.tests.build.properties." + i);
+			setPreferences(project, CompilerFlags.ERROR);
+			if (buildProject(project)) {
 				IResource buildProperty = project.findMember("build.properties");
 				PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
 
@@ -67,19 +60,14 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		}
 	}
 
-	public void testBuildPropertiesTwo() throws CoreException, BackingStoreException, IOException {
-		IProject project = findProject("org.eclipse.pde.tests.build.properties.two");
-		project.open(new NullProgressMonitor());
+	public void testJavacEntries() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.6");
 		setPreferences(project, CompilerFlags.WARNING);
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
-		
-		// TODO Close the project and reopen to force natures data to refresh, remove if bug 297871 is fixed
-		project.close(new NullProgressMonitor());
-		project.open(new NullProgressMonitor());
 
-		if (buildProject(project, 1)) {
+		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
 			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
 
@@ -90,19 +78,14 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		}
 	}
 
-	public void testBuildPropertiesTwo_JreCompliance() throws CoreException, BackingStoreException, IOException {
-		IProject project = findProject("org.eclipse.pde.tests.build.properties.two");
-		project.open(new NullProgressMonitor());
+	public void testJreCompliance() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.7");
 		setPreferences(project, CompilerFlags.ERROR);
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.2");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
-		
-		// TODO Close the project and reopen to force natures data to refresh, remove if bug 297871 is fixed
-		project.close(new NullProgressMonitor());
-		project.open(new NullProgressMonitor());
 
-		if (buildProject(project, 2)) {
+		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
 			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
 
@@ -113,11 +96,25 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		}
 	}
 	
-	public void testBuildPropertiesThree() throws CoreException, BackingStoreException, IOException {
-		IProject project = findProject("org.eclipse.pde.tests.build.properties.three");
-		project.open(new NullProgressMonitor());
+	public void testSimpleProject() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.8");
 		setPreferences(project, CompilerFlags.ERROR);
-		if (buildProject(project, 1)) {
+		if (buildProject(project)) {
+			IResource buildProperty = project.findMember("build.properties");
+			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+
+			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
+			verifyQuickFixes(buildProperty, expectedValues);
+		} else {
+			fail("Could not build the project '" + project.getName() + "'");
+		}
+	}
+	
+	//Bug 292763
+	public void testSrcExcludeQuickFix() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.9");
+		setPreferences(project, CompilerFlags.ERROR);
+		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
 			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
 

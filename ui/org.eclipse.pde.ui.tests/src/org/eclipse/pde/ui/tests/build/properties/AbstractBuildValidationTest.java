@@ -10,21 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
-import java.io.File;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.resources.IMarker;
-
 import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.PropertyResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -53,27 +45,37 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 
 	private static final String MARKER = "marker";
 	private static final String MULTIPLE_MARKERS = "multipleMarkers";
-	private int fBuildPropIndex;
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		URL location = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties");
+		URL location = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties/build.properties.tests.zip");
 		File projectFile = new File(FileLocator.toFileURL(location).getFile());
-		assertTrue("Could not find test zip files at " + projectFile, projectFile.isDirectory());
-		File[] zipFiles = projectFile.listFiles();
-		for (int i = 0; i < zipFiles.length; i++) {
-			int index = zipFiles[i].getName().lastIndexOf('.');
-			if (index > 0) { // look out for "CVS" files in the workspace
-				IProject project = findProject(zipFiles[i].getName().substring(0, index));
-				if (project.exists()) {
-					project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-					project.delete(true, new NullProgressMonitor());
+		assertTrue("Could not find test zip file at " + projectFile, projectFile.isFile());
+		doUnZip(MacroPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/build.properties.tests.zip");
+		
+		projectFile = MacroPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();		
+		File[] projects = projectFile.listFiles(new FileFilter() {
+
+			public boolean accept(File pathname) {
+				int index = pathname.getName().lastIndexOf('.');
+				if (index > 1 && pathname.isDirectory()) { // look out for "CVS" files in the workspace
+					return true;
 				}
-				project.create(new NullProgressMonitor());
-				doUnZip(MacroPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/" + zipFiles[i].getName());
+				return false;
 			}
+
+		});
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = findProject(projects[i].getName());
+			if (project.exists()) {
+				project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				project.delete(true, new NullProgressMonitor());
+			}
+			project.create(new NullProgressMonitor());
+			project.open(new NullProgressMonitor());
+			
 		}
 	}
 
@@ -93,8 +95,8 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 				IMarkerResolution[] resolutions = resGen.getResolutions(markers[i]);
 				String quickFixindex = getProperty(expectedValues, markerEntry, "quickfix");
 				resolutions[new Integer(quickFixindex.trim()).intValue()].run(markers[i]);
-				buildProject(markers[i].getResource().getProject(), 0);
-				assertFalse("Quick fix verification failed for build.properties" + fBuildPropIndex, markers[i].exists());
+				buildProject(markers[i].getResource().getProject());
+				assertFalse("Quick fix verification failed for the project " + buildProperty.getProject().getName() , markers[i].exists());
 			}
 		}
 	}
@@ -112,7 +114,8 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		String message;
 		String markercount = getProperty(expectedValues, "count");
 
-		message = "Marker count for build.properties" + fBuildPropIndex;
+		String projectName = buildProperty.getProject().getName();
+		message = "Marker count for the project " + projectName;
 		assertEquals(message, markercount, String.valueOf(markers.length));
 
 		int markerSeverity;
@@ -128,25 +131,25 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		}
 
 		for (int i = 0; i < markers.length; i++) {
-			message = "Marker severity for build.properties" + fBuildPropIndex;
+			message = "Marker severity for the project " + projectName;
 			String markerEntry = (String) markers[i].getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
 			assertEquals(message, markerSeverity, getIntAttribute(markers[i], IMarker.SEVERITY));
 
-			message = "Marker type for build.properties" + fBuildPropIndex;
+			message = "Marker type for the project " + projectName;
 			String markerType = getProperty(expectedValues, markerEntry, PDEMarkerFactory.CAT_ID);
 			assertEquals(message, markerType, getStringAttribute(markers[i], PDEMarkerFactory.CAT_ID));
 
-			message = "Marker line number for build.properties" + fBuildPropIndex;
+			message = "Marker line number for build.properties" + projectName;
 			int lineNumber;
 			try {
 				lineNumber = new Integer(getProperty(expectedValues, markerEntry, IMarker.LINE_NUMBER)).intValue();
 			} catch (Exception e) {
-				message = "Could not read expected line number for build.properties" + fBuildPropIndex;
+				message = "Could not read expected line number for the project " + projectName;
 				lineNumber = 0;
 			}
 			assertEquals(message, lineNumber, getIntAttribute(markers[i], IMarker.LINE_NUMBER));
 
-			message = "Marker build entry token value for build.properties" + fBuildPropIndex;
+			message = "Marker build entry token value for the project " + projectName;
 			String multipleMarkers = getProperty(expectedValues, markerEntry, MULTIPLE_MARKERS);
 			String tokenValue = getProperty(expectedValues, markerEntry, PDEMarkerFactory.BK_BUILD_TOKEN);
 			if (multipleMarkers.equalsIgnoreCase(Boolean.TRUE.toString())) {
@@ -235,31 +238,12 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	}
 
 	/**
-	 * Build the given project with the specified build.properties file and wait till the build the complete
+	 * Build the given project and wait till the build the complete
 	 * @param project	project to be build
-	 * @param index		suffix to the build.properties that shall be used to build the project
 	 * @return			<code>true</code> if the project got build successfully. <code>false</code> otherwise.
 	 * @throws CoreException
 	 */
-	protected boolean buildProject(IProject project, int index) throws CoreException {
-		fBuildPropIndex = index;
-		IResource buildProp = project.findMember("build.properties");
-		if (index > 0) {
-			int attempts = 0;
-			while (buildProp != null && buildProp.exists() && attempts < 10) {
-				try {
-					buildProp.delete(true, new NullProgressMonitor());
-				} catch (CoreException e) {
-					attempts++;
-				}
-			}
-			buildProp = project.findMember("build.properties" + index);
-			if (buildProp == null) {
-				fail("build.properties" + index + "is missing. Can not build the project '" + project.getName() + "'");
-				return false;
-			}
-			buildProp.copy(buildProp.getProjectRelativePath().removeFileExtension().addFileExtension("properties"), true, new NullProgressMonitor());
-		}
+	protected boolean buildProject(IProject project) throws CoreException {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		boolean wasInterrupted = false;
 		do {
