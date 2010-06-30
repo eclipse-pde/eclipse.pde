@@ -238,11 +238,13 @@ public class ExtensionPointsSection extends TableSection {
 					newSelection = new StructuredSelection(points[index]);
 				try {
 					String schema = ep.getSchema();
-					IProject project = ep.getModel().getUnderlyingResource().getProject();
-					IFile schemaFile = project.getFile(schema);
-					if (schemaFile.exists())
-						if (MessageDialog.openQuestion(getSection().getShell(), PDEUIMessages.ExtensionPointsSection_title, NLS.bind(PDEUIMessages.ExtensionPointsSection_message1, schemaFile.getProjectRelativePath().toString())))
-							schemaFile.delete(true, true, new NullProgressMonitor());
+					if (schema != null && schema.length() > 0) {
+						IProject project = ep.getModel().getUnderlyingResource().getProject();
+						IFile schemaFile = project.getFile(schema);
+						if (schemaFile != null && schemaFile.exists())
+							if (MessageDialog.openQuestion(getSection().getShell(), PDEUIMessages.ExtensionPointsSection_title, NLS.bind(PDEUIMessages.ExtensionPointsSection_message1, schemaFile.getProjectRelativePath().toString())))
+								schemaFile.delete(true, true, new NullProgressMonitor());
+					}
 					plugin.remove(ep);
 					if (newSelection != null)
 						pointTable.setSelection(newSelection);
