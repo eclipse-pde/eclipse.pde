@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	public ExtensionPointsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION, new String[] {PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new});
+		super(page, parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION, new String[] {PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new, PDEUIMessages.Actions_delete_label});
 		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_title);
 		getSection().setDescription(PDEUIMessages.ExtensionPointsSection_sectionDescAllExtensionPoints);
 		fHandleDefaultButton = false;
@@ -207,6 +207,8 @@ public class ExtensionPointsSection extends TableSection {
 	protected void buttonSelected(int index) {
 		if (index == 0)
 			handleNew();
+		else if (index == 1)
+			handleDelete();
 	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
