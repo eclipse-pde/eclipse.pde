@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -233,8 +233,8 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		manager.appendToGroup("presentation", fShowTree); //$NON-NLS-1$
 		manager.appendToGroup("presentation", fShowList); //$NON-NLS-1$
 		manager.add(new Separator("history")); //$NON-NLS-1$
-		manager.add(fShowLoops);
-		manager.add(fHistoryDropDownAction);
+		manager.appendToGroup("history", fShowLoops); //$NON-NLS-1$
+		manager.appendToGroup("history", fHistoryDropDownAction); //$NON-NLS-1$
 	}
 
 	/*
@@ -289,7 +289,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * @see org.eclipse.ui.part.PageBookView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
 		fShowCallees = new ShowCalleesAction();
 		fShowCallees.setChecked(!fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS));
 		fShowCallers = new ShowCallersAction();
@@ -308,6 +307,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
+
+		// Create the actions before calling super so that actions added by the pages get added at the end
+		super.createPartControl(parent);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.DEPENDENCIES_VIEW);
 	}
