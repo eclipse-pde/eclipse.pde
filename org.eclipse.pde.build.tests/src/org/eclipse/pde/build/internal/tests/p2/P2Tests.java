@@ -479,6 +479,9 @@ public class P2Tests extends P2TestCase {
 		FileUtils.zip(output, root, Collections.EMPTY_SET, FileUtils.createRootPathComputer(root));
 		org.eclipse.pde.internal.build.Utils.close(output);
 
+		//bug 318144
+		Utils.writeBuffer(zipped.getFile(".repo/not.a.repo"), new StringBuffer("I am not a repo"));
+
 		IFolder outRepo2 = Utils.createFolder(buildFolder, "outRepo2");
 		properties.put("repoBaseLocation", zipped.getLocation().toOSString());
 		properties.put("transformedRepoLocation", outRepo2.getLocation().toOSString());

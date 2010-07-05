@@ -207,8 +207,9 @@ set here?
 <!-- Invokes the p2 transformer to process all the repositories found in repoBaseLocation -->
 <!-- ===================================================================== -->
 <target name="transformRepos">
+	<property name="repoBaseLocation.excludes" value=".*" />
 	<p2.repo2runnable destination="${transformedRepoLocation}">
-		<source dir="${repoBaseLocation}/" includes="*" excludes=".*"/>
+		<source dir="${repoBaseLocation}/" includes="*" excludes="${repoBaseLocation.excludes}"/>
 	</p2.repo2runnable>
 </target>
 
