@@ -208,7 +208,7 @@ set here?
 <!-- ===================================================================== -->
 <target name="transformRepos">
 	<p2.repo2runnable destination="${transformedRepoLocation}">
-		<source dir="${repoBaseLocation}/" includes="*"/>
+		<source dir="${repoBaseLocation}/" includes="*" excludes=".*"/>
 	</p2.repo2runnable>
 </target>
 
