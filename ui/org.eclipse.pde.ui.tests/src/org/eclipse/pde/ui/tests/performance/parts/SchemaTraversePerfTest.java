@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 
 package org.eclipse.pde.ui.tests.performance.parts;
-
-import org.eclipse.test.performance.Performance;
 
 import java.io.InputStream;
 import junit.framework.Test;
@@ -40,7 +38,6 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 	 * @throws Exception
 	 */
 	public void testSchemaTraverse() throws Exception {
-		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "Degradation starting in build I20090825-1032 is due to the addition of an include statement in the test schema.");
 		executeTestRun();
 	}
 
