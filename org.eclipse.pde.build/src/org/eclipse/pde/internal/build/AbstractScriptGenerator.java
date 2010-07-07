@@ -622,34 +622,37 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (areaFile.exists()) {
 			IProvisioningAgent agent = BundleHelper.getDefault().getProvisioningAgent(areaFile.toURI());
 			if (agent != null) {
-				IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
+				IProfileRegistry registry = new SimpleProfileRegistry(agent, (File) profileInfo.get(PROFILE_REGISTRY), null, false);
 				try {
 					long timestamp = ((Long) profileInfo.get(PROFILE_TIMESTAMP)).longValue();
 					String profileId = (String) profileInfo.get(PROFILE_ID);
 					if (timestamp == -1L) {
 						long[] timestamps = registry.listProfileTimestamps(profileId);
-						timestamp = timestamps[timestamps.length - 1];
+						if (timestamps.length > 0)
+							timestamp = timestamps[timestamps.length - 1];
 					}
 
 					//specifying the timestamp avoids attempting to lock the profile registry
 					//which could be a problem if it is read only.
-					IProfile profile = registry.getProfile(profileId, timestamp);
-					if (profile != null) {
-						String cache = profile.getProperty(IProfile.PROP_CACHE);
-						if (cache != null)
-							result.add(new File(cache).toURI());
-						String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
-						if (sharedCache != null)
-							result.add(new File(cache).toURI());
-						String dropinRepositories = profile.getProperty("org.eclipse.equinox.p2.cache.extensions"); //$NON-NLS-1$
-						if (dropinRepositories != null) {
-							// #filterRepos will remove any dropin folders that require synchronization
-							StringTokenizer tokenizer = new StringTokenizer(dropinRepositories, "|"); //$NON-NLS-1$
-							while (tokenizer.hasMoreTokens()) {
-								try {
-									result.add(new URI(tokenizer.nextToken()));
-								} catch (URISyntaxException e) {
-									//skip
+					if (timestamp > 0) {
+						IProfile profile = registry.getProfile(profileId, timestamp);
+						if (profile != null) {
+							String cache = profile.getProperty(IProfile.PROP_CACHE);
+							if (cache != null)
+								result.add(new File(cache).toURI());
+							String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
+							if (sharedCache != null)
+								result.add(new File(cache).toURI());
+							String dropinRepositories = profile.getProperty("org.eclipse.equinox.p2.cache.extensions"); //$NON-NLS-1$
+							if (dropinRepositories != null) {
+								// #filterRepos will remove any dropin folders that require synchronization
+								StringTokenizer tokenizer = new StringTokenizer(dropinRepositories, "|"); //$NON-NLS-1$
+								while (tokenizer.hasMoreTokens()) {
+									try {
+										result.add(new URI(tokenizer.nextToken()));
+									} catch (URISyntaxException e) {
+										//skip
+									}
 								}
 							}
 						}
@@ -670,13 +673,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private static String PROFILE_TIMESTAMP = "timestamp"; //$NON-NLS-1$
 	private static String PROFILE_ID = "profileId"; //$NON-NLS-1$
 	private static String PROFILE_DATA_AREA = "dataArea"; //$NON-NLS-1$
+	private static String PROFILE_REGISTRY = "registry"; //$NON-NLS-1$
 
 	private static Map extractProfileInformation(File target) {
 		if (target == null || !target.exists())
 			return null;
 
 		IPath path = new Path(target.getAbsolutePath());
-		if (!PROFILE.equals(path.getFileExtension()))
+		if (!path.lastSegment().endsWith(PROFILE) && !path.lastSegment().endsWith(PROFILE_GZ))
 			return null;
 
 		//expect at least "p2/org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile"
@@ -686,27 +690,39 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		Map results = new HashMap();
 		results.put(PROFILE_TIMESTAMP, new Long(-1));
 
-		String profileId = path.removeFileExtension().lastSegment();
+		String profileId = null;
 		if (target.isFile()) {
-			//p2/org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile/12345.profile
+			//p2/org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile/123456.profile.gz
 			if (path.segmentCount() < 5)
 				return null;
 
-			try {
-				results.put(PROFILE_TIMESTAMP, new Long(profileId));
-			} catch (NumberFormatException e) {
-				//not a timestamp?
+			String timestamp = path.lastSegment();
+			int idx = timestamp.indexOf('.');
+			if (idx > 0) {
+				timestamp = timestamp.substring(0, idx);
+				try {
+					results.put(PROFILE_TIMESTAMP, new Long(timestamp));
+				} catch (NumberFormatException e) {
+					//not a timestamp?
+				}
 			}
 
 			path = path.removeLastSegments(1);
+			profileId = path.removeFileExtension().lastSegment();
+		} else {
+			//target is the profile folder
 			profileId = path.removeFileExtension().lastSegment();
 		}
 
 		profileId = SimpleProfileRegistry.unescape(profileId);
 		results.put(PROFILE_ID, profileId);
 
-		//removing "org.eclipse.equinox.p2.engine/profileRegistry/Profile.profile"
-		path = path.removeLastSegments(3);
+		//remove Profile.profile to get the registry folder
+		path = path.removeLastSegments(1);
+		results.put(PROFILE_REGISTRY, path.toFile());
+
+		//removing "org.eclipse.equinox.p2.engine/profileRegistry"
+		path = path.removeLastSegments(2);
 		results.put(PROFILE_DATA_AREA, path.toOSString());
 
 		return results;
