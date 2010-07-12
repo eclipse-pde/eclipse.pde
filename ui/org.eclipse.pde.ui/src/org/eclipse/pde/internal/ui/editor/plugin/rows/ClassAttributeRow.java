@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,9 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		if (index > 0)
 			// if the schema specifies a class and interface, then show only types that extend the class (currently can't search on both).
 			superName = superName.substring(0, index);
+		else if (index == 0)
+			// if only an interfaces was given (":MyInterface") use this
+			superName = superName.substring(1);
 		String filter = text.getText();
 		if (filter.length() == 0 && superName != null)
 			filter = "**"; //$NON-NLS-1$
