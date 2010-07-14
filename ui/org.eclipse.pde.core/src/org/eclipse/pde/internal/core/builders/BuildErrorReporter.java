@@ -338,8 +338,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				//PDE Build uses top most entry to build the plug-in
 				String execEnv = execEnvs[0];
 
-				String projectSourceCompatibility = project.getOption(JavaCore.COMPILER_SOURCE, false);
-				String projectClassCompatibility = project.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, false);
+				String projectSourceCompatibility = project.getOption(JavaCore.COMPILER_SOURCE, true);
+				String projectClassCompatibility = project.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true);
 				if (projectComplianceLevel.equals(findMatchingEE(projectSourceCompatibility, projectClassCompatibility, false)) && execEnv.equals(findMatchingEE(projectSourceCompatibility, projectClassCompatibility, true))) {
 					return; //The project compliance settings matches the BREE
 				}
@@ -527,25 +527,25 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private String findMatchingEE(String srcCompatibility, String clsCompatibility, boolean ee) {
 		String executionEnv = null;
 		String complaince = null;
-		if (srcCompatibility.equals(JavaCore.VERSION_1_1) && clsCompatibility.equals(JavaCore.VERSION_1_1)) {
+		if (JavaCore.VERSION_1_1.equals(srcCompatibility) && JavaCore.VERSION_1_1.equals(clsCompatibility)) {
 			executionEnv = JRE_1_1;
 			complaince = JavaCore.VERSION_1_1;
-		} else if (srcCompatibility.equals(JavaCore.VERSION_1_2) && clsCompatibility.equals(JavaCore.VERSION_1_1)) {
+		} else if (JavaCore.VERSION_1_2.equals(srcCompatibility) && JavaCore.VERSION_1_1.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_2;
 			complaince = JavaCore.VERSION_1_2;
-		} else if (srcCompatibility.equals(JavaCore.VERSION_1_3) && clsCompatibility.equals(JavaCore.VERSION_1_1)) {
+		} else if (JavaCore.VERSION_1_3.equals(srcCompatibility) && JavaCore.VERSION_1_1.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_3;
 			complaince = JavaCore.VERSION_1_3;
-		} else if (srcCompatibility.equals(JavaCore.VERSION_1_3) && clsCompatibility.equals(JavaCore.VERSION_1_2)) {
+		} else if (JavaCore.VERSION_1_3.equals(srcCompatibility) && JavaCore.VERSION_1_2.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_4;
 			complaince = JavaCore.VERSION_1_4;
-		} else if (srcCompatibility.equals(JavaCore.VERSION_1_5) && clsCompatibility.equals(JavaCore.VERSION_1_5)) {
+		} else if (JavaCore.VERSION_1_5.equals(srcCompatibility) && JavaCore.VERSION_1_5.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_5;
 			complaince = JavaCore.VERSION_1_5;
-		} else if (srcCompatibility.equals(JavaCore.VERSION_1_6) && clsCompatibility.equals(JavaCore.VERSION_1_6)) {
+		} else if (JavaCore.VERSION_1_6.equals(srcCompatibility) && JavaCore.VERSION_1_6.equals(clsCompatibility)) {
 			executionEnv = JavaSE_1_6;
 			complaince = JavaCore.VERSION_1_6;
-		} else if (srcCompatibility.equals(JavaCore.VERSION_1_7) && clsCompatibility.equals(JavaCore.VERSION_1_7)) {
+		} else if (JavaCore.VERSION_1_7.equals(srcCompatibility) && JavaCore.VERSION_1_7.equals(clsCompatibility)) {
 			executionEnv = JavaSE_1_7;
 			complaince = JavaCore.VERSION_1_7;
 		}
