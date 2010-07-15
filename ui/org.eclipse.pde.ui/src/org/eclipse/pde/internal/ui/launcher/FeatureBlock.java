@@ -208,8 +208,8 @@ public class FeatureBlock {
 			} else if (source instanceof TreeColumn) {
 				handleColumn((TreeColumn) source, 0);
 			}
-
-			fTab.updateLaunchConfigurationDialog();
+			if (!fIsDisposed)
+				fTab.updateLaunchConfigurationDialog();
 		}
 
 		private void handleSelectFeatures() {
@@ -340,7 +340,7 @@ public class FeatureBlock {
 				PDEPlugin.log(e);
 			}
 			if (fOperation.hasErrors()) {
-				PluginStatusDialog dialog = new PluginStatusDialog(getShell(), SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
+				PluginStatusDialog dialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 				dialog.setInput(fOperation.getInput());
 				dialog.open();
 				dialog = null;
@@ -756,6 +756,7 @@ public class FeatureBlock {
 	private LaunchValidationOperation fOperation;
 
 	private ViewerFilter fSelectedOnlyFilter;
+	private boolean fIsDisposed = false;
 
 	/**
 	 * Maps feature ID to the FeatureLaunchModel that represents the feature in the tree
@@ -809,6 +810,7 @@ public class FeatureBlock {
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		fIsDisposed = true;
 	}
 
 	private void createCheckBoxTree(Composite parent) {
