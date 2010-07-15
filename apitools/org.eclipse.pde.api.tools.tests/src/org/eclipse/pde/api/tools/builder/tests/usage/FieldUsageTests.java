@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,6 +192,30 @@ public class FieldUsageTests extends UsageTest {
 	private void x5(boolean inc) {
 		expectingNoProblems();
 		String typename = "testF5";
+		deployUsageTest(typename, inc);
+	}
+	/**
+	 * Tests that field tagged with a noreference tag that is being accessed from a dependent plug-in 
+	 * is properly flagged as a problem using a full build
+	 */
+	public void testFieldUsage6F() {
+		x6(false);
+	}
+	
+	/**
+	 * Tests that a field tagged with a noreference tag that is being accessed from a dependent plug-in 
+	 * is properly flagged as a problem using an incremental build
+	 */
+	public void testFieldUsage6I() {
+		x6(true);
+	}
+	
+	private void x6(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(1));
+		String typename = "testF8";
+		setExpectedMessageArgs(new String[][] {
+				{FIELD_CLASS_NAME, typename, "f1"},
+		});
 		deployUsageTest(typename, inc);
 	}
 }
