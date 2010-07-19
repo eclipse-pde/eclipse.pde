@@ -1304,32 +1304,30 @@ public class ReferenceExtractor extends ClassAdapter {
 						Reference.methodReference(method, superTypeName, method.getName(), method.getSignature(), IReference.REF_OVERRIDE));
 				}
 			}
-			if(!"<clinit>".equals(name)) { //$NON-NLS-1$
-				int argumentcount = 0;
-				if((access & Opcodes.ACC_SYNTHETIC) == 0) {
-					if(signature != null) {
-						this.processSignature(name, signature, IReference.REF_PARAMETERIZED_METHODDECL, METHOD);
-						argumentcount = this.signaturevisitor.argumentcount;
+			int argumentcount = 0;
+			if((access & Opcodes.ACC_SYNTHETIC) == 0) {
+				if(signature != null) {
+					this.processSignature(name, signature, IReference.REF_PARAMETERIZED_METHODDECL, METHOD);
+					argumentcount = this.signaturevisitor.argumentcount;
+				}
+				else {
+					Type[] arguments = Type.getArgumentTypes(desc);
+					for(int i = 0; i < arguments.length; i++) {
+						Type type = arguments[i];
+						this.addTypeReference(type, IReference.REF_PARAMETER);
+						argumentcount += type.getSize();
 					}
-					else {
-						Type[] arguments = Type.getArgumentTypes(desc);
-						for(int i = 0; i < arguments.length; i++) {
-							Type type = arguments[i];
-							this.addTypeReference(type, IReference.REF_PARAMETER);
-							argumentcount += type.getSize();
-						}
-						this.addTypeReference(Type.getReturnType(desc), IReference.REF_RETURNTYPE);
-						if(exceptions != null) {
-							for(int i = 0; i < exceptions.length; i++) {
-								this.addTypeReference(Type.getObjectType(exceptions[i]), IReference.REF_THROWS);
-							}
+					this.addTypeReference(Type.getReturnType(desc), IReference.REF_RETURNTYPE);
+					if(exceptions != null) {
+						for(int i = 0; i < exceptions.length; i++) {
+							this.addTypeReference(Type.getObjectType(exceptions[i]), IReference.REF_THROWS);
 						}
 					}
 				}
-				MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-				if(mv != null && ((access & (Opcodes.ACC_NATIVE | Opcodes.ACC_ABSTRACT)) == 0)) {
-					return new ClassFileMethodVisitor(mv, name, argumentcount);
-				}
+			}
+			MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+			if(mv != null && ((access & (Opcodes.ACC_NATIVE | Opcodes.ACC_ABSTRACT)) == 0)) {
+				return new ClassFileMethodVisitor(mv, name, argumentcount);
 			}
 		}
 		return null;
