@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
@@ -18,6 +20,9 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
@@ -229,14 +234,41 @@ public class ExtensionPointDetails extends PDEDetails {
 				}
 				if (pointID == null)
 					pointID = pluginID + "." + fInput.getId(); //$NON-NLS-1$
+				IPluginExtensionPoint extPoint = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(pointID);
 				if (e.getHref().equals("search")) { //$NON-NLS-1$
 					new FindReferencesAction(fInput, pluginID).run();
-				} else if (e.getHref().equals("open")) { //$NON-NLS-1$
+				} else if (e.getHref().equals("open")) { //$NON-NLS-1$					
+					if (extPoint == null) {
+						IProject project = getPage().getPDEEditor().getCommonProject();
+						IFile file = project.getFile(fSchemaEntry.getValue());
+						if (file.exists())
+							openSchemaFile(file);
+						else
+							generateSchema();
+						return;
+					}
 					OpenSchemaAction action = new OpenSchemaAction();
 					action.setInput(pointID);
 					action.setEnabled(true);
 					action.run();
 				} else {
+					if (extPoint == null) {
+						IProject project = getPage().getPDEEditor().getCommonProject();
+						IFile file = project.getFile(fSchemaEntry.getValue());
+						URL url;
+						try {
+							url = file.getLocationURI().toURL();
+						} catch (MalformedURLException e1) {
+							return;
+						}
+						SchemaDescriptor schemaDesc = new SchemaDescriptor(pointID, url);
+						Schema schema = new Schema(schemaDesc, url, false);
+						schema.setPluginId(pluginID);
+						schema.setPointId(fInput.getId());
+						schema.setName(fNameEntry.getValue());
+						new ShowDescriptionAction(schema).run();
+						return;
+					}
 					new ShowDescriptionAction(pointID).run();
 				}
 			}
