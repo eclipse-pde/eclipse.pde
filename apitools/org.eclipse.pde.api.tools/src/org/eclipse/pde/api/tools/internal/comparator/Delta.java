@@ -226,6 +226,12 @@ public class Delta implements IDelta {
 		return this.componentID;
 	}
 
+	public String getComponentId() {
+		if (this.componentID == null) return null;
+		int index = this.componentID.indexOf(Util.VERSION_SEPARATOR);
+		return this.componentID.substring(0, index);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getArguments()
 	 */

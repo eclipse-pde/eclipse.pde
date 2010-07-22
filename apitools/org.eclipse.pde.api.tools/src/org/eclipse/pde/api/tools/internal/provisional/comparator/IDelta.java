@@ -972,4 +972,14 @@ public interface IDelta {
 	 * @return the component id in which the given delta is reported, or <code>null</code> if none
 	 */
 	public String getComponentVersionId();
+	
+
+	/**
+	 * Returns the component identifier without its version identifier in which the given delta is
+	 * reported, or <code>null</code>. Can be <code>null</code> if the delta is reported against an
+	 * API profile.
+	 * 
+	 * @return the component id in which the given delta is reported, or <code>null</code> if none
+	 */
+	public String getComponentId();
 }

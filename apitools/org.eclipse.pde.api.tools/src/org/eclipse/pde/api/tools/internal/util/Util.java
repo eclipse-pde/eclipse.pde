@@ -132,6 +132,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public final class Util {
 
+	public static final char VERSION_SEPARATOR = '(';
+
 	/**
 	 * Class that runs a build in the workspace or the given project
 	 */
@@ -1984,7 +1986,7 @@ public final class Util {
 		String version = component.getVersion();
 		// remove the qualifier part
 		if (version != null) {
-			buffer.append('(');
+			buffer.append(Util.VERSION_SEPARATOR);
 			try {
 				Version version2 = new Version(version);
 				buffer
