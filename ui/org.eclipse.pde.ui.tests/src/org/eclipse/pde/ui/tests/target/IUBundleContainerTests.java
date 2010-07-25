@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.equinox.internal.p2.core.helpers.URLUtil;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
@@ -231,6 +232,44 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String id = (String) profiles.get(0);
 		assertTrue("Unexpected profile GC'd", id.endsWith(definitionB.getHandle().getMemento()));
 	}	
+	
+	/**
+	 * Tests that the external model manager can restore external bundles from the bundle pool
+	 * properly. See bug 320583.
+	 * 
+	 * @throws Exception
+	 */
+	public void testExternalModelManagerPreferences() throws Exception {		
+		// Set the active target to feature b (has 6 bundles)
+		String[]unitIds = new String[]{"feature.b.feature.group"};
+		IUBundleContainer container = createContainer(unitIds);
+		ITargetDefinition targetB = getTargetService().newTarget();
+		targetB.setBundleContainers(new IBundleContainer[]{container});
+		getTargetService().saveTargetDefinition(targetB);
+		setTargetPlatform(targetB);
+		
+		// Set the active target to feature a (has 3 bundles)
+		unitIds = new String[]{"feature.a.feature.group"};
+		container = createContainer(unitIds);
+		ITargetDefinition targetA = getTargetService().newTarget();
+		targetA.setBundleContainers(new IBundleContainer[]{container});
+		getTargetService().saveTargetDefinition(targetA);
+		setTargetPlatform(targetA);
+		
+		// ensure the external model manager only knows about bundles in target A
+		URL[] paths = PDECore.getDefault().getModelManager().getExternalModelManager().getPluginPaths();
+		assertEquals("Wrong number of external bundles", 3, paths.length);
+		// expected bundles
+		Set expected = new HashSet();
+		expected.add("bundle.a1_1.0.0.jar");
+		expected.add("bundle.a2_1.0.0.jar");
+		expected.add("bundle.a3_1.0.0.jar");
+		for (int i = 0; i < paths.length; i++) {
+			assertTrue("Unexpected bundle in restored list: " + paths[i].toExternalForm(), expected.remove(URLUtil.toFile(paths[i]).getName()));
+		}
+		assertTrue(expected.isEmpty());
+		resetTargetPlatform();
+	}
 	
 	/**
 	 * Creates an IU bundle container with the specified IUs from the test repository.
