@@ -69,18 +69,34 @@ public class ExternalModelManager extends AbstractModelManager {
 		fModels = models;
 	}
 
-	protected URL[] getPluginPaths() {
+	/**
+	 * Returns the URLs of all external plug-ins referenced by PDE target platform preferences.
+	 * <p>
+	 * Note this method is public for testing purposes only.
+	 * </p>
+	 * @return URLs of all external plug-ins referenced by PDE target platform preferences.
+	 */
+	public URL[] getPluginPaths() {
 		PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
-		URL[] base = PluginPathFinder.getPluginPaths(pref.getString(ICoreConstants.PLATFORM_PATH));
+		boolean addPool = false;
+		String baseLocation = pref.getString(ICoreConstants.PLATFORM_PATH);
+		URL[] base = null;
+		if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(baseLocation))) {
+			// if the base platform path is part of the bundle pool, use the bundle pool
+			// preference info to restore bundles selectively
+			addPool = true;
+			base = new URL[0];
+		} else {
+			base = PluginPathFinder.getPluginPaths(baseLocation);
+		}
 
 		String value = pref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
 		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 
-		if (tokenizer.countTokens() == 0)
+		if (!addPool && tokenizer.countTokens() == 0)
 			return base;
 
 		List extraLocations = new ArrayList(tokenizer.countTokens());
-		boolean addPool = false;
 		while (tokenizer.hasMoreTokens()) {
 			String location = tokenizer.nextToken();
 			if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(location))) {
