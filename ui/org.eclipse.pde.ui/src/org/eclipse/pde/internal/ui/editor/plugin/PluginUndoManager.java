@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,12 +17,17 @@ import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.build.BuildObject;
 import org.eclipse.pde.internal.core.build.IBuildObject;
+import org.eclipse.pde.internal.core.bundle.BundleObject;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.PluginAttribute;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.text.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ModelUndoManager;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.osgi.framework.Constants;
 
 public class PluginUndoManager extends ModelUndoManager {
 
@@ -79,10 +84,14 @@ public class PluginUndoManager extends ModelUndoManager {
 	private void executeAdd(IModelChangeProvider model, Object[] elements) {
 		IPluginBase pluginBase = null;
 		IBuild build = null;
-		if (model instanceof IPluginModelBase)
+		IBundleModel bundleModel = null;
+		if (model instanceof IPluginModelBase) {
 			pluginBase = ((IPluginModelBase) model).getPluginBase();
-		if (model instanceof IBuildModel)
+		} else if (model instanceof IBuildModel) {
 			build = ((IBuildModel) model).getBuild();
+		} else if (model instanceof IBundleModel) {
+			bundleModel = (IBundleModel) model;
+		}
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
@@ -107,6 +116,13 @@ public class PluginUndoManager extends ModelUndoManager {
 				} else if (element instanceof IBuildEntry) {
 					IBuildEntry e = (IBuildEntry) element;
 					build.add(e);
+				} else if (element instanceof BundleObject) {
+					if (element instanceof ImportPackageObject) {
+						IManifestHeader header = bundleModel.getBundle().getManifestHeader(Constants.IMPORT_PACKAGE);
+						if (header != null && header instanceof ImportPackageHeader) {
+							((ImportPackageHeader) header).addPackage((PackageObject) element);
+						}
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -117,10 +133,14 @@ public class PluginUndoManager extends ModelUndoManager {
 	private void executeRemove(IModelChangeProvider model, Object[] elements) {
 		IPluginBase pluginBase = null;
 		IBuild build = null;
-		if (model instanceof IPluginModelBase)
+		IBundleModel bundleModel = null;
+		if (model instanceof IPluginModelBase) {
 			pluginBase = ((IPluginModelBase) model).getPluginBase();
-		if (model instanceof IBuildModel)
+		} else if (model instanceof IBuildModel) {
 			build = ((IBuildModel) model).getBuild();
+		} else if (model instanceof IBundleModel) {
+			bundleModel = (IBundleModel) model;
+		}
 
 		try {
 			for (int i = 0; i < elements.length; i++) {
@@ -145,6 +165,13 @@ public class PluginUndoManager extends ModelUndoManager {
 				} else if (element instanceof IBuildEntry) {
 					IBuildEntry e = (IBuildEntry) element;
 					build.remove(e);
+				} else if (element instanceof BundleObject) {
+					if (element instanceof ImportPackageObject) {
+						IManifestHeader header = bundleModel.getBundle().getManifestHeader(Constants.IMPORT_PACKAGE);
+						if (header != null && header instanceof ImportPackageHeader) {
+							((ImportPackageHeader) header).removePackage((PackageObject) element);
+						}
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -186,6 +213,11 @@ public class PluginUndoManager extends ModelUndoManager {
 			PluginObjectNode node = (PluginObjectNode) element;
 			String newString = newValue != null ? newValue.toString() : null;
 			node.setXMLAttribute(propertyName, newString);
+		} else if (element instanceof BundleObject) {
+			if (element instanceof ImportPackageObject) {
+				ImportPackageObject ipObj = (ImportPackageObject) element;
+				ipObj.restoreProperty(propertyName, oldValue, newValue);
+			}
 		}
 	}
 
