@@ -15,8 +15,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal;
+import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -26,6 +26,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.*;
@@ -221,10 +223,13 @@ public class JavaResolutionFactory {
 						bundle.setHeader(Constants.IMPORT_PACKAGE, pkgId);
 					} else if (header instanceof ImportPackageHeader) {
 						ImportPackageHeader ipHeader = (ImportPackageHeader) header;
+						int manifestVersion = BundlePluginBase.getBundleManifestVersion(bundle);
+						String versionAttr = (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
+						ImportPackageObject impObject = new ImportPackageObject((ManifestHeader) header, (ExportPackageDescription) getChangeObject(), versionAttr);
 						if (!isUndo()) {
-							ipHeader.addPackage(pkgId);
+							ipHeader.addPackage(impObject);
 						} else {
-							ipHeader.removePackage(pkgId);
+							ipHeader.removePackage(impObject);
 						}
 					}
 				}
