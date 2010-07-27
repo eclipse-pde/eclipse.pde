@@ -109,20 +109,19 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		String filename = file.getName();
 		if (file.equals(PDEProject.getOptionsFile(project))) {
 			PDECore.getDefault().getTracingOptionsManager().reset();
-		} else if (filename.endsWith(".properties")) { //$NON-NLS-1$
+		} else if (file.equals(PDEProject.getBuildProperties(project))) {
 			// change in build.properties should trigger a Classpath Update
 			// we therefore fire a notification
 			//TODO this is inefficient.  we could do better.
-			if (file.equals(PDEProject.getBuildProperties(project))) {
-				Object model = getModel(file.getProject());
-				if (model != null)
-					addChange(model, IModelProviderEvent.MODELS_CHANGED);
-			} else {
-				// reset bundle resource if localization file has changed.
-				if (file.equals(PDEProject.getLocalizationFile(file.getProject()))) {
-					IPluginModelBase model = getPluginModel(file.getProject());
-					((AbstractNLModel) model).resetNLResourceHelper();
-				}
+			Object model = getModel(project);
+			if (model != null) {
+				addChange(model, IModelProviderEvent.MODELS_CHANGED);
+			}
+		} else if (file.equals(PDEProject.getLocalizationFile(project))) {
+			// reset bundle resource if localization file has changed.
+			IPluginModelBase model = getPluginModel(project);
+			if (model != null) {
+				((AbstractNLModel) model).resetNLResourceHelper();
 			}
 		} else if (filename.endsWith(".exsd")) { //$NON-NLS-1$
 			handleEclipseSchemaDelta(file, delta);
