@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.Map;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
@@ -32,7 +33,13 @@ public class PluginStatusDialog extends TrayDialog {
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
-			return (Object[]) fInput.get(parentElement);
+			if (fInput.containsKey(parentElement)) {
+				return (Object[]) fInput.get(parentElement);
+			}
+			if (parentElement instanceof MultiStatus) {
+				return ((MultiStatus) parentElement).getChildren();
+			}
+			return new Object[0];
 		}
 
 		public Object getParent(Object element) {
@@ -40,7 +47,13 @@ public class PluginStatusDialog extends TrayDialog {
 		}
 
 		public boolean hasChildren(Object element) {
-			return fInput.containsKey(element) && element instanceof BundleDescription;
+			if (fInput.containsKey(element) && element instanceof BundleDescription) {
+				return true;
+			}
+			if (element instanceof MultiStatus) {
+				return ((MultiStatus) element).getChildren().length > 0;
+			}
+			return false;
 		}
 
 		public Object[] getElements(Object inputElement) {

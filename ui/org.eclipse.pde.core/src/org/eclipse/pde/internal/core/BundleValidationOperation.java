@@ -51,18 +51,23 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	}
 
 	public Map getResolverErrors() {
+		Set alreadyDuplicated = new HashSet();
 		Map map = new HashMap();
 		BundleDescription[] bundles = fState.getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			BundleDescription desc = bundles[i];
 			if (!desc.isResolved()) {
 				map.put(desc, fState.getResolverErrors(desc));
-			} else if (desc.isSingleton()) {
+			} else if (desc.isSingleton() && !alreadyDuplicated.contains(desc.getSymbolicName())) {
 				BundleDescription[] dups = fState.getBundles(desc.getSymbolicName());
 				if (dups.length > 1) {
 					// more than 1 singleton present
-					IStatus errorStatus = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.BundleValidationOperation_multiple_singletons, new String[] {Integer.toString(dups.length), desc.getSymbolicName()}));
-					map.put(desc, new Object[] {errorStatus});
+					alreadyDuplicated.add(desc.getSymbolicName());
+					MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, NLS.bind(PDECoreMessages.BundleValidationOperation_multiple_singletons, new String[] {Integer.toString(dups.length), desc.getSymbolicName()}), null);
+					for (int j = 0; j < dups.length; j++) {
+						status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, dups[j].getLocation()));
+					}
+					map.put(desc, new Object[] {status});
 				}
 			}
 		}
