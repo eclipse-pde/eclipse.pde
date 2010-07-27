@@ -245,7 +245,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	public boolean isContentEqual(AbstractBundleContainer container) {
 		if (container instanceof ProfileBundleContainer) {
 			ProfileBundleContainer pbc = (ProfileBundleContainer) container;
-			return fHome.equals(pbc.fHome) && isNullOrEqual(fConfiguration, fConfiguration);
+			return fHome.equals(pbc.fHome) && isNullOrEqual(pbc.fConfiguration, fConfiguration);
 		}
 		return false;
 	}
