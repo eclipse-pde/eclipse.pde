@@ -89,6 +89,7 @@ public abstract class AbstractPluginBlock {
 	private HashMap autoColumnCache = new HashMap();
 	private TreeEditor levelColumnEditor = null;
 	private TreeEditor autoColumnEditor = null;
+	private boolean fIsDisposed = false;
 
 	/**
 	 * Label provider for the tree.
@@ -164,7 +165,8 @@ public abstract class AbstractPluginBlock {
 			} else if (source == fValidateButton) {
 				handleValidate();
 			}
-			fTab.updateLaunchConfigurationDialog();
+			if (!fIsDisposed)
+				fTab.updateLaunchConfigurationDialog();
 		}
 	}
 
@@ -865,6 +867,7 @@ public abstract class AbstractPluginBlock {
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		fIsDisposed = true;
 	}
 
 	protected boolean isEnabled() {
@@ -925,7 +928,7 @@ public abstract class AbstractPluginBlock {
 			PDEPlugin.log(e);
 		}
 		if (fOperation.hasErrors()) {
-			PluginStatusDialog dialog = new PluginStatusDialog(getShell(), SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
+			PluginStatusDialog dialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 			dialog.setInput(fOperation.getInput());
 			dialog.open();
 			dialog = null;
