@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,20 +11,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-
 import java.util.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.ifeature.IEnvironment;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
  * This operation generates a product configuration filling in fields based on information
@@ -108,8 +108,23 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 					arguments = factory.createLauncherArguments();
 				if (vmargs != null)
 					arguments.setVMArguments(vmargs, IArgumentsInfo.L_ARGS_ALL);
-				if (programArgs != null)
-					arguments.setProgramArguments(programArgs, IArgumentsInfo.L_ARGS_ALL);
+				if (programArgs != null) {
+					String[] parsedArgs = DebugPlugin.parseArguments(programArgs);
+					List unwantedArgs = Arrays.asList(new String[] {'-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL, '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS});
+					StringBuffer filteredArgs = new StringBuffer();
+					for (int i = 0; i < parsedArgs.length; i++) {
+						if (unwantedArgs.contains(parsedArgs[i].toLowerCase())) {
+							if (!parsedArgs[i + 1].startsWith("-")) { //$NON-NLS-1$
+								i++; // skip its value too
+								continue;
+							}
+						}
+						filteredArgs.append(parsedArgs[i] + ' ');
+					}
+					programArgs = filteredArgs.toString().trim();
+					if (programArgs.length() > 0)
+						arguments.setProgramArguments(programArgs, IArgumentsInfo.L_ARGS_ALL);
+				}
 				product.setLauncherArguments(arguments);
 			}
 
