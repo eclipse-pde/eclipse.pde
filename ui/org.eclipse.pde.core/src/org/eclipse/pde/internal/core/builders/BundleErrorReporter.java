@@ -323,15 +323,50 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String[] bundleEnvs = desc.getExecutionEnvironments();
 		if (bundleEnvs == null || bundleEnvs.length == 0) {
 			// No EE specified
-			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-			IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+			IJavaProject javaProject = JavaCore.create(fProject);
 
-			for (int i = 0; i < systemEnvs.length; i++) {
-				// Get strictly compatible EE for the default VM
-				if (systemEnvs[i].isStrictlyCompatible(defaultVM)) {
-					IMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
-					addMarkerAttribute(marker, "ee_id", systemEnvs[i].getId()); //$NON-NLS-1$
-					break;
+			// See if the project has an EE classpath entry
+			if (javaProject.exists()) {
+				try {
+					IClasspathEntry[] entries = javaProject.getRawClasspath();
+
+					for (int i = 0; i < entries.length; i++) {
+						if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+							IPath currentPath = entries[i].getPath();
+							if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) > 0) {
+								String eeId = JavaRuntime.getExecutionEnvironmentId(currentPath);
+								if (eeId != null) {
+									IMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
+									addMarkerAttribute(marker, "ee_id", eeId); //$NON-NLS-1$
+									return;
+								}
+							}
+						}
+					}
+				} catch (JavaModelException e) {
+					PDECore.log(e);
+				}
+			}
+
+			// If no EE classpath entry, get a matching EE for the project JRE (or the default JRE)
+			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+			IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+			if (javaProject.exists()) {
+				try {
+					vm = JavaRuntime.getVMInstall(javaProject);
+				} catch (CoreException e) {
+					PDECore.log(e);
+				}
+			}
+
+			if (vm != null) {
+				for (int i = 0; i < systemEnvs.length; i++) {
+					// Get strictly compatible EE for the default VM
+					if (systemEnvs[i].isStrictlyCompatible(vm)) {
+						IMarker marker = report(PDECoreMessages.BundleErrorReporter_noExecutionEnvironmentSet, 1, sev, PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET, PDEMarkerFactory.CAT_EE);
+						addMarkerAttribute(marker, "ee_id", systemEnvs[i].getId()); //$NON-NLS-1$
+						break;
+					}
 				}
 			}
 			return;
