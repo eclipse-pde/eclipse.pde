@@ -51,7 +51,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			for (int i = 0; i < projects.length; i++) {
 				if (WorkspaceModelManager.isPluginProject(projects[i]) && !WorkspaceModelManager.isBinaryProject(projects[i])) {
 					IPluginModelBase model = PluginRegistry.findModel(projects[i]);
-					if (model != null)
+					if (model != null && model.getBundleDescription() != null)
 						result.add(model);
 				}
 			}
