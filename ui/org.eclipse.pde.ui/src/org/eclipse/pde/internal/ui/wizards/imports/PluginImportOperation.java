@@ -186,18 +186,23 @@ public class PluginImportOperation extends WorkspaceJob {
 			HashMap workspacePluginMap = new HashMap();
 			for (int i = 0; i < workspacePlugins.length; i++) {
 				IPluginModelBase plugin = workspacePlugins[i];
-				String symbolicName = plugin.getBundleDescription().getSymbolicName();
-				ArrayList pluginsWithSameSymbolicName = (ArrayList) workspacePluginMap.get(symbolicName);
-				if (pluginsWithSameSymbolicName == null) {
-					pluginsWithSameSymbolicName = new ArrayList();
-					workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
+				if (plugin.getBundleDescription() != null) {
+					String symbolicName = plugin.getBundleDescription().getSymbolicName();
+					ArrayList pluginsWithSameSymbolicName = (ArrayList) workspacePluginMap.get(symbolicName);
+					if (pluginsWithSameSymbolicName == null) {
+						pluginsWithSameSymbolicName = new ArrayList();
+						workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
+					}
+					pluginsWithSameSymbolicName.add(plugin);
 				}
-				pluginsWithSameSymbolicName.add(plugin);
 			}
 			monitor.worked(1);
 
 			final ArrayList conflictingPlugins = new ArrayList();
 			for (int i = 0; i < fModels.length; i++) {
+				if (fModels[i].getBundleDescription() == null) {
+					continue;
+				}
 				String symbolicName = fModels[i].getBundleDescription().getSymbolicName();
 				ArrayList plugins = (ArrayList) workspacePluginMap.get(symbolicName);
 				if (plugins == null || plugins.size() == 0) {
