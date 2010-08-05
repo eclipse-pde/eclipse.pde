@@ -13,18 +13,13 @@ package org.eclipse.pde.internal.core.builders;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
 
 public class ManifestErrorReporter extends XMLErrorReporter {
 
@@ -126,7 +121,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	 * @return false if failed
 	 */
 	protected boolean validatePluginID(Element element, Attr attr) {
-		if (!IdUtil.isValidCompositeID(attr.getValue())) {
+		if (!IdUtil.isValidCompositeID3_0(attr.getValue())) {
 			String message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, attr.getValue(), attr.getName());
 			report(message, getLine(element, attr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
 			return false;
