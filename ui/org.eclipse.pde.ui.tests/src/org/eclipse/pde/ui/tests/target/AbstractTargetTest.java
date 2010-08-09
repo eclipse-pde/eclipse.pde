@@ -226,12 +226,13 @@ public abstract class AbstractTargetTest extends TestCase {
 	}	
 	
 	/**
-	 * Sets the target platform based on the given definition.
+	 * Synchronously sets the target platform based on the given definition.
 	 * 
 	 * @param target target definition or <code>null</code>
 	 * @throws CoreException 
 	 */
 	protected void setTargetPlatform(ITargetDefinition target) throws CoreException {
+		// Create the job to load the target, but then join with the job's thread
 		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
 		job.schedule();
 		try {

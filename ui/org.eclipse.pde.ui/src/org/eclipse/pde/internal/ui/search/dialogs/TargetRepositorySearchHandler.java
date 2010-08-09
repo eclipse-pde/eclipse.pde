@@ -90,8 +90,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 			newContainers[newContainers.length - 1] = container;
 			definition.setBundleContainers(newContainers);
 			service.saveTargetDefinition(definition);
-			LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(definition);
-			job.schedule();
+			LoadTargetDefinitionJob.load(definition);
 		}
 	}
 }

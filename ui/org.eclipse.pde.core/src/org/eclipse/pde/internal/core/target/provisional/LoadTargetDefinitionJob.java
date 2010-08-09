@@ -358,7 +358,15 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			Set includedIds = new HashSet();
 
 			if (!fTarget.isResolved()) {
-				fTarget.resolve(subMon.newChild(20));
+				IStatus resolveStatus = fTarget.resolve(subMon.newChild(20));
+				if (!resolveStatus.isOK()) {
+					if (resolveStatus.getSeverity() == IStatus.CANCEL) {
+						subMon.setCanceled(true);
+						return;
+					} else if (resolveStatus.getException() instanceof CoreException) {
+						throw (CoreException) resolveStatus.getException();
+					}
+				}
 			} else {
 				subMon.worked(20);
 			}
@@ -446,6 +454,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				NameVersionDescriptor nv = new NameVersionDescriptor(models[i].getPluginBase().getId(), models[i].getPluginBase().getVersion());
 				models[i].setEnabled(!missingDescriptions.contains(nv));
 			}
+
+			if (subMon.isCanceled()) {
+				return;
+			}
+
 			// save CHECKED_PLUGINS
 			if (urls.length == 0) {
 				pref.setValue(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
