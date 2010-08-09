@@ -358,17 +358,14 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			Set includedIds = new HashSet();
 
 			if (!fTarget.isResolved()) {
-				IStatus resolveStatus = fTarget.resolve(subMon.newChild(20));
-				if (!resolveStatus.isOK()) {
-					if (resolveStatus.getSeverity() == IStatus.CANCEL) {
-						subMon.setCanceled(true);
-						return;
-					} else if (resolveStatus.getException() instanceof CoreException) {
-						throw (CoreException) resolveStatus.getException();
-					}
-				}
+				// Even if there are errors in the target, don't interrupt the user with an error dialog
+				fTarget.resolve(subMon.newChild(20));
 			} else {
 				subMon.worked(20);
+			}
+
+			if (subMon.isCanceled()) {
+				return;
 			}
 
 			// collect all bundles, ignoring duplicates (symbolic name & version)
