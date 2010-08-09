@@ -414,9 +414,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-		IQueryResult queryResult = slice.query(QueryUtil.createIUAnyQuery(), new SubProgressMonitor(subMonitor, 10));
+		IQueryResult queryResult = null;
+		if (slice != null)
+			queryResult = slice.query(QueryUtil.createIUAnyQuery(), new SubProgressMonitor(subMonitor, 10));
 
-		if (subMonitor.isCanceled() || queryResult.isEmpty()) {
+		if (!slicer.getStatus().isOK() || subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 			return new IResolvedBundle[0];
 		}
 

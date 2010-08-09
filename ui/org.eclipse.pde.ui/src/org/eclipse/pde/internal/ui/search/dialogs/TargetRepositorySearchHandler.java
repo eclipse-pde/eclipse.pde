@@ -81,6 +81,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(units, repositories);
 		// Force the target into slicer mode as all requirements may not be available
 		container.setIncludeAllRequired(false, definition);
+		container.setIncludeAllEnvironments(true, definition);
 		IBundleContainer[] oldContainers = definition.getBundleContainers();
 		if (oldContainers == null) {
 			definition.setBundleContainers(new IBundleContainer[] {container});
