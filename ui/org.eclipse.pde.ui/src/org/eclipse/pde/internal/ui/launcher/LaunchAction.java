@@ -134,22 +134,29 @@ public class LaunchAction extends Action {
 		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
 		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteProgramArguments(os)) : ""; //$NON-NLS-1$
-		if (userArgs.length() > 0) {
-			buffer.append(" "); //$NON-NLS-1$
-			buffer.append(userArgs);
-		}
-		return buffer.toString();
+		return concatArgs(buffer, userArgs);
 	}
 
 	private String getVMArguments(String os) {
 		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialVMArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
 		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
-		if (userArgs.length() > 0) {
-			buffer.append(" "); //$NON-NLS-1$
-			buffer.append(userArgs);
+		return concatArgs(buffer, userArgs);
+	}
+
+	private String concatArgs(StringBuffer initialArgs, String userArgs) {
+		List initialArgsList = Arrays.asList(DebugPlugin.parseArguments(initialArgs.toString()));
+		if (userArgs != null && userArgs.length() > 0) {
+			List userArgsList = Arrays.asList(DebugPlugin.parseArguments(userArgs));
+			for (Iterator iterator = userArgsList.iterator(); iterator.hasNext();) {
+				Object userArg = iterator.next();
+				if (!initialArgsList.contains(userArg)) {
+					initialArgs.append(' ');
+					initialArgs.append(userArg);
+				}
+			}
 		}
-		return buffer.toString();
+		return initialArgs.toString();
 	}
 
 	private String getJREContainer(String os) {
