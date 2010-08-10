@@ -91,6 +91,8 @@ public abstract class AbstractPluginBlock {
 	private TreeEditor autoColumnEditor = null;
 	private boolean fIsDisposed = false;
 
+	private PluginStatusDialog fDialog;
+
 	/**
 	 * Label provider for the tree.
 	 */
@@ -927,15 +929,26 @@ public abstract class AbstractPluginBlock {
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
-		if (fOperation.hasErrors()) {
-			PluginStatusDialog dialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
-			dialog.setInput(fOperation.getInput());
-			dialog.open();
-			dialog = null;
-		} else if (fOperation.isEmpty()) {
-			MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+
+		if (fDialog == null) {
+			if (fOperation.hasErrors()) {
+				fDialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
+				fDialog.setInput(fOperation.getInput());
+				fDialog.open();
+				fDialog = null;
+			} else if (fOperation.isEmpty()) {
+				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+			} else {
+				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
+			}
 		} else {
-			MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
+			if (fOperation.getInput().size() > 0)
+				fDialog.refresh(fOperation.getInput());
+			else {
+				Map input = new HashMap(1);
+				input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
+				fDialog.refresh(input);
+			}
 		}
 	}
 
