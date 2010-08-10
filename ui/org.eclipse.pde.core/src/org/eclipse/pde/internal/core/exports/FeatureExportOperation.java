@@ -1047,7 +1047,7 @@ public class FeatureExportOperation extends Job {
 
 					if (fInfo.exportSource && fInfo.exportSourceBundle) {
 						includes = doc.createElement("includes"); //$NON-NLS-1$
-						includes.setAttribute("id", feature.getId() + " .source"); //$NON-NLS-1$ //$NON-NLS-2$
+						includes.setAttribute("id", feature.getId() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
 						includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
 						root.appendChild(includes);
 					}
