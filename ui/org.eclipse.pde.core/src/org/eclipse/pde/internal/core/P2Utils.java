@@ -26,8 +26,7 @@ import org.eclipse.equinox.p2.metadata.VersionRange;
 import org.eclipse.equinox.p2.planner.ProfileInclusionRules;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.osgi.framework.Constants;
@@ -378,6 +377,11 @@ public class P2Utils {
 		IProfile profile = null;
 		Properties props = new Properties();
 //		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
+		props.setProperty(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
+		// Set up environment and nationalization properties so OS specific fragments are installed
+		props.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
+		props.put(IProfile.PROP_NL, TargetPlatform.getNL());
+
 		profile = registry.addProfile(profileID, props);
 
 		// Create metadata for the bundles
@@ -403,6 +407,24 @@ public class P2Utils {
 			throw new CoreException(status);
 		}
 
+	}
+
+	/**
+	 * Generates the environment properties string for the self hosting p2 profile by looking up the current target platform properties.
+	 *
+	 * @return environment properties string
+	 */
+	private static String generateEnvironmentProperties() {
+		StringBuffer env = new StringBuffer();
+		env.append("osgi.ws="); //$NON-NLS-1$
+		env.append(TargetPlatform.getWS());
+		env.append(","); //$NON-NLS-1$
+		env.append("osgi.os="); //$NON-NLS-1$
+		env.append(TargetPlatform.getOS());
+		env.append(","); //$NON-NLS-1$
+		env.append("osgi.arch="); //$NON-NLS-1$
+		env.append(TargetPlatform.getOSArch());
+		return env.toString();
 	}
 
 	/**
