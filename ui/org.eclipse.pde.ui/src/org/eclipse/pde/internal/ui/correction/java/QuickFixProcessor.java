@@ -154,18 +154,28 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 		ASTNode selectedNode = problemLocation.getCoveringNode(cu);
 		if (selectedNode != null) {
 			ASTNode node = getParent(selectedNode);
-			// Find import declaration which is the problem
-			if (node instanceof ImportDeclaration) {
+			String className = null;
+			String packageName = null;
+			if (node == null) {
+				if (selectedNode instanceof SimpleName) {
+					ITypeBinding typeBinding = ((SimpleName) selectedNode).resolveTypeBinding();
+					className = typeBinding.getBinaryName();
+					packageName = typeBinding.getPackage().getName();
+				}
+			} else if (node instanceof ImportDeclaration) {
+				// Find import declaration which is the problem
+				className = ((ImportDeclaration) node).getName().getFullyQualifiedName();
+
+				// always add the search repositories proposal
+				packageName = className.substring(0, className.lastIndexOf('.'));
+				result.add(JavaResolutionFactory.createSearchRepositoriesProposal(packageName));
+			}
+
+			if (className != null && packageName != null) {
 				IProject project = cu.getJavaElement().getJavaProject().getProject();
 				// only try to find proposals on Plug-in Projects
 				if (!WorkspaceModelManager.isPluginProject(project))
 					return;
-
-				String className = ((ImportDeclaration) node).getName().getFullyQualifiedName();
-
-				// always add the search repositories proposal
-				String packageName = className.substring(0, className.lastIndexOf('.'));
-				result.add(JavaResolutionFactory.createSearchRepositoriesProposal(packageName));
 
 				// create a collector that will create IJavaCompletionProposals and load them into 'result'
 				AbstractClassResolutionCollector collector = createCollector(result);
