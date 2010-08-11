@@ -217,7 +217,12 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		generator.setBuildSiteFactory(siteFactory);
 		generator.setFeatureId(nestedId);
 		generator.setVersion(nestedVersion);
+		generator.setPluginPath(pluginPath);
 		generator.generate();
+
+		//get the siteFactory back from the nested generator so we don't need to recreate it
+		if (siteFactory == null)
+			siteFactory = generator.siteFactory;
 
 		if (productKey != null) {
 			buildProperties = new Properties();
@@ -472,6 +477,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		}
 
 		createBuildProperties(directory);
+		getSite(false).addFeatureReferenceModel(directory);
 	}
 
 	protected void createBuildProperties(File directory) {
