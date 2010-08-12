@@ -16,30 +16,19 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.team.core.RepositoryProvider;
 
 public abstract class WorkspaceModelManager extends AbstractModelManager implements IResourceChangeListener, IResourceDeltaVisitor {
 
 	public static boolean isPluginProject(IProject project) {
-		try {
-			if (project.isOpen() && project.hasNature(PDE.PLUGIN_NATURE)) {
-				return PDEProject.getManifest(project).exists() || PDEProject.getPluginXml(project).exists() || PDEProject.getFragmentXml(project).exists();
-			}
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
+		if (project.isOpen())
+			return PDEProject.getManifest(project).exists() || PDEProject.getPluginXml(project).exists() || PDEProject.getFragmentXml(project).exists();
 		return false;
 	}
 
 	public static boolean isFeatureProject(IProject project) {
-		try {
-			return project.isOpen() && project.hasNature(PDE.FEATURE_NATURE) && PDEProject.getFeatureXml(project).exists();
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
-		return false;
+		return project.isOpen() && PDEProject.getFeatureXml(project).exists();
 	}
 
 	public static boolean isBinaryProject(IProject project) {
