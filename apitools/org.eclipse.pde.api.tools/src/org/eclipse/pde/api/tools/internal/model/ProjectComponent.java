@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -44,9 +43,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.osgi.framework.BundleException;
 
 /**
@@ -211,85 +210,87 @@ public class ProjectComponent extends BundleComponent {
 		fPathToOutputContainers = new HashMap(4);
 		fOutputLocationToContainer = new HashMap(4);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
-			IFile prop = fProject.getProject().getFile("build.properties"); //$NON-NLS-1$
-			if (prop.exists()) {
-				WorkspaceBuildModel properties = new WorkspaceBuildModel(prop);
-				IBuild build = properties.getBuild();
-				IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
-				if (entry != null) {
-					String[] tokens = entry.getTokens();
-					if (tokens.length == 1 && tokens[0].equals("true")) { //$NON-NLS-1$
-						// hack : add the current output location for each classpath entries
-						IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
-						List containers = new ArrayList();
-						for (int i = 0; i < classpathEntries.length; i++) {
-							IClasspathEntry classpathEntry = classpathEntries[i];
-							switch(classpathEntry.getEntryKind()) {
-								case IClasspathEntry.CPE_SOURCE :
-									String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
-									IApiTypeContainer container = getApiTypeContainer(containerPath, this);
-									if (container != null && !containers.contains(container)) {
-										containers.add(container);
+			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+			if (model != null) {
+				IBuildModel buildModel = PluginRegistry.createBuildModel(model);
+				if (buildModel != null) {
+					IBuild build = buildModel.getBuild();
+					IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
+					if (entry != null) {
+						String[] tokens = entry.getTokens();
+						if (tokens.length == 1 && tokens[0].equals("true")) { //$NON-NLS-1$
+							// hack : add the current output location for each classpath entries
+							IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
+							List containers = new ArrayList();
+							for (int i = 0; i < classpathEntries.length; i++) {
+								IClasspathEntry classpathEntry = classpathEntries[i];
+								switch(classpathEntry.getEntryKind()) {
+									case IClasspathEntry.CPE_SOURCE :
+										String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
+										IApiTypeContainer container = getApiTypeContainer(containerPath, this);
+										if (container != null && !containers.contains(container)) {
+											containers.add(container);
+										}
+										break;
+									case IClasspathEntry.CPE_VARIABLE :
+										classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
+										//$FALL-THROUGH$
+									case IClasspathEntry.CPE_LIBRARY :
+										IPath path = classpathEntry.getPath();
+										if (Util.isArchive(path.lastSegment())) {
+											IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+											if (resource != null) {
+												// jar inside the workspace
+												containers.add(new ArchiveApiTypeContainer(this, resource.getLocation().toOSString()));
+											} else {
+												// external jar
+												containers.add(new ArchiveApiTypeContainer(this, path.toOSString()));
+											}
+										}
+										break;
+								}
+							}
+							if (!containers.isEmpty()) {
+								IApiTypeContainer cfc = null;
+								if (containers.size() == 1) {
+									cfc = (IApiTypeContainer) containers.get(0);
+								} else {
+									cfc = new CompositeApiTypeContainer(this, containers);
+								}
+								fPathToOutputContainers.put(".", cfc); //$NON-NLS-1$
+							}
+						}
+					} else {
+						IBuildEntry[] entries = build.getBuildEntries();
+						int length = entries.length;
+						for (int i = 0; i < length; i++) {
+							IBuildEntry buildEntry = entries[i];
+							if (buildEntry.getName().startsWith(IBuildEntry.JAR_PREFIX)) {
+								String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
+								String[] tokens = buildEntry.getTokens();
+								if (tokens.length == 1) {
+									IApiTypeContainer container = getApiTypeContainer(tokens[0], this);
+									if (container != null) {
+										fPathToOutputContainers.put(jar, container);
 									}
-									break;
-								case IClasspathEntry.CPE_VARIABLE :
-									classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
-									//$FALL-THROUGH$
-								case IClasspathEntry.CPE_LIBRARY :
-									IPath path = classpathEntry.getPath();
-									if (Util.isArchive(path.lastSegment())) {
-										IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-										if (resource != null) {
-											// jar inside the workspace
-											containers.add(new ArchiveApiTypeContainer(this, resource.getLocation().toOSString()));
-										} else {
-											// external jar
-											containers.add(new ArchiveApiTypeContainer(this, path.toOSString()));
+								} else {
+									List containers = new ArrayList();
+									for (int j = 0; j < tokens.length; j++) {
+										String currentToken = tokens[j];
+										IApiTypeContainer container = getApiTypeContainer(currentToken, this);
+										if (container != null && !containers.contains(container)) {
+											containers.add(container);
 										}
 									}
-									break;
-							}
-						}
-						if (!containers.isEmpty()) {
-							IApiTypeContainer cfc = null;
-							if (containers.size() == 1) {
-								cfc = (IApiTypeContainer) containers.get(0);
-							} else {
-								cfc = new CompositeApiTypeContainer(this, containers);
-							}
-							fPathToOutputContainers.put(".", cfc); //$NON-NLS-1$
-						}
-					}
-				} else {
-					IBuildEntry[] entries = build.getBuildEntries();
-					int length = entries.length;
-					for (int i = 0; i < length; i++) {
-						IBuildEntry buildEntry = entries[i];
-						if (buildEntry.getName().startsWith(IBuildEntry.JAR_PREFIX)) {
-							String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
-							String[] tokens = buildEntry.getTokens();
-							if (tokens.length == 1) {
-								IApiTypeContainer container = getApiTypeContainer(tokens[0], this);
-								if (container != null) {
-									fPathToOutputContainers.put(jar, container);
-								}
-							} else {
-								List containers = new ArrayList();
-								for (int j = 0; j < tokens.length; j++) {
-									String currentToken = tokens[j];
-									IApiTypeContainer container = getApiTypeContainer(currentToken, this);
-									if (container != null && !containers.contains(container)) {
-										containers.add(container);
+									if (!containers.isEmpty()) {
+										IApiTypeContainer cfc = null;
+										if (containers.size() == 1) {
+											cfc = (IApiTypeContainer) containers.get(0);
+										} else {
+											cfc = new CompositeApiTypeContainer(this, containers);
+										}
+										fPathToOutputContainers.put(jar, cfc);
 									}
-								}
-								if (!containers.isEmpty()) {
-									IApiTypeContainer cfc = null;
-									if (containers.size() == 1) {
-										cfc = (IApiTypeContainer) containers.get(0);
-									} else {
-										cfc = new CompositeApiTypeContainer(this, containers);
-									}
-									fPathToOutputContainers.put(jar, cfc);
 								}
 							}
 						}
