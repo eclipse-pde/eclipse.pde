@@ -168,7 +168,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * Provides the instance of PluginModelManager. If one doesn't exists already than a new one is created and 
 	 * the workspace and external (target) model manager are initialized with listeners added to each one
 	 */
-	public static PluginModelManager getInstance() {
+	public static synchronized PluginModelManager getInstance() {
 		if (fModelManager == null) {
 			fModelManager = new PluginModelManager();
 		}

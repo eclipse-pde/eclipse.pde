@@ -119,7 +119,6 @@ public class PDECore extends Plugin {
 		log(status);
 	}
 
-	private PluginModelManager fModelManager;
 	private FeatureModelManager fFeatureModelManager;
 
 	private TargetDefinitionManager fTargetProfileManager;
@@ -177,22 +176,16 @@ public class PDECore extends Plugin {
 	}
 
 	public PluginModelManager getModelManager() {
-		if (fModelManager == null) {
-			fModelManager = PluginModelManager.getInstance();
-			// when initializing plug-in models, create the extension registry so it can track relevant (ModelChange) events.
-			if (fExtensionRegistry == null)
-				getExtensionsRegistry();
-		}
-		return fModelManager;
+		return PluginModelManager.getInstance();
 	}
 
-	public TargetDefinitionManager getTargetProfileManager() {
+	public synchronized TargetDefinitionManager getTargetProfileManager() {
 		if (fTargetProfileManager == null)
 			fTargetProfileManager = new TargetDefinitionManager();
 		return fTargetProfileManager;
 	}
 
-	public FeatureModelManager getFeatureModelManager() {
+	public synchronized FeatureModelManager getFeatureModelManager() {
 		if (fFeatureModelManager == null)
 			fFeatureModelManager = new FeatureModelManager();
 		return fFeatureModelManager;
@@ -202,38 +195,38 @@ public class PDECore extends Plugin {
 		return fJavaElementChangeListener;
 	}
 
-	public SchemaRegistry getSchemaRegistry() {
+	public synchronized SchemaRegistry getSchemaRegistry() {
 		if (fSchemaRegistry == null)
 			fSchemaRegistry = new SchemaRegistry();
 		return fSchemaRegistry;
 	}
 
-	public PDEExtensionRegistry getExtensionsRegistry() {
+	public synchronized PDEExtensionRegistry getExtensionsRegistry() {
 		if (fExtensionRegistry == null) {
 			fExtensionRegistry = new PDEExtensionRegistry();
 		}
 		return fExtensionRegistry;
 	}
 
-	public SourceLocationManager getSourceLocationManager() {
+	public synchronized SourceLocationManager getSourceLocationManager() {
 		if (fSourceLocationManager == null)
 			fSourceLocationManager = new SourceLocationManager();
 		return fSourceLocationManager;
 	}
 
-	public JavadocLocationManager getJavadocLocationManager() {
+	public synchronized JavadocLocationManager getJavadocLocationManager() {
 		if (fJavadocLocationManager == null)
 			fJavadocLocationManager = new JavadocLocationManager();
 		return fJavadocLocationManager;
 	}
 
-	public TracingOptionsManager getTracingOptionsManager() {
+	public synchronized TracingOptionsManager getTracingOptionsManager() {
 		if (fTracingOptionsManager == null)
 			fTracingOptionsManager = new TracingOptionsManager();
 		return fTracingOptionsManager;
 	}
 
-	public SearchablePluginsManager getSearchablePluginsManager() {
+	public synchronized SearchablePluginsManager getSearchablePluginsManager() {
 		if (fSearchablePluginsManager == null) {
 			fSearchablePluginsManager = new SearchablePluginsManager();
 		}
@@ -241,7 +234,7 @@ public class PDECore extends Plugin {
 	}
 
 	public boolean areModelsInitialized() {
-		return fModelManager != null && fModelManager.isInitialized();
+		return getModelManager().isInitialized();
 	}
 
 	public void start(BundleContext context) throws Exception {
@@ -326,10 +319,9 @@ public class PDECore extends Plugin {
 			fExtensionRegistry.stop();
 			fExtensionRegistry = null;
 		}
-		if (fModelManager != null) {
-			fModelManager.shutdown();
-			fModelManager = null;
-		}
+
+		getModelManager().shutdown();
+
 		if (fTargetPlatformService != null) {
 			fTargetPlatformService.unregister();
 			fTargetPlatformService = null;
