@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.util.ArrayList;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
@@ -23,8 +24,6 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
@@ -240,14 +239,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private void addExtraPrerequisites(IPluginModelBase model, ArrayList result) {
 		try {
-			IBuildModel buildModel = model.getBuildModel();
-			if (buildModel == null) {
-				IFile buildFile = PDEProject.getBuildProperties(model.getUnderlyingResource().getProject());
-				if (buildFile.exists()) {
-					buildModel = new WorkspaceBuildModel(buildFile);
-					buildModel.load();
-				}
-			}
+			IBuildModel buildModel = PluginRegistry.createBuildModel(model);
 			if (buildModel == null)
 				return;
 

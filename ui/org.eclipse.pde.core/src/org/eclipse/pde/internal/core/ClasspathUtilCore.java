@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
@@ -20,13 +20,11 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundleFragment;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.plugin.Plugin;
-import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class ClasspathUtilCore {
 
@@ -193,15 +191,7 @@ public class ClasspathUtilCore {
 	}
 
 	public static IBuild getBuild(IPluginModelBase model) throws CoreException {
-		IBuildModel buildModel = model.getBuildModel();
-		if (buildModel == null) {
-			IProject project = model.getUnderlyingResource().getProject();
-			IFile buildFile = PDEProject.getBuildProperties(project);
-			if (buildFile.exists()) {
-				buildModel = new WorkspaceBuildModel(buildFile);
-				buildModel.load();
-			}
-		}
+		IBuildModel buildModel = PluginRegistry.createBuildModel(model);
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 

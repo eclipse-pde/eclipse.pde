@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,8 +36,6 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 
 	private boolean fEditable = true;
 
-	private IBuildModel fBuildModel;
-
 	protected NLResourceHelper createNLResourceHelper() {
 		return new NLResourceHelper("plugin", PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
@@ -62,7 +60,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 	}
 
 	public IBuildModel getBuildModel() {
-		return fBuildModel;
+		return null;
 	}
 
 	public String getContents() {
@@ -168,10 +166,6 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 			fPluginBase.write("", writer); //$NON-NLS-1$
 		}
 		fDirty = false;
-	}
-
-	public void setBuildModel(IBuildModel buildModel) {
-		fBuildModel = buildModel;
 	}
 
 	public void setDirty(boolean dirty) {

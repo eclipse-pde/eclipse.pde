@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,8 +51,12 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	/**
 	 * Returns an associated build.properties model
 	 * that works in conjunction with this model.
-	 *
-	 * @return the matching plugin.jars model
+	 * <p>
+	 * This method always returns <code>null</code>
+	 * </p>
+	 * @return <code>null</code>
+	 * @deprecated This method has always returned <code>null</code>. 
+	 *   Since 3.7, use {@link PluginRegistry#createBuildModel(IPluginModelBase)} instead.
 	 */
 	IBuildModel getBuildModel();
 

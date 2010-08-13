@@ -12,10 +12,15 @@ package org.eclipse.pde.core.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Version;
 
@@ -384,5 +389,29 @@ public class PluginRegistry {
 			}
 		}
 		return (IPluginModelBase[]) results.toArray(new IPluginModelBase[results.size()]);
+	}
+
+	/**
+	 * Creates and returns a model associated with the <code>build.properties</code> of a bundle
+	 * in the workspace or <code>null</code> if none.
+	 * 
+	 * @param model plug-in model base
+	 * @return a build model initialized from the plug-in's <code>build.properties</code> or
+	 *  <code>null</code> if none. Returns <code>null</code> for external plug-in models (i.e.
+	 *  models that are not based on workspace projects).
+	 *  @exception CoreException if unable to create a build model
+	 * @since 3.7
+	 */
+	public static IBuildModel createBuildModel(IPluginModelBase model) throws CoreException {
+		IProject project = model.getUnderlyingResource().getProject();
+		if (project != null) {
+			IFile buildFile = PDEProject.getBuildProperties(project);
+			if (buildFile.exists()) {
+				IBuildModel buildModel = new WorkspaceBuildModel(buildFile);
+				buildModel.load();
+				return buildModel;
+			}
+		}
+		return null;
 	}
 }
