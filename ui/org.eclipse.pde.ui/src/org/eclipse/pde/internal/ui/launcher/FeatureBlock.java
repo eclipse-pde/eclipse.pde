@@ -185,8 +185,6 @@ public class FeatureBlock {
 
 	class ButtonSelectionListener extends SelectionAdapter {
 
-		private PluginStatusDialog fDialog;
-
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fValidateButton) {
@@ -769,6 +767,7 @@ public class FeatureBlock {
 
 	private ViewerFilter fSelectedOnlyFilter;
 	private boolean fIsDisposed = false;
+	private PluginStatusDialog fDialog;
 
 	/**
 	 * Maps feature ID to the FeatureLaunchModel that represents the feature in the tree
@@ -1105,6 +1104,15 @@ public class FeatureBlock {
 			int checked = fTree.getCheckedLeafCount();
 			int total = fFeatureModels.values().size() + fAdditionalPlugins.size();
 			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
+		}
+	}
+
+	public void setVisible(boolean visible) {
+		if (!visible) {
+			if (fDialog != null) {
+				fDialog.close();
+				fDialog = null;
+			}
 		}
 	}
 

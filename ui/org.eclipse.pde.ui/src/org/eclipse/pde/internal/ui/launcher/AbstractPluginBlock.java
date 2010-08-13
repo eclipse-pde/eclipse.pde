@@ -952,6 +952,15 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
+	protected void setVisible(boolean visible) {
+		if (!visible) {
+			if (fDialog != null) {
+				fDialog.close();
+				fDialog = null;
+			}
+		}
+	}
+
 	protected abstract LaunchValidationOperation createValidationOperation();
 
 	/**

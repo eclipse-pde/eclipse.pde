@@ -110,8 +110,8 @@ public class BlockAdapter {
 
 	public void setActiveBlock(int index) {
 		try {
-			fActiveIndex = index;
 			if (index == FEATURES_BLOCK) {
+				fPluginBlock.setVisible(false);
 				if (fFeatureBlockComposite == null) {
 					fFeatureBlockComposite = SWTFactory.createComposite(fParent, 7, 1, GridData.FILL_BOTH, 0, 0);
 					fFeatureBlock.createControl(fFeatureBlockComposite, 6, 10);
@@ -120,23 +120,28 @@ public class BlockAdapter {
 					}
 				}
 				fLayout.topControl = fFeatureBlockComposite;
-				return;
-			} else if (fPluginBlockComposite == null) {
-				fPluginBlockComposite = SWTFactory.createComposite(fParent, fSpan, 1, GridData.FILL_BOTH, 0, 0);
-				fPluginBlock.createControl(fPluginBlockComposite, fSpan, fIndent);
-				if (fLaunchConfig != null) {
-					if (fPluginBlock instanceof PluginBlock) {
-						fPluginBlock.initializeFrom(fLaunchConfig, fActiveIndex == PLUGINS_BLOCK);
-					} else if (fPluginBlock instanceof OSGiBundleBlock) {
-						((OSGiBundleBlock) fPluginBlock).initializeFrom(fLaunchConfig);
+			} else {
+				fFeatureBlock.setVisible(false);
+				if (fActiveIndex != index) {
+					fPluginBlock.setVisible(false);
+				}
+				if (fPluginBlockComposite == null) {
+					fPluginBlockComposite = SWTFactory.createComposite(fParent, fSpan, 1, GridData.FILL_BOTH, 0, 0);
+					fPluginBlock.createControl(fPluginBlockComposite, fSpan, fIndent);
+					if (fLaunchConfig != null) {
+						if (fPluginBlock instanceof PluginBlock) {
+							fPluginBlock.initializeFrom(fLaunchConfig, index == PLUGINS_BLOCK);
+						} else if (fPluginBlock instanceof OSGiBundleBlock) {
+							((OSGiBundleBlock) fPluginBlock).initializeFrom(fLaunchConfig);
+						}
 					}
 				}
+				fLayout.topControl = fPluginBlockComposite;
 			}
-			fLayout.topControl = fPluginBlockComposite;
+			fActiveIndex = index;
 		} catch (CoreException ex) {
 			PDEPlugin.log(ex);
 		}
 
 	}
-
 }
