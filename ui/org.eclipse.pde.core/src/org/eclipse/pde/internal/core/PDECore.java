@@ -320,7 +320,7 @@ public class PDECore extends Plugin {
 			fExtensionRegistry = null;
 		}
 
-		getModelManager().shutdown();
+		PluginModelManager.shutdownInstance();
 
 		if (fTargetPlatformService != null) {
 			fTargetPlatformService.unregister();

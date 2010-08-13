@@ -165,7 +165,7 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
-	 * Provides the instance of PluginModelManager. If one doesn't exists already than a new one is created and 
+	 * Provides the instance of {@link PluginModelManager}. If one doesn't exists already than a new one is created and 
 	 * the workspace and external (target) model manager are initialized with listeners added to each one
 	 */
 	public static synchronized PluginModelManager getInstance() {
@@ -173,6 +173,15 @@ public class PluginModelManager implements IModelProviderListener {
 			fModelManager = new PluginModelManager();
 		}
 		return fModelManager;
+	}
+
+	/**
+	 * Shuts down the instance of {@link PluginModelManager} if it exists.
+	 */
+	public static synchronized void shutdownInstance() {
+		if (fModelManager != null) {
+			fModelManager.shutdown();
+		}
 	}
 
 	/**
