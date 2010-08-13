@@ -62,7 +62,7 @@ public class PluginRegistryTests extends TestCase {
 	}
 	
 	public void testMatchEquivalent() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", "3.6.0", IMatchRules.EQUIVALENT, null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.core", "3.7.0", IMatchRules.EQUIVALENT, null);
 		assertNotNull(model);
 		assertEquals("org.eclipse.pde.core", model.getPluginBase().getId());
 	}
