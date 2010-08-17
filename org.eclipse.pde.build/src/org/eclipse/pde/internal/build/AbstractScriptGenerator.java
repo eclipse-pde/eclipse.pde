@@ -311,18 +311,19 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (siteFactory != null && refresh == false)
 			return siteFactory.createSite();
 
-		if (siteFactory == null || refresh == true) {
-			siteFactory = new BuildTimeSiteFactory();
-			siteFactory.setFilterState(filterState);
-			siteFactory.setFilterRoots(featuresForFilterRoots, pluginsForFilterRoots);
-			siteFactory.setReportResolutionErrors(reportResolutionErrors);
-			siteFactory.setFilterP2Base(filterP2Base);
-		}
+		//If there is an exception from createSite(), we will discard the factory
+		BuildTimeSiteFactory factory = new BuildTimeSiteFactory();
+		factory.setFilterState(filterState);
+		factory.setFilterRoots(featuresForFilterRoots, pluginsForFilterRoots);
+		factory.setReportResolutionErrors(reportResolutionErrors);
+		factory.setFilterP2Base(filterP2Base);
+		factory.setSitePaths(getPaths());
+		factory.setEESources(getEESources());
+		factory.setInitialState(pdeUIState);
 
-		siteFactory.setSitePaths(getPaths());
-		siteFactory.setEESources(getEESources());
-		siteFactory.setInitialState(pdeUIState);
-		BuildTimeSite result = siteFactory.createSite();
+		BuildTimeSite result = factory.createSite();
+		siteFactory = factory;
+
 		if (platformProperties != null)
 			result.setPlatformPropeties(platformProperties);
 
@@ -457,6 +458,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		try {
 			state = getSite(false).getRegistry();
 		} catch (CoreException e) {
+			BundleHelper.getDefault().getLog().log(e.getStatus());
 			return null;
 		}
 		Path path = new Path(location);
@@ -475,7 +477,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		try {
 			feature = getSite(false).findFeature(id, null, false);
 		} catch (CoreException e) {
-			//Ignore
+			BundleHelper.getDefault().getLog().log(e.getStatus());
 		}
 		if (feature == null)
 			return null;

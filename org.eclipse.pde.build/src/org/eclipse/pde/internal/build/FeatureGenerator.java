@@ -295,7 +295,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			try {
 				executableFeature = getSite(false).findFeature(FEATURE_EQUINOX_EXECUTABLE, null, false);
 			} catch (CoreException e) {
-				// ignore
+				BundleHelper.getDefault().getLog().log(e.getStatus());
 			}
 			if (executableFeature != null) {
 				/* the executable feature includes the launcher and fragments already */

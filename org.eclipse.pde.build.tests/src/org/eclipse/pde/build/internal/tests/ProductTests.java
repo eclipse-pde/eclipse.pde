@@ -174,6 +174,24 @@ public class ProductTests extends PDETestCase {
 		runAntScript(buildXMLPath, new String[] {"generateFeature", "generate"}, buildFolder.getLocation().toOSString(), properties);
 	}
 
+	public void test315792() throws Exception {
+		IFolder buildFolder = newTest("315792");
+
+		Utils.generateProduct(buildFolder.getFile("features/foo/foo.product"), null, "1.0.0", null, new String[] {"org.eclipse.osgi"}, false);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", "/foo/foo.product");
+		properties.put("configs", Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch());
+		properties.put("verify", "true");
+		properties.put("baseLocation", buildFolder.getFolder("base").getLocation().toOSString());
+		properties.put("pluginPath", Platform.getInstallLocation().getURL().getPath());
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/productBuild.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"generateFeature"}, buildFolder.getLocation().toOSString(), properties);
+		assertLogContainsLine(buildFolder.getFile("log.log"), "[eclipse.generateFeature] Incorrect directory entry");
+	}
+
 	public void test237747() throws Exception {
 		IFolder buildFolder = newTest("237747");
 
