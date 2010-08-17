@@ -107,7 +107,7 @@ public class BundleRootTests extends TestCase {
 		IPath root = new Path("some/place");
 		description.setBundleRoot(root);
 		IBundleClasspathEntry cp1 = getBundleProjectService().newBundleClasspathEntry(new Path("src"), new Path("bin"), new Path("the.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{cp1});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{cp1});
 		IPath nls = new Path("plugin.properties");
 		description.setLocalization(nls);
 		description.apply(null);
@@ -128,7 +128,7 @@ public class BundleRootTests extends TestCase {
 		IPath root = new Path("bundle/root");
 		description.setBundleRoot(root);
 		IBundleClasspathEntry cp1 = getBundleProjectService().newBundleClasspathEntry(new Path("src"), new Path("bin"), new Path("the.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{cp1});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{cp1});
 		IPath nls = new Path("plugin.properties");
 		description.setLocalization(nls);
 		description.setActivator("org.eclipse.foo.SomeActivator");

@@ -295,15 +295,27 @@ public interface IBundleProjectDescription {
 	 * is specified, no Bundle-Classpath header will be produced.
 	 * 
 	 * @param entries Bundle-Classpath header entries or <code>null</code>
+	 * @deprecated use {@link #setBundleClasspath(IBundleClasspathEntry[])}
 	 */
 	public void setBundleClassath(IBundleClasspathEntry[] entries);
+
+	/**
+	 * Sets the entries for the Bundle-Classpath header of the described bundle,
+	 * or <code>null</code> if unspecified. Specifies the relationship between
+	 * source and/or binary folders with bundle classpath entries. When <code>null</code>
+	 * is specified, no Bundle-Classpath header will be produced.
+	 * 
+	 * @param entries Bundle-Classpath header entries or <code>null</code>
+	 * @since 3.7
+	 */
+	public void setBundleClasspath(IBundleClasspathEntry[] entries);
 
 	/**
 	 * Returns the entries on the Bundle-Classpath header of the described bundle,
 	 * or <code>null</code> if unspecified.
 	 * 
 	 * @return bundle class path entries or <code>null</code> if unspecified
-	 * @see #setBundleClassath(IBundleClasspathEntry[])
+	 * @see #setBundleClasspath(IBundleClasspathEntry[])
 	 */
 	public IBundleClasspathEntry[] getBundleClasspath();
 

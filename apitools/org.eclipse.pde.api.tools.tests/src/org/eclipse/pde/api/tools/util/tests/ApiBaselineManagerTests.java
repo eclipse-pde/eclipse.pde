@@ -615,7 +615,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			// remove from bundle class path
 			IBundleProjectService service = ProjectUtils.getBundleProjectService();
 			IBundleProjectDescription description = service.getDescription(project.getProject());
-			description.setBundleClassath(new IBundleClasspathEntry[]{service.newBundleClasspathEntry(new Path(ProjectUtils.SRC_FOLDER), null, null)});
+			description.setBundleClasspath(new IBundleClasspathEntry[]{service.newBundleClasspathEntry(new Path(ProjectUtils.SRC_FOLDER), null, null)});
 			description.apply(null);
 			waitForAutoBuild();
 						

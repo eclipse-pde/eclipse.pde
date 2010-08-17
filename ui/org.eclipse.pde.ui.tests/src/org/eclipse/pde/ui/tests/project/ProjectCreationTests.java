@@ -283,7 +283,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setHost(host);
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"), new Path("frag.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{e1});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{e1});
 		description.apply(null);
 		
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -332,7 +332,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("the.jar"));
 		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), null, new Path("the.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{e1, e2});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
 		
@@ -391,7 +391,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("."));
 		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), new Path("bin2"), new Path("two.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{e1, e2});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
 		
@@ -487,7 +487,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
 		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
@@ -548,7 +548,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
 		
@@ -606,7 +606,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
@@ -686,7 +686,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IPath src = new Path("srcA");
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("a.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
 		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
@@ -698,7 +698,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription modify = service.getDescription(project);
 		IPath srcB = new Path("srcB");
 		IBundleClasspathEntry specB = service.newBundleClasspathEntry(srcB, null, new Path("b.jar"));
-		modify.setBundleClassath(new IBundleClasspathEntry[] {specB});
+		modify.setBundleClasspath(new IBundleClasspathEntry[] {specB});
 		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false, new String[]{"zz.top"});
 		modify.setPackageExports(new IPackageExportDescription[]{ex0, ex2, ex4, ex3}); // remove, add, re-order
 		modify.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
@@ -818,7 +818,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, null, new Path("one.jar"));
 		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, null, new Path("lib/two.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{one, two});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{one, two});
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
 		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
@@ -904,7 +904,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, new Path("bin1"), new Path("one.jar"));
 		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, new Path("bin2"), new Path("two.jar"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{one, two});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{one, two});
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
 		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
@@ -1020,7 +1020,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
@@ -1120,7 +1120,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
@@ -1186,7 +1186,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
@@ -1253,7 +1253,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClassath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
@@ -1492,7 +1492,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setSymbolicName(proj.getName());
 		description.setNatureIds(new String[]{IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
 		IBundleClasspathEntry entry = getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, null);
-		description.setBundleClassath(new IBundleClasspathEntry[]{entry});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{entry});
 		description.apply(null);
 		
 		// validate
@@ -1534,7 +1534,7 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(new Path("src"), new Path("WebContent/WEB-INF/classes"), new Path("WebContent/WEB-INF/classes"));
-		description.setBundleClassath(new IBundleClasspathEntry[]{one});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{one});
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
 		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});

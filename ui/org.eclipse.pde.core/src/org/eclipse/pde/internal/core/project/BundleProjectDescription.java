@@ -229,7 +229,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				// default bundle classpath of '.'
 				classpath = getClasspathEntries(project, build, "."); //$NON-NLS-1$
 			}
-			setBundleClassath(classpath);
+			setBundleClasspath(classpath);
 			elements = parseHeader(headers, Constants.BUNDLE_SYMBOLICNAME);
 			if (elements != null && elements.length > 0) {
 				setSymbolicName(elements[0].getValue());
@@ -736,6 +736,13 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleClassath(org.eclipse.pde.core.project.IBundleClasspathSpecification[])
 	 */
 	public void setBundleClassath(IBundleClasspathEntry[] entries) {
+		setBundleClasspath(entries);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleClasspath(org.eclipse.pde.core.project.IBundleClasspathEntry[])
+	 */
+	public void setBundleClasspath(IBundleClasspathEntry[] entries) {
 		fBundleClasspath = entries;
 	}
 

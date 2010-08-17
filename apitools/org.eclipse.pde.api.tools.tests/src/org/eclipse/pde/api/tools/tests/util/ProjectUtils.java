@@ -89,7 +89,7 @@ public class ProjectUtils {
 		IBundleProjectDescription description = service.getDescription(project);
 		IBundleClasspathEntry entry = service.newBundleClasspathEntry(new Path(SRC_FOLDER), new Path(BIN_FOLDER), null);
 		description.setSymbolicName(projectName);
-		description.setBundleClassath(new IBundleClasspathEntry[]{entry});
+		description.setBundleClasspath(new IBundleClasspathEntry[]{entry});
 		description.setNatureIds(resolvednatures);
 		description.setBundleVendor("ibm");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_4);
@@ -363,7 +363,7 @@ public class ProjectUtils {
 		IBundleClasspathEntry[] next = new IBundleClasspathEntry[classpath.length + 1];
 		System.arraycopy(classpath, 0, next, 0, classpath.length);
 		next[next.length - 1] = entry;
-		description.setBundleClassath(next);
+		description.setBundleClasspath(next);
 		description.apply(null);
 	}
 }
