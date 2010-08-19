@@ -158,6 +158,9 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 	 */
 	static IProfileRegistry getProfileRegistry() {
 		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+		if (agent == null) {
+			return null;
+		}
 		return (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 	}
 
