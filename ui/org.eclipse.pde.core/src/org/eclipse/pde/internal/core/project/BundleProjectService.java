@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kaloyan Raev - kaloyan.raev@sap.com - Bug 323246: IBundleProjectService.setBundleRoot() does not accept null argument
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
@@ -171,7 +172,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @throws CoreException if setting the root fails
 	 */
 	public void setBundleRoot(IProject project, IPath bundleRoot) throws CoreException {
-		PDEProject.setBundleRoot(project, project.getFolder(bundleRoot));
+		PDEProject.setBundleRoot(project, (bundleRoot == null) ? null : project.getFolder(bundleRoot));
 	}
 
 	/* (non-Javadoc)

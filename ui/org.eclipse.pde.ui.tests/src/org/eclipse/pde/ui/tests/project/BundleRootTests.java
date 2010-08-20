@@ -89,6 +89,25 @@ public class BundleRootTests extends TestCase {
 	}
 	
 	/**
+	 * Tests setting/getting the bundle root property for a project using IBundleProjectService and IBundleProjectDescription
+	 */
+	public void testServiceSetGetLocation() throws CoreException {
+		IProject project = createProject();
+		IBundleProjectService service = getBundleProjectService();
+		IBundleProjectDescription description = service.getDescription(project);
+		assertNull("Bundle root unspecified - should be project itself (null)", description.getBundleRoot());
+		// set to something
+		IFolder folder = project.getFolder(new Path("bundle/root"));
+		service.setBundleRoot(project, folder.getProjectRelativePath());
+		description = service.getDescription(project);
+		assertEquals("Wrong bundle root", folder.getProjectRelativePath(), description.getBundleRoot());	
+		// set to null
+		service.setBundleRoot(project, null);
+		description = service.getDescription(project);
+		assertNull("Bundle root unspecified - should be project itself (null)", description.getBundleRoot());
+	}		
+	
+	/**
 	 * Test getting a root location from a non-existent project
 	 */
 	public void testGetOnNonExistantProject() {
