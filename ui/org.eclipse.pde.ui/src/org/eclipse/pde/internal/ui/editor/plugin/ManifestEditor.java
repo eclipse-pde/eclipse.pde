@@ -66,6 +66,10 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return openPluginEditor(PluginRegistry.findModel(id));
 	}
 
+	public static IEditorPart openPluginEditor(BundleDescription bd) {
+		return openPluginEditor(PluginRegistry.findModel(bd));
+	}
+
 	public static IEditorPart openPluginEditor(IPluginModelBase model) {
 		if (model == null) {
 			Display.getDefault().beep();

@@ -234,7 +234,7 @@ public abstract class DependenciesViewPage extends Page {
 			desc = ((ExportPackageDescription) export).getExporter();
 		}
 		if (desc != null)
-			ManifestEditor.openPluginEditor(desc.getSymbolicName());
+			ManifestEditor.openPluginEditor(desc);
 	}
 
 	private void handleFocusOn() {
