@@ -100,7 +100,9 @@ public class PluginPathFinder {
 		for (int i = 0; i < contents.length; i++) {
 			if (contents[i].isFile()) {
 				if (contents[i].getName().endsWith(LINK)) {
-					sites.add(new File(getSitePath(platformHome, contents[i], features)));
+					String path = getSitePath(platformHome, contents[i], features);
+					if (path != null)
+						sites.add(new File(path));
 				} else {
 					//bundle
 					results.add(contents[i]);
