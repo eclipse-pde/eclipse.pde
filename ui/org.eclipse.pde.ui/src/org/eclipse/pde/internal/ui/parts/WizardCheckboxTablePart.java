@@ -24,6 +24,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class WizardCheckboxTablePart extends CheckboxTablePart {
 	private int selectAllIndex = -1;
 	private int deselectAllIndex = -1;
+	private int selectIndex = -1;
+	private int deselectIndex = -1;
 	private String tableName;
 	private int counter;
 	private Label counterLabel;
@@ -38,9 +40,11 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	}
 
 	public WizardCheckboxTablePart(String mainLabel) {
-		this(mainLabel, new String[] {PDEUIMessages.WizardCheckboxTablePart_selectAll, PDEUIMessages.WizardCheckboxTablePart_deselectAll});
+		this(mainLabel, new String[] {PDEUIMessages.WizardCheckboxTablePart_selectAll, PDEUIMessages.WizardCheckboxTablePart_deselectAll, PDEUIMessages.WizardCheckboxTablePart_select, PDEUIMessages.WizardCheckboxTablePart_deselect});
 		setSelectAllIndex(0);
 		setDeselectAllIndex(1);
+		setSelectIndex(2);
+		setDeselectIndex(3);
 	}
 
 	public void setSelectAllIndex(int index) {
@@ -51,12 +55,26 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		this.deselectAllIndex = index;
 	}
 
+	public void setSelectIndex(int index) {
+		this.selectIndex = index;
+	}
+
+	public void setDeselectIndex(int index) {
+		this.deselectIndex = index;
+	}
+
 	protected void buttonSelected(Button button, int index) {
 		if (index == selectAllIndex) {
 			handleSelectAll(true);
 		}
 		if (index == deselectAllIndex) {
 			handleSelectAll(false);
+		}
+		if (index == selectIndex) {
+			handleSelect(true);
+		}
+		if (index == deselectIndex) {
+			handleSelect(false);
 		}
 	}
 
@@ -77,6 +95,19 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 
 	public void createControl(Composite parent, int span) {
 		createControl(parent, SWT.NULL, span, null);
+		counterLabel = new Label(parent, SWT.NULL);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = span;
+		counterLabel.setLayoutData(gd);
+		updateCounter(0);
+	}
+
+	public void createControl(Composite parent, int span, boolean multiselect) {
+		if (multiselect) {
+			createControl(parent, SWT.MULTI, span, null);
+		} else {
+			createControl(parent, SWT.NULL, span, null);
+		}
 		counterLabel = new Label(parent, SWT.NULL);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = span;
@@ -111,6 +142,10 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		updateCounterLabel();
 	}
 
+	public void updateCount(int amount) {
+		updateCounter(amount);
+	}
+
 	protected void updateCounterLabel() {
 		String number = "" + getSelectionCount(); //$NON-NLS-1$
 		String totalNumber = "" + getTotalCount(); //$NON-NLS-1$
@@ -141,6 +176,18 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 			selected = getTotalCount();
 		}
 		updateCounter(selected);
+	}
+
+	protected void handleSelect(boolean select) {
+		CheckboxTableViewer viewer = getTableViewer();
+		if (viewer.getTable().getSelection().length > 0) {
+			TableItem[] selected = viewer.getTable().getSelection();
+			for (int i = 0; i < selected.length; i++) {
+				TableItem item = selected[i];
+				item.setChecked(select);
+			}
+			updateCounter(viewer.getCheckedElements().length);
+		}
 	}
 
 	protected void elementChecked(Object element, boolean checked) {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import com.ibm.icu.text.Collator;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
@@ -19,13 +17,13 @@ import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,7 +42,7 @@ public class PluginListPage extends BasePluginListPage {
 
 	private Combo fLaunchConfigsCombo;
 	private Button fInitLaunchConfigButton;
-
+	private CheckboxTableViewer pluginViewer;
 	private static final String S_INIT_LAUNCH = "initLaunch"; //$NON-NLS-1$
 
 	public PluginListPage() {
@@ -71,13 +69,11 @@ public class PluginListPage extends BasePluginListPage {
 			fInitLaunchConfigButton.setText(PDEUIMessages.PluginListPage_initializeFromLaunch);
 			fInitLaunchConfigButton.setSelection(initLaunch);
 			fInitLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
-
 				public void widgetSelected(SelectionEvent e) {
 					boolean initLaunchConfigs = fInitLaunchConfigButton.getSelection();
 					fLaunchConfigsCombo.setEnabled(initLaunchConfigs);
 					tablePart.setEnabled(!initLaunchConfigs);
 				}
-
 			});
 
 			fLaunchConfigsCombo = new Combo(container, SWT.READ_ONLY);
@@ -96,8 +92,8 @@ public class PluginListPage extends BasePluginListPage {
 			initPluginsButton.setSelection(!initLaunch);
 		}
 
-		tablePart.createControl(container, 3);
-		CheckboxTableViewer pluginViewer = tablePart.getTableViewer();
+		tablePart.createControl(container, 3, true);
+		pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		pluginViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
@@ -114,6 +110,17 @@ public class PluginListPage extends BasePluginListPage {
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
+		pluginViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				TableItem firstTI = pluginViewer.getTable().getSelection()[0];
+				if (firstTI.getChecked()) {
+					firstTI.setChecked(false);
+				} else {
+					firstTI.setChecked(true);
+				}
+				tablePart.updateCount(pluginViewer.getCheckedElements().length);
+			}
+		});
 	}
 
 	public IPluginBase[] getSelectedPlugins() {

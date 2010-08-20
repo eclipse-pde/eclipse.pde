@@ -562,6 +562,8 @@ public class PDEUIMessages extends NLS {
 	// Reusable Parts ################################
 	public static String WizardCheckboxTablePart_selectAll;
 	public static String WizardCheckboxTablePart_deselectAll;
+	public static String WizardCheckboxTablePart_select;
+	public static String WizardCheckboxTablePart_deselect;
 	public static String WizardCheckboxTablePart_counter;
 
 	// Outline #################################
