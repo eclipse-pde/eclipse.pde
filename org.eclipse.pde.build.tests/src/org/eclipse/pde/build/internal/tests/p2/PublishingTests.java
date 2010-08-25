@@ -1944,4 +1944,26 @@ public class PublishingTests extends P2TestCase {
 
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/A_1.0.0.jar");
 	}
+
+	public void testBug323286() throws Exception {
+		IFolder buildFolder = newTest("323286");
+		IFolder A_1 = Utils.createFolder(buildFolder, "plugins/A_1");
+		IFolder A_2 = Utils.createFolder(buildFolder, "plugins/A_2");
+		IFile productFile = buildFolder.getFile("product.product");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"A;version=1"});
+
+		Utils.generateBundle(A_1, "A", "1");
+		Utils.generateBundle(A_2, "A", "2");
+		Utils.generateProduct(productFile, "product", "1.0.0", new String[] {"A"}, false);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("topLevelElementId", "F");
+		properties.put("p2.gathering", "true");
+		properties.put("baseLocation", "");
+		properties.put("includeLaunchers", "false");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+	}
 }

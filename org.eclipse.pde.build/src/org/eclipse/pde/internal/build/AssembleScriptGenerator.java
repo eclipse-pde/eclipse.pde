@@ -198,7 +198,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.printCopyFileTask(productPath, newProduct, true);
 			if (p2Inf.exists())
 				script.printCopyTask(p2Inf.getAbsolutePath(), getProductDir(), null, false, true);
-			generateProductReplaceTask(product, newProduct);
+			generateProductReplaceTask(product, newProduct, assemblageInformation);
 			script.printTargetEnd();
 			script.println();
 		}

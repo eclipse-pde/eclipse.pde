@@ -1054,6 +1054,10 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static String getEntryVersionMappings(FeatureEntry[] entries, BuildTimeSite site) {
+		return getEntryVersionMappings(entries, site, null);
+	}
+
+	public static String getEntryVersionMappings(FeatureEntry[] entries, BuildTimeSite site, AssemblyInformation assembly) {
 		if (entries == null || site == null)
 			return null;
 
@@ -1070,7 +1074,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 			try {
 				if (entries[i].isPlugin()) {
-					BundleDescription model = site.getRegistry().getResolvedBundle(id, versionRequested);
+					BundleDescription model = null;
+					if (assembly != null)
+						model = assembly.getPlugin(entries[i].getId(), versionRequested);
+					if (model == null)
+						model = site.getRegistry().getResolvedBundle(id, versionRequested);
 					if (model != null)
 						newVersion = model.getVersion().toString();
 				} else {

@@ -204,7 +204,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printAttribute("value", Utils.getPropertyFormat(PROPERTY_P2_FLAVOR), true); //$NON-NLS-1$
 			script.println("/>"); //$NON-NLS-1$
 			generateCopyConfigs(product, productDir);
-			generateProductReplaceTask(product, newProduct);
+			generateProductReplaceTask(product, newProduct, assemblyInformation);
 
 			script.printTab();
 			script.print("<p2.publish.product"); //$NON-NLS-1$
