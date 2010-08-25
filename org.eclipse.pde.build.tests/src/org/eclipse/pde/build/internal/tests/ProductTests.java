@@ -121,6 +121,9 @@ public class ProductTests extends PDETestCase {
 
 		IFile iniFile = buildFolder.getFile("tmp/eclipse/test.app/Contents/MacOS/test.ini");
 		assertLogContainsLine(iniFile, "-Dfoo=bar");
+		//bug 313940
+		assertLogContainsLine(iniFile, "-Dschemes1=archive zip jar");
+		assertLogContainsLine(iniFile, "-Dschemes2=archive zip jar");
 	}
 
 	public void test237922() throws Exception {

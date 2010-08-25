@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.p2.publisher.QuotedTokenizer;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
@@ -677,31 +678,25 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		try {
 			writer = new PrintWriter(new FileWriter(new File(dir, launcher + ".ini"))); //$NON-NLS-1$
 			if (programArgs != null && programArgs.length() > 0) {
-				StringReader reader = new StringReader(programArgs);
-				StreamTokenizer tokenizer = new StreamTokenizer(reader);
-				tokenizer.resetSyntax();
-				tokenizer.whitespaceChars(0, 0x20);
-				tokenizer.wordChars(0x21, 0xFF);
-				tokenizer.quoteChar('"');
-				tokenizer.quoteChar('\'');
-				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
-					writer.print(tokenizer.sval);
-					writer.print(lineDelimiter);
+				QuotedTokenizer tokenizer = new QuotedTokenizer(programArgs);
+				while (tokenizer.hasMoreTokens()) {
+					String token = tokenizer.nextToken().trim();
+					if (!token.equals("")) { //$NON-NLS-1$
+						writer.print(token);
+						writer.print(lineDelimiter);
+					}
 				}
 			}
 			if (vmArgs != null && vmArgs.length() > 0) {
 				writer.print("-vmargs"); //$NON-NLS-1$
 				writer.print(lineDelimiter);
-				StringReader reader = new StringReader(vmArgs);
-				StreamTokenizer tokenizer = new StreamTokenizer(reader);
-				tokenizer.resetSyntax();
-				tokenizer.whitespaceChars(0, 0x20);
-				tokenizer.wordChars(0x21, 0xFF);
-				tokenizer.quoteChar('"');
-				tokenizer.quoteChar('\'');
-				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
-					writer.print(tokenizer.sval);
-					writer.print(lineDelimiter);
+				QuotedTokenizer tokenizer = new QuotedTokenizer(vmArgs);
+				while (tokenizer.hasMoreTokens()) {
+					String token = tokenizer.nextToken().trim();
+					if (!token.equals("")) { //$NON-NLS-1$
+						writer.print(token);
+						writer.print(lineDelimiter);
+					}
 				}
 			}
 		} catch (IOException e) {
