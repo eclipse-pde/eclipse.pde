@@ -190,111 +190,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		// Resolving may change the included features, clear the cached values
-		fFeatures = null;
-
-		SubMonitor subMon = SubMonitor.convert(monitor, 100);
-
-		// Attempt to restore from the profile first, as it is local and faster
-		IResolvedBundle[] result = resolveWithProfile(definition, subMon.newChild(25));
-		if (result != null) {
-			subMon.done();
-			return result;
+		fFeatures = null; // Resolving may change the included features
+		if (fIncludeAllRequired) {
+			return resolveWithPlanner(definition, monitor);
 		}
-
-		// Unable to load from profile, resolve normally
-		try {
-			if (fIncludeAllRequired) {
-				result = resolveWithPlanner(definition, subMon.newChild(75));
-			} else {
-				result = resolveWithSlicer(definition, subMon.newChild(75));
-			}
-			// If there is a problem generating the profile, delete it so it doesn't get used by #resolveWithProfile()
-			if (result == null || result.length == 0 || subMon.isCanceled()) {
-				AbstractTargetHandle handle = ((AbstractTargetHandle) definition.getHandle());
-				handle.deleteProfile();
-			}
-			return result;
-		} catch (CoreException e) {
-			AbstractTargetHandle handle = ((AbstractTargetHandle) definition.getHandle());
-			handle.deleteProfile();
-			throw e;
-		}
-
-	}
-
-	/**
-	 * Used to resolve the contents of this container if the container has been resolved and saved to a profile file.  If the
-	 * profile contains the correct bundles, there is no need to do a full resolve.  If this method has a problem (missing
-	 * file, unable to compute all dependent bundles), this method will return <code>null</code> and the caller should 
-	 * use {@link #resolveWithPlanner(ITargetDefinition, IProgressMonitor)} or {@link #resolveWithSlicer(ITargetDefinition, IProgressMonitor)} 
-	 * to do a full resolve.
-	 * 
-	 * @param definition definition being resolved
-	 * @param monitor for reporting progress
-	 * @return set of bundles included in this container or <code>null</code> if the profile is out of date
-	 * @throws CoreException if an unexpected problem occurs trying to read from the profile
-	 */
-	private IResolvedBundle[] resolveWithProfile(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		IProfile profile = ((TargetDefinition) definition).getProfile();
-		if (profile == null) {
-			return null;
-		}
-
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_LoadingFromProfileJob, 20);
-
-		// resolve IUs (similar to #getInstallableUnits but only checks the profile, no remote repositories
-		if (fUnits == null) {
-			fUnits = new IInstallableUnit[fIds.length];
-			for (int i = 0; i < fIds.length; i++) {
-				IQuery query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
-				IQueryResult queryResult = profile.query(query, null);
-				if (queryResult.isEmpty()) {
-					// Missing a root unit in the profile
-					fUnits = null;
-					return null;
-				}
-				fUnits[i] = (IInstallableUnit) queryResult.iterator().next();
-			}
-		}
-		IInstallableUnit[] units = fUnits;
-
-		// slice IUs and all prerequisites
-		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false, false);
-		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-
-		// query for bundles
-		Map bundles = generateResolvedBundles(slice, getBundlePool(profile), false);
-
-		// If there are no resolved bundles from the profile, or a backing file was missing from the repository, do a normal resolve
-		if (bundles == null || bundles.isEmpty()) {
-			subMonitor.done();
-			return null;
-		}
-
-		if (subMonitor.isCanceled()) {
-			return null;
-		}
-
-		// Cache the feature list
-		queryForFeatures(slice);
-
-		if (subMonitor.isCanceled()) {
-			return null;
-		}
-
-		removeDuplicateBundles(definition, bundles);
-
-		// If there are no resolved bundles from the profile, do a normal resolve
-		if (bundles.isEmpty()) {
-			subMonitor.done();
-			return null;
-		}
-
-		subMonitor.worked(10);
-		subMonitor.done();
-
-		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+		return resolveWithSlicer(definition, monitor);
 	}
 
 	/**
@@ -309,11 +209,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private IResolvedBundle[] resolveWithPlanner(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-		subMonitor.beginTask(Messages.IUBundleContainer_0, 200);
+		subMonitor.beginTask(Messages.IUBundleContainer_0, 210);
 
 		// retrieve profile
 		IProfile profile = ((TargetDefinition) definition).getProfile();
-		profile.getTimestamp();
 		subMonitor.worked(10);
 
 		if (subMonitor.isCanceled()) {
@@ -344,7 +243,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
-		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 20));
+		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 10));
 		IStatus status = plan.getStatus();
 		if (!status.isOK()) {
 			throw new CoreException(status);
@@ -383,6 +282,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
+		// query for bundles
+		OSGiBundleQuery query = new OSGiBundleQuery();
+		IQueryResult queryResult = slice.query(query, new SubProgressMonitor(subMonitor, 10));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
 		// Cache the feature list
 		queryForFeatures(slice);
 
@@ -390,15 +297,45 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
-		// query for bundles
-		Map bundles = generateResolvedBundles(slice, getBundlePool(profile), true);
+		Map bundles = new LinkedHashMap();
+		IFileArtifactRepository repo = getBundlePool(profile);
+		for (Iterator iterator = queryResult.iterator(); iterator.hasNext();) {
+			IInstallableUnit unit = (IInstallableUnit) iterator.next();
+			Collection/*<IArtifactKey*/artifacts = unit.getArtifacts();
+			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+				File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
+				if (file == null) {
+					// TODO: missing bundle
+				} else {
+					IResolvedBundle bundle = generateBundle(file);
+					if (bundle != null) {
+						bundles.put(bundle.getBundleInfo(), bundle);
+					}
+				}
+			}
+		}
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
 		}
 
-		removeDuplicateBundles(definition, bundles);
-
+		// remove all bundles from previous IU containers (so we don't get duplicates from multi-locations
+		IBundleContainer[] containers = definition.getBundleContainers();
+		for (int i = 0; i < containers.length; i++) {
+			IBundleContainer container = containers[i];
+			if (container == this) {
+				break;
+			}
+			if (container instanceof IUBundleContainer) {
+				IUBundleContainer bc = (IUBundleContainer) container;
+				IResolvedBundle[] included = bc.getBundles();
+				if (included != null) {
+					for (int j = 0; j < included.length; j++) {
+						bundles.remove(included[j].getBundleInfo());
+					}
+				}
+			}
+		}
 		subMonitor.worked(10);
 		subMonitor.done();
 		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
@@ -416,7 +353,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private IResolvedBundle[] resolveWithSlicer(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-		subMonitor.beginTask(Messages.IUBundleContainer_0, 180);
+		subMonitor.beginTask(Messages.IUBundleContainer_0, 200);
 
 		// retrieve profile
 		IProfile profile = ((TargetDefinition) definition).getProfile();
@@ -522,6 +459,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
+		// query for bundles
+		queryResult = slice.query(new OSGiBundleQuery(), new SubProgressMonitor(subMonitor, 10));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+
 		// Cache the feature list
 		queryForFeatures(slice);
 
@@ -529,15 +473,46 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return new IResolvedBundle[0];
 		}
 
-		// query for bundles
-		Map bundles = generateResolvedBundles(slice, getBundlePool(profile), true);
+		Map bundles = new LinkedHashMap();
+		IFileArtifactRepository repo = getBundlePool(profile);
+		Iterator iterator = queryResult.iterator();
+		while (iterator.hasNext()) {
+			IInstallableUnit unit = (IInstallableUnit) iterator.next();
+			Collection/*<IArtifactKey>*/artifacts = unit.getArtifacts();
+			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+				File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
+				if (file == null) {
+					// TODO: missing bundle
+				} else {
+					IResolvedBundle bundle = generateBundle(file);
+					if (bundle != null) {
+						bundles.put(bundle.getBundleInfo(), bundle);
+					}
+				}
+			}
+		}
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
 		}
 
-		removeDuplicateBundles(definition, bundles);
-
+		// remove all bundles from previous IU containers (so we don't get duplicates from multi-locations
+		IBundleContainer[] containers = definition.getBundleContainers();
+		for (int i = 0; i < containers.length; i++) {
+			IBundleContainer container = containers[i];
+			if (container == this) {
+				break;
+			}
+			if (container instanceof IUBundleContainer) {
+				IUBundleContainer bc = (IUBundleContainer) container;
+				IResolvedBundle[] included = bc.getBundles();
+				if (included != null) {
+					for (int j = 0; j < included.length; j++) {
+						bundles.remove(included[j].getBundleInfo());
+					}
+				}
+			}
+		}
 		subMonitor.worked(10);
 		subMonitor.done();
 		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
@@ -605,71 +580,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			}
 		}
 		return fUnits;
-	}
-
-	/**
-	 * Checks all other bundle containers in the given target and removes any bundles provided by them from
-	 * the map.  This prevents targets containing more than one IUBundleContainer from having duplicate bundles.
-	 * 
-	 * @param definition target definition to look for other containers in
-	 * @param bundles collection of bundles arranged by mapping BundleInfo to IResolvedBundle
-	 */
-	private void removeDuplicateBundles(ITargetDefinition definition, Map bundles) {
-		// remove all bundles from previous IU containers (so we don't get duplicates from multi-locations
-		IBundleContainer[] containers = definition.getBundleContainers();
-		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
-			if (container == this) {
-				break;
-			}
-			if (container instanceof IUBundleContainer) {
-				IUBundleContainer bc = (IUBundleContainer) container;
-				IResolvedBundle[] included = bc.getBundles();
-				if (included != null) {
-					for (int j = 0; j < included.length; j++) {
-						bundles.remove(included[j].getBundleInfo());
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Collects all available installable units from the given source that represent OSGI
-	 * bundles.  A IResolvedBundle is created for each and a map containing all results
-	 * mapping BundleInfo to IResolvedBundle is returned.
-	 * <p>
-	 * If there is an artifact missing for a unit it will either be ignored (not added to the returned map),
-	 * or <code>null</code> will be returned depending on the ignoreMissingFiles parameter. 
-	 * </p>
-	 * @param source A queryable profile or slice that the bundle units will be obtained from
-	 * @param ignoreMissingFiles if <code>true</code> ius that have missing artifacts will be ignored and not added to the map, if <code>false</code>, <code>null</code> will be returned
-	 * @return map of BundleInfo to IResolvedBundle or <code>null</code> if a missing file is found and not ignored
-	 * @throws CoreException
-	 */
-	private Map generateResolvedBundles(IQueryable source, IFileArtifactRepository repo, boolean ignoreMissingFiles) throws CoreException {
-		OSGiBundleQuery query = new OSGiBundleQuery();
-		IQueryResult queryResult = source.query(query, null);
-		Map bundles = new LinkedHashMap();
-		for (Iterator iterator = queryResult.iterator(); iterator.hasNext();) {
-			IInstallableUnit unit = (IInstallableUnit) iterator.next();
-			Collection artifacts = unit.getArtifacts();
-			for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
-				File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
-				if (file == null) {
-					// Missing file
-					if (!ignoreMissingFiles) {
-						return null;
-					}
-				} else {
-					IResolvedBundle bundle = generateBundle(file);
-					if (bundle != null) {
-						bundles.put(bundle.getBundleInfo(), bundle);
-					}
-				}
-			}
-		}
-		return bundles;
 	}
 
 	/**

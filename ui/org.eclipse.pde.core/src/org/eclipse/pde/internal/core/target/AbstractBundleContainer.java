@@ -163,8 +163,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	protected abstract IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Collects all of the features in this container.  May return an empty array if {@link #resolveBundles(ITargetDefinition, IProgressMonitor)}
-	 * has not been called previously.
+	 * Collects all of the features in this container
 	 * <p>
 	 * Subclasses must implement this method.
 	 * </p><p>
