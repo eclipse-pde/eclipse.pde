@@ -9,7 +9,8 @@
 
 package org.eclipse.pde.build.internal.tests.p2;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -1606,24 +1607,9 @@ public class PublishingTests extends P2TestCase {
 			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
 		}
 
-		if (Platform.getOS().equals("linux")) {
-			IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.carbon.ppc.zip");
-
-			String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
-			String[] command = new String[] {"unzip", "-qq", zip.getLocation().toOSString(), exeString, "-d", buildFolder.getLocation().toOSString()};
-			Process proc = Runtime.getRuntime().exec(command);
-			proc.waitFor();
-
-			IFile executable = buildFolder.getFile(exeString);
-			assertResourceFile(executable);
-
-			command = new String[] {"ls", "-la", executable.getLocation().toOSString()};
-			proc = Runtime.getRuntime().exec(command);
-			Utils.transferStreams(proc.getInputStream(), new FileOutputStream(buildFolder.getFile("ls.out").getLocation().toFile()));
-			proc.waitFor();
-
-			assertLogContainsLine(buildFolder.getFile("ls.out"), "-rwxr-xr-x");
-		}
+		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.carbon.ppc.zip");
+		String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
+		assertZipPermissions(zip, exeString, "-rwxr-xr-x");
 
 		assertLogContainsLines(ini, new String[] {"-vm", "myVm"});
 		boolean duplicate = false;
@@ -1965,5 +1951,38 @@ public class PublishingTests extends P2TestCase {
 		properties.put("includeLaunchers", "false");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
+	}
+
+	public void testBug322340() throws Exception {
+		IFolder buildFolder = newTest("322340");
+		IFolder F = Utils.createFolder(buildFolder, "features/F");
+		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
+
+		Utils.generateBundle(A, "A", "1");
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"A"});
+		Utils.writeBuffer(F.getFile("file.txt"), new StringBuffer("I'm a file!"));
+		Utils.writeBuffer(F.getFile("meToo.txt"), new StringBuffer("I'm also a file!"));
+
+		Properties properties = new Properties();
+		properties.put("root", "file:file.txt, file:meToo.txt");
+		properties.put("root.permissions.755", "*.txt");
+		Utils.storeBuildProperties(F, properties);
+
+		IFile productFile = buildFolder.getFile("product.product");
+		Utils.generateProduct(productFile, "product", "1", new String[] {"F"}, true);
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("p2.gathering", "true");
+		properties.put("configs", "linux,gtk,x86");
+		properties.put("baseLocation", "");
+		properties.put("includeLaunchers", "false");
+		properties.put("archivesFormat", "linux,gtk,x86-antZip");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runProductBuild(buildFolder);
+
+		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-linux.gtk.x86.zip");
+		assertZipPermissions(zip, "eclipse/meToo.txt", "-rwxr-xr-x");
+		assertZipPermissions(zip, "eclipse/file.txt", "-rwxr-xr-x");
 	}
 }

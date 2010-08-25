@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
+import org.eclipse.core.runtime.Path;
+
 public class ZipFileSet extends FileSet {
 
 	String prefix;
 	boolean file;
 	String permission;
-	
+
 	/**
 	 * @param dir
 	 * @param defaultexcludes
@@ -32,7 +34,7 @@ public class ZipFileSet extends FileSet {
 		this.file = file;
 		this.permission = permission;
 	}
-	
+
 	protected void print(AntScript script) {
 		script.printTab();
 		script.print("<zipfileset"); //$NON-NLS-1$
@@ -46,16 +48,26 @@ public class ZipFileSet extends FileSet {
 		script.printAttribute("excludes", excludes, false); //$NON-NLS-1$
 		script.printAttribute("excludesfile", excludesfile, false); //$NON-NLS-1$
 		script.printAttribute("casesensitive", casesensitive, false); //$NON-NLS-1$
-		if (file)
+		if (prefixHasWildcards()) {
+			String pre = new Path(prefix).removeLastSegments(1).toString();
+			script.printAttribute("prefix", pre, false); //$NON-NLS-1$
+		} else if (file) {
 			script.printAttribute("fullpath", prefix, false); //$NON-NLS-1$
-		else
+		} else {
 			script.printAttribute("prefix", prefix, false); //$NON-NLS-1$
-		
+		}
+
 		if (file)
 			script.printAttribute("filemode", permission, false); //$NON-NLS-1$
-		else 
+		else
 			script.printAttribute("dirmode", permission, false); //$NON-NLS-1$
-		
+
 		script.println("/>"); //$NON-NLS-1$
+	}
+
+	private boolean prefixHasWildcards() {
+		if (prefix == null)
+			return false;
+		return (prefix.indexOf('*') != -1 || prefix.indexOf('?') != -1);
 	}
 }

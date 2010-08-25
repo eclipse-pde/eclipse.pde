@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.pde.build.tests;
@@ -24,6 +22,7 @@ import org.apache.tools.zip.ZipFile;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifier;
 import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
@@ -336,5 +335,28 @@ public abstract class PDETestCase extends TestCase {
 			context.ungetService(certRef);
 		}
 
+	}
+
+	public void assertZipPermissions(IFile zip, String file, String permissions) throws Exception {
+		if (Platform.getOS().equals("linux")) {
+			IFolder tempFolder = org.eclipse.pde.build.internal.tests.Utils.createFolder(buildFolder, "permissions" + String.valueOf(Math.random()).substring(2, 7));
+			try {
+				String[] command = new String[] {"unzip", "-qq", zip.getLocation().toOSString(), file, "-d", tempFolder.getLocation().toOSString()};
+				Process proc = Runtime.getRuntime().exec(command);
+				proc.waitFor();
+
+				IFile extractedFile = tempFolder.getFile(file);
+				assertResourceFile(extractedFile);
+
+				command = new String[] {"ls", "-la", extractedFile.getLocation().toOSString()};
+				proc = Runtime.getRuntime().exec(command);
+				Utils.transferStreams(proc.getInputStream(), new FileOutputStream(tempFolder.getFile("ls.out").getLocation().toFile()));
+				proc.waitFor();
+
+				assertLogContainsLine(tempFolder.getFile("ls.out"), permissions);
+			} finally {
+				FileUtils.deleteAll(tempFolder.getLocation().toFile());
+			}
+		}
 	}
 }
