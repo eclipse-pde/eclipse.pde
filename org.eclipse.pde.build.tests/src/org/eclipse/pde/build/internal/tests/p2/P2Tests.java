@@ -954,14 +954,16 @@ public class P2Tests extends P2TestCase {
 		StringBuffer scriptBuffer = new StringBuffer();
 		scriptBuffer.append("<project name=\"project\" default=\"go\">																\n");
 		scriptBuffer.append("   <target name=\"go\">																				\n");
-		scriptBuffer.append("      <fileset dir=\"${eclipse.home}/plugins\" id=\"launcher\">										\n");
-		scriptBuffer.append("         <include name=\"org.eclipse.equinox.launcher_*\" />											\n");
-		scriptBuffer.append("      </fileset>																						\n");
+		scriptBuffer.append("		<last id=\"launcher\">																			\n");
+		scriptBuffer.append("			<sort>																						\n");
+		scriptBuffer.append("				<fileset dir=\"${eclipse.home}/plugins\" includes=\"org.eclipse.equinox.launcher_*\" />	\n");
+		scriptBuffer.append("			</sort>																						\n");
+		scriptBuffer.append("		</last>																							\n");
 		scriptBuffer.append("      <property name=\"launcher\" refid=\"launcher\" />												\n");
 		scriptBuffer.append("      <condition property=\"p2.director.devMode\" value=\"-dev &quot;${osgi.dev}&quot;\" else=\"\">	\n");
 		scriptBuffer.append("         <isset property=\"osgi.dev\" />																\n");
 		scriptBuffer.append("      </condition>																						\n");
-		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${eclipse.home}/plugins/${launcher}\" fork=\"true\">				\n");
+		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">										\n");
 		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.publisher.EclipseGenerator\" />				\n");
 		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
 		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
@@ -978,7 +980,7 @@ public class P2Tests extends P2TestCase {
 		scriptBuffer.append("      </java>																							\n");
 
 		//step three call the director
-		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${eclipse.home}/plugins/${launcher}\" fork=\"true\">				\n");
+		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">				\n");
 		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
 		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
 		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.director\" />									\n");
