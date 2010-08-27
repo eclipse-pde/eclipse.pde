@@ -199,6 +199,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			nestedId = product.getId() + ".root.feature"; //$NON-NLS-1$
 			nestedVersion = product.getVersion();
 			productKey = PRODUCT_PREFIX + product.getId();
+			if (!buildProperties.containsKey(PROPERTY_GENERATED_FEATURE_LABEL) && product.getProductName() != null)
+				buildProperties.put(PROPERTY_GENERATED_FEATURE_LABEL, product.getProductName() + " Root Files"); //$NON-NLS-1$
 		} else {
 			nestedId = nestedInclusions;
 			nestedVersion = version != null ? version : "1.0.0.qualifier"; //$NON-NLS-1$
@@ -347,6 +349,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		if (verify && includeLaunchers)
 			addLauncher(state, plugins, fragments, features);
 
+		String featureName = buildProperties != null ? (String) buildProperties.get(PROPERTY_GENERATED_FEATURE_LABEL) : null;
+
 		//Create feature.xml
 		File file = new File(directory, Constants.FEATURE_FILENAME_DESCRIPTOR);
 		OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
@@ -363,6 +367,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 			parameters.put(ID, feature);
 			parameters.put(VERSION, version != null ? version : "1.0.0"); //$NON-NLS-1$ 
+			if (featureName != null)
+				parameters.put(LABEL, featureName);
 			writer.startTag(FEATURE, parameters, true);
 
 			boolean fragment = false;

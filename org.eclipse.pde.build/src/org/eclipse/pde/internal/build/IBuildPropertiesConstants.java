@@ -140,4 +140,5 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_PACKAGER_AS_NORMALIZER = "packagerAsNormalizer"; //$NON-NLS-1$
 
 	public static final String PROPERTY_GENERATE_ECLIPSEPRODUCT = "generateEclipseProduct"; //$NON-NLS-1$
+	public static final String PROPERTY_GENERATED_FEATURE_LABEL = "generatedFeatureLabel"; //$NON-NLS-1$
 }

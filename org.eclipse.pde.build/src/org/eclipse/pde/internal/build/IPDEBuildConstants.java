@@ -21,6 +21,7 @@ public interface IPDEBuildConstants {
 	public static final String FEATURE = "feature"; //$NON-NLS-1$
 	public static final String VERSION = "version"; //$NON-NLS-1$
 	public static final String ID = "id"; //$NON-NLS-1$
+	public static final String LABEL = "label"; //$NON-NLS-1$
 
 	/** PDE Core plug-in id */
 	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$

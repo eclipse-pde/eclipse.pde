@@ -126,6 +126,8 @@ public class PublishingTests extends P2TestCase {
 		iu = getIU(metadata, "foo");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "foo.root.feature.feature.group");
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
+		iu = getIU(metadata, "foo.root.feature.feature.group");
+		assertEquals(iu.getProperty("org.eclipse.equinox.p2.name"), "foo Root Files");
 	}
 
 	public void testBug277824_2() throws Exception {
