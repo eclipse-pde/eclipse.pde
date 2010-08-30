@@ -513,7 +513,6 @@ public class LogView extends ViewPart implements ILogListener {
 			gd.verticalIndent = 2;
 			gd.horizontalIndent = 1;
 		}
-		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		fFilteredTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fFilteredTree.setInitialText(Messages.LogView_show_filter_initialText);
 		fTree = fFilteredTree.getViewer().getTree();
