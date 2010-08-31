@@ -176,6 +176,15 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
+	 * Saves the state of the instance of {@link PluginModelManager} if it exists.
+	 */
+	public static synchronized void saveInstance() {
+		if (fModelManager != null) {
+			fModelManager.save();
+		}
+	}
+
+	/**
 	 * Shuts down the instance of {@link PluginModelManager} if it exists.
 	 */
 	public static synchronized void shutdownInstance() {
@@ -1079,15 +1088,24 @@ public class PluginModelManager implements IModelProviderListener {
 	/**
 	 * Perform cleanup upon shutting down
 	 */
-	public void shutdown() {
+	protected void shutdown() {
 		fWorkspaceManager.shutdown();
 		fExternalManager.shutdown();
-		if (fState != null)
-			fState.shutdown();
+
 		if (fListeners != null)
 			fListeners.clear();
 		if (fStateListeners != null)
 			fStateListeners.clear();
+	}
+
+	/**
+	 * Called as part of save participant. Save's PDE model state.
+	 */
+	protected void save() {
+		if (fState != null) {
+			fState.saveExternalState();
+			fState.saveWorkspaceState();
+		}
 	}
 
 	public void addExtensionDeltaListener(IExtensionDeltaListener listener) {

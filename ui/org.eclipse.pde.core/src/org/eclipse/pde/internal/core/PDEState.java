@@ -117,15 +117,20 @@ public class PDEState extends MinimalState {
 
 	private void readTargetState(URL[] urls, IProgressMonitor monitor) {
 		fTargetTimestamp = computeTimestamp(urls);
+		if (DEBUG) {
+			System.out.println("Timestamp of " + urls.length + " target URLS: " + fTargetTimestamp); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		File dir = new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
 		if ((fState = readStateCache(dir)) == null || !fAuxiliaryState.readPluginInfoCache(dir)) {
+			if (DEBUG) {
+				System.out.println("Creating new state, persisted state did not exist"); //$NON-NLS-1$
+			}
 			createNewTargetState(true, urls, monitor);
-			if (!dir.exists())
-				dir.mkdirs();
-			fAuxiliaryState.savePluginInfo(dir);
 			resolveState(false);
-			saveState(dir);
 		} else {
+			if (DEBUG) {
+				System.out.println("Restored previously persisted state"); //$NON-NLS-1$
+			}
 			// get the system bundle from the State
 			if (fState.getPlatformProperties() != null && fState.getPlatformProperties().length > 0) {
 				String systemBundle = (String) fState.getPlatformProperties()[0].get(ICoreConstants.OSGI_SYSTEM_BUNDLE);
@@ -262,8 +267,18 @@ public class PDEState extends MinimalState {
 	}
 
 	private long computeTimestamp(URL[] urls, long timestamp) {
+		List sorted = new ArrayList(urls.length);
 		for (int i = 0; i < urls.length; i++) {
-			File file = new File(urls[i].getFile());
+			sorted.add(urls[i]);
+		}
+		Collections.sort(sorted, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((URL) o1).toExternalForm().compareTo(((URL) o2).toExternalForm());
+			}
+		});
+		URL[] sortedURLs = (URL[]) sorted.toArray(new URL[sorted.size()]);
+		for (int i = 0; i < sortedURLs.length; i++) {
+			File file = new File(sortedURLs[i].getFile());
 			if (file.exists()) {
 				if (file.isFile()) {
 					timestamp ^= file.lastModified();
@@ -278,7 +293,7 @@ public class PDEState extends MinimalState {
 					if (manifest.exists())
 						timestamp ^= manifest.lastModified();
 				}
-				timestamp ^= file.getAbsolutePath().hashCode();
+				timestamp ^= file.getAbsolutePath().toLowerCase().hashCode();
 			}
 		}
 		return timestamp;
@@ -347,12 +362,59 @@ public class PDEState extends MinimalState {
 		return (IPluginModelBase[]) fWorkspaceModels.toArray(new IPluginModelBase[fWorkspaceModels.size()]);
 	}
 
-	public void shutdown() {
+	/**
+	 * Saves state associated with the external PDE target. 
+	 */
+	public void saveExternalState() {
+		IPluginModelBase[] models = PluginRegistry.getExternalModels();
+		URL[] urls = new URL[models.length];
+		for (int i = 0; i < urls.length; i++) {
+			try {
+				urls[i] = new File(models[i].getInstallLocation()).toURL();
+			} catch (MalformedURLException e) {
+				if (DEBUG) {
+					System.out.println("FAILED to save external state due to MalformedURLException"); //$NON-NLS-1$
+				}
+				return;
+			}
+		}
+		fTargetTimestamp = computeTimestamp(urls);
+		File dir = new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
+
+		boolean osgiStateExists = dir.exists() && dir.isDirectory();
+		boolean auxStateExists = fAuxiliaryState.exists(dir);
+		if (!osgiStateExists || !auxStateExists) {
+			if (!dir.exists())
+				dir.mkdirs();
+			if (DEBUG) {
+				System.out.println("Saving external state of " + urls.length + " bundles to: " + dir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			State state = stateObjectFactory.createState(false);
+			for (int i = 0; i < models.length; i++) {
+				BundleDescription desc = models[i].getBundleDescription();
+				if (desc != null)
+					state.addBundle(state.getFactory().createBundleDescription(desc));
+			}
+			fAuxiliaryState.savePluginInfo(dir);
+			saveState(state, dir);
+		} else if (DEBUG) {
+			System.out.println("External state unchanged, save skipped."); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Save state associated with workspace models and deletes persisted
+	 * files associated with other time stamps.
+	 */
+	public void saveWorkspaceState() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		long timestamp = 0;
 		if (!"true".equals(System.getProperty("pde.nocache")) && shouldSaveState(models)) { //$NON-NLS-1$ //$NON-NLS-2$
 			timestamp = computeTimestamp(models);
 			File dir = new File(DIR, Long.toString(timestamp) + ".workspace"); //$NON-NLS-1$
+			if (DEBUG) {
+				System.out.println("Saving workspace state to: " + dir.getAbsolutePath()); //$NON-NLS-1$
+			}
 			State state = stateObjectFactory.createState(false);
 			for (int i = 0; i < models.length; i++) {
 				BundleDescription desc = models[i].getBundleDescription();

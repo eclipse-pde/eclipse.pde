@@ -261,6 +261,7 @@ public class PDECore extends Plugin {
 				if (fSearchablePluginsManager != null) {
 					fSearchablePluginsManager.saving(saveContext);
 				}
+				PluginModelManager.saveInstance();
 			}
 
 			public void rollback(ISaveContext saveContext) {

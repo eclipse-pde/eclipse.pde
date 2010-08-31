@@ -265,6 +265,17 @@ public class PDEAuxiliaryState {
 	}
 
 	/**
+	 * Returns whether the auxiliary state exists in the given directory.
+	 * 
+	 * @param dir parent directory
+	 * @return whether the state file exist
+	 */
+	protected boolean exists(File dir) {
+		File file = new File(dir, CACHE_EXTENSION);
+		return file.exists() && file.isFile();
+	}
+
+	/**
 	 * Writes out auxiliary information from the given models to an xml file
 	 * in the given destination directory.
 	 * @param models models to collect information from
