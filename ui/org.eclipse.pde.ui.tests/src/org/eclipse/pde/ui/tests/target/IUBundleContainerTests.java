@@ -181,21 +181,25 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected void doResolutionTest(String[] unitIds, String[] bundleIds) throws Exception {
-		IUBundleContainer container = createContainer(unitIds);
-		ITargetDefinition target = getTargetService().newTarget();
-		target.setBundleContainers(new IBundleContainer[]{container});
-		List infos = getAllBundleInfos(target);
-		Set names = collectAllSymbolicNames(infos);
-		assertEquals(bundleIds.length, infos.size());
-		
-		for (int i = 0; i < bundleIds.length; i++) {
-			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
-		}
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(1, profiles.size());
-		String id = (String) profiles.get(0);
-		assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+		try {
+			IUBundleContainer container = createContainer(unitIds);
+			ITargetDefinition target = getTargetService().newTarget();
+			target.setBundleContainers(new IBundleContainer[]{container});
+			List infos = getAllBundleInfos(target);
+			Set names = collectAllSymbolicNames(infos);
+			assertEquals(bundleIds.length, infos.size());
+
+			for (int i = 0; i < bundleIds.length; i++) {
+				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
+			}
+			List profiles = ((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+			assertEquals(1, profiles.size());
+			String id = (String) profiles.get(0);
+			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+		} finally {
+			// Always clean any profiles, even if the test failed to prevent cascading failures
+			((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+		}	
 	}	
 	
 	/**
