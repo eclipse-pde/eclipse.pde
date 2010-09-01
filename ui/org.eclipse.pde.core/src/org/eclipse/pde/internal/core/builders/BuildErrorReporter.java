@@ -621,7 +621,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String[] tokens = binIncludes.getTokens();
 		boolean exists = false;
 		for (int i = 0; i < tokens.length; i++) {
-			if (tokens[i].startsWith(key)) {
+			if (key.startsWith(tokens[i])) {
 				exists = true;
 				break;
 			}

@@ -124,4 +124,19 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			fail("Could not build the project '" + project.getName() + "'");
 		}
 	}
+	
+	// Bug 323774
+	public void testOsgiInf() throws Exception {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.10");
+		setPreferences(project, CompilerFlags.ERROR);
+		if (buildProject(project)) {
+			IResource buildProperty = project.findMember("build.properties");
+			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+
+			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
+			verifyQuickFixes(buildProperty, expectedValues);
+		} else {
+			fail("Could not build the project '" + project.getName() + "'");
+		}
+	}
 }
