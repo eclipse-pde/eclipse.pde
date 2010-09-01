@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.equinox.internal.p2.core.helpers.URLUtil;
+import java.util.Iterator;
 
 import java.io.*;
 import java.net.URI;
@@ -20,7 +20,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.core.helpers.URLUtil;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
@@ -84,6 +86,60 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		}		
 		assertTrue("Did not find IU: " + id, false);
 		return null;
+	}
+	
+	public void testResolveUsingProfile() throws Exception {
+		String[] bundleIDs = new String[]{"feature.b.feature.group"};
+		String[] expectedBundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
+		String[] expectedBundles2 = new String[]{"bundle.b1", "bundle.b2", "bundle.b3"};
+
+		try { 
+
+			IUBundleContainer container = createContainer(bundleIDs);
+			ITargetDefinition target = getTargetService().newTarget();
+			target.setBundleContainers(new IBundleContainer[]{container});
+
+			List infos = getAllBundleInfos(target);
+			Set names = collectAllSymbolicNames(infos);
+			assertEquals(expectedBundles.length, infos.size());
+			for (int i = 0; i < expectedBundles.length; i++) {
+				assertTrue("Missing: " + expectedBundles[i], names.contains(expectedBundles[i]));
+			}
+
+			IProfile profile = ((TargetDefinition)target).getProfile();
+
+			IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
+			IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
+			IProvisioningPlan plan = engine.createPlan(profile, new ProvisioningContext(agent));
+			IQueryResult units = profile.query(QueryUtil.ALL_UNITS, null);
+			for (Iterator iterator = units.iterator(); iterator.hasNext();) {
+				IInstallableUnit unit = (IInstallableUnit) iterator.next();
+				if (unit.getId().startsWith("bundle.a")){
+					plan.removeInstallableUnit(unit);
+				}
+			}
+			IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE});
+			IStatus result = engine.perform(plan, phases, null);
+
+			assertTrue("Problem while provisioning: " + result.getMessage(), result.isOK());
+			
+			target.resolve(null);  // Force the target to reresolve (hopefully using the modified profile)
+			infos = getAllBundleInfos(target);
+			names = collectAllSymbolicNames(infos);
+			assertEquals(expectedBundles2.length, infos.size());
+			for (int i = 0; i < expectedBundles2.length; i++) {
+				assertTrue("Missing: " + expectedBundles2[i], names.contains(expectedBundles2[i]));
+			}
+
+			List profiles = ((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+			assertEquals(1, profiles.size());
+			String id = (String) profiles.get(0);
+			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
+		
+		} finally {
+			// Always clean any profiles, even if the test failed to prevent cascading failures
+			((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+		}	
 	}
 	
 	/**
