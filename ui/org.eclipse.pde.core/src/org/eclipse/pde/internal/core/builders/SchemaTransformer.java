@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class SchemaTransformer {
 
 	private void printHeader() {
 		fWriter.print("<HEAD>"); //$NON-NLS-1$
-		fWriter.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
+		fWriter.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
 		fWriter.println("<title>" + fSchema.getName() + "</title>"); //$NON-NLS-1$ //$NON-NLS-2$
 		printStyles();
 		fWriter.println("</HEAD>"); //$NON-NLS-1$

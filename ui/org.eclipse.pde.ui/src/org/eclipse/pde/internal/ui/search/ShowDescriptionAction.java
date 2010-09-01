@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
+import org.eclipse.pde.internal.core.ICoreConstants;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -119,7 +121,7 @@ public class ShowDescriptionAction extends Action {
 
 			SchemaTransformer transformer = new SchemaTransformer();
 			OutputStream os = new FileOutputStream(fPreviewFile);
-			PrintWriter printWriter = new PrintWriter(os, true);
+			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, ICoreConstants.UTF_8), true);
 			transformer.transform(fSchema, printWriter);
 			os.flush();
 			os.close();

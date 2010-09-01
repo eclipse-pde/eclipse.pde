@@ -81,7 +81,7 @@ public class ConvertSchemaToHTML extends Task {
 				if (id.indexOf('.') == -1)
 					id = pluginID + "." + id; //$NON-NLS-1$
 				File file = new File(directory, id.replace('.', '_') + ".html"); //$NON-NLS-1$
-				out = new PrintWriter(new FileWriter(file), true);
+				out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), ICoreConstants.UTF_8), true);
 				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
 			} catch (Exception e) {
 				if (e.getMessage() != null)
