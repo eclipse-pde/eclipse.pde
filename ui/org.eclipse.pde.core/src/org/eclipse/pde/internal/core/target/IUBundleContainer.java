@@ -478,7 +478,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		if (slice != null)
 			queryResult = slice.query(QueryUtil.createIUAnyQuery(), new SubProgressMonitor(subMonitor, 10));
 
-		if (!slicer.getStatus().isOK() || subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
+		if (!slicer.getStatus().isOK()) {
+			throw new CoreException(slicer.getStatus());
+		}
+		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 			return new IResolvedBundle[0];
 		}
 
