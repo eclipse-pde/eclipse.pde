@@ -261,7 +261,15 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		IQueryable slice = slicer.slice(fUnits, new SubProgressMonitor(subMonitor, 10));
 
 		// query for bundles
-		Map bundles = generateResolvedBundles(slice, getBundlePool(profile), false);
+		IFileArtifactRepository repository = null;
+		try {
+			repository = getBundlePool(profile);
+		} catch (CoreException e) {
+			// The bundle pool is broken, do a normal resolve to try and recreate it
+			subMonitor.done();
+			return null;
+		}
+		Map bundles = generateResolvedBundles(slice, repository, false);
 
 		// If there are no resolved bundles from the profile, or a backing file was missing from the repository, do a normal resolve
 		if (bundles == null || bundles.isEmpty()) {
@@ -712,16 +720,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private IFileArtifactRepository getBundlePool(IProfile profile) throws CoreException {
 		String path = profile.getProperty(IProfile.PROP_CACHE);
-		if (path != null) {
-			URI uri = new File(path).toURI();
-			IArtifactRepositoryManager manager = getArtifactRepositoryManager();
-			try {
-				return (IFileArtifactRepository) manager.loadRepository(uri, null);
-			} catch (ProvisionException e) {
-				//the repository doesn't exist, so fall through and create a new one
-			}
+		if (path == null) {
+			// We should always be setting the bundle pool, so if the bundle pool location is missing there isn't much we can do 
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_NoBundlePool));
 		}
-		return null;
+		URI uri = new File(path).toURI();
+		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
+		return (IFileArtifactRepository) manager.loadRepository(uri, null);
 	}
 
 	/**
