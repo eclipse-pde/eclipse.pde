@@ -437,7 +437,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		File linkFile = new File(linkLocation, "test.link");
 		linkFile.createNewFile();
 		FileWriter writer = new FileWriter(linkFile);
-		writer.write("path=" + extraPlugins.removeLastSegments(1).toOSString() + "");
+		writer.write("path=" + extraPlugins.removeLastSegments(1).toPortableString());
 		writer.flush();
 		writer.close();
 		
