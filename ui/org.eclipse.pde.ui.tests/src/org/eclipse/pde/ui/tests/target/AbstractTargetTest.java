@@ -61,6 +61,25 @@ public abstract class AbstractTargetTest extends TestCase {
 	}
 	
 	/**
+	 * Extracts the same plugins as {@link #extractAbcdePlugins()}, but puts them
+	 * in a linked folder setup (linked/eclipse/plugins).  Returns the location
+	 * of the plugins directory.
+	 * 
+	 * @return path to the plug-ins directory
+	 * @throws Exception 
+	 */
+	protected IPath extractLinkedPlugins() throws Exception {
+		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath location = stateLocation.append("linked/eclipse/plugins");
+		if (location.toFile().exists()) {
+			// recursively delete
+			File dir = location.toFile();
+			delete(dir);
+		}
+		return doUnZip(location, "/tests/targets/abcde-plugins.zip");
+	}
+	
+	/**
 	 * Extracts the classic plug-ins archive, if not already done, and returns a path to the
 	 * root directory containing the plug-ins.
 	 * 

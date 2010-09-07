@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import java.io.FileWriter;
+
 import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -418,6 +420,86 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertEquals("Wrong number of fragments", 6, frag);
 	}
 	
+	
+	/**
+	 * Tests that an installation container will recognize linked plug-ins
+	 * while a directory container will not
+	 * @throws Exception
+	 */
+	public void testLinkedInstallResolution() throws Exception {
+		// extract the 3.0.2 skeleton and extra plugins to link
+		IPath location = extractClassicPlugins();
+		IPath extraPlugins = extractLinkedPlugins();
+		
+		// Create the link file
+		File linkLocation = new File(location.toFile().getParentFile(),"links");
+		linkLocation.mkdirs();
+		File linkFile = new File(linkLocation, "test.link");
+		linkFile.createNewFile();
+		FileWriter writer = new FileWriter(linkFile);
+		writer.write("path=" + extraPlugins.removeLastSegments(1).toOSString() + "");
+		writer.flush();
+		writer.close();
+		
+		ITargetDefinition definition = getNewTarget();
+		String home = location.removeLastSegments(1).toOSString();
+		IBundleContainer container = getTargetService().newProfileContainer(home, null);
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.resolve(null);
+		IResolvedBundle[] bundles = definition.getAllBundles();
+		
+		int source = 0;
+		int frag = 0;
+		int bin = 0;
+		
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle bundle = bundles[i];
+			if (bundle.isFragment()) {
+				frag++;
+				if (bundle.isSourceBundle()) {
+					source++; // fragment && source
+				} 
+			} else if (bundle.isSourceBundle()) {
+				source++;
+			} else {
+				bin++;
+			}
+		}
+		// there should be 80 plug-ins and 4 source plug-ins (win 32) + 10 extra links plug-ins (5 of which are source)
+		assertEquals("Wrong number of bundles", 94, bundles.length);
+		assertEquals("Wrong number of source bundles", 9, source);
+		assertEquals("Wrong number of fragments", 6, frag);
+		
+		// Check that the directory container doesn't find any linked plugins
+		definition = getNewTarget();
+		container = getTargetService().newDirectoryContainer(home);
+		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.resolve(null);
+		bundles = definition.getAllBundles();
+		
+		source = 0;
+		frag = 0;
+		bin = 0;
+		
+		for (int i = 0; i < bundles.length; i++) {
+			IResolvedBundle bundle = bundles[i];
+			if (bundle.isFragment()) {
+				frag++;
+				if (bundle.isSourceBundle()) {
+					source++; // fragment && source
+				} 
+			} else if (bundle.isSourceBundle()) {
+				source++;
+			} else {
+				bin++;
+			}
+		}
+		// there should be 80 plug-ins and 4 source plug-ins (win 32)
+		assertEquals("Wrong number of bundles", 84, bundles.length);
+		assertEquals("Wrong number of source bundles", 4, source);
+		assertEquals("Wrong number of fragments", 6, frag);
+		
+	}
 	/**
 	 * Tests that when resolving a set of bundles that include source bundles, the source bundles
 	 * are able to determine the bundle their source is for.
