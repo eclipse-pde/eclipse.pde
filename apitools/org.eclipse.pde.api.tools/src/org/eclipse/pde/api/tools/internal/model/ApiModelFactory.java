@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,27 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
+import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 
 /**
  * Utility class for creating new {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}s
@@ -181,5 +191,53 @@ public class ApiModelFactory {
 	 */
 	public static IApiBaseline newApiBaseline(String name, File eeDescription, String location) throws CoreException {
 		return new ApiBaseline(name, eeDescription, location);
+	}
+	
+	/**
+	 * Collects api components for the bundles part of the specified installation and adds them to the baseline. The
+	 * components that were added to the baseline are returned.
+	 * 
+	 * @param baseline The baseline to add the components to
+	 * @param installLocation Location of an installation that components are collected from
+	 * @param monitor progress monitor or <code>null</code>
+	 * @return List of api components that were added to the baseline, possibly empty
+	 * @throws CoreException If problems occur getting components or modifying the baseline
+	 */
+	public static IApiComponent[] addComponents(IApiBaseline baseline, String installLocation, IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 50);
+		
+		ITargetPlatformService service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
+		IBundleContainer container = service.newProfileContainer(installLocation, null);
+		// treat as an installation, if that fails, try plug-ins directory
+		ITargetDefinition definition = service.newTarget();
+		container.resolve(definition, subMonitor.newChild(30));
+		subMonitor.worked(1);
+		IResolvedBundle[] bundles = container.getBundles();
+		
+		SubMonitor componentMonitor = subMonitor.newChild(20);
+		List components = new ArrayList();
+		if (bundles.length > 0) {
+			componentMonitor.beginTask(Util.EMPTY_STRING, bundles.length);
+			for (int i = 0; i < bundles.length; i++) {
+					if (!bundles[i].isSourceBundle()) {
+						IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
+						if (component != null) {
+							components.add(component);
+						}
+					}
+				componentMonitor.worked(1);
+			}
+		}
+		componentMonitor.done();
+		
+		IApiComponent[] result = (IApiComponent[])components.toArray(new IApiComponent[components.size()]);
+		baseline.addApiComponents(result);
+		
+		subMonitor.done();
+		if (monitor != null){
+			monitor.done();
+		}
+		
+		return result;
 	}
 }

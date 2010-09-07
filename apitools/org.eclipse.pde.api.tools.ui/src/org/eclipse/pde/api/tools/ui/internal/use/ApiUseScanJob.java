@@ -49,8 +49,6 @@ import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
@@ -251,7 +249,7 @@ public class ApiUseScanJob extends Job {
 				if (!file.exists() || !file.isDirectory()) {
 					abort(MessageFormat.format(Messages.ApiUseScanJob_intall_dir_does_no_exist, new String[]{path}));
 				}
-				return createBaseline(new Path(file.getAbsolutePath()), monitor);
+				return createBaseline(path, monitor);
 			case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION:
 				String memento = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_HANDLE, (String)null);
 				if (memento == null) {
@@ -273,7 +271,7 @@ public class ApiUseScanJob extends Job {
 	 * @return service or <code>null</code>
 	 */
 	private ITargetPlatformService getTargetService() {
-		return (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		return (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
 	}
 	
 	/**
@@ -485,39 +483,19 @@ public class ApiUseScanJob extends Job {
 	}	
 	
 	/**
-	 * Creates a baseline at an install location, as a plain directory (does not treat as an install).
+	 * Creates a baseline at an install location
 	 * 
 	 * @param path
 	 * @param monitor
 	 */
-	private IApiBaseline createBaseline(IPath path, IProgressMonitor monitor) throws CoreException {
+	private IApiBaseline createBaseline(String installLocation, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_scanning, 10);
-		ITargetPlatformService service = (ITargetPlatformService) ApiUIPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
-		IBundleContainer container = service.newDirectoryContainer(path.toOSString());
-		// treat as an installation, if that fails, try plug-ins directory
-		ITargetDefinition definition = service.newTarget();
-		container.resolve(definition, localmonitor.newChild(1));
-		Util.updateMonitor(localmonitor, 1);
-		IResolvedBundle[] bundles = container.getBundles();
-		List components = new ArrayList();
-		IApiBaseline profile = ApiModelFactory.newApiBaseline(this.configuration.getName());
-		Util.updateMonitor(localmonitor, 1);
-		if (bundles.length > 0) {
-			localmonitor.setWorkRemaining(bundles.length);
-			for (int i = 0; i < bundles.length; i++) {
-				Util.updateMonitor(localmonitor, 1);
-				if (bundles[i].getStatus().isOK() && !bundles[i].isSourceBundle()) {
-					IApiComponent component = ApiModelFactory.newApiComponent(profile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
-					if (component != null) {
-						components.add(component);
-					}
-				}
-			}
-		} else {
-			abort(MessageFormat.format(Messages.ApiUseScanJob_no_bundles, new String[]{path.toOSString()}));
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline(this.configuration.getName());
+		IApiComponent[] components = ApiModelFactory.addComponents(baseline, installLocation, localmonitor);
+		if (components.length == 0){
+			abort(MessageFormat.format(Messages.ApiUseScanJob_no_bundles, new String[]{installLocation}));
 		}
-		profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
-		return profile;
+		return baseline;
 	}	
 	
 }

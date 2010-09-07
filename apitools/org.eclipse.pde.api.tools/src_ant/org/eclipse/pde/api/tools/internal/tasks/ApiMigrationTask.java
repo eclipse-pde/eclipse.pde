@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -303,7 +303,7 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 			time = System.currentTimeMillis();
 			System.out.println("Creating '"+name+"' baseline..."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		IApiBaseline baseline = createBaseline(name, getInstallDir(installdir), this.eeFileLocation);
+		IApiBaseline baseline = createBaseline(name, installdir.getAbsolutePath(), this.eeFileLocation);
 		if (this.debug) {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

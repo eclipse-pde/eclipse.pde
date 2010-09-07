@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,8 +27,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
@@ -56,10 +52,6 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiBaselinePreferencePage;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -175,91 +167,21 @@ public class ApiBaselineWizardPage extends WizardPage {
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
-			Path path = new Path(location);
-			File plugins = path.append("plugins").toFile(); //$NON-NLS-1$
-			ITargetPlatformService service = (ITargetPlatformService) ApiUIPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
-			IBundleContainer container = service.newProfileContainer(path.toOSString(), null);
-			// treat as an installation, if that fails, try plug-ins directory
-			ITargetDefinition definition = service.newTarget();
-			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
-			container.resolve(definition, subMonitor);
-			subMonitor.done();
-			monitor.worked(1);
-			IResolvedBundle[] bundles = container.getBundles();
-			List components = new ArrayList();
 			try {
 				fProfile = ApiModelFactory.newApiBaseline(name, location);
 			} catch (CoreException e) {
 				throw new InvocationTargetException(e);
 			}
-			if (bundles.length > 0) {
-				// an installation
-				subMonitor = new SubProgressMonitor(monitor, 8);
-				subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, bundles.length); 
-				for (int i = 0; i < bundles.length; i++) {
-					try {
-						if (!bundles[i].isSourceBundle()) {
-							IApiComponent component = ApiModelFactory.newApiComponent(fProfile, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
-							if (component != null) {
-								components.add(component);
-							}
-						}
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-					subMonitor.worked(1);
-				}
-				subMonitor.done();
-			} else {
-				// scan directory
-				if (!plugins.exists() || !plugins.isDirectory()) {
-					plugins = path.toFile();
-				}
-				File[] files = scanLocation(plugins);
-				monitor.worked(1);
-				subMonitor = new SubProgressMonitor(monitor, 7);
-				subMonitor.beginTask(IApiToolsConstants.EMPTY_STRING, files.length); 
-				for (int i = 0; i < files.length; i++) {
-					try {
-						IApiComponent component = ApiModelFactory.newApiComponent(fProfile, files[i].getPath());
-						if (component != null) {
-							components.add(component);
-						}
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-					subMonitor.worked(1);
-				}
-				subMonitor.done();
-			}
-			try {
-				fProfile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+			
+			try{
+				ApiModelFactory.addComponents(fProfile, location, monitor);
 				ApiBaselineWizardPage.this.contentchange = true;
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			}
-			monitor.worked(1);
 			monitor.done();
 		}
 		
-		/**
-		 * Scan given directory for plug-ins
-		 * @param directory
-		 * @return Files of plug-ins/features
-		 */
-		private File[] scanLocation(File directory) {
-			if(!directory.exists() && !directory.isDirectory()) {
-				return new File[0];
-			}
-			HashSet result = new HashSet();
-			File[] children = directory.listFiles();
-			if (children != null) {
-				for (int j = 0; j < children.length; j++) {
-					result.add(children[j]);
-				}
-			}
-			return (File[]) result.toArray(new File[result.size()]);
-		}
 	}
 	
 	/**

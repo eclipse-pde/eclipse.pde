@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 /**
  * API tooling UI plug-in class.
@@ -229,11 +228,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		return new Status(IStatus.ERROR, getPluginIdentifier(), INTERNAL_ERROR, message, exception);
 	}
 	
-	/**
-	 * This bundle's OSGi context
-	 */
-	private BundleContext fBundleContext = null;
-	
 	private ISessionListener sessionListener = new ISessionListener() {
 		public void sessionAdded(ISession addedSession) {
 			getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -253,19 +247,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 */
 	public ApiUIPlugin() {
 		fgDefault = this;
-	}
-	
-	/**
-	 * Returns a service with the specified name or <code>null</code> if none.
-	 * 
-	 * @param serviceName name of service
-	 * @return service object or <code>null</code> if none
-	 */
-	public Object acquireService(String serviceName) {
-		ServiceReference reference = fBundleContext.getServiceReference(serviceName);
-		if (reference == null)
-			return null;
-		return fBundleContext.getService(reference);
 	}
 	
 	/**
@@ -345,7 +326,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		fBundleContext = context;
 		ApiPlugin.getDefault().getSessionManager().addSessionListener(this.sessionListener);
 		fActionFilterAdapterFactory= new ActionFilterAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(fActionFilterAdapterFactory, IJavaElement.class);
@@ -362,7 +342,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 			image.dispose();
 		}
 		fCompositeImages.clear();
-		fBundleContext = null;
 		ApiPlugin.getDefault().getSessionManager().removeSessionListener(this.sessionListener);
 		Platform.getAdapterManager().unregisterAdapters(fActionFilterAdapterFactory, IJavaElement.class);
 		super.stop(context);

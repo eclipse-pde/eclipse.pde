@@ -52,6 +52,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.FileManager;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -156,6 +157,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * Singleton instance of the {@link ISessionManager}
 	 */
 	private static ISessionManager fgSessionManager = null;
+	/**
+	 * This bundle's OSGi context
+	 */
+	private BundleContext fBundleContext = null;
 	/**
 	 * Private debug options
 	 */
@@ -485,6 +490,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			super.start(context);
 		} finally {
 			ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, this);
+			fBundleContext = context;
 			deltaProcessor = new WorkspaceDeltaProcessor();
 			JavaCore.addElementChangedListener(deltaProcessor, ElementChangedEvent.POST_CHANGE);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(deltaProcessor, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_BUILD);
@@ -501,6 +507,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			ApiBaselineManager.getManager().stop();
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(PLUGIN_ID);
 			FileManager.getManager().deleteFiles();
+			fBundleContext = null;
 			if(deltaProcessor != null) {
 				JavaCore.removeElementChangedListener(deltaProcessor);
 				ResourcesPlugin.getWorkspace().removeResourceChangeListener(deltaProcessor);
@@ -678,5 +685,18 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 				WorkspaceDeltaProcessor.setDebug(option.equals(TRUE));
 			}
 		}
+	}
+	
+	/**
+	 * Returns a service with the specified name or <code>null</code> if none.
+	 * 
+	 * @param serviceName name of service
+	 * @return service object or <code>null</code> if none
+	 */
+	public Object acquireService(String serviceName) {
+		ServiceReference reference = fBundleContext.getServiceReference(serviceName);
+		if (reference == null)
+			return null;
+		return fBundleContext.getService(reference);
 	}
 }

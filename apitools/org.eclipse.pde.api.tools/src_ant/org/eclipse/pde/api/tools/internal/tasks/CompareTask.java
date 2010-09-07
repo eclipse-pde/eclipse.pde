@@ -84,8 +84,8 @@ public class CompareTask extends CommonUtilsTask {
 
 		// run the comparison
 		// create baseline for the reference
-		IApiBaseline referenceBaseline = createBaseline(REFERENCE_BASELINE_NAME, getInstallDir(referenceInstallDir), this.eeFileLocation);
-		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, getInstallDir(baselineInstallDir), this.eeFileLocation);
+		IApiBaseline referenceBaseline = createBaseline(REFERENCE_BASELINE_NAME, referenceInstallDir.getAbsolutePath(), this.eeFileLocation);
+		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, baselineInstallDir.getAbsolutePath(), this.eeFileLocation);
 		
 		IDelta delta = null;
 		

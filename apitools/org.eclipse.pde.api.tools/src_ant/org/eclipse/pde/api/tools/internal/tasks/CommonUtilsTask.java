@@ -36,9 +36,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class CommonUtilsTask extends Task {
-	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
 	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
-	private static final String PLUGINS_FOLDER_NAME = "plugins"; //$NON-NLS-1$
 
 	protected static final String CURRENT = "currentBaseline"; //$NON-NLS-1$
 	protected static final String CURRENT_BASELINE_NAME = "current_baseline"; //$NON-NLS-1$
@@ -54,13 +52,15 @@ public abstract class CommonUtilsTask extends Task {
 	protected String reportLocation;
 	
 	/**
-	 * Creates a baseline with the given name and ee file location in the given directory
-	 * @param baselineName
-	 * @param dir
-	 * @param eeFileLocation
+	 * Creates a baseline with the given name and ee file location in the given directory.  The installLocation
+	 * will be searched for bundles to add as API components.
+	 * 
+	 * @param baselineName Name to use for the new baseline
+	 * @param installLocation Location of an installation or directory of bundles to add as api components
+	 * @param eeFileLocation execution environment location or <code>null</code> to have the EE determined from api components
 	 * @return a new {@link IApiBaseline}
 	 */
-	protected IApiBaseline createBaseline(String baselineName, File dir, String eeFileLocation) {
+	protected IApiBaseline createBaseline(String baselineName, String installLocation, String eeFileLocation) {
 		try {
 			IApiBaseline baseline = null;
 			if (ApiPlugin.isRunningInFramework()) {
@@ -70,26 +70,11 @@ public abstract class CommonUtilsTask extends Task {
 			} else {
 				baseline = ApiModelFactory.newApiBaseline(baselineName, Util.getEEDescriptionFile());
 			}
-			// create a component for each jar/directory in the folder
-			File[] files = dir.listFiles();
-			if(files == null) {
-				throw new BuildException(
-						NLS.bind(Messages.directoryIsEmpty,
-						dir.getAbsolutePath()));
-			}
-			List components = new ArrayList();
-			for (int i = 0; i < files.length; i++) {
-				File bundle = files[i];
-				if (!bundle.getName().equals(CVS_FOLDER_NAME)) {
-					// ignore CVS folder
-					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
-					if(component != null) {
-						components.add(component);
-					}
-				}
-			}
 			
-			baseline.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+			IApiComponent[] components = ApiModelFactory.addComponents(baseline, installLocation, null);
+			if (components.length == 0){			
+				throw new BuildException(NLS.bind(Messages.directoryIsEmpty, installLocation));
+			}
 			return baseline;
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -165,15 +150,6 @@ public abstract class CommonUtilsTask extends Task {
 		} else {
 			return locationFile;
 		}
-	}
-	
-	/**
-	 * Returns a file handle for the plug-ins directory within the given file
-	 * @param dir
-	 * @return the plug-ins directory file handle within the given file
-	 */
-	protected File getInstallDir(File dir) {
-		return new File(dir, PLUGINS_FOLDER_NAME);
 	}
 	
 	/**

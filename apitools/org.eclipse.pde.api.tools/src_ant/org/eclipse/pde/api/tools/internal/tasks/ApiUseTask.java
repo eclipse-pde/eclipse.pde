@@ -413,7 +413,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 			time = System.currentTimeMillis();
 			System.out.println("Creating '"+name+"' baseline..."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		IApiBaseline baseline = createBaseline(name, getInstallDir(installdir), this.eeFileLocation);
+		IApiBaseline baseline = createBaseline(name, installdir.getAbsolutePath(), this.eeFileLocation);
 		if (this.debug) {
 			System.out.println("done in: " + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
