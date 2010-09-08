@@ -44,6 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class APIFreezeReportConversionTask extends Task {
 	static final class ConverterDefaultHandler extends DefaultHandler {
+		private static final String API_BASELINE_DELTAS = "Added and removed bundles"; //$NON-NLS-1$
 		private String[] arguments;
 		private List argumentsList;
 		private String componentID;
@@ -123,7 +124,13 @@ public class APIFreezeReportConversionTask extends Task {
 					printAttribute(attributes, IApiXmlConstants.ATTR_RESTRICTIONS);
 					printAttribute(attributes, IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				}
-				this.componentID = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
+				final String value = attributes.getValue(IApiXmlConstants.ATTR_NAME_COMPONENT_ID);
+				if (value == null) {
+					// removed or added bundles
+					this.componentID = API_BASELINE_DELTAS;
+				} else {
+					this.componentID = value;
+				}
 				this.flags = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_FLAGS));
 				this.elementType = Util.getDeltaElementTypeValue(attributes.getValue(IApiXmlConstants.ATTR_NAME_ELEMENT_TYPE));
 				this.typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
@@ -263,6 +270,9 @@ public class APIFreezeReportConversionTask extends Task {
 								Messages.deltaReportTask_entry_minor_version,
 								this.arguments));
 						break;
+					case IDelta.API_BASELINE_ELEMENT_TYPE :
+						buffer.append(this.key);
+						break;
 				}
 			}
 			return CommonUtilsTask.convertToHtml(String.valueOf(buffer));
@@ -383,7 +393,11 @@ public class APIFreezeReportConversionTask extends Task {
 
 		File file = new File(this.xmlFileLocation);
 		if (this.htmlFileLocation == null) {
-			this.htmlFileLocation = extractNameFromXMLName();
+			int index = this.xmlFileLocation.lastIndexOf('.');
+			if (index == -1) {
+				throw new BuildException(Messages.deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension);
+			}
+			this.htmlFileLocation = extractNameFromXMLName(index);
 			if (this.debug) {
 				System.out.println("output name :" + this.htmlFileLocation); //$NON-NLS-1$
 			}
@@ -400,8 +414,7 @@ public class APIFreezeReportConversionTask extends Task {
 			// ignore
 		}
 	}
-	private String extractNameFromXMLName() {
-		int index = this.xmlFileLocation.lastIndexOf('.');
+	private String extractNameFromXMLName(int index) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(this.xmlFileLocation.substring(0, index)).append(".html"); //$NON-NLS-1$
 		return String.valueOf(buffer);

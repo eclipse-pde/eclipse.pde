@@ -27,6 +27,7 @@ public class Messages extends NLS {
 	public static String deltaReportTask_entry_minor_version;
 	public static String deltaReportTask_missingXmlFileLocation;
 	public static String deltaReportTask_couldNotCreateSAXParser;
+	public static String deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension;
 
 	public static String fullReportTask_bundlesheader;
 	public static String fullReportTask_bundlesentry_even;
