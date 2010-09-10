@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class Product extends ProductObject implements IProduct {
 
 	private TreeMap fPlugins = new TreeMap();
 	private TreeMap fPluginConfigurations = new TreeMap();
+	private TreeMap fConfigurationProperties = new TreeMap();
 	private List fFeatures = new ArrayList();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
@@ -242,6 +243,11 @@ public class Product extends ProductObject implements IProduct {
 				IPluginConfiguration configuration = (IPluginConfiguration) iter.next();
 				configuration.write(indent + "      ", writer); //$NON-NLS-1$
 			}
+			iter = fConfigurationProperties.values().iterator();
+			while (iter.hasNext()) {
+				IConfigurationProperty property = (IConfigurationProperty) iter.next();
+				property.write(indent + "      ", writer); //$NON-NLS-1$
+			}
 			writer.println(indent + "   </configurations>"); //$NON-NLS-1$
 		}
 
@@ -269,6 +275,7 @@ public class Product extends ProductObject implements IProduct {
 		fAboutInfo = null;
 		fPlugins.clear();
 		fPluginConfigurations.clear();
+		fConfigurationProperties.clear();
 		fFeatures.clear();
 		fConfigIniInfo = null;
 		fWindowImages = null;
@@ -308,7 +315,7 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("features")) { //$NON-NLS-1$
 						parseFeatures(child.getChildNodes());
 					} else if (name.equals("configurations")) { //$NON-NLS-1$
-						parsePluginConfigurations(child.getChildNodes());
+						parseConfigations(child.getChildNodes());
 					} else if (name.equals("configIni")) { //$NON-NLS-1$
 						fConfigIniInfo = factory.createConfigFileInfo();
 						fConfigIniInfo.parse(child);
@@ -352,7 +359,7 @@ public class Product extends ProductObject implements IProduct {
 		}
 	}
 
-	private void parsePluginConfigurations(NodeList children) {
+	private void parseConfigations(NodeList children) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -360,6 +367,11 @@ public class Product extends ProductObject implements IProduct {
 					IPluginConfiguration configuration = getModel().getFactory().createPluginConfiguration();
 					configuration.parse(child);
 					fPluginConfigurations.put(configuration.getId(), configuration);
+				}
+				if (child.getNodeName().equals("property")) { //$NON-NLS-1$
+					IConfigurationProperty property = getModel().getFactory().createConfigurationProperty();
+					property.parse(child);
+					fConfigurationProperties.put(property.getName(), property);
 				}
 			}
 		}
@@ -423,6 +435,27 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addConfigurationProperties(org.eclipse.pde.internal.core.iproduct.IConfigurationProperty[])
+	 */
+	public void addConfigurationProperties(IConfigurationProperty[] properties) {
+		boolean modified = false;
+		for (int i = 0; i < properties.length; i++) {
+			if (properties[i] == null)
+				continue;
+			String name = properties[i].getName();
+			if (name == null || fConfigurationProperties.containsKey(name)) {
+				continue;
+			}
+
+			properties[i].setModel(getModel());
+			fConfigurationProperties.put(name, properties[i]);
+			modified = true;
+		}
+		if (modified && isEditable())
+			fireStructureChanged(properties, IModelChangedEvent.INSERT);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugins(org.eclipse.pde.internal.core.iproduct.IProductPlugin[])
 	 */
 	public void removePlugins(IProductPlugin[] plugins) {
@@ -461,6 +494,20 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removeConfigurationProperties(org.eclipse.pde.internal.core.iproduct.IConfigurationProperty[])
+	 */
+	public void removeConfigurationProperties(IConfigurationProperty[] properties) {
+		boolean modified = false;
+		for (int i = 0; i < properties.length; i++) {
+			if (fConfigurationProperties.remove(properties[i].getName()) != null) {
+				modified = true;
+			}
+		}
+		if (isEditable() && modified)
+			fireStructureChanged(properties, IModelChangedEvent.REMOVE);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPlugins()
 	 */
 	public IProductPlugin[] getPlugins() {
@@ -472,6 +519,13 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public IPluginConfiguration[] getPluginConfigurations() {
 		return (IPluginConfiguration[]) fPluginConfigurations.values().toArray(new IPluginConfiguration[fPluginConfigurations.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationProperties()
+	 */
+	public IConfigurationProperty[] getConfigurationProperties() {
+		return (IConfigurationProperty[]) fConfigurationProperties.values().toArray(new IConfigurationProperty[fConfigurationProperties.size()]);
 	}
 
 	/* (non-Javadoc)

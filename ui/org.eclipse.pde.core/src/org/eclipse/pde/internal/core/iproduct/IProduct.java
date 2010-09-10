@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,11 +63,29 @@ public interface IProduct extends IProductObject {
 
 	void addPluginConfigurations(IPluginConfiguration[] configurations);
 
+	/**
+	 * Adds the given properties to the list of properties known to this
+	 * product.  Only properties that do not exist in the product configuration
+	 * will be added.
+	 * 
+	 * @param properties properties to add
+	 */
+	void addConfigurationProperties(IConfigurationProperty[] properties);
+
 	void removePlugins(IProductPlugin[] plugins);
 
 	void removeFeatures(IProductFeature[] feature);
 
 	void removePluginConfigurations(IPluginConfiguration[] configurations);
+
+	/**
+	 * Removes the given properties from the list of properties known to this
+	 * product.  If the properties are not in the product's properties, this
+	 * method has no effect.
+	 * 
+	 * @param properties properties to remove
+	 */
+	void removeConfigurationProperties(IConfigurationProperty[] properties);
 
 	IPluginConfiguration findPluginConfiguration(String id);
 
@@ -76,6 +94,11 @@ public interface IProduct extends IProductObject {
 	IProductFeature[] getFeatures();
 
 	IPluginConfiguration[] getPluginConfigurations();
+
+	/**
+	 * @return The list of properties set in the product configuration
+	 */
+	IConfigurationProperty[] getConfigurationProperties();
 
 	void setId(String id);
 

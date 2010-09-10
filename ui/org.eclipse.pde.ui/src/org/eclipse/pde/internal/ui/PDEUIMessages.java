@@ -2908,6 +2908,19 @@ public class PDEUIMessages extends NLS {
 	public static String ProjectSelectionDialog_message;
 	public static String ProjectSelectionDialog_settingsTitle;
 
+	public static String PropertiesSection_Add;
+	public static String PropertiesSection_Edit;
+	public static String PropertiesSection_ErrorPropertyExists;
+	public static String PropertiesSection_ErrorPropertyNoName;
+	public static String PropertiesSection_Name;
+	public static String PropertiesSection_NameColumn;
+	public static String PropertiesSection_PropertiesSectionDescription;
+	public static String PropertiesSection_PropertiesSectionTitle;
+	public static String PropertiesSection_PropertyDialogTitle;
+	public static String PropertiesSection_Remove;
+	public static String PropertiesSection_Value;
+	public static String PropertiesSection_ValueColumn;
+
 	public static String PDECompilersConfigurationBlock_error;
 	public static String PDECompilersConfigurationBlock_warning;
 	public static String PDECompilersConfigurationBlock_ignore;
