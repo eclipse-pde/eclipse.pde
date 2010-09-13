@@ -232,7 +232,7 @@ public class PropertiesSection extends TableSection {
 		sectionData.horizontalSpan = 2;
 		section.setLayoutData(sectionData);
 		Composite container = createClientContainer(section, 3, toolkit);
-		createViewerPartControl(container, SWT.MULTI, 3, toolkit);
+		createViewerPartControl(container, SWT.MULTI | SWT.FULL_SELECTION, 3, toolkit);
 		fPropertiesTable = getTablePart().getTableViewer();
 		fPropertiesTable.setSorter(new ViewerSorter());
 		fPropertiesTable.addDoubleClickListener(new IDoubleClickListener() {

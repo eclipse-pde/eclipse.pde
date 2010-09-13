@@ -130,7 +130,7 @@ public class PluginConfigurationSection extends TableSection {
 		sectionData.horizontalSpan = 2;
 		section.setLayoutData(sectionData);
 		Composite container = createClientContainer(section, 3, toolkit);
-		createViewerPartControl(container, SWT.SINGLE, 3, toolkit);
+		createViewerPartControl(container, SWT.SINGLE | SWT.FULL_SELECTION, 3, toolkit);
 		fConfigurationsTable = getTablePart().getTableViewer();
 
 		final Table table = fConfigurationsTable.getTable();
