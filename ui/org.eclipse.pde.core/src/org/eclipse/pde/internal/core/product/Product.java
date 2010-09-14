@@ -236,7 +236,7 @@ public class Product extends ProductObject implements IProduct {
 
 		writer.println();
 
-		if (fPluginConfigurations.size() > 0) {
+		if (fConfigurationProperties.size() > 0 || fPluginConfigurations.size() > 0) {
 			writer.println(indent + "   <configurations>"); //$NON-NLS-1$  
 			iter = fPluginConfigurations.values().iterator();
 			while (iter.hasNext()) {
