@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.util.ArrayList;
 import java.util.Set;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -259,6 +257,12 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	/**
 	 * Adds a warning if importing from a repository and not all bundles are available in
 	 * a repository.
+	 * <p>
+	 * The detail page no longer needs this as its available list is filtered, but on the express page
+	 * we may end up with plug-ins from the workspace that require plug-ins without repo info.  In that
+	 * case the bundles will still be added to the right column but won't be available on the next page
+	 * (CVS page).
+	 * </p>
 	 */
 	protected void checkRepositoryAvailability() {
 		PluginImportWizardFirstPage page = (PluginImportWizardFirstPage) getPreviousPage();

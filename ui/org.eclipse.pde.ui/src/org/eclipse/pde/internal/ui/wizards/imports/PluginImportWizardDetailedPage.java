@@ -443,7 +443,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		updateButtonEnablement(doAddEnablement, doRemoveEnablement);
 		setPageComplete(fImportListViewer.getTable().getItemCount() > 0);
 		setMessage(PDEUIMessages.ImportWizard_DetailedPage_desc);
-		checkRepositoryAvailability();
 	}
 
 	private void updateCount() {
