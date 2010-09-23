@@ -16,12 +16,12 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
-import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.planner.IPlanner;
+import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
 import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
@@ -333,13 +333,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// create the provisioning plan
-		ProfileChangeRequest request = new ProfileChangeRequest(profile);
+		IPlanner planner = getPlanner();
+		IProfileChangeRequest request = planner.createChangeRequest(profile);
 		request.addAll(Arrays.asList(units));
 		for (int i = 0; i < units.length; i++) {
 			IInstallableUnit unit = units[i];
 			request.setInstallableUnitProfileProperty(unit, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
 		}
-		IPlanner planner = getPlanner();
 		URI[] repositories = resolveRepositories();
 		ProvisioningContext context = new ProvisioningContext(getAgent());
 		context.setMetadataRepositories(repositories);
