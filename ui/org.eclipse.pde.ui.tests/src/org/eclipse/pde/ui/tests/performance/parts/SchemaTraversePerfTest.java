@@ -12,6 +12,8 @@
 package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URLConnection;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
@@ -45,16 +47,24 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 	 * @see org.eclipse.pde.ui.tests.performance.parts.AbstractSchemaPerfTest#executeTest()
 	 */
 	protected void executeTest() throws Exception {
+		URLConnection connection = null;
 		InputStream input = null;
-		input = SchemaUtil.getInputStream(fXSDFile.toURL());
-		SAXParserWrapper parser = new SAXParserWrapper();
-		XMLDefaultHandler handler = new XMLDefaultHandler(true);
-		parser.parse(input, handler);
-		if (input != null) {
-			input.close();
+		try {
+			connection = SchemaUtil.getURLConnection(fXSDFile.toURL());
+			input = connection.getInputStream(); 
+			SAXParserWrapper parser = new SAXParserWrapper();
+			XMLDefaultHandler handler = new XMLDefaultHandler(true);
+			parser.parse(input, handler);
+			EditableSchema schema = new EditableSchema("pluginID", "pointID", "name", true);
+			schema.traverseDocumentTree(handler.getDocumentElement());
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+			if (connection instanceof JarURLConnection){
+				((JarURLConnection)connection).getJarFile().close();
+			}
 		}
-		EditableSchema schema = new EditableSchema("pluginID", "pointID", "name", true);
-		schema.traverseDocumentTree(handler.getDocumentElement());
 	}
 
 }
