@@ -108,6 +108,7 @@ public class TracingBlock {
 				CheckboxTableViewer tableViewer = (CheckboxTableViewer) e.getSource();
 				boolean selected = tableViewer.getChecked(getSelectedModel());
 				pluginSelected(getSelectedModel(), selected);
+				storeSelectedModel();
 			}
 		});
 		fPluginViewer.addCheckStateListener(new ICheckStateListener() {
@@ -243,7 +244,6 @@ public class TracingBlock {
 		config.setAttribute(IPDELauncherConstants.TRACING, tracingEnabled);
 		if (tracingEnabled) {
 			boolean changes = false;
-			storeSelectedModel();
 			for (Enumeration elements = fPropertySources.elements(); elements.hasMoreElements();) {
 				TracingPropertySource source = (TracingPropertySource) elements.nextElement();
 				if (source.isModified()) {
