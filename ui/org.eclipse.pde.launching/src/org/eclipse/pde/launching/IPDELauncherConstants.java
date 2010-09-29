@@ -183,6 +183,9 @@ public interface IPDELauncherConstants {
 	/**
 	 * Launch configuration attribute key. The value is the id of the last plug-in 
 	 * that was selected on the Tracing tab.
+	 * 
+	 * @deprecated This option is no longer supported in the launch config.  A recent selection is stored
+	 * in dialog settings.
 	 */
 	String TRACING_SELECTED_PLUGIN = "selectedPlugin"; //$NON-NLS-1$
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -27,6 +26,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 import org.eclipse.swt.SWT;
@@ -50,6 +50,12 @@ public class TracingBlock {
 	private Hashtable fPropertySources = new Hashtable();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
+
+	/**
+	 * The last selected item in the list is stored in the dialog settings.
+	 */
+	private static final String TRACING_SETTINGS = "TracingTab"; //$NON-NLS-1$
+	private static final String SETTINGS_SELECTED_PLUGIN = "selectedPlugin"; //$NON-NLS-1$
 
 	public TracingBlock(TracingTab tab) {
 		fTab = tab;
@@ -219,7 +225,7 @@ public class TracingBlock {
 					}
 				}
 				fPluginViewer.setCheckedElements(list.toArray());
-				IPluginModelBase model = getLastSelectedPlugin(config);
+				IPluginModelBase model = getLastSelectedPlugin();
 				if (model != null) {
 					fPluginViewer.setSelection(new StructuredSelection(model), true);
 					pluginSelected(model, list.contains(model));
@@ -236,10 +242,8 @@ public class TracingBlock {
 		boolean tracingEnabled = fTracingCheck.getSelection();
 		config.setAttribute(IPDELauncherConstants.TRACING, tracingEnabled);
 		if (tracingEnabled) {
-			IPluginModelBase model = getSelectedModel();
-			String id = (model == null) ? null : model.getPluginBase().getId();
-			config.setAttribute(IPDELauncherConstants.TRACING_SELECTED_PLUGIN, id);
 			boolean changes = false;
+			storeSelectedModel();
 			for (Enumeration elements = fPropertySources.elements(); elements.hasMoreElements();) {
 				TracingPropertySource source = (TracingPropertySource) elements.nextElement();
 				if (source.isModified()) {
@@ -249,9 +253,8 @@ public class TracingBlock {
 			}
 			if (changes)
 				config.setAttribute(IPDELauncherConstants.TRACING_OPTIONS, fMasterOptions);
-		} else {
-			config.setAttribute(IPDELauncherConstants.TRACING_SELECTED_PLUGIN, (String) null);
 		}
+
 		Object[] checked = fPluginViewer.getCheckedElements();
 		if (checked.length == 0) {
 			config.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
@@ -323,9 +326,35 @@ public class TracingBlock {
 		return fTraceableModels;
 	}
 
-	private IPluginModelBase getLastSelectedPlugin(ILaunchConfiguration config) throws CoreException {
-		String pluginID = config.getAttribute(IPDELauncherConstants.TRACING_SELECTED_PLUGIN, (String) null);
-		return pluginID == null ? null : PluginRegistry.findModel(pluginID);
+	/**
+	 * Returns the last selected plug-in as stored in dialog settings or <code>null</code> if no
+	 * previous selection is found.
+	 * 
+	 * @return model for the last selected plug-in or <code>null</code>
+	 */
+	private IPluginModelBase getLastSelectedPlugin() {
+		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(TRACING_SETTINGS);
+		if (settings != null) {
+			String id = settings.get(SETTINGS_SELECTED_PLUGIN);
+			if (id != null && id.trim().length() > 0) {
+				return PluginRegistry.findModel(id);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Stores the currently selected model in the dialog settings for later retrieval using
+	 * {@link #getLastSelectedPlugin()}.  If no model is selected, the settings are cleared.
+	 */
+	private void storeSelectedModel() {
+		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(TRACING_SETTINGS);
+		if (settings == null) {
+			settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(TRACING_SETTINGS);
+		}
+		IPluginModelBase model = getSelectedModel();
+		String id = (model == null) ? null : model.getPluginBase().getId();
+		settings.put(SETTINGS_SELECTED_PLUGIN, id);
 	}
 
 	private TracingPropertySource getPropertySource(IPluginModelBase model) {
