@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ExcludedElements {
+public class FilteredElements {
 
 	private Set exactMatches;
 	private Set partialMatches;
@@ -95,5 +95,9 @@ public class ExcludedElements {
 		buffer
 			.append("================================================================") //$NON-NLS-1$
 			.append(lineSeparator);
+	}
+	
+	public boolean isEmpty(){
+		return (exactMatches == null || exactMatches.isEmpty()) && (partialMatches == null || partialMatches.isEmpty());
 	}
 }

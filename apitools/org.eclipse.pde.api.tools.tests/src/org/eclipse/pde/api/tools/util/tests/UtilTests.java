@@ -30,7 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
+import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
@@ -578,7 +578,7 @@ public class UtilTests extends TestCase {
 		}
 		IApiComponent[] components = new IApiComponent[allComponents.size()];
 		allComponents.toArray(components);
-		ExcludedElements excludedElements = new ExcludedElements();
+		FilteredElements excludedElements = new FilteredElements();
 		try {
 			Util.collectRegexIds(line, excludedElements, components, true);
 		} catch (Exception e) {
@@ -589,7 +589,7 @@ public class UtilTests extends TestCase {
 		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core"));
 	}
 	public void testRegexExcludeList2() {
-		ExcludedElements excludedElements = new ExcludedElements();
+		FilteredElements excludedElements = new FilteredElements();
 		assertEquals("Wrong size", 0, excludedElements.getPartialMatches().size());
 		assertEquals("Wrong size", 0, excludedElements.getExactMatches().size());
 		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core"));

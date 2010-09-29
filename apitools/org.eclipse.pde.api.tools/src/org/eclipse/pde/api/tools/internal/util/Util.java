@@ -2217,8 +2217,8 @@ public final class Util {
 	 * @param baseline
 	 * @return the list of bundles to be excluded
 	 */
-	public static ExcludedElements initializeRegexExcludeList(String location, IApiBaseline baseline, boolean debug) {
-		ExcludedElements excludedElements = new ExcludedElements();
+	public static FilteredElements initializeRegexFilterList(String location, IApiBaseline baseline, boolean debug) {
+		FilteredElements excludedElements = new FilteredElements();
 		if (location != null) {
 			File file = new File(location);
 			if (file.exists()) {
@@ -2241,7 +2241,7 @@ public final class Util {
 					LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
 					String line = null;
 					try {
-						while ((line = reader.readLine()) != null) {
+						while ((line = reader.readLine().trim()) != null) {
 							if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
 								continue; 
 							}
@@ -2273,7 +2273,7 @@ public final class Util {
 	 * @param list
 	 * @param components
 	 */
-	public static void collectRegexIds(String line, ExcludedElements excludedElements, IApiComponent[] components, boolean debug) throws Exception {
+	public static void collectRegexIds(String line, FilteredElements excludedElements, IApiComponent[] components, boolean debug) throws Exception {
 		if (line.startsWith(REGULAR_EXPRESSION_START)) {
 			String componentname = line;
 			// regular expression

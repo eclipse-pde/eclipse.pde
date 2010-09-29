@@ -35,6 +35,7 @@ import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.UseMetadata;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
+import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 import com.ibm.icu.text.DateFormat;
@@ -95,6 +96,16 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * </pre>
 	 */
 	private String[] archivePatterns = null;
+	
+	/**
+	 * List of elements excluded from the scope
+	 */
+	private FilteredElements excludedElements = null;
+	
+	/**
+	 * List of elements explicitly limiting the scope
+	 */
+	private FilteredElements includedElements = null;
 	
 	/**
 	 * Set the location of the current product you want to search.
@@ -275,6 +286,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 				getDescription());
 		IApiBaseline baseline = getBaseline(CURRENT_BASELINE_NAME, this.currentBaselineLocation);
 		IApiSearchReporter reporter = new XmlSearchReporter(this.reportLocation, this.debug);
+		
 		try {
 			Set ids = new HashSet();
 			TreeSet scope = new TreeSet(Util.componentsorter);
@@ -348,24 +360,49 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * @throws CoreException
 	 */
 	private void getContext(IApiBaseline baseline, Set ids, Set scope) throws CoreException {
+
+		excludedElements = CommonUtilsTask.initializeFilteredElements(this.excludeListLocation, baseline, this.debug);
+		if (this.debug) {
+			System.out.println("===================================================================================="); //$NON-NLS-1$
+			System.out.println("Excluded elements list:"); //$NON-NLS-1$
+			System.out.println(excludedElements);
+		}
+
+		includedElements = CommonUtilsTask.initializeFilteredElements(this.includeListLocation, baseline, this.debug);
+		if (this.debug) {
+			System.out.println("===================================================================================="); //$NON-NLS-1$
+			System.out.println("Included elements list:"); //$NON-NLS-1$
+			System.out.println(includedElements);
+		}
+
 		IApiComponent[] components = baseline.getApiComponents();
 		this.notsearched = new TreeSet(Util.componentsorter);
-		Pattern pattern = null, pattern2 = null;
+		Pattern refPattern = null, scopePattern = null;
 		if(this.referencepattern != null) {
-			pattern = Pattern.compile(this.referencepattern);
+			refPattern = Pattern.compile(this.referencepattern);
 		}
 		if(this.scopepattern != null) {
-			pattern2 = Pattern.compile(this.scopepattern);
+			scopePattern = Pattern.compile(this.scopepattern);
 		}
 		for (int i = 0; i < components.length; i++) {
-			if(acceptComponent(components[i], pattern, true)) {
-				ids.add(components[i].getSymbolicName());
+			String symbolicName = components[i].getSymbolicName();
+			boolean skip = false;
+			if (!includedElements.isEmpty() && !(includedElements.containsExactMatch(symbolicName) || includedElements.containsPartialMatch(symbolicName))){
+				skip = true;
 			}
-			if(acceptComponent(components[i], pattern2, false)) {
-				scope.add(components[i]);
+			if (!skip && (excludedElements.containsExactMatch(symbolicName) || excludedElements.containsPartialMatch(symbolicName))) {
+				skip = true;
+			}
+			if (!skip){
+				if(acceptComponent(components[i], refPattern, true)) {
+					ids.add(symbolicName);
+				}
+				if(acceptComponent(components[i], scopePattern, false)) {
+					scope.add(components[i]);
+				}
 			}
 			else {
-				this.notsearched.add(new SkippedComponent(components[i].getSymbolicName(), components[i].getVersion(), components[i].getErrors()));
+				this.notsearched.add(new SkippedComponent(symbolicName, components[i].getVersion(), components[i].getErrors()));
 			}
 		}
 	}
@@ -452,6 +489,16 @@ public final class ApiUseTask extends CommonUtilsTask {
 			System.out.println("Searching for API references : " + this.considerapi); //$NON-NLS-1$
 			System.out.println("Searching for internal references : " + this.considerinternal); //$NON-NLS-1$
 			System.out.println("Searching for illegal API use : "+ this.considerillegaluse); //$NON-NLS-1$
+			if (this.excludeListLocation != null) {
+				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
+			} else {
+				System.out.println("No exclude list location"); //$NON-NLS-1$
+			}
+			if (this.includeListLocation != null) {
+				System.out.println("include list location : " + this.includeListLocation); //$NON-NLS-1$
+			} else {
+				System.out.println("No include list location"); //$NON-NLS-1$
+			}
 			if(this.scopepattern == null) {
 				System.out.println("No scope pattern defined - searching all bundles"); //$NON-NLS-1$
 			}
@@ -466,5 +513,61 @@ public final class ApiUseTask extends CommonUtilsTask {
 			}
 			System.out.println("-----------------------------------------------------------------------------------------------------"); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Set the exclude list location.
+	 * 
+	 * <p>The exclude list is used to know what bundles should excluded from the xml report generated by the task
+	 * execution. Lines starting with '#' are ignored from the excluded elements.</p>
+	 * <p>The format of the exclude list file looks like this:</p>
+	 * <pre>
+	 * # DOC BUNDLES
+	 * org.eclipse.jdt.doc.isv
+	 * org.eclipse.jdt.doc.user
+	 * org.eclipse.pde.doc.user
+	 * org.eclipse.platform.doc.isv
+	 * org.eclipse.platform.doc.user
+	 * # NON-ECLIPSE BUNDLES
+	 * com.ibm.icu
+	 * com.jcraft.jsch
+	 * javax.servlet
+	 * javax.servlet.jsp
+	 * ...
+	 * </pre>
+	 * <p>The location is set using an absolute path.</p>
+	 *
+	 * @param excludeListLocation the given location for the excluded list file
+	 */
+	public void setExcludeList(String excludeListLocation) {
+		this.excludeListLocation = excludeListLocation;
+	}
+	
+	/**
+	 * Set the include list location.
+	 * 
+	 * <p>The include list is used to know what bundles should included from the xml report generated by the task
+	 * execution. Lines starting with '#' are ignored from the included elements.</p>
+	 * <p>The format of the include list file looks like this:</p>
+	 * <pre>
+	 * # DOC BUNDLES
+	 * org.eclipse.jdt.doc.isv
+	 * org.eclipse.jdt.doc.user
+	 * org.eclipse.pde.doc.user
+	 * org.eclipse.platform.doc.isv
+	 * org.eclipse.platform.doc.user
+	 * # NON-ECLIPSE BUNDLES
+	 * com.ibm.icu
+	 * com.jcraft.jsch
+	 * javax.servlet
+	 * javax.servlet.jsp
+	 * ...
+	 * </pre>
+	 * <p>The location is set using an absolute path.</p>
+	 *
+	 * @param includeListLocation the given location for the included list file
+	 */
+	public void setIncludeList(String includeListLocation) {
+		this.includeListLocation = includeListLocation;
 	}
 }

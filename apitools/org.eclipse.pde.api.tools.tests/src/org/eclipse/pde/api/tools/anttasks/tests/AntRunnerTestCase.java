@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,10 +91,28 @@ public abstract class AntRunnerTestCase extends TestCase {
 		}
 		TestSuiteHelper.copy(sourceFile, destinationFile);
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
-
+		
 		return buildFolder;
 	}
 
+	protected IFolder newTest(String parentFolder, String[] resources) throws Exception {
+		buildFolder = newTest(parentFolder + resources[0]);
+		
+		if (resources.length > 1){
+			for(int index = 1; index < resources.length; ++index){
+				IPath pluginDirectoryPath = TestSuiteHelper.getPluginDirectoryPath();
+				String path = pluginDirectoryPath.append(new Path("/test-anttasks/" + parentFolder + resources[index])).toOSString();
+				File sourceDataFile = new File(path);
+				path = buildFolder.getLocation().toOSString();
+				File destinationDataFile = new File(path);
+				TestSuiteHelper.copy(sourceDataFile, destinationDataFile);
+			}
+		}
+		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+		return buildFolder;
+		
+	}
+	
 	protected void runAntScript(String script, String[] targets, String antHome, Properties additionalProperties) throws Exception {
 		runAntScript(script, targets, antHome, additionalProperties, null, null);
 	}

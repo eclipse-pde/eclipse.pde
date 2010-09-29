@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
+import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -140,7 +140,8 @@ public abstract class SearchTest extends TestCase {
 		if(filename == null) {
 			return null;
 		}
-		final ExcludedElements excludedElements = Util.initializeRegexExcludeList(getExcludeFilePath(filename), baseline, false);
+		// MY fix it
+		final FilteredElements excludedElements = Util.initializeRegexFilterList(getExcludeFilePath(filename), baseline, false);
 		final HashSet<String> result = new HashSet<String>(excludedElements.getExactMatches());
 		result.addAll(excludedElements.getPartialMatches());
 		return result;

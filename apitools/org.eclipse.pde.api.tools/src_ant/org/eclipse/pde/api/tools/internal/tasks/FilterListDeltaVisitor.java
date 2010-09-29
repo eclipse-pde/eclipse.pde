@@ -23,25 +23,27 @@ import org.eclipse.pde.api.tools.internal.comparator.DeltaXmlVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
-import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
+import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * This class is used to exclude some deltas from the generated report.
  */
-public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
+public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 	public static final int CHECK_DEPRECATION = 0x01;
 	public static final int CHECK_OTHER = 0x02;
 	public static final int CHECK_ALL = CHECK_DEPRECATION | CHECK_OTHER;
 
-	private ExcludedElements excludedElements;
+	private FilteredElements excludedElements;
+	private FilteredElements includedElements;
 	private List nonExcludedElements;
 
 	private int flags;
-
-	public ExcludeListDeltaVisitor(ExcludedElements excludedElements, int flags) throws CoreException {
+	
+	public FilterListDeltaVisitor(FilteredElements excludedElements,FilteredElements includedElements, int flags) throws CoreException {
 		super();
 		this.excludedElements = excludedElements;
+		this.includedElements = includedElements;
 		this.nonExcludedElements = new ArrayList();
 		this.flags = flags;
 	}
@@ -66,6 +68,10 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 		if (componentId != null) {
 			if (this.excludedElements.containsExactMatch(componentId)
 					|| this.excludedElements.containsPartialMatch(componentId)) {
+				return true;
+			}
+			if (!this.includedElements.isEmpty() && !(this.includedElements.containsExactMatch(componentId)
+					|| this.includedElements.containsPartialMatch(componentId))) {
 				return true;
 			}
 			buffer.append(componentId).append(':');
@@ -103,11 +109,17 @@ public class ExcludeListDeltaVisitor extends DeltaXmlVisitor {
 					.append(Util.getDeltaKindName(delta.getKind()));
 				break;
 		}
-		String excludeListKey = String.valueOf(buffer);
-		if (this.excludedElements.containsExactMatch(excludeListKey)) {
+
+		String listKey = String.valueOf(buffer);			
+		if (this.excludedElements.containsExactMatch(listKey)) {
 			return true;
 		}
-		this.nonExcludedElements.add(excludeListKey);
+		if (!this.includedElements.isEmpty() && !(this.includedElements.containsExactMatch(delta.getKey())
+				|| this.includedElements.containsPartialMatch(delta.getKey()))) {
+			return true;
+		}
+		this.nonExcludedElements.add(listKey);
+		
 		return false;
 	}
 	protected void processLeafDelta(IDelta delta) {

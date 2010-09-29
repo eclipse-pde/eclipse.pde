@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,5 +73,58 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		} catch (Exception e) {
 			checkBuildException(e);
 		}
+	}
+	
+	/**
+	 * Test for with just Exclude list
+	 */
+	public void test5() throws Exception {
+		IFolder buildFolder = newTest("test5");
+		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString();
+		Properties properties = new Properties();
+		properties.put("reference_location", buildFolder.getFile("before").getLocation().toOSString());
+		properties.put("current_location", buildFolder.getFile("after").getLocation().toOSString());
+		properties.put("report_location", buildFolder.getLocation().toOSString());
+		runAntScript(buildXMLPath, new String[] {"run"}, buildFolder.getLocation().toOSString(), properties);
+		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists());
+		IFolder folder = buildFolder.getFolder("deltatest");
+		assertTrue("deltatest folder must exist", folder.exists());
+		folder = buildFolder.getFolder("deltatest1");
+		assertTrue("deltatest1 folder must exist", folder.exists());
+		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists());
+	}
+	
+	/**
+	 * Test for with just Include list
+	 */
+	public void test6() throws Exception {
+		IFolder buildFolder = newTest("test6");
+		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString();
+		Properties properties = new Properties();
+		properties.put("reference_location", buildFolder.getFile("before").getLocation().toOSString());
+		properties.put("current_location", buildFolder.getFile("after").getLocation().toOSString());
+		properties.put("report_location", buildFolder.getLocation().toOSString());
+		runAntScript(buildXMLPath, new String[] {"run"}, buildFolder.getLocation().toOSString(), properties);
+		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists());
+		IFolder folder = buildFolder.getFolder("deltatest2");
+		assertTrue("deltatest2 folder must exist", folder.exists());
+		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists());
+	}
+	
+	/**
+	 * Test for with both Exclude and Include list
+	 */
+	public void test7() throws Exception {
+		IFolder buildFolder = newTest("test7");
+		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString();
+		Properties properties = new Properties();
+		properties.put("reference_location", buildFolder.getFile("before").getLocation().toOSString());
+		properties.put("current_location", buildFolder.getFile("after").getLocation().toOSString());
+		properties.put("report_location", buildFolder.getLocation().toOSString());
+		runAntScript(buildXMLPath, new String[] {"run"}, buildFolder.getLocation().toOSString(), properties);
+		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists());
+		IFolder folder = buildFolder.getFolder("deltatest");
+		assertTrue("deltatest folder must exist", folder.exists());
+		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists());
 	}
 }

@@ -36,6 +36,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,6 +67,9 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	private String analysisScope = null; // the bundles to analyze references from (search scope)
 	private String targetScope = null; // the bundles to analyze references to (target scope)
 	
+	private FilteredElements excludedElements = null; //List of elements excluded from the scope
+	private FilteredElements includedElements = null; //List of elements explicitly limiting the scope
+	
 	/**
 	 * Creates a visitor to resolve references in the given baseline
 	 * 
@@ -84,9 +88,19 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		unresolved = new ArrayList();
 		targetComponent = target;
 		skipped = false;
-		if (targetScope == null || target.getId().matches(targetScope)) {
+		String id = targetComponent.getId();
+		if (includedElements != null && !includedElements.isEmpty() &&
+				!(includedElements.containsExactMatch(id) || includedElements.containsPartialMatch(id))) {
+			skipped = true;
+			return false;
+		}
+		if (excludedElements != null && (excludedElements.containsExactMatch(id) || excludedElements.containsPartialMatch(id))) {
+			skipped = true;
+			return false;
+		}
+		if (targetScope == null || id.matches(targetScope)) {
 			// only analyze if it matches our scope
-			currComponent = baseline.getApiComponent(targetComponent.getId());
+			currComponent = baseline.getApiComponent(id);
 			return true;			
 		}
 		skipped = true;
@@ -277,5 +291,20 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	public void setTargetScope(String regex) {
 		targetScope = regex;
 	}
+	
+	/**
+	 * @param excludedElements the list of elements excluded from the scope
+	 */
+	public void setExcludedElements(FilteredElements excludedElements) {
+		this.excludedElements = excludedElements;
+	}
+	
+	/**
+	 * @param includedElements Sets the List of elements explicitly limiting the scope
+	 */
+	public void setIncludedElements(FilteredElements includedElements) {
+		this.includedElements = includedElements;
+	}
+		
 
 }

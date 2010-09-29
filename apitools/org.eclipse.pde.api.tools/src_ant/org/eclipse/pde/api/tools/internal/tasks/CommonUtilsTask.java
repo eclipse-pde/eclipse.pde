@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.util.ExcludedElements;
+import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -48,6 +48,7 @@ public abstract class CommonUtilsTask extends Task {
 	protected String currentBaselineLocation;
 	protected String referenceBaselineLocation;
 	protected String excludeListLocation;
+	protected String includeListLocation;
 	
 	protected String reportLocation;
 	
@@ -190,14 +191,14 @@ public abstract class CommonUtilsTask extends Task {
 	}
 	
 	/**
-	 * Initializes the exclude list from the given file location, and returns
-	 * a {@link Set} of project names that should be excluded.
+	 * Initializes the include/exclude list from the given file location, and returns
+	 * a {@link Set} of project names that should be include/excluded.
 	 * 
 	 * @param excludeListLocation
 	 * @return the set of project names to be excluded
 	 */
-	protected static ExcludedElements initializeExcludedElement(String excludeListLocation, IApiBaseline baseline, boolean debug) {
-		return Util.initializeRegexExcludeList(excludeListLocation, baseline, debug);
+	protected static FilteredElements initializeFilteredElements(String filterListLocation, IApiBaseline baseline, boolean debug) {
+		return Util.initializeRegexFilterList(filterListLocation, baseline, debug);
 	}
 
 	/**
