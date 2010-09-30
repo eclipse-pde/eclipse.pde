@@ -378,6 +378,51 @@ public class APIFreezeReportConversionTask extends Task {
 			System.out.println("xmlFileLocation : " + this.xmlFileLocation); //$NON-NLS-1$
 			System.out.println("htmlFileLocation : " + this.htmlFileLocation); //$NON-NLS-1$
 		}
+		File file = new File(this.xmlFileLocation);
+		if (!file.exists()) {
+			throw new BuildException(
+					NLS.bind(Messages.deltaReportTask_missingXmlFile, this.xmlFileLocation));
+		}
+		if (file.isDirectory()) {
+			throw new BuildException(
+					NLS.bind(Messages.deltaReportTask_xmlFileLocationMustBeAFile, this.xmlFileLocation));
+		}
+		File outputFile = null;
+		if (this.htmlFileLocation == null) {
+			int index = this.xmlFileLocation.lastIndexOf('.');
+			if (index == -1
+					|| !this.xmlFileLocation.substring(index).toLowerCase().equals(".xml")) { //$NON-NLS-1$
+				throw new BuildException(Messages.deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension);
+			}
+			this.htmlFileLocation = extractNameFromXMLName(index);
+			if (this.debug) {
+				System.out.println("output name :" + this.htmlFileLocation); //$NON-NLS-1$
+			}
+			outputFile = new File(this.htmlFileLocation);
+		} else {
+			// check if the htmlFileLocation is a file and not a directory
+			int index = this.htmlFileLocation.lastIndexOf('.');
+			if (index == -1
+					|| !this.htmlFileLocation.substring(index).toLowerCase().equals(".html")) { //$NON-NLS-1$
+				throw new BuildException(Messages.deltaReportTask_htmlFileLocationShouldHaveAnHtmlExtension);
+			}
+			outputFile = new File(this.htmlFileLocation);
+			if (outputFile.exists()) {
+				// if the file already exist, we check that this is a file
+				if (outputFile.isDirectory()) {
+					throw new BuildException(
+							NLS.bind(Messages.deltaReportTask_hmlFileLocationMustBeAFile, outputFile.getAbsolutePath()));
+				}
+			} else {
+				File parentFile = outputFile.getParentFile();
+				if (!parentFile.exists()) {
+					if (!parentFile.mkdirs()) {
+						throw new BuildException(
+								NLS.bind(Messages.errorCreatingParentReportFile, parentFile.getAbsolutePath()));
+					}
+				}
+			}
+		}
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = null;
 		try {
@@ -389,18 +434,6 @@ public class APIFreezeReportConversionTask extends Task {
 		}
 		if (parser == null) {
 			throw new BuildException(Messages.deltaReportTask_couldNotCreateSAXParser);
-		}
-
-		File file = new File(this.xmlFileLocation);
-		if (this.htmlFileLocation == null) {
-			int index = this.xmlFileLocation.lastIndexOf('.');
-			if (index == -1) {
-				throw new BuildException(Messages.deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension);
-			}
-			this.htmlFileLocation = extractNameFromXMLName(index);
-			if (this.debug) {
-				System.out.println("output name :" + this.htmlFileLocation); //$NON-NLS-1$
-			}
 		}
 		try {
 			ConverterDefaultHandler defaultHandler = new ConverterDefaultHandler(this.debug);

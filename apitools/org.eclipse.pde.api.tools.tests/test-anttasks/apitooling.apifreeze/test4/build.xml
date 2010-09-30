@@ -14,9 +14,7 @@
 		<apitooling.apifreeze
 			baseline="${baseline_location}"
 			profile="${profile_location}"
-			report="${report_location}.xml"
-			excludelist="${filter_location}/excludeList.txt"
-			includelist="${filter_location}/includeList.txt"
+			report="${report_location}"
 		/>
 	</target>
 </project>

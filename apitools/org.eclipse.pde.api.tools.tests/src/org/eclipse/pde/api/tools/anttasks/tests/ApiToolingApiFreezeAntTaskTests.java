@@ -32,8 +32,8 @@ public class ApiToolingApiFreezeAntTaskTests extends AntRunnerTestCase {
 		return "apitooling.apifreeze/";
 	}
 	
-	public void test1() throws Exception {		
-		runTaskAndVerify("test1");	
+	public void test1() throws Exception {
+		runTaskAndVerify("test1");
 	}
 
 	private void runTaskAndVerify(String resourceName) throws Exception,
@@ -65,11 +65,19 @@ public class ApiToolingApiFreezeAntTaskTests extends AntRunnerTestCase {
 		assertTrue("org.example.rcpmail", found);
 	}
 	
-	public void test2() throws Exception {		
-		runTaskAndVerify("test2");	
+	public void test2() throws Exception {
+		runTaskAndVerify("test2");
 	}
 	
-	public void test3() throws Exception {		
-		runTaskAndVerify("test3");	
+	public void test3() throws Exception {
+		runTaskAndVerify("test3");
+	}
+	public void test4() throws Exception {
+		try {
+			runTaskAndVerify("test4");
+			assertTrue("Should not be there", false);
+		} catch(Exception e) {
+			assertEquals("Wrong exception", "org.apache.tools.ant.BuildException", e.getClass().getCanonicalName());
+		}
 	}
 }

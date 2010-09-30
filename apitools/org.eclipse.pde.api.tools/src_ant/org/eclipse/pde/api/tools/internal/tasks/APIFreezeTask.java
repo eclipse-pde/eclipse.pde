@@ -38,7 +38,6 @@ public class APIFreezeTask extends CommonUtilsTask {
 	private String eeFileLocation;
 	private String excludeListLocation;
 	private String includeListLocation;
-	private static final String REPORT_XML_FILE_NAME = "compare.xml"; //$NON-NLS-1$
 
 	public void execute() throws BuildException {
 		if (this.referenceBaselineLocation == null
@@ -72,6 +71,27 @@ public class APIFreezeTask extends CommonUtilsTask {
 			} else {
 				System.out.println("No include list location"); //$NON-NLS-1$
 			}
+		}
+		File outputFile = new File(this.reportLocation);
+		if (outputFile.exists()) {
+			if (outputFile.isDirectory()){
+				// the output file cannot be a directory
+				throw new BuildException(
+						NLS.bind(Messages.reportLocationHasToBeAFile, outputFile.getAbsolutePath()));
+			}
+		} else {
+			File outputDir = outputFile.getParentFile();
+			if (!outputDir.exists()) {
+				if (!outputDir.mkdirs()) {
+					throw new BuildException(
+						NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
+				}
+			}
+		}
+		int index = this.reportLocation.lastIndexOf('.');
+		if (index == -1
+				|| !this.reportLocation.substring(index).toLowerCase().equals(".xml")) { //$NON-NLS-1$
+			throw new BuildException(Messages.deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension);
 		}
 		// unzip reference
 		long time = 0;
@@ -135,23 +155,6 @@ public class APIFreezeTask extends CommonUtilsTask {
 		if (delta != ApiComparator.NO_DELTA) {
 			// dump the report in the appropriate folder
 			BufferedWriter writer = null;
-			File outputFile = new File(this.reportLocation);
-			if (outputFile.exists()) {
-				if (outputFile.isDirectory()){
-					 outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);					
-				}
-				// delete the file
-				// TODO we might want to customize it
-				outputFile.delete();
-			} else {
-				File outputDir = outputFile.getParentFile();
-				if (!outputDir.exists()) {
-					if (!outputDir.mkdirs()) {
-						throw new BuildException(
-							NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
-					}
-				}
-			}
 			try {
 				writer = new BufferedWriter(new FileWriter(outputFile));
 				FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_OTHER);

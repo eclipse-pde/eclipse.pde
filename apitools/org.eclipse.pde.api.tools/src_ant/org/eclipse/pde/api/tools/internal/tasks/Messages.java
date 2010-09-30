@@ -28,6 +28,10 @@ public class Messages extends NLS {
 	public static String deltaReportTask_missingXmlFileLocation;
 	public static String deltaReportTask_couldNotCreateSAXParser;
 	public static String deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension;
+	public static String deltaReportTask_htmlFileLocationShouldHaveAnHtmlExtension;
+	public static String deltaReportTask_missingXmlFile;
+	public static String deltaReportTask_xmlFileLocationMustBeAFile;
+	public static String deltaReportTask_hmlFileLocationMustBeAFile;
 
 	public static String fullReportTask_bundlesheader;
 	public static String fullReportTask_bundlesentry_even;
@@ -74,6 +78,7 @@ public class Messages extends NLS {
 	public static String couldNotCreate;
 	public static String couldNotUnzip;
 	public static String couldNotUntar;
+	public static String reportLocationHasToBeAFile;
 
 	public static String api_generation_printArguments;
 	public static String api_generation_projectLocationNotADirectory;
