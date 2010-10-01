@@ -909,6 +909,9 @@ public class TargetContentsGroup {
 				total += ((TargetDefinition) fTargetDefinition).getOtherBundles().length;
 			}
 		}
+		if (fMissing != null) {
+			total += fMissing.size();
+		}
 
 		fSelectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != total);
 		fDeselectAllButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() != 0);
@@ -973,7 +976,13 @@ public class TargetContentsGroup {
 			// Checked features and plugins
 			result.addAll(((TargetDefinition) fTargetDefinition).getFeaturesAndBundles());
 		} else {
-			result.addAll(Arrays.asList(fTargetDefinition.getBundles()));
+			// Bundles with errors are already included from fMissing, do not add twice
+			IResolvedBundle[] bundles = fTargetDefinition.getBundles();
+			for (int i = 0; i < bundles.length; i++) {
+				if (bundles[i].getStatus().isOK()) {
+					result.add(bundles[i]);
+				}
+			}
 		}
 		fTree.setCheckedElements(result.toArray());
 	}
@@ -1069,6 +1078,7 @@ public class TargetContentsGroup {
 		if (fFeaureModeButton.getSelection()) {
 			// Create a list of checked bundle infos
 			List included = new ArrayList();
+			int missingCount = 0;
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
 				if (checked[i] instanceof IFeatureModel) {
@@ -1078,17 +1088,19 @@ public class TargetContentsGroup {
 					// Missing features are included as IResolvedBundles, save them as features instead
 					if (((IResolvedBundle) checked[i]).getStatus().getCode() == IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST) {
 						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_PLUGIN));
+						missingCount++;
 					} else if (((IResolvedBundle) checked[i]).getStatus().getCode() == IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
 						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_FEATURE));
+						missingCount++;
 					} else {
 						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null));
 					}
 				}
 			}
 
-			if (included == null || included.size() == 0) {
+			if (included.size() == 0) {
 				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
-			} else if (included.size() == fTargetDefinition.getAllFeatures().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
+			} else if (included.size() == 0 || included.size() - missingCount == fTargetDefinition.getAllFeatures().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
 				fTargetDefinition.setIncluded(null);
 			} else {
 				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
@@ -1123,9 +1135,9 @@ public class TargetContentsGroup {
 				}
 			}
 
-			if (included == null || included.size() == 0) {
+			if (included.size() == 0) {
 				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
-			} else if (included.size() == fAllBundles.size()) {
+			} else if (included.size() == fAllBundles.size() + fMissing.size()) {
 				fTargetDefinition.setIncluded(null);
 			} else {
 				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
@@ -1162,11 +1174,13 @@ public class TargetContentsGroup {
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
 				List result = new ArrayList();
+				boolean refreshCheckstate = false;
 
 				// Check if there are any errors for missing features/bundles to display
 				if (fMissing == null) {
 					fMissing = new ArrayList();
 				} else {
+					refreshCheckstate = true;
 					fMissing.clear();
 				}
 				IResolvedBundle[] bundles = fTargetDefinition.getBundles();
@@ -1188,9 +1202,22 @@ public class TargetContentsGroup {
 				} else if (fGrouping == GROUP_BY_CONTAINER) {
 					result.addAll(Arrays.asList(fTargetDefinition.getBundleContainers()));
 				} else if (fGrouping == GROUP_BY_NONE) {
-					result.addAll(Arrays.asList(fTargetDefinition.getAllBundles()));
+					// Missing bundles are already handled by adding to fMissing, avoid adding twice
+					IResolvedBundle[] allBundles = fTargetDefinition.getAllBundles();
+					for (int i = 0; i < allBundles.length; i++) {
+						if (allBundles[i].getStatus().isOK()) {
+							result.add(allBundles[i]);
+						}
+					}
 				} else {
 					result.addAll(Arrays.asList(getFileBundleMapping().keySet().toArray()));
+				}
+
+				// When the tree is filtered, getElements is called which can replace missing plug-ins with new equivalent objects
+				// The cache in the tree viewer must be updated with the new objects, so we use the inefficient option of redoing the entire cache.
+				if (refreshCheckstate) {
+					updateCheckState();
+					updateButtons();
 				}
 				return result.toArray();
 			}

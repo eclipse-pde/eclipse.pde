@@ -64,10 +64,12 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 					for (int i = 0; i < children.length; i++) {
 						updateCheckState(children[i], state);
 					}
-				} else {
+				} else if (!checkState.contains(element)) {
+					// Check if already added to avoid concurrent modification exceptions
 					checkState.add(element);
 				}
-			} else {
+			} else if (!checkState.contains(element)) {
+				// Check if already added to avoid concurrent modification exceptions
 				checkState.add(element);
 			}
 		} else if (checkState != null) {
