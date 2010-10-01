@@ -105,10 +105,16 @@ public class NameVersionDescriptor {
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append(fId);
-		buf.append('_');
-		buf.append(fVersion);
-		buf.append('_');
+		if (fVersion != null) {
+			buf.append(' ');
+			buf.append('(');
+			buf.append(fVersion);
+			buf.append(')');
+		}
+		buf.append(' ');
+		buf.append('[');
 		buf.append(fType);
+		buf.append(']');
 		return buf.toString();
 	}
 
