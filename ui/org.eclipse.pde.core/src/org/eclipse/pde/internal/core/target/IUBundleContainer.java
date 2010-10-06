@@ -97,6 +97,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private boolean fIncludeMultipleEnvironments = false;
 
+	private static final boolean DEBUG_PROFILE;
+	static {
+		DEBUG_PROFILE = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/target/profile")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
 	 * 
@@ -236,20 +241,37 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException if an unexpected problem occurs trying to read from the profile
 	 */
 	private IResolvedBundle[] resolveWithProfile(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_PROFILE) {
+			System.out.println("Target resolution using profile (" + definition.getName() + ")"); //$NON-NLS-1$//$NON-NLS-2$
+		}
+
 		IProfile profile = ((TargetDefinition) definition).getProfile();
 		if (profile == null) {
+			if (DEBUG_PROFILE) {
+				System.out.println("No profile found"); //$NON-NLS-1$
+			}
 			return null;
 		}
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_LoadingFromProfileJob, 20);
 
 		// Always create our own units because the slicer will return existing units even though the profile is empty
+		if (DEBUG_PROFILE) {
+			System.out.print("Required Units: "); //$NON-NLS-1$
+			for (int i = 0; i < fIds.length; i++) {
+				System.out.print(fIds[i] + ", "); //$NON-NLS-1$
+			}
+			System.out.println();
+		}
+
 		fUnits = new IInstallableUnit[fIds.length];
 		for (int i = 0; i < fIds.length; i++) {
 			IQuery query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
 			IQueryResult queryResult = profile.query(query, null);
 			if (queryResult.isEmpty()) {
-				// Missing a root unit in the profile
+				if (DEBUG_PROFILE) {
+					System.out.println("Required unit not found in profile: " + fIds[i]); //$NON-NLS-1$
+				}
 				fUnits = null;
 				return null;
 			}
@@ -265,7 +287,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		try {
 			repository = getBundlePool(profile);
 		} catch (CoreException e) {
-			// The bundle pool is broken, do a normal resolve to try and recreate it
+			if (DEBUG_PROFILE) {
+				System.out.println("Bundle pool repository could not be loaded"); //$NON-NLS-1$
+			}
 			subMonitor.done();
 			return null;
 		}
@@ -273,6 +297,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		// If there are no resolved bundles from the profile, or a backing file was missing from the repository, do a normal resolve
 		if (bundles == null || bundles.isEmpty()) {
+			if (DEBUG_PROFILE) {
+				System.out.println("Profile does not contain any bundles or artifacts were missing"); //$NON-NLS-1$
+			}
 			subMonitor.done();
 			return null;
 		}
@@ -298,6 +325,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		subMonitor.worked(10);
 		subMonitor.done();
+
+		if (DEBUG_PROFILE) {
+			System.out.println("Loading from profile successful. " + bundles.values().size() + " bundles found"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println();
+		}
 
 		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
 	}
@@ -667,6 +699,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				if (file == null) {
 					// Missing file
 					if (!ignoreMissingFiles) {
+						if (DEBUG_PROFILE) {
+							System.out.println("Backing file missing for: " + unit.getId()); //$NON-NLS-1$
+						}
 						return null;
 					}
 				} else {
