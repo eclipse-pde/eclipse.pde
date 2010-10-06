@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,8 @@ public class ActionMessages extends NLS {
 	public static String PropertyKindKey;
 	public static String PropertyNewModifiersKey;
 	public static String PropertyOldModifiersKey;
-	public static String PropertyRestrictionsKey;
+	public static String PropertyCurrentRestrictionsKey;
+	public static String PropertyPreviousRestrictionsKey;
 	public static String PropertyTypeNameKey;
 
 	public static String MessageCategory;

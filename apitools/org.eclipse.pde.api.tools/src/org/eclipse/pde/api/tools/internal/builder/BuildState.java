@@ -189,7 +189,9 @@ public class BuildState {
 		}
 		int oldModifiers = modifiers & Delta.MODIFIERS_MASK;
 		int newModifiers = modifiers >>> Delta.NEW_MODIFIERS_OFFSET;
-		return new Delta(componentID, elementType, kind, flags, restrictions, oldModifiers, newModifiers, typeName, key, datas);
+		int previousRestrictions = restrictions >>> Delta.PREVIOUS_RESTRICTIONS_OFFSET;
+		int currentRestrictions = restrictions & Delta.RESTRICTIONS_MASK;
+		return new Delta(componentID, elementType, kind, flags, currentRestrictions, previousRestrictions, oldModifiers, newModifiers, typeName, key, datas);
 	}
 	
 	/**
@@ -210,7 +212,7 @@ public class BuildState {
 		out.writeInt(delta.getElementType());
 		out.writeInt(delta.getKind());
 		out.writeInt(delta.getFlags());
-		out.writeInt(delta.getRestrictions());
+		out.writeInt(delta.getCurrentRestrictions());
 		int modifiers = (delta.getNewModifiers() << Delta.NEW_MODIFIERS_OFFSET) | delta.getOldModifiers();
 		out.writeInt(modifiers);
 		out.writeUTF(delta.getTypeName());

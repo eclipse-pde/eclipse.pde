@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPATIBLE, Boolean.toString(DeltaProcessor.isCompatible(delta)));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_OLD_MODIFIERS, Integer.toString(delta.getOldModifiers()));
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_NEW_MODIFIERS, Integer.toString(delta.getNewModifiers()));
-		deltaElement.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(delta.getRestrictions()));
+		deltaElement.setAttribute(IApiXmlConstants.ATTR_RESTRICTIONS, Integer.toString(delta.getCurrentRestrictions()));
 		String apiComponentID = delta.getComponentVersionId();
 		if (apiComponentID != null) {
 			deltaElement.setAttribute(IApiXmlConstants.ATTR_NAME_COMPONENT_ID, apiComponentID);

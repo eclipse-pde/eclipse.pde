@@ -327,7 +327,7 @@ public class BundleComponent extends Component {
 			version = ver != null ? new Version(ver) : null;
 		}
 		catch (NumberFormatException nfe) {
-			version = null;
+			// ignore
 		}
 		ManifestElement[] name = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, (String)manifest.get(Constants.BUNDLE_SYMBOLICNAME));
 		if(name.length < 1) {

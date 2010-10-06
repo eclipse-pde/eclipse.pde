@@ -173,7 +173,10 @@ public class ClassFileComparator {
 		this.addDelta(new Delta(Util.getDeltaComponentVersionsId(this.component2), elementType, kind, flags, restrictions, oldModifiers, newModifiers, type.getName(), key, data));
 	}
 	private void addDelta(int elementType, int kind, int flags, int restrictions, int oldModifiers, int newModifiers, IApiType type, String key, String[] datas) {
-		this.addDelta(new Delta(Util.getDeltaComponentVersionsId(this.component2), elementType, kind, flags, restrictions, oldModifiers, newModifiers, type.getName(), key, datas));
+		this.addDelta(new Delta(Util.getDeltaComponentVersionsId(this.component2), elementType, kind, flags, restrictions, 0, oldModifiers, newModifiers, type.getName(), key, datas));
+	}
+	private void addDelta(int elementType, int kind, int flags, int currentRestrictions, int previousRestrictions, int oldModifiers, int newModifiers, IApiType type, String key, String[] datas) {
+		this.addDelta(new Delta(Util.getDeltaComponentVersionsId(this.component2), elementType, kind, flags, currentRestrictions, previousRestrictions, oldModifiers, newModifiers, type.getName(), key, datas));
 	}
 	/**
 	 * Checks if the super-class set has been change in any way compared to the baseline (grown or reduced or types changed)
@@ -542,6 +545,7 @@ public class ClassFileComparator {
 											IDelta.CHANGED,
 											IDelta.DECREASE_ACCESS,
 											restrictions | this.currentDescriptorRestrictions,
+											0,
 											typeMember.getModifiers(),
 											typeMember2.getModifiers(),
 											typeMember.getName(),
@@ -558,6 +562,7 @@ public class ClassFileComparator {
 											IDelta.CHANGED,
 											IDelta.TYPE_VISIBILITY,
 											restrictions | this.currentDescriptorRestrictions,
+											0,
 											typeMember.getModifiers(),
 											typeMember2.getModifiers(),
 											typeMember.getName(),
@@ -2369,12 +2374,13 @@ public class ClassFileComparator {
 			if (restrictions != referenceRestrictions) {
 				if (!Flags.isFinal(access2)) {
 					if (RestrictionModifiers.isOverrideRestriction(restrictions)
-							&& !RestrictionModifiers.isOverrideRestriction(referenceRestrictions)) {
+								&& !RestrictionModifiers.isOverrideRestriction(referenceRestrictions)) {
 							this.addDelta(
 									getElementType(method),
 									IDelta.ADDED,
 									IDelta.RESTRICTIONS,
 									restrictions,
+									referenceRestrictions,
 									access,
 									access2,
 									this.type1,

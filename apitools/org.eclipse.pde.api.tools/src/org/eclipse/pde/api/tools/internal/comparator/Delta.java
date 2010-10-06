@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ public class Delta implements IDelta {
 	private static final int INITIAL_SIZE = 4;
 	public static final int MODIFIERS_MASK = 0xFFFF;
 	public static final int NEW_MODIFIERS_OFFSET = 16;
+
+	public static final int RESTRICTIONS_MASK = 0xFFFF;
+	public static final int PREVIOUS_RESTRICTIONS_OFFSET = 16;
 
 	/**
 	 * Writes the delta to the given {@link PrintWriter}
@@ -105,17 +108,17 @@ public class Delta implements IDelta {
 	 * @param data
 	 */
 	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int oldModifiers, int newModifiers, String typeName, String key, String data) {
-		this(componentID, elementType, kind, flags, restrictions, oldModifiers, newModifiers, typeName, key, new String[] {data});
+		this(componentID, elementType, kind, flags, restrictions, 0, oldModifiers, newModifiers, typeName, key, new String[] {data});
 	}
 
-	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int oldModifiers, int newModifiers, String typeName, String key, String[] datas) {
+	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int previousRestrictions, int oldModifiers, int newModifiers, String typeName, String key, String[] datas) {
 		this.componentID = componentID;
 		this.elementType = elementType;
 		this.kind = kind;
 		this.flags = flags;
-		this.modifiers = (newModifiers & MODIFIERS_MASK) << 16 | (oldModifiers & MODIFIERS_MASK);
+		this.modifiers = (newModifiers & MODIFIERS_MASK) << NEW_MODIFIERS_OFFSET | (oldModifiers & MODIFIERS_MASK);
 		this.typeName = typeName == null ? Util.EMPTY_STRING : typeName;
-		this.restrictions = restrictions;
+		this.restrictions = (previousRestrictions & RESTRICTIONS_MASK) << PREVIOUS_RESTRICTIONS_OFFSET | (restrictions & RESTRICTIONS_MASK);
 		this.key = key;
 		this.datas = datas;
 	}
@@ -304,12 +307,17 @@ public class Delta implements IDelta {
 		return this.modifiers & MODIFIERS_MASK;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getRestrictions()
+	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getCurrentRestrictions()
 	 */
-	public int getRestrictions() {
-		return this.restrictions;
+	public int getCurrentRestrictions() {
+		return (this.restrictions & RESTRICTIONS_MASK);
 	}
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getPreviousRestrictions()
+	 */
+	public int getPreviousRestrictions() {
+		return (this.restrictions >>> PREVIOUS_RESTRICTIONS_OFFSET);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getTypeName()
 	 */

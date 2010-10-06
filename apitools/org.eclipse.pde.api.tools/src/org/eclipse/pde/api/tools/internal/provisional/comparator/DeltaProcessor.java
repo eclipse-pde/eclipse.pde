@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,7 +173,7 @@ public class DeltaProcessor {
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isMethodCompatible(IDelta delta) {
-		int restrictions = delta.getRestrictions();
+		int restrictions = delta.getCurrentRestrictions();
 		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
 			return true;
 		}
@@ -189,7 +189,10 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.TYPE_PARAMETER :
 					case IDelta.RESTRICTIONS :
-						return !Util.isVisible(delta.getNewModifiers());
+						if (Util.isVisible(delta.getNewModifiers())) {
+							return RestrictionModifiers.isExtendRestriction(delta.getPreviousRestrictions());
+						}
+						return true;
 				}
 				break;
 			case IDelta.CHANGED :
@@ -219,7 +222,7 @@ public class DeltaProcessor {
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isFieldCompatible(IDelta delta) {
-		int restrictions = delta.getRestrictions();
+		int restrictions = delta.getCurrentRestrictions();
 		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
 			return true;
 		}
@@ -230,7 +233,7 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.VALUE :
 						if (Flags.isProtected(oldModifiers)) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+							return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 						}
 						if (Flags.isPublic(oldModifiers)) {
 							return false;
@@ -249,7 +252,7 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.TYPE :
 						if (Flags.isProtected(newModifiers)) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+							return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 						}
 						return !Util.isVisible(newModifiers);
 					case IDelta.TYPE_ARGUMENT :
@@ -260,7 +263,7 @@ public class DeltaProcessor {
 					case IDelta.VALUE :
 					case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT :
 						if (Flags.isProtected(newModifiers)) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+							return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 						}
 						if (Flags.isPublic(newModifiers)) {
 							return false;
@@ -268,7 +271,7 @@ public class DeltaProcessor {
 						// not visible
 						return true;
 					case IDelta.DECREASE_ACCESS :
-						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 				}
 				break;
 			case IDelta.ADDED :
@@ -286,7 +289,7 @@ public class DeltaProcessor {
 	 * @return true if compatible, false otherwise
 	 */
 	private static boolean isConstructorCompatible(IDelta delta) {
-		int restrictions = delta.getRestrictions();
+		int restrictions = delta.getCurrentRestrictions();
 		if (RestrictionModifiers.isReferenceRestriction(restrictions)) {
 			return true;
 		}
@@ -380,7 +383,7 @@ public class DeltaProcessor {
 						if (Util.isVisible(newModifiers)) {
 							if (Flags.isAbstract(newModifiers)) {
 								// case where the implementation is provided and the class cannot be instantiated by the client
-								return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+								return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 							}
 						}
 						return true; 
@@ -400,15 +403,15 @@ public class DeltaProcessor {
 							return false;
 						}
 						if (Flags.isProtected(delta.getOldModifiers())) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+							return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 						}
 						return true;
 					case IDelta.CONSTRUCTOR :
 					case IDelta.API_CONSTRUCTOR :
 						if (Util.isVisible(delta.getOldModifiers())) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions())
+							return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions())
 									&& (Flags.isProtected(delta.getOldModifiers()) ||
-											RestrictionModifiers.isInstantiateRestriction(delta.getRestrictions()));
+											RestrictionModifiers.isInstantiateRestriction(delta.getCurrentRestrictions()));
 						}
 						return true;
 					case IDelta.TYPE_PARAMETER :
@@ -420,7 +423,7 @@ public class DeltaProcessor {
 				switch(delta.getFlags()) {
 					case IDelta.NON_ABSTRACT_TO_ABSTRACT :
 						if (Util.isVisible(delta.getNewModifiers())) {
-							return RestrictionModifiers.isInstantiateRestriction(delta.getRestrictions());
+							return RestrictionModifiers.isInstantiateRestriction(delta.getCurrentRestrictions());
 						}
 						return true;
 					case IDelta.TYPE_CONVERSION :
@@ -430,11 +433,11 @@ public class DeltaProcessor {
 						return !Util.isVisible(delta.getNewModifiers());
 					case IDelta.NON_FINAL_TO_FINAL:
 						if (Util.isVisible(delta.getNewModifiers())) {
-							return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+							return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 						}
 						return true; 
 					case IDelta.DECREASE_ACCESS :
-						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 				}
 				break;
 		}
@@ -481,10 +484,10 @@ public class DeltaProcessor {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
-						return RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
+						return RestrictionModifiers.isImplementRestriction(delta.getCurrentRestrictions());
 					case IDelta.METHOD :
 					case IDelta.SUPER_INTERFACE_WITH_METHODS :
-						return RestrictionModifiers.isImplementRestriction(delta.getRestrictions());
+						return RestrictionModifiers.isImplementRestriction(delta.getCurrentRestrictions());
 					case IDelta.TYPE_PARAMETER :
 						return false;
 					case IDelta.RESTRICTIONS :
@@ -508,7 +511,7 @@ public class DeltaProcessor {
 					case IDelta.TYPE_CONVERSION :
 						return false;
 					case IDelta.DECREASE_ACCESS :
-						return RestrictionModifiers.isExtendRestriction(delta.getRestrictions());
+						return RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions());
 				}
 				break;
 		}

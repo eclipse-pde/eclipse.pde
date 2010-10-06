@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,8 @@ public class DeltaSession implements ISession {
 		private static final Object ID_KIND = "IDelta.Kind"; //$NON-NLS-1$
 		private static final Object ID_NEW_MODIFIERS = "IDelta.NewModifiers"; //$NON-NLS-1$
 		private static final Object ID_OLD_MODIFIERS = "IDelta.OldModifiers"; //$NON-NLS-1$
-		private static final Object ID_RESTRICTIONS = "IDelta.Restrictions"; //$NON-NLS-1$
+		private static final Object ID_CURRENT_RESTRICTIONS = "IDelta.CurrentRestrictions"; //$NON-NLS-1$
+		private static final Object ID_PREVIOUS_RESTRICTIONS = "IDelta.PreviousRestrictions"; //$NON-NLS-1$
 		private static final Object ID_TYPENAME = "IDelta.TypeName"; //$NON-NLS-1$
 
 		// categories
@@ -70,7 +71,8 @@ public class DeltaSession implements ISession {
 		public static final String P_KIND = ActionMessages.PropertyKindKey;
 		public static final String P_NEW_MODIFIERS = ActionMessages.PropertyNewModifiersKey;
 		public static final String P_OLD_MODIFIERS = ActionMessages.PropertyOldModifiersKey;
-		public static final String P_RESTRICTIONS = ActionMessages.PropertyRestrictionsKey;
+		public static final String P_CURRENT_RESTRICTIONS = ActionMessages.PropertyCurrentRestrictionsKey;
+		public static final String P_PREVIOUS_RESTRICTIONS = ActionMessages.PropertyPreviousRestrictionsKey;
 		public static final String P_TYPENAME = ActionMessages.PropertyTypeNameKey;
 
 		private static List Descriptors;
@@ -102,7 +104,11 @@ public class DeltaSession implements ISession {
 			propertyDescriptor.setCategory(P_INFO_CATEGORY);
 			Descriptors.add(propertyDescriptor);
 
-			propertyDescriptor = new PropertyDescriptor(ID_RESTRICTIONS, P_RESTRICTIONS);
+			propertyDescriptor = new PropertyDescriptor(ID_CURRENT_RESTRICTIONS, P_CURRENT_RESTRICTIONS);
+			propertyDescriptor.setCategory(P_INFO_CATEGORY);
+			Descriptors.add(propertyDescriptor);
+
+			propertyDescriptor = new PropertyDescriptor(ID_PREVIOUS_RESTRICTIONS, P_PREVIOUS_RESTRICTIONS);
 			propertyDescriptor.setCategory(P_INFO_CATEGORY);
 			Descriptors.add(propertyDescriptor);
 
@@ -210,17 +216,24 @@ public class DeltaSession implements ISession {
 			}
 			if (ID_OLD_MODIFIERS.equals(propKey)) {
 				return getDisplayedModifiers(delta.getOldModifiers());
-				}
-			if (ID_RESTRICTIONS.equals(propKey)) {
-				int restrictions = delta.getRestrictions();
-				StringBuffer buffer = new StringBuffer(RestrictionModifiers.getRestrictionText(restrictions));
-				buffer.append(" (0x").append(Integer.toHexString(restrictions)).append(')'); //$NON-NLS-1$
-				return String.valueOf(buffer);
+			}
+			if (ID_CURRENT_RESTRICTIONS.equals(propKey)) {
+				int restrictions = delta.getCurrentRestrictions();
+				return getDisplayRestrictions(restrictions);
+			}
+			if (ID_PREVIOUS_RESTRICTIONS.equals(propKey)) {
+				int restrictions = delta.getPreviousRestrictions();
+				return getDisplayRestrictions(restrictions);
 			}
 			if (ID_TYPENAME.equals(propKey)) {
 				return delta.getTypeName();
 			}
 			return null;
+		}
+		private Object getDisplayRestrictions(int restrictions) {
+			StringBuffer buffer = new StringBuffer(RestrictionModifiers.getRestrictionText(restrictions));
+			buffer.append(" (0x").append(Integer.toHexString(restrictions)).append(')'); //$NON-NLS-1$
+			return String.valueOf(buffer);
 		}
 		public boolean isPropertySet(Object id) {
 			return false;

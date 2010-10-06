@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -541,7 +541,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertTrue("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -724,7 +724,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertTrue("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertTrue("No extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -930,7 +930,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags());
-		assertTrue("Wrong restrictions", RestrictionModifiers.isExtendRestriction(child.getRestrictions()));
+		assertTrue("Wrong restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions()));
 		assertTrue("Wrong modifier", Flags.isProtected(child.getNewModifiers()));
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
@@ -1324,7 +1324,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.INCREASE_ACCESS, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @noreferece restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @noreferece restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1391,14 +1391,14 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1421,7 +1421,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_STATIC_TO_STATIC, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1444,7 +1444,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.STATIC_TO_NON_STATIC, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1467,14 +1467,14 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind());
 		assertEquals("Wrong flag", IDelta.VALUE, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.NON_FINAL_TO_FINAL, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1497,7 +1497,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1520,7 +1520,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1543,7 +1543,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1566,7 +1566,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.DECREASE_ACCESS, child.getFlags());
 		assertFalse("Is visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}
@@ -1589,7 +1589,7 @@ public class FieldDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind());
 		assertEquals("Wrong flag", IDelta.TYPE, child.getFlags());
 		assertTrue("Not visible", Util.isVisible(child.getNewModifiers()));
-		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getRestrictions()));
+		assertTrue("Not @reference restriction", RestrictionModifiers.isReferenceRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong element type", IDelta.FIELD_ELEMENT_TYPE, child.getElementType());
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child));
 	}

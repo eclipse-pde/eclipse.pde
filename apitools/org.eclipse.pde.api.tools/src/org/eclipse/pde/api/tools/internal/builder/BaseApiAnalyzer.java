@@ -1065,6 +1065,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 										IDelta.REMOVED,
 										IDelta.TYPE,
 										restrictions,
+										RestrictionModifiers.NO_RESTRICTIONS,
 										type.getModifiers(),
 										0,
 										typeName,
@@ -1500,7 +1501,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int kind = delta.getKind();
 		int modifiers = delta.getNewModifiers();
 		if (DeltaProcessor.isCompatible(delta)) {
-			if (!RestrictionModifiers.isReferenceRestriction(delta.getRestrictions())) {
+			if (!RestrictionModifiers.isReferenceRestriction(delta.getCurrentRestrictions())) {
 				if (Util.isVisible(modifiers)) {
 					if (Flags.isProtected(modifiers)) {
 						String typeName = delta.getTypeName();

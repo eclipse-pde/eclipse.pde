@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,10 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 */
 	public static Test suite() {
 		return buildTestSuite(ClassCompatibilityMethodTests.class);
+//		junit.framework.TestSuite suite = new junit.framework.TestSuite();
+//		suite.addTest(new ClassCompatibilityMethodTests("testAddNooverrideRemoveNoextendI"));
+//		suite.addTest(new ClassCompatibilityMethodTests("testAddNooverrideRemoveNoextendF"));
+//		return suite;
 	}
 
 	/* (non-Javadoc)
@@ -107,6 +111,21 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 		xRemoveTwoPublicAPIMethods(false);
 	}	
 	
+	public void testAddNooverrideRemoveNoextendI() throws Exception {
+		xAddNooverrideRemoveNoextendI(true);
+	}	
+	
+	public void testAddNooverrideRemoveNoextendF() throws Exception {
+		xAddNooverrideRemoveNoextendI(false);
+	}	
+	
+	/**
+	 * Tests the removal of a public methods from an API class - incremental.
+	 */
+	private void xAddNooverrideRemoveNoextendI(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNooverrideRemoveNoextend.java");
+		performCompatibilityTest(filePath, incremental);
+	}
 	/**
 	 * Tests the removal of a public methods from an API class - incremental.
 	 */

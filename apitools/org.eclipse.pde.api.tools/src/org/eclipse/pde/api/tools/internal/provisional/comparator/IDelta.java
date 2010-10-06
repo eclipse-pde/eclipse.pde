@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -942,11 +942,18 @@ public interface IDelta {
 	public String[] getArguments();
 	
 	/**
-	 * Returns the delta's restrictions.
+	 * Returns the delta's current restrictions.
 	 * 
-	 * @return the delta's restrictions
+	 * @return the delta's current restrictions
 	 */
-	public int getRestrictions();
+	public int getCurrentRestrictions();
+
+	/**
+	 * Returns the delta's previous restrictions.
+	 * 
+	 * @return the delta's previous restrictions
+	 */
+	public int getPreviousRestrictions();
 
 	/**
 	 * Returns the delta's new modifiers. This corresponds to the new modifiers of the affected element.

@@ -158,7 +158,7 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 									break;
 							}
 						}
-					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
+					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions())) {
 						if ((this.flags & CHECK_DEPRECATION) != 0) {
 							switch(delta.getFlags()) {
 								case IDelta.DEPRECATION :

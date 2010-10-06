@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -418,10 +418,10 @@ public class Messages extends NLS {
 							case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED :
 								return 74;
 							case IDelta.NON_FINAL_TO_FINAL :
-								if (RestrictionModifiers.isExtendRestriction(delta.getRestrictions())) {
+								if (RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions())) {
 									return 81;
 								}
-								if (RestrictionModifiers.isOverrideRestriction(delta.getRestrictions())) {
+								if (RestrictionModifiers.isOverrideRestriction(delta.getCurrentRestrictions())) {
 									return 82;
 								}
 								return 83;
