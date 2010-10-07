@@ -59,11 +59,13 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	protected Control createContents(Composite parent) {
 		final Link link = new Link(parent, SWT.NONE);
-		final String target = "org.eclipse.ui.preferencePages.GeneralTextEditor"; //$NON-NLS-1$
 		link.setText(PDEUIMessages.EditorPreferencePage_link);
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), target, null, null);
+				if ("org.eclipse.ui.preferencePages.GeneralTextEditor".equals(e.text)) //$NON-NLS-1$
+					PreferencesUtil.createPreferenceDialogOn(link.getShell(), e.text, null, null);
+				else if ("org.eclipse.ui.preferencePages.ColorsAndFonts".equals(e.text)) //$NON-NLS-1$
+					PreferencesUtil.createPreferenceDialogOn(link.getShell(), e.text, null, "selectFont:org.eclipse.jface.textfont"); //$NON-NLS-1$
 			}
 		});
 
