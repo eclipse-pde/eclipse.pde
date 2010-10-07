@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.TextViewer;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 public class PluginContentMergeViewer extends TextMergeViewer {
 
 	private IColorManager fColorManager;
+	private ArrayList fPropertyChangedListeners;
 
 	public PluginContentMergeViewer(Composite parent, CompareConfiguration config) {
 		super(parent, config);
@@ -47,8 +49,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 					configuration.dispose();
 				}
 			});
-			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			store.addPropertyChangeListener(new IPropertyChangeListener() {
+			IPropertyChangeListener propertyChangedListener = new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					// the configuration will test if the properties affect the presentation also,
 					// but checking it here allows us to prevent the viewer from being invalidated
@@ -58,7 +59,12 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 						textViewer.invalidateTextPresentation();
 					}
 				}
-			});
+			};
+			PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyChangedListener);
+
+			if (fPropertyChangedListeners == null)
+				fPropertyChangedListeners = new ArrayList(3);
+			fPropertyChangedListeners.add(propertyChangedListener);
 			((SourceViewer) textViewer).configure(configuration);
 			Font font = JFaceResources.getFont(PluginContentMergeViewer.class.getName());
 			if (font != null)
@@ -82,5 +88,11 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 		super.handleDispose(event);
 		if (fColorManager != null)
 			fColorManager.dispose();
+		if (fPropertyChangedListeners != null) {
+			Iterator iter = fPropertyChangedListeners.iterator();
+			while (iter.hasNext())
+				PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener((IPropertyChangeListener) iter.next());
+			fPropertyChangedListeners = null;
+		}
 	}
 }
