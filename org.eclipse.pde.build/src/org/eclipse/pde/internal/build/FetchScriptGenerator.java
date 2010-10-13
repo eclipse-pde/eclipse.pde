@@ -482,6 +482,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				factory.generateRetrieveFilesCall(elementInfos, destination, files, retrieve);
 
 				retrieve.printTargetEnd();
+				factory.addTargets(retrieve);
 				retrieve.printProjectEnd();
 			} finally {
 				retrieve.close();
