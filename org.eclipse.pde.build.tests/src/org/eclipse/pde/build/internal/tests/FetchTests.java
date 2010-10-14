@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Copyright (c) 2007, 2010 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.pde.build.internal.tests;
@@ -140,11 +138,11 @@ public class FetchTests extends PDETestCase {
 		IFolder buildFolder = newTest("p2.fetchFeature");
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("feature@org.eclipse.cvs=p2IU,id=org.eclipse.cvs.feature.jar,repository=http://eclipsebuildserv/3.6-I-builds/\n");
-		buffer.append("plugin@org.eclipse.cvs=p2IU,id=org.eclipse.cvs,repository=http://eclipsebuildserv/3.6-I-builds/\n");
-		buffer.append("plugin@org.eclipse.team.cvs.core=p2IU,id=org.eclipse.team.cvs.core,repository=http://eclipsebuildserv/3.6-I-builds/\n");
-		buffer.append("plugin@org.eclipse.team.cvs.ssh2=p2IU,id=org.eclipse.team.cvs.ssh2,repository=http://eclipsebuildserv/3.6-I-builds/\n");
-		buffer.append("plugin@org.eclipse.team.cvs.ui=p2IU,id=org.eclipse.team.cvs.ui,repository=http://eclipsebuildserv/3.6-I-builds/\n");
+		buffer.append("feature@org.eclipse.cvs=p2IU,id=org.eclipse.cvs.feature.jar,repository=http://eclipsebuildserv/3.7-I-builds/\n");
+		buffer.append("plugin@org.eclipse.cvs=p2IU,id=org.eclipse.cvs,repository=http://eclipsebuildserv/3.7-I-builds/\n");
+		buffer.append("plugin@org.eclipse.team.cvs.core=p2IU,id=org.eclipse.team.cvs.core,repository=http://eclipsebuildserv/3.7-I-builds/\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ssh2=p2IU,id=org.eclipse.team.cvs.ssh2,repository=http://eclipsebuildserv/3.7-I-builds/\n");
+		buffer.append("plugin@org.eclipse.team.cvs.ui=p2IU,id=org.eclipse.team.cvs.ui,repository=http://eclipsebuildserv/3.7-I-builds/\n");
 		Utils.writeBuffer(buildFolder.getFile("directory.txt"), buffer);
 
 		Properties fetchProperties = new Properties();
