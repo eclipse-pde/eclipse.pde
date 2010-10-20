@@ -28,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -206,7 +207,15 @@ public class ApiModelFactory {
 	public static IApiComponent[] addComponents(IApiBaseline baseline, String installLocation, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 50);
 		
-		ITargetPlatformService service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
+		// Acquire the service
+		ITargetPlatformService service = null;
+		ApiPlugin plugin = ApiPlugin.getDefault();
+		if (plugin != null){
+			service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
+		} else {
+			// If we are running without osgi, services are unavailable so use the class directly
+			service = TargetPlatformService.getDefault();
+		}
 		IBundleContainer container = service.newProfileContainer(installLocation, null);
 		// treat as an installation, if that fails, try plug-ins directory
 		ITargetDefinition definition = service.newTarget();
