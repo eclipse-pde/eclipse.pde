@@ -31,6 +31,7 @@ import org.osgi.framework.Version;
 public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private static final Object SAVE_LOCK = new Object();
 	private static final String FETCH_TASK_FACTORY = "internal.factory"; //$NON-NLS-1$
+	private static final String FETCH_TASK_FACTORY_ID = "internal.factory.id"; //$NON-NLS-1$
 	private static final String MATCHED_VERSION = "internal.matchedVersion"; //$NON-NLS-1$
 
 	// flag saying if we want to recursively generate the scripts	
@@ -307,6 +308,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		// store builder
 		entryInfos.put(FETCH_TASK_FACTORY, fetchTaskFactory);
+		entryInfos.put(FETCH_TASK_FACTORY_ID, repoIdentifier);
 
 		// keep track of the version of the element as found in the map file
 		entryInfos.put(MATCHED_VERSION, match[1]);
@@ -478,7 +480,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				retrieve.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 
 				String[] files = new String[] {Constants.FEATURE_FILENAME_DESCRIPTOR, PROPERTIES_FILE};
-				IFetchFactory factory = (IFetchFactory) elementInfos.get(FETCH_TASK_FACTORY);
+				String factoryId = (String) elementInfos.get(FETCH_TASK_FACTORY_ID);
+				IFetchFactory factory = fetchTaskFactories.newFactory(factoryId);
+				if (factory == null) {
+					String message = NLS.bind(Messages.error_noCorrespondingFactory, elementName, factoryId);
+					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
+				}
 				factory.generateRetrieveFilesCall(elementInfos, destination, files, retrieve);
 
 				retrieve.printTargetEnd();
