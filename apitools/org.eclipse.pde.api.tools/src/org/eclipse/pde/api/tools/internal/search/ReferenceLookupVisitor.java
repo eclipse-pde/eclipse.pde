@@ -210,7 +210,7 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisit(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
 	 */
-	public void endVisit(IComponentDescriptor target) {
+	public void endVisitComponent(IComponentDescriptor target) {
 		if (skipped) {
 			skippedComponents.add(target);
 		} else {

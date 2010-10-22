@@ -254,7 +254,7 @@ public class UseScanParser {
 			}
 			endMember();
 			endReferencingComponent();
-			endTargetComponent();
+			endComponent();
 		}
 		finally {
 			visitor.endVisitScan();
@@ -355,7 +355,7 @@ public class UseScanParser {
 			// end visit
 			endMember();
 			endReferencingComponent();
-			endTargetComponent();
+			endComponent();
 			
 			// start next
 			targetComponent = component;
@@ -411,21 +411,25 @@ public class UseScanParser {
 	
 	private void endMember() {
 		if (targetMember != null) {
-			visitor.endVisitMember(targetMember);
+			if (visitReferencingComponent && visitMembers) {
+				visitor.endVisitMember(targetMember);
+			}
 			targetMember = null;
 		}
 	}
 	
 	private void endReferencingComponent() {
 		if (referencingComponent != null) {
-			visitor.endVisitReferencingComponent(referencingComponent);
+			if (visitReferencingComponent){
+				visitor.endVisitReferencingComponent(referencingComponent);
+			}
 			referencingComponent = null;
 		}
 	}
 	
-	private void endTargetComponent() {
+	private void endComponent() {
 		if (targetComponent != null) {
-			visitor.endVisit(targetComponent);
+			visitor.endVisitComponent(targetComponent);
 			targetComponent = null;
 		}
 	}

@@ -50,7 +50,7 @@ public class UseScanVisitor {
 	 * 
 	 * @param target the component that was visited
 	 */
-	public void endVisit(IComponentDescriptor target) {
+	public void endVisitComponent(IComponentDescriptor target) {
 	}
 	
 	/**

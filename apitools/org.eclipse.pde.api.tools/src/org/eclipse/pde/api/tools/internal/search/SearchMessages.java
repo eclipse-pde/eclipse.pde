@@ -29,6 +29,13 @@ public class SearchMessages extends NLS {
 	public static String ApiSearchEngine_searching_for_use_from;
 	public static String ApiSearchEngine_searching_project;
 	public static String ApiSearchEngine_searching_projects;
+	public static String ConsumerReportConvertor_BackLinkToConsumer;
+	public static String ConsumerReportConvertor_ConsumerListHeader;
+	public static String ConsumerReportConvertor_ConsumerTitle;
+	public static String ConsumerReportConvertor_IndexTitle;
+	public static String ConsumerReportConvertor_ProducerListHeader;
+	public static String ConsumerReportConvertor_ProducerTitle;
+	public static String ConsumerReportConvertor_TypeListHeader;
 	public static String ioexception_writing_html_file;
 	public static String could_not_create_sax_parser;
 	public static String could_not_create_file;
