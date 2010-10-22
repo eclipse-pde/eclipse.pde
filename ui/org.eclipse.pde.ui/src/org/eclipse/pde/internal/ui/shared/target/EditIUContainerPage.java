@@ -506,7 +506,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(units.length)));
 					}
 				} else {
-					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0))); //$NON-NLS-1$
+					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
 				}
 				fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
 
