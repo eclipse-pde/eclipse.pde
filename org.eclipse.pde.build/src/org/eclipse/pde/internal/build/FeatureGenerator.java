@@ -470,7 +470,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				if (verify) {
 					//this will throw an exception if the feature is not found.
 					boolean exception = true;
-					if (buildProperties.containsKey("generate.feature@" + name)) //$NON-NLS-1$
+					if (buildProperties != null && buildProperties.containsKey("generate.feature@" + name)) //$NON-NLS-1$
 						exception = false;
 					getSite(false).findFeature(name, featureVersion, exception);
 				}
