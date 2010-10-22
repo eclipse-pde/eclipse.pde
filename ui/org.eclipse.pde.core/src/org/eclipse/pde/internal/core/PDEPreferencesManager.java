@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Provides old {@link Preferences} like interface to preferences but uses {@link IEclipsePreferences} instead
+ * Provides old {@link org.eclipse.core.runtime.Preferences} like interface to preferences but uses {@link IEclipsePreferences} instead
  *
  */
 public final class PDEPreferencesManager {
@@ -40,7 +40,7 @@ public final class PDEPreferencesManager {
 	 * given listener argument must not be <code>null</code>.
 	 * 
 	 * @param listener the preference change listener to register
-	 * @see #removePreferenceChangeListener(IPreferenceChangeListener)
+	 * @see #removePreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
 	 * @see IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
@@ -64,6 +64,7 @@ public final class PDEPreferencesManager {
 	 *         <code>null</code> if the associated value does not exist in either scope or cannot
 	 *         be interpreted as a <code>boolean</code>.
 	 * @see #setValue(String, boolean)
+	 * @see #setValueOrRemove(String, boolean)
 	 * @see #setDefault(String, boolean)
 	 */
 	public boolean getBoolean(String key) {
@@ -150,6 +151,7 @@ public final class PDEPreferencesManager {
 	 *         <code>0</code> if the associated value does not exist in either scope or cannot
 	 *         be interpreted as an <code>int</code>.
 	 * @see #setValue(String, int)
+	 * @see #setValueOrRemove(String, int)
 	 * @see #setDefault(String, int)
 	 */
 	public int getInt(String key) {
@@ -169,6 +171,7 @@ public final class PDEPreferencesManager {
 	 * @return the value associated with <code>key</code>, or
 	 *         <code>null</code> if the associated value does not exist in either scope.
 	 * @see #setValue(String, String)
+	 * @see #setValueOrRemove(String, String)
 	 * @see #setDefault(String, String)
 	 */
 	public String getString(String key) {
@@ -181,7 +184,7 @@ public final class PDEPreferencesManager {
 	 * effect. The given listener argument must not be <code>null</code>.
 	 * 
 	 * @param listener the preference change listener to remove
-	 * @see #addPreferenceChangeListener(IPreferenceChangeListener)
+	 * @see #addPreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
 	 * @see IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
@@ -254,7 +257,7 @@ public final class PDEPreferencesManager {
 	 * 
 	 * @param key <code>key</code> with which the <code>boolean</code> value is to be associated.
 	 * @param value <code>value</code> to be associated with <code>key</code>.
-	 * @see #getBoolean(String,boolean)
+	 * @see #getBoolean(String)
 	 * @see #getDefaultBoolean(String)
 	 * @see #setToDefault(String)
 	 */
@@ -288,5 +291,78 @@ public final class PDEPreferencesManager {
 	 */
 	public void setValue(String key, String value) {
 		fInstanceScopePrefs.put(key, value);
+	}
+
+	/**
+	 * Associates the specified <code>boolean</code> value with the specified key in the instance scope
+	 * or removes the preference if the value is equal to the value in the default scope.
+	 * <p>
+	 * This method is intended for use in conjunction with the {@link #getBoolean(String)} method.
+	 * 
+	 * @param key <code>key</code> with which the <code>boolean</code> value is to be associated
+	 * @param value <code>value</code> to be associated with <code>key</code>
+	 * @see #getBoolean(String)
+	 * @see #getDefaultBoolean(String)
+	 * @see #setToDefault(String)
+	 */
+	public void setValueOrRemove(String key, boolean value) {
+		if (value == getDefaultBoolean(key)) {
+			fInstanceScopePrefs.remove(key);
+		} else {
+			fInstanceScopePrefs.putBoolean(key, value);
+		}
+	}
+
+	/**
+	 * Associates the specified <code>int</code> value with the specified key in the instance scope
+	 * or removes the preference if the value is equal to the value in the default scope.
+	 * <p>
+	 * This method is intended for use in conjunction with the {@link #getInt(String)} method.
+	 * 
+	 * @param key <code>key</code> with which the <code>int</code> value is to be associated
+	 * @param value <code>value</code> to be associated with <code>key</code>
+	 * @see #getInt(String)
+	 * @see #getDefaultInt(String)
+	 * @see #setToDefault(String)
+	 */
+	public void setValueOrRemove(String key, int value) {
+		if (value == getDefaultInt(key)) {
+			fInstanceScopePrefs.remove(key);
+		} else {
+			fInstanceScopePrefs.putInt(key, value);
+		}
+	}
+
+	/**
+	 * Associates the specified <code>String</code> value with the specified key in the instance scope
+	 * or removes the preference if the value is equal to the value in the default scope.
+	 * <p>
+	 * This method is intended for use in conjunction with the {@link #getString(String)} method.
+	 * 
+	 * @param key <code>key</code> with which the <code>String</code> value is to be associated
+	 * @param value <code>value</code> to be associated with <code>key</code>
+	 * @see #getString(String)
+	 * @see #getDefaultString(String)
+	 * @see #setToDefault(String)
+	 */
+	public void setValueOrRemove(String key, String value) {
+		if (value.equals(getDefaultString(key))) {
+			fInstanceScopePrefs.remove(key);
+		} else {
+			fInstanceScopePrefs.put(key, value);
+		}
+	}
+
+	/**
+	 * Forces any changes in the contents of the instance node and its descendants to
+	 * the persistent store.
+	 * 
+	 * @throws BackingStoreException if this operation cannot be completed due
+	 *         to a failure in the backing store, or inability to communicate
+	 *         with it.
+	 * @see org.osgi.service.prefs.Preferences#flush()
+	 */
+	public void flush() throws BackingStoreException {
+		fInstanceScopePrefs.flush();
 	}
 }

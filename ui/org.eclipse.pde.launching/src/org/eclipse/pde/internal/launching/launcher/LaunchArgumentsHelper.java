@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,8 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
 
@@ -321,8 +323,21 @@ public class LaunchArgumentsHelper {
 		return "${workspace_loc}/../runtime-" + uniqueName.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	public static String getDefaultJUnitWorkspaceLocation() {
-		return "${workspace_loc}/../junit-workspace"; //$NON-NLS-1$
+	public static String getDefaultWorkspaceLocation(String uniqueName, boolean isJUnit) {
+		if (!isJUnit)
+			return getDefaultWorkspaceLocation(uniqueName);
+
+		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
+		String location = launchingStore.getString(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION);
+		if (launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER)) {
+			return location + '/' + uniqueName.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return location;
+	}
+
+	public static boolean getDefaultJUnitWorkspaceIsContainer() {
+		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
+		return launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER);
 	}
 
 	public static String getDefaultJUnitConfigurationLocation() {

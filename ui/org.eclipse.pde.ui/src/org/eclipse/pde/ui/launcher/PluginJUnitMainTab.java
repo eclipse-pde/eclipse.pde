@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.internal.ui.launcher.JUnitProgramBlock;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
  * A launch configuration tab that displays and edits the main launching arguments
@@ -40,6 +41,16 @@ public class PluginJUnitMainTab extends MainTab {
 		fDataBlock.setDefaults(config, true);
 		fProgramBlock.setDefaults(config);
 		fJreBlock.setDefaults(config);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		fDataBlock.performApply(config, true);
+		fProgramBlock.performApply(config);
+		fJreBlock.performApply(config);
 	}
 
 	/* (non-Javadoc)

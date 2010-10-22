@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
+import java.io.File;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,6 +32,8 @@ public class WorkspaceDataBlock extends BaseBlock {
 	private Button fAskClearCheck;
 	private Button fClearWorkspaceRadio;
 	private Button fClearWorkspaceLogRadio;
+
+	private String fLastKnownName;
 
 	public WorkspaceDataBlock(AbstractLauncherTab tab) {
 		super(tab);
@@ -94,15 +96,33 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fAskClearCheck.addSelectionListener(fListener);
 	}
 
-	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IPDELauncherConstants.LOCATION, getLocation());
+	public void performApply(ILaunchConfigurationWorkingCopy config, boolean isJUnit) {
+		String currentLocation = getLocation();
+		String currentName = config.getName();
+		if (fLastKnownName != null && !fLastKnownName.equals(currentName)) {
+			String lastDefaultLocation = LaunchArgumentsHelper.getDefaultWorkspaceLocation(fLastKnownName, isJUnit);
+			if (lastDefaultLocation.equals(currentLocation)) {
+				try {
+					File workspaceDir = new File(LaunchArgumentsHelper.getWorkspaceLocation(config));
+					if (!workspaceDir.exists()) {
+						currentLocation = LaunchArgumentsHelper.getDefaultWorkspaceLocation(currentName, isJUnit);
+						fLocationText.setText(currentLocation);
+						fLastKnownName = currentName;
+					}
+				} catch (CoreException e) {
+					// don't change workspace location
+				}
+			}
+		}
+		config.setAttribute(IPDELauncherConstants.LOCATION, currentLocation);
 		config.setAttribute(IPDELauncherConstants.DOCLEAR, fClearWorkspaceCheck.getSelection());
 		config.setAttribute(IPDELauncherConstants.ASKCLEAR, fAskClearCheck.getSelection());
 		config.setAttribute(IPDEConstants.DOCLEARLOG, fClearWorkspaceLogRadio.getSelection());
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
-		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())));
+		fLastKnownName = configuration.getName();
+		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(fLastKnownName)));
 		fClearWorkspaceCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false));
 		fAskClearCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true));
 		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
@@ -113,11 +133,8 @@ public class WorkspaceDataBlock extends BaseBlock {
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {
-		if (isJUnit) {
-			configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
-		} else {
-			configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName()));
-		}
+		fLastKnownName = configuration.getName();
+		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(fLastKnownName, isJUnit));
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, isJUnit);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, !isJUnit);
 		configuration.setAttribute(IPDEConstants.DOCLEARLOG, false);

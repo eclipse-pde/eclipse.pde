@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
-
-import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.launching.PDESourcePathProvider;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -23,6 +20,9 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.PDESourcePathProvider;
+
 
 /**
  * A launch shortcut capable of launching a Plug-in JUnit test.
@@ -45,11 +45,13 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 	 */
 	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
 		ILaunchConfigurationWorkingCopy configuration = super.createLaunchConfiguration(element);
+		String configName = configuration.getName();
+
 		if (TargetPlatformHelper.usesNewApplicationModel())
 			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$ 
 		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
 			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
-		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
+		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(configName, true));
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, true);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
 		configuration.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
@@ -80,8 +82,11 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 
 		// configuration attributes
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true);
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, false);
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, LaunchArgumentsHelper.getDefaultJUnitConfigurationLocation());
+		boolean useDefaultArea = LaunchArgumentsHelper.getDefaultJUnitWorkspaceIsContainer();
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, useDefaultArea);
+		if (!useDefaultArea) {
+			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, LaunchArgumentsHelper.getDefaultJUnitConfigurationLocation());
+		}
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
 
 		// tracing option

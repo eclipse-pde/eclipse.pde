@@ -415,6 +415,18 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_exportingGroup;
 	public static String MainPreferencePage_sourceGroup;
 	public static String MainPreferencePage_group2;
+	public static String MainPreferencePage_junitWorkspace_asContainer;
+
+	public static String MainPreferencePage_junitWorkspace_asLocation;
+
+	public static String MainPreferencePage_junitWorkspace_fileSystem;
+
+	public static String MainPreferencePage_junitWorkspace_variables;
+
+	public static String MainPreferencePage_junitWorkspace_workspace;
+
+	public static String MainPreferencePage_junitWorkspaceGroup;
+
 	public static String MainPreferencePage_promptBeforeOverwrite;
 	public static String MainPreferencePage_promtBeforeRemove;
 	public static String MainPreferencePage_showSourceBundles;

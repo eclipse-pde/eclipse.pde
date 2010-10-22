@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,13 +55,14 @@ public abstract class BaseBlock {
 				handleBrowseWorkspace();
 			} else if (source == fVariablesButton) {
 				handleInsertVariable();
-			} else {
+			} else if (fTab != null) {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		}
 
 		public void modifyText(ModifyEvent e) {
-			fTab.scheduleUpdateJob();
+			if (fTab != null)
+				fTab.scheduleUpdateJob();
 		}
 	}
 
@@ -117,7 +118,7 @@ public abstract class BaseBlock {
 	}
 
 	protected void handleBrowseFileSystem() {
-		DirectoryDialog dialog = new DirectoryDialog(fTab.getControl().getShell());
+		DirectoryDialog dialog = new DirectoryDialog(fLocationText.getShell());
 		dialog.setFilterPath(getLocation());
 		dialog.setText(PDEUIMessages.BaseBlock_dirSelection);
 		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose);
@@ -127,7 +128,7 @@ public abstract class BaseBlock {
 	}
 
 	protected void handleBrowseWorkspace() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(fTab.getControl().getShell(), getContainer(), true, PDEUIMessages.BaseBlock_relative);
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(fLocationText.getShell(), getContainer(), true, PDEUIMessages.BaseBlock_relative);
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 0)
@@ -167,7 +168,7 @@ public abstract class BaseBlock {
 	}
 
 	private void handleInsertVariable() {
-		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(fTab.getControl().getShell());
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(fLocationText.getShell());
 		if (dialog.open() == Window.OK)
 			fLocationText.insert(dialog.getVariableExpression());
 	}
@@ -193,7 +194,8 @@ public abstract class BaseBlock {
 		fFileSystemButton.setEnabled(enabled);
 		fWorkspaceButton.setEnabled(enabled);
 		fVariablesButton.setEnabled(enabled);
-		fTab.updateLaunchConfigurationDialog();
+		if (fTab != null)
+			fTab.updateLaunchConfigurationDialog();
 	}
 
 }
