@@ -1589,7 +1589,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
-		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"), new String[] {"The local variable b is never read", "1 problem (1 error)"});
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"), new String[] {"The value of the local variable b is not used", "1 problem (1 error)"});
 		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String[] {"Discouraged access: The type A", "3 problems (3 errors)"});
 	}
 
