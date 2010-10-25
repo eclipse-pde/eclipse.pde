@@ -42,7 +42,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 				if (fCorrectionAssist != null)
 					editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fCorrectionAssist);
 				if (fContentAssist != null)
-					editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fContentAssist);
+					editMenu.prependToGroup(ITextEditorActionConstants.GROUP_ASSIST, fContentAssist);
 			}
 		}
 
