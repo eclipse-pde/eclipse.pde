@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 public class ModelChangeTable {
 
 	private Hashtable fChangeTable = new Hashtable();
-	private int fTotalModelChanges = 0;
 	private ArrayList fPreSelected = new ArrayList();
 
 	public void addToChangeTable(IPluginModelBase model, IFile file, Object change, boolean selected) {
@@ -29,7 +28,6 @@ public class ModelChangeTable {
 		else {
 			modelChange = new ModelChange(model, selected);
 			fChangeTable.put(model, modelChange);
-			fTotalModelChanges += 1;
 			if (selected)
 				fPreSelected.add(modelChange);
 		}
