@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
@@ -1250,7 +1251,8 @@ public final class Util {
 	 * @return the given input stream's contents as a character array.
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
-	public static char[] getInputStreamAsCharArray(InputStream stream, int length, String encoding) throws IOException {
+	public static char[] getInputStreamAsCharArray(InputStream stream, int
+			length, String encoding) throws IOException {
 		Charset charset = null;
 		try {
 			charset = Charset.forName(encoding);
@@ -1262,12 +1264,20 @@ public final class Util {
 			return null;
 		}
 		CharsetDecoder charsetDecoder = charset.newDecoder();
+
 		charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
 		byte[] contents = getInputStreamAsByteArray(stream, length);
 		ByteBuffer byteBuffer = ByteBuffer.allocate(contents.length);
 		byteBuffer.put(contents);
 		byteBuffer.flip();
-		return charsetDecoder.decode(byteBuffer).array();
+		CharBuffer charBuffer = charsetDecoder.decode(byteBuffer);
+		charBuffer.compact(); // ensure payload starting at 0
+		char[] array = charBuffer.array();
+		int lengthToBe = charBuffer.position();
+		if (array.length > lengthToBe) {
+			System.arraycopy(array, 0, (array = new char[lengthToBe]), 0, lengthToBe);
+		}
+		return array;
 	}
 	
 	/**

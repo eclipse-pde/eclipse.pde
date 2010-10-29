@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
@@ -594,5 +600,36 @@ public class UtilTests extends TestCase {
 		assertEquals("Wrong size", 0, excludedElements.getExactMatches().size());
 		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core"));
 		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core"));
+	}
+	
+	public void testPluginXmlDecoding() {
+		InputStream stream = UtilTests.class.getResourceAsStream("plugin.xml.zip");
+		ZipInputStream inputStream = new ZipInputStream(new BufferedInputStream(stream));
+		String s = null;
+		try {
+			ZipEntry zEntry;
+			while ((zEntry = inputStream.getNextEntry()) != null) {
+				// if it is empty directory, continue
+				if (zEntry.isDirectory() || !zEntry.getName().endsWith(".xml")) {
+					continue;
+				}
+				s = new String(Util.getInputStreamAsCharArray(inputStream, -1, IApiCoreConstants.UTF_8));
+			}
+		} catch (IOException e) {
+			// ignore
+		} finally {
+			try {
+				if (inputStream != null)
+					inputStream.close();
+			} catch (IOException ioe) {
+				// ignore
+			}
+		}
+		assertNotNull("Should not be null", s);
+		try {
+			Util.parseDocument(s);
+		} catch(CoreException ce) {
+			assertTrue("Should not happen", false);
+		}
 	}
 }
