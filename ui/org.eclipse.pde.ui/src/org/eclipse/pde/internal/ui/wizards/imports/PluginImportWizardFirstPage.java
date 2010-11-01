@@ -62,7 +62,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private Combo targetDefinitionCombo;
 	private List targetDefinitions;
 	private Combo importDirectory;
-	private Button openTargetPrefsButton;
+	private Link openTargetPrefsLink;
 
 	private Button importButton;
 	private Button scanButton;
@@ -270,7 +270,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void createImportFromGroup(Composite parent) {
 		Group composite = SWTFactory.createGroup(parent, PDEUIMessages.ImportWizard_FirstPage_importFrom, 3, 1, GridData.FILL_HORIZONTAL);
 
-		importActiveTargetButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, 3);
+		importActiveTargetButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, 1);
 		importActiveTargetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateSourceGroup(getImportOrigin());
@@ -278,22 +278,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 		});
 
-		importTargetDefinitionButton = SWTFactory.createRadioButton(composite, PDEUIMessages.PluginImportWizardFirstPage_0, 1);
-		importTargetDefinitionButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateSourceGroup(getImportOrigin());
-				validateDropLocation();
-			}
-		});
-		targetDefinitionCombo = SWTFactory.createCombo(composite, SWT.DROP_DOWN | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, null);
-		targetDefinitionCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				validateDropLocation();
-			}
-		});
-
-		openTargetPrefsButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_goToTarget, null);
-		openTargetPrefsButton.addSelectionListener(new SelectionAdapter() {
+		Composite linkComp = SWTFactory.createComposite(composite, 1, 2, GridData.FILL_HORIZONTAL, 0, 0);
+		openTargetPrefsLink = new Link(linkComp, SWT.NONE);
+		openTargetPrefsLink.setText(PDEUIMessages.ImportWizard_FirstPage_goToTarget);
+		openTargetPrefsLink.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, true, false));
+		openTargetPrefsLink.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ITargetDefinition selected = getTargetDefinition();
 				ITargetHandle handle = null;
@@ -322,6 +311,20 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					}
 					importDirectory.setText(TargetPlatform.getLocation());
 				}
+			}
+		});
+
+		importTargetDefinitionButton = SWTFactory.createRadioButton(composite, PDEUIMessages.PluginImportWizardFirstPage_0, 1);
+		importTargetDefinitionButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateSourceGroup(getImportOrigin());
+				validateDropLocation();
+			}
+		});
+		targetDefinitionCombo = SWTFactory.createCombo(composite, SWT.DROP_DOWN | SWT.READ_ONLY, 2, GridData.FILL_HORIZONTAL, null);
+		targetDefinitionCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				validateDropLocation();
 			}
 		});
 
