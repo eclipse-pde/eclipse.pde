@@ -626,7 +626,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		try {
 			IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 			int length = apiComponents.length;
-			int apiToolsComponents = 0;
 			Set visitedApiComponentNames = new HashSet();
 			for (int i = 0; i < length; i++) {
 				IApiComponent apiComponent = apiComponents[i];
@@ -639,7 +638,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					allNonApiBundles.add(name);
 					continue;
 				}
-				apiToolsComponents++;
 				allApiBundles.add(name);
 				BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 				try {
