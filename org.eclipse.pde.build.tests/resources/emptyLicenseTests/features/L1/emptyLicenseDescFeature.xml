@@ -2,8 +2,7 @@
 <feature
       id="L1"
       label="L1"
-      version="1.0.0.qualifier"
-      is-license="true">
+      version="2.0.0.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
