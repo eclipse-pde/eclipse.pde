@@ -46,6 +46,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private String customCallbacksBuildpath = null;
 	private String customCallbacksFailOnError = null;
 	private String customCallbacksInheritAll = null;
+	private BuildTimeFeature licenseFeature;
 
 	public FeatureBuildScriptGenerator(BuildTimeFeature feature) {
 		this.feature = feature;
@@ -318,7 +319,9 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 		script.printCopyTask(null, featureTemp, new FileSet[] {fileSet}, true, true);
+
 		generateIdReplacerCall(featureTemp);
+		generateLicenseReplacerCall(featureTemp, customFeatureCallbacks != null);
 
 		if (customFeatureCallbacks != null) {
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null);
@@ -332,6 +335,11 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		else
 			script.println("   buildResultFolder=\"" + featureTemp + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
+		if (getLicenseFeature() != null) {
+			IPath licenseLocation = Utils.makeRelative(new Path(getLicenseFeatureRootLocation()), new Path(featureRootLocation));
+			String licensePath = licenseLocation.isAbsolute() ? licenseLocation.toString() : "${basedir}/" + licenseLocation.toString(); //$NON-NLS-1$
+			script.println("   licenseDirectory=\"" + licensePath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		script.println("/>"); //$NON-NLS-1$
 
 		script.printTargetEnd();
@@ -371,6 +379,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 			// Generate the parameters for the Id Replacer.
 			generateIdReplacerCall(root);
+			generateLicenseReplacerCall(root, true);
 		}
 		generateRootFilesAndPermissionsCalls();
 		if (customFeatureCallbacks != null) {
@@ -385,6 +394,50 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		String pluginVersionInfo = Utils.getEntryVersionMappings(feature.getRawPluginEntries(), getSite(false));
 
 		script.println("<eclipse.idReplacer featureFilePath=\"" + AntScript.getEscaped(root) + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersion() + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	}
+
+	private String getLicenseFeatureRootLocation() throws CoreException {
+		if (getLicenseFeature() != null) {
+			return getLicenseFeature().getRootLocation();
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	private BuildTimeFeature getLicenseFeature() throws CoreException {
+		if (licenseFeature == null) {
+			String licenseFeatureName = feature.getLicenseFeature();
+			if (licenseFeatureName == null || licenseFeatureName.length() == 0) {
+				return null;
+			}
+			licenseFeature = getSite(false).findFeature(licenseFeatureName, feature.getLicenseFeatureVersion(), true);
+		}
+		return licenseFeature;
+	}
+
+	private void generateLicenseReplacerCall(String featureRoot, boolean printCopy) throws CoreException {
+		if (getLicenseFeature() == null) {
+			return;
+		}
+
+		IPath licenseLocation = Utils.makeRelative(new Path(getLicenseFeatureRootLocation()), new Path(featureRootLocation));
+		String licensePath = licenseLocation.isAbsolute() ? licenseLocation.toString() : "${basedir}/" + licenseLocation.toString(); //$NON-NLS-1$
+
+		if (printCopy) {
+			String include, exclude;
+			if (getLicenseFeature().isBinary()) {
+				include = "**"; //$NON-NLS-1$
+				exclude = "META-INF/"; //$NON-NLS-1$
+			} else {
+				include = (String) getBuildProperties(getLicenseFeatureRootLocation()).get(PROPERTY_BIN_INCLUDES);
+				exclude = (String) getBuildProperties(getLicenseFeatureRootLocation()).get(PROPERTY_BIN_EXCLUDES);
+			}
+			exclude = (exclude != null ? exclude + "," : "") + IPDEBuildConstants.LICENSE_DEFAULT_EXCLUDES; //$NON-NLS-1$//$NON-NLS-2$
+
+			FileSet fileSet = new FileSet(licensePath, null, include, null, exclude, null, null);
+			script.printCopyTask(null, featureRoot, new FileSet[] {fileSet}, true, true);
+		}
+
+		script.println("<eclipse.licenseReplacer featureFilePath=\"" + AntScript.getEscaped(featureRoot) + "\" licenseFilePath=\"" + AntScript.getEscaped(licensePath) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -470,6 +523,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 				if (file.startsWith("absolute:")) { //$NON-NLS-1$
 					file = file.substring(9);
 					fromDir = ""; //$NON-NLS-1$
+				} else if (file.startsWith("license:")) { //$NON-NLS-1$
+					if (getLicenseFeature() == null) {
+						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, NLS.bind(Messages.error_licenseRootWithoutLicenseRef, featureRootLocation), null));
+					}
+					file = file.substring(8);
+					fromDir = getLicenseFeatureRootLocation();
 				}
 				if (file.startsWith("file:")) { //$NON-NLS-1$
 					IPath target = new Path(file.substring(5));
@@ -693,6 +752,18 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		if (buildProperties == null)
 			buildProperties = readProperties(featureRootLocation, PROPERTIES_FILE, director.isIgnoreMissingPropertiesFile() ? IStatus.OK : IStatus.WARNING);
 		return buildProperties;
+	}
+
+	/**
+	 * Return a properties object constructed from the build.properties file
+	 * for the given feature. If no file exists, then an empty properties
+	 * object is returned.
+	 * 
+	 * @return Properties the feature's build.properties
+	 * @throws CoreException
+	 */
+	protected Properties getBuildProperties(String featureLocation) throws CoreException {
+		return readProperties(featureLocation, PROPERTIES_FILE, director.isIgnoreMissingPropertiesFile() ? IStatus.OK : IStatus.WARNING);
 	}
 
 	/**

@@ -415,8 +415,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		FeatureEntry[] allChildren = feature.getRawPluginEntries();
 		FeatureEntry[] compiledChildren = feature.getPluginEntries();
 
+		String elementId;
 		for (int i = 0; i < allChildren.length; i++) {
-			String elementId = allChildren[i].getId();
+			elementId = allChildren[i].getId();
 			Version versionId = new Version(allChildren[i].getVersion());
 			// We are not fetching the elements that are said to be generated, but we are fetching some elements that can be associated
 			if (featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + elementId)) {
@@ -436,6 +437,16 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (generated == false)
 				generateFetchEntry(IFetchFactory.ELEMENT_TYPE_BUNDLE + '@' + elementId, versionId, !Utils.isIn(compiledChildren, allChildren[i]));
 		}
+
+		elementId = feature.getLicenseFeature();
+		if (elementId == null || elementId.length() == 0) {
+			return;
+		}
+
+		String version = feature.getLicenseFeatureVersion();
+		if (version == null)
+			version = IPDEBuildConstants.GENERIC_VERSION_NUMBER;
+		generateFetchEntry(IFetchFactory.ELEMENT_TYPE_FEATURE + '@' + elementId, new Version(version), false);
 	}
 
 	/**

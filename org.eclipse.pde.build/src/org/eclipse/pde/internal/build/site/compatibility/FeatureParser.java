@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -176,6 +176,8 @@ public class FeatureParser extends DefaultHandler implements IPDEBuildConstants 
 			result.setLabel(attributes.getValue("label")); //$NON-NLS-1$
 			result.setImage(attributes.getValue("image")); //$NON-NLS-1$
 			result.setBrandingPlugin(attributes.getValue(PLUGIN));
+			result.setLicenseFeature(attributes.getValue("license-feature")); //$NON-NLS-1$
+			result.setLicenseFeatureVersion(attributes.getValue("license-feature-version")); //$NON-NLS-1$
 			//			Utils.debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}

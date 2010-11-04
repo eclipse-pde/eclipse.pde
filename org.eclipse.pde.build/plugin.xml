@@ -67,6 +67,11 @@
       </antTask>
       <antTask
             library="lib/pdebuild-ant.jar"
+            name="eclipse.licenseReplacer"
+            class="org.eclipse.pde.internal.build.tasks.LicenseReplaceTask">
+      </antTask>
+      <antTask
+            library="lib/pdebuild-ant.jar"
             name="eclipse.jnlpGenerator"
             class="org.eclipse.pde.internal.build.tasks.JNLPGeneratorTask">
       </antTask>

@@ -41,6 +41,7 @@ public class Messages extends NLS {
 	public static String error_noCorrespondingFactory;
 	public static String error_retrieveFailed;
 	public static String error_invalidURLInMapFileEntry;
+	public static String error_licenseRootWithoutLicenseRef;
 
 	// exception
 	public static String exception_missingElement;

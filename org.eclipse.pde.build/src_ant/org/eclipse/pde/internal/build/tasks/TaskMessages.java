@@ -36,6 +36,9 @@ public class TaskMessages extends NLS {
 	public static String error_artifactRepoNotURI;
 	public static String error_metadataRepoNotURI;
 	public static String error_locationNotURI;
+	public static String error_noCallAfterReplace;
+	public static String error_licenseRootWithoutLicenseRef;
+	public static String error_conflictingProperties;
 
 	static {
 		// load message values from bundle file

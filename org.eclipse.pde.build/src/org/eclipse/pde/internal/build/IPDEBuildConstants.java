@@ -159,4 +159,6 @@ public interface IPDEBuildConstants {
 	public static final String PROPERTY_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
 	public static final String PROPERTY_RESOLVE_OPTIONAL = "osgi.resolveOptional"; //$NON-NLS-1$
 	public static final String VALUE_DEVELOPMENT = "development"; //$NON-NLS-1$
+
+	public static final String LICENSE_DEFAULT_EXCLUDES = ",.project,build.properties,feature.xml,feature.properties,feature_*.properties"; //$NON-NLS-1$
 }

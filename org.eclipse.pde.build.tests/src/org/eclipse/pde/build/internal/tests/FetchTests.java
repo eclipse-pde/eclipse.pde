@@ -161,6 +161,27 @@ public class FetchTests extends PDETestCase {
 		assertEquals(plugins.list().length, 4);
 	}
 
+	public void testFetchLicenseFeature() throws Exception {
+		IFolder buildFolder = newTest("license.fetchFeature");
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("feature@F1=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,pde/build/org.eclipse.pde.build.tests/resources/licenseFeature1/features/F1\n");
+		buffer.append("feature@L1=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,pde/build/org.eclipse.pde.build.tests/resources/licenseFeature1/features/L1\n");
+		Utils.writeBuffer(buildFolder.getFile("directory.txt"), buffer);
+
+		Properties fetchProperties = new Properties();
+		fetchProperties.put("buildDirectory", buildFolder.getLocation().toOSString());
+		fetchProperties.put("type", "feature");
+		fetchProperties.put("id", "F1");
+
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"fetchElement"}, buildFolder.getLocation().toOSString(), fetchProperties);
+
+		File features = new File(buildFolder.getLocation().toFile(), "features");
+		assertEquals(2, features.list().length);
+	}
+
 	public void testBug248767_2() throws Exception {
 		IFolder buildFolder = newTest("248767_2");
 		IFolder base = Utils.createFolder(buildFolder, "base");

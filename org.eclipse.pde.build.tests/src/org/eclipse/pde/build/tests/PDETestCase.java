@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -80,13 +80,13 @@ public abstract class PDETestCase extends TestCase {
 		return builderProject;
 	}
 
-	protected IFolder newTest(String resources) throws Exception {
+	protected IFolder newTest(String folderName, String resources) throws Exception {
 		clearStatics();
 
 		IProject builderProject = newTest();
 
 		// create build folder for this test
-		buildFolder = builderProject.getFolder(resources);
+		buildFolder = builderProject.getFolder(folderName);
 		if (buildFolder.exists()) {
 			try {
 				buildFolder.delete(true, null);
@@ -106,6 +106,10 @@ public abstract class PDETestCase extends TestCase {
 		}
 
 		return buildFolder;
+	}
+
+	protected IFolder newTest(String resources) throws Exception {
+		return newTest(resources, resources);
 	}
 
 	protected void runBuild(IFolder buildFolder) throws Exception {
@@ -196,9 +200,11 @@ public abstract class PDETestCase extends TestCase {
 		assertZipContents(buildFolder, archive, entries, true);
 	}
 
-	public static void assertZipContents(IFolder buildFolder, String archive, Set entries, boolean assertEmpty) throws Exception {
-		File folder = new File(buildFolder.getLocation().toOSString());
-		File archiveFile = new File(folder, archive);
+	public static void assertZipContents(File archiveFile, Set entries) throws Exception {
+		assertZipContents(archiveFile, entries, true);
+	}
+
+	public static void assertZipContents(File archiveFile, Set entries, boolean assertEmpty) throws Exception {
 		assertTrue(archiveFile.exists());
 
 		ZipFile zip = new ZipFile(archiveFile);
@@ -218,6 +224,12 @@ public abstract class PDETestCase extends TestCase {
 		}
 		if (assertEmpty)
 			assertTrue(entries.size() == 0);
+	}
+
+	public static void assertZipContents(IFolder buildFolder, String archive, Set entries, boolean assertEmpty) throws Exception {
+		File folder = new File(buildFolder.getLocation().toOSString());
+		File archiveFile = new File(folder, archive);
+		assertZipContents(archiveFile, entries, assertEmpty);
 	}
 
 	/**

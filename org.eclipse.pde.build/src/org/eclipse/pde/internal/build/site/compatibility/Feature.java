@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,6 +26,8 @@ public class Feature implements IPlatformEntry {
 
 	private URLEntry description;
 	private URLEntry license;
+	private String licenseFeature;
+	private String licenseFeatureVersion;
 	private URLEntry copyright;
 
 	private String installHandler;
@@ -140,10 +142,26 @@ public class Feature implements IPlatformEntry {
 		this.license.setURL(licenseURL);
 	}
 
+	public void setLicenseFeature(String name) {
+		this.licenseFeature = name;
+	}
+
+	public void setLicenseFeatureVersion(String version) {
+		this.licenseFeatureVersion = version;
+	}
+
 	public String getLicenseURL() {
 		if (license != null)
 			return license.getURL();
 		return null;
+	}
+
+	public String getLicenseFeature() {
+		return licenseFeature;
+	}
+
+	public String getLicenseFeatureVersion() {
+		return licenseFeatureVersion;
 	}
 
 	public void setLicense(String license) {

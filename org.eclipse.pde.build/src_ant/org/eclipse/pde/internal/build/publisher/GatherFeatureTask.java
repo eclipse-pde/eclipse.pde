@@ -17,14 +17,18 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.apache.tools.ant.types.selectors.FilenameSelector;
 import org.apache.tools.ant.types.selectors.OrSelector;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.tasks.TaskMessages;
 
 public class GatherFeatureTask extends AbstractPublisherTask {
 	private String buildResultFolder = null;
 	private String targetFolder = null;
+	private String licenseDirectory = null;
 
 	public void execute() throws BuildException {
 		GatheringComputer computer = createFeatureComputer();
@@ -85,10 +89,38 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 
 		GatheringComputer computer = new GatheringComputer();
 
+		if (licenseDirectory != null) {
+			try {
+				// Default includes and excludes for binary license features
+				String licenseInclude = "**"; //$NON-NLS-1$
+				String licenseExclude = "META-INF/"; //$NON-NLS-1$
+
+				// Read build.properties from license feature for source features
+				if (new File(licenseDirectory, IPDEBuildConstants.PROPERTIES_FILE).exists()) {
+					Properties licenseProperties = AbstractScriptGenerator.readProperties(licenseDirectory, IPDEBuildConstants.PROPERTIES_FILE, IStatus.WARNING);
+					licenseInclude = (String) licenseProperties.get(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
+					licenseExclude = (String) licenseProperties.get(IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
+				}
+				licenseExclude = (licenseExclude != null ? licenseExclude + "," : "") + IPDEBuildConstants.LICENSE_DEFAULT_EXCLUDES; //$NON-NLS-1$//$NON-NLS-2$
+
+				FileSet licenseFiles = createFileSet(licenseDirectory, licenseInclude, licenseExclude);
+				computer.addFiles(licenseDirectory, licenseFiles.getDirectoryScanner().getIncludedFiles());
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		FileSet fileSet = createFileSet(buildResultFolder, include, exclude);
+		computer.addFiles(buildResultFolder, fileSet.getDirectoryScanner().getIncludedFiles());
+		return computer;
+	}
+
+	private FileSet createFileSet(String folder, String includes, String excludes) {
 		FileSet fileSet = new FileSet();
 		fileSet.setProject(getProject());
-		fileSet.setDir(new File(buildResultFolder));
-		String[] splitIncludes = Utils.getArrayFromString(include);
+		fileSet.setDir(new File(folder));
+		String[] splitIncludes = Utils.getArrayFromString(includes);
 		for (int i = 0; i < splitIncludes.length; i++) {
 			String entry = splitIncludes[i];
 			if (entry.equals(ModelBuildScriptGenerator.DOT))
@@ -98,13 +130,12 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			fileInclude.setName(entry);
 		}
 
-		String[] splitExcludes = Utils.getArrayFromString(exclude);
+		String[] splitExcludes = Utils.getArrayFromString(excludes);
 		for (int i = 0; i < splitExcludes.length; i++) {
 			NameEntry fileExclude = fileSet.createExclude();
-			fileExclude.setName(splitIncludes[i]);
+			fileExclude.setName(splitExcludes[i]);
 		}
-		computer.addFiles(buildResultFolder, fileSet.getDirectoryScanner().getIncludedFiles());
-		return computer;
+		return fileSet;
 	}
 
 	private String reorderConfig(String config) {
@@ -145,6 +176,12 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 						if (file.startsWith("absolute:")) { //$NON-NLS-1$
 							file = file.substring(9);
 							fromDir = null;
+						} else if (file.startsWith("license:")) { //$NON-NLS-1$
+							if (licenseDirectory == null) {
+								throw new BuildException(NLS.bind(TaskMessages.error_licenseRootWithoutLicenseRef, baseDirectory));
+							}
+							file = file.substring(8);
+							fromDir = licenseDirectory;
 						}
 						if (file.startsWith("file:")) { //$NON-NLS-1$
 							File temp = fromDir != null ? new File(fromDir, file.substring(5)) : new File(file.substring(5));
@@ -232,5 +269,10 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	public void setTargetFolder(String targetFolder) {
 		if (targetFolder != null && targetFolder.length() > 0 && !targetFolder.startsWith(ANT_PREFIX))
 			this.targetFolder = targetFolder;
+	}
+
+	public void setLicenseDirectory(String licenseDirectory) {
+		if (licenseDirectory != null && licenseDirectory.length() > 0 && !licenseDirectory.startsWith(ANT_PREFIX))
+			this.licenseDirectory = licenseDirectory;
 	}
 }
