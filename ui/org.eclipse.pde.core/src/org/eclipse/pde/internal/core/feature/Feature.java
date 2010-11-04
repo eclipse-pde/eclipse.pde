@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,8 @@ public class Feature extends VersionableObject implements IFeature {
 	private String fPlugin;
 	private boolean fValid;
 	private String fCopyright;
+	private String fLicenseFeatureID;
+	private String fLicenseFeatureVersion;
 
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
@@ -110,6 +112,28 @@ public class Feature extends VersionableObject implements IFeature {
 		return fProviderName;
 	}
 
+	public void setLicenseFeatureID(String featureID) {
+		fLicenseFeatureID = featureID;
+	}
+
+	public String getLicenseFeatureID() {
+		if (fLicenseFeatureID == null) {
+			fLicenseFeatureID = ""; //$NON-NLS-1$
+		}
+		return fLicenseFeatureID;
+	}
+
+	public void setLicenseFeatureVersion(String version) {
+		fLicenseFeatureVersion = version;
+	}
+
+	public String getLicenseFeatureVersion() {
+		if (fLicenseFeatureVersion == null) {
+			fLicenseFeatureVersion = ""; //$NON-NLS-1$
+		}
+		return fLicenseFeatureVersion;
+	}
+
 	public String getPlugin() {
 		return fPlugin;
 	}
@@ -142,6 +166,8 @@ public class Feature extends VersionableObject implements IFeature {
 	protected void parse(Node node) {
 		super.parse(node);
 		fProviderName = getNodeAttribute(node, "provider-name"); //$NON-NLS-1$
+		fLicenseFeatureID = getNodeAttribute(node, "license-feature"); //$NON-NLS-1$
+		fLicenseFeatureVersion = getNodeAttribute(node, "license-feature-version"); //$NON-NLS-1$
 		fPlugin = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
 		fOs = getNodeAttribute(node, "os"); //$NON-NLS-1$
 		fWs = getNodeAttribute(node, "ws"); //$NON-NLS-1$
@@ -676,6 +702,14 @@ public class Feature extends VersionableObject implements IFeature {
 		if (isPrimary()) {
 			writer.println();
 			writer.print(indenta + "primary=\"true\""); //$NON-NLS-1$
+		}
+		if (getLicenseFeatureID().length() > 0) {
+			writer.println();
+			writer.print(indenta + "license-feature=\"" + getLicenseFeatureID() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (getLicenseFeatureVersion().length() > 0) {
+			writer.println();
+			writer.print(indenta + "license-feature-version=\"" + getLicenseFeatureVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (isExclusive()) {
 			writer.println();

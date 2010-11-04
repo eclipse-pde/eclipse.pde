@@ -693,6 +693,12 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_info_copyright;
 	public static String FeatureEditor_info_discoveryUrls;
 
+	public static String FeatureEditor_licenseFeatureSection_browse;
+	public static String FeatureEditor_licenseFeatureSection_sharedButton;
+	public static String FeatureEditor_licenseFeatureSection_featureID;
+	public static String FeatureEditor_licenseFeatureSection_featureVersion;
+	public static String FeatureEditor_licenseFeatureSection_localButton;
+
 	public static String FeatureEditor_PluginSection_pluginTitle;
 	public static String FeatureEditor_PluginSection_pluginDesc;
 	public static String FeatureEditor_PluginSection_new;

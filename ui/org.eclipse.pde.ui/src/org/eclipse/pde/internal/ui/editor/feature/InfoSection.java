@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -63,6 +63,8 @@ public class InfoSection extends PDESection {
 
 	private Control fUrlsPage;
 
+	private Control fLicensePage;
+
 	public InfoSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.NO_TITLE, false);
 		String description = PDEUIMessages.FeatureEditor_InfoSection_desc;
@@ -114,6 +116,7 @@ public class InfoSection extends PDESection {
 		fNotebook.setLayout(fNotebookLayout);
 
 		fInfoPage = createInfoPage(toolkit, fNotebook);
+		fLicensePage = createLicensePage(toolkit, fNotebook);
 		fUrlsPage = createUrlsPage(toolkit, fNotebook);
 		fNotebookLayout.topControl = fInfoPage;
 
@@ -124,6 +127,23 @@ public class InfoSection extends PDESection {
 			fTabFolder.setSelection(0);
 			updateTabSelection();
 		}
+	}
+
+	private Control createLicensePage(FormToolkit toolkit, Composite parent) {
+		Composite page = toolkit.createComposite(parent);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 2;
+		layout.marginHeight = 0;
+		layout.verticalSpacing = 8;
+		layout.marginTop = 0;
+		page.setLayout(layout);
+
+		LicenseFeatureSection licenseSection = new LicenseFeatureSection(getPage(), page, fSourceConfiguration);
+		licenseSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
+
+		getManagedForm().addPart(licenseSection);
+		return page;
 	}
 
 	/**
@@ -138,6 +158,7 @@ public class InfoSection extends PDESection {
 		layout.marginHeight = 5;
 		layout.verticalSpacing = 8;
 		page.setLayout(layout);
+
 		GridData gd;
 		Label label = toolkit.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_url);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -249,7 +270,7 @@ public class InfoSection extends PDESection {
 	}
 
 	private void handleApply() {
-		if (0 <= fElementIndex && fElementIndex < 3 && fElement != null) {
+		if (0 <= fElementIndex && fElementIndex < 2 && fElement != null) {
 			handleApply((IFeatureInfo) fElement, fTabFolder.getSelectionIndex());
 		} else {
 			handleApply(null, fTabFolder.getSelectionIndex());
@@ -257,7 +278,7 @@ public class InfoSection extends PDESection {
 	}
 
 	private void handleApply(IFeatureInfo info, int index) {
-		if (index >= 3)
+		if (index >= 2)
 			return;
 		String urlName = fUrlText.getText();
 		String text = fDocument.get();
@@ -285,6 +306,7 @@ public class InfoSection extends PDESection {
 			targetInfo.setURL(url);
 			targetInfo.setDescription(text);
 		} catch (CoreException e) {
+			// TODO: This should probably at least be logged
 		}
 	}
 
@@ -382,11 +404,21 @@ public class InfoSection extends PDESection {
 			IFeatureInfo info = feature.getFeatureInfo(index);
 			updateEditorInput(info, true);
 		}
+
+		// TODO: Why is this code in both updateEditorInput and updateTabSelection?
 		Control oldPage = fNotebookLayout.topControl;
-		if (index < 3)
-			fNotebookLayout.topControl = fInfoPage;
-		else
-			fNotebookLayout.topControl = fUrlsPage;
+		switch (index) {
+			case 0 :
+			case 1 :
+				fNotebookLayout.topControl = fInfoPage;
+				break;
+			case 2 :
+				fNotebookLayout.topControl = fLicensePage;
+				break;
+			case 3 :
+				fNotebookLayout.topControl = fUrlsPage;
+				break;
+		}
 		if (oldPage != fNotebookLayout.topControl)
 			fNotebook.layout();
 	}
@@ -429,10 +461,17 @@ public class InfoSection extends PDESection {
 		fElementIndex = fTabFolder.getSelectionIndex();
 
 		Control oldPage = fNotebookLayout.topControl;
-		if (input instanceof IFeatureURLElement || input instanceof NamedElement) {
-			fNotebookLayout.topControl = fUrlsPage;
-		} else {
-			fNotebookLayout.topControl = fInfoPage;
+		switch (fElementIndex) {
+			case 0 :
+			case 1 :
+				fNotebookLayout.topControl = fInfoPage;
+				break;
+			case 2 :
+				fNotebookLayout.topControl = fLicensePage;
+				break;
+			case 3 :
+				fNotebookLayout.topControl = fUrlsPage;
+				break;
 		}
 		if (oldPage != fNotebookLayout.topControl)
 			fNotebook.layout();
