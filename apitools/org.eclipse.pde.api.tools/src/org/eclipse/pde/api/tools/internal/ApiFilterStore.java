@@ -133,7 +133,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					IProject project = fProject.getProject();
 					if(!project.isAccessible()) {
 						if(DEBUG) {
-							System.out.println("project ["+fProject.getElementName()+"] is not accessible, saving termainated"); //$NON-NLS-1$ //$NON-NLS-2$
+							System.out.println("project ["+fProject.getElementName()+"] is not accessible, saving terminated"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						return Status.CANCEL_STATUS;
 					}
