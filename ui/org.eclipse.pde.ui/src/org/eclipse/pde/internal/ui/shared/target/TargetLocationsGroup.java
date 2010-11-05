@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.core.target.UpdateTargetJob;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
@@ -48,6 +51,7 @@ public class TargetLocationsGroup {
 	private Button fAddButton;
 	private Button fEditButton;
 	private Button fRemoveButton;
+	private Button fUpdateButton;
 	private Button fShowContentButton;
 
 	private ITargetDefinition fTarget;
@@ -130,6 +134,7 @@ public class TargetLocationsGroup {
 		fAddButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_0, SWT.PUSH);
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
+		fUpdateButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_3, SWT.PUSH);
 
 		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
 
@@ -169,6 +174,7 @@ public class TargetLocationsGroup {
 		fAddButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_0, null);
 		fEditButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_1, null);
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
+		fUpdateButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_3, null);
 
 		fShowContentButton = SWTFactory.createCheckButton(comp, Messages.TargetLocationsGroup_1, null, false, 2);
 
@@ -240,6 +246,15 @@ public class TargetLocationsGroup {
 		fRemoveButton.setLayoutData(new GridData());
 		fRemoveButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fRemoveButton);
+
+		fUpdateButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleUpdate();
+			}
+		});
+		fUpdateButton.setLayoutData(new GridData());
+		fUpdateButton.setEnabled(false);
+		SWTFactory.setButtonDimensionHint(fUpdateButton);
 
 		fShowContentButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -369,24 +384,79 @@ public class TargetLocationsGroup {
 		}
 	}
 
+	private void handleUpdate() {
+		// go over the selection and make a map from container to set of ius to update.
+		// if the set is empty then the whole container is to be updated.
+		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		Map toUpdate = new HashMap();
+		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+			Object currentSelection = iterator.next();
+			if (currentSelection instanceof IBundleContainer)
+				toUpdate.put(currentSelection, new HashSet(0));
+			else if (currentSelection instanceof IUWrapper) {
+				IUWrapper wrapper = (IUWrapper) currentSelection;
+				Set iuSet = (Set) toUpdate.get(wrapper.getParent());
+				if (iuSet == null) {
+					iuSet = new HashSet();
+					iuSet.add(wrapper.getIU().getId());
+					toUpdate.put(wrapper.getParent(), iuSet);
+				} else if (!iuSet.isEmpty())
+					iuSet.add(wrapper.getIU().getId());
+			}
+		}
+		if (toUpdate.isEmpty())
+			return;
+
+		JobChangeAdapter listener = new JobChangeAdapter() {
+			public void done(final IJobChangeEvent event) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						// XXX what if everything is disposed by the time we get back?
+						UpdateTargetJob job = (UpdateTargetJob) event.getJob();
+						contentsChanged(job.isUpdated());
+						fTreeViewer.refresh(true);
+						try {
+							ITargetHandle currentTarget = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
+							if (job.isUpdated() && fTarget.getHandle().equals(currentTarget))
+								LoadTargetDefinitionJob.load(fTarget);
+						} catch (CoreException e) {
+							// do nothing if we could not see the current target.
+						}
+						updateButtons();
+						// XXX still need to figure how to mark the target as dirty so it gets persisted.
+						// right now it seems to always be dirty
+					}
+				});
+			}
+		};
+		UpdateTargetJob.update(toUpdate, listener);
+	}
+
 	private void updateButtons() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		fEditButton.setEnabled(!selection.isEmpty() && (selection.getFirstElement() instanceof IBundleContainer || selection.getFirstElement() instanceof IUWrapper));
 		// If any container is selected, allow the remove (the remove ignores non-container entries)
 		boolean removeAllowed = false;
+		boolean updateAllowed = false;
 		Iterator iter = selection.iterator();
 		while (iter.hasNext()) {
+			if (removeAllowed && updateAllowed){
+				break;
+			}
 			Object current = iter.next();
+			if (current instanceof IUBundleContainer) {
+				updateAllowed = true;
+			}
 			if (current instanceof IBundleContainer) {
 				removeAllowed = true;
-				break;
 			}
 			if (current instanceof IUWrapper) {
 				removeAllowed = true;
-				break;
+				updateAllowed = true;
 			}
 		}
 		fRemoveButton.setEnabled(removeAllowed);
+		fUpdateButton.setEnabled(updateAllowed);
 	}
 
 	/**
@@ -427,7 +497,7 @@ public class TargetLocationsGroup {
 						// Show the IUs as children
 						// TODO See if we can get the profile using API
 						try {
-							IProfile profile = ((TargetDefinition) fTarget).getProfile();
+							IProfile profile = P2TargetUtils.getProfile(fTarget);
 							IInstallableUnit[] units = ((IUBundleContainer) parentElement).getInstallableUnits(profile);
 							// Wrap the units so that they remember their parent container
 							List wrappedUnits = new ArrayList(units.length);

@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.target.AbstractTargetHandle;
+import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 
 public class ExternalModelManager extends AbstractModelManager {
@@ -81,7 +81,7 @@ public class ExternalModelManager extends AbstractModelManager {
 		boolean addPool = false;
 		String baseLocation = pref.getString(ICoreConstants.PLATFORM_PATH);
 		URL[] base = null;
-		if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(baseLocation))) {
+		if (P2TargetUtils.BUNDLE_POOL.isPrefixOf(new Path(baseLocation))) {
 			// if the base platform path is part of the bundle pool, use the bundle pool
 			// preference info to restore bundles selectively
 			addPool = true;
@@ -99,7 +99,7 @@ public class ExternalModelManager extends AbstractModelManager {
 		List extraLocations = new ArrayList(tokenizer.countTokens());
 		while (tokenizer.hasMoreTokens()) {
 			String location = tokenizer.nextToken();
-			if (AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(location))) {
+			if (P2TargetUtils.BUNDLE_POOL.isPrefixOf(new Path(location))) {
 				addPool = true;
 			} else {
 				File dir = new File(location, "plugins"); //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class ExternalModelManager extends AbstractModelManager {
 					while (tokenizer.hasMoreTokens()) {
 						String fileName = tokenizer.nextToken();
 						try {
-							urls.add(AbstractTargetHandle.BUNDLE_POOL.append("plugins").append(fileName).toFile().toURL()); //$NON-NLS-1$
+							urls.add(P2TargetUtils.BUNDLE_POOL.append("plugins").append(fileName).toFile().toURL()); //$NON-NLS-1$
 						} catch (MalformedURLException e) {
 							PDECore.log(e);
 						}

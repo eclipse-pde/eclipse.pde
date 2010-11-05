@@ -377,7 +377,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 					BundleInfo bundleInfo = resolved[i].getBundleInfo();
 					NameVersionDescriptor desc = new NameVersionDescriptor(bundleInfo.getSymbolicName(), bundleInfo.getVersion());
 					File file = new File(bundleInfo.getLocation());
-					boolean inPool = AbstractTargetHandle.BUNDLE_POOL.isPrefixOf(new Path(file.getAbsolutePath()));
+					boolean inPool = P2TargetUtils.BUNDLE_POOL.isPrefixOf(new Path(file.getAbsolutePath()));
 					considerPool = considerPool || inPool;
 					if (!duplicates.contains(desc)) {
 						if (inPool) {

@@ -23,8 +23,7 @@ import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -122,7 +121,7 @@ public class ExportActiveTargetJob extends Job {
 				if (component != null) {
 					// If p2 is available, export the metadata
 					TargetDefinition definition = ((TargetDefinition) TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition());
-					IProfile profile = definition.getProfile();
+					IProfile profile = P2TargetUtils.getProfile(definition);
 					IStatus status = component.exportMetadata(profile, fDestination, definition.getName());
 					if (status.isOK()) {
 						return status;

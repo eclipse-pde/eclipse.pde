@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     EclipseSource Corporation - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -233,7 +234,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		fTableViewer = CheckboxTableViewer.newCheckList(tableComposite, SWT.MULTI | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 300;
+		gd.heightHint = 250;
 		fTableViewer.getControl().setLayoutData(gd);
 		fTableViewer.setLabelProvider(new TargetLabelProvider());
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -820,17 +821,20 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		updateButtons();
 		// start job to do GC
 		if (gc) {
-			final TargetPlatformService finalService = (TargetPlatformService) service;
-			Job job = new Job(PDEUIMessages.TargetPlatformPreferencePage2_26) {
-				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask(PDEUIMessages.TargetPlatformPreferencePage2_27, IProgressMonitor.UNKNOWN);
-					finalService.garbageCollect();
-					monitor.done();
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
+			runGC();
 		}
 		return super.performOk();
+	}
+
+	private void runGC() {
+		Job job = new Job(PDEUIMessages.TargetPlatformPreferencePage2_26) {
+			protected IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask(PDEUIMessages.TargetPlatformPreferencePage2_27, IProgressMonitor.UNKNOWN);
+				P2TargetUtils.garbageCollect();
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 }

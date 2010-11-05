@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.internal.core.target.P2TargetUtils;
+
 import java.util.Iterator;
 
 import java.io.*;
@@ -106,7 +108,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 				assertTrue("Missing: " + expectedBundles[i], names.contains(expectedBundles[i]));
 			}
 
-			IProfile profile = ((TargetDefinition)target).getProfile();
+			IProfile profile = P2TargetUtils.getProfile(target);
 
 			IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
 			IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
@@ -131,14 +133,14 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 				assertTrue("Missing: " + expectedBundles2[i], names.contains(expectedBundles2[i]));
 			}
 
-			List profiles = ((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+			List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			assertEquals(1, profiles.size());
 			String id = (String) profiles.get(0);
 			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
 		
 		} finally {
 			// Always clean any profiles, even if the test failed to prevent cascading failures
-			((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+			P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		}	
 	}
 	
@@ -248,13 +250,13 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			for (int i = 0; i < bundleIds.length; i++) {
 				assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
 			}
-			List profiles = ((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+			List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			assertEquals(1, profiles.size());
 			String id = (String) profiles.get(0);
 			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
 		} finally {
 			// Always clean any profiles, even if the test failed to prevent cascading failures
-			((TargetPlatformService) getTargetService()).cleanOrphanedTargetDefinitionProfiles();
+			P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		}	
 	}	
 	
@@ -286,8 +288,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		for (int i = 0; i < bundleIds.length; i++) {
 			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
 		}
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(1, profiles.size());
 		String id = (String) profiles.get(0);
 		assertTrue("Unexpected profile GC'd", id.endsWith(definitionB.getHandle().getMemento()));
@@ -412,8 +413,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		
 		getTargetService().deleteTarget(target.getHandle());
 		
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(0, profiles.size());
 	}
 	
@@ -447,8 +447,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		
 		getTargetService().deleteTarget(target.getHandle());
 		
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(0, profiles.size());
 	}	
 	
@@ -483,8 +482,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			assertTrue("Missing: " + bundleIds[i], names.contains(bundleIds[i]));
 		}
 		
-		TargetPlatformService targetService = (TargetPlatformService) getTargetService();
-		List profiles = targetService.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(1, profiles.size());
 	}	
 }

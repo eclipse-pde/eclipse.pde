@@ -68,6 +68,7 @@ public class TargetDefinitionPersistenceHelper {
 	public static final String MODE_SLICER = "slicer"; //$NON-NLS-1$
 	public static final String MODE_PLANNER = "planner"; //$NON-NLS-1$
 	static final String ATTR_INCLUDE_ALL_PLATFORMS = "includeAllPlatforms"; //$NON-NLS-1$
+	static final String ATTR_INCLUDE_SOURCE = "includeSource"; //$NON-NLS-1$
 	static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
 	static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
@@ -300,6 +301,7 @@ public class TargetDefinitionPersistenceHelper {
 			IUBundleContainer iubc = (IUBundleContainer) container;
 			containerElement.setAttribute(ATTR_INCLUDE_MODE, iubc.getIncludeAllRequired() ? MODE_PLANNER : MODE_SLICER);
 			containerElement.setAttribute(ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(iubc.getIncludeAllEnvironments()));
+			containerElement.setAttribute(ATTR_INCLUDE_SOURCE, Boolean.toString(iubc.getIncludeSource()));
 			String[] ids = iubc.getIds();
 			Version[] versions = iubc.getVersions();
 			for (int i = 0; i < ids.length; i++) {

@@ -181,6 +181,7 @@ public class TargetPersistence36Helper {
 		} else if (IUBundleContainer.TYPE.equals(type)) {
 			String includeMode = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE);
 			String includeAllPlatforms = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS);
+			String includeSource = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE);
 			NodeList list = location.getChildNodes();
 			List ids = new ArrayList();
 			List versions = new ArrayList();
@@ -225,6 +226,7 @@ public class TargetPersistence36Helper {
 			if (includeAllPlatforms != null && includeAllPlatforms.trim().length() > 0) {
 				((IUBundleContainer) container).setIncludeAllEnvironments(Boolean.valueOf(includeAllPlatforms).booleanValue(), null);
 			}
+			((IUBundleContainer) container).setIncludeSource(Boolean.valueOf(includeSource).booleanValue());
 
 		}
 		return container;

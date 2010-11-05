@@ -19,12 +19,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.p2.engine.IProfile;
-import org.eclipse.equinox.p2.engine.IProfileRegistry;
-import org.eclipse.equinox.p2.engine.query.IUProfilePropertyQuery;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
@@ -365,9 +360,11 @@ public class TargetDefinition implements ITargetDefinition {
 				for (int i = 0; i < containers.length; i++) {
 					IBundleContainer container = containers[i];
 					IResolvedBundle[] bundles = container.getBundles();
-					for (int j = 0; j < bundles.length; j++) {
-						IResolvedBundle rb = bundles[j];
-						all.add(rb);
+					if (bundles != null) {
+						for (int j = 0; j < bundles.length; j++) {
+							IResolvedBundle rb = bundles[j];
+							all.add(rb);
+						}
 					}
 				}
 
@@ -840,153 +837,6 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
-	 * Returns whether software site containers are configured to provision for all environments
-	 * versus a single environment.
-	 * 
-	 * @return whether all environments will be provisioned
-	 */
-	private boolean isAllEnvironments() {
-		IBundleContainer[] containers = getBundleContainers();
-		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				if (containers[i] instanceof IUBundleContainer) {
-					IUBundleContainer iu = (IUBundleContainer) containers[i];
-					if (iu.getIncludeAllEnvironments()) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the mode used to provision this target - slice versus plan or <code>null</code> if
-	 * this target has no software sites.
-	 * 
-	 * @return provisioning mode or <code>null</code>
-	 */
-	private String getProvisionMode() {
-		IBundleContainer[] containers = getBundleContainers();
-		if (containers != null) {
-			for (int i = 0; i < containers.length; i++) {
-				if (containers[i] instanceof IUBundleContainer) {
-					IUBundleContainer iu = (IUBundleContainer) containers[i];
-					if (iu.getIncludeAllRequired()) {
-						return TargetDefinitionPersistenceHelper.MODE_PLANNER;
-					}
-					return TargetDefinitionPersistenceHelper.MODE_SLICER;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the profile for the this target handle, creating one if required.
-	 * 
-	 * @return profile
-	 * @throws CoreException in unable to retrieve profile
-	 */
-	public IProfile getProfile() throws CoreException {
-		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
-		}
-		AbstractTargetHandle handle = ((AbstractTargetHandle) getHandle());
-		String id = handle.getProfileId();
-		IProfile profile = registry.getProfile(id);
-		if (profile != null) {
-			boolean recreate = false;
-			// check if all environments setting is the same
-			boolean all = false;
-			String value = profile.getProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS);
-			if (value != null) {
-				all = Boolean.valueOf(value).booleanValue();
-				if (!Boolean.toString(isAllEnvironments()).equals(value)) {
-					recreate = true;
-				}
-			}
-			// ensure environment & NL settings are still the same (else we need a new profile)
-			String property = null;
-			if (!recreate && !all) {
-				property = generateEnvironmentProperties();
-				value = profile.getProperty(IProfile.PROP_ENVIRONMENTS);
-				if (!property.equals(value)) {
-					recreate = true;
-				}
-			}
-			// check provisioning mode: slice versus plan
-			String mode = getProvisionMode();
-			if (mode != null) {
-				value = profile.getProperty(AbstractTargetHandle.PROP_PROVISION_MODE);
-				if (!mode.equals(value)) {
-					recreate = true;
-				}
-			}
-
-			if (!recreate) {
-				property = generateNLProperty();
-				value = profile.getProperty(IProfile.PROP_NL);
-				if (!property.equals(value)) {
-					recreate = true;
-				}
-			}
-			if (!recreate) {
-				// check top level IU's. If any have been removed from the containers that are
-				// still in the profile, we need to recreate (rather than uninstall)
-				IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
-				IQueryResult queryResult = profile.query(propertyQuery, null);
-				Iterator iterator = queryResult.iterator();
-				if (iterator.hasNext()) {
-					Set installedIUs = new HashSet();
-					while (iterator.hasNext()) {
-						IInstallableUnit unit = (IInstallableUnit) iterator.next();
-						installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
-					}
-					IBundleContainer[] containers = getBundleContainers();
-					if (containers != null) {
-						for (int i = 0; i < containers.length; i++) {
-							if (containers[i] instanceof IUBundleContainer) {
-								IUBundleContainer bc = (IUBundleContainer) containers[i];
-								String[] ids = bc.getIds();
-								Version[] versions = bc.getVersions();
-								for (int j = 0; j < versions.length; j++) {
-									installedIUs.remove(new NameVersionDescriptor(ids[j], versions[j].toString()));
-								}
-							}
-						}
-					}
-					if (!installedIUs.isEmpty()) {
-						recreate = true;
-					}
-				}
-			}
-			if (recreate) {
-				handle.deleteProfile();
-				profile = null;
-			}
-		}
-		if (profile == null) {
-			// create profile
-			Map properties = new HashMap();
-			properties.put(IProfile.PROP_INSTALL_FOLDER, AbstractTargetHandle.INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
-			properties.put(IProfile.PROP_CACHE, AbstractTargetHandle.BUNDLE_POOL.toOSString());
-			properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
-			// set up environment & NL properly so OS specific fragments are down loaded/installed
-			properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
-			properties.put(IProfile.PROP_NL, generateNLProperty());
-			String mode = getProvisionMode();
-			if (mode != null) {
-				properties.put(AbstractTargetHandle.PROP_PROVISION_MODE, mode);
-				properties.put(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(isAllEnvironments()));
-			}
-			profile = registry.addProfile(id, properties);
-		}
-		return profile;
-	}
-
-	/**
 	 * Returns a set of feature models that exist in the provided location.  If
 	 * the locationPath is <code>null</code> the default target platform location
 	 * will be used.  The locationPath string may container string variables which
@@ -1150,49 +1000,5 @@ public class TargetDefinition implements ITargetDefinition {
 
 	public void setUIMode(int mode) {
 		fUIMode = mode;
-	}
-
-	/**
-	 * Generates the environment properties string for this target definition's p2 profile.
-	 * 
-	 * @return environment properties
-	 */
-	private String generateEnvironmentProperties() {
-		// TODO: are there constants for these keys?
-		StringBuffer env = new StringBuffer();
-		String ws = getWS();
-		if (ws == null) {
-			ws = Platform.getWS();
-		}
-		env.append("osgi.ws="); //$NON-NLS-1$
-		env.append(ws);
-		env.append(","); //$NON-NLS-1$
-		String os = getOS();
-		if (os == null) {
-			os = Platform.getOS();
-		}
-		env.append("osgi.os="); //$NON-NLS-1$
-		env.append(os);
-		env.append(","); //$NON-NLS-1$
-		String arch = getArch();
-		if (arch == null) {
-			arch = Platform.getOSArch();
-		}
-		env.append("osgi.arch="); //$NON-NLS-1$
-		env.append(arch);
-		return env.toString();
-	}
-
-	/**
-	 * Generates the NL property for this target definition's p2 profile.
-	 * 
-	 * @return NL profile property
-	 */
-	private String generateNLProperty() {
-		String nl = getNL();
-		if (nl == null) {
-			nl = Platform.getNL();
-		}
-		return nl;
 	}
 }

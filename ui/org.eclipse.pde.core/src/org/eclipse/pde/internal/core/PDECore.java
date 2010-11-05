@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.update.configurator.ConfiguratorUtils;
@@ -254,10 +255,7 @@ public class PDECore extends Plugin {
 		// use save participant to clean orphaned profiles.
 		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
 			public void saving(ISaveContext saveContext) throws CoreException {
-				ITargetPlatformService tps = (ITargetPlatformService) acquireService(ITargetPlatformService.class.getName());
-				if (tps instanceof TargetPlatformService) {
-					((TargetPlatformService) tps).cleanOrphanedTargetDefinitionProfiles();
-				}
+				P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 				if (fSearchablePluginsManager != null) {
 					fSearchablePluginsManager.saving(saveContext);
 				}

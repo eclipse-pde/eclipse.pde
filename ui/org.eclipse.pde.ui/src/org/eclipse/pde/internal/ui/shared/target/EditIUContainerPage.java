@@ -91,6 +91,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fShowOldVersionsButton;
 	private Button fIncludeRequiredButton;
 	private Button fAllPlatformsButton;
+	private Button fIncludeSourceButton;
 	private Text fDetailsText;
 	private ProvisioningUI profileUI;
 
@@ -134,6 +135,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null);
 		container.setIncludeAllRequired(fIncludeRequiredButton.getSelection(), fTarget);
 		container.setIncludeAllEnvironments(fAllPlatformsButton.getSelection(), fTarget);
+		container.setIncludeSource(fIncludeSourceButton.getSelection());
 		return container;
 	}
 
@@ -296,6 +298,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			}
 		});
 		((GridData) fAllPlatformsButton.getLayoutData()).horizontalIndent = 10;
+		fIncludeSourceButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_16, null, true, 1);
 	}
 
 	private void warnIfGlobalSettingChanged() {
@@ -454,6 +457,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		if (fEditContainer != null) {
 			fIncludeRequiredButton.setSelection(fEditContainer.getIncludeAllRequired());
 			fAllPlatformsButton.setSelection(fEditContainer.getIncludeAllEnvironments());
+			fIncludeSourceButton.setSelection(fEditContainer.getIncludeSource());
 		} else {
 			// If we are creating a new container, but there is an existing iu container we should use it's settings (otherwise we overwrite them)
 			IBundleContainer[] knownContainers = fTarget.getBundleContainers();

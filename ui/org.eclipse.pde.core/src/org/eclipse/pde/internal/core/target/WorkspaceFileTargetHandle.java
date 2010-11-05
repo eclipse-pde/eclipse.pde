@@ -107,7 +107,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		if (fFile.exists()) {
 			fFile.delete(false, null);
 		}
-		deleteProfile();
+		P2TargetUtils.deleteProfile(this);
 	}
 
 	/* (non-Javadoc)

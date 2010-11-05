@@ -33,15 +33,19 @@ public class Messages extends NLS {
 	public static String FeatureBundleContainer_5;
 	public static String IUBundleContainer_0;
 	public static String IUBundleContainer_1;
+	public static String IUBundleContainer_10;
 	public static String IUBundleContainer_2;
 	public static String IUBundleContainer_3;
 	public static String IUBundleContainer_4;
 	public static String IUBundleContainer_5;
 	public static String IUBundleContainer_6;
 	public static String IUBundleContainer_7;
+	public static String IUBundleContainer_8;
+	public static String IUBundleContainer_9;
 	public static String IUBundleContainer_LoadingFromProfileJob;
 	public static String IUBundleContainer_NoBundlePool;
 	public static String IUBundleContainer_ProblemsLoadingRepositories;
+	public static String IUBundleContainer_ProvisioningSourceBundles;
 	public static String LoadTargetDefinitionJob_0;
 	public static String LoadTargetDefinitionJob_1;
 	public static String LoadTargetOperation_argsTaskName;
@@ -76,6 +80,9 @@ public class Messages extends NLS {
 	public static String TargetPlatformService_4;
 	public static String TargetPlatformService_5;
 	public static String TargetPlatformService_7;
+	public static String UpdateTargetJob_UpdateJobName;
+	public static String UpdateTargetJob_UpdatingContainer;
+	public static String UpdateTargetJob_UpdatingTarget;
 	public static String WorkspaceFileTargetHandle_0;
 	static {
 		// initialize resource bundle

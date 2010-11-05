@@ -13,17 +13,22 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.internal.p2.engine.ProfileMetadataRepository;
+import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.*;
+import org.eclipse.equinox.p2.engine.query.IUProfilePropertyQuery;
 import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.planner.IPlanner;
 import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
 import org.eclipse.equinox.p2.query.*;
-import org.eclipse.equinox.p2.repository.IRepositoryManager;
+import org.eclipse.equinox.p2.repository.*;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
@@ -97,7 +102,22 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private boolean fIncludeMultipleEnvironments = false;
 
+	/**
+	 * Whether this container should download and include source bundles for the selected units if the associated
+	 * source is available in the repository.
+	 * <p>
+	 * <code>false</code>by default
+	 */
+	private boolean fIncludeSource = false;
+
+	/**
+	 * Constant ID for a root installable unit that is installed into the profile if {@link #fIncludeSource} is set
+	 * to <code>true</code>.  The source units found in the repository will be set as required IUs on the root unit.
+	 */
+	private static final String SOURCE_IU_ID = "org.eclipse.pde.core.target.source.bundles"; //$NON-NLS-1$
+
 	private static final boolean DEBUG_PROFILE;
+
 	static {
 		DEBUG_PROFILE = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/target/profile")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -150,7 +170,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
 	 */
 	public String getLocation(boolean resolve) throws CoreException {
-		return AbstractTargetHandle.BUNDLE_POOL.toOSString();
+		return P2TargetUtils.BUNDLE_POOL.toOSString();
 	}
 
 	/* (non-Javadoc)
@@ -217,12 +237,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			// If there is a problem generating the profile, delete it so it doesn't get used by #resolveWithProfile()
 			if (result == null || result.length == 0 || subMon.isCanceled()) {
 				AbstractTargetHandle handle = ((AbstractTargetHandle) definition.getHandle());
-				handle.deleteProfile();
+				P2TargetUtils.deleteProfile(handle);
 			}
 			return result;
 		} catch (CoreException e) {
 			AbstractTargetHandle handle = ((AbstractTargetHandle) definition.getHandle());
-			handle.deleteProfile();
+			P2TargetUtils.deleteProfile(handle);
 			throw e;
 		}
 
@@ -245,7 +265,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			System.out.println("Target resolution using profile (" + definition.getName() + ")"); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		IProfile profile = ((TargetDefinition) definition).getProfile();
+		IProfile profile = P2TargetUtils.getProfile(definition);
 		if (profile == null) {
 			if (DEBUG_PROFILE) {
 				System.out.println("No profile found"); //$NON-NLS-1$
@@ -277,61 +297,23 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			}
 			fUnits[i] = (IInstallableUnit) queryResult.iterator().next();
 		}
-
-		// slice IUs and all prerequisites
-		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false, false);
-		IQueryable slice = slicer.slice(fUnits, new SubProgressMonitor(subMonitor, 10));
-
-		// query for bundles
-		IFileArtifactRepository repository = null;
-		try {
-			repository = getBundlePool(profile);
-		} catch (CoreException e) {
-			if (DEBUG_PROFILE) {
-				System.out.println("Bundle pool repository could not be loaded"); //$NON-NLS-1$
-			}
-			subMonitor.done();
+		// check that the include source flag matches what the profile represents
+		if (fIncludeSource != (getCurrentSourceIU(profile) != null))
 			return null;
-		}
-		Map bundles = generateResolvedBundles(slice, repository, false);
 
-		// If there are no resolved bundles from the profile, or a backing file was missing from the repository, do a normal resolve
-		if (bundles == null || bundles.isEmpty()) {
-			if (DEBUG_PROFILE) {
-				System.out.println("Profile does not contain any bundles or artifacts were missing"); //$NON-NLS-1$
-			}
-			subMonitor.done();
-			return null;
-		}
-
-		if (subMonitor.isCanceled()) {
-			return null;
-		}
-
-		// Cache the feature list
-		queryForFeatures(slice);
-
-		if (subMonitor.isCanceled()) {
-			return null;
-		}
-
-		removeDuplicateBundles(definition, bundles);
-
-		// If there are no resolved bundles from the profile, do a normal resolve
-		if (bundles.isEmpty()) {
-			subMonitor.done();
-			return null;
-		}
+		// OK.  Everything looks good.  Now gather the features and bundles and be done.
+		ResolvedBundle[] resolvedBundles = updateAfterResolve(profile, definition);
 
 		subMonitor.worked(10);
 		subMonitor.done();
-
 		if (DEBUG_PROFILE) {
-			System.out.println("Loading from profile successful. " + bundles.values().size() + " bundles found"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (resolvedBundles == null || resolvedBundles.length == 0)
+				System.out.println("No bundles loaded from profile"); //$NON-NLS-1$
+			else
+				System.out.println("Loading from profile successful. " + resolvedBundles.length + " bundles found"); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println();
 		}
-
-		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+		return resolvedBundles;
 	}
 
 	/**
@@ -349,7 +331,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		subMonitor.beginTask(Messages.IUBundleContainer_0, 200);
 
 		// retrieve profile
-		IProfile profile = ((TargetDefinition) definition).getProfile();
+		IProfile profile = P2TargetUtils.getProfile(definition);
 		profile.getTimestamp();
 		subMonitor.worked(10);
 
@@ -365,17 +347,20 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// create the provisioning plan
-		IPlanner planner = getPlanner();
+		IPlanner planner = P2TargetUtils.getPlanner();
 		IProfileChangeRequest request = planner.createChangeRequest(profile);
+		// first remove everything that was explicitly installed.  Then add it back.  This has the net effect of 
+		// removing everything that is no longer needed.
+		computeRemovals(profile, request, units);
 		request.addAll(Arrays.asList(units));
 		for (int i = 0; i < units.length; i++) {
 			IInstallableUnit unit = units[i];
-			request.setInstallableUnitProfileProperty(unit, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
+			request.setInstallableUnitProfileProperty(unit, P2TargetUtils.PROP_INSTALLED_IU, Boolean.toString(true));
 		}
-		URI[] repositories = resolveRepositories();
-		ProvisioningContext context = new ProvisioningContext(getAgent());
-		context.setMetadataRepositories(repositories);
-		context.setArtifactRepositories(repositories);
+
+		ProvisioningContext context = new ProvisioningContext(P2TargetUtils.getAgent());
+		context.setMetadataRepositories(resolveRepositories());
+		context.setArtifactRepositories(resolveArtifactRepositories());
 
 		if (subMonitor.isCanceled()) {
 			return new IResolvedBundle[0];
@@ -399,10 +384,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// execute the provisioning plan
-		IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE, PhaseSetFactory.PHASE_UNINSTALL});
-		IEngine engine = getEngine();
-		plan.setProfileProperty(AbstractTargetHandle.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_PLANNER);
-		plan.setProfileProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(false));
+		IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE});
+		IEngine engine = P2TargetUtils.getEngine();
+		plan.setProfileProperty(P2TargetUtils.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_PLANNER);
+		plan.setProfileProperty(P2TargetUtils.PROP_ALL_ENVIRONMENTS, Boolean.toString(false));
 		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
 
 		if (subMonitor.isCanceled()) {
@@ -412,33 +397,145 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			throw new CoreException(result);
 		}
 
-		// slice IUs and all prerequisites
-		PermissiveSlicer slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false, false);
-		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-
-		if (subMonitor.isCanceled()) {
-			return new IResolvedBundle[0];
+		// Now that we have a plan with all the binary and explicit bundles, do a second pass and add 
+		// in all the source.
+		try {
+			planInSourceBundles(profile, context, subMonitor);
+		} catch (CoreException e) {
+			// XXX Review required: is adding in the source critical or optional?
+			// We failed adding in the source so remove the intermediate profile and rethrow
+			P2TargetUtils.getProfileRegistry().removeProfile(profile.getProfileId(), profile.getTimestamp());
+			throw e;
 		}
 
-		// Cache the feature list
-		queryForFeatures(slice);
-
-		if (subMonitor.isCanceled()) {
-			return new IResolvedBundle[0];
-		}
-
-		// query for bundles
-		Map bundles = generateResolvedBundles(slice, getBundlePool(profile), true);
-
-		if (subMonitor.isCanceled()) {
-			return new IResolvedBundle[0];
-		}
-
-		removeDuplicateBundles(definition, bundles);
-
+		ResolvedBundle[] resolvedBundles = updateAfterResolve(profile, definition);
 		subMonitor.worked(10);
 		subMonitor.done();
-		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+		return resolvedBundles;
+	}
+
+	/** 
+	 * Update the given change request to remove anything that was explicitly installed
+	 * including the internal source IU.  
+	 */
+	private void computeRemovals(IProfile profile, IProfileChangeRequest request, IInstallableUnit[] units) {
+		// if include source is off then ensure that the source IU is removed.
+		if (!fIncludeSource) {
+			IInstallableUnit sourceIU = getCurrentSourceIU(profile);
+			if (sourceIU != null)
+				request.remove(sourceIU);
+		}
+		// remove everything that is marked as roots.  The plan will have the new roots added in anyway.
+		IQuery query = new IUProfilePropertyQuery(P2TargetUtils.PROP_INSTALLED_IU, Boolean.toString(true));
+		IQueryResult installedIUs = profile.query(query, null);
+		request.removeAll(installedIUs.toSet());
+	}
+
+	// run a second pass of the planner to add in the source bundles for everything that's
+	// in the current profile.
+	private void planInSourceBundles(IProfile profile, ProvisioningContext context, IProgressMonitor monitor) throws CoreException {
+		if (!fIncludeSource)
+			return;
+
+		SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
+		subMonitor.beginTask(Messages.IUBundleContainer_ProvisioningSourceBundles, 200);
+
+		// create an IU that optionally and greedily requires the related source bundles.
+		// Completely replace any source IU that may already be in place
+		IInstallableUnit currentSourceIU = getCurrentSourceIU(profile);
+
+		// determine the new version number.  start at 1
+		Version sourceVersion = Version.createOSGi(1, 0, 0);
+		if (currentSourceIU != null) {
+			Integer major = (Integer) currentSourceIU.getVersion().getSegment(0);
+			sourceVersion = Version.createOSGi(major.intValue() + 1, 0, 0);
+		}
+		IInstallableUnit sourceIU = createSourceIU(profile, sourceVersion);
+
+		// call the planner again to add in the new source IU and all available source bundles
+		IPlanner planner = P2TargetUtils.getPlanner();
+		IProfileChangeRequest request = planner.createChangeRequest(profile);
+		if (currentSourceIU != null)
+			request.remove(currentSourceIU);
+		request.add(sourceIU);
+		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, new SubProgressMonitor(subMonitor, 20));
+		IStatus status = plan.getStatus();
+		if (!status.isOK()) {
+			throw new CoreException(status);
+		}
+		if (subMonitor.isCanceled()) {
+			return;
+		}
+
+		long oldTimestamp = profile.getTimestamp();
+
+		// execute the provisioning plan
+		IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE, PhaseSetFactory.PHASE_UNINSTALL});
+		IEngine engine = P2TargetUtils.getEngine();
+		plan.setProfileProperty(P2TargetUtils.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_PLANNER);
+		plan.setProfileProperty(P2TargetUtils.PROP_ALL_ENVIRONMENTS, Boolean.toString(false));
+		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
+
+		if (subMonitor.isCanceled()) {
+			return;
+		}
+		if (!result.isOK()) {
+			throw new CoreException(result);
+		}
+
+		// remove the old (intermediate) profile version now we have a new one with source.
+		P2TargetUtils.getProfileRegistry().removeProfile(profile.getProfileId(), oldTimestamp);
+		subMonitor.worked(10);
+		subMonitor.done();
+	}
+
+	// Create and return an IU that has optional and greedy requirements on all source bundles
+	// related to bundle IUs in the given queryable. 
+	/**
+	 * Creates and returns an IU that has optional and greedy requirements on all source bundles
+	 * related to bundle IUs in the given queryable.
+	 * @param queryable location to search for source bundle IUs
+	 * @param iuVersion version to set on the returned installable unit
+	 * @return a new installable unit with requirements on the available source IUs
+	 */
+	private IInstallableUnit createSourceIU(IQueryable queryable, Version iuVersion) {
+		// compute the set of source bundles we could possibly need for the bundles in the profile
+		IRequirement bundleRequirement = MetadataFactory.createRequirement("org.eclipse.equinox.p2.eclipse.type", "bundle", null, null, false, false, false); //$NON-NLS-1$ //$NON-NLS-2$
+		IQueryResult profileIUs = queryable.query(QueryUtil.createIUAnyQuery(), null);
+		ArrayList requirements = new ArrayList();
+		for (Iterator i = profileIUs.iterator(); i.hasNext();) {
+			IInstallableUnit profileIU = (IInstallableUnit) i.next();
+			if (profileIU.satisfies(bundleRequirement)) {
+				String id = profileIU.getId() + ".source"; //$NON-NLS-1$
+				Version version = profileIU.getVersion();
+				VersionRange range = new VersionRange(version, true, version, true);
+				IRequirement sourceRequirement = MetadataFactory.createRequirement("osgi.bundle", id, range, null, true, false, true); //$NON-NLS-1$
+				requirements.add(sourceRequirement);
+			}
+		}
+
+		InstallableUnitDescription sourceDescription = new MetadataFactory.InstallableUnitDescription();
+		sourceDescription.setSingleton(true);
+		sourceDescription.setId(SOURCE_IU_ID);
+		sourceDescription.setVersion(iuVersion);
+		sourceDescription.addRequirements(requirements);
+		IProvidedCapability capability = MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, SOURCE_IU_ID, iuVersion);
+		sourceDescription.setCapabilities(new IProvidedCapability[] {capability});
+		return MetadataFactory.createInstallableUnit(sourceDescription);
+	}
+
+	/**
+	 * Lookup and return the source IU in the given queryable or <code>null</code> if not found.
+	 * @param queryable location to look for source IUs
+	 * @return the source IU or <code>null</code>
+	 */
+	private IInstallableUnit getCurrentSourceIU(IQueryable queryable) {
+		IQuery query = QueryUtil.createIUQuery(SOURCE_IU_ID);
+		IQueryResult list = queryable.query(query, null);
+		IInstallableUnit currentSourceIU = null;
+		if (!list.isEmpty())
+			currentSourceIU = (IInstallableUnit) list.iterator().next();
+		return currentSourceIU;
 	}
 
 	/**
@@ -456,7 +553,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		subMonitor.beginTask(Messages.IUBundleContainer_0, 180);
 
 		// retrieve profile
-		IProfile profile = ((TargetDefinition) definition).getProfile();
+		IProfile profile = P2TargetUtils.getProfile(definition);
 		subMonitor.worked(10);
 
 		if (subMonitor.isCanceled()) {
@@ -480,7 +577,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		loadMonitor.beginTask(null, repoCount * 10);
 		List metadataRepos = new ArrayList(repoCount);
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
-		IMetadataRepositoryManager manager = getRepoManager();
+		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
 		for (int i = 0; i < repoCount; ++i) {
 			try {
 				IMetadataRepository repo = manager.loadRepository(repositories[i], new SubProgressMonitor(loadMonitor, 10));
@@ -500,6 +597,103 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			allMetadata = QueryUtil.compoundQueryable(metadataRepos);
 		}
 
+		// do an initial slice to add everything the user requested
+		IQueryResult queryResult = slice(units, allMetadata, definition, subMonitor);
+		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
+			return new IResolvedBundle[0];
+		}
+
+		// If we are including source then create a source IU to bring in the relevant source
+		// bundles and run the slicer again.
+		if (fIncludeSource) {
+			// Build an IU that represents all the source bundles and slice again to add them in if available
+			IInstallableUnit sourceIU = createSourceIU(queryResult, Version.createOSGi(1, 0, 0));
+			IInstallableUnit[] units2 = new IInstallableUnit[units.length + 1];
+			System.arraycopy(units, 0, units2, 0, units.length);
+			units2[units.length] = sourceIU;
+
+			queryResult = slice(units2, allMetadata, definition, subMonitor);
+			if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
+				return new IResolvedBundle[0];
+			}
+		}
+
+		IEngine engine = P2TargetUtils.getEngine();
+		ProvisioningContext context = new ProvisioningContext(P2TargetUtils.getAgent());
+		context.setMetadataRepositories(repositories);
+		context.setArtifactRepositories(resolveArtifactRepositories());
+		IProvisioningPlan plan = engine.createPlan(profile, context);
+
+		Set newSet = queryResult.toSet();
+		Iterator itor = newSet.iterator();
+		while (itor.hasNext()) {
+			plan.addInstallableUnit((IInstallableUnit) itor.next());
+		}
+		for (int i = 0; i < units.length; i++) {
+			IInstallableUnit unit = units[i];
+			plan.setInstallableUnitProfileProperty(unit, P2TargetUtils.PROP_INSTALLED_IU, Boolean.toString(true));
+		}
+
+		// remove all units that are in the current profile but not in the new slice
+		Set toRemove = profile.query(QueryUtil.ALL_UNITS, null).toSet();
+		toRemove.removeAll(newSet);
+		for (Iterator i = toRemove.iterator(); i.hasNext();) {
+			plan.removeInstallableUnit((IInstallableUnit) i.next());
+		}
+
+		plan.setProfileProperty(P2TargetUtils.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_SLICER);
+		plan.setProfileProperty(P2TargetUtils.PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
+
+		// execute the provisioning plan
+		IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE});
+		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
+
+		if (subMonitor.isCanceled()) {
+			return new IResolvedBundle[0];
+		}
+		if (!result.isOK()) {
+			throw new CoreException(result);
+		}
+
+		ResolvedBundle[] resolvedBundles = updateAfterResolve(profile, definition);
+
+		subMonitor.worked(10);
+		subMonitor.done();
+		return resolvedBundles;
+	}
+
+	private ResolvedBundle[] updateAfterResolve(IProfile profile, ITargetDefinition definition) throws CoreException {
+		// Cache the feature list
+		queryForFeatures(profile);
+
+		// query for bundles
+		IFileArtifactRepository repository = null;
+		try {
+			repository = P2TargetUtils.getBundlePool(profile);
+		} catch (CoreException e) {
+			if (DEBUG_PROFILE) {
+				System.out.println("Bundle pool repository could not be loaded"); //$NON-NLS-1$
+			}
+			return null;
+		}
+
+		Map bundles = generateResolvedBundles(profile, repository, true);
+		if (bundles == null || bundles.isEmpty()) {
+			if (DEBUG_PROFILE) {
+				System.out.println("Profile does not contain any bundles or artifacts were missing"); //$NON-NLS-1$
+			}
+			return null;
+		}
+
+		removeDuplicateBundles(definition, bundles);
+		if (bundles.isEmpty()) {
+			return null;
+		}
+
+		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+	}
+
+	private IQueryResult slice(IInstallableUnit[] units, IQueryable allMetadata, ITargetDefinition definition, SubProgressMonitor subMonitor) throws CoreException {
 		// slice IUs and all prerequisites
 		PermissiveSlicer slicer = null;
 		if (getIncludeAllEnvironments()) {
@@ -514,73 +708,13 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-		IQueryResult queryResult = null;
-		if (slice != null)
-			queryResult = slice.query(QueryUtil.createIUAnyQuery(), new SubProgressMonitor(subMonitor, 10));
-
 		if (!slicer.getStatus().isOK()) {
 			throw new CoreException(slicer.getStatus());
 		}
-		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
-			return new IResolvedBundle[0];
-		}
-
-		IEngine engine = getEngine();
-		ProvisioningContext context = new ProvisioningContext(getAgent());
-		context.setMetadataRepositories(repositories);
-		context.setArtifactRepositories(repositories);
-		IProvisioningPlan plan = engine.createPlan(profile, context);
-
-		Set querySet = queryResult.toUnmodifiableSet();
-		Iterator itor = querySet.iterator();
-		while (itor.hasNext()) {
-			plan.addInstallableUnit((IInstallableUnit) itor.next());
-		}
-		for (int i = 0; i < units.length; i++) {
-			IInstallableUnit unit = units[i];
-			plan.setInstallableUnitProfileProperty(unit, AbstractTargetHandle.PROP_INSTALLED_IU, Boolean.toString(true));
-		}
-		plan.setProfileProperty(AbstractTargetHandle.PROP_PROVISION_MODE, TargetDefinitionPersistenceHelper.MODE_SLICER);
-		plan.setProfileProperty(AbstractTargetHandle.PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
-
-		// execute the provisioning plan
-		IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE, PhaseSetFactory.PHASE_UNINSTALL});
-		IStatus result = engine.perform(plan, phases, new SubProgressMonitor(subMonitor, 140));
-
-		if (subMonitor.isCanceled()) {
-			return new IResolvedBundle[0];
-		}
-		if (!result.isOK()) {
-			throw new CoreException(result);
-		}
-
-		// slice IUs and all prerequisites
-		slicer = new PermissiveSlicer(profile, new Properties(), true, false, true, false, false);
-		slice = slicer.slice(units, new SubProgressMonitor(subMonitor, 10));
-
-		if (subMonitor.isCanceled()) {
-			return new IResolvedBundle[0];
-		}
-
-		// Cache the feature list
-		queryForFeatures(slice);
-
-		if (subMonitor.isCanceled()) {
-			return new IResolvedBundle[0];
-		}
-
-		// query for bundles
-		Map bundles = generateResolvedBundles(slice, getBundlePool(profile), true);
-
-		if (subMonitor.isCanceled()) {
-			return new IResolvedBundle[0];
-		}
-
-		removeDuplicateBundles(definition, bundles);
-
-		subMonitor.worked(10);
-		subMonitor.done();
-		return (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+		IQueryResult queryResult = null;
+		if (slice != null)
+			queryResult = slice.query(QueryUtil.createIUAnyQuery(), new SubProgressMonitor(subMonitor, 10));
+		return queryResult;
 	}
 
 	/**
@@ -626,7 +760,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 					URI[] repositories = resolveRepositories();
 					for (int j = 0; j < repositories.length; j++) {
 						try {
-							IMetadataRepository repository = getRepository(repositories[j]);
+							IMetadataRepository repository = P2TargetUtils.getRepository(repositories[j]);
 							queryResult = repository.query(query, null);
 							if (!queryResult.isEmpty()) {
 								break;
@@ -645,6 +779,50 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			}
 		}
 		return fUnits;
+	}
+
+	private IMetadataRepository[] getRepos() throws CoreException {
+		URI[] repos = resolveRepositories();
+		IMetadataRepository[] result = new IMetadataRepository[repos.length];
+		for (int i = 0; i < repos.length; i++)
+			result[i] = P2TargetUtils.getRepository(repos[i]);
+		return result;
+	}
+
+	/**
+	 * Update the root IUs to the latest available in the repos associated with this container.
+	 * 
+	 * @param toUpdate the set of IU ids in this container to consider updating.  If null
+	 * then update everything
+	 * @return a bitmasked int indicating how/if this container changed.  See {@link UpdateTargetJob#DIRTY} and {@link UpdateTargetJob#UPDATED}. 
+	 * @exception CoreException if unable to retrieve IU's
+	 */
+	public synchronized int update(Set toUpdate) throws CoreException {
+		IQueryable source = new CompoundQueryable(getRepos());
+		int dirty = 0;
+		int updated = 0;
+		for (int i = 0; i < fIds.length; i++) {
+			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i]))
+				continue;
+			IQuery query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
+			IQueryResult queryResult = source.query(query, null);
+			Iterator it = queryResult.iterator();
+			// bail if the feature is no longer available.
+			if (!it.hasNext())
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
+			IInstallableUnit iu = (IInstallableUnit) it.next();
+			fUnits[i] = iu;
+			// if the version is different from the spec (up or down), record the change.
+			if (!iu.getVersion().equals(fVersions[i])) {
+				updated = UpdateTargetJob.UPDATED;
+				// if the spec was not specific (e.g., 0.0.0) the target def itself has changed.
+				if (!fVersions[i].equals(Version.emptyVersion)) {
+					fVersions[i] = iu.getVersion();
+					dirty = UpdateTargetJob.DIRTY;
+				}
+			}
+		}
+		return dirty | updated;
 	}
 
 	/**
@@ -715,116 +893,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return bundles;
 	}
 
-	/**
-	 * Returns the metadata repository with the given URI.
-	 * 
-	 * @param uri location
-	 * @return repository
-	 * @throws CoreException
-	 */
-	private IMetadataRepository getRepository(URI uri) throws CoreException {
-		IMetadataRepositoryManager manager = getRepoManager();
-		IMetadataRepository repo = manager.loadRepository(uri, null);
-		return repo;
-	}
-
-	/**
-	 * Returns the metadata repository manager.
-	 * 
-	 * @return metadata repository manager
-	 * @throws CoreException if none
-	 */
-	private IMetadataRepositoryManager getRepoManager() throws CoreException {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		if (agent == null)
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
-		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
-		if (manager == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_2));
-		}
-		return manager;
-	}
-
-	/**
-	 * Returns the local bundle pool (repository) where bundles are stored for the
-	 * given profile.
-	 * 
-	 * @param profile profile bundles are stored
-	 * @return local file artifact repository
-	 * @throws CoreException
-	 */
-	private IFileArtifactRepository getBundlePool(IProfile profile) throws CoreException {
-		String path = profile.getProperty(IProfile.PROP_CACHE);
-		if (path == null) {
-			// We should always be setting the bundle pool, so if the bundle pool location is missing there isn't much we can do 
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_NoBundlePool));
-		}
-		URI uri = new File(path).toURI();
-		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
-		return (IFileArtifactRepository) manager.loadRepository(uri, null);
-	}
-
-	/**
-	 * Returns the provisioning engine service.
-	 * 
-	 * @return provisioning engine
-	 * @throws CoreException if none
-	 */
-	private IArtifactRepositoryManager getArtifactRepositoryManager() throws CoreException {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		if (agent == null)
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
-		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.class.getName());
-		if (manager == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_3));
-		}
-		return manager;
-	}
-
-	/**
-	 * Returns the provisioning engine service.
-	 * 
-	 * @return provisioning engine
-	 * @throws CoreException if none
-	 */
-	private IEngine getEngine() throws CoreException {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		if (agent == null)
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
-		IEngine engine = (IEngine) agent.getService(IEngine.class.getName());
-		if (engine == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_4));
-		}
-		return engine;
-	}
-
-	/**
-	 * Returns the provisioning planner.
-	 * 
-	 * @return provisioning planner
-	 * @throws CoreException if none
-	 */
-	private IPlanner getPlanner() throws CoreException {
-		IPlanner planner = (IPlanner) getAgent().getService(IPlanner.class.getName());
-		if (planner == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_5));
-		}
-		return planner;
-	}
-
-	/**
-	 * Returns the provisioning agent.
-	 * 
-	 * @return provisioning agent
-	 * @throws CoreException if none
-	 */
-	private IProvisioningAgent getAgent() throws CoreException {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		if (agent == null)
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
-		return agent;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
 	 */
@@ -837,6 +905,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 					return isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos);
 				}
 			}
+			if (fIncludeSource != iuContainer.getIncludeSource())
+				return false;
 		}
 		return false;
 	}
@@ -885,10 +955,104 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private URI[] resolveRepositories() throws CoreException {
 		if (fRepos == null) {
-			IMetadataRepositoryManager manager = getRepoManager();
+			IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
 			return manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 		}
 		return fRepos;
+	}
+
+	/**
+	 * Returns the artifact repositories to consider when getting artifacts.  Returns a default set of
+	 * repositories if current repository settings are <code>null</code>).
+	 *  
+	 * @return URI's of repositories to use when getting artifacts
+	 * @exception CoreException
+	 */
+	private URI[] resolveArtifactRepositories() throws CoreException {
+		URI[] repositories = fRepos;
+		if (fRepos == null) {
+			IArtifactRepositoryManager manager = P2TargetUtils.getArtifactRepositoryManager();
+			repositories = manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
+		}
+		if (!useAdditionalLocalArtifacts())
+			return repositories;
+		Set additionalRepos = new HashSet(Arrays.asList(repositories));
+		findProfileRepos(additionalRepos);
+		findWorkspaceRepos(additionalRepos);
+		return (URI[]) additionalRepos.toArray(new URI[additionalRepos.size()]);
+	}
+
+	/**
+	 * @return whether to use local artifact repositories when provisioning the target
+	 */
+	private boolean useAdditionalLocalArtifacts() {
+		// TODO consider using a preference here or another strategy if users are able to spec 
+		// what local repos are to be considered.
+		return true;
+	}
+
+	/** 
+	 * Add the artifact repos from the PDE target bundle pools from all known repos.  For example, the list 
+	 * of "recent workspaces" maintained by the IDE is a good source.
+	 * 
+	 * @param additionalRepos the set to which additional repos are added.
+	 */
+	private void findWorkspaceRepos(Set additionalRepos) {
+		IPreferencesService prefs = P2TargetUtils.getPreferences();
+		if (prefs == null)
+			return;
+		String recent = prefs.getString("org.eclipse.ui.ide", "RECENT_WORKSPACES", null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		if (recent == null)
+			return;
+		String[] recents = recent.split("\n"); //$NON-NLS-1$
+		for (int i = 0; i < recents.length; i++) {
+			String bundlePool = recents[i] + "/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool"; //$NON-NLS-1$
+			if (new File(bundlePool).exists()) {
+				URI uri;
+				try {
+					uri = new URI("file", bundlePool, null); //$NON-NLS-1$
+					additionalRepos.add(uri);
+				} catch (URISyntaxException e) {
+					// should never happen
+				}
+			}
+		}
+	}
+
+	/** 
+	 * Look through the current p2 profile (_SELF_) and add the artifact repos that make up its
+	 * bundle pool, dropins location, ...  This helps in the cases that you are targeting stuff that 
+	 * makes up your current IDE.
+	 * 
+	 * @param additionalRepos the set to which additional repos are added.
+	 */
+	private void findProfileRepos(Set additionalRepos) {
+		try {
+			// NOTE: be sure to use the global p2 agent here as we are looking for SELF.
+			IProfileRegistry profileRegistry = (IProfileRegistry) P2TargetUtils.getGlobalAgent().getService(IProfileRegistry.SERVICE_NAME);
+			if (profileRegistry == null)
+				return;
+			IProfile self = profileRegistry.getProfile(IProfileRegistry.SELF);
+			if (self == null)
+				return;
+
+			IAgentLocation location = (IAgentLocation) P2TargetUtils.getGlobalAgent().getService(IAgentLocation.SERVICE_NAME);
+			URI dataArea = location.getDataArea("org.eclipse.equinox.p2.engine"); //$NON-NLS-1$
+			dataArea = URIUtil.append(dataArea, "profileRegistry/" + self.getProfileId() + ".profile"); //$NON-NLS-1$//$NON-NLS-2$
+			ProfileMetadataRepository profileRepo = new ProfileMetadataRepository(P2TargetUtils.getGlobalAgent(), dataArea, null);
+			Collection repos = profileRepo.getReferences();
+			for (Iterator i = repos.iterator(); i.hasNext();) {
+				Object element = i.next();
+				if (element instanceof IRepositoryReference) {
+					IRepositoryReference reference = (IRepositoryReference) element;
+					if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null)
+						additionalRepos.add(reference.getLocation());
+				}
+			}
+		} catch (CoreException e) {
+			// if there is a problem, move on.  Could log something here 
+			return;
+		}
 	}
 
 	/**
@@ -972,6 +1136,26 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	public boolean getIncludeAllEnvironments() {
 		return fIncludeMultipleEnvironments;
+	}
+
+	/**
+	 * Set whether or not the source bundles corresponding to any binary bundles should
+	 * be automatically included in the target.
+	 * 
+	 * @param value whether or not to include source
+	 */
+	public void setIncludeSource(boolean value) {
+		fIncludeSource = value;
+	}
+
+	/**
+	 * Returns whether or not source bundles corresponding to selected binary bundles 
+	 * are automatically included in the target.
+	 * 
+	 * @return whether or not source is included automatically
+	 */
+	public boolean getIncludeSource() {
+		return fIncludeSource;
 	}
 
 	/**

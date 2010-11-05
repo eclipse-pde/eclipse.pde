@@ -16,10 +16,6 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.engine.IProfile;
-import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
@@ -599,58 +595,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories) {
 		return new IUBundleContainer(units, repositories);
-	}
-
-	/**
-	 * Deletes any profiles associated with target definitions that no longer exist
-	 * and returns a list of profile identifiers that were deleted.
-	 */
-	public List cleanOrphanedTargetDefinitionProfiles() throws CoreException {
-		List list = new ArrayList();
-		IProfileRegistry registry = AbstractTargetHandle.getProfileRegistry();
-		if (registry != null) {
-			IProfile[] profiles = registry.getProfiles();
-			for (int i = 0; i < profiles.length; i++) {
-				IProfile profile = profiles[i];
-				String id = profile.getProfileId();
-				if (id.startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-					String memento = id.substring(AbstractTargetHandle.PROFILE_ID_PREFIX.length());
-					AbstractTargetHandle target = (AbstractTargetHandle) getTarget(memento);
-					if (!target.exists()) {
-						target.deleteProfile();
-						list.add(id);
-					}
-				}
-			}
-		}
-		return list;
-	}
-
-	/**
-	 * Performs garbage collection based on remaining profiles. Should be called to avoid
-	 * having PDE's bundle pool area grow unbounded.
-	 */
-	public void garbageCollect() {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		if (agent != null) {
-			IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
-			if (registry != null) {
-				IProfile[] profiles = registry.getProfiles();
-				if (profiles.length > 0) {
-					IProfile profile = null;
-					for (int i = 0; i < profiles.length; i++) {
-						if (profiles[i].getProfileId().startsWith(AbstractTargetHandle.PROFILE_ID_PREFIX)) {
-							profile = profiles[i];
-							break;
-						}
-					}
-					if (profile != null) {
-						GarbageCollector gc = (GarbageCollector) agent.getService(GarbageCollector.SERVICE_NAME);
-						gc.runGC(profile);
-					}
-				}
-			}
-		}
 	}
 
 	/* (non-Javadoc)

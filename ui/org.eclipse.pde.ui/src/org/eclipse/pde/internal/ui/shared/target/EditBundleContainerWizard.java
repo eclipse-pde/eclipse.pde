@@ -51,8 +51,7 @@ public class EditBundleContainerWizard extends Wizard {
 			fPage = new EditFeatureContainerPage(fContainer);
 		} else if (fContainer instanceof IUBundleContainer) {
 			try {
-				// TODO Use proper API to get the profile if available
-				fPage = new EditIUContainerPage((IUBundleContainer) fContainer, fTarget, ((TargetDefinition) fTarget).getProfile());
+				fPage = new EditIUContainerPage((IUBundleContainer) fContainer, fTarget, P2TargetUtils.getProfile(fTarget));
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
