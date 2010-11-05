@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -108,7 +109,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			return null;
 		}		
 		try {
-			String lookupName = getTypeName(reference.getMember()).replace('$', '.');
+			IApiMember member = reference.getMember();
+			String lookupName = getTypeName(member).replace('$', '.');
 			IType type = javaProject.findType(lookupName, new NullProgressMonitor());
 			if (type == null) {
 				return null;
@@ -127,27 +129,65 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			IJavaElement element = compilationUnit;
 			if (!Util.isManifest(resource.getProjectRelativePath()) && !type.isBinary()) {
 				IDocument document = Util.getDocument(compilationUnit);
-				// retrieve line number, char start and char end
 				if (lineNumber > 0) {
+					// reference line number are 1-based, but the api problem 
+					// line number are 0-based
+					// they will be converted to 1-based at marker creation time
 					lineNumber--;
 				}
-				// get the source range for the problem
-				try {
-					Position pos = getSourceRange(type, document, reference);
-					if (pos != null) {
-						charStart = pos.getOffset();
-						if (charStart != -1) {
-							charEnd = charStart + pos.getLength();
-							lineNumber = document.getLineOfOffset(charStart);
+				// retrieve line number, char start and char end
+				if ((reference.getReferenceKind() & 
+						(IReference.REF_OVERRIDE | IReference.REF_EXTENDS | IReference.REF_IMPLEMENTS
+						| IReference.REF_PARAMETER | IReference.REF_RETURNTYPE | IReference.REF_THROWS)) != 0) {
+					IApiType enclosingType = member.getEnclosingType();
+					if (lineNumber > 0 && enclosingType != null && enclosingType.isAnonymous()) {
+						String superclass = enclosingType.getSuperclassName();
+						String name = null;
+						if ("java.lang.Object".equals(superclass)) { //$NON-NLS-1$
+							// check the superinterfaces
+							String[] superinterfaces = enclosingType.getSuperInterfaceNames();
+							if (superinterfaces != null) {
+								String superinterface = superinterfaces[0];
+								name = superinterface.substring(superinterface.lastIndexOf('.') + 1);
+							} else {
+								// this is really an anonymous class of Object
+								name = superclass.substring(superclass.lastIndexOf('.') + 1);
+							}
+						} else if (superclass != null) {
+							name = superclass.substring(superclass.lastIndexOf('.') + 1);
+						}
+						if (name != null) {
+							try {
+								IRegion lineInformation = document.getLineInformation(lineNumber);
+								String lineContents = document.get(lineInformation.getOffset(), lineInformation.getLength());
+								charStart = lineInformation.getOffset() + lineContents.indexOf(name);
+								charEnd = charStart + name.length();
+							} catch (BadLocationException e) {
+								ApiPlugin.log(e);
+								return null;
+							}
 						}
 					}
-				} catch (CoreException e) {
-					ApiPlugin.log(e);
-					return null;
 				}
-				catch (BadLocationException e) {
-					ApiPlugin.log(e);
-					return null;
+				if (charStart == -1) {
+					// get the source range for the problem
+					try {
+						Position pos = getSourceRange(type, document, reference);
+						if (pos != null) {
+							charStart = pos.getOffset();
+							if (charStart != -1) {
+								charEnd = charStart + pos.getLength();
+								lineNumber = document.getLineOfOffset(charStart);
+							}
+						}
+					} catch (CoreException e) {
+						ApiPlugin.log(e);
+						return null;
+					}
+					catch (BadLocationException e) {
+						ApiPlugin.log(e);
+						return null;
+					}
 				}
 				if(charStart > -1) {
 					element = compilationUnit.getElementAt(charStart);
@@ -159,7 +199,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
 					new Object[] {(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
 								   new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
-					lineNumber, 
+					lineNumber, // 0-based
 					charStart, 
 					charEnd, 
 					getElementType(reference), 
@@ -544,6 +584,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	protected Position getFieldNameRange(String typeName, String fieldName, IDocument document, IReference reference) throws BadLocationException, CoreException {
 		int linenumber = reference.getLineNumber();
 		if (linenumber > 0) {
+			// line number are 1-based for the reference, but 0-based for the document
 			linenumber--;
 		}
 		if (linenumber > 0) {
@@ -599,6 +640,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	protected Position getMethodNameRange(boolean isContructor, String name, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		int linenumber = reference.getLineNumber();
 		if (linenumber > 0) {
+			// line number are 1-based for the reference, but 0-based for the document
 			linenumber--;
 		}
 		String methodname = name;

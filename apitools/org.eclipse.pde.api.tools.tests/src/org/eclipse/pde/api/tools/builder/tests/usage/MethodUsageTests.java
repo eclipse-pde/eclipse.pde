@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,6 +251,99 @@ public class MethodUsageTests extends UsageTest {
 				new LineMapping(39, pids[3], args[3]),
 				new LineMapping(50, pids[4], args[4]),
 				new LineMapping(51, pids[5], args[5])
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests that accessing restricted method from an anonymous class is properly reported
+	 * using a full build
+	 */
+	public void testMethodUsageTests5F() {
+		x5(false);
+	}
+	
+	/**
+	 * Tests that accessing restricted method from an anonymous class is properly reported
+	 * using a full build
+	 */
+	public void testMethodUsageTests5I() {
+		x5(true);
+	}
+	private void x5(boolean inc) {
+		int[] pids = new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+		};
+		setExpectedProblemIds(pids);
+		String typename = "testM8";
+		String[][] args = new String[][] {
+				{METHOD_CLASS_NAME, typename, "m1()"},
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(21, pids[0], args[0]),
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests that accessing restricted method from a local class is properly reported
+	 * using a full build
+	 */
+	public void testMethodUsageTests6F() {
+		x6(false);
+	}
+	
+	/**
+	 * Tests that accessing restricted method from a local class is properly reported
+	 * using a full build
+	 */
+	public void testMethodUsageTests6I() {
+		x6(true);
+	}
+	private void x6(boolean inc) {
+		int[] pids = new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+		};
+		setExpectedProblemIds(pids);
+		String typename = "testM9";
+		String[][] args = new String[][] {
+				{METHOD_CLASS_NAME, typename, "m1()"},
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(21, pids[0], args[0]),
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests that accessing restricted method from a local class is properly reported
+	 * using a full build
+	 */
+	public void testMethodUsageTests7F() {
+		x7(false);
+	}
+	
+	/**
+	 * Tests that accessing restricted method from a local class is properly reported
+	 * using a full build
+	 */
+	public void testMethodUsageTests7I() {
+		x7(true);
+	}
+	private void x7(boolean inc) {
+		int[] pids = new int[] {
+				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS),
+		};
+		setExpectedProblemIds(pids);
+		String typename = "testM10";
+		String[][] args = new String[][] {
+				{METHOD_CLASS_NAME, typename, "m2()"},
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(18, pids[0], args[0]),
 		});
 		deployUsageTest(typename, inc);
 	}

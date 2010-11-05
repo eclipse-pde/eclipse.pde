@@ -488,9 +488,11 @@ public class ReferenceExtractor extends ClassAdapter {
 				case Opcodes.NEW: {
 					//we can omit the NEW case as it is caught by the constructor call
 					//handle it only for anonymous / local types
-					Reference ref = (Reference) fAnonymousTypes.get(processName(type.getInternalName()));
-					if(ref != null) {
-						this.linePositionTracker.addLocation(ref);
+					List refs = (List) fAnonymousTypes.get(processName(type.getInternalName()));
+					if(refs != null) {
+						for (Iterator iterator = refs.iterator(); iterator.hasNext(); ) {
+							this.linePositionTracker.addLocation((Reference) iterator.next());
+						}
 					}
 				}
 			}
@@ -1231,16 +1233,18 @@ public class ReferenceExtractor extends ClassAdapter {
 					//do nothing for a bad classfile
 					return;
 				}
-				Set refs = null;
+				Set refs = processInnerClass(type, fReferenceKinds);;
 				if(type.isAnonymous() || type.isLocal()) {
-					//visit the class files for the dependent anonymous and local inner types
-					refs = processInnerClass(type, IReference.REF_EXTENDS);
-					if(refs.iterator().hasNext()) {
-						fAnonymousTypes.put(pname, refs.iterator().next());
+					// visit the class files for the dependent anonymous and local inner types
+					// set a line number for all references with no line numbers
+					List allRefs = new ArrayList();
+					for (Iterator iterator = refs.iterator(); iterator.hasNext(); ) {
+						Reference reference = (Reference) iterator.next();
+						if (reference.getLineNumber() < 0) {
+							allRefs.add(reference);
+						}
 					}
-				}
-				else {
-					refs = processInnerClass(type, fReferenceKinds);
+					fAnonymousTypes.put(pname, allRefs);
 				}
 				if(refs != null && !refs.isEmpty()) {
 					this.collector.addAll(refs);

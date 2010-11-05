@@ -85,13 +85,13 @@ public class ReferenceAnalyzer {
 		public void visit(String packageName, IApiTypeRoot classFile) {
 			if (!fMonitor.isCanceled()) {
 				try {
-					//don't process inner/anonymous/local types, this is done in the extractor
-					if(classFile.getTypeName().indexOf('$') > -1) {
-						return;
-					}
 					IApiType type = classFile.getStructure();
 					if(type == null) {
 						//do nothing for bad class files
+						return;
+					}
+					//don't process inner/anonymous/local types, this is done in the extractor
+					if(type.isMemberType() || type.isLocal() || type.isAnonymous()) {
 						return;
 					}
 					List references = type.extractReferences(fAllReferenceKinds, null);
