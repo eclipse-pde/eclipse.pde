@@ -52,9 +52,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected IMetadataRepository getRepository(URI uri) throws Exception {
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		assertNotNull("Unable to acquire p2 agent",agent);
-		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager(); 
 		assertNotNull("Missing metadata repository manager", manager);
 		IMetadataRepository repo = manager.loadRepository(uri, null);
 		return repo;
