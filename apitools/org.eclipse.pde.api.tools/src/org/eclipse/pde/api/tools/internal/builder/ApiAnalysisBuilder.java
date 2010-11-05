@@ -76,6 +76,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	static final IPath SETTINGS_PATH = new Path(".settings"); //$NON-NLS-1$
 	
 	/**
+	 * Project relative path to the build.properties file
+	 */
+	static final IPath BUILD_PROPERTIES_PATH = new Path("build.properties"); //$NON-NLS-1$
+
+	/**
 	 * Project relative path to the manifest file.
 	 */
 	static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
@@ -272,11 +277,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						}
 						else {	
 							IResourceDelta manifest = null;
+							IResourceDelta buildProperties = null;
 							IResourceDelta filters = null;
 							boolean filterbuild = false;
 							for (int i = 0; i < deltas.length; i++) {
 								manifest = deltas[i].findMember(MANIFEST_PATH);
 								if(manifest != null) {
+									break;
+								}
+								buildProperties = deltas[i].findMember(BUILD_PROPERTIES_PATH);
+								if(buildProperties != null) {
 									break;
 								}
 								filters = deltas[i].findMember(FILTER_PATH);
@@ -297,7 +307,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 									}
 								}
 							}
-							if (manifest != null || filterbuild) {
+							if (manifest != null || buildProperties != null || filterbuild) {
 								if (DEBUG) {
 									System.out.println("Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
 		 						}

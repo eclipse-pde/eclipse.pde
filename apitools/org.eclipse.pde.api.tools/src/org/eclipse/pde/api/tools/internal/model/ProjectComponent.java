@@ -265,33 +265,11 @@ public class ProjectComponent extends BundleComponent {
 						int length = entries.length;
 						for (int i = 0; i < length; i++) {
 							IBuildEntry buildEntry = entries[i];
-							if (buildEntry.getName().startsWith(IBuildEntry.JAR_PREFIX)) {
-								String jar = buildEntry.getName().substring(IBuildEntry.JAR_PREFIX.length());
-								String[] tokens = buildEntry.getTokens();
-								if (tokens.length == 1) {
-									IApiTypeContainer container = getApiTypeContainer(tokens[0], this);
-									if (container != null) {
-										fPathToOutputContainers.put(jar, container);
-									}
-								} else {
-									List containers = new ArrayList();
-									for (int j = 0; j < tokens.length; j++) {
-										String currentToken = tokens[j];
-										IApiTypeContainer container = getApiTypeContainer(currentToken, this);
-										if (container != null && !containers.contains(container)) {
-											containers.add(container);
-										}
-									}
-									if (!containers.isEmpty()) {
-										IApiTypeContainer cfc = null;
-										if (containers.size() == 1) {
-											cfc = (IApiTypeContainer) containers.get(0);
-										} else {
-											cfc = new CompositeApiTypeContainer(this, containers);
-										}
-										fPathToOutputContainers.put(jar, cfc);
-									}
-								}
+							String name = buildEntry.getName();
+							if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
+								retrieveContainers(name, IBuildEntry.JAR_PREFIX, buildEntry);
+							} else if (name.startsWith("extra.")) { //$NON-NLS-1$
+								retrieveContainers(name, "extra.", buildEntry); //$NON-NLS-1$
 							}
 						}
 					}
@@ -301,7 +279,49 @@ public class ProjectComponent extends BundleComponent {
 		}
 		return Collections.EMPTY_LIST;
 	}
-	
+	private void retrieveContainers(String name, String prefix, IBuildEntry buildEntry) throws CoreException {
+		String jar = name.substring(prefix.length());
+		String[] tokens = buildEntry.getTokens();
+		if (tokens.length == 1) {
+			IApiTypeContainer container = getApiTypeContainer(tokens[0], this);
+			if (container != null) {
+				IApiTypeContainer existingContainer = (IApiTypeContainer) this.fPathToOutputContainers.get(jar);
+				if (existingContainer != null) {
+					// concat both containers
+					List allContainers = new ArrayList();
+					allContainers.add(existingContainer);
+					allContainers.add(container);
+					IApiTypeContainer apiTypeContainer = new CompositeApiTypeContainer(this, allContainers);
+					fPathToOutputContainers.put(jar, apiTypeContainer);
+				} else {
+					fPathToOutputContainers.put(jar, container);
+				}
+			}
+		} else {
+			List containers = new ArrayList();
+			for (int j = 0; j < tokens.length; j++) {
+				String currentToken = tokens[j];
+				IApiTypeContainer container = getApiTypeContainer(currentToken, this);
+				if (container != null && !containers.contains(container)) {
+					containers.add(container);
+				}
+			}
+			if (!containers.isEmpty()) {
+				IApiTypeContainer existingContainer = (IApiTypeContainer) this.fPathToOutputContainers.get(jar);
+				if (existingContainer != null) {
+					// concat both containers
+					containers.add(existingContainer);
+				}
+				IApiTypeContainer cfc = null;
+				if (containers.size() == 1) {
+					cfc = (IApiTypeContainer) containers.get(0);
+				} else {
+					cfc = new CompositeApiTypeContainer(this, containers);
+				}
+				fPathToOutputContainers.put(jar, cfc);
+			}
+		}
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createClassFileContainer(java.lang.String)
 	 */
