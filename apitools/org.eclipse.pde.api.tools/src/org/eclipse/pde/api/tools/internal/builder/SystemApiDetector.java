@@ -248,6 +248,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			case IReference.T_TYPE_REFERENCE : {
 				int linenumber = reference.getLineNumber();
 				if (linenumber > 0) {
+					// line number starts at 0 for the 
 					linenumber--;
 				}
 				if (linenumber > 0) {
