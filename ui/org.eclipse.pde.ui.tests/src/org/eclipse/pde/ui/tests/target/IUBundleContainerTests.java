@@ -110,8 +110,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 			IProfile profile = P2TargetUtils.getProfile(target);
 
-			IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-			IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
+			IProvisioningAgent agent = P2TargetUtils.getAgent();
+			IEngine engine = P2TargetUtils.getEngine();
 			IProvisioningPlan plan = engine.createPlan(profile, new ProvisioningContext(agent));
 			IQueryResult units = profile.query(QueryUtil.ALL_UNITS, null);
 			for (Iterator iterator = units.iterator(); iterator.hasNext();) {
