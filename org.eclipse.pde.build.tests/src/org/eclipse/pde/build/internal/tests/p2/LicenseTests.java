@@ -167,7 +167,7 @@ public class LicenseTests extends P2TestCase {
 		try {
 			runBuild(buildFolder);
 		} catch (Exception e) {
-			assertTrue("Build throws wrong exception", e.getMessage().indexOf("uses license: root keyword but does not reference a license feature") != -1);
+			assertTrue("Build throws wrong exception", e.getMessage().indexOf("uses 'license:' root keyword but does not reference a license feature") != -1);
 			expectedExceptionCaught = true;
 		}
 
