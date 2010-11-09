@@ -208,10 +208,8 @@ public class CoreUtility {
 			is = new FileInputStream(source);
 			os = new FileOutputStream(target);
 			byte[] buf = new byte[1024];
-			long currentLen = 0;
 			int len = is.read(buf);
 			while (len != -1) {
-				currentLen += len;
 				os.write(buf, 0, len);
 				len = is.read(buf);
 			}

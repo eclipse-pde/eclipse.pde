@@ -416,6 +416,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		}
 		// there should be 80 plug-ins and 4 source plug-ins (win 32)
 		assertEquals("Wrong number of bundles", 84, bundles.length);
+		assertEquals("Wrong number of binary bundles", 75, bin);
 		assertEquals("Wrong number of source bundles", 4, source);
 		assertEquals("Wrong number of fragments", 6, frag);
 	}
@@ -467,6 +468,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		}
 		// there should be 80 plug-ins and 4 source plug-ins (win 32) + 10 extra links plug-ins (5 of which are source)
 		assertEquals("Wrong number of bundles", 94, bundles.length);
+		assertEquals("Wrong number of binary bundles", 80, bin);
 		assertEquals("Wrong number of source bundles", 9, source);
 		assertEquals("Wrong number of fragments", 6, frag);
 		

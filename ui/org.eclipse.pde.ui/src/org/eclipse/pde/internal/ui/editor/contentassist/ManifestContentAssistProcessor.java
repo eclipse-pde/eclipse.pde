@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,8 @@ import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -182,10 +180,6 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 
 	protected ICompletionProposal[] computeHeader(String currentValue, int startOffset, int offset) {
 		ArrayList completions = new ArrayList();
-		IBaseModel model = fSourcePage.getInputContext().getModel();
-		int length = fHeader.length;
-		if (model instanceof IBundleModel && !((IBundleModel) model).isFragmentModel())
-			--length;
 		for (int i = 0; i < fHeader.length; i++) {
 			if (fHeader[i].regionMatches(true, 0, currentValue, 0, currentValue.length()) && fHeaders.get(fHeader[i]) == null) {
 				TypeCompletionProposal proposal = new TypeCompletionProposal(fHeader[i] + ": ", getImage(F_TYPE_HEADER), //$NON-NLS-1$
