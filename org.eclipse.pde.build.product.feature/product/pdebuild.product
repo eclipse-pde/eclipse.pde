@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Basic Standalone PDE Build System" uid="org.eclipse.pde.build.product" application="org.eclipse.pde.build.Build" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-console -nosplash -consolelog</programArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <launcher name="pdebuild">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.eclipse.pde.build.feature" version="1.0.0.qualifier"/>
+      <feature id="org.eclipse.pde.build.product.feature" version="1.0.0.qualifier"/>
+      <feature id="org.eclipse.core.runtime.feature" version="1.0.0.qualifier"/>
+   </features>
+
+
+</product>
