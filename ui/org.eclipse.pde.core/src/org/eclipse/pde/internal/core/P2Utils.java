@@ -375,9 +375,9 @@ public class P2Utils {
 
 		// Create the profile
 		IProfile profile = null;
-		Properties props = new Properties();
+		Map props = new HashMap();
 //		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
-		props.setProperty(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
+		props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 		// Set up environment and nationalization properties so OS specific fragments are installed
 		props.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
 		props.put(IProfile.PROP_NL, TargetPlatform.getNL());
