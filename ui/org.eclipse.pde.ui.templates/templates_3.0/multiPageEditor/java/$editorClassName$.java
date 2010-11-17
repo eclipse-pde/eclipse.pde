@@ -129,6 +129,9 @@ public class $editorClassName$ extends MultiPageEditorPart implements IResourceC
 	 * Subclasses may extend.
 	 */
 	public void dispose() {
+		// SWT resources like fonts must be explicitly disposed when they are no longer needed
+		if (font != null)
+			font.dispose();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
