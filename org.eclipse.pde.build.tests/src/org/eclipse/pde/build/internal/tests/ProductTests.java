@@ -207,14 +207,14 @@ public class ProductTests extends PDETestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/foo/foo.product");
-		properties.put("configs", "win32,win32,x86_64 & hpux, motif, ia64_32");
+		properties.put("configs", "win32,win32,x86_64 & aix, gtk, ppc64");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
 
-		assertResourceFile(buildFolder, "I.TestBuild/eclipse-hpux.motif.ia64_32.zip");
+		assertResourceFile(buildFolder, "I.TestBuild/eclipse-aix.gtk.ppc64.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86_64.zip");
 	}
 
