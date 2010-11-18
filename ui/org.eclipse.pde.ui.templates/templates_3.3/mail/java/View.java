@@ -17,6 +17,11 @@ import org.eclipse.ui.part.ViewPart;
 public class View extends ViewPart {
 
 	public static final String ID = "$pluginId$.view";
+
+	/**
+	 * The text control that's displaying the content of the email message.
+	 */
+	private Text messageText;
 	
 	public void createPartControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
@@ -60,8 +65,8 @@ public class View extends ViewPart {
 		l = new Label(banner, SWT.WRAP);
 		l.setText("10:34 am");
 		// message contents
-		Text text = new Text(top, SWT.MULTI | SWT.WRAP);
-		text.setText("This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:\n"+
+		messageText = new Text(top, SWT.MULTI | SWT.WRAP);
+		messageText.setText("This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:\n"+
 						"- add a top-level menu and toolbar with actions\n"+
 						"- add keybindings to actions\n" +
 						"- create views that can't be closed and\n"+
@@ -69,9 +74,10 @@ public class View extends ViewPart {
 						"- perspectives with placeholders for new views\n"+
 						"- use the default about dialog\n"+
 						"- create a product definition\n");
-		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+		messageText.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	public void setFocus() {
+		messageText.setFocus();
 	}
 }
