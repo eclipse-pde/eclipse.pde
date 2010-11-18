@@ -115,7 +115,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			delta = ApiComparator.compare(referenceBaseline, currentBaseline, VisibilityModifiers.API, true, null);
 		} finally {
 			if (this.debug) {
-				System.out.println("API freeze check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("API deprecation check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				time = System.currentTimeMillis();
 			}
 			referenceBaseline.dispose();
@@ -138,7 +138,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			File outputFile = new File(this.reportLocation);
 			if (outputFile.exists()) {
 				if (outputFile.isDirectory()){
-					 outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);					
+					 outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);
 				}
 				// delete the file
 				// TODO we might want to customize it

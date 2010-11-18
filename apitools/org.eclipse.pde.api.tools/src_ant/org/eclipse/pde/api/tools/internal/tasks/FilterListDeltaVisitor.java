@@ -189,7 +189,8 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 							}
 						}
 					}
-					if (delta.getElementType() == IDelta.API_BASELINE_ELEMENT_TYPE) {
+					if (delta.getElementType() == IDelta.API_BASELINE_ELEMENT_TYPE
+							&& ((this.flags & CHECK_OTHER) != 0)) {
 						switch(delta.getKind()) {
 							case IDelta.ADDED :
 								if (delta.getFlags() == IDelta.API_COMPONENT) {
