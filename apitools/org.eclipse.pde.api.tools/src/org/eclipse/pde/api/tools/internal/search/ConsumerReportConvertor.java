@@ -95,6 +95,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 */
 	class ConsumerReportVisitor extends UseScanVisitor{
 		Consumer consumer;
+		Map producers = new HashMap();
 		private IComponentDescriptor consumerDescriptor;
 		private Producer currentProducer;
 		private Type2 currenttype = null;
@@ -126,7 +127,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 					start = System.currentTimeMillis();
 				}
 				if(consumer.counts.getTotalRefCount() > 0) {
-					writeConsumerReport(consumer);
+					writeConsumerReport(consumer, producers);
+					producers.clear();
 				}
 				if(DEBUG) {
 					System.out.println("Done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -152,8 +154,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		public void endVisitComponent(IComponentDescriptor target) {
 			if(this.currentProducer.counts.getTotalRefCount() > 0) {
 				try {
-					if (!consumer.producers.containsKey(currentProducer.name)){
-						consumer.producers.put(currentProducer.name, currentProducer);
+					if (!producers.containsKey(currentProducer.name)){
+						producers.put(currentProducer.name, currentProducer);
 					}
 					long start = 0;
 					if(DEBUG) {
@@ -423,7 +425,6 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	
 	class Consumer{
 		String name;
-		Map producers = new HashMap();
 		CountGroup counts = new CountGroup();
 	}
 	
@@ -461,9 +462,11 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		parser.parse(getXmlLocation(), subMon.newChild(5), listVisitor);
 		List consumerReports = new ArrayList();
 		
+		IComponentDescriptor currentConsumer = null;
+		ConsumerReportVisitor visitor = null;
 		for (Iterator iterator = listVisitor.consumers.iterator(); iterator.hasNext();) {
-			IComponentDescriptor currentConsumer = (IComponentDescriptor)iterator.next();
-			ConsumerReportVisitor visitor = new ConsumerReportVisitor(currentConsumer);
+			currentConsumer = (IComponentDescriptor)iterator.next();
+			visitor = new ConsumerReportVisitor(currentConsumer);
 			parser.parse(getXmlLocation(), null, visitor);
 			if (visitor.consumer.counts.getTotalRefCount() > 0){
 				consumerReports.add(visitor.consumer);
@@ -574,9 +577,10 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * the consumer bundle references.
 	 * 
 	 * @param consumer consumer to write the report for
+	 * @param producers a map of producer name to a {@link Producer} object
 	 * @throws Exception
 	 */
-	protected void writeConsumerReport(Consumer consumer) throws Exception {
+	protected void writeConsumerReport(Consumer consumer, Map producers) throws Exception {
 		PrintWriter writer = null;
 		File originhtml = null;
 		try {
@@ -599,7 +603,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_H3).append(getConsumerTitle(consumer.name)).append(CLOSE_H3);
 			
 			List producerNames = new ArrayList();
-			producerNames.addAll(consumer.producers.keySet());
+			producerNames.addAll(producers.keySet());
 			Collections.sort(producerNames, compare);
 			
 			buffer.append(getReferencesTableHeader(SearchMessages.ConsumerReportConvertor_ConsumerListHeader, SearchMessages.UseReportConverter_bundle, true));
@@ -607,7 +611,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			File refereehtml = null;
 			String link = null;
 			for(Iterator iter = producerNames.iterator(); iter.hasNext();) {
-				producer = (Producer)consumer.producers.get(iter.next());
+				producer = (Producer)producers.get(iter.next());
 				if(producer != null) {
 					refereehtml = new File(getReportsRoot(), producer.name+File.separator+"index.html"); //$NON-NLS-1$
 					link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
