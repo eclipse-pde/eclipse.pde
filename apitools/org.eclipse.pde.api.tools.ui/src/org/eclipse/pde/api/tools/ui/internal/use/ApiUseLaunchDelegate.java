@@ -52,6 +52,15 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final String JAR_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".JAR_PATTERNS_LIST"; //$NON-NLS-1$
 	public static final String REPORT_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".REPORT_PATTERNS_LIST"; //$NON-NLS-1$
 	public static final String REPORT_TO_PATTERNS_LIST = ApiUIPlugin.PLUGIN_ID + ".TO_PATTERNS_LIST"; //$NON-NLS-1$
+	
+	/**
+	 * Type of report to produce.  Integer value selected between possible values {@link #REPORT_KIND_CONSUMER} and
+	 * {@link #REPORT_KIND_PRODUCER}.
+	 */
+	public static final String REPORT_TYPE = ApiUIPlugin.PLUGIN_ID + ".REPORT_TYPE"; //$NON-NLS-1$
+	public static final int REPORT_KIND_PRODUCER = 1;
+	public static final int REPORT_KIND_CONSUMER = 2;
+	
 	/**
 	 * Scope of bundles to search - a regular expression to match against bundle symbolic names.
 	 * Unspecified indicates all bundles in the bundle source.

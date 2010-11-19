@@ -42,6 +42,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.ApiDescriptionModifier;
+import org.eclipse.pde.api.tools.internal.search.ConsumerReportConvertor;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.eclipse.pde.api.tools.internal.search.UseMetadata;
 import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
@@ -185,7 +186,14 @@ public class ApiUseScanJob extends Job {
 			if(isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_generating_html_reports);
 				String htmlPath = rootpath.append("html").toOSString(); //$NON-NLS-1$
+				
+				int reportType = ApiUseLaunchDelegate.REPORT_KIND_PRODUCER;
+				if (this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER) == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER){
+					reportType = ApiUseLaunchDelegate.REPORT_KIND_CONSUMER;
+				}
+				
 				performReportCreation(
+						reportType,
 						isSpecified(ApiUseLaunchDelegate.CLEAN_HTML),
 						htmlPath,
 						xmlPath,
@@ -364,6 +372,7 @@ public class ApiUseScanJob extends Job {
 	
 	/**
 	 * Performs the report creation
+	 * @param reportType what report converter to use, either {@link ApiUseLaunchDelegate#REPORT_KIND_PRODUCER} or {@link ApiUseLaunchDelegate#REPORT_KIND_CONSUMER}
 	 * @param cleanh
 	 * @param hlocation
 	 * @param rlocation
@@ -371,7 +380,8 @@ public class ApiUseScanJob extends Job {
 	 * @param monitor
 	 * @throws OperationCanceledException
 	 */
-	void performReportCreation(boolean cleanh, 
+	void performReportCreation(int reportType, 
+			boolean cleanh, 
 			String hlocation, 
 			String rlocation, 
 			boolean openhtml,
@@ -383,7 +393,13 @@ public class ApiUseScanJob extends Job {
 			cleanReportLocation(hlocation, localmonitor.newChild(5));
 		}
 		try {
-			UseReportConverter converter = new UseReportConverter(hlocation, rlocation, topatterns, frompatterns);
+			UseReportConverter converter = null;
+			if (reportType == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER){
+				converter = new ConsumerReportConvertor(hlocation, rlocation, topatterns, frompatterns);
+			} else {
+				converter = new UseReportConverter(hlocation, rlocation, topatterns, frompatterns);
+			}
+			
 			converter.convert(null, localmonitor.newChild(5));
 			if(openhtml) {
 				final File index = converter.getReportIndex();

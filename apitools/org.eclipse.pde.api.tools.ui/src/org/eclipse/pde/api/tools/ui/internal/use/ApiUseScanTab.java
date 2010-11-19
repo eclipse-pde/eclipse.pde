@@ -81,7 +81,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	};
 	
 	boolean initializing = false;
-	Combo baseline, targetCombo;
+	Combo baseline, targetCombo, reportTypeCombo;
 	Button radioBaseline = null, 
 		   radioTarget = null, 
 		   radioInstall = null,
@@ -113,14 +113,14 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		GridLayout layout = (GridLayout) comp.getLayout();
 		layout.makeColumnsEqualWidth = true;
 		
-		Group group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_analuze, 3, 3, GridData.FILL_HORIZONTAL);
-		this.radioBaseline = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_api_baseline);
+		Group reportGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_analuze, 3, 3, GridData.FILL_HORIZONTAL);
+		this.radioBaseline = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_api_baseline);
 		this.radioBaseline.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateTarget();
 			}
 		});
-		this.baseline = SWTFactory.createCombo(group, 
+		this.baseline = SWTFactory.createCombo(reportGroup, 
 				SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 
 				1, 
 				GridData.BEGINNING | GridData.FILL_HORIZONTAL, 
@@ -128,7 +128,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		GridData gd = (GridData) this.baseline.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		this.baseline.addSelectionListener(selectionadapter);
-		this.baselinesButton = SWTFactory.createPushButton(group, Messages.ApiUseScanTab_baselines, null);
+		this.baselinesButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_baselines, null);
 		this.baselinesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int bef = ApiUseScanTab.this.baseline.getSelectionIndex();
@@ -151,13 +151,13 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		this.radioTarget = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_target_definitions);
+		this.radioTarget = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_target_definitions);
 		this.radioTarget.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateTarget();
 			}
 		});
-		this.targetCombo = SWTFactory.createCombo(group, 
+		this.targetCombo = SWTFactory.createCombo(reportGroup, 
 				SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 
 				1, 
 				GridData.BEGINNING | GridData.FILL_HORIZONTAL, 
@@ -165,7 +165,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		gd = (GridData) this.targetCombo.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		this.targetCombo.addSelectionListener(selectionadapter);
-		this.targetsButton = SWTFactory.createPushButton(group, Messages.ApiUseScanTab_targets, null);
+		this.targetsButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_targets, null);
 		this.targetsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = ApiUseScanTab.this.targetCombo.getSelectionIndex();
@@ -187,23 +187,23 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		this.radioInstall = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_install_location);
+		this.radioInstall = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_install_location);
 		this.radioInstall.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateTarget();
 			}
 		});
-		this.installLocation = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
+		this.installLocation = SWTFactory.createText(reportGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		gd = (GridData) this.installLocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
-		this.installButton = SWTFactory.createPushButton(group, Messages.ApiUseScanTab_browse, null);
+		this.installButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_browse, null);
 		this.installButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				handleFolderBrowse(ApiUseScanTab.this.installLocation, Messages.ApiUseScanTab_select_install_location);
 				updateDialog();
 			}
 		});
-		this.radioReportOnly = SWTFactory.createRadioButton(group, Messages.ApiUseScanTab_generate_html_only);
+		this.radioReportOnly = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_generate_html_only);
 		gd = (GridData)this.radioReportOnly.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = 2;
@@ -231,41 +231,47 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.searchScope = SWTFactory.createText(searchInGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.searchScope.addModifyListener(modifyadapter);
 		
-		group = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
-		SWTFactory.createLabel(group, Messages.ApiUseScanTab_report_location, 2);
-		this.reportlocation = SWTFactory.createText(group, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
+		reportGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
+		
+		Composite reportTypeComp = SWTFactory.createComposite(reportGroup, 2, 2, GridData.BEGINNING, 0, 0);
+		SWTFactory.createLabel(reportTypeComp, Messages.ApiUseScanTab_reportType, 1);
+		reportTypeCombo = SWTFactory.createCombo(reportTypeComp, SWT.READ_ONLY, 1, GridData.FILL_BOTH, new String[] {Messages.ApiUseScanTab_referencedBundlesReport, Messages.ApiUseScanTab_referencingBundlesReport});
+		reportTypeCombo.addSelectionListener(selectionadapter);
+		
+		SWTFactory.createLabel(reportGroup, Messages.ApiUseScanTab_report_location, 2);
+		this.reportlocation = SWTFactory.createText(reportGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.reportlocation.addModifyListener(modifyadapter);
 		gd = (GridData) this.reportlocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
-		Button browse = SWTFactory.createPushButton(group, Messages.ApiUseScanTab_brows_e_, null);
+		Button browse = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_brows_e_, null);
 		browse.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
-				handleFolderBrowse(ApiUseScanTab.this.reportlocation, "Select the location to write the report to"); //$NON-NLS-1$
+				handleFolderBrowse(ApiUseScanTab.this.reportlocation, Messages.ApiUseScanTab_SelectDirectory);
 			}
 		});
-		this.cleanreportlocation = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_clean_report_dir, null, false, 2);
+		this.cleanreportlocation = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_clean_report_dir, null, false, 2);
 		gd = (GridData) this.cleanreportlocation.getLayoutData();
 		this.cleanreportlocation.addSelectionListener(selectionadapter);
 		gd.horizontalIndent = 10;
 		
-		this.createhtml = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_create_html_report, null, false, 2);
+		this.createhtml = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_create_html_report, null, false, 2);
 		this.createhtml.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				updateReportOptions();
 				updateDialog();
 			}
 		});
-		this.cleanhtmllocation = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_clean_html_report_dir, null, false, 2);
+		this.cleanhtmllocation = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_clean_html_report_dir, null, false, 2);
 		gd = (GridData) this.cleanhtmllocation.getLayoutData();
 		gd.horizontalIndent = 10;
 		this.cleanhtmllocation.addSelectionListener(selectionadapter);
-		this.openreport = SWTFactory.createCheckButton(group, Messages.ApiUseScanTab_open_report, null, false, 2);
+		this.openreport = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_open_report, null, false, 2);
 		gd = (GridData) this.openreport.getLayoutData();
 		gd.horizontalIndent = 10;
 		this.openreport.setEnabled(false);
 		this.openreport.addSelectionListener(selectionadapter);
-		SWTFactory.createLabel(group, Messages.ApiUseScanTab_description, 1);
-		this.description = SWTFactory.createText(group, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP, 2, GridData.FILL_HORIZONTAL);
+		SWTFactory.createLabel(reportGroup, Messages.ApiUseScanTab_description, 1);
+		this.description = SWTFactory.createText(reportGroup, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP, 2, GridData.FILL_HORIZONTAL);
 		gd = (GridData) this.description.getLayoutData();
 		gd.heightHint = 40;
 		this.description.addModifyListener(modifyadapter);
@@ -503,6 +509,14 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.considerapi.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES, configuration));
 			this.considerinternal.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, configuration));
 			this.consideruse.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE, configuration));
+			
+			int reportType = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
+			if (reportType == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER){
+				this.reportTypeCombo.select(1);
+			} else {
+				this.reportTypeCombo.select(0);
+			}
+			
 			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, IApiToolsConstants.EMPTY_STRING)); 
 			this.cleanreportlocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_XML, configuration));
 			boolean enabled = isSpecified(ApiUseLaunchDelegate.CREATE_HTML, configuration);
@@ -627,6 +641,12 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, this.searchScope.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, this.targetScope.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.DESCRIPTION, this.description.getText().trim());
+		if (reportTypeCombo.getSelectionIndex() == 1){
+			configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_CONSUMER);
+		} else {
+			// TODO This will likely make the config dirty
+			configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
+		}
 	}
 	
 	/**
@@ -673,6 +693,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		int modifiers = ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES;
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
+		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
 	}
 	
 	/* (non-Javadoc)

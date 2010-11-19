@@ -68,13 +68,17 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_internal_references;
 	public static String ApiUseScanTab_must_search_something;
 	public static String ApiUseScanTab_open_report;
+	public static String ApiUseScanTab_referencedBundlesReport;
 	public static String ApiUseScanTab_references_to;
+	public static String ApiUseScanTab_referencingBundlesReport;
 	public static String ApiUseScanTab_regex_problem;
 	public static String ApiUseScanTab_report_location;
 	public static String ApiUseScanTab_reporting;
+	public static String ApiUseScanTab_reportType;
 	public static String ApiUseScanTab_search_for;
 	public static String ApiUseScanTab_search_in;
 	public static String ApiUseScanTab_select_install_location;
+	public static String ApiUseScanTab_SelectDirectory;
 	public static String ApiUseScanTab_target_definitions;
 	public static String ApiUseScanTab_targets;
 	public static String ArchivePatternPage_archive_name;
