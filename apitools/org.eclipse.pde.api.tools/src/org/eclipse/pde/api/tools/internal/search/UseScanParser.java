@@ -106,12 +106,22 @@ public class UseScanParser {
 	 */
 	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) throws SAXException {
 		if (IApiXmlConstants.REFERENCES.equals(name)) {
+			// Check that the current target component and referencing component match what is in the file
 			String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
-			String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
 			String[] idv = getIdVersion(target);
-			enterTargetComponent(Factory.componentDescriptor(idv[0], idv[1]));
+			IComponentDescriptor targetComponent = Factory.componentDescriptor(idv[0], idv[1]);
+			if (!targetComponent.equals(this.targetComponent)){
+				System.out.println("WARNING: The referee in the xml file (" + targetComponent + ") does not match the directory name (" + this.targetComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			
+			String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
 			idv = getIdVersion(source);
-			enterReferencingComponent(Factory.componentDescriptor(idv[0], idv[1]));
+			IComponentDescriptor sourceComponent = Factory.componentDescriptor(idv[0], idv[1]);
+			if (!sourceComponent.equals(this.referencingComponent)){
+				System.out.println("WARNING: The origin in the xml file (" + sourceComponent + ") does not match the directory name (" + this.referencingComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			
+			// Track the current reference visibility
 			String visString = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
 			try {
 				int vis = Integer.parseInt(visString);
@@ -228,33 +238,52 @@ public class UseScanParser {
 		visitor.visitScan();
 		try {
 			SAXParser parser = getParser();
+			// Treat each top level directory as a producer component
 			for (int i = 0; i < referees.length; i++) {
-				origins = getDirectories(referees[i]);
-				origins = sort(origins); // sort to visit in determined order
-				for (int j = 0; j < origins.length; j++) {
-					localmonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {origins[j].getName()}));
-					xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
-						public boolean accept(File pathname) {
-							return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
-						}
-					});
-					if (xmlfiles != null && xmlfiles.length > 0) {
-						xmlfiles = sort(xmlfiles); // sort to visit in determined order
-						for (int k = 0; k < xmlfiles.length; k++) {
-							try {
-								ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
-								parser.parse(xmlfiles[k], handler);
-							} 
-							catch (SAXException e) {}
-							catch (IOException e) {}
+				if (referees[i].isDirectory()){
+					String[] idv = getIdVersion(referees[i].getName());
+					IComponentDescriptor targetComponent = Factory.componentDescriptor(idv[0], idv[1]);
+					enterTargetComponent(targetComponent);
+					if (visitReferencingComponent){
+
+						// If the visitor returned true, treat sub-directories as consumer components
+						origins = getDirectories(referees[i]);
+						origins = sort(origins); // sort to visit in determined order
+						for (int j = 0; j < origins.length; j++) {
+							if (origins[j].isDirectory()){
+								idv = getIdVersion(origins[j].getName());
+								IComponentDescriptor referencingComponent = Factory.componentDescriptor(idv[0], idv[1]);
+								enterReferencingComponent(referencingComponent);
+								if (visitMembers){
+
+									// If the visitor returned true, open all xml files in the directory and process them to find members
+									localmonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {origins[j].getName()}));
+									xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
+										public boolean accept(File pathname) {
+											return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
+										}
+									});
+									if (xmlfiles != null && xmlfiles.length > 0) {
+										xmlfiles = sort(xmlfiles); // sort to visit in determined order
+										for (int k = 0; k < xmlfiles.length; k++) {
+											try {
+												ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
+												parser.parse(xmlfiles[k], handler);
+											} 
+											catch (SAXException e) {}
+											catch (IOException e) {}
+										}
+									}
+									endMember();
+								}
+								endReferencingComponent();
+							}
 						}
 					}
+					Util.updateMonitor(localmonitor, 1);
+					endComponent();
 				}
-				Util.updateMonitor(localmonitor, 1);
 			}
-			endMember();
-			endReferencingComponent();
-			endComponent();
 		}
 		finally {
 			visitor.endVisitScan();
