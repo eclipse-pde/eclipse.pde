@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.ui.launcher.PDELogFileProvider;
@@ -215,4 +216,19 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return fTextFileDocumentProvider;
 	}
 
+	/**
+	 * Returns a section in the PDE UI plug-in's dialog settings. If the section doesn't exist yet, it is created.
+	 *
+	 * @param name the name of the section
+	 * @return the section of the given name
+	 * @since 3.6.100
+	 */
+	public IDialogSettings getDialogSettingsSection(String name) {
+		IDialogSettings dialogSettings = getDialogSettings();
+		IDialogSettings section = dialogSettings.getSection(name);
+		if (section == null) {
+			section = dialogSettings.addNewSection(name);
+		}
+		return section;
+	}
 }
