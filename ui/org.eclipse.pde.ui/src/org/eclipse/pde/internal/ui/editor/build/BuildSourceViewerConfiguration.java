@@ -16,7 +16,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -35,8 +34,6 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fCommentScanner;
 	private BasePDEScanner fPropertyValueScanner;
-
-	private PDEQuickAssistAssistant fQuickAssistant;
 
 	private abstract class AbstractJavaScanner extends BasePDEScanner {
 
@@ -219,19 +216,5 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 	public boolean affectsColorPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
-	}
-
-	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
-		if (sourceViewer.isEditable()) {
-			if (fQuickAssistant == null)
-				fQuickAssistant = new PDEQuickAssistAssistant();
-			return fQuickAssistant;
-		}
-		return null;
-	}
-
-	public void dispose() {
-		if (fQuickAssistant != null)
-			fQuickAssistant.dispose();
 	}
 }

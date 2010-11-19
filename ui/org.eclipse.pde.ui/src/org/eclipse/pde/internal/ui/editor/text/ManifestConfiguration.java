@@ -15,7 +15,6 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -31,7 +30,6 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	private IAnnotationHover fAnnotationHover;
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fPropertyValueScanner;
-	private PDEQuickAssistAssistant fQuickAssistant;
 	private ContentAssistant fContentAssistant;
 	private ManifestContentAssistProcessor fContentAssistantProcessor;
 	private ManifestTextHover fTextHover;
@@ -226,18 +224,8 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		fPropertyValueScanner.adaptToPreferenceChange(event);
 	}
 
-	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
-		if (sourceViewer.isEditable()) {
-			if (fQuickAssistant == null)
-				fQuickAssistant = new PDEQuickAssistAssistant();
-			return fQuickAssistant;
-		}
-		return null;
-	}
-
 	public void dispose() {
-		if (fQuickAssistant != null)
-			fQuickAssistant.dispose();
+		super.dispose();
 		if (fContentAssistant != null)
 			fContentAssistantProcessor.dispose();
 	}

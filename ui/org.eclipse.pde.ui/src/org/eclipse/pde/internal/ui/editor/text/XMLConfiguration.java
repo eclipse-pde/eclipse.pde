@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.text;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -40,7 +39,6 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 	private TextAttribute fXMLCommentAttr;
 	private MultilineDamagerRepairer fDamagerRepairer;
-	private PDEQuickAssistAssistant fQuickAssistant;
 
 	public XMLConfiguration(IColorManager colorManager) {
 		this(colorManager, null);
@@ -151,20 +149,6 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	public boolean affectsColorPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.equals(IPDEColorConstants.P_DEFAULT) || property.equals(IPDEColorConstants.P_PROC_INSTR) || property.equals(IPDEColorConstants.P_STRING) || property.equals(IPDEColorConstants.P_EXTERNALIZED_STRING) || property.equals(IPDEColorConstants.P_TAG) || property.equals(IPDEColorConstants.P_XML_COMMENT);
-	}
-
-	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
-		if (sourceViewer.isEditable()) {
-			if (fQuickAssistant == null)
-				fQuickAssistant = new PDEQuickAssistAssistant();
-			return fQuickAssistant;
-		}
-		return null;
-	}
-
-	public void dispose() {
-		if (fQuickAssistant != null)
-			fQuickAssistant.dispose();
 	}
 
 	protected int getInfoImplementationType() {

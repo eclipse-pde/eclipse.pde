@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.*;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -37,6 +38,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	protected AbstractReconciler fReconciler;
 	private InformationPresenter fInfoPresenter;
 	private InformationPresenter fOutlinePresenter;
+	private PDEQuickAssistAssistant fQuickAssistant;
 
 	/**
 	 * @param page
@@ -163,12 +165,26 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		return allDetectors;
 	}
 
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		if (sourceViewer.isEditable()) {
+			if (fQuickAssistant == null) {
+				fQuickAssistant = new PDEQuickAssistAssistant();
+				fQuickAssistant.setRestoreCompletionProposalSize(PDEPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
+			}
+			return fQuickAssistant;
+		}
+		return null;
+	}
+
 	public abstract boolean affectsTextPresentation(PropertyChangeEvent event);
 
 	public abstract boolean affectsColorPresentation(PropertyChangeEvent event);
 
 	public abstract void adaptToPreferenceChange(PropertyChangeEvent event);
 
-	public abstract void dispose();
+	public void dispose() {
+		if (fQuickAssistant != null)
+			fQuickAssistant.dispose();
+	}
 
 }
