@@ -346,11 +346,12 @@ public class PluginRegistry {
 		Version maxV = null;
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
+			String versionStr = model.getPluginBase().getVersion();
+			Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;
 			if (max == null) {
 				max = model;
-				maxV = new Version(model.getPluginBase().getVersion());
+				maxV = version;
 			} else {
-				Version version = new Version(model.getPluginBase().getVersion());
 				if (VersionUtil.isGreaterOrEqualTo(version, maxV)) {
 					max = model;
 					maxV = version;
@@ -383,7 +384,9 @@ public class PluginRegistry {
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
 			if ((filter == null || filter.accept(model)) && id.equals(model.getPluginBase().getId())) {
-				if (range == null || range.isIncluded(new Version(model.getPluginBase().getVersion()))) {
+				String versionStr = model.getPluginBase().getVersion();
+				Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;
+				if (range == null || range.isIncluded(version)) {
 					results.add(model);
 				}
 			}
