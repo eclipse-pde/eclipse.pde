@@ -14,8 +14,7 @@ import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.xml.parsers.SAXParserFactory;
-import org.eclipse.core.runtime.IContributor;
-import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -125,6 +124,13 @@ public class PDERegistryStrategy extends RegistryStrategy {
 
 	protected void init() {
 		connectListeners();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.spi.RegistryStrategy#log(org.eclipse.core.runtime.IStatus)
+	 */
+	public void log(IStatus status) {
+		// Because we are at development time, we create markers for registry problems and therefore do not log anything (bug 330648)
 	}
 
 	protected void connectListeners() {
