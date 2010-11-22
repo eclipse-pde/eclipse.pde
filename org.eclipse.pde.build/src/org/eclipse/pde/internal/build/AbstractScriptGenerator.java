@@ -640,8 +640,16 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 						IProfile profile = registry.getProfile(profileId, timestamp);
 						if (profile != null) {
 							String cache = profile.getProperty(IProfile.PROP_CACHE);
-							if (cache != null)
-								result.add(new File(cache).toURI());
+							if (cache != null) {
+								File cacheFolder = new File(cache);
+								if (cacheFolder.exists()) {
+									result.add(cacheFolder.toURI());
+								} else {
+									//if cache does not exist, this could be a roaming profile that has not
+									//been run yet, lets guess and use the parent of the p2 data area
+									result.add(areaFile.getParentFile().toURI());
+								}
+							}
 							String sharedCache = profile.getProperty(IProfile.PROP_SHARED_CACHE);
 							if (sharedCache != null)
 								result.add(new File(cache).toURI());
@@ -661,6 +669,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 					}
 				} catch (IllegalStateException e) {
 					//unable to read profile, may be read only
+					result.add(areaFile.getParentFile().toURI());
 				}
 
 				//download cache
