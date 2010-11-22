@@ -438,18 +438,20 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	private void addExtraLibrary(IPath path, IPluginModelBase model, ArrayList entries) {
-		IPath srcPath = null;
-		if (model != null) {
-			IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(new Path(model.getInstallLocation())));
-			srcPath = ClasspathUtilCore.getSourceAnnotation(model, shortPath.toString());
-		} else {
-			String filename = ClasspathUtilCore.getSourceZipName(path.lastSegment());
-			IPath candidate = path.removeLastSegments(1).append(filename);
-			if (PDECore.getWorkspace().getRoot().getFile(candidate).exists())
-				srcPath = candidate;
+		if (path.segmentCount() > 1) {
+			IPath srcPath = null;
+			if (model != null) {
+				IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(new Path(model.getInstallLocation())));
+				srcPath = ClasspathUtilCore.getSourceAnnotation(model, shortPath.toString());
+			} else {
+				String filename = ClasspathUtilCore.getSourceZipName(path.lastSegment());
+				IPath candidate = path.removeLastSegments(1).append(filename);
+				if (PDECore.getWorkspace().getRoot().getFile(candidate).exists())
+					srcPath = candidate;
+			}
+			IClasspathEntry clsEntry = JavaCore.newLibraryEntry(path, srcPath, null);
+			if (!entries.contains(clsEntry))
+				entries.add(clsEntry);
 		}
-		IClasspathEntry clsEntry = JavaCore.newLibraryEntry(path, srcPath, null);
-		if (!entries.contains(clsEntry))
-			entries.add(clsEntry);
 	}
 }
