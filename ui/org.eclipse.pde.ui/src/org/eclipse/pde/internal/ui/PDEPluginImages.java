@@ -207,6 +207,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_EXPORT_PLUGIN_TOOL = create(PATH_TOOL, "exp_deployplug.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXPORT_PRODUCT_TOOL = create(PATH_TOOL, "exp_product.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXPORT_FEATURE_TOOL = create(PATH_TOOL, "exp_deployfeat.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXPORT_TARGET_TOOL = create(PATH_TOOL, "export_target.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_TOOL = create(PATH_TOOL, "build_exec.gif"); //$NON-NLS-1$
 
 	/**

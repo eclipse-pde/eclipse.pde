@@ -19,11 +19,13 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.*;
+import org.eclipse.pde.internal.ui.wizards.exports.TargetDefinitionExportWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
@@ -286,6 +288,7 @@ public class TargetEditor extends FormEditor {
 				return hyperlink;
 			}
 		};
+
 		final String helpContextID = contextID;
 		Action help = new Action("help") { //$NON-NLS-1$
 			public void run() {
@@ -298,9 +301,23 @@ public class TargetEditor extends FormEditor {
 		};
 		help.setToolTipText(PDEUIMessages.PDEFormPage_help);
 		help.setImageDescriptor(PDEPluginImages.DESC_HELP);
+
+		Action export = new Action("export") { //$NON-NLS-1$
+			public void run() {
+				TargetDefinitionExportWizard wizard = new TargetDefinitionExportWizard(getTarget());
+				wizard.setWindowTitle(PDEUIMessages.ExportActiveTargetDefinition);
+				WizardDialog dialog = new WizardDialog(getSite().getShell(), wizard);
+				dialog.open();
+			}
+		};
+		export.setToolTipText("Export");
+		export.setImageDescriptor(PDEPluginImages.DESC_EXPORT_TARGET_TOOL);
+
 		form.getToolBarManager().add(setAsTarget);
+		form.getToolBarManager().add(export);
 		form.getToolBarManager().add(help);
 		form.updateToolBar();
+
 	}
 
 	/**

@@ -13,13 +13,10 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
 import java.io.IOException;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -34,9 +31,31 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 	private Button fBrowseButton = null;
 	private Combo fDestinationCombo = null;
 	private Button fClearDestinationButton = null;
+	private ITargetDefinition fTarget = null;
 
-	protected TargetDefinitionExportWizardPage() {
+	/**
+	 * Dialog settings key for the most recent location
+	 */
+	private static final String SETTINGS_LOCATION_1 = "location1"; //$NON-NLS-1$
+
+	/**
+	 * Dialog settings key for the second most recent location
+	 */
+	private static final String SETTINGS_LOCATION_2 = "location2"; //$NON-NLS-1$
+
+	/**
+	 * Dialog settings key for the third most recent location 
+	 */
+	private static final String SETTINGS_LOCATION_3 = "location3"; //$NON-NLS-1$
+
+	/**
+	 * Dialog settings key for whether the clear the destination directory
+	 */
+	private static final String SETTINGS_CLEAR = "clear"; //$NON-NLS-1$
+
+	protected TargetDefinitionExportWizardPage(ITargetDefinition target) {
 		super(PAGE_ID);
+		fTarget = target;
 		setPageComplete(false);
 		setTitle(PDEUIMessages.ExportActiveTargetDefinition);
 		setMessage(PDEUIMessages.ExportActiveTargetDefinition_message);
@@ -57,14 +76,7 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		new Label(parent, SWT.NONE).setText(PDEUIMessages.ExportTargetCurrentTarget);
 		Label l = new Label(parent, SWT.NONE);
-
-		try {
-			// TODO this is a bit dirty
-			TargetDefinition definition = ((TargetDefinition) TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition());
-			l.setText(definition.getName());
-		} catch (CoreException e) {
-			// TODO log something?
-		}
+		l.setText(fTarget.getName());
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -102,6 +114,8 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 15;
 		fClearDestinationButton.setLayoutData(gd);
+
+		initSettings();
 	}
 
 	public String getDestinationDirectory() {
@@ -120,34 +134,65 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		setMessage(null);
 
 		if (fDestinationCombo.getText().equals("")) { //$NON-NLS-1$
-			setMessage(PDEUIMessages.ExportTargetError_ChooseDestination, IStatus.ERROR);
+			setErrorMessage(PDEUIMessages.ExportTargetError_ChooseDestination);
 			return false;
 		} else if (!isValidLocation(fDestinationCombo.getText().trim())) {
-			setMessage(PDEUIMessages.ExportTargetError_validPath, IStatus.ERROR);
+			setErrorMessage(PDEUIMessages.ExportTargetError_validPath);
 			return false;
 		}
+		setErrorMessage(null);
 
 		return true;
 	}
 
-	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
-		for (int i = 0; i < 6; i++) {
-			String curr = settings.get(key + String.valueOf(i));
-			if (curr != null && combo.indexOf(curr) == -1) {
-				combo.add(curr);
+	public void storeSettings() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			settings.put(SETTINGS_CLEAR, fClearDestinationButton.getSelection());
+
+			String newLocation = fDestinationCombo.getText().trim();
+			if (newLocation.charAt(newLocation.length() - 1) == File.separatorChar) {
+				newLocation = newLocation.substring(0, newLocation.length() - 1);
 			}
+			String[] items = fDestinationCombo.getItems();
+			for (int i = 0; i < items.length; i++) {
+				if (items[i].equals(newLocation)) {
+					// Already have this location stored
+					return;
+				}
+			}
+			String location = settings.get(SETTINGS_LOCATION_2);
+			if (location != null) {
+				settings.put(SETTINGS_LOCATION_3, location);
+			}
+			location = settings.get(SETTINGS_LOCATION_1);
+			if (location != null) {
+				settings.put(SETTINGS_LOCATION_2, location);
+			}
+			settings.put(SETTINGS_LOCATION_1, newLocation);
 		}
-		if (combo.getItemCount() > 0)
-			combo.setText(combo.getItem(0));
 	}
 
-	protected void saveCombo(IDialogSettings settings, String key, Combo combo) {
-		if (combo.getText().trim().length() > 0) {
-			settings.put(key + String.valueOf(0), combo.getText().trim());
-			String[] items = combo.getItems();
-			int nEntries = Math.min(items.length, 5);
-			for (int i = 0; i < nEntries; i++) {
-				settings.put(key + String.valueOf(i + 1), items[i].trim());
+	private void initSettings() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			fClearDestinationButton.setSelection(settings.getBoolean(SETTINGS_CLEAR));
+
+			String location = settings.get(SETTINGS_LOCATION_1);
+			if (location != null) {
+				fDestinationCombo.add(location);
+			}
+			location = settings.get(SETTINGS_LOCATION_2);
+			if (location != null) {
+				fDestinationCombo.add(location);
+			}
+			location = settings.get(SETTINGS_LOCATION_3);
+			if (location != null) {
+				fDestinationCombo.add(location);
+			}
+
+			if (fDestinationCombo.getItemCount() > 0) {
+				fDestinationCombo.setText(fDestinationCombo.getItem(0));
 			}
 		}
 	}
