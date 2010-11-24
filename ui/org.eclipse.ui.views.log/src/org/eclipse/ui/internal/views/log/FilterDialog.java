@@ -184,7 +184,7 @@ public class FilterDialog extends TrayDialog {
 
 		});
 
-		filterList = new List(comp, SWT.BORDER);
+		filterList = new List(comp, SWT.BORDER | SWT.MULTI);
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		gd.verticalSpan = 3;
 		gd.widthHint = 280;
@@ -252,11 +252,10 @@ public class FilterDialog extends TrayDialog {
 	}
 
 	private void removeFilter() {
-		int index = filterList.getSelectionIndex();
-		if (index != -1) {
-			filterList.remove(index);
+		String[] selected = filterList.getSelection();
+		for (int i = 0; i < selected.length; i++) {
+			filterList.remove(selected[i]);
 		}
-
 		removeFilter.setEnabled(false);
 	}
 
