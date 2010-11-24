@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -205,7 +206,7 @@ public class ApiModelFactory {
 	 * @throws CoreException If problems occur getting components or modifying the baseline
 	 */
 	public static IApiComponent[] addComponents(IApiBaseline baseline, String installLocation, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 50);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50); 
 		
 		// Acquire the service
 		ITargetPlatformService service = null;
@@ -216,36 +217,34 @@ public class ApiModelFactory {
 			// If we are running without osgi, services are unavailable so use the class directly
 			service = TargetPlatformService.getDefault();
 		}
+		Util.updateMonitor(subMonitor, 1);
 		IBundleContainer container = service.newProfileContainer(installLocation, null);
 		// treat as an installation, if that fails, try plug-ins directory
 		ITargetDefinition definition = service.newTarget();
+		subMonitor.subTask(Messages.resolving_target_definition);
 		container.resolve(definition, subMonitor.newChild(30));
-		subMonitor.worked(1);
+		Util.updateMonitor(subMonitor, 1);
 		IResolvedBundle[] bundles = container.getBundles();
 		
-		SubMonitor componentMonitor = subMonitor.newChild(20);
 		List components = new ArrayList();
 		if (bundles.length > 0) {
-			componentMonitor.beginTask(Util.EMPTY_STRING, bundles.length);
+			subMonitor.setWorkRemaining(bundles.length);
 			for (int i = 0; i < bundles.length; i++) {
+				Util.updateMonitor(subMonitor, 1);
 					if (!bundles[i].isSourceBundle()) {
 						IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
 						if (component != null) {
+							subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
 							components.add(component);
 						}
 					}
-				componentMonitor.worked(1);
 			}
 		}
-		componentMonitor.done();
 		
 		IApiComponent[] result = (IApiComponent[])components.toArray(new IApiComponent[components.size()]);
 		baseline.addApiComponents(result);
 		
 		subMonitor.done();
-		if (monitor != null){
-			monitor.done();
-		}
 		
 		return result;
 	}

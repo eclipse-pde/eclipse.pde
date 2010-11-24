@@ -14,6 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.internal.model.Messages"; //$NON-NLS-1$
+	public static String adding_component__0;
 	public static String ApiType_0;
 	public static String ApiType_1;
 	public static String ApiType_2;
@@ -21,6 +22,8 @@ public class Messages extends NLS {
 	public static String ApiScope_0;
 	public static String BundleApiComponent_baseline_disposed;
 	public static String BundleComponent_failed_to_lookup_fragment;
+	public static String configuring_baseline;
+	public static String resolving_target_definition;
 	
 	static {
 		// initialize resource bundle
