@@ -109,6 +109,7 @@ public class ApiFileGenerationTask extends Task {
 	String binaryLocations;
 	String manifests;
 	String sourceLocations;
+	boolean allowNonApiProject = false;
 	Set apiPackages = new HashSet(0);
 
 	/**
@@ -153,6 +154,18 @@ public class ApiFileGenerationTask extends Task {
 	public void setBinary(String binaryLocations) {
 		this.binaryLocations = binaryLocations;
 	}
+	
+	/**
+	 * Set if the task should scan the project even if it is not API tools enabled.
+	 * <p>The possible values are: <code>true</code> or <code>false</code></p>
+	 * <p>Default is: <code>false</code>.</p>
+	 * @since 1.2
+	 * @param allow
+	 */
+	public void setAllowNonApiProject(String allow) {
+		this.allowNonApiProject = Boolean.valueOf(allow).booleanValue();
+	}
+	
 	/**
 	 * Set the debug value.
 	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
@@ -236,7 +249,7 @@ public class ApiFileGenerationTask extends Task {
 		// check if the project contains the api tools nature
 		File dotProjectFile = new File(root, ".project"); //$NON-NLS-1$
 		
-		if (!isAPIToolsNature(dotProjectFile)) {
+		if(!this.allowNonApiProject && !isAPIToolsNature(dotProjectFile)) {
 			return;
 		}
 		// check if the .api_description file exists
