@@ -169,17 +169,14 @@ public class ApiBaselineWizardPage extends WizardPage {
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
 			try {
 				fProfile = ApiModelFactory.newApiBaseline(name, location);
-			} catch (CoreException e) {
-				throw new InvocationTargetException(e);
-			}
-			
-			try{
 				ApiModelFactory.addComponents(fProfile, location, monitor);
 				ApiBaselineWizardPage.this.contentchange = true;
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
 			}
-			monitor.done();
+			finally {
+				monitor.done();
+			}
 		}
 		
 	}
