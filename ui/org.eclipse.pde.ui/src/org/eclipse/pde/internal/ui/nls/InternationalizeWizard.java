@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,10 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.ui.*;
@@ -63,7 +63,6 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_XHTML_CONVERT_WIZ);
 		setWindowTitle(PDEUIMessages.InternationalizeWizard_title);
 		this.action = action;
-		setHelpAvailable(false);
 	}
 
 	/**
@@ -200,7 +199,10 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		return super.performCancel();
 	}
 
-	public boolean isHelpAvailable() {
-		return false;
+	public void setContainer(IWizardContainer wizardContainer) {
+		super.setContainer(wizardContainer);
+		if (getContainer() instanceof TrayDialog)
+			((TrayDialog) getContainer()).setHelpAvailable(false);
 	}
+
 }
