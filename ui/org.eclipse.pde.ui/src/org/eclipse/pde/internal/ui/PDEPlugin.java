@@ -71,6 +71,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 	}
 
+	/**
+	 * @return The active workbench page or <code>null</code> if the workbench is shutting down
+	 */
 	public static IWorkbenchPage getActivePage() {
 		return getDefault().internalGetActivePage();
 	}
@@ -105,8 +108,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return ResourcesPlugin.getWorkspace();
 	}
 
+	/**
+	 * @return The active workbench page or <code>null</code> if the workbench is shutting down
+	 */
 	private IWorkbenchPage internalGetActivePage() {
-		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchWindow workbenchWin = getWorkbench().getActiveWorkbenchWindow();
+		return workbenchWin != null ? workbenchWin.getActivePage() : null;
 	}
 
 	public static void log(IStatus status) {

@@ -60,9 +60,12 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 								PDEUIMessages.Launcher_error_code13, MessageDialog.ERROR, new String[] {PDEUIMessages.Launcher_error_displayInLogView, PDEUIMessages.Launcher_error_displayInSystemEditor, IDialogConstants.NO_LABEL}, OPEN_IN_ERROR_LOG_VIEW);
 						int dialog_value = dialog.open();
 						if (dialog_value == OPEN_IN_ERROR_LOG_VIEW) {
-							LogView errlog = (LogView) PDEPlugin.getActivePage().showView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
-							errlog.handleImportPath(log.getAbsolutePath());
-							errlog.sortByDateDescending();
+							IWorkbenchPage page = PDEPlugin.getActivePage();
+							if (page != null) {
+								LogView errlog = (LogView) page.showView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
+								errlog.handleImportPath(log.getAbsolutePath());
+								errlog.sortByDateDescending();
+							}
 						} else if (dialog_value == OPEN_IN_SYSTEM_EDITOR) {
 							openInEditor(log);
 						}
