@@ -201,7 +201,7 @@ public class ApiModelFactory {
 	 * 
 	 * @param baseline The baseline to add the components to
 	 * @param installLocation Location of an installation that components are collected from
-	 * @param monitor progress monitor or <code>null</code>
+	 * @param monitor progress monitor or <code>null</code>, the caller is responsible for calling {@link IProgressMonitor#done()} 
 	 * @return List of api components that were added to the baseline, possibly empty
 	 * @throws CoreException If problems occur getting components or modifying the baseline
 	 */
