@@ -196,7 +196,7 @@ public class UseScanParser {
 					System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
 				}
 			} else {
-				System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped",targetMember.getName()));
+				System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped",targetMember.getName())); //$NON-NLS-1$
 			}
 		}
 	}
