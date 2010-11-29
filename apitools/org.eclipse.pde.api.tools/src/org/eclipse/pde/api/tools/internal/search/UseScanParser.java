@@ -160,37 +160,43 @@ public class UseScanParser {
 			}
 		} else if (IApiXmlConstants.ATTR_REFERENCE.equals(name)) {
 			String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
-			String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
-			String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
-			IMemberDescriptor origin = null;
-			if (signature != null) {
-				origin = Factory.methodDescriptor(qName, memberName, signature);
-			} else if (memberName != null) {
-				origin = Factory.fieldDescriptor(qName, memberName);
-			} else {
-				origin = Factory.typeDescriptor(qName);
-			}
-			String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
-			String flags = attributes.getValue(IApiXmlConstants.ATTR_FLAGS);
-			try {
-				int num = Integer.parseInt(line);
-				int flgs = 0;
-				if(flags != null) {
-					flgs = Integer.parseInt(flags);
+
+			if (qName != null){
+
+				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
+				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
+				IMemberDescriptor origin = null;
+				if (signature != null) {
+					origin = Factory.methodDescriptor(qName, memberName, signature);
+				} else if (memberName != null) {
+					origin = Factory.fieldDescriptor(qName, memberName);
+				} else {
+					origin = Factory.typeDescriptor(qName);
 				}
-				setReference(Factory.referenceDescriptor(
-						referencingComponent, 
-						origin, 
-						num, 
-						targetComponent, 
-						targetMember, 
-						referenceKind, 
-						flgs, 
-						visibility, 
-						parseMessages(attributes)));
-			} catch (NumberFormatException e) {
-				// TODO:
-				System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
+				String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
+				String flags = attributes.getValue(IApiXmlConstants.ATTR_FLAGS);
+				try {
+					int num = Integer.parseInt(line);
+					int flgs = 0;
+					if(flags != null) {
+						flgs = Integer.parseInt(flags);
+					}
+					setReference(Factory.referenceDescriptor(
+							referencingComponent, 
+							origin, 
+							num, 
+							targetComponent, 
+							targetMember, 
+							referenceKind, 
+							flgs, 
+							visibility, 
+							parseMessages(attributes)));
+				} catch (NumberFormatException e) {
+					// TODO:
+					System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
+				}
+			} else {
+				System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped",targetMember.getName()));
 			}
 		}
 	}

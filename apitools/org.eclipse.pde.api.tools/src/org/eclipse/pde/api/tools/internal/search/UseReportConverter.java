@@ -806,13 +806,17 @@ public class UseReportConverter extends HTMLConvertor {
 	
 	/**
 	 * Builds the name for the component
-	 * @param id
-	 * @param version
-	 * @return
+	 * @param id id of the component
+	 * @param version version of the component, can be <code>null</code>
+	 * @return string name
 	 */
 	protected String composeName(String id, String version) {
-		StringBuffer buffer = new StringBuffer(3+id.length()+version.length());
-		buffer.append(id).append(" (").append(version).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+		String versionName = version;
+		if (version == null){
+			versionName = Version.emptyVersion.toString();
+		}
+		StringBuffer buffer = new StringBuffer(3+id.length()+versionName.length());
+		buffer.append(id).append(" (").append(versionName).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 		return buffer.toString();
 	}
 	
