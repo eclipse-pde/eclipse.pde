@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<introContent>
+  <extensionContent path="root/page-content/links/anchor1"> 
+  	<link label="Learn about Concept Three..." url="http://org.eclipse.ui.intro/showPage?id=concept3"/>
+  </extensionContent>
+  
+  <page id="concept3">
+	<include path="root/title_id" merge-style="false"/>
+	<group id="content" label="Concept Three"> 
+		<text>This is where Concept Three is explained.</text>
+		<text>This is the first topic from the root page of this Welcome:</text>
+		<include path="root/page-content/links/firstLink" />
+		<contentProvider id="contentProviderId" 
+			class="$packageName$.DynamicContentProvider" 
+			pluginId="$pluginId$"> 
+			<text>Content provider failed. Alternate text for content provider</text>
+		</contentProvider>
+	</group>
+   </page>
+		
+</introContent>

@@ -1,0 +1,34 @@
+/* Give some space for main div.*/
+#page-content {
+	text-align: center;
+	margin-top:100px;
+	}
+
+/* satisfy Mozilla */	
+div > div#page-content {
+	padding-left:30%;
+	}
+
+#links {
+	text-align:left;
+	width:23em;
+	} 
+
+/* Set the background picture and layout the text. */
+a {
+	display:block;
+	margin-bottom:20px;
+	background-repeat: no-repeat;
+	background-image: url("./link_obj.gif");
+	background-position: left;
+	height:48px;
+	}
+
+a span  { 
+	position: relative;
+	left:54px;
+	top:16px;
+	}
+	
+	
+

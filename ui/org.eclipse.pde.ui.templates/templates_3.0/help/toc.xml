@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+%if isPrimary
+<toc label="$tocLabel$" topic="html/toc.html">
+%else
+<toc label="$tocLabel$">
+%endif
+%if isPrimary && gettingStarted
+   <topic label="Getting Started">
+      <anchor id="gettingstarted"/>
+   </topic>
+%endif
+%if isPrimary && concepts
+   <topic label="Concepts">
+      <anchor id="concepts"/>
+   </topic>
+%endif
+%if isPrimary && tasks
+   <topic label="Tasks">
+      <anchor id="tasks"/>
+   </topic>
+%endif
+%if isPrimary && reference
+   <topic label="Reference">
+      <anchor id="reference"/>
+   </topic>
+%endif
+%if isPrimary && samples
+   <topic label="Samples">
+      <anchor id="samples"/>
+   </topic>
+%endif
+%if isPrimary && (gettingStarted || concepts || tasks || reference || samples) 
+%else
+	<topic label="Main Topic"  href="html/maintopic.html"> 
+		<topic label="Sub Topic" href="html/subtopic.html"/> 
+	</topic>
+	<topic label="Main Topic 2"/>
+%endif
+</toc>

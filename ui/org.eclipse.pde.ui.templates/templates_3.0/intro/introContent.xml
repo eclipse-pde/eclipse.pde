@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<introContent>
+	
+	<page style-id="page_style" id="root" style="content/root.css">
+		<title id="title_id">Welcome to $productName$</title>
+		<group id="page-content"> 
+			<group id="links"> 
+				<link label="Learn about Concept One..." url="http://org.eclipse.ui.intro/showPage?id=concept1" id ="firstLink"/>
+				<link label="Learn about Concept Two..." url="http://org.eclipse.ui.intro/showPage?id=concept2" />
+				<anchor id="anchor1" /> 
+			</group> 
+		</group>
+	</page>
+		
+			
+	<page id="concept1">
+		<include path="root/title_id" merge-style="false"/>
+		<group id="content" label="Concept One">
+			<text>This is where Concept One is explained.</text>
+		</group>
+	</page>
+		
+	<page id="concept2">
+		<include path="root/title_id" merge-style="false"/>
+		<group id="content" label="Concept Two">
+			<text>This is where Concept Two is explained.</text>
+		</group>
+	</page>
+		
+
+</introContent>
