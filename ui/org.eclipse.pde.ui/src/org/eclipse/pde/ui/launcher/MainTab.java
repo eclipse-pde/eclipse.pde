@@ -112,7 +112,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
-			fDataBlock.initializeFrom(config);
+			fDataBlock.initializeFrom(config, false);
 			fProgramBlock.initializeFrom(config);
 			fJreBlock.initializeFrom(config);
 		} catch (CoreException e) {

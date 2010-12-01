@@ -320,17 +320,14 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static String getDefaultWorkspaceLocation(String uniqueName) {
-		return "${workspace_loc}/../runtime-" + uniqueName.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return getDefaultWorkspaceLocation(uniqueName, false);
 	}
 
 	public static String getDefaultWorkspaceLocation(String uniqueName, boolean isJUnit) {
-		if (!isJUnit)
-			return getDefaultWorkspaceLocation(uniqueName);
-
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
-		String location = launchingStore.getString(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION);
-		if (launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER)) {
-			return location + '/' + uniqueName.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String location = launchingStore.getString(isJUnit ? ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION : ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION);
+		if (launchingStore.getBoolean(isJUnit ? ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER : ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER)) {
+			return location + uniqueName.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return location;
 	}

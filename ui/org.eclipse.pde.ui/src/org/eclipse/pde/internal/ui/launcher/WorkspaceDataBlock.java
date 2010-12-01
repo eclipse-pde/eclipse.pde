@@ -18,6 +18,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class WorkspaceDataBlock extends BaseBlock {
 
@@ -90,12 +92,26 @@ public class WorkspaceDataBlock extends BaseBlock {
 
 		createButtons(buttons, new String[] {PDEUIMessages.BaseBlock_workspace, PDEUIMessages.BaseBlock_filesystem, PDEUIMessages.BaseBlock_variables});
 
-		fAskClearCheck = new Button(group, SWT.CHECK);
-		fAskClearCheck.setText(PDEUIMessages.WorkspaceDataBlock_askClear);
-		gd = new GridData();
+		Composite buttons2 = new Composite(group, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		buttons2.setLayout(layout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		fAskClearCheck.setLayoutData(gd);
+		buttons2.setLayoutData(gd);
+
+		fAskClearCheck = new Button(buttons2, SWT.CHECK);
+		fAskClearCheck.setText(PDEUIMessages.WorkspaceDataBlock_askClear);
 		fAskClearCheck.addSelectionListener(fListener);
+
+		final Link configureDefaults = new Link(buttons2, SWT.NONE);
+		configureDefaults.setLayoutData(new GridData(SWT.END, SWT.FILL, true, false));
+		configureDefaults.setText("<A>" + PDEUIMessages.WorkspaceDataBlock_configureDefaults + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
+		configureDefaults.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(configureDefaults.getShell(), MainPreferencePage.ID, new String[] {MainPreferencePage.ID}, null).open();
+			}
+		});
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config, boolean isJUnit) {
@@ -150,9 +166,9 @@ public class WorkspaceDataBlock extends BaseBlock {
 		return location + '-' + i;
 	}
 
-	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
+	public void initializeFrom(ILaunchConfiguration configuration, boolean isJUnit) throws CoreException {
 		fLastKnownName = configuration.getName();
-		fLastKnownLocation = configuration.getAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(fLastKnownName));
+		fLastKnownLocation = configuration.getAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(fLastKnownName, isJUnit));
 		fLocationText.setText(fLastKnownLocation);
 		fClearWorkspaceCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false));
 		fAskClearCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true));

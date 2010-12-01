@@ -42,6 +42,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_1;
 
+	public static String DefaultJUnitWorkspaceBlock_name;
+
 	public static String DefinitionPage_0;
 
 	public static String DefinitionPage_1;
@@ -413,8 +415,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_addToJavaSearch;
 	public static String MainPreferencePage_exportingGroup;
-	public static String MainPreferencePage_sourceGroup;
-	public static String MainPreferencePage_group2;
 	public static String MainPreferencePage_junitWorkspace_asContainer;
 
 	public static String MainPreferencePage_junitWorkspace_asLocation;
@@ -429,6 +429,17 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_promptBeforeOverwrite;
 	public static String MainPreferencePage_promtBeforeRemove;
+	public static String MainPreferencePage_runtimeWorkspace_asContainer;
+
+	public static String MainPreferencePage_runtimeWorkspace_asLocation;
+
+	public static String MainPreferencePage_runtimeWorkspace_fileSystem;
+
+	public static String MainPreferencePage_runtimeWorkspace_variables;
+
+	public static String MainPreferencePage_runtimeWorkspace_workspace;
+
+	public static String MainPreferencePage_runtimeWorkspaceGroup;
 	public static String MainPreferencePage_showSourceBundles;
 	public static String MainPreferencePage_updateStale;
 	public static String MainPreferencePage_targetDefinitionsGroup;
@@ -889,6 +900,8 @@ public class PDEUIMessages extends NLS {
 	public static String WorkspaceDataBlock_askClear;
 	public static String WorkspaceDataBlock_clearLog;
 	public static String WorkspaceDataBlock_clearWorkspace;
+
+	public static String WorkspaceDataBlock_configureDefaults;
 	public static String BasicLauncherTab_javaExec;
 
 	public static String BasicLauncherTab_unbound;

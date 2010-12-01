@@ -19,6 +19,8 @@ public interface ILaunchingPreferenceConstants {
 
 	// Main preference page
 	public static final String PROP_AUTO_MANAGE = "Preferences.MainPage.automanageDependencies"; //$NON-NLS-1$
+	public static final String PROP_RUNTIME_WORKSPACE_LOCATION = "Preferences.MainPage.runtimeWorkspaceLocation"; //$NON-NLS-1$
+	public static final String PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER = "Preferences.MainPage.runtimeWorkspaceLocationIsContainer"; //$NON-NLS-1$
 	public static final String PROP_JUNIT_WORKSPACE_LOCATION = "Preferences.MainPage.junitWorkspaceLocation"; //$NON-NLS-1$
 	public static final String PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER = "Preferences.MainPage.junitWorkspaceLocationIsContainer"; //$NON-NLS-1$
 

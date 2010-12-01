@@ -22,6 +22,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences prefs = new DefaultScope().getNode(IPDEConstants.PLUGIN_ID);
 		prefs.put(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, OSGiFrameworkManager.DEFAULT_FRAMEWORK);
+		prefs.put(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION, "${workspace_loc}/../runtime-"); //$NON-NLS-1$
+		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER, true);
 		prefs.put(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION, "${workspace_loc}/../junit-workspace"); //$NON-NLS-1$
 		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER, false);
 
