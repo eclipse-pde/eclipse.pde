@@ -37,10 +37,12 @@ public class SearchMessages extends NLS {
 	public static String ConsumerReportConvertor_ProducerTitle;
 	public static String ConsumerReportConvertor_TypeListHeader;
 	public static String ioexception_writing_html_file;
+	public static String collecting_external_dependencies;
 	public static String could_not_create_sax_parser;
 	public static String could_not_create_file;
 	public static String missing_xml_files_location;
 	public static String invalid_directory_name;
+	public static String load_external_dependencies;
 	public static String MigrationReportConvertor_bundle_migration_information;
 	public static String MigrationReportConvertor_bundles_have_references;
 	public static String MigrationReportConvertor_click_table_entry;

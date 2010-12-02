@@ -159,5 +159,16 @@ public interface IApiMarkerConstants {
 	 * Value is: <code>problemTypeName</code>
 	 */
 	public static final String MARKER_ATTR_PROBLEM_TYPE_NAME = "problemTypeName"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id for the Api Use Scan breakage problem marker.
+	 * Value is: <code>org.eclipse.pde.api.tools.marker.apiusescan</code>
+	 */
+	public static final String API_USESCAN_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".marker.apiusescan"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id for the additional marker attribute for storing the type name
+	 * This will be used to delete the markers when a missing type becomes available 
+	 * Value is: <code>apiUseScanType</code>
+	 */
+	public static final String API_USESCAN_TYPE = "apiUseScanType"; //$NON-NLS-1$
 
 }

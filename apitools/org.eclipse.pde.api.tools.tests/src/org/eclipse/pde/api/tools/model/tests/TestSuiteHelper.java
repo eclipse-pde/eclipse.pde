@@ -53,6 +53,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
+import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
@@ -124,6 +126,7 @@ public class TestSuiteHelper {
 	 */
 	public static IApiComponent createTestingApiComponent(final String baselinename, final String name, final String id, final IApiDescription description) {
 		return new IApiComponent() {
+			private IReferenceCollection fReferences;
 			public String[] getPackageNames() throws CoreException {
 				return null;
 			}
@@ -213,6 +216,15 @@ public class TestSuiteHelper {
 			}
 			public int getContainerType() {
 				return 0;
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getExternalDependencies()
+			 */
+			public IReferenceCollection getExternalDependencies() {
+				if (fReferences == null) {
+					fReferences = new UseScanReferences();
+				}
+				return fReferences;
 			}
 		};
 	}

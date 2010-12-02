@@ -28,6 +28,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProblemSeveritiesConfigurationBlock_8;
 	public static String ApiProblemSeveritiesConfigurationBlock_9;
 	public static String ApiProblemSeveritiesConfigurationBlock_10;
+	public static String ApiProblemSeveritiesConfigurationBlock_11;
 	public static String ApiProfilesPreferencePage_0;
 	public static String ApiProfilesPreferencePage_1;
 	public static String ApiProfilesPreferencePage_2;
@@ -39,6 +40,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiToolingNotificationsBlock_1;
 	public static String ApiToolingNotificationsBlock_2;
 	public static String ApiToolingNotificationsBlock_3;
+	public static String ApiToolingNotificationsBlock_4;
 	public static String CompatibilityAPIComponentElement;
 	public static String CompatibilityAnnotationElement;
 	public static String CompatibilityInterfaceElement;
@@ -171,6 +173,25 @@ public class PreferenceMessages extends NLS {
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title;
 	public static String ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description;
+	public static String ApiUseScanConfigurationBlock_0;
+	public static String ApiUseScanConfigurationBlock_unresolvedTypeProblem;
+	public static String ApiUseScanConfigurationBlock_unresolvedMethodProblem;
+	public static String ApiUseScanConfigurationBlock_unresolvedFieldProblem;
+	public static String ApiUseScanPreferencePage_0;
+	public static String ApiUseScanPreferencePage_1;
+	public static String ApiUseScanPreferencePage_10;
+	public static String ApiUseScanPreferencePage_11;
+	public static String ApiUseScanPreferencePage_12;
+	public static String ApiUseScanPreferencePage_2;
+	public static String ApiUseScanPreferencePage_3;
+	public static String ApiUseScanPreferencePage_4;
+	public static String ApiUseScanPreferencePage_5;
+	public static String ApiUseScanPreferencePage_6;
+	public static String ApiUseScanPreferencePage_7;
+	public static String ApiUseScanPreferencePage_8;
+	public static String ApiUseScanPreferencePage_9;
+	public static String options;
+	public static String xml;
 
 	static {
 		// initialize resource bundle

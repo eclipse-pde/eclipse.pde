@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescrip
  * Used to visit an API use scan. This visitor visits each referenced component in 
  * a use scan, by each component that refers to it, by each reference.
  */
-public class UseScanVisitor {
+public abstract class UseScanVisitor {
 	
 	/**
 	 * Start visiting an API use scan

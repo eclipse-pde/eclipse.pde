@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ public class BuilderMessages extends NLS {
 	public static String api_analysis_on_0;
 	public static String building_workspace_profile;
 	public static String checking_api_usage;
+	public static String checking_external_dependencies;
 
 	public static String AbstractTypeLeakDetector_vis_type_has_no_api_description;
 	public static String ApiAnalysisBuilder_builder_for_project;
@@ -29,6 +30,8 @@ public class BuilderMessages extends NLS {
 	public static String BaseApiAnalyzer_checking_compat;
 	public static String BaseApiAnalyzer_checking_since_tags;
 	public static String BaseApiAnalyzer_comparing_api_profiles;
+	public static String BaseApiAnalyzer_Constructor;
+	public static String BaseApiAnalyzer_Method;
 	public static String BaseApiAnalyzer_more_version_problems;
 	public static String BaseApiAnalyzer_processing_deltas;
 	public static String BaseApiAnalyzer_scanning_0;

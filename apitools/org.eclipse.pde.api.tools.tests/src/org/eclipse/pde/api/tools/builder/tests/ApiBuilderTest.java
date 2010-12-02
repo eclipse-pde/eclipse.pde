@@ -962,6 +962,24 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		}
 	}
 	
+	/**
+	 * Enables or disables the External Depencency breakage problems for the builder
+	 * @param enabled if true the builder options are set to 'Error', false sets the 
+	 * options to 'Ignore'
+	 */
+	protected void enableExternalDependencyCheckOptions(boolean enabled) {
+		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
+		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);		
+		inode.put(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, value);
+		inode.put(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, value);
+		inode.put(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, value);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
+	}
+	
 	/** 
 	 * Sets up this test.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -444,6 +444,20 @@ public class ApiProblem implements IApiProblem {
 	}
 
 	/**
+	 * Returns the string representation of the API Use Scan breakage problem kind
+	 * @param kind
+	 * @return
+	 */
+	public static String getApiUseScanProblemKindName(int kind) {
+		switch(kind) {
+			case IApiProblem.API_USE_SCAN_TYPE_PROBLEM: return "API_USE_SCAN_TYPE_PROBLEM"; //$NON-NLS-1$
+			case IApiProblem.API_USE_SCAN_METHOD_PROBLEM: return "API_USE_SCAN_METHOD_PROBLEM"; //$NON-NLS-1$
+			case IApiProblem.API_USE_SCAN_FIELD_PROBLEM: return "API_USE_SCAN_FIELD_PROBLEM"; //$NON-NLS-1$			
+		}
+		return Util.UNKNOWN_KIND;
+	}
+	
+	/**
 	 * Returns the string representation of the kind of an
 	 * {@link IApiProblem}, given its category
 	 * @param category
@@ -469,6 +483,9 @@ public class ApiProblem implements IApiProblem {
 			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				return ApiProblem.getApiComponentResolutionProblemKindName(kind);
+			}
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
+				return ApiProblem.getApiUseScanProblemKindName(kind);
 			}
 		}
 		return Util.UNKNOWN_KIND;
@@ -526,6 +543,15 @@ public class ApiProblem implements IApiProblem {
 					}
 				}
 			}
+			break;
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
+				switch(flags) {
+					case 0:
+						return "DELETED"; //$NON-NLS-1$
+					case 1:
+						return "UNRESOLVED"; //$NON-NLS-1$
+				}
+			}
 		}
 		return Util.UNKNOWN_FLAGS;
 	}
@@ -549,6 +575,8 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				return ApiProblem.getDescriptorKind(kind);
 			}
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM:
+				return Util.getApiElementType(kind);				
 		}
 		return Util.UNKNOWN_KIND;
 	}
@@ -572,6 +600,8 @@ public class ApiProblem implements IApiProblem {
 				return "API_BASELINE"; //$NON-NLS-1$
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
 				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM :
+				return "API USE SCAN PROBLEM"; //$NON-NLS-1$
 			default :
 				return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
 		}

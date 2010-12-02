@@ -53,6 +53,12 @@
                id="org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage.keywords">
          </keywordReference>
       </page>
+      <page
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.api.tools.ui.internal.preferences.ApiUseScanPreferencePage"
+            id="org.eclipse.pde.api.tools.ui.apiusescan.prefpage"
+            name="%ApiUseScanPreferencePage.name">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">

@@ -253,4 +253,16 @@ public interface IApiProblemTypes {
 	 * Key for the severity of an unused API problem filter.
 	 */
 	public static final String UNUSED_PROBLEM_FILTERS = "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
+	/**
+	 * Key for the severity of API Use Scan Type breakage problems.
+	 */
+	public static final String API_USE_SCAN_TYPE_SEVERITY = "API_USE_SCAN_TYPE_SEVERITY";	 //$NON-NLS-1$
+	/**
+	 * Key for the severity of API Use Scan Method breakage problems.
+	 */
+	public static final String API_USE_SCAN_METHOD_SEVERITY = "API_USE_SCAN_METHOD_SEVERITY"; //$NON-NLS-1$
+	/**
+	 * Key for the severity of API Use Scan Field breakage problems.
+	 */
+	public static final String API_USE_SCAN_FIELD_SEVERITY = "API_USE_SCAN_FIELD_SEVERITY"; //$NON-NLS-1$
 }

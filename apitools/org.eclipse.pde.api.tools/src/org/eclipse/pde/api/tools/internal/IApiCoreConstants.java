@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
+
 
 
 /**
@@ -64,5 +65,19 @@ public interface IApiCoreConstants {
 	 * Value is: <code>ant_build_profile</code>
 	 */
 	public static final String ANT_BUILD_PROFILE_NAME = "ant_build_profile"; //$NON-NLS-1$
+
+	/**
+	 * Preference to store the Api Use Scan report location
+	 */
+	public static final String API_USE_SCAN_LOCATION = "API_USE_SCAN_LOCATION"; //$NON-NLS-1$
+
+	/**
+	 * Preference to store the cache size for holding the Api Use Scan references
+	 */
+	public static final String API_USE_SCAN_REFERENCE_CACHE_SIZE = "API_USE_SCAN_REFERENCE_CACHE_SIZE"; //$NON-NLS-1$
+	/**
+	 * Constant representing <code>XML</code>
+	 */
+	public static final String XML = "XML"; //$NON-NLS-1$
 
 }

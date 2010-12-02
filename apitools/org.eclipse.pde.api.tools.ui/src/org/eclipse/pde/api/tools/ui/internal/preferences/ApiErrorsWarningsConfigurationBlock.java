@@ -409,6 +409,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 
 	private static final Key KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT = 
 		getApiToolsKey(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
+	
+	//External Dependencies' Keys
+	private static final Key KEY_API_USE_SCAN_TYPE_PROBLEM = 
+			getApiToolsKey(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY);
+	private static final Key KEY_API_USE_SCAN_METHOD_PROBLEM = 
+			getApiToolsKey(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY);
+	private static final Key KEY_API_USE_SCAN_FIELD_PROBLEM = 
+			getApiToolsKey(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY);
 	/**
 	 * @since 1.1
 	 */
@@ -419,6 +427,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final int COMPATIBILITY_PAGE_ID = 1;
 	private static final int VERSION_MANAGEMENT_PAGE_ID = 2;
 	private static final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
+	private static final int EXTERNAL_DEPENDENCIES_PAGE_ID = 4;
 
 	static Key[] fgAllApiComponentResolutionKeys = {
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
@@ -521,6 +530,12 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION
 	};
 
+	static Key[] fgAllExternalDependenciesKeys = {
+		KEY_API_USE_SCAN_TYPE_PROBLEM,
+		KEY_API_USE_SCAN_METHOD_PROBLEM,
+		KEY_API_USE_SCAN_FIELD_PROBLEM
+	};
+	
 	/**
 	 * An array of all of the keys for the page
 	 */
@@ -616,7 +631,10 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
 		KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
-		KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS
+		KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS,
+		KEY_API_USE_SCAN_TYPE_PROBLEM,
+		KEY_API_USE_SCAN_METHOD_PROBLEM,
+		KEY_API_USE_SCAN_FIELD_PROBLEM
 	};
 
 	/**
@@ -738,6 +756,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 					break;
 				case API_COMPONENT_RESOLUTION_PAGE_ID :
 					setAllTo(this.newValue, fgAllApiComponentResolutionKeys);
+					break;
+				case EXTERNAL_DEPENDENCIES_PAGE_ID:
+					setAllTo(this.newValue, fgAllExternalDependenciesKeys);
 					break;
 			}
 		}
@@ -874,7 +895,12 @@ public class ApiErrorsWarningsConfigurationBlock {
 				API_COMPONENT_RESOLUTION_PAGE_ID,
 				folder,
 				PreferenceMessages.ApiToolingNotificationsBlock_3,
-				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_10); 
+				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_10);
+		createPage(
+				EXTERNAL_DEPENDENCIES_PAGE_ID,
+				folder,
+				PreferenceMessages.ApiToolingNotificationsBlock_4,
+				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_11); 
 		restoreExpansionState();
 		validateSettings(null, null, null);
 		Dialog.applyDialogFont(fMainComp);
@@ -945,340 +971,24 @@ public class ApiErrorsWarningsConfigurationBlock {
 		
 		switch(kind) {
 			case API_SCANNING_USAGE_PAGE_ID : {
-				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
-				scomp.setExpandHorizontal(true);
-				scomp.setExpandVertical(true);
-				scomp.setLayout(new GridLayout(2, false));
-				scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				scomp.addListener(SWT.Resize, new Listener() {
-					public void handleEvent(Event event) {
-						handleExpand(getScrollingParent(event.widget));
-					}
-				});
-				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
-				scomp.setContent(sbody);
-				
-				Composite client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_general);
-				initializeComboControls(client, 
-						new String[] {
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use,
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_reference_to_system_libraries,
-						},
-						new Key[] {
-							KEY_INVALID_JAVADOC_TAG,
-							KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
-						});
-				initializeInstalledMetatadata(client);
-				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
-				initializeComboControls(client,
-					new String[] {
-						PreferenceMessages.ApiProblemSeveritiesNoImplement,
-						PreferenceMessages.ApiProblemSeveritiesNoExtend,
-						PreferenceMessages.ApiProblemSeveritiesNoReference,
-						PreferenceMessages.ApiProblemSeveritiesNoInstanciate,
-						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_override_tagged_method,
-					},
-					new Key[] {
-						KEY_NOIMPLEMENT,
-						KEY_NOEXTEND,
-						KEY_NOREFERENCE,
-						KEY_NOINSTANTIATE,
-						KEY_NOOVERRIDE,
-					}
-				);
-				client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_leaks);
-				initializeComboControls(client,
-						new String[] {
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_extend_non_api_class,
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_implement_non_api,
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_field_decl_non_api,
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_return_type_non_api,
-							PreferenceMessages.ApiErrorsWarningsConfigurationBlock_parameter_non_api
-						},
-						new Key[] {
-							KEY_LEAK_EXTEND,
-							KEY_LEAK_IMPLEMENT,
-							KEY_LEAK_FIELD_DECL,
-							KEY_LEAK_METHOD_RETURN_TYPE,
-							KEY_LEAK_METHOD_PARAM
-						}
-					);
+				createApiScanningPage(page);
 				break;
 			}
 			case VERSION_MANAGEMENT_PAGE_ID : {
-				Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
-				initializeComboControls(vcomp,
-					new String[] {
-						PreferenceMessages.VersionManagementReportMissingSinceTag,
-						PreferenceMessages.VersionManagementReportMalformedSinceTags,
-						PreferenceMessages.VersionManagementReportInvalidSinceTagVersion,
-						PreferenceMessages.VersionManagementReportInvalidApiComponentVersion,
-					},
-					new Key[] {
-						KEY_MISSING_SINCE_TAG,
-						KEY_MALFORMED_SINCE_TAG,
-						KEY_INVALID_SINCE_TAG_VERSION,
-						KEY_INCOMPATIBLE_API_COMPONENT_VERSION
-					}
-				);
-				addCheckBox(
-					vcomp,
-					PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMinorWithoutApiChange,
-					KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE,
-					CHECKBOX_VALUES,
-					2);
-				addCheckBox(
-					vcomp,
-					PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMajorWithoutBreakingChange,
-					KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
-					CHECKBOX_VALUES,
-					2);
+				createVersionManagementPage(page);
 				break;
 			}
 			case API_COMPONENT_RESOLUTION_PAGE_ID : {
-				Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
-				initializeComboControls(vcomp,
-					new String[] {
-						PreferenceMessages.ReportApiComponentResolutionFailure,
-						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_unused_problem_filters,
-					},
-					new Key[] {
-						KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
-						KEY_UNUSED_PROBLEM_FILTERS
-					}
-				);
-				addCheckBox(vcomp, 
-						PreferenceMessages.ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters, 
-						KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS, 
-						CHECKBOX_VALUES, 
-						0);
+				createApiComponentResolutionPage(page);
 				break;
 			}
 			case COMPATIBILITY_PAGE_ID : {
-				// compatibility
-				Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_HORIZONTAL);
-				addCheckBox(
-					vcomp,
-					PreferenceMessages.CompatibilityReportApiBreakageWhenMajorVersionIncremented,
-					KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
-					CHECKBOX_VALUES,
-					2);
-				ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
-				scomp.setExpandHorizontal(true);
-				scomp.setExpandVertical(true);
-				scomp.setLayout(new GridLayout(1, false));
-				scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				scomp.addListener(SWT.Resize, new Listener() {
-					public void handleEvent(Event event) {
-						handleExpand(getScrollingParent(event.widget));
-					}
-				});
-				Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
-				scomp.setContent(sbody);
-				
-				Composite client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIComponentElement);
-				initializeComboControls(
-						client,
-						new String[] {
-								PreferenceMessages.API_COMPONENT_REMOVED_API_TYPE,
-								PreferenceMessages.API_COMPONENT_REMOVED_TYPE,
-								PreferenceMessages.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
-								PreferenceMessages.API_COMPONENT_REMOVED_REEXPORTED_TYPE,
-						},
-						new Key[] {
-								KEY_API_COMPONENT_REMOVED_API_TYPE,
-								KEY_API_COMPONENT_REMOVED_TYPE,
-								KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
-								KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE,
-						});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityClassElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.CLASS_ADDED_METHOD,
-						PreferenceMessages.CLASS_ADDED_RESTRICTIONS,
-						PreferenceMessages.CLASS_ADDED_TYPE_PARAMETER,
-						PreferenceMessages.CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-						PreferenceMessages.CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
-						PreferenceMessages.CLASS_CHANGED_NON_FINAL_TO_FINAL,
-						PreferenceMessages.CLASS_CHANGED_TYPE_CONVERSION,
-						PreferenceMessages.CLASS_CHANGED_DECREASE_ACCESS,
-						PreferenceMessages.CLASS_REMOVED_FIELD,
-						PreferenceMessages.CLASS_REMOVED_METHOD,
-						PreferenceMessages.CLASS_REMOVED_CONSTRUCTOR,
-						PreferenceMessages.CLASS_REMOVED_SUPERCLASS,
-						PreferenceMessages.CLASS_REMOVED_TYPE_MEMBER,
-						PreferenceMessages.CLASS_REMOVED_TYPE_PARAMETER,
-					},
-					new Key[] {
-						KEY_CLASS_ADDED_METHOD,
-						KEY_CLASS_ADDED_RESTRICTIONS,
-						KEY_CLASS_ADDED_TYPE_PARAMETER,
-						KEY_CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-						KEY_CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
-						KEY_CLASS_CHANGED_NON_FINAL_TO_FINAL,
-						KEY_CLASS_CHANGED_TYPE_CONVERSION,
-						KEY_CLASS_CHANGED_DECREASE_ACCESS,
-						KEY_CLASS_REMOVED_FIELD,
-						KEY_CLASS_REMOVED_METHOD,
-						KEY_CLASS_REMOVED_CONSTRUCTOR,
-						KEY_CLASS_REMOVED_SUPERCLASS,
-						KEY_CLASS_REMOVED_TYPE_MEMBER,
-						KEY_CLASS_REMOVED_TYPE_PARAMETER,
-					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityInterfaceElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.INTERFACE_ADDED_FIELD,
-						PreferenceMessages.INTERFACE_ADDED_METHOD,
-						PreferenceMessages.INTERFACE_ADDED_RESTRICTIONS,
-						PreferenceMessages.INTERFACE_ADDED_SUPER_INTERFACE_WITH_METHODS,
-						PreferenceMessages.INTERFACE_ADDED_TYPE_PARAMETER,
-						PreferenceMessages.INTERFACE_CHANGED_TYPE_CONVERSION,
-						PreferenceMessages.INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-						PreferenceMessages.INTERFACE_REMOVED_TYPE_PARAMETER,
-						PreferenceMessages.INTERFACE_REMOVED_FIELD,
-						PreferenceMessages.INTERFACE_REMOVED_METHOD,
-						PreferenceMessages.INTERFACE_REMOVED_TYPE_MEMBER,
-					},
-					new Key[] {
-						KEY_INTERFACE_ADDED_FIELD,
-						KEY_INTERFACE_ADDED_METHOD,
-						KEY_INTERFACE_ADDED_RESTRICTIONS,
-						KEY_INTERFACE_ADDED_SUPER_INTERFACE_WITH_METHODS,
-						KEY_INTERFACE_ADDED_TYPE_PARAMETER,
-						KEY_INTERFACE_CHANGED_TYPE_CONVERSION,
-						KEY_INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-						KEY_INTERFACE_REMOVED_TYPE_PARAMETER,
-						KEY_INTERFACE_REMOVED_FIELD,
-						KEY_INTERFACE_REMOVED_METHOD,
-						KEY_INTERFACE_REMOVED_TYPE_MEMBER,
-					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityEnumElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-						PreferenceMessages.ENUM_CHANGED_TYPE_CONVERSION,
-						PreferenceMessages.ENUM_REMOVED_FIELD,
-						PreferenceMessages.ENUM_REMOVED_ENUM_CONSTANT,
-						PreferenceMessages.ENUM_REMOVED_METHOD,
-						PreferenceMessages.ENUM_REMOVED_TYPE_MEMBER,
-					},
-					new Key[] {
-						KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-						KEY_ENUM_CHANGED_TYPE_CONVERSION,
-						KEY_ENUM_REMOVED_FIELD,
-						KEY_ENUM_REMOVED_ENUM_CONSTANT,
-						KEY_ENUM_REMOVED_METHOD,
-						KEY_ENUM_REMOVED_TYPE_MEMBER,
-					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAnnotationElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
-						PreferenceMessages.ANNOTATION_CHANGED_TYPE_CONVERSION,
-						PreferenceMessages.ANNOTATION_REMOVED_FIELD,
-						PreferenceMessages.ANNOTATION_REMOVED_METHOD,
-						PreferenceMessages.ANNOTATION_REMOVED_TYPE_MEMBER,
-					},
-					new Key[] {
-						KEY_ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
-						KEY_ANNOTATION_CHANGED_TYPE_CONVERSION,
-						KEY_ANNOTATION_REMOVED_FIELD,
-						KEY_ANNOTATION_REMOVED_METHOD,
-						KEY_ANNOTATION_REMOVED_TYPE_MEMBER,
-					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityFieldElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.FIELD_ADDED_VALUE,
-						PreferenceMessages.FIELD_CHANGED_TYPE,
-						PreferenceMessages.FIELD_CHANGED_VALUE,
-						PreferenceMessages.FIELD_CHANGED_DECREASE_ACCESS,
-						PreferenceMessages.FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT,
-						PreferenceMessages.FIELD_CHANGED_NON_FINAL_TO_FINAL,
-						PreferenceMessages.FIELD_CHANGED_STATIC_TO_NON_STATIC,
-						PreferenceMessages.FIELD_CHANGED_NON_STATIC_TO_STATIC,
-						PreferenceMessages.FIELD_REMOVED_VALUE,
-						PreferenceMessages.FIELD_REMOVED_TYPE_ARGUMENT,
-					},
-					new Key[] {
-						KEY_FIELD_ADDED_VALUE,
-						KEY_FIELD_CHANGED_TYPE,
-						KEY_FIELD_CHANGED_VALUE,
-						KEY_FIELD_CHANGED_DECREASE_ACCESS,
-						KEY_FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT,
-						KEY_FIELD_CHANGED_NON_FINAL_TO_FINAL,
-						KEY_FIELD_CHANGED_STATIC_TO_NON_STATIC,
-						KEY_FIELD_CHANGED_NON_STATIC_TO_STATIC,
-						KEY_FIELD_REMOVED_VALUE,
-						KEY_FIELD_REMOVED_TYPE_ARGUMENT,
-					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityMethodElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.METHOD_ADDED_RESTRICTIONS,
-						PreferenceMessages.METHOD_ADDED_TYPE_PARAMETER,
-						PreferenceMessages.METHOD_CHANGED_VARARGS_TO_ARRAY,
-						PreferenceMessages.METHOD_CHANGED_DECREASE_ACCESS,
-						PreferenceMessages.METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
-						PreferenceMessages.METHOD_CHANGED_NON_STATIC_TO_STATIC,
-						PreferenceMessages.METHOD_CHANGED_STATIC_TO_NON_STATIC,
-						PreferenceMessages.METHOD_CHANGED_NON_FINAL_TO_FINAL,
-						PreferenceMessages.METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE,
-						PreferenceMessages.METHOD_REMOVED_TYPE_PARAMETER,
-					},
-					new Key[] {
-						KEY_METHOD_ADDED_RESTRICTIONS,
-						KEY_METHOD_ADDED_TYPE_PARAMETER,
-						KEY_METHOD_CHANGED_VARARGS_TO_ARRAY,
-						KEY_METHOD_CHANGED_DECREASE_ACCESS,
-						KEY_METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
-						KEY_METHOD_CHANGED_NON_STATIC_TO_STATIC,
-						KEY_METHOD_CHANGED_STATIC_TO_NON_STATIC,
-						KEY_METHOD_CHANGED_NON_FINAL_TO_FINAL,
-						KEY_METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE,
-						KEY_METHOD_REMOVED_TYPE_PARAMETER,
-					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityConstructorElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.CONSTRUCTOR_ADDED_TYPE_PARAMETER,
-						PreferenceMessages.CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY,
-						PreferenceMessages.CONSTRUCTOR_CHANGED_DECREASE_ACCESS,
-						PreferenceMessages.CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
-					},
-					new Key[] {
-						KEY_CONSTRUCTOR_ADDED_TYPE_PARAMETER,
-						KEY_CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY,
-						KEY_CONSTRUCTOR_CHANGED_DECREASE_ACCESS,
-						KEY_CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
-					});
-				client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityTypeParameterElement);
-				initializeComboControls(
-					client,
-					new String[] {
-						PreferenceMessages.TYPE_PARAMETER_ADDED_CLASS_BOUND,
-						PreferenceMessages.TYPE_PARAMETER_ADDED_INTERFACE_BOUND,
-						PreferenceMessages.TYPE_PARAMETER_CHANGED_CLASS_BOUND,
-						PreferenceMessages.TYPE_PARAMETER_CHANGED_INTERFACE_BOUND,
-						PreferenceMessages.TYPE_PARAMETER_REMOVED_CLASS_BOUND,
-						PreferenceMessages.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
-					},
-					new Key[] {
-						KEY_TYPE_PARAMETER_ADDED_CLASS_BOUND,
-						KEY_TYPE_PARAMETER_ADDED_INTERFACE_BOUND,
-						KEY_TYPE_PARAMETER_CHANGED_CLASS_BOUND,
-						KEY_TYPE_PARAMETER_CHANGED_INTERFACE_BOUND,
-						KEY_TYPE_PARAMETER_REMOVED_CLASS_BOUND,
-						KEY_TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
-					});
+				createCompatibilityPage(page);
+				break;
+			}
+			case EXTERNAL_DEPENDENCIES_PAGE_ID: {
+				createExternalDependenciesPage(page);
+				break;
 			}
 		}
 		SWTFactory.createVerticalSpacer(page, 1);
@@ -1291,6 +1001,358 @@ public class ApiErrorsWarningsConfigurationBlock {
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore_button, null, SWT.RIGHT);
 		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_IGNORE));
 		return page;
+	}
+	private void createExternalDependenciesPage(Composite page) {
+		Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
+		initializeComboControls(vcomp,
+			new String[] {
+				PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedTypeProblem,
+				PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedMethodProblem,
+				PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedFieldProblem
+			},
+			new Key[] {
+				KEY_API_USE_SCAN_TYPE_PROBLEM,
+				KEY_API_USE_SCAN_METHOD_PROBLEM,
+				KEY_API_USE_SCAN_FIELD_PROBLEM
+			}
+		);	
+	}
+	
+	private void createCompatibilityPage(Composite page) {
+		// compatibility
+		Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_HORIZONTAL);
+		addCheckBox(
+			vcomp,
+			PreferenceMessages.CompatibilityReportApiBreakageWhenMajorVersionIncremented,
+			KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
+			CHECKBOX_VALUES,
+			2);
+		ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
+		scomp.setExpandHorizontal(true);
+		scomp.setExpandVertical(true);
+		scomp.setLayout(new GridLayout(1, false));
+		scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		scomp.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				handleExpand(getScrollingParent(event.widget));
+			}
+		});
+		Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
+		scomp.setContent(sbody);
+		
+		Composite client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAPIComponentElement);
+		initializeComboControls(
+				client,
+				new String[] {
+						PreferenceMessages.API_COMPONENT_REMOVED_API_TYPE,
+						PreferenceMessages.API_COMPONENT_REMOVED_TYPE,
+						PreferenceMessages.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
+						PreferenceMessages.API_COMPONENT_REMOVED_REEXPORTED_TYPE,
+				},
+				new Key[] {
+						KEY_API_COMPONENT_REMOVED_API_TYPE,
+						KEY_API_COMPONENT_REMOVED_TYPE,
+						KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
+						KEY_API_COMPONENT_REMOVED_REEXPORTED_TYPE,
+				});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityClassElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.CLASS_ADDED_METHOD,
+				PreferenceMessages.CLASS_ADDED_RESTRICTIONS,
+				PreferenceMessages.CLASS_ADDED_TYPE_PARAMETER,
+				PreferenceMessages.CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+				PreferenceMessages.CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+				PreferenceMessages.CLASS_CHANGED_NON_FINAL_TO_FINAL,
+				PreferenceMessages.CLASS_CHANGED_TYPE_CONVERSION,
+				PreferenceMessages.CLASS_CHANGED_DECREASE_ACCESS,
+				PreferenceMessages.CLASS_REMOVED_FIELD,
+				PreferenceMessages.CLASS_REMOVED_METHOD,
+				PreferenceMessages.CLASS_REMOVED_CONSTRUCTOR,
+				PreferenceMessages.CLASS_REMOVED_SUPERCLASS,
+				PreferenceMessages.CLASS_REMOVED_TYPE_MEMBER,
+				PreferenceMessages.CLASS_REMOVED_TYPE_PARAMETER,
+			},
+			new Key[] {
+				KEY_CLASS_ADDED_METHOD,
+				KEY_CLASS_ADDED_RESTRICTIONS,
+				KEY_CLASS_ADDED_TYPE_PARAMETER,
+				KEY_CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+				KEY_CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+				KEY_CLASS_CHANGED_NON_FINAL_TO_FINAL,
+				KEY_CLASS_CHANGED_TYPE_CONVERSION,
+				KEY_CLASS_CHANGED_DECREASE_ACCESS,
+				KEY_CLASS_REMOVED_FIELD,
+				KEY_CLASS_REMOVED_METHOD,
+				KEY_CLASS_REMOVED_CONSTRUCTOR,
+				KEY_CLASS_REMOVED_SUPERCLASS,
+				KEY_CLASS_REMOVED_TYPE_MEMBER,
+				KEY_CLASS_REMOVED_TYPE_PARAMETER,
+			});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityInterfaceElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.INTERFACE_ADDED_FIELD,
+				PreferenceMessages.INTERFACE_ADDED_METHOD,
+				PreferenceMessages.INTERFACE_ADDED_RESTRICTIONS,
+				PreferenceMessages.INTERFACE_ADDED_SUPER_INTERFACE_WITH_METHODS,
+				PreferenceMessages.INTERFACE_ADDED_TYPE_PARAMETER,
+				PreferenceMessages.INTERFACE_CHANGED_TYPE_CONVERSION,
+				PreferenceMessages.INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+				PreferenceMessages.INTERFACE_REMOVED_TYPE_PARAMETER,
+				PreferenceMessages.INTERFACE_REMOVED_FIELD,
+				PreferenceMessages.INTERFACE_REMOVED_METHOD,
+				PreferenceMessages.INTERFACE_REMOVED_TYPE_MEMBER,
+			},
+			new Key[] {
+				KEY_INTERFACE_ADDED_FIELD,
+				KEY_INTERFACE_ADDED_METHOD,
+				KEY_INTERFACE_ADDED_RESTRICTIONS,
+				KEY_INTERFACE_ADDED_SUPER_INTERFACE_WITH_METHODS,
+				KEY_INTERFACE_ADDED_TYPE_PARAMETER,
+				KEY_INTERFACE_CHANGED_TYPE_CONVERSION,
+				KEY_INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+				KEY_INTERFACE_REMOVED_TYPE_PARAMETER,
+				KEY_INTERFACE_REMOVED_FIELD,
+				KEY_INTERFACE_REMOVED_METHOD,
+				KEY_INTERFACE_REMOVED_TYPE_MEMBER,
+			});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityEnumElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+				PreferenceMessages.ENUM_CHANGED_TYPE_CONVERSION,
+				PreferenceMessages.ENUM_REMOVED_FIELD,
+				PreferenceMessages.ENUM_REMOVED_ENUM_CONSTANT,
+				PreferenceMessages.ENUM_REMOVED_METHOD,
+				PreferenceMessages.ENUM_REMOVED_TYPE_MEMBER,
+			},
+			new Key[] {
+				KEY_ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+				KEY_ENUM_CHANGED_TYPE_CONVERSION,
+				KEY_ENUM_REMOVED_FIELD,
+				KEY_ENUM_REMOVED_ENUM_CONSTANT,
+				KEY_ENUM_REMOVED_METHOD,
+				KEY_ENUM_REMOVED_TYPE_MEMBER,
+			});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityAnnotationElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
+				PreferenceMessages.ANNOTATION_CHANGED_TYPE_CONVERSION,
+				PreferenceMessages.ANNOTATION_REMOVED_FIELD,
+				PreferenceMessages.ANNOTATION_REMOVED_METHOD,
+				PreferenceMessages.ANNOTATION_REMOVED_TYPE_MEMBER,
+			},
+			new Key[] {
+				KEY_ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
+				KEY_ANNOTATION_CHANGED_TYPE_CONVERSION,
+				KEY_ANNOTATION_REMOVED_FIELD,
+				KEY_ANNOTATION_REMOVED_METHOD,
+				KEY_ANNOTATION_REMOVED_TYPE_MEMBER,
+			});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityFieldElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.FIELD_ADDED_VALUE,
+				PreferenceMessages.FIELD_CHANGED_TYPE,
+				PreferenceMessages.FIELD_CHANGED_VALUE,
+				PreferenceMessages.FIELD_CHANGED_DECREASE_ACCESS,
+				PreferenceMessages.FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT,
+				PreferenceMessages.FIELD_CHANGED_NON_FINAL_TO_FINAL,
+				PreferenceMessages.FIELD_CHANGED_STATIC_TO_NON_STATIC,
+				PreferenceMessages.FIELD_CHANGED_NON_STATIC_TO_STATIC,
+				PreferenceMessages.FIELD_REMOVED_VALUE,
+				PreferenceMessages.FIELD_REMOVED_TYPE_ARGUMENT,
+			},
+			new Key[] {
+				KEY_FIELD_ADDED_VALUE,
+				KEY_FIELD_CHANGED_TYPE,
+				KEY_FIELD_CHANGED_VALUE,
+				KEY_FIELD_CHANGED_DECREASE_ACCESS,
+				KEY_FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT,
+				KEY_FIELD_CHANGED_NON_FINAL_TO_FINAL,
+				KEY_FIELD_CHANGED_STATIC_TO_NON_STATIC,
+				KEY_FIELD_CHANGED_NON_STATIC_TO_STATIC,
+				KEY_FIELD_REMOVED_VALUE,
+				KEY_FIELD_REMOVED_TYPE_ARGUMENT,
+			});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityMethodElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.METHOD_ADDED_RESTRICTIONS,
+				PreferenceMessages.METHOD_ADDED_TYPE_PARAMETER,
+				PreferenceMessages.METHOD_CHANGED_VARARGS_TO_ARRAY,
+				PreferenceMessages.METHOD_CHANGED_DECREASE_ACCESS,
+				PreferenceMessages.METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+				PreferenceMessages.METHOD_CHANGED_NON_STATIC_TO_STATIC,
+				PreferenceMessages.METHOD_CHANGED_STATIC_TO_NON_STATIC,
+				PreferenceMessages.METHOD_CHANGED_NON_FINAL_TO_FINAL,
+				PreferenceMessages.METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE,
+				PreferenceMessages.METHOD_REMOVED_TYPE_PARAMETER,
+			},
+			new Key[] {
+				KEY_METHOD_ADDED_RESTRICTIONS,
+				KEY_METHOD_ADDED_TYPE_PARAMETER,
+				KEY_METHOD_CHANGED_VARARGS_TO_ARRAY,
+				KEY_METHOD_CHANGED_DECREASE_ACCESS,
+				KEY_METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+				KEY_METHOD_CHANGED_NON_STATIC_TO_STATIC,
+				KEY_METHOD_CHANGED_STATIC_TO_NON_STATIC,
+				KEY_METHOD_CHANGED_NON_FINAL_TO_FINAL,
+				KEY_METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE,
+				KEY_METHOD_REMOVED_TYPE_PARAMETER,
+			});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityConstructorElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.CONSTRUCTOR_ADDED_TYPE_PARAMETER,
+				PreferenceMessages.CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY,
+				PreferenceMessages.CONSTRUCTOR_CHANGED_DECREASE_ACCESS,
+				PreferenceMessages.CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
+			},
+			new Key[] {
+				KEY_CONSTRUCTOR_ADDED_TYPE_PARAMETER,
+				KEY_CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY,
+				KEY_CONSTRUCTOR_CHANGED_DECREASE_ACCESS,
+				KEY_CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
+			});
+		client = createExpansibleComposite(sbody, PreferenceMessages.CompatibilityTypeParameterElement);
+		initializeComboControls(
+			client,
+			new String[] {
+				PreferenceMessages.TYPE_PARAMETER_ADDED_CLASS_BOUND,
+				PreferenceMessages.TYPE_PARAMETER_ADDED_INTERFACE_BOUND,
+				PreferenceMessages.TYPE_PARAMETER_CHANGED_CLASS_BOUND,
+				PreferenceMessages.TYPE_PARAMETER_CHANGED_INTERFACE_BOUND,
+				PreferenceMessages.TYPE_PARAMETER_REMOVED_CLASS_BOUND,
+				PreferenceMessages.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
+			},
+			new Key[] {
+				KEY_TYPE_PARAMETER_ADDED_CLASS_BOUND,
+				KEY_TYPE_PARAMETER_ADDED_INTERFACE_BOUND,
+				KEY_TYPE_PARAMETER_CHANGED_CLASS_BOUND,
+				KEY_TYPE_PARAMETER_CHANGED_INTERFACE_BOUND,
+				KEY_TYPE_PARAMETER_REMOVED_CLASS_BOUND,
+				KEY_TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
+			});
+	}
+	
+	private void createApiComponentResolutionPage(Composite page) {
+		Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
+		initializeComboControls(vcomp,
+			new String[] {
+				PreferenceMessages.ReportApiComponentResolutionFailure,
+				PreferenceMessages.ApiErrorsWarningsConfigurationBlock_unused_problem_filters,
+			},
+			new Key[] {
+				KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
+				KEY_UNUSED_PROBLEM_FILTERS
+			}
+		);
+		addCheckBox(vcomp, 
+				PreferenceMessages.ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters, 
+				KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS, 
+				CHECKBOX_VALUES, 
+				0);
+	}
+	
+	private void createVersionManagementPage(Composite page) {
+		Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
+		initializeComboControls(vcomp,
+			new String[] {
+				PreferenceMessages.VersionManagementReportMissingSinceTag,
+				PreferenceMessages.VersionManagementReportMalformedSinceTags,
+				PreferenceMessages.VersionManagementReportInvalidSinceTagVersion,
+				PreferenceMessages.VersionManagementReportInvalidApiComponentVersion,
+			},
+			new Key[] {
+				KEY_MISSING_SINCE_TAG,
+				KEY_MALFORMED_SINCE_TAG,
+				KEY_INVALID_SINCE_TAG_VERSION,
+				KEY_INCOMPATIBLE_API_COMPONENT_VERSION
+			}
+		);
+		addCheckBox(
+			vcomp,
+			PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMinorWithoutApiChange,
+			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE,
+			CHECKBOX_VALUES,
+			2);
+		addCheckBox(
+			vcomp,
+			PreferenceMessages.VersionManagementReportInvalidApiComponentVersionIncludeMajorWithoutBreakingChange,
+			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
+			CHECKBOX_VALUES,
+			2);
+	}
+	
+	private void createApiScanningPage(Composite page) {
+		ScrolledComposite scomp = new ScrolledComposite(page, SWT.H_SCROLL | SWT.V_SCROLL);
+		scomp.setExpandHorizontal(true);
+		scomp.setExpandVertical(true);
+		scomp.setLayout(new GridLayout(2, false));
+		scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		scomp.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				handleExpand(getScrollingParent(event.widget));
+			}
+		});
+		Composite sbody = SWTFactory.createComposite(scomp, 1, 1, GridData.FILL_BOTH);
+		scomp.setContent(sbody);
+		
+		Composite client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_general);
+		initializeComboControls(client, 
+				new String[] {
+					PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use,
+					PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_reference_to_system_libraries,
+				},
+				new Key[] {
+					KEY_INVALID_JAVADOC_TAG,
+					KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
+				});
+		initializeInstalledMetatadata(client);
+		client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
+		initializeComboControls(client,
+			new String[] {
+				PreferenceMessages.ApiProblemSeveritiesNoImplement,
+				PreferenceMessages.ApiProblemSeveritiesNoExtend,
+				PreferenceMessages.ApiProblemSeveritiesNoReference,
+				PreferenceMessages.ApiProblemSeveritiesNoInstanciate,
+				PreferenceMessages.ApiErrorsWarningsConfigurationBlock_override_tagged_method,
+			},
+			new Key[] {
+				KEY_NOIMPLEMENT,
+				KEY_NOEXTEND,
+				KEY_NOREFERENCE,
+				KEY_NOINSTANTIATE,
+				KEY_NOOVERRIDE,
+			}
+		);
+		client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_leaks);
+		initializeComboControls(client,
+				new String[] {
+					PreferenceMessages.ApiErrorsWarningsConfigurationBlock_extend_non_api_class,
+					PreferenceMessages.ApiErrorsWarningsConfigurationBlock_implement_non_api,
+					PreferenceMessages.ApiErrorsWarningsConfigurationBlock_field_decl_non_api,
+					PreferenceMessages.ApiErrorsWarningsConfigurationBlock_return_type_non_api,
+					PreferenceMessages.ApiErrorsWarningsConfigurationBlock_parameter_non_api
+				},
+				new Key[] {
+					KEY_LEAK_EXTEND,
+					KEY_LEAK_IMPLEMENT,
+					KEY_LEAK_FIELD_DECL,
+					KEY_LEAK_METHOD_RETURN_TYPE,
+					KEY_LEAK_METHOD_PARAM
+				}
+			);
 	}
 	
 	/**

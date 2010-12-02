@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -143,7 +145,38 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		cleanupUsageMarkers(resource);
 		cleanupCompatibilityMarkers(resource);
 		cleanupUnsupportedTagMarkers(resource);
+		cleanApiUseScanMarkers(resource);
 		cleanupFatalMarkers(resource);
+	}
+	
+	/**
+	 * Cleans up api use scan breakage related markers on the specified resource
+	 * @param resource
+	 */
+	void cleanApiUseScanMarkers(IResource resource) {
+		try {
+			if (resource != null && resource.isAccessible()) {
+				if (DEBUG) {
+					System.out.println("cleaning api use problems"); //$NON-NLS-1$
+				}
+				resource.deleteMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+
+				IProject project = resource.getProject();
+				IMarker[] markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+				for (int i = 0; i < markers.length; i++) {
+					String typeName = markers[i].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
+					IJavaElement adaptor = (IJavaElement) resource.getAdapter(IJavaElement.class);					
+					if (adaptor != null && adaptor instanceof ICompilationUnit) {
+						IType typeroot = ((ICompilationUnit)adaptor).findPrimaryType();
+						if (typeroot != null && typeName != null && typeName.equalsIgnoreCase(typeroot.getFullyQualifiedName())) {
+							markers[i].delete();
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
 	}
 	
 	/**
@@ -520,7 +553,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				continue;
 			}
 			if(DEBUG) {
-				System.out.println("creating marker for: "+problems[i].toString()); //$NON-NLS-1$
+				System.out.println("creating marker for: " + problems[i].toString()); //$NON-NLS-1$
 			}
 			createMarkerForProblem(category, type, problems[i]);
 		}
@@ -559,6 +592,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			case IApiProblem.CATEGORY_VERSION: {
 				return IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER;
 			}
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM : {
+				return IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER;
+			}
 		}
 		return null;
 	}
@@ -577,12 +613,28 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			return;
 		}
 		try {
+			if (category == IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM) {
+				IMarker[] markers = resource.findMarkers(type, true, IResource.DEPTH_ZERO);
+				for (int i = 0; i < markers.length; i++) {
+					String msg = markers[i].getAttribute(IMarker.MESSAGE, null);
+					if (msg == null || msg.equalsIgnoreCase(problem.getMessage())){
+						int markerSeverity = markers[i].getAttribute(IMarker.SEVERITY, 0);
+						int problemSeverity = ApiPlugin.getDefault().getSeverityLevel(ApiProblemFactory.getProblemSeverityId(problem), this.currentproject);
+						if (markerSeverity == problemSeverity) {
+							return; // Marker already exists
+						}
+					} else {
+						markers[i].delete(); // create the marker afresh
+					}
+				}
+			}			
 			IMarker marker = resource.createMarker(type);
 			int line = problem.getLineNumber();
 			switch(category) {
 				case IApiProblem.CATEGORY_VERSION :
 				case IApiProblem.CATEGORY_API_BASELINE :
-				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
+				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : 
+				case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM : {
 					break;
 				}
 				default : {
@@ -620,6 +672,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			//add all other extra arguments, if any
 			if(problem.getExtraMarkerAttributeIds().length > 0) {
 				marker.setAttributes(problem.getExtraMarkerAttributeIds(), problem.getExtraMarkerAttributeValues());
+			}
+			if (DEBUG) {
+				System.out.println("Created the marker: " + marker.getId() + " - " + marker.getAttributes().entrySet()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (CoreException e) {
 			//ignore and continue

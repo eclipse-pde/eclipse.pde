@@ -36,6 +36,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -375,6 +376,9 @@ public class UtilTests extends TestCase {
 				return null;
 			}
 			public IElementDescriptor getHandle() {
+				return null;
+			}
+			public IReferenceCollection getExternalDependencies() {
 				return null;
 			}
 		}

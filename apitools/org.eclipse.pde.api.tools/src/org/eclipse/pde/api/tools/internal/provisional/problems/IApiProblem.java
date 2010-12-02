@@ -54,6 +54,10 @@ public interface IApiProblem {
 	 */
 	public static final int CATEGORY_FATAL_PROBLEM = 0x70000000;
 	/**
+	 * Constant representing a api use scan breakage problem
+	 */
+	public static final int CATEGORY_API_USE_SCAN_PROBLEM = 0x80000000;
+	/**
 	 * Constant representing the offset of the message key portion of the id bit mask.
 	 */
 	public static final int OFFSET_MESSAGE = 0;
@@ -424,6 +428,33 @@ public interface IApiProblem {
 	 */
 	public static final int FATAL_JDT_BUILDPATH_PROBLEM = 1;
 	/**
+	 * Constant representing the value of a type {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>1</code>
+	 * 
+	 * @see #getKind()
+	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
+	 */
+	public static final int API_USE_SCAN_TYPE_PROBLEM = 1;
+	/**
+	 * Constant representing the value of a method {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>2</code>
+	 * 
+	 * @see #getKind()
+	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
+	 */
+	public static final int API_USE_SCAN_METHOD_PROBLEM = 2;
+	/**
+	 * Constant representing the value of a field {@link IApiProblem} kind.
+	 * <br>
+	 * Value is: <code>3</code>
+	 * 
+	 * @see #getKind()
+	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
+	 */
+	public static final int API_USE_SCAN_FIELD_PROBLEM = 3;
+	/**
 	 * Returns the severity of the problem. See the severity constants defined in
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.ApiPlugin} class.
 	 * 
@@ -505,10 +536,13 @@ public interface IApiProblem {
 	 * one of:
 	 * <ul>
 	 * <li>{@link #CATEGORY_COMPATIBILITY}</li>
-	 * <li>{@link #CATEGORY_SINCETAGS}</li>
 	 * <li>{@link #CATEGORY_USAGE}</li>
 	 * <li>{@link #CATEGORY_VERSION}</li>
+	 * <li>{@link #CATEGORY_SINCETAGS}</li>
 	 * <li>{@link #CATEGORY_API_BASELINE}</li>
+	 * <li>{@link #CATEGORY_API_COMPONENT_RESOLUTION}</li>
+	 * <li>{@link #CATEGORY_FATAL_PROBLEM}</li>
+	 * <li>{@link #CATEGORY_API_USE_SCAN_PROBLEM}</li>
 	 * </ul> 
 	 * @return the category for the problem
 	 */

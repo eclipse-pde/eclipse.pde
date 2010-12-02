@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +39,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -79,10 +83,13 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IBuildContext;
+import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -92,6 +99,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
+import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
+import org.eclipse.pde.api.tools.internal.search.UseScanManager;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -176,7 +185,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			final IApiComponent component,
 			final IBuildContext context,
 			IProgressMonitor monitor) {
-		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 7);
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 8);
 		try {
 			fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
@@ -269,6 +278,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				checkUnusedProblemFilters(bcontext, component, localMonitor.newChild(1));
 			}
 			Util.updateMonitor(localMonitor);
+			checkExternalDependencies(component, bcontext, localMonitor.newChild(1));
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
 		}
@@ -284,6 +294,151 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+	/**
+	 * Processes the API Use Scan report for the given API Component
+	 * 
+	 * @param apiComponent
+	 * @param bcontext
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	void checkExternalDependencies(IApiComponent apiComponent, IBuildContext bcontext, IProgressMonitor monitor) throws CoreException {
+		if (!isSeverityEnabled()) {
+			return;
+		}
+		String[] apiUseTypes = getApiUseTypes(bcontext);
+		if (DEBUG) {
+			System.out.println("Fetching external dependencies for the types : " + Arrays.asList(apiUseTypes)); //$NON-NLS-1$
+		}
+		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.checking_external_dependencies, 10);
+		IReferenceDescriptor[] externalDependencies  = UseScanManager.getInstance().getExternalDependenciesFor(apiComponent, apiUseTypes, localmonitor.newChild(10));
+		try {
+			if (externalDependencies != null) {
+				localmonitor.setWorkRemaining(externalDependencies.length);
+				HashMap problems = new HashMap();
+				for (int i = 0; i < externalDependencies.length; i++) {		
+					Util.updateMonitor(localmonitor, 1);
+					Reference externalReference = null;
+					IApiTypeRoot type = null;
+					IMemberDescriptor referencedMember = externalDependencies[i].getReferencedMember();
+					IReferenceTypeDescriptor referenceMemberType = referencedMember.getEnclosingType();
+					if (referenceMemberType != null) {
+						type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
+					}
+					switch (referencedMember.getElementType()) {
+						case IElementDescriptor.TYPE :
+							referenceMemberType = (IReferenceTypeDescriptor) referencedMember;
+							type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
+							if (type != null) {
+								externalReference = Reference.typeReference(type.getStructure(), referenceMemberType.getQualifiedName(), externalDependencies[i].getReferenceKind());
+							}
+							break;
+						case IElementDescriptor.METHOD :
+							if (type != null) {
+								externalReference = Reference.methodReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), ((IMethodDescriptor) referencedMember).getSignature(), externalDependencies[i].getReferenceKind());
+							}
+							break;
+						case IElementDescriptor.FIELD :
+							if (type != null) {
+								externalReference = Reference.fieldReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), externalDependencies[i].getReferenceKind());
+							}
+							break;
+					}
+					if (type == null) {
+						createExternalDependenciesProblem(problems, externalDependencies[i], referenceMemberType.getQualifiedName(), referencedMember, externalDependencies[i].getReferencedMember().getElementType(), 0);
+					} else {
+						externalReference.resolve();
+						if (externalReference.getResolvedReference() == null) {
+							createExternalDependenciesProblem(problems, externalDependencies[i], referenceMemberType.getQualifiedName(), referencedMember, externalDependencies[i].getReferencedMember().getElementType(), 1);
+						}
+					}				
+				}
+				for (Iterator iterator = problems.values().iterator(); iterator.hasNext();) {
+					IApiProblem apiProblem = (IApiProblem) iterator.next();
+					addProblem(apiProblem);
+				}
+			}
+		}
+		finally {
+			localmonitor.done();
+		}
+	}
+
+	public boolean isSeverityEnabled() {
+		IEclipsePreferences node = (new InstanceScope()).getNode(ApiPlugin.PLUGIN_ID);
+
+		if (!node.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_IGNORE).equalsIgnoreCase(ApiPlugin.VALUE_IGNORE)) {
+			return true;
+		}
+		if (!node.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, ApiPlugin.VALUE_IGNORE).equalsIgnoreCase(ApiPlugin.VALUE_IGNORE)) {
+			return true;
+		}
+		if (!node.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, ApiPlugin.VALUE_IGNORE).equalsIgnoreCase(ApiPlugin.VALUE_IGNORE)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Creates an {@link IApiProblem} for the broken external dependency 
+	 * 
+	 * @param problems
+	 * @param dependency
+	 * @param referenceType
+	 * @param referencedMember
+	 * @param elementType
+	 * @param flag
+	 * @return
+	 */
+	protected IApiProblem createExternalDependenciesProblem(HashMap problems, IReferenceDescriptor dependency, String referenceTypeName, IMemberDescriptor referencedMember, int elementType, int flag) {	
+		String resource = referenceTypeName;
+		String primaryTypeName = referenceTypeName;
+		if (referenceTypeName.indexOf('$') > -1) {
+			primaryTypeName = referenceTypeName.substring(0, referenceTypeName.indexOf('$'));
+		}
+		try {
+			if (fJavaProject.findType(primaryTypeName) != null) {
+				resource = primaryTypeName;
+			} else {					
+				resource = "."; // place the marker on project //$NON-NLS-1$
+			}
+		} catch (JavaModelException e) {						
+		}
+		String[] msgArgs = new String[] {referenceTypeName, referencedMember.getName(), dependency.getComponent().getId()};
+		int kind = 0;
+		switch (elementType) {
+			case IElementDescriptor.TYPE :
+				kind = IApiProblem.API_USE_SCAN_TYPE_PROBLEM;				
+				break;
+			case IElementDescriptor.METHOD :
+				kind = IApiProblem.API_USE_SCAN_METHOD_PROBLEM;
+				msgArgs[1] = BuilderMessages.BaseApiAnalyzer_Method + ' ' + msgArgs[1];
+				if ((dependency.getReferenceKind() & IReference.REF_CONSTRUCTORMETHOD) > 0) {
+					msgArgs[1] = BuilderMessages.BaseApiAnalyzer_Constructor + ' ' + msgArgs[1];
+				}
+				break;
+			case IElementDescriptor.FIELD :
+				kind = IApiProblem.API_USE_SCAN_FIELD_PROBLEM;
+				break;
+		}
+		
+		int dependencyNameIndex = 2;	// the comma separated list of dependent plugins 
+		String problemKey = referenceTypeName +  resource + dependency.getReferenceKind() + elementType + kind + flag;
+		IApiProblem similarProblem =  (IApiProblem) problems.get(problemKey);
+		if (similarProblem != null) {
+			String[] exisitingMsgArgs = similarProblem.getMessageArguments()[dependencyNameIndex].split(","); //$NON-NLS-1$
+			if (!Arrays.asList(exisitingMsgArgs).contains(msgArgs[dependencyNameIndex])) {
+				msgArgs[dependencyNameIndex] = similarProblem.getMessageArguments()[dependencyNameIndex] + ',' + ' ' + msgArgs[dependencyNameIndex];
+			} else {
+				return similarProblem;
+			}
+		}
+		IApiProblem problem = ApiProblemFactory.newApiUseScanProblem(resource, resource, msgArgs, 
+				new String[] {IApiMarkerConstants.API_USESCAN_TYPE}, new String[] {primaryTypeName }, elementType, kind, flag);
+		problems.put(problemKey, problem);
+		return problem;		
+	}
+	
 	/**
 	 * Checks the compatibility of each type.
 	 * 

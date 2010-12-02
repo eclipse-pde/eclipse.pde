@@ -235,7 +235,7 @@ public class UseScanParser {
 			throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, xmlLocation));
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseScanParser_parsing, 8);
-		localmonitor.setTaskName(SearchMessages.UseReportConverter_collecting_dir_info);
+		localmonitor.subTask(SearchMessages.UseReportConverter_collecting_dir_info);
 		File[] referees = getDirectories(reportsRoot);
 		Util.updateMonitor(localmonitor, 1);
 		File[] origins = null;
@@ -263,7 +263,7 @@ public class UseScanParser {
 								if (visitMembers){
 
 									// If the visitor returned true, open all xml files in the directory and process them to find members
-									localmonitor.setTaskName(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {origins[j].getName()}));
+									localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {origins[j].getName()}));
 									xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
 										public boolean accept(File pathname) {
 											return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$

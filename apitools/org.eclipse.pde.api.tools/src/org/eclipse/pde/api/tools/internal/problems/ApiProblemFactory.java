@@ -215,6 +215,25 @@ public class ApiProblemFactory {
 	}
 	
 	/**
+	 * Creates a new Api Use Scan breakge {@link IApiProblem}
+	 * 
+	 * @param resourcePath path of the resource associated with the problem
+	 * @param typeName the type name this problem was found in
+	 * @param messageargs listing of arguments to pass in to the localized message.
+	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param argumentids the ids of arguments passed into the problem
+	 * @param arguments the arguments that correspond to the listing of ids
+	 * @param element the element kind
+	 * @param kind the kind
+	 * @param flags flags the reason for problem. <code>0</code> if the type could not be resolved. 
+	 * <code>1</code> if member could not be located in the type.
+	 * @return a new {@link IApiProblem} for Api Use Scan breakge
+	 */
+	public static IApiProblem newApiUseScanProblem( String resourcePath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int element, int kind, int flags) {
+		int id = createProblemId(IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM, element, kind, flags);
+		return newApiProblem(resourcePath, typeName, messageargs, argumentids, arguments, -1, -1, -1, id);
+	}
+	/**
 	 * Returns the localized message for the given {@link IApiProblem}. Returns
 	 * <code>null</code> if no localized message cannot be created.
 	 * @param problemid the id of the problem to create a message for
@@ -596,6 +615,13 @@ public class ApiProblemFactory {
 				}
 				break;
 			}
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM : {
+				switch(kind) {
+					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM: return 136 + flags;
+					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM: return 138 + flags;
+					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM: return 140 + flags;
+				}
+			}
 		}
 		return 0;
 	}
@@ -666,6 +692,13 @@ public class ApiProblemFactory {
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {
 				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());
+			}
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
+				switch(problem.getKind()) {
+					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM : return IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY;
+					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM : return IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY;
+					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM : return IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY;
+				}
 			}
 		}
 		return null;

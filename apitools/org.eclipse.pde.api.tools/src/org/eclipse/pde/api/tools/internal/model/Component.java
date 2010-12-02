@@ -21,6 +21,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
+import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 
 /**
  * Common implementation of an API component as a composite class file container.
@@ -37,6 +39,11 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 * Api Filter store
 	 */
 	private IApiFilterStore fFilterStore = null;
+
+	/**
+	 * References in Api use scan reports
+	 */
+	private IReferenceCollection fReferences;
 	
 	/**
 	 * Constructs an API component in the given {@link IApiBaseline}.
@@ -178,4 +185,15 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 * @throws CoreException
 	 */
 	protected abstract IApiFilterStore createApiFilterStore() throws CoreException;	
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getExternalDependencies()
+	 */
+	public IReferenceCollection getExternalDependencies() {
+		if (fReferences == null) {
+			fReferences = new UseScanReferences();
+		}
+		return fReferences;
+	}
 }

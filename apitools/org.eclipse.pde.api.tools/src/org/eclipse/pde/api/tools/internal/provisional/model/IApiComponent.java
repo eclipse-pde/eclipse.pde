@@ -16,6 +16,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 
 /**
  * Describes the API of a software component. An API component
@@ -213,4 +214,10 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @return element descriptor
 	 */
 	public IElementDescriptor getHandle();
+	
+	/**
+	 * Returns all references to this component as registered by API use scans with the Use Scan Manager.
+	 * @return the collection of reference descriptors
+	 */
+	public IReferenceCollection getExternalDependencies();
 }
