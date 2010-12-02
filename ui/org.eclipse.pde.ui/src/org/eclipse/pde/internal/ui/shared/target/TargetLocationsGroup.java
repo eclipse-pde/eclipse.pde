@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.core.target.UpdateTargetJob;
-
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -423,8 +420,6 @@ public class TargetLocationsGroup {
 							// do nothing if we could not see the current target.
 						}
 						updateButtons();
-						// XXX still need to figure how to mark the target as dirty so it gets persisted.
-						// right now it seems to always be dirty
 					}
 				});
 			}
@@ -440,7 +435,7 @@ public class TargetLocationsGroup {
 		boolean updateAllowed = false;
 		Iterator iter = selection.iterator();
 		while (iter.hasNext()) {
-			if (removeAllowed && updateAllowed){
+			if (removeAllowed && updateAllowed) {
 				break;
 			}
 			Object current = iter.next();
@@ -495,10 +490,13 @@ public class TargetLocationsGroup {
 						}
 					} else if (parentElement instanceof IUBundleContainer) {
 						// Show the IUs as children
-						// TODO See if we can get the profile using API
 						try {
-							IProfile profile = P2TargetUtils.getProfile(fTarget);
-							IInstallableUnit[] units = ((IUBundleContainer) parentElement).getInstallableUnits(profile);
+							// if this is a bundle container then we must be sure that all bundle containers are
+							// happy since they all share the same profile.
+							if (!P2TargetUtils.isResolved(fTarget)) {
+								return new Object[0];
+							}
+							IInstallableUnit[] units = ((IUBundleContainer) parentElement).getInstallableUnits();
 							// Wrap the units so that they remember their parent container
 							List wrappedUnits = new ArrayList(units.length);
 							for (int i = 0; i < units.length; i++) {

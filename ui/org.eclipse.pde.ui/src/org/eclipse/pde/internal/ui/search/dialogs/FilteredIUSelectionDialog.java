@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.search.dialogs;
 import java.util.Comparator;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.query.IQuery;
@@ -24,6 +23,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.Messages;
+import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -66,6 +66,13 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 				styledString.append(' ');
 				styledString.append("(", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				styledString.append(iuPackage.getVersion().toString(), StyledString.QUALIFIER_STYLER);
+				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				IInstallableUnit iu = iuPackage.getIU();
+				styledString.append(" from ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				styledString.append(iu.getId(), StyledString.QUALIFIER_STYLER);
+				styledString.append(' ');
+				styledString.append("(", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				styledString.append(iu.getVersion().toString(), StyledString.QUALIFIER_STYLER);
 				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 			} else if (element instanceof IInstallableUnit) {
 				IInstallableUnit iu = (IInstallableUnit) element;
@@ -190,10 +197,9 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	 */
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		// TODO clean up this code a bit...
-		IProvisioningAgent agent = (IProvisioningAgent) PDECore.getDefault().acquireService(IProvisioningAgent.SERVICE_NAME);
-		if (agent == null)
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
-		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
+		if (manager == null)
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_2));
 
 		//URI[] knownRepositories = metadataManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 		IQuery pipedQuery;

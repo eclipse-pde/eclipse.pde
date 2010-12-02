@@ -41,12 +41,12 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	/**
 	 * Resolved bundles or <code>null</code> if unresolved
 	 */
-	private IResolvedBundle[] fBundles;
+	protected IResolvedBundle[] fBundles;
 
 	/**
 	 * List of features contained in this bundle container or <code>null</code> if unresolved
 	 */
-	private IFeatureModel[] fFeatures;
+	protected IFeatureModel[] fFeatures;
 
 	/**
 	 * Status generated when this container was resolved, possibly <code>null</code>
@@ -550,5 +550,15 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			return null;
 		}
 		return fVMArgs;
+	}
+
+	/**
+	 * Associate this bundle container with the given target.  This allows for the container and 
+	 * the target to share configuration information etc.  
+	 * 
+	 * @param target the target to which this container is being added.
+	 */
+	protected void associateWithTarget(ITargetDefinition target) {
+		// Do nothing by default
 	}
 }

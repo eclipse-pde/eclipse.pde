@@ -78,10 +78,9 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
 		ITargetDefinition definition = currentTarget.getTargetDefinition();
-		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(units, repositories);
 		// Force the target into slicer mode as all requirements may not be available
-		container.setIncludeAllRequired(false, definition);
-		container.setIncludeAllEnvironments(true, definition);
+		int flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;
+		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(units, repositories, flags);
 		IBundleContainer[] oldContainers = definition.getBundleContainers();
 		if (oldContainers == null) {
 			definition.setBundleContainers(new IBundleContainer[] {container});

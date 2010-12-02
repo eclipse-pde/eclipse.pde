@@ -1028,10 +1028,10 @@ public class TargetContentsGroup {
 		if (parent == null) {
 			result = fAllBundles.toArray();
 		} else if (fFeaureModeButton.getSelection() && parent == OTHER_CATEGORY) {
-			return ((TargetDefinition) fTargetDefinition).getOtherBundles();
+			result = ((TargetDefinition) fTargetDefinition).getOtherBundles();
 		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof IBundleContainer) {
 			IBundleContainer container = (IBundleContainer) parent;
-			return container.getBundles();
+			result = container.getBundles();
 		} else if (fGrouping == GROUP_BY_FILE_LOC && parent instanceof IPath) {
 			List bundles = (List) getFileBundleMapping().get(parent);
 			if (bundles != null && bundles.size() > 0) {

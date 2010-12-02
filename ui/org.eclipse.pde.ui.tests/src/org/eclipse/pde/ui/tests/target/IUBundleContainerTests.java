@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.internal.core.target.P2TargetUtils;
-
-import java.util.Iterator;
-
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -23,8 +19,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.URLUtil;
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.engine.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
@@ -89,16 +83,16 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	}
 	
 	public void testResolveUsingProfile() throws Exception {
-		String[] bundleIDs = new String[]{"feature.b.feature.group"};
+		String[] features1 = new String[]{"feature.b.feature.group"};
+		String[] features2 = new String[]{"feature.a.feature.group"};
 		String[] expectedBundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
-		String[] expectedBundles2 = new String[]{"bundle.b1", "bundle.b2", "bundle.b3"};
+		String[] expectedBundles2 = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
 
 		try { 
-
-			IUBundleContainer container = createContainer(bundleIDs);
+			// create a target that references just a high level root
+			IUBundleContainer container = createContainer(features1);
 			ITargetDefinition target = getTargetService().newTarget();
 			target.setBundleContainers(new IBundleContainer[]{container});
-
 			List infos = getAllBundleInfos(target);
 			Set names = collectAllSymbolicNames(infos);
 			assertEquals(expectedBundles.length, infos.size());
@@ -106,24 +100,9 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 				assertTrue("Missing: " + expectedBundles[i], names.contains(expectedBundles[i]));
 			}
 
-			IProfile profile = P2TargetUtils.getProfile(target);
-
-			IProvisioningAgent agent = P2TargetUtils.getAgent();
-			IEngine engine = P2TargetUtils.getEngine();
-			IProvisioningPlan plan = engine.createPlan(profile, new ProvisioningContext(agent));
-			IQueryResult units = profile.query(QueryUtil.ALL_UNITS, null);
-			for (Iterator iterator = units.iterator(); iterator.hasNext();) {
-				IInstallableUnit unit = (IInstallableUnit) iterator.next();
-				if (unit.getId().startsWith("bundle.a")){
-					plan.removeInstallableUnit(unit);
-				}
-			}
-			IPhaseSet phases = PhaseSetFactory.createDefaultPhaseSetExcluding(new String[] {PhaseSetFactory.PHASE_CHECK_TRUST, PhaseSetFactory.PHASE_CONFIGURE, PhaseSetFactory.PHASE_UNCONFIGURE});
-			IStatus result = engine.perform(plan, phases, null);
-
-			assertTrue("Problem while provisioning: " + result.getMessage(), result.isOK());
-			
-			target.resolve(null);  // Force the target to reresolve (hopefully using the modified profile)
+			// Now modify the target to have just a lower level root.  The extra higher level stuff should get removed.
+			container = createContainer(features2);
+			target.setBundleContainers(new IBundleContainer[]{container});
 			infos = getAllBundleInfos(target);
 			names = collectAllSymbolicNames(infos);
 			assertEquals(expectedBundles2.length, infos.size());
@@ -211,8 +190,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 */
 	public void testContentEqualNull() throws Exception {		
 		ITargetPlatformService service = getTargetService();
-		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
-		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
+		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
+		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
 		assertTrue("Contents should be equivalent", c3.isContentEqual(c4));
 	}
 	
@@ -223,8 +202,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 */
 	public void testContentNotEqualNull() throws Exception {		
 		ITargetPlatformService service = getTargetService();
-		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null);
-		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.b1", "bundle.b2"}, new String[]{"1.0.0", "1.0.0"}, null);
+		IUBundleContainer c3 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 1);
+		IUBundleContainer c4 = (IUBundleContainer) service.newIUContainer(new String[]{"bundle.b1", "bundle.b2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
 		assertFalse("Contents should not be equivalent", c3.isContentEqual(c4));
 	}	
 	
@@ -356,7 +335,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected IUBundleContainer createContainer(IInstallableUnit[] units, URI[] repositories) throws Exception {
-		return (IUBundleContainer) getTargetService().newIUContainer(units, repositories);
+		return (IUBundleContainer) getTargetService().newIUContainer(units, repositories, IUBundleContainer.INCLUDE_REQUIRED);
 	}
 	
 	/**
@@ -473,7 +452,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		
 		infos = getBundleInfos(c2);
 		names = collectAllSymbolicNames(infos);
-		bundleIds = new String[]{"bundle.b1", "bundle.b2", "bundle.b3"};
+		bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		assertEquals(bundleIds.length, infos.size());
 		
 		for (int i = 0; i < bundleIds.length; i++) {

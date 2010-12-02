@@ -236,12 +236,8 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		IBundleContainer restrictedProfileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
 	
 		// Site bundle containers with different settings
-		IUBundleContainer siteContainer = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[]{}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")});
-		siteContainer.setIncludeAllRequired(false, null);
-		siteContainer.setIncludeAllEnvironments(true, null);
-		IUBundleContainer siteContainer2 = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1","unit2"},new String[]{"1.0", "2.0"}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")});
-		siteContainer2.setIncludeAllRequired(true, null);
-		siteContainer2.setIncludeAllEnvironments(false, null);
+		IUBundleContainer siteContainer = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[]{}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")}, IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS);
+		IUBundleContainer siteContainer2 = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1","unit2"},new String[]{"1.0", "2.0"}, new URI[]{new URI("TESTURI"), new URI("TESTURI2")}, IUBundleContainer.INCLUDE_REQUIRED);
 		
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", null),

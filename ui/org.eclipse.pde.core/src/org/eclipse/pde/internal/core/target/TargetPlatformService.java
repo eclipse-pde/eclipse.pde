@@ -591,16 +591,16 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit[], java.net.URI[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.p2.metadata.IInstallableUnit[], java.net.URI[], int)
 	 */
-	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories) {
-		return new IUBundleContainer(units, repositories);
+	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
+		return new IUBundleContainer(units, repositories, resolutionFlags);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(java.lang.String[], java.lang.String[], java.net.URI[])
+	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(java.lang.String[], java.lang.String[], java.net.URI[], int)
 	 */
-	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories) {
-		return new IUBundleContainer(unitIds, versions, repositories);
+	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags) {
+		return new IUBundleContainer(unitIds, versions, repositories, resolutionFlags);
 	}
 }

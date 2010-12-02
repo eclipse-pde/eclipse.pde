@@ -15,13 +15,11 @@ import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
 import org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
@@ -219,13 +217,12 @@ public class ExportTargetJob extends Job {
 	}
 
 	private void exportProfile(ITargetDefinition target, URI destination, IProgressMonitor monitor) throws CoreException {
-		IProfile profile = P2TargetUtils.getProfile(target);
 		Repo2Runnable exporter = new Repo2Runnable();
-		exporter.addDestination(createRepoDescriptor(destination, profile.getProfileId(), RepositoryDescriptor.KIND_METADATA));
-		exporter.addDestination(createRepoDescriptor(destination, profile.getProfileId(), RepositoryDescriptor.KIND_ARTIFACT));
-		exporter.addSource(createRepoDescriptor(P2TargetUtils.getBundlePool(profile).getLocation(), null, RepositoryDescriptor.KIND_ARTIFACT));
+		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), RepositoryDescriptor.KIND_METADATA));
+		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), RepositoryDescriptor.KIND_ARTIFACT));
+		exporter.addSource(createRepoDescriptor(P2TargetUtils.getBundlePool().getLocation(), null, RepositoryDescriptor.KIND_ARTIFACT));
 
-		IQueryResult ius = profile.query(QueryUtil.createIUAnyQuery(), null);
+		IQueryResult ius = P2TargetUtils.getIUs(target, monitor);
 		ArrayList toExport = new ArrayList();
 		for (Iterator i = ius.iterator(); i.hasNext();) {
 			IInstallableUnit iu = (IInstallableUnit) i.next();

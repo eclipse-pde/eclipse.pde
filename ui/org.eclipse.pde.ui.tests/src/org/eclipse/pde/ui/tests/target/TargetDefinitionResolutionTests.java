@@ -594,47 +594,49 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 */
 	public void testSiteContainerIncludeSettings() throws Exception{
 		ITargetDefinition target = getNewTarget();
-		IUBundleContainer containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null);
-		IUBundleContainer containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null);
+		IUBundleContainer containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null, IUBundleContainer.INCLUDE_REQUIRED);
+		IUBundleContainer containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, IUBundleContainer.INCLUDE_REQUIRED);
 		target.setBundleContainers(new IBundleContainer[]{containerA, containerB});
 		
 		// Check default settings
 		assertTrue(containerA.getIncludeAllRequired());
 		assertFalse(containerA.getIncludeAllEnvironments());
+		assertFalse(containerA.getIncludeSource());
 		assertTrue(containerB.getIncludeAllRequired());
 		assertFalse(containerB.getIncludeAllEnvironments());
+		assertFalse(containerB.getIncludeSource());
 		
 		// Check basic changes
-		containerA.setIncludeAllRequired(false, null);
-		containerA.setIncludeAllEnvironments(true, null);
+		int flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;
+		containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null, flags);
+		containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, flags);
+		target.setBundleContainers(new IBundleContainer[]{containerA, containerB});
 		assertFalse(containerA.getIncludeAllRequired());
 		assertTrue(containerA.getIncludeAllEnvironments());
-		containerA.setIncludeAllEnvironments(false, null);
-		containerA.setIncludeAllRequired(true, null);
-		assertTrue(containerA.getIncludeAllRequired());
-		assertFalse(containerA.getIncludeAllEnvironments());
+		assertTrue(containerA.getIncludeSource());
 		
 		// Check that all containers are updated in the target if target is passed as argument
-		containerA.setIncludeAllRequired(false, target);
+		flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;
+		containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null, flags);
+		flags = IUBundleContainer.INCLUDE_REQUIRED;
+		containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, flags);
+
+		target.setBundleContainers(new IBundleContainer[]{containerA, containerB});
+		assertTrue(containerA.getIncludeAllRequired());
+		assertFalse(containerA.getIncludeAllEnvironments());
+		assertFalse(containerA.getIncludeSource());
+		assertTrue(containerB.getIncludeAllRequired());
+		assertFalse(containerB.getIncludeAllEnvironments());
+		assertFalse(containerB.getIncludeSource());
+
+		// now switch the order of A and B
+		target.setBundleContainers(new IBundleContainer[]{containerB, containerA});
 		assertFalse(containerA.getIncludeAllRequired());
-		assertFalse(containerA.getIncludeAllEnvironments());
-		assertFalse(containerB.getIncludeAllRequired());
-		assertFalse(containerB.getIncludeAllEnvironments());
-		containerB.setIncludeAllRequired(true, target);
-		assertTrue(containerA.getIncludeAllRequired());
-		assertFalse(containerA.getIncludeAllEnvironments());
-		assertTrue(containerB.getIncludeAllRequired());
-		assertFalse(containerB.getIncludeAllEnvironments());
-		containerA.setIncludeAllEnvironments(true, target);
-		assertTrue(containerA.getIncludeAllRequired());
 		assertTrue(containerA.getIncludeAllEnvironments());
-		assertTrue(containerB.getIncludeAllRequired());
+		assertTrue(containerA.getIncludeSource());
+		assertFalse(containerB.getIncludeAllRequired());
 		assertTrue(containerB.getIncludeAllEnvironments());
-		containerB.setIncludeAllEnvironments(false, target);
-		assertTrue(containerA.getIncludeAllRequired());
-		assertFalse(containerA.getIncludeAllEnvironments());
-		assertTrue(containerB.getIncludeAllRequired());
-		assertFalse(containerB.getIncludeAllEnvironments());
+		assertTrue(containerB.getIncludeSource());
 	}
 	
 	public void testNameVersionDescriptor() {

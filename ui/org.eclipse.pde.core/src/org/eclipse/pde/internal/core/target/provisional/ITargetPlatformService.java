@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target.provisional;
 
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-
 import java.net.URI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
 
 /**
  * A service to manage target platform definitions available to the workspace.
  * 
  * @since 3.5
+ * @noimplement This interface is not intended to be implemented by clients. 
  */
 public interface ITargetPlatformService {
 
@@ -139,9 +140,10 @@ public interface ITargetPlatformService {
 	 * @param units installable units
 	 * @param repositories URI's describing repository locations or <code>null</code> to use
 	 * 	default repositories
+	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}
 	 * @return bundle container
 	 */
-	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories);
+	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories, int resolutionFlags);
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles contained in
@@ -152,9 +154,10 @@ public interface ITargetPlatformService {
 	 * @param versions version identifiers
 	 * @param repositories URI's describing repository locations or <code>null</code> to use
 	 * 	default repositories
+	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}
 	 * @return bundle container
 	 */
-	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories);
+	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags);
 
 	/**
 	 * Creates and returns a bundle container that contains all bundles referenced by

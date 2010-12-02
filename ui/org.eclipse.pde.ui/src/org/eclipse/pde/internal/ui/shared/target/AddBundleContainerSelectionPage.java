@@ -14,12 +14,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
@@ -291,14 +289,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_SECTION);
 						}
 						setDialogSettings(settings);
-						// TODO Use proper API to get the profile
-						IProfile profile = null;
-						try {
-							profile = P2TargetUtils.getProfile(fTarget);
-						} catch (CoreException e) {
-							PDEPlugin.log(e);
-						}
-						addPage(new EditIUContainerPage(fTarget, profile));
+						addPage(new EditIUContainerPage(fTarget));
 					}
 
 					public boolean performFinish() {

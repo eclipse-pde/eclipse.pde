@@ -18,7 +18,6 @@ import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
-import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
@@ -30,6 +29,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
@@ -68,11 +68,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private IUBundleContainer fEditContainer;
 
 	/**
-	 * Profile from the target
-	 */
-	private IProfile fProfile;
-
-	/**
 	 * Used to provide special attributes/filtering to the available iu group 
 	 */
 	private IUViewQueryContext fQueryContext;
@@ -97,19 +92,18 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 	/**
 	 * Constructor for creating a new container
-	 * @param profile profile from the parent target, used to setup the p2 UI
+	 * @param definition the target definintion we are editing
 	 */
-	protected EditIUContainerPage(ITargetDefinition definition, IProfile profile) {
+	protected EditIUContainerPage(ITargetDefinition definition) {
 		super("AddP2Container"); //$NON-NLS-1$
 		setTitle(Messages.EditIUContainerPage_5);
 		setMessage(Messages.EditIUContainerPage_6);
 		fTarget = definition;
-		fProfile = profile;
 		ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
 		// TODO we use the service session from the self profile.  In the future we may want
 		// to set up our own services for the profile (separate repo managers, etc).
 		// We use our own new policy so we don't bash the SDK's settings.
-		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), profile.getProfileId(), new Policy());
+		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), P2TargetUtils.getProfileId(definition), new Policy());
 	}
 
 	/**
@@ -117,8 +111,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * @param container the container to edit
 	 * @param profile profile from the parent target, used to setup the p2 UI
 	 */
-	protected EditIUContainerPage(IUBundleContainer container, ITargetDefinition definition, IProfile profile) {
-		this(definition, profile);
+	protected EditIUContainerPage(IUBundleContainer container, ITargetDefinition definition) {
+		this(definition);
 		setTitle(Messages.EditIUContainerPage_7);
 		setMessage(Messages.EditIUContainerPage_6);
 		fEditContainer = container;
@@ -132,10 +126,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		if (service == null) {
 			PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.EditIUContainerPage_9));
 		}
-		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null);
-		container.setIncludeAllRequired(fIncludeRequiredButton.getSelection(), fTarget);
-		container.setIncludeAllEnvironments(fAllPlatformsButton.getSelection(), fTarget);
-		container.setIncludeSource(fIncludeSourceButton.getSelection());
+		int flags = fIncludeRequiredButton.getSelection() ? IUBundleContainer.INCLUDE_REQUIRED : 0;
+		flags |= fAllPlatformsButton.getSelection() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
+		flags |= fIncludeSourceButton.getSelection() ? IUBundleContainer.INCLUDE_SOURCE : 0;
+		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null, flags);
 		return container;
 	}
 
@@ -299,32 +293,37 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		});
 		((GridData) fAllPlatformsButton.getLayoutData()).horizontalIndent = 10;
 		fIncludeSourceButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_16, null, true, 1);
+		fIncludeSourceButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				warnIfGlobalSettingChanged();
+			}
+		});
 	}
 
 	private void warnIfGlobalSettingChanged() {
-		boolean warn = false;
-		if (fTarget != null) {
-			IBundleContainer[] containers = fTarget.getBundleContainers();
-			if (containers != null) {
-				for (int i = 0; i < containers.length; i++) {
-					if (containers[i] instanceof IUBundleContainer && containers[i] != fEditContainer) {
-						IUBundleContainer container = (IUBundleContainer) containers[i];
-						if (container.getIncludeAllRequired() != fIncludeRequiredButton.getSelection()) {
-							warn = true;
-							break;
-						}
-						if (!fIncludeRequiredButton.getSelection() && container.getIncludeAllEnvironments() != fAllPlatformsButton.getSelection()) {
-							warn = true;
-							break;
-						}
-					}
+		boolean noChange = true;
+		IUBundleContainer iuContainer = null;
+		IBundleContainer[] containers = fTarget.getBundleContainers();
+		if (containers != null) {
+			// Look for a IUBundleContainer to compare against.
+			for (int i = 0; i < containers.length; i++) {
+				if (containers[i] instanceof IUBundleContainer && containers[i] != fEditContainer) {
+					iuContainer = (IUBundleContainer) containers[i];
+					break;
 				}
 			}
+			// If there is another IU container then compare against it.  No need to check them all
+			// as they will all be set the same within one target.
+			if (iuContainer != null) {
+				noChange &= fIncludeRequiredButton.getSelection() == iuContainer.getIncludeAllRequired();
+				noChange &= fAllPlatformsButton.getSelection() == iuContainer.getIncludeAllEnvironments();
+				noChange &= fIncludeSourceButton.getSelection() == iuContainer.getIncludeSource();
+			}
 		}
-		if (warn) {
-			setMessage(Messages.EditIUContainerPage_4, IStatus.WARNING);
-		} else {
+		if (noChange) {
 			setMessage(Messages.EditIUContainerPage_6);
+		} else {
+			setMessage(Messages.EditIUContainerPage_4, IStatus.WARNING);
 		}
 	}
 
@@ -333,7 +332,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 */
 	private void createQueryContext() {
 		fQueryContext = ProvUI.getQueryContext(ProvisioningUI.getDefaultUI().getPolicy());
-		fQueryContext.setInstalledProfileId(fProfile.getProfileId());
+		fQueryContext.setInstalledProfileId(P2TargetUtils.getProfileId(fTarget));
 		fQueryContext.showAlreadyInstalled();
 	}
 
@@ -498,7 +497,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				// Only able to check items if we don't have categories
 				fQueryContext.setViewType(IUViewQueryContext.AVAILABLE_VIEW_FLAT);
 				fAvailableIUGroup.updateAvailableViewState();
-				fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits(fProfile));
+				fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits());
 				// Make sure view is back in proper state
 				updateViewContext();
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
@@ -519,5 +518,4 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			}
 		}
 	}
-
 }

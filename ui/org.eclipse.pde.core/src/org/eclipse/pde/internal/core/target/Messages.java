@@ -34,6 +34,7 @@ public class Messages extends NLS {
 	public static String IUBundleContainer_0;
 	public static String IUBundleContainer_1;
 	public static String IUBundleContainer_10;
+	public static String IUBundleContainer_11;
 	public static String IUBundleContainer_2;
 	public static String IUBundleContainer_3;
 	public static String IUBundleContainer_4;

@@ -224,18 +224,14 @@ public class TargetPersistence35Helper {
 			String[] iuIDs = (String[]) ids.toArray(new String[ids.size()]);
 			String[] iuVer = (String[]) versions.toArray(new String[versions.size()]);
 			URI[] uris = (URI[]) repos.toArray(new URI[repos.size()]);
-			container = new IUBundleContainer(iuIDs, iuVer, uris);
+			int flags = IUBundleContainer.INCLUDE_REQUIRED;
 			if (includeMode != null && includeMode.trim().length() > 0) {
-				if (includeMode.equals(TargetDefinitionPersistenceHelper.MODE_PLANNER)) {
-					((IUBundleContainer) container).setIncludeAllRequired(true, null);
-				} else if (includeMode.equals(TargetDefinitionPersistenceHelper.MODE_SLICER)) {
-					((IUBundleContainer) container).setIncludeAllRequired(false, null);
+				if (includeMode.equals(TargetDefinitionPersistenceHelper.MODE_SLICER)) {
+					flags = 0;
 				}
 			}
-			if (includeAllPlatforms != null && includeAllPlatforms.trim().length() > 0) {
-				((IUBundleContainer) container).setIncludeAllEnvironments(Boolean.valueOf(includeAllPlatforms).booleanValue(), null);
-			}
-
+			flags |= Boolean.valueOf(includeAllPlatforms).booleanValue() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
+			container = new IUBundleContainer(iuIDs, iuVer, uris, flags);
 		}
 
 		NodeList list = location.getChildNodes();

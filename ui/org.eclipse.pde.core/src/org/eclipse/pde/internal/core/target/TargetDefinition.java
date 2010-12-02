@@ -75,6 +75,8 @@ public class TargetDefinition implements ITargetDefinition {
 	private IFeatureModel[] fFeatureModels;
 	private IResolvedBundle[] fOtherBundles;
 
+	private int fSequenceNumber = -1;
+
 	/**
 	 * Constructs a target definition based on the given handle. 
 	 */
@@ -142,6 +144,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setArch(java.lang.String)
 	 */
 	public void setArch(String arch) {
+		incrementSequenceNumber();
 		fArch = arch;
 	}
 
@@ -149,6 +152,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setNL(java.lang.String)
 	 */
 	public void setNL(String nl) {
+		incrementSequenceNumber();
 		fNL = nl;
 	}
 
@@ -163,6 +167,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOS(java.lang.String)
 	 */
 	public void setOS(String os) {
+		incrementSequenceNumber();
 		fOS = os;
 	}
 
@@ -190,6 +195,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setWS(java.lang.String)
 	 */
 	public void setWS(String ws) {
+		incrementSequenceNumber();
 		fWS = ws;
 	}
 
@@ -197,6 +203,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setBundleContainers(org.eclipse.pde.internal.core.target.provisional.IBundleContainer[])
 	 */
 	public void setBundleContainers(IBundleContainer[] containers) {
+		incrementSequenceNumber();
 		// Clear the feature model cache as it is based on the bundle container locations
 		fFeatureModels = null;
 		fOtherBundles = null;
@@ -208,6 +215,30 @@ public class TargetDefinition implements ITargetDefinition {
 		fContainers = containers;
 
 		if (containers == null) {
+			fIncluded = null;
+			fOptional = null;
+		} else {
+			for (int i = 0; i < containers.length; i++) {
+				((AbstractBundleContainer) containers[i]).associateWithTarget(this);
+			}
+		}
+	}
+
+	/**
+	 * Clears the any models that are cached for the given container location.
+	 * 
+	 * @param location location to clear cache for or <code>null</code> to clear all cached models
+	 */
+	public void flushCaches(String location) {
+		// Clear the feature model cache as it is based on the bundle container locations
+		fFeatureModels = null;
+		fOtherBundles = null;
+		if (location == null) {
+			fFeaturesInLocation.clear();
+		} else {
+			fFeaturesInLocation.remove(location);
+		}
+		if (fContainers == null) {
 			fIncluded = null;
 			fOptional = null;
 		}
@@ -623,6 +654,7 @@ public class TargetDefinition implements ITargetDefinition {
 			fProgramArgs = null;
 			fVMArgs = null;
 			fWS = null;
+			fSequenceNumber = 0;
 			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
 		} catch (ParserConfigurationException e) {
 			abort(Messages.TargetDefinition_0, e);
@@ -994,11 +1026,46 @@ public class TargetDefinition implements ITargetDefinition {
 		return result;
 	}
 
+	/**
+	 * @return the current UI style one of {@link #MODE_FEATURE} or {@link #MODE_PLUGIN}
+	 */
 	public int getUIMode() {
 		return fUIMode;
 	}
 
+	/**
+	 * @param mode new UI style to use, one of {@link #MODE_FEATURE} or {@link #MODE_PLUGIN}
+	 */
 	public void setUIMode(int mode) {
 		fUIMode = mode;
+	}
+
+	/**
+	 * Returns the current sequence number of this target.  Sequence numbers change
+	 * whenever something in the target that affects the set of features and bundles that 
+	 * would be resolved.
+	 * 
+	 * @return the current sequence number
+	 */
+	public int getSequenceNumber() {
+		return fSequenceNumber;
+	}
+
+	/**
+	 * Increases the current sequence number.
+	 * @see TargetDefinition#getSequenceNumber()
+	 * @return the current sequence number after it has been increased
+	 */
+	public int incrementSequenceNumber() {
+		return ++fSequenceNumber;
+	}
+
+	/**
+	 * Convenience method to set the sequence number to a specific 
+	 * value. Used when loading a target from a persisted file.
+	 * @param value value to set the sequence number to
+	 */
+	void setSequenceNumber(int value) {
+		fSequenceNumber = value;
 	}
 }

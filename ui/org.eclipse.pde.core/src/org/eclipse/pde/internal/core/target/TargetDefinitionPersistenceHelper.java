@@ -72,6 +72,7 @@ public class TargetDefinitionPersistenceHelper {
 	static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
 	static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
+	static final String ATTR_SEQUENCE_NUMBER = "sequenceNumber"; //$NON-NLS-1$
 	static final String CONTENT = "content"; //$NON-NLS-1$
 	static final String ATTR_USE_ALL = "useAllPlugins"; //$NON-NLS-1$
 	static final String PLUGINS = "plugins"; //$NON-NLS-1$
@@ -106,6 +107,8 @@ public class TargetDefinitionPersistenceHelper {
 		if (((TargetDefinition) definition).getUIMode() == TargetDefinition.MODE_FEATURE) {
 			rootElement.setAttribute(ATTR_INCLUDE_MODE, FEATURE);
 		}
+
+		rootElement.setAttribute(ATTR_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) definition).getSequenceNumber()));
 
 		IBundleContainer[] containers = definition.getBundleContainers();
 		if (containers != null && containers.length > 0) {

@@ -73,17 +73,16 @@ public class UpdateTargetJob extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
-		int totalWork = toUpdate.size();
+		SubMonitor progress = SubMonitor.convert(monitor, Messages.UpdateTargetJob_UpdatingTarget, toUpdate.size());
 		result = 0;
 		try {
-			monitor.beginTask(Messages.UpdateTargetJob_UpdatingTarget, totalWork);
 			for (Iterator i = toUpdate.entrySet().iterator(); i.hasNext();) {
 				try {
 					Map.Entry entry = (Map.Entry) i.next();
 					IBundleContainer container = (IBundleContainer) entry.getKey();
 					monitor.subTask(NLS.bind(Messages.UpdateTargetJob_UpdatingContainer, ((AbstractBundleContainer) container).getLocation(false)));
 					if (container instanceof IUBundleContainer)
-						result |= ((IUBundleContainer) container).update((Set) entry.getValue());
+						result |= ((IUBundleContainer) container).update((Set) entry.getValue(), progress.newChild(1));
 				} catch (CoreException e1) {
 					return e1.getStatus();
 				} finally {
