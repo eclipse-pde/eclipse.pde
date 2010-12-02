@@ -26,6 +26,7 @@
 
    <features>
       <feature id="org.eclipse.pde.build.feature" version="1.0.0.qualifier"/>
+      <feature id="org.eclipse.pde.build.product.feature" version="1.0.0.qualifier"/>
       <feature id="org.eclipse.core.runtime.feature" version="1.0.0.qualifier"/>
    </features>
 
