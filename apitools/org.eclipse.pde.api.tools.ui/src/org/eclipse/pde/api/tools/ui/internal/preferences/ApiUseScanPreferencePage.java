@@ -63,6 +63,12 @@ import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.osgi.service.prefs.BackingStoreException;
 
+/**
+ * Preference page to allow users to add use scans.  The use scans are analyzed in the 
+ * API Tools builder to see if any methods found in the scan have been removed.
+ * 
+ * @since 3.7
+ */
 public class ApiUseScanPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiusescan.prefpage"; //$NON-NLS-1$
@@ -430,14 +436,19 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			locations.append(UseScanManager.LOCATION_DELIM);
 		}
 		
+		setStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, locations.toString());
+		setStoredValue(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(fSpinner.getSelection()));	
+		
 		if (hasLocationsChanges(locations.toString())) {
 			IProject[] projects = Util.getApiProjects();
-			if(MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiUseScanPreferencePage_11, PreferenceMessages.ApiUseScanPreferencePage_12)) {
-				Util.getBuildJob(projects).schedule();
+			// If there are API projects in the workspace, ask the user if they should be cleaned and built to run the new tooling
+			if (projects != null){
+				if(MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiUseScanPreferencePage_11, PreferenceMessages.ApiUseScanPreferencePage_12)) {
+					Util.getBuildJob(projects).schedule();
+				}
 			}
 		}
-		setStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, locations.toString());
-		setStoredValue(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(fSpinner.getSelection()));		
+			
 		try {
 			fManager.applyChanges();
 		} catch (BackingStoreException e) {
@@ -452,10 +463,11 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	private boolean hasLocationsChanges(String newLocations) {
 		String oldLocations = getStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
-
-		if (oldLocations.equalsIgnoreCase(newLocations)) 
-			return false;
 		
+		if (oldLocations != null && oldLocations.equalsIgnoreCase(newLocations)) {
+			return false;
+		}
+			
 		ArrayList oldCheckedElements = new ArrayList();
 		if (oldLocations != null && oldLocations.length() > 0) {
 			String[] locations = oldLocations.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
