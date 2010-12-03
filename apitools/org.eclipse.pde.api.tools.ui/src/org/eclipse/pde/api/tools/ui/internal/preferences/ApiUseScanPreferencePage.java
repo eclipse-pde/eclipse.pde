@@ -436,9 +436,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			locations.append(UseScanManager.LOCATION_DELIM);
 		}
 		
-		setStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, locations.toString());
-		setStoredValue(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(fSpinner.getSelection()));	
-		
 		if (hasLocationsChanges(locations.toString())) {
 			IProject[] projects = Util.getApiProjects();
 			// If there are API projects in the workspace, ask the user if they should be cleaned and built to run the new tooling
@@ -448,6 +445,9 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 		}
+		
+		setStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, locations.toString());
+		setStoredValue(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(fSpinner.getSelection()));	
 			
 		try {
 			fManager.applyChanges();
