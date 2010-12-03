@@ -11,9 +11,15 @@
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -72,13 +78,22 @@ import org.osgi.service.prefs.BackingStoreException;
 public class ApiUseScanPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiusescan.prefpage"; //$NON-NLS-1$
-
+	public static final String NAME_REGEX = "^.* (.*)$"; //$NON-NLS-1$
+	
 	private IWorkingCopyManager fManager;
 	CheckboxTableViewer fTableViewer;
-	List fLocationList = new ArrayList();
+	HashSet fLocationList = new HashSet();
 	private Spinner fSpinner;
 	Button remove = null;
 	Button editbutton = null;
+	FileFilter filter = new FileFilter() {
+		public boolean accept(File pathname) {
+			if(pathname.getName().matches(NAME_REGEX)) {
+				throw new RuntimeException(pathname.getName());
+			}
+			return false;
+		}
+	};
 
 	/**
 	 * Column provider for the use scan table
@@ -162,13 +177,19 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_4, null);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				addDirectory(null);
+				String loc = getDirectory(null);
+				if(loc != null) {
+					addLocation(loc);
+				}
 			}
 		});
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_5, null);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				addArchive(null);
+				String loc = getArchive(null);
+				if(loc != null) {
+					addLocation(loc);
+				}
 			}
 		});
 		
@@ -221,45 +242,34 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	}
 	
 	/**
-	 * Adds a directory to a use scan to the table
+	 * Allows users to select a directory with a use scan in it
 	 * @param prevLocation
-	 * @return if the location was actually added
-			 */
-	boolean addDirectory(String prevLocation) {
+	 * @return the new directory or <code>null</code> if the dialog was cancelled
+	 */
+	String getDirectory(String prevLocation) {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(PreferenceMessages.ApiUseScanPreferencePage_7);
 		if (prevLocation != null) {
 			dialog.setFilterPath(prevLocation);
 		}
-		String location = dialog.open();
-		if (location == null || location.length() == 0)
-			return false;
-		if (prevLocation != null && !prevLocation.equalsIgnoreCase(location)) {
-			setMessage(null);
-		}
-		addLocation(location);
-		return true;
+		return dialog.open();
 	}
 	
 	/**
-	 * Adds an archive file to the table
-	 * @param file
-	 * @return if the archive was actually added
-			 */
-	boolean addArchive(File file) {
+	 * Allows the user to select an archive from the file system
+	 * 
+	 * @param file a starting file
+	 * @return the path to the new archive or <code>null</code> if cancelled
+	 */
+	String getArchive(File file) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-		dialog.setFilterNames(new String[] {"Archives (*.zip)", "Jars (*.jar)"}); //$NON-NLS-1$ //$NON-NLS-2$
+		dialog.setFilterNames(new String[] {PreferenceMessages.archives__zip, PreferenceMessages.jars__jar});
 		dialog.setFilterExtensions(new String[] {"*.zip", "*.jar"}); //$NON-NLS-1$ //$NON-NLS-2$				 
 		if (file != null) {
 			dialog.setFilterPath(file.getParent());
 			dialog.setFileName(file.getName());
 		}
-		String location = dialog.open();
-		if (location == null || location.length() == 0) {
-			return false;
-		}
-		addLocation(location);
-		return true;
+		return dialog.open();
 	}
 	
 	/**
@@ -267,15 +277,11 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * @param location
 	 */
 	void addLocation(String location) {
-		if (fLocationList.contains(location)) {
-			return;
-		}
-		if (!isValidScanLocation(location)) {
-			setErrorMessage(NLS.bind(PreferenceMessages.ApiUseScanPreferencePage_8, location));
-		}
 		fLocationList.add(location);
 		fTableViewer.refresh();
-		fTableViewer.setChecked(location, true);		
+		fTableViewer.setChecked(location, true);
+		//do the whole pass in case you have more than one invalid location
+		validateScans();
 	}
 
 	/**
@@ -285,15 +291,15 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		String location = selection.getFirstElement().toString();			
 		File file = new File(location);
-		boolean editted = false;			
+		String newloc = null;
 		if (file.isDirectory()) {
-			editted = addDirectory(location);
+			newloc = getDirectory(location);
 		} else {
-			editted = addArchive(file);
+			newloc = getArchive(file);
 		}
-		if (editted) {				
+		if(newloc != null) {
 			fLocationList.remove(location);
-			fTableViewer.refresh();
+			addLocation(newloc);
 		}
 	}
 	
@@ -311,18 +317,18 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * Validates that the scan are all still valid
 	 */
 	private void validateScans() {
-		if (fLocationList.size() == 0) {
-			return; //nothing to validate
-		}
-		String badLocation = null;
-		for (Iterator iterator = fLocationList.iterator(); iterator.hasNext();) {
-			badLocation = (String) iterator.next();
-			if (!isValidScanLocation(badLocation)) {
-				setErrorMessage(NLS.bind(PreferenceMessages.ApiUseScanPreferencePage_8, badLocation));
-				setValid(false);
-				return;
+		if (fLocationList.size() > 0) {
+			String loc = null;
+			for (Iterator iterator = fLocationList.iterator(); iterator.hasNext();) {
+				loc = (String) iterator.next();
+				if (!isValidScanLocation(loc)) {
+					setErrorMessage(NLS.bind(PreferenceMessages.ApiUseScanPreferencePage_8, loc));
+					setValid(false);
+					return;
+				}
 			}
 		}
+		setValid(true);
 		setErrorMessage(null);
 	}
 	
@@ -335,28 +341,92 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		if (location != null && location.length() > 0) {
 			IPath path = new Path(location);		
 			File file = path.toFile();
-			if (file.exists()) {
-				if (Util.isArchive(file.getName())) {
-					//TODO validate the archive contains a scan
-					return true;
-				}
-				File root = null;
-				if (path.lastSegment().equalsIgnoreCase(IApiCoreConstants.XML)) {
-					root = path.toFile();
-				}
-				if(root == null) {
-					path = path.append(IApiCoreConstants.XML);
-					root = path.toFile();
-					if(!root.exists()) {
-						root = null;
-					}
-				}
-				return root.isDirectory();
-			}
+			return validDirectory(file) || validArchive(file);
 		}
 		return false;
 	}
 
+	/**
+	 * Validate if the given {@link File} is a folder that contains a use scan.
+	 * <br><br> 
+	 * The {@link File} is considered valid iff:
+	 * <ul>
+	 * <li>it is a folder</li>
+	 * <li>the folder has child folder that matches the name pattern <code>^.* (.*)$</code></li>
+	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* (.*)$</code></li>
+	 * </ul>
+	 * @param file
+	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
+	 */
+	boolean validDirectory(File file) {
+		if(file.exists() && file.isDirectory()) {
+			try {
+				file.listFiles(filter);
+			}
+			catch(RuntimeException rte) {
+				File f = new File(file, rte.getMessage());
+				try {
+					if(f.exists() && f.isDirectory()) {
+						f.listFiles(filter);
+					}
+				}
+				catch(RuntimeException re) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Validate if the given {@link File} is an archive that contains a use scan.
+	 * <br><br> 
+	 * The {@link File} is considered valid iff:
+	 * <ul>
+	 * <li>it has an xml folder</li>
+	 * <li>the xml folder has child folder that matches the name pattern <code>^.* (.*)$</code></li>
+	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* (.*)$</code></li>
+	 * </ul>
+	 * @param file
+	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
+	 */
+	boolean validArchive(File file) {
+		String fname = file.getName();
+		if(file.exists() && Util.isArchive(fname)) {
+			Enumeration entries = null;
+			if(fname.endsWith("jar")) { //$NON-NLS-1$
+				try {
+					JarFile jfile = new JarFile(file);
+					entries = jfile.entries();
+				}
+				catch(IOException ioe) {
+					return false;
+				}
+			}
+			else if(fname.endsWith("zip")) { //$NON-NLS-1$
+				try {
+					ZipFile zfile = new ZipFile(file);
+					entries = zfile.entries();
+				} catch (IOException e) {
+					return false;
+				}
+			}
+			if(entries != null) {
+				while(entries.hasMoreElements()) {
+					ZipEntry o = (ZipEntry) entries.nextElement();
+					if(o.isDirectory() && o.getName().toLowerCase().startsWith("xml")) { //$NON-NLS-1$
+						IPath path = new Path(o.getName());
+						int count = path.segmentCount();
+						if(count > 2) {
+							return path.segment(count-1).matches(NAME_REGEX) && path.segment(count-2).matches(NAME_REGEX);
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
@@ -387,7 +457,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	private void performInit(int cacheSizeValue, String locationValue) {
 		int cacheSize = 0;
-
 		try {
 			cacheSize = cacheSizeValue != 0 ? cacheSizeValue : Integer.parseInt(getStoredValue(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(1000)));
 		} catch (NumberFormatException e2) {
@@ -467,7 +536,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		if (oldLocations != null && oldLocations.equalsIgnoreCase(newLocations)) {
 			return false;
 		}
-			
+		
 		ArrayList oldCheckedElements = new ArrayList();
 		if (oldLocations != null && oldLocations.length() > 0) {
 			String[] locations = oldLocations.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
@@ -479,9 +548,9 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			}			
 		}
 		Object[] newCheckedLocations = fTableViewer.getCheckedElements();
-		if (newCheckedLocations.length != oldCheckedElements.size())
+		if (newCheckedLocations.length != oldCheckedElements.size()) {
 			return true;
-		
+		}
 		for (int i = 0; i < newCheckedLocations.length; i++) {
 			if (!oldCheckedElements.contains(newCheckedLocations[i])) {
 				return true;
