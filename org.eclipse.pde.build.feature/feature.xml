@@ -44,7 +44,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.pde.build.compiler.adapter"
+         id="org.eclipse.jdt.core.ant.compiler.adapter"
          download-size="0"
          install-size="0"
          version="0.0.0"
