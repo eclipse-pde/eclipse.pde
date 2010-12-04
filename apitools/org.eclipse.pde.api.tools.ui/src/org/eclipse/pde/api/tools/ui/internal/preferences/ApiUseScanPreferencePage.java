@@ -391,7 +391,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
 	 */
 	boolean validArchive(File file) {
-		String fname = file.getName();
+		String fname = file.getName().toLowerCase();
 		if(file.exists() && Util.isArchive(fname)) {
 			Enumeration entries = null;
 			if(fname.endsWith("jar")) { //$NON-NLS-1$
