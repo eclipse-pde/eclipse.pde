@@ -278,7 +278,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				checkUnusedProblemFilters(bcontext, component, localMonitor.newChild(1));
 			}
 			Util.updateMonitor(localMonitor);
-			checkExternalDependencies(component, bcontext, localMonitor.newChild(1));
+			
+			if (component instanceof ProjectComponent) {
+				checkExternalDependencies(component, bcontext, localMonitor.newChild(1));
+			}
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
 		}
