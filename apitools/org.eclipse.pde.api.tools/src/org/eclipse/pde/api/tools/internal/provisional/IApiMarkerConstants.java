@@ -11,7 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 /**
- * Interface that defines all the constants used to create the Api tooling markers.
+ * Interface that defines all the constants used to create the API tooling markers.
  * 
  * This interface is not intended to be extended or implemented.
  *
@@ -21,7 +21,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 public interface IApiMarkerConstants {
 
 	/**
-	 * Constant representing the name of the 'problem' attribute on api tooling markers.
+	 * Constant representing the name of the 'problem' attribute on API tooling markers.
 	 * Value is: <code>problemid</code>
 	 */
 	public static final String MARKER_ATTR_PROBLEM_ID = "problemid"; //$NON-NLS-1$
@@ -135,12 +135,12 @@ public interface IApiMarkerConstants {
 	 */
 	public static final int UNSUPPORTED_TAG_MARKER_ID = 6;
 	/**
-	 * Constant representing the apiMarkerID value for duplicate javadoc tag markers
+	 * Constant representing the apiMarkerID value for duplicate JavaDoc tag markers
 	 * Value is: <code>7</code>
 	 */
 	public static final int DUPLICATE_TAG_MARKER_ID = 7;
 	/**
-	 * Constant representing the apiMarkerID value for api component resolution markers.
+	 * Constant representing the apiMarkerID value for API component resolution markers.
 	 * Value is: <code>8</code>
 	 */
 	public static final int API_COMPONENT_RESOLUTION_MARKER_ID = 8;
@@ -155,12 +155,12 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String VERSION_NUMBERING_ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 	/**
-	 * Constant representing the type name of the 'problem' attribute on api tooling markers.
+	 * Constant representing the type name of the 'problem' attribute on API tooling markers.
 	 * Value is: <code>problemTypeName</code>
 	 */
 	public static final String MARKER_ATTR_PROBLEM_TYPE_NAME = "problemTypeName"; //$NON-NLS-1$
 	/**
-	 * Constant representing the id for the Api Use Scan breakage problem marker.
+	 * Constant representing the id for the API Use Scan breakage problem marker.
 	 * Value is: <code>org.eclipse.pde.api.tools.marker.apiusescan</code>
 	 */
 	public static final String API_USESCAN_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".marker.apiusescan"; //$NON-NLS-1$

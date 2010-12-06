@@ -58,6 +58,9 @@
             class="org.eclipse.pde.api.tools.ui.internal.preferences.ApiUseScanPreferencePage"
             id="org.eclipse.pde.api.tools.ui.apiusescan.prefpage"
             name="%ApiUseScanPreferencePage.name">
+         <keywordReference
+               id="org.eclipse.pde.api.tools.ui.use.scan.pref.page.keyword">
+         </keywordReference>
       </page>
    </extension>
    <extension
@@ -213,6 +216,10 @@
             id="org.eclipse.pde.api.tools.ui.apitools.prefpage"
             label="%ApiErrorsWarningsPage.keywords">
       </keyword>
+      <keyword
+            id="org.eclipse.pde.api.tools.ui.use.scan.pref.page.keyword"
+            label="%apiUseScanKeyword.label">
+      </keyword>
    </extension>
    <extension
          point="org.eclipse.ui.ide.markerSupport">
@@ -244,6 +251,9 @@
          </markerTypeReference>
          <markerTypeReference
                id="org.eclipse.pde.api.tools.fatal_problem">
+         </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.pde.api.tools.marker.apiusescan">
          </markerTypeReference>
       </markerTypeCategory>
    </extension>
@@ -281,6 +291,10 @@
        <markerAttributeGrouping
              defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
              markerType="org.eclipse.pde.api.tools.fatal_problem">
+       </markerAttributeGrouping>
+       <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.marker.apiusescan">
        </markerAttributeGrouping>
     </extension>
    <extension

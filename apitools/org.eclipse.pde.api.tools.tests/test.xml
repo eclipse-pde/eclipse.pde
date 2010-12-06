@@ -33,7 +33,7 @@
 
   <!-- This target defines the regression tests that need to be run. -->
   <target name="suite">
-    <!-- Api Tools Plugin test suite -->
+    <!--API Tools Plugin test suite -->
     <property name="api-tools-plugins-folder" 
               value="${eclipse-home}/api_tools_plugins_folder"/>
     <delete dir="${api-tools-plugins-folder}" quiet="true"/>
@@ -46,7 +46,7 @@
         <property name="vmargs" value="-Xmx300M" />
     </ant>
 
-    <!-- Api Tools test suite -->
+    <!-- API Tools test suite -->
     <property name="api-tools-folder" 
               value="${eclipse-home}/api_tools_folder"/>
     <delete dir="${api-tools-folder}" quiet="true"/>
@@ -62,7 +62,7 @@
 	
   <!-- This target defines the performance tests that need to be run. -->
   <target name="perfsuite">
-    <!-- Api Tools Performance test suite -->
+    <!-- API Tools Performance test suite -->
     <property name="api-tools-plugins-folder" 
               value="${eclipse-home}/api_tools_plugins_folder"/>
     <delete dir="${api-tools-plugins-folder}" quiet="true"/>

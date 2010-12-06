@@ -22,14 +22,14 @@ public class ApiToolProjectNature implements IProjectNature {
 	IProject project;
 
 	/**
-	 * Add the Api plugin builder in the project build spec
+	 * Add the API plugin builder in the project build spec
 	 */
 	public void configure() throws CoreException {
 		addToBuildSpec(ApiPlugin.BUILDER_ID);
 	}
 
 	/**
-	 * Remove the Api plugin builder from the project build spec
+	 * Remove the API plugin builder from the project build spec
 	 */
 	public void deconfigure() throws CoreException {
 		removeFromBuildSpec(ApiPlugin.BUILDER_ID);

@@ -37,7 +37,7 @@ import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * This block is used to add the Api Use Scan problem severity settings UI to a
+ * This block is used to add the API Use Scan problem severity settings UI to a
  * parent control
  */
 public class ApiUseScanConfigurationBlock {

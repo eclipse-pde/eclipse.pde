@@ -605,7 +605,7 @@ public class ApiDescription implements IApiDescription {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("Api description for component: ").append(fOwningComponentId); //$NON-NLS-1$
+		buffer.append("API description for component: ").append(fOwningComponentId); //$NON-NLS-1$
 		return buffer.toString();
 	}
 

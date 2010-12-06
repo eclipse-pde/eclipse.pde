@@ -23,7 +23,7 @@ public interface IApiToolsConstants {
 	 */
 	public static final String ID_API_TOOLS_UI_PLUGIN = "org.eclipse.pde.api.tools.ui"; //$NON-NLS-1$
 	/**
-	 * Id for the Api baselines preference page.
+	 * Id for the API baselines preference page.
 	 * <br>
 	 * Value is: <code>org.eclipse.pde.api.tools.ui.apiprofiles.prefpage</code>
 	 */

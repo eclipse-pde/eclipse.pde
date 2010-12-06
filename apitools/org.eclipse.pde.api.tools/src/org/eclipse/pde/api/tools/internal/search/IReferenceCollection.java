@@ -34,14 +34,14 @@ public interface IReferenceCollection {
 	public boolean hasReferencesTo(String type);
 		
 	/**
-	 * Returns the list of all the references made to this component in the Api Use Scan report
+	 * Returns the list of all the references made to this component in the API Use Scan report
 	 * @return the list of reference descriptors
 	 */
 	public IReferenceDescriptor[] getAllExternalDependencies();
 	
 	/**
 	 * Returns the list of all the references made to a particular member of this component 
-	 * in the Api Use Scan report
+	 * in the API Use Scan report
 	 * @param types to which references have been made
 	 * @return the list of reference descriptors
 	 */

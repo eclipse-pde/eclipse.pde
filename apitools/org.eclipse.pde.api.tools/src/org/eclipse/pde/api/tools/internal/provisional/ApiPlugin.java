@@ -139,7 +139,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public static final String VALUE_ENABLED = "Enabled"; //$NON-NLS-1$
 	/**
-	 * The identifier for the Api builder
+	 * The identifier for the API builder
 	 * Value is: <code>"org.eclipse.pde.api.tools.apiAnalysisBuilder"</code>
 	 */
 	public static final String BUILDER_ID = PLUGIN_ID + ".apiAnalysisBuilder" ; //$NON-NLS-1$

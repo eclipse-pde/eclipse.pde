@@ -215,7 +215,7 @@ public class ApiProblemFactory {
 	}
 	
 	/**
-	 * Creates a new Api Use Scan breakge {@link IApiProblem}
+	 * Creates a new API Use Scan breakage {@link IApiProblem}
 	 * 
 	 * @param resourcePath path of the resource associated with the problem
 	 * @param typeName the type name this problem was found in
@@ -223,16 +223,20 @@ public class ApiProblemFactory {
 	 * The arguments are passed into the string in the order they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
+	 * @param linenumber the number of the line the problem occurred on
+	 * @param charstart the start of a char selection range
+	 * @param charend the end of a char selection range
 	 * @param element the element kind
 	 * @param kind the kind
 	 * @param flags flags the reason for problem. <code>0</code> if the type could not be resolved. 
 	 * <code>1</code> if member could not be located in the type.
-	 * @return a new {@link IApiProblem} for Api Use Scan breakge
+	 * @return a new {@link IApiProblem} for API Use Scan breakage
 	 */
-	public static IApiProblem newApiUseScanProblem( String resourcePath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int element, int kind, int flags) {
+	public static IApiProblem newApiUseScanProblem( String resourcePath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind, int flags) {
 		int id = createProblemId(IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM, element, kind, flags);
-		return newApiProblem(resourcePath, typeName, messageargs, argumentids, arguments, -1, -1, -1, id);
+		return newApiProblem(resourcePath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
+	
 	/**
 	 * Returns the localized message for the given {@link IApiProblem}. Returns
 	 * <code>null</code> if no localized message cannot be created.

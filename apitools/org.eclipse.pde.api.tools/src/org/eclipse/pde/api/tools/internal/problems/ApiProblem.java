@@ -304,7 +304,7 @@ public class ApiProblem implements IApiProblem {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("Api problem: "); //$NON-NLS-1$
+		buffer.append("API problem: "); //$NON-NLS-1$
 		buffer.append(fResourcePath != null ? fResourcePath : "no path").append("\n"); //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append("\tseverity: "); //$NON-NLS-1$
 		buffer.append(Util.getSeverity(getSeverity())).append("\n"); //$NON-NLS-1$

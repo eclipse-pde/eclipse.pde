@@ -62,7 +62,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * This manager is used to maintain (persist, restore, access, update) Api baselines.
+ * This manager is used to maintain (persist, restore, access, update) API baselines.
  * This manager is lazy, in that caches are built and maintained when requests
  * are made for information, nothing is pre-loaded when the manager is initialized.
  * 

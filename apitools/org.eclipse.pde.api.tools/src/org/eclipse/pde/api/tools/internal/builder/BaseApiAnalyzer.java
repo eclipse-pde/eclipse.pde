@@ -395,18 +395,31 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	protected IApiProblem createExternalDependenciesProblem(HashMap problems, IReferenceDescriptor dependency, String referenceTypeName, IMemberDescriptor referencedMember, int elementType, int flag) {	
 		String resource = referenceTypeName;
-		String primaryTypeName = referenceTypeName;
-		if (referenceTypeName.indexOf('$') > -1) {
-			primaryTypeName = referenceTypeName.substring(0, referenceTypeName.indexOf('$'));
-		}
+		String primaryTypeName = referenceTypeName.replace('$', '.');
+		int charStart = -1, charEnd = -1, lineNumber = -1; 
 		try {
-			if (fJavaProject.findType(primaryTypeName) != null) {
-				resource = primaryTypeName;
-			} else {					
-				resource = "."; // place the marker on project //$NON-NLS-1$
+			IType type = fJavaProject.findType(primaryTypeName);
+			IResource res = Util.getResource(fJavaProject.getProject(), type);
+			if(res == null) {
+				return null;
 			}
-		} catch (JavaModelException e) {						
-		}
+			if(!Util.isManifest(res.getProjectRelativePath())) {
+				resource = res.getProjectRelativePath().toString();
+			}
+			else {
+				resource = res.getProject().getName();
+			}
+			ISourceRange range = type.getNameRange();
+			charStart = range.getOffset();
+			charEnd = charStart + range.getLength();
+			try {
+				IDocument document = Util.getDocument(type.getCompilationUnit());
+				lineNumber = document.getLineOfOffset(charStart);
+			} catch (BadLocationException e) {
+				// ignore
+			}
+			catch (CoreException ce) {}
+		} catch (JavaModelException e) {}
 		String[] msgArgs = new String[] {referenceTypeName, referencedMember.getName(), dependency.getComponent().getId()};
 		int kind = 0;
 		switch (elementType) {
@@ -436,8 +449,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				return similarProblem;
 			}
 		}
-		IApiProblem problem = ApiProblemFactory.newApiUseScanProblem(resource, resource, msgArgs, 
-				new String[] {IApiMarkerConstants.API_USESCAN_TYPE}, new String[] {primaryTypeName }, elementType, kind, flag);
+		IApiProblem problem = ApiProblemFactory.newApiUseScanProblem(
+				resource, 
+				primaryTypeName, 
+				msgArgs, 
+				new String[] {IApiMarkerConstants.API_USESCAN_TYPE}, 
+				new String[] {primaryTypeName },
+				lineNumber,
+				charStart,
+				charEnd,
+				elementType, 
+				kind, 
+				flag);
 		problems.put(problemKey, problem);
 		return problem;		
 	}

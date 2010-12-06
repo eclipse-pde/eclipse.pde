@@ -36,12 +36,12 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	private IApiDescription fApiDescription = null;
 		
 	/**
-	 * Api Filter store
+	 * API Filter store
 	 */
 	private IApiFilterStore fFilterStore = null;
 
 	/**
-	 * References in Api use scan reports
+	 * References in API use scan reports
 	 */
 	private IReferenceCollection fReferences;
 	

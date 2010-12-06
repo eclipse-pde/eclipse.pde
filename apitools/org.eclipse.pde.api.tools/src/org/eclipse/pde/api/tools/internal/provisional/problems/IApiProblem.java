@@ -54,7 +54,7 @@ public interface IApiProblem {
 	 */
 	public static final int CATEGORY_FATAL_PROBLEM = 0x70000000;
 	/**
-	 * Constant representing a api use scan breakage problem
+	 * Constant representing a API use scan breakage problem
 	 */
 	public static final int CATEGORY_API_USE_SCAN_PROBLEM = 0x80000000;
 	/**

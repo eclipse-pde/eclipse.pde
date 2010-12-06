@@ -75,7 +75,7 @@ import com.ibm.icu.text.MessageFormat;
 
 
 /**
- * This block is used to add the Api tooling notification settings UI
+ * This block is used to add the API tooling notification settings UI
  * to a parent control
  * 
  * @since 1.0.0

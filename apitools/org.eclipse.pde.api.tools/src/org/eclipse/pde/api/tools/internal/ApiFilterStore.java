@@ -55,7 +55,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Base implementation of a filter store for Api components
+ * Base implementation of a filter store for API components
  * 
  * @since 1.0.0
  */
@@ -883,7 +883,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "Api filter store for component: "+fProject.getElementName(); //$NON-NLS-1$
+		return "API filter store for component: "+fProject.getElementName(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
