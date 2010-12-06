@@ -225,6 +225,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String LauncherUtils_clearLogFile;
 
+	public static String LauncherUtils_edit;
+
 	public static String LauncherUtils_generateConfigIni;
 
 	public static String OrganizeManifestsWizardPage_calculateUses;

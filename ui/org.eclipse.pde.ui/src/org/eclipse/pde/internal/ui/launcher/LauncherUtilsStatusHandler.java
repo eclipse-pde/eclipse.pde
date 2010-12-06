@@ -15,9 +15,13 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.ui.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.launching.PDEMessages;
@@ -32,9 +36,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class LauncherUtilsStatusHandler implements IStatusHandler {
 
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-		if (status.getCode() == LauncherUtils.WORKSPACE_LOCKED)
-			handleWorkspaceLocked((String) source);
-		else if (status.getCode() == LauncherUtils.CLEAR_LOG)
+		if (status.getCode() == LauncherUtils.WORKSPACE_LOCKED) {
+			Object[] args = (Object[]) source;
+			handleWorkspaceLocked((String) args[0], (ILaunchConfiguration) args[1], (String) args[2]);
+		} else if (status.getCode() == LauncherUtils.CLEAR_LOG)
 			return clearLog();
 		else if (status.getCode() == LauncherUtils.DELETE_WORKSPACE)
 			return deleteWorkspace((String) source);
@@ -60,8 +65,9 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		return generateDialog(PDEUIMessages.LauncherUtils_clearLogFile);
 	}
 
-	private void handleWorkspaceLocked(String workspace) {
-		generateErrorDialog(PDEUIMessages.LauncherUtils_workspaceLocked, NLS.bind(PDEMessages.LauncherUtils_cannotLaunchApplication, workspace));
+	private void handleWorkspaceLocked(String workspace, ILaunchConfiguration launchConfig, String mode) {
+		String message = NLS.bind(PDEMessages.LauncherUtils_cannotLaunchApplication, workspace);
+		generateErrorDialog(PDEUIMessages.LauncherUtils_workspaceLocked, message, launchConfig, mode);
 	}
 
 	private void organizeManifests(final ArrayList projects, final IProgressMonitor monitor, final Properties lastRun) {
@@ -136,11 +142,23 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		return new Integer(result[0]);
 	}
 
-	private static void generateErrorDialog(final String title, final String message) {
+	private static void generateErrorDialog(final String title, final String message, final ILaunchConfiguration launchConfig, final String mode) {
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.ERROR, new String[] {IDialogConstants.OK_LABEL}, 0);
-				dialog.open();
+				Shell parentShell = getActiveShell();
+				if (launchConfig == null || mode == null) {
+					MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {IDialogConstants.OK_LABEL}, 0);
+					dialog.open();
+				} else {
+					MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {PDEUIMessages.LauncherUtils_edit, IDialogConstants.OK_LABEL}, 1);
+					int res = dialog.open();
+					if (res == 0) {
+						IStructuredSelection selection = new StructuredSelection(launchConfig);
+						ILaunchGroup group = DebugUITools.getLaunchGroup(launchConfig, mode);
+						String groupIdentifier = group == null ? IDebugUIConstants.ID_RUN_LAUNCH_GROUP : group.getIdentifier();
+						DebugUITools.openLaunchConfigurationDialogOnGroup(parentShell, selection, groupIdentifier);
+					}
+				}
 			}
 		});
 	}

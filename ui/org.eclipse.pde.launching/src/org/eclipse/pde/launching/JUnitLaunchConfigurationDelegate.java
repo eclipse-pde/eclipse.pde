@@ -419,6 +419,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		if (autoValidate)
 			validatePluginDependencies(configuration, new SubProgressMonitor(monitor, 1));
 		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 		clear(configuration, new SubProgressMonitor(monitor, 1));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigurationDirectory(configuration).toString());
 		synchronizeManifests(configuration, new SubProgressMonitor(monitor, 1));

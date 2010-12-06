@@ -294,6 +294,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		if (autoValidate)
 			validatePluginDependencies(configuration, new SubProgressMonitor(monitor, 1));
 		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
 		clear(configuration, new SubProgressMonitor(monitor, 1));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 		synchronizeManifests(configuration, new SubProgressMonitor(monitor, 1));

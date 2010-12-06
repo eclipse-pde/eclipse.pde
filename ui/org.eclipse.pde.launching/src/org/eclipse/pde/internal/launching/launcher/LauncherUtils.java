@@ -41,6 +41,11 @@ public class LauncherUtils {
 	private static final String TIMESTAMP = "timestamp"; //$NON-NLS-1$
 	private static final String FILE_NAME = "dep-timestamp.properties"; //$NON-NLS-1$
 	private static Properties fLastRun;
+	/**
+	 * Stores the last known launch mode so status handlers can open the correct launch configuration dialog
+	 * @see LauncherUtils#setLastLaunchMode(String)
+	 */
+	private static String fLastLaunchMode;
 
 	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
 
@@ -82,7 +87,7 @@ public class LauncherUtils {
 			Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, WORKSPACE_LOCKED, null, null);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 			if (statusHandler != null)
-				statusHandler.handleStatus(status, workspace);
+				statusHandler.handleStatus(status, new Object[] {workspace, configuration, fLastLaunchMode});
 			monitor.done();
 			return false;
 		}
@@ -344,4 +349,13 @@ public class LauncherUtils {
 		return new Status(IStatus.ERROR, PDELaunchingPlugin.getPluginId(), IStatus.OK, message, null);
 	}
 
+	/**
+	 * Updates the stores launch mode.  This should be called on any PDE Eclipse launch.  The launch mode
+	 * is passed to the status handler so it can open the correct launch configuration dialog
+	 * 
+	 * @param launchMode last known launch mode, see {@link ILaunch#getLaunchMode()}
+	 */
+	public static void setLastLaunchMode(String launchMode) {
+		fLastLaunchMode = launchMode;
+	}
 }
