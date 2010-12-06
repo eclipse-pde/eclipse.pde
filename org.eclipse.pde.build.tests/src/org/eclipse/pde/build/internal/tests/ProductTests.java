@@ -28,6 +28,10 @@ import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.eclipse.pde.internal.swt.tools.IconExe;
 import org.osgi.framework.Version;
 
+/**
+ * NOTE:  To run some of these tests, you must have the delta pack installed in your target.  Any 
+ * test that calls {@link Utils#findDeltaPack()} will fail without the delta pack being available
+ */
 public class ProductTests extends PDETestCase {
 
 	public void testBug192127() throws Exception {
