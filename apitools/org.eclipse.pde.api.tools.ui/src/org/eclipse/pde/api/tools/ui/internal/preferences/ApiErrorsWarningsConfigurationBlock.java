@@ -427,7 +427,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final int COMPATIBILITY_PAGE_ID = 1;
 	private static final int VERSION_MANAGEMENT_PAGE_ID = 2;
 	private static final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
-	private static final int EXTERNAL_DEPENDENCIES_PAGE_ID = 4;
+	private static final int API_USE_SCANS_PAGE_ID = 4;
 
 	static Key[] fgAllApiComponentResolutionKeys = {
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
@@ -757,7 +757,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				case API_COMPONENT_RESOLUTION_PAGE_ID :
 					setAllTo(this.newValue, fgAllApiComponentResolutionKeys);
 					break;
-				case EXTERNAL_DEPENDENCIES_PAGE_ID:
+				case API_USE_SCANS_PAGE_ID:
 					setAllTo(this.newValue, fgAllExternalDependenciesKeys);
 					break;
 			}
@@ -897,7 +897,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 				PreferenceMessages.ApiToolingNotificationsBlock_3,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_10);
 		createPage(
-				EXTERNAL_DEPENDENCIES_PAGE_ID,
+				API_USE_SCANS_PAGE_ID,
 				folder,
 				PreferenceMessages.ApiToolingNotificationsBlock_4,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_11); 
@@ -986,8 +986,8 @@ public class ApiErrorsWarningsConfigurationBlock {
 				createCompatibilityPage(page);
 				break;
 			}
-			case EXTERNAL_DEPENDENCIES_PAGE_ID: {
-				createExternalDependenciesPage(page);
+			case API_USE_SCANS_PAGE_ID: {
+				createAPIUseScanPage(page);
 				break;
 			}
 		}
@@ -1002,7 +1002,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_IGNORE));
 		return page;
 	}
-	private void createExternalDependenciesPage(Composite page) {
+	private void createAPIUseScanPage(Composite page) {
 		Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
 		initializeComboControls(vcomp,
 			new String[] {
