@@ -42,6 +42,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	protected String directoryLocation;
 	protected SortedMap directory;
 
+	protected String fetchCache;
+
 	// The location of the CVS password file.
 	protected String cvsPassFileLocation;
 
@@ -515,6 +517,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		try {
 			Map retrieveProp = new HashMap();
 			retrieveProp.put("fetch.failonerror", "true"); //$NON-NLS-1$//$NON-NLS-2$
+			retrieveProp.put("buildDirectory", getWorkingDirectory()); //$NON-NLS-1$
+			if (fetchCache != null)
+				retrieveProp.put(IBuildPropertiesConstants.PROPERTY_FETCH_CACHE, fetchCache);
 			if (scriptRunner != null) {
 				scriptRunner.runScript(target, TARGET_MAIN, retrieveProp);
 			} else {
@@ -817,5 +822,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	private void setDirectoryFile(Properties dir) {
 		directoryFile = dir;
+	}
+
+	public void setFetchCache(String cache) {
+		fetchCache = cache;
 	}
 }

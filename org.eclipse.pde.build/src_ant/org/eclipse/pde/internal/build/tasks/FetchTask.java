@@ -99,6 +99,10 @@ public class FetchTask extends Task {
 	public void execute() throws BuildException {
 		try {
 			BundleHelper.getDefault().setLog(this);
+
+			String fetchCache = getProject().getProperty(IBuildPropertiesConstants.PROPERTY_FETCH_CACHE);
+			if (fetchCache != null && !fetchCache.startsWith("${")) //$NON-NLS-1$
+				generator.setFetchCache(fetchCache);
 			generator.setScriptRunner(new AntScriptRunner(this));
 			generator.generate();
 			BundleHelper.getDefault().setLog(null);
