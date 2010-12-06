@@ -99,9 +99,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	/**
 	 * Constant representing the name of the 'source' attribute on API tooling markers.
-	 * Value is <code>Api Tooling</code>
+	 * Value is <code>API Tooling</code>
 	 */
-	static final String SOURCE = "Api Tooling"; //$NON-NLS-1$
+	static final String SOURCE = "API Tooling"; //$NON-NLS-1$
 	
 	/**
 	 * Method used for initializing tracing in the API tool builder

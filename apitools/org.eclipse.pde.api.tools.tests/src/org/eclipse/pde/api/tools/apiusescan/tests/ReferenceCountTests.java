@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
@@ -35,6 +36,7 @@ public class ReferenceCountTests extends TestCase {
 			return;
 		}
 		fUseScanManager = UseScanManager.getInstance();
+		fBaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 	}
 
 	public void testReferenceCountReportAll() {

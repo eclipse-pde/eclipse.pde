@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.search.UseScanManager;
@@ -101,7 +102,7 @@ public class ExternalDependencyTestUtils {
 				String destLoc = root.getLocation().toOSString() + "/Reports/";
 				Util.delete(new File(destLoc));
 				Util.unzip(fReportLocation + reportName + ".zip", destLoc);
-				location = destLoc + reportName + File.separator + "XML";
+				location = destLoc + reportName + File.separator + IApiCoreConstants.XML;
 			} else {
 				File newFile = new File( root.getLocation().toOSString() + "/Reports/" + reportName + ".zip");
 				Util.delete(newFile);

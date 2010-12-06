@@ -67,17 +67,17 @@ public interface IApiCoreConstants {
 	public static final String ANT_BUILD_PROFILE_NAME = "ant_build_profile"; //$NON-NLS-1$
 
 	/**
-	 * Preference to store the Api Use Scan report location
+	 * Preference to store the API Use Scan report location
 	 */
 	public static final String API_USE_SCAN_LOCATION = "API_USE_SCAN_LOCATION"; //$NON-NLS-1$
 
 	/**
-	 * Preference to store the cache size for holding the Api Use Scan references
+	 * Preference to store the cache size for holding the API Use Scan references
 	 */
 	public static final String API_USE_SCAN_REFERENCE_CACHE_SIZE = "API_USE_SCAN_REFERENCE_CACHE_SIZE"; //$NON-NLS-1$
 	/**
 	 * Constant representing <code>XML</code>
 	 */
-	public static final String XML = "XML"; //$NON-NLS-1$
+	public static final String XML = "xml"; //$NON-NLS-1$
 
 }
