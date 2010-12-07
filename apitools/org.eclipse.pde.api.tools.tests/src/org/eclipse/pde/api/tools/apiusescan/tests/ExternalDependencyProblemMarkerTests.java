@@ -120,4 +120,28 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			fail(e.getMessage());
 		}
 	}
+
+	public void testMissingInnerType() {
+		try {			
+			IType type = fProject.findType("tests.apiusescan.coretestproject.ClassWithInnerType.InnerType");
+			type.rename("InnerType1", true, null);
+			IProject project = fProject.getProject();
+			ExternalDependencyTestUtils.waitForBuild();
+			
+			IMarker[] markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			assertEquals("No Api Use Scan problem marker found for missing type IConstants", 1, markers.length);
+			String typeName = markers[0].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
+			assertEquals("Marker for missing type InnerType not found","tests.apiusescan.coretestproject.ClassWithInnerType.InnerType", typeName);
+			
+			type = fProject.findType("tests.apiusescan.coretestproject.ClassWithInnerType.InnerType1");
+			type.rename("InnerType", true, null);
+			ExternalDependencyTestUtils.waitForBuild();		
+			markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			assertEquals("Api Use Scan problem marker for missing type InnerType did not clear", 0, markers.length);			
+		} catch (JavaModelException e) {
+			fail(e.getMessage());
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
+	}
 }

@@ -168,7 +168,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					IJavaElement adaptor = (IJavaElement) resource.getAdapter(IJavaElement.class);					
 					if (adaptor != null && adaptor instanceof ICompilationUnit) {
 						IType typeroot = ((ICompilationUnit)adaptor).findPrimaryType();
-						if (typeroot != null && typeName != null && typeName.equalsIgnoreCase(typeroot.getFullyQualifiedName())) {
+						if (typeroot != null && typeName != null && typeName.startsWith(typeroot.getFullyQualifiedName())) {
 							markers[i].delete();
 						}
 					}

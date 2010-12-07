@@ -399,6 +399,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int charStart = -1, charEnd = -1, lineNumber = -1; 
 		try {
 			IType type = fJavaProject.findType(primaryTypeName);
+			if (type == null && referenceTypeName.indexOf('$') > -1) {
+				type = fJavaProject.findType(referenceTypeName.substring(0, referenceTypeName.indexOf('$') -1));
+			}
 			IResource res = Util.getResource(fJavaProject.getProject(), type);
 			if(res == null) {
 				return null;
@@ -407,18 +410,20 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				resource = res.getProjectRelativePath().toString();
 			}
 			else {
-				resource = res.getProject().getName();
+				resource = "."; //$NON-NLS-1$
 			}
-			ISourceRange range = type.getNameRange();
-			charStart = range.getOffset();
-			charEnd = charStart + range.getLength();
-			try {
-				IDocument document = Util.getDocument(type.getCompilationUnit());
-				lineNumber = document.getLineOfOffset(charStart);
-			} catch (BadLocationException e) {
-				// ignore
+			if (type != null) {
+				ISourceRange range = type.getNameRange();
+				charStart = range.getOffset();
+				charEnd = charStart + range.getLength();
+				try {
+					IDocument document = Util.getDocument(type.getCompilationUnit());
+					lineNumber = document.getLineOfOffset(charStart);
+				} catch (BadLocationException e) {
+					// ignore
+				}			
+				catch (CoreException ce) {}
 			}
-			catch (CoreException ce) {}
 		} catch (JavaModelException e) {}
 		String[] msgArgs = new String[] {referenceTypeName, referencedMember.getName(), dependency.getComponent().getId()};
 		int kind = 0;
