@@ -39,6 +39,7 @@
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
                 value="org.eclipse.pde.build.tests.PDEBuildTestSuite"/>
+      <property name="extraVMargs" value="-XX:MaxPermSize=256m" />
     </ant>
   </target>
 
