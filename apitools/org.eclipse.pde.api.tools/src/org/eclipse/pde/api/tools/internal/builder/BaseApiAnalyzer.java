@@ -399,9 +399,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int charStart = -1, charEnd = -1, lineNumber = -1; 
 		try {
 			IType type = fJavaProject.findType(primaryTypeName);
-			if (type == null && referenceTypeName.indexOf('$') > -1) {
-				type = fJavaProject.findType(referenceTypeName.substring(0, referenceTypeName.indexOf('$') -1));
-			}
 			IResource res = Util.getResource(fJavaProject.getProject(), type);
 			if(res == null) {
 				return null;
