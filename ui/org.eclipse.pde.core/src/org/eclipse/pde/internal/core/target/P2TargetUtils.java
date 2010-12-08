@@ -293,10 +293,13 @@ public class P2TargetUtils {
 
 		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
 		try {
-			IProvisioningAgent result = provider.createAgent(AGENT_LOCATION);
+			IProvisioningAgent agent = provider.createAgent(AGENT_LOCATION);
 			// turn off the garbage collector for the PDE agent.  GC is managed on a coarser grain
-			getGarbageCollector().stop();
-			return result;
+			GarbageCollector garbageCollector = (GarbageCollector) agent.getService(GarbageCollector.class.getName());
+			if (garbageCollector != null) {
+				garbageCollector.stop();
+			}
+			return agent;
 		} catch (ProvisionException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7, e));
 		}
