@@ -484,10 +484,10 @@ public class DeltaProcessor {
 			case IDelta.ADDED :
 				switch(delta.getFlags()) {
 					case IDelta.FIELD :
-						return RestrictionModifiers.isImplementRestriction(delta.getPreviousRestrictions());
 					case IDelta.METHOD :
 					case IDelta.SUPER_INTERFACE_WITH_METHODS :
-						return RestrictionModifiers.isImplementRestriction(delta.getPreviousRestrictions());
+						return RestrictionModifiers.isImplementRestriction(delta.getPreviousRestrictions())
+								|| RestrictionModifiers.isImplementRestriction(delta.getCurrentRestrictions());
 					case IDelta.TYPE_PARAMETER :
 						return false;
 					case IDelta.RESTRICTIONS :

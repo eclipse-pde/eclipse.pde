@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -502,5 +502,34 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	
 	public void testReduceSuperInterfaceABtoEmptyF() throws Exception {
 		xReduceSuperInterfaceABtoEmpty(false);
+	}
+	
+	/**
+	 * Tests adding a method to a noimplement interface
+	 */
+	private void xAddMethodNoImplement2(boolean incremental) throws Exception {
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("K.java");
+		updateWorkspaceFile(
+				filePath,
+				getUpdateFilePath(filePath.lastSegment()));
+		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("I.java");
+		createWorkspaceFile(
+				filePath,
+				getUpdateFilePath(filePath.lastSegment()));
+		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("J.java");
+		createWorkspaceFile(
+				filePath,
+				getUpdateFilePath(filePath.lastSegment()));
+		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoImplement2.java");
+		expectingNoProblems();
+		performCompatibilityTest(filePath, incremental);
+	}
+	
+	public void testAddMethodNoImplement2I() throws Exception {
+		xAddMethodNoImplement2(true);
+	}
+	
+	public void testAddMethodNoImplement2F() throws Exception {
+		xAddMethodNoImplement2(false);
 	}
 }

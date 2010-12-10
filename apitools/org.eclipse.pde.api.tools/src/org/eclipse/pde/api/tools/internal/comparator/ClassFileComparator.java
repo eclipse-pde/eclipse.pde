@@ -436,6 +436,7 @@ public class ClassFileComparator {
 												IDelta.ADDED,
 												IDelta.SUPER_INTERFACE_WITH_METHODS,
 												this.currentDescriptorRestrictions,
+												this.initialDescriptorRestrictions,
 												this.type1.getModifiers(),
 												this.type2.getModifiers(),
 												this.type1,
