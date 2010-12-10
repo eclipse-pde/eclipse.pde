@@ -966,7 +966,7 @@ public class P2TargetUtils {
 	// run a second pass of the planner to add in the source bundles for everything that's
 	// in the current profile.
 	private void planInSourceBundles(IProfile fProfile, ProvisioningContext context, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "Provisioning source bundles", 100);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.P2TargetUtils_ProvisioningSourceTask, 100);
 
 		// create an IU that optionally and greedily requires the related source bundles.
 		// Completely replace any source IU that may already be in place
