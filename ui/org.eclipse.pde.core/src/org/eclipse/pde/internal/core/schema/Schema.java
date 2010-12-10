@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.PlatformObject;
@@ -343,9 +343,11 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	public void load() {
+		URLConnection connection = null;
 		InputStream input = null;
 		try {
-			input = SchemaUtil.getInputStream(fURL);
+			connection = SchemaUtil.getURLConnection(fURL);
+			input = connection.getInputStream();
 			load(input);
 		} catch (FileNotFoundException e) {
 			fLoaded = false;
@@ -353,8 +355,12 @@ public class Schema extends PlatformObject implements ISchema {
 			PDECore.logException(e);
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
+				if (connection instanceof JarURLConnection) {
+					((JarURLConnection) connection).getJarFile().close();
+				}
 			} catch (IOException e1) {
 			}
 		}
