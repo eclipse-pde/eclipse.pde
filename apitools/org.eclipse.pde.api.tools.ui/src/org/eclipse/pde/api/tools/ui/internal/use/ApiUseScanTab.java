@@ -196,6 +196,12 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.installLocation = SWTFactory.createText(reportGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		gd = (GridData) this.installLocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
+		this.installLocation.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				scheduleUpdate();
+			}
+		});
+		
 		this.installButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_browse, null);
 		this.installButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
@@ -289,10 +295,17 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Avoid synthetic accessor
 	 */
+	void scheduleUpdate(){
+		scheduleUpdateJob();
+	}
+	
+	/**
+	 * Avoid synthetic accessor
+	 */
 	Shell getTabShell() {
 		return getShell();
 	}
-	
+
 	/**
 	 * The selected target has changed (radio selection). Update control enabled state and dialog.
 	 */
