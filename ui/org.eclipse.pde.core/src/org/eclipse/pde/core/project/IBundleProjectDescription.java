@@ -337,7 +337,7 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Sets the version of Eclipse the described bundle is to targeted for.
-	 * This effects the values generated for Equinox specific headers.
+	 * This affects the values generated for Equinox specific headers.
 	 * Has no effect when {@link #isEquinox()} is <code>false</code>.
 	 * When {@link #isEquinox()} is <code>true</code>, and a target version
 	 * is unspecified, the newest available target version of Eclipse is
@@ -384,7 +384,7 @@ public interface IBundleProjectDescription {
 
 	/**
 	 * Returns whether the described bundle is targeted for the Equinox OSGi framework.
-	 * Effects the Equinox lazy-start header generated in the manifest.
+	 * Affects the Equinox lazy-start header generated in the manifest.
 	 * 
 	 * @return whether the described bundle is targeted for the Equinox OSGi framework
 	 */
