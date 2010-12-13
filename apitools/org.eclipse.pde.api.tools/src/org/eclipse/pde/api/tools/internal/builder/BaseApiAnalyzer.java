@@ -444,8 +444,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		String problemKey = referenceTypeName +  resource + dependency.getReferenceKind() + elementType + kind + flag;
 		IApiProblem similarProblem =  (IApiProblem) problems.get(problemKey);
 		if (similarProblem != null) {
-			String[] exisitingMsgArgs = similarProblem.getMessageArguments()[dependencyNameIndex].split(","); //$NON-NLS-1$
-			if (!Arrays.asList(exisitingMsgArgs).contains(msgArgs[dependencyNameIndex])) {
+			String[] existingMsgArgs = similarProblem.getMessageArguments()[dependencyNameIndex].split(", "); //$NON-NLS-1$
+			if (!Arrays.asList(existingMsgArgs).contains(msgArgs[dependencyNameIndex])) {
 				msgArgs[dependencyNameIndex] = similarProblem.getMessageArguments()[dependencyNameIndex] + ',' + ' ' + msgArgs[dependencyNameIndex];
 			} else {
 				return similarProblem;
