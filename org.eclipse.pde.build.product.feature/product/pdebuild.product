@@ -27,6 +27,7 @@
    <features>
       <feature id="org.eclipse.pde.build.feature"/>
       <feature id="org.eclipse.core.runtime.feature"/>
+      <feature id="org.eclipse.pde.build.configuration"/>
    </features>
 
 
