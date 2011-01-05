@@ -712,38 +712,29 @@ public class LogView extends ViewPart implements ILogListener {
 				}
 				copy(in, out);
 			} catch (IOException ex) {
+				// do nothing
+			} finally {
 				try {
 					if (in != null)
 						in.close();
 					if (out != null)
 						out.close();
-				} catch (IOException e1) { // do nothing
+				} catch (IOException e1) {
+					// do nothing
 				}
 			}
 		}
 	}
 
-	private void copy(Reader input, Writer output) {
+	private void copy(Reader input, Writer output) throws IOException {
 		BufferedReader reader = null;
 		BufferedWriter writer = null;
-		try {
-			reader = new BufferedReader(input);
-			writer = new BufferedWriter(output);
-			String line;
-			while (reader.ready() && ((line = reader.readLine()) != null)) {
-				writer.write(line);
-				writer.newLine();
-			}
-		} catch (IOException e) { // do nothing
-		} finally {
-			try {
-				if (reader != null)
-					reader.close();
-				if (writer != null)
-					writer.close();
-			} catch (IOException e1) {
-				// do nothing
-			}
+		reader = new BufferedReader(input);
+		writer = new BufferedWriter(output);
+		String line;
+		while (reader.ready() && ((line = reader.readLine()) != null)) {
+			writer.write(line);
+			writer.newLine();
 		}
 	}
 
