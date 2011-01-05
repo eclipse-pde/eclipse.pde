@@ -578,12 +578,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 				IResolvedBundle[] bundles = target.getBundles();
 				Map sourceMap = new HashMap();
-				URL[] all = new URL[bundles.length];
+				List/*<URL>*/all = new ArrayList();
 				for (int i = 0; i < bundles.length; i++) {
 					IResolvedBundle bundle = bundles[i];
 					try {
 						if (bundle.getStatus().isOK()) {
-							all[i] = new File(bundle.getBundleInfo().getLocation()).toURL();
+							all.add(new File(bundle.getBundleInfo().getLocation()).toURL());
 							if (bundle.isSourceBundle()) {
 								sourceMap.put(new SourceLocationKey(bundle.getBundleInfo().getSymbolicName(), new Version(bundle.getBundleInfo().getVersion())), bundle);
 							}
@@ -595,7 +595,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					}
 				}
 				pm = new SubProgressMonitor(monitor, 50);
-				state = new PDEState(all, false, pm);
+				state = new PDEState((URL[]) all.toArray(new URL[0]), false, pm);
 				models = state.getTargetModels();
 				List sourceModels = new ArrayList();
 				List sourceBundles = new ArrayList();
