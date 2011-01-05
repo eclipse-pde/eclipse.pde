@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -57,13 +58,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
@@ -83,7 +83,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	private IWorkingCopyManager fManager;
 	CheckboxTableViewer fTableViewer;
 	HashSet fLocationList = new HashSet();
-	private Spinner fSpinner;
 	Button remove = null;
 	Button editbutton = null;
 	FileFilter filter = new FileFilter() {
@@ -138,14 +137,26 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiUseScanPreferencePage_0, 2, 200);
+		Link link = new Link(comp, SWT.WRAP);
+		link.setText(PreferenceMessages.ApiUseScanPreferencePage_0);
+		link.setFont(comp.getFont());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=2;
+		gd.widthHint=150;
+		link.setLayoutData(gd);
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", null, null);
+			}
+		});
+		
 		SWTFactory.createVerticalSpacer(comp, 1);
 		
 		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiUseScanPreferencePage_2, 2);
 
 		Table table = new Table(comp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK | SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridData gd = (GridData) table.getLayoutData();
+		gd = (GridData) table.getLayoutData();
 		gd.widthHint = 350;
 		table.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -207,12 +218,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 				removeLocation();
 			}
 		});
-		
-		Group optiongrp = SWTFactory.createGroup(comp, PreferenceMessages.options, 2, 2, GridData.FILL_HORIZONTAL);
-		Label lbl = SWTFactory.createLabel(optiongrp, PreferenceMessages.ApiUseScanPreferencePage_9, 1);
-		gd = (GridData) lbl.getLayoutData();
-		gd.grabExcessHorizontalSpace = true;
-		fSpinner = new Spinner(optiongrp, SWT.BORDER);
 		
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -280,6 +285,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		fLocationList.add(location);
 		fTableViewer.refresh();
 		fTableViewer.setChecked(location, true);
+		fTableViewer.setSelection(new StructuredSelection(location));
 		//do the whole pass in case you have more than one invalid location
 		validateScans();
 	}
@@ -456,14 +462,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * @param locationValue
 	 */
 	private void performInit(int cacheSizeValue, String locationValue) {
-		int cacheSize = 0;
-		try {
-			cacheSize = cacheSizeValue != 0 ? cacheSizeValue : Integer.parseInt(getStoredValue(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(1000)));
-		} catch (NumberFormatException e2) {
-		}
-
-		fSpinner.setValues(cacheSize, 0, Integer.MAX_VALUE, 0, 100, 1000);
-		
 		if (getContainer() == null) {
 			fManager = new WorkingCopyManager();
 		} else {
@@ -516,7 +514,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		}
 		
 		setStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, locations.toString());
-		setStoredValue(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(fSpinner.getSelection()));	
 			
 		try {
 			fManager.applyChanges();

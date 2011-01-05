@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,10 +71,6 @@ public interface IApiCoreConstants {
 	 */
 	public static final String API_USE_SCAN_LOCATION = "API_USE_SCAN_LOCATION"; //$NON-NLS-1$
 
-	/**
-	 * Preference to store the cache size for holding the API Use Scan references
-	 */
-	public static final String API_USE_SCAN_REFERENCE_CACHE_SIZE = "API_USE_SCAN_REFERENCE_CACHE_SIZE"; //$NON-NLS-1$
 	/**
 	 * Constant representing <code>XML</code>
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,11 @@ public class UseScanManager {
 	public static final String ESCAPE_REGEX = "\\"; //$NON-NLS-1$
 	
 	/**
+	 * Number of entries to cache in the {@link UseScanCache}
+	 */
+	public static final int DEFAULT_CACHE_SIZE = 1000;
+	
+	/**
 	 * Cache to maintain the list of least recently used <code>UseScanReferences</code>
 	 */
 	private static class UseScanCache extends OverflowingLRUCache {
@@ -74,16 +79,9 @@ public class UseScanManager {
 	public synchronized static UseScanManager getInstance() {
 		if (fUseScanProcessor == null) {
 			fUseScanProcessor = new UseScanManager();
-			String cacheSize = getCacheSize();
-			fApiComponentCache = new UseScanCache(Integer.parseInt(cacheSize));
+			fApiComponentCache = new UseScanCache(DEFAULT_CACHE_SIZE);
 		}
 		return fUseScanProcessor;
-	}
-
-	private static String getCacheSize() {
-		IEclipsePreferences node = (new InstanceScope()).getNode(ApiPlugin.PLUGIN_ID);
-		String cacheSize = node.get(IApiCoreConstants.API_USE_SCAN_REFERENCE_CACHE_SIZE, String.valueOf(100));
-		return cacheSize;
 	}
 
 	/**

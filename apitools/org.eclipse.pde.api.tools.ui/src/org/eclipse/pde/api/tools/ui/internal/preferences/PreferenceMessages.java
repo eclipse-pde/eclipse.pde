@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,7 +189,6 @@ public class PreferenceMessages extends NLS {
 	public static String ApiUseScanPreferencePage_6;
 	public static String ApiUseScanPreferencePage_7;
 	public static String ApiUseScanPreferencePage_8;
-	public static String ApiUseScanPreferencePage_9;
 	public static String archives__zip;
 	public static String jars__jar;
 	public static String options;
