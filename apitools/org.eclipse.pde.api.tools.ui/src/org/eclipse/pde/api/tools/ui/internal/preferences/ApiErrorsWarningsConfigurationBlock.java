@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -423,11 +423,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS = 
 		getApiToolsKey(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS);
 
-	private static final int API_SCANNING_USAGE_PAGE_ID = 0;
-	private static final int COMPATIBILITY_PAGE_ID = 1;
-	private static final int VERSION_MANAGEMENT_PAGE_ID = 2;
-	private static final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
-	private static final int API_USE_SCANS_PAGE_ID = 4;
+	public static final int API_SCANNING_USAGE_PAGE_ID = 0;
+	public static final int COMPATIBILITY_PAGE_ID = 1;
+	public static final int VERSION_MANAGEMENT_PAGE_ID = 2;
+	public static final int API_COMPONENT_RESOLUTION_PAGE_ID = 3;
+	public static final int API_USE_SCANS_PAGE_ID = 4;
 
 	static Key[] fgAllApiComponentResolutionKeys = {
 		KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
@@ -826,6 +826,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private Composite fParent = null;
 	
 	/**
+	 * The tab folder for the various tabs
+	 */
+	private TabFolder fTabFolder = null;
+	
+	/**
 	 * Constructor
 	 * @param project
 	 */
@@ -869,36 +874,36 @@ public class ApiErrorsWarningsConfigurationBlock {
 		fParent = parent;
 		SWTFactory.createVerticalSpacer(parent, 1);
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
-		TabFolder folder = new TabFolder(fMainComp, SWT.NONE);
+		fTabFolder = new TabFolder(fMainComp, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 400;
-		folder.setLayoutData(gd);
+		fTabFolder.setLayoutData(gd);
 
 		// API scanning usage options
 		createPage(
 				API_SCANNING_USAGE_PAGE_ID,
-				folder,
+				fTabFolder,
 				PreferenceMessages.ApiToolingNotificationsBlock_0,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_3);
 		// API compatibility options
 		createPage(
 				COMPATIBILITY_PAGE_ID,
-				folder,
+				fTabFolder,
 				PreferenceMessages.ApiToolingNotificationsBlock_1,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_8); 
 		createPage(
 				VERSION_MANAGEMENT_PAGE_ID,
-				folder,
+				fTabFolder,
 				PreferenceMessages.ApiToolingNotificationsBlock_2,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_9); 
 		createPage(
 				API_COMPONENT_RESOLUTION_PAGE_ID,
-				folder,
+				fTabFolder,
 				PreferenceMessages.ApiToolingNotificationsBlock_3,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_10);
 		createPage(
 				API_USE_SCANS_PAGE_ID,
-				folder,
+				fTabFolder,
 				PreferenceMessages.ApiToolingNotificationsBlock_4,
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_11); 
 		restoreExpansionState();
@@ -953,15 +958,15 @@ public class ApiErrorsWarningsConfigurationBlock {
 
 	/**
 	 * Creates a tab page parented in the folder
-	 * @param kind
+	 * @param tabID
 	 * @param folder
 	 * @param name
 	 * @param description
 	 * @return
 	 */
-	private Composite createPage(int kind, TabFolder folder, String name, String description) {
+	private Composite createPage(int tabID, TabFolder folder, String name, String description) {
 		Composite page = SWTFactory.createComposite(folder, 1, 1, GridData.FILL_BOTH);
-		TabItem tab = new TabItem(folder, SWT.NONE);
+		TabItem tab = new TabItem(folder, SWT.NONE, tabID);
 		tab.setText(name);
 		tab.setControl(page);
 		
@@ -969,7 +974,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		SWTFactory.createWrapLabel(page, description, 1);
 		SWTFactory.createVerticalSpacer(page, 1);
 		
-		switch(kind) {
+		switch(tabID) {
 			case API_SCANNING_USAGE_PAGE_ID : {
 				createApiScanningPage(page);
 				break;
@@ -995,11 +1000,11 @@ public class ApiErrorsWarningsConfigurationBlock {
 		
 		Group bcomp = SWTFactory.createGroup(page, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_setAllto, 3, 2, GridData.FILL_HORIZONTAL);
 		Button button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_error_button, null, SWT.RIGHT);
-		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_ERROR));
+		button.addSelectionListener(new SetAllSelectionAdapter(tabID, ApiPlugin.VALUE_ERROR));
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_warning_button, null, SWT.RIGHT);
-		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_WARNING));
+		button.addSelectionListener(new SetAllSelectionAdapter(tabID, ApiPlugin.VALUE_WARNING));
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_ignore_button, null, SWT.RIGHT);
-		button.addSelectionListener(new SetAllSelectionAdapter(kind, ApiPlugin.VALUE_IGNORE));
+		button.addSelectionListener(new SetAllSelectionAdapter(tabID, ApiPlugin.VALUE_IGNORE));
 		return page;
 	}
 	private void createAPIUseScanPage(Composite page) {
@@ -1747,5 +1752,16 @@ public class ApiErrorsWarningsConfigurationBlock {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * If a valid tab ID is provided, select that tab in the tab folder.
+	 * 
+	 * @param tabID integer tab id, one of {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#COMPATIBILITY_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#VERSION_MANAGEMENT_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#API_COMPONENT_RESOLUTION_PAGE_ID} and {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID} 
+	 */
+	public void selectTab(int tabID){
+		if (tabID >= 0 && tabID < fTabFolder.getItemCount()){
+			fTabFolder.setSelection(tabID);
+		}
 	}
 }

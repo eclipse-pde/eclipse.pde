@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
@@ -44,7 +46,19 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class ApiErrorsWarningsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	public static final String ID = ApiUIPlugin.PLUGIN_ID + "apitools.errorwarnings.prefpage"; //$NON-NLS-1$
+	/**
+	 * Id of a setting in the data map applied when the page is opened.  
+	 * Value must be a Boolean object.  If true, the customize project settings link will be hidden.
+	 */
 	public static final String NO_LINK= "PropertyAndPreferencePage.nolink"; //$NON-NLS-1$
+	/**
+	 * Id of a setting in the data map applied when the page is opened. 
+	 * Value must be an Integer object with a value match the id of a tab on the page
+	 * See constants {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#COMPATIBILITY_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#VERSION_MANAGEMENT_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#API_COMPONENT_RESOLUTION_PAGE_ID} and {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID}
+	 * If an id is provided, the preference page will open with the specified tab visible
+	 */
+	public static final String INITIAL_TAB = "PropertyAndPreferencePage.initialTab"; //$NON-NLS-1$
 	
 	/**
 	 * The main configuration block for the page
@@ -52,7 +66,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	ApiErrorsWarningsConfigurationBlock block = null;
 	private Link link = null;
 	
-	private HashMap fPageData = null;
+	private Map fPageData = null;
 	
 	/**
 	 * Constructor
@@ -146,7 +160,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		super.performApply();
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
@@ -154,13 +168,17 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		super.performDefaults();
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	public void applyData(Object data) {
-		if(data instanceof HashMap) {
-			fPageData = (HashMap) data;
+		if(data instanceof Map) {
+			fPageData = (Map) data;
 			link.setVisible(!Boolean.TRUE.equals(fPageData.get(NO_LINK)));
+			Integer tabIndex = (Integer)fPageData.get(INITIAL_TAB);
+			if (tabIndex != null){
+				block.selectTab(tabIndex.intValue());
+			}
 		}
 	}
 }

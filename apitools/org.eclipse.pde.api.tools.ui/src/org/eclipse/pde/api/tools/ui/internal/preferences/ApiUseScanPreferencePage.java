@@ -15,6 +15,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.jar.JarFile;
@@ -137,27 +138,15 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		Link link = new Link(comp, SWT.WRAP);
-		link.setText(PreferenceMessages.ApiUseScanPreferencePage_0);
-		link.setFont(comp.getFont());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		gd.widthHint=150;
-		link.setLayoutData(gd);
-		link.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", null, null);
-			}
-		});
 		
+		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiUseScanPreferencePage_0, 2, 250);
 		SWTFactory.createVerticalSpacer(comp, 1);
-		
 		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiUseScanPreferencePage_2, 2);
 
 		Table table = new Table(comp, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER | SWT.CHECK | SWT.V_SCROLL);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		gd = (GridData) table.getLayoutData();
-		gd.widthHint = 350;
+		GridData gd = (GridData) table.getLayoutData();
+		gd.widthHint = 250;
 		table.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				if (e.stateMask == SWT.NONE && e.keyCode == SWT.DEL) {
@@ -231,7 +220,23 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 				edit();
 			}
 		});
-		performInit(0, null);
+		
+		Link link = new Link(comp, SWT.WRAP);
+		link.setText(PreferenceMessages.ApiUseScanPreferencePage_9);
+		link.setFont(comp.getFont());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=2;
+		gd.widthHint=250;
+		link.setLayoutData(gd);
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				HashMap data = new HashMap();
+				data.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, new Integer(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", null, data); //$NON-NLS-1$
+			}
+		});
+		
+		performInit();
 		validateScans();
 		Dialog.applyDialogFont(comp);
 		return comp;
@@ -452,16 +457,15 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		performInit(1000, ""); //$NON-NLS-1$
-		applyChanges();
+		fLocationList.clear();
+		fTableViewer.refresh();
+		super.performDefaults();
 	}
 	
 	/**
 	 * Initializes the page
-	 * @param cacheSizeValue
-	 * @param locationValue
 	 */
-	private void performInit(int cacheSizeValue, String locationValue) {
+	private void performInit() {
 		if (getContainer() == null) {
 			fManager = new WorkingCopyManager();
 		} else {
@@ -470,7 +474,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 		fLocationList.clear();
 
-		String location = locationValue != null ? locationValue :  getStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
+		String location = getStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
 		
 		ArrayList checkedLocations = new ArrayList();
 		if (location != null && location.length() > 0) {

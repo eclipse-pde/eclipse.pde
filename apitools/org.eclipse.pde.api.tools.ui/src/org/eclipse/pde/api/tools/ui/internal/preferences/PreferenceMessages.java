@@ -189,6 +189,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiUseScanPreferencePage_6;
 	public static String ApiUseScanPreferencePage_7;
 	public static String ApiUseScanPreferencePage_8;
+	public static String ApiUseScanPreferencePage_9;
 	public static String archives__zip;
 	public static String jars__jar;
 	public static String options;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	private final static String OVR = ICONS_PATH + "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
 	/**
 	 * The id of the plugin
+	 * Value is "org.eclipse.pde.api.tools.ui"
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools.ui"; //$NON-NLS-1$
 	private final static String WIZBAN = ICONS_PATH + "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
