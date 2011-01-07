@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	private Link link = null;
 	
 	private Map fPageData = null;
+	private boolean fLoaded = false;
 	
 	/**
 	 * Constructor
@@ -118,6 +119,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		block = new ApiErrorsWarningsConfigurationBlock(null, (IWorkbenchPreferenceContainer)getContainer());
 		block.createControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APITOOLS_ERROR_WARNING_PREF_PAGE);
+		fLoaded = true;
 		return comp;
 	}
 	
@@ -172,7 +174,7 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	public void applyData(Object data) {
-		if(data instanceof Map) {
+		if(fLoaded == true && data instanceof Map) {
 			fPageData = (Map) data;
 			link.setVisible(!Boolean.TRUE.equals(fPageData.get(NO_LINK)));
 			Integer tabIndex = (Integer)fPageData.get(INITIAL_TAB);

@@ -59,12 +59,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
@@ -221,20 +220,13 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			}
 		});
 		
-		Link link = new Link(comp, SWT.WRAP);
-		link.setText(PreferenceMessages.ApiUseScanPreferencePage_9);
-		link.setFont(comp.getFont());
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan=2;
-		gd.widthHint=250;
-		link.setLayoutData(gd);
-		link.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				HashMap data = new HashMap();
-				data.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, new Integer(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
-				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", null, data); //$NON-NLS-1$
-			}
-		});
+		HashMap linkdata = new HashMap();
+		linkdata.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, new Integer(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
+		PreferenceLinkArea apiErrorLinkArea = new PreferenceLinkArea(comp, SWT.NONE,
+				"org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", PreferenceMessages.ApiUseScanPreferencePage_9,//$NON-NLS-1$
+				(IWorkbenchPreferenceContainer) getContainer(), linkdata);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		apiErrorLinkArea.getControl().setLayoutData(data);
 		
 		performInit();
 		validateScans();

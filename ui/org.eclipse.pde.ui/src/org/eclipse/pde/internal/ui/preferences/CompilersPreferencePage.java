@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	private Link link = null;
 
 	private HashMap fPageData = null;
+	private boolean fLoaded = false;
 
 	/**
 	 *  
@@ -92,6 +93,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		fBlock = new PDECompilersConfigurationBlock(null, (IWorkbenchPreferenceContainer) getContainer());
 		fBlock.createControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
+		fLoaded = true;
 		return comp;
 	}
 
@@ -147,7 +149,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	public void applyData(Object data) {
-		if (data instanceof HashMap) {
+		if (fLoaded == true && data instanceof HashMap) {
 			fPageData = (HashMap) data;
 			link.setVisible(!Boolean.TRUE.equals(fPageData.get(NO_LINK)));
 		}
