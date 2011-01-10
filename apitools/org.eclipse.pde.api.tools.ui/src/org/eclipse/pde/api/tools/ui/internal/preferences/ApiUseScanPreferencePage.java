@@ -223,9 +223,11 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		HashMap linkdata = new HashMap();
 		linkdata.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, new Integer(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
 		PreferenceLinkArea apiErrorLinkArea = new PreferenceLinkArea(comp, SWT.NONE,
-				"org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage", PreferenceMessages.ApiUseScanPreferencePage_9,//$NON-NLS-1$
+				ApiErrorsWarningsPreferencePage.ID, PreferenceMessages.ApiUseScanPreferencePage_9,
 				(IWorkbenchPreferenceContainer) getContainer(), linkdata);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		data.widthHint = 250;
+		data.horizontalSpan = 2;
 		apiErrorLinkArea.getControl().setLayoutData(data);
 		
 		performInit();

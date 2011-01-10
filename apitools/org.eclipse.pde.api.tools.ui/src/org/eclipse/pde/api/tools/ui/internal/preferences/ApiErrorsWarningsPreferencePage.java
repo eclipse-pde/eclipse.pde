@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class ApiErrorsWarningsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String ID = ApiUIPlugin.PLUGIN_ID + "apitools.errorwarnings.prefpage"; //$NON-NLS-1$
+	public static final String ID = ApiUIPlugin.PLUGIN_ID + ".apitools.errorwarnings.prefpage"; //$NON-NLS-1$
 	/**
 	 * Id of a setting in the data map applied when the page is opened.  
 	 * Value must be a Boolean object.  If true, the customize project settings link will be hidden.
@@ -66,8 +66,10 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	ApiErrorsWarningsConfigurationBlock block = null;
 	private Link link = null;
 	
+	/**
+	 * Since {@link #applyData(Object)} can be called before createContents, store the data
+	 */
 	private Map fPageData = null;
-	private boolean fLoaded = false;
 	
 	/**
 	 * Constructor
@@ -118,8 +120,11 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		});
 		block = new ApiErrorsWarningsConfigurationBlock(null, (IWorkbenchPreferenceContainer)getContainer());
 		block.createControl(comp);
+		
+		// Initialize with data map in case applyData was called before createContents
+		applyData(fPageData);
+		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APITOOLS_ERROR_WARNING_PREF_PAGE);
-		fLoaded = true;
 		return comp;
 	}
 	
@@ -174,12 +179,20 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	public void applyData(Object data) {
-		if(fLoaded == true && data instanceof Map) {
-			fPageData = (Map) data;
-			link.setVisible(!Boolean.TRUE.equals(fPageData.get(NO_LINK)));
-			Integer tabIndex = (Integer)fPageData.get(INITIAL_TAB);
-			if (tabIndex != null){
-				block.selectTab(tabIndex.intValue());
+		if(data instanceof Map) {
+			fPageData = (Map)data;
+			if (link != null && fPageData.containsKey(NO_LINK)){
+				link.setVisible(!Boolean.TRUE.equals(fPageData.get(NO_LINK)));
+			}
+			if (block != null && fPageData.containsKey(INITIAL_TAB)){
+				Integer tabIndex = (Integer)fPageData.get(INITIAL_TAB);
+				if (tabIndex != null){
+					try {
+						block.selectTab(tabIndex.intValue());
+					} catch (NumberFormatException e){
+						// Page was called with bad data, just ignore
+					}
+				}
 			}
 		}
 	}

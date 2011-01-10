@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -39,8 +38,10 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	private PDECompilersConfigurationBlock fBlock = null;
 	private Link link = null;
 
-	private HashMap fPageData = null;
-	private boolean fLoaded = false;
+	/**
+	 * Since {@link #applyData(Object)} can be called before createContents, store the data
+	 */
+	private Map fPageData = null;
 
 	/**
 	 *  
@@ -92,8 +93,11 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		});
 		fBlock = new PDECompilersConfigurationBlock(null, (IWorkbenchPreferenceContainer) getContainer());
 		fBlock.createControl(comp);
+
+		// Initialize with data map in case applyData was called before createContents
+		applyData(fPageData);
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
-		fLoaded = true;
 		return comp;
 	}
 
@@ -149,9 +153,11 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	public void applyData(Object data) {
-		if (fLoaded == true && data instanceof HashMap) {
-			fPageData = (HashMap) data;
-			link.setVisible(!Boolean.TRUE.equals(fPageData.get(NO_LINK)));
+		if (data instanceof Map) {
+			fPageData = (Map) data;
+			if (link != null && fPageData.containsKey(NO_LINK)) {
+				link.setVisible(!Boolean.TRUE.equals(((Map) data).get(NO_LINK)));
+			}
 		}
 	}
 }
