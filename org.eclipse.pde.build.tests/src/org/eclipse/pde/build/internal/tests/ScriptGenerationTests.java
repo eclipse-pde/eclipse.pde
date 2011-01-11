@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- * Andrew Eisenberg - bug 303960 tests
+ * Copyright (c) 2007, 2010 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: Andrew Eisenberg - bug 303960 tests
  *******************************************************************************/
 
 package org.eclipse.pde.build.internal.tests;
@@ -682,7 +680,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		} catch (Exception e) {
 			//ok
 		}
-		assertLogContainsLines(buildFolder.getFile("log.log"), new String[] {"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid format"});
+		assertLogContainsLines(buildFolder.getFile("log.log"), new String[] {"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid qualifier"});
 	}
 
 	public void testBug248767_212467() throws Exception {
