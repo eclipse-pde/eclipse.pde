@@ -2921,6 +2921,7 @@ public class PDEUIMessages extends NLS {
 	public static String XMLContentAssistProcessor_schemaLocation;
 
 	public static String PDEJavaHelper_msgContentAssistAvailable;
+	public static String PDEJavaHelper_msgContentAssistAvailableWithKeyBinding;
 
 	public static String AddExportPackageResolution_Label;
 	public static String AddBundleClassPathResolution_add;

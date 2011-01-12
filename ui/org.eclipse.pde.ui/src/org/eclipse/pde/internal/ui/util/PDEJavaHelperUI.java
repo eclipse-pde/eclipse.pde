@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,13 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.fieldassist.*;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -40,6 +42,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 public class PDEJavaHelperUI {
 
@@ -222,7 +226,16 @@ public class PDEJavaHelperUI {
 		// No margin
 		controlDecoration.setMarginWidth(0);
 		// Custom hover tip text
-		controlDecoration.setDescriptionText(PDEUIMessages.PDEJavaHelper_msgContentAssistAvailable);
+		String description = null;
+		IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		TriggerSequence[] activeBindings = bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		if (activeBindings.length == 0)
+			description = PDEUIMessages.PDEJavaHelper_msgContentAssistAvailable;
+		else
+			description = NLS.bind(PDEUIMessages.PDEJavaHelper_msgContentAssistAvailableWithKeyBinding, activeBindings[0].format());
+
+		controlDecoration.setDescriptionText(description);
+
 		// Custom hover properties
 		controlDecoration.setShowHover(true);
 		controlDecoration.setShowOnlyOnFocus(true);
