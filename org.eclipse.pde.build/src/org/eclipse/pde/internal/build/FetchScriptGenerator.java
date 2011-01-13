@@ -179,6 +179,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			FetchScriptGenerator generator = new FetchScriptGenerator("feature@" + featureId + ',' + referencedFeatures[i].getVersion()); //$NON-NLS-1$
 			generator.setDirectoryLocation(directoryLocation);
 			generator.setFetchChildren(fetchChildren);
+			generator.setFetchCache(fetchCache);
 			generator.setCvsPassFileLocation(cvsPassFileLocation);
 			generator.setRecursiveGeneration(recursiveGeneration);
 			generator.setFetchTag(fetchTags);
