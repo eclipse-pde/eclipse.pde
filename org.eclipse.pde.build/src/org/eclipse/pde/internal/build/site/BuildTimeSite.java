@@ -224,7 +224,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	static public boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List configs) {
 		Dictionary environment = new Hashtable(3);
 		Filter bundleFilter = BundleHelper.getDefault().getFilter(bundle);
-		if (hasPlatformFilterError(errors) != null) {
+		if (bundleFilter != null && hasPlatformFilterError(errors) != null) {
 			for (Iterator iter = configs.iterator(); iter.hasNext();) {
 				Config aConfig = (Config) iter.next();
 				environment.put("osgi.os", aConfig.getOs()); //$NON-NLS-1$
