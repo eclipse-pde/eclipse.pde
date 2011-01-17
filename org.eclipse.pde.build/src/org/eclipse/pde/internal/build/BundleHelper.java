@@ -180,7 +180,7 @@ public class BundleHelper {
 	}
 
 	public static String[] getClasspath(Dictionary manifest) {
-		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
+		String fullClasspath = getManifestHeader(manifest, Constants.BUNDLE_CLASSPATH);
 		String[] result = new String[0];
 		try {
 			if (fullClasspath != null) {
@@ -195,5 +195,19 @@ public class BundleHelper {
 			//Ignore
 		}
 		return result;
+	}
+
+	public static String getManifestHeader(Dictionary manifest, String header) {
+		String value = (String) manifest.get(header);
+		if (value != null)
+			return value;
+
+		Enumeration keys = manifest.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			if (key.equalsIgnoreCase(header))
+				return (String) manifest.get(key);
+		}
+		return null;
 	}
 }

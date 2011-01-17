@@ -101,7 +101,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (addBundleDescription(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
-			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, enhancedManifest.get(Constants.BUNDLE_NAME)), e);
+			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, BundleHelper.getManifestHeader(enhancedManifest, Constants.BUNDLE_NAME)), e);
 			BundleHelper.getDefault().getLog().log(status);
 			return false;
 		}
@@ -146,7 +146,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 
 		for (int i = 0; i < entries.length; i++) {
-			String entry = (String) manifest.get(entries[i]);
+			String entry = BundleHelper.getManifestHeader(manifest, entries[i]);
 			if (entry != null) {
 				properties.put(entries[i], entry);
 			}
@@ -177,11 +177,11 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private String fillPatchData(Dictionary manifest) {
-		if (manifest.get(EXTENSIBLE_API) != null) {
+		if (BundleHelper.getManifestHeader(manifest, EXTENSIBLE_API) != null) {
 			return EXTENSIBLE_API + ": true"; //$NON-NLS-1$
 		}
 
-		if (manifest.get(PATCH_FRAGMENT) != null) {
+		if (BundleHelper.getManifestHeader(manifest, PATCH_FRAGMENT) != null) {
 			return PATCH_FRAGMENT + ": true"; //$NON-NLS-1$
 		}
 		return null;
@@ -248,12 +248,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		String newVersion = null;
 		String oldVersion = null;
 		try {
-			String symbolicName = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+			String symbolicName = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_SYMBOLICNAME);
 			if (symbolicName == null)
 				return null;
 
 			symbolicName = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicName)[0].getValue();
-			oldVersion = (String) manifest.get(Constants.BUNDLE_VERSION);
+			oldVersion = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_VERSION);
 			newVersion = QualifierReplacer.replaceQualifierInVersion(oldVersion, symbolicName, (String) manifest.get(PROPERTY_QUALIFIER), repositoryVersions);
 		} catch (BundleException e) {
 			//ignore
@@ -269,7 +269,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 * @throws BundleException
 	 */
 	private void hasQualifier(File bundleLocation, Dictionary manifest) throws BundleException {
-		ManifestElement[] versionInfo = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, (String) manifest.get(Constants.BUNDLE_VERSION));
+		ManifestElement[] versionInfo = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_VERSION));
 		if (versionInfo != null) {
 			if (versionInfo[0].getValue().endsWith(PROPERTY_QUALIFIER)) {
 				manifest.put(PROPERTY_QUALIFIER, getQualifierPropery(bundleLocation.getAbsolutePath()));
@@ -335,7 +335,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private boolean enforceSymbolicName(File bundleLocation, Dictionary initialManifest) {
-		if (initialManifest.get(Constants.BUNDLE_SYMBOLICNAME) != null)
+		if (BundleHelper.getManifestHeader(initialManifest, Constants.BUNDLE_SYMBOLICNAME) != null)
 			return true;
 
 		Dictionary generatedManifest = convertPluginManifest(bundleLocation, false);
@@ -346,20 +346,20 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		Enumeration enumeration = generatedManifest.keys();
 		while (enumeration.hasMoreElements()) {
 			Object key = enumeration.nextElement();
-			if (initialManifest.get(key) == null)
+			if (BundleHelper.getManifestHeader(initialManifest, (String) key) == null)
 				initialManifest.put(key, generatedManifest.get(key));
 		}
 		return true;
 	}
 
 	private void enforceClasspath(Dictionary manifest) {
-		String classpath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
+		String classpath = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_CLASSPATH);
 		if (classpath == null)
 			manifest.put(Constants.BUNDLE_CLASSPATH, "."); //$NON-NLS-1$
 	}
 
 	private void enforceVersion(Dictionary manifest) {
-		String version = (String) manifest.get(Constants.BUNDLE_VERSION);
+		String version = BundleHelper.getManifestHeader(manifest, Constants.BUNDLE_VERSION);
 		if (version == null)
 			manifest.put(Constants.BUNDLE_VERSION, "0.0.0"); //$NON-NLS-1$
 	}
