@@ -18,6 +18,9 @@ public interface IFeatureInfo extends IFeatureObject {
 
 	String P_DESC = "p_desc"; //$NON-NLS-1$
 
+	/**
+	 * @return the url for the feature, possibly <code>null</code>
+	 */
 	public String getURL();
 
 	public String getDescription();

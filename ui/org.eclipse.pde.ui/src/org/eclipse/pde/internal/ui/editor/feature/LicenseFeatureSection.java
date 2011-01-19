@@ -277,7 +277,7 @@ public class LicenseFeatureSection extends PDESection {
 		IFeatureInfo info = feature.getFeatureInfo(2);
 		fLicenseFeatureIDText.setText(feature.getLicenseFeatureID());
 		fLicenseFeatureVersionText.setText(feature.getLicenseFeatureVersion());
-		fUrlText.setText(info.getURL());
+		fUrlText.setText(info.getURL() != null ? info.getURL() : ""); //$NON-NLS-1$
 		fDocument.set(info.getDescription());
 		super.refresh();
 		fIgnoreChange = false;
