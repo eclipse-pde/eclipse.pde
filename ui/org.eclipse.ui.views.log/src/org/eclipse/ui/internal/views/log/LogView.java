@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -418,7 +418,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private Action createPropertiesAction() {
-		Action action = new EventDetailsDialogAction(fTree.getShell(), fFilteredTree.getViewer(), fMemento);
+		Action action = new EventDetailsDialogAction(fTree, fFilteredTree.getViewer(), fMemento);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES));
 		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES_DISABLED));
 		action.setToolTipText(Messages.LogView_properties_tooltip);
@@ -739,7 +739,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void handleFilter() {
-		FilterDialog dialog = new FilterDialog(Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), fMemento);
+		FilterDialog dialog = new FilterDialog(getSite().getShell(), fMemento);
 		dialog.create();
 		dialog.getShell().setText(Messages.LogView_FilterDialog_title);
 		if (dialog.open() == Window.OK)
@@ -1278,7 +1278,8 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void makeHoverShell() {
-		fTextShell = new Shell(fTree.getShell(), SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL);
+		// parent it off the workbench window's shell so it will be valid regardless of whether the view is a detached window or not
+		fTextShell = new Shell(getSite().getWorkbenchWindow().getShell(), SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL);
 		Display display = fTextShell.getDisplay();
 		fTextShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		GridLayout layout = new GridLayout(1, false);
