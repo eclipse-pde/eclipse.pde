@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
 	public void endDocument() throws SAXException {
-		IPluginBase pluginBase = fModel.getPluginBase();
+		IPluginBase pluginBase = fModel.getPluginBase(false);
 		try {
 			if (pluginBase != null)
 				pluginBase.setSchemaVersion(fSchemaVersion);
@@ -83,7 +83,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 	protected IDocumentElementNode getDocumentNode(String name, IDocumentElementNode parent) {
 		IDocumentElementNode node = null;
 		if (parent == null) {
-			node = (IDocumentElementNode) getModel().getPluginBase();
+			node = (IDocumentElementNode) getModel().getPluginBase(false);
 			if (node != null) {
 				node.setOffset(-1);
 				node.setLength(-1);
