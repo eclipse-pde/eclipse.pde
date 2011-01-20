@@ -51,6 +51,30 @@ public class AnalysisReportConversionTask extends Task {
 			this.message = message;
 			this.severity = severity;
 		}
+		public String getHtmlMessage() {
+			StringBuffer buffer = new StringBuffer();
+			char[] chars = this.message.toCharArray();
+			for (int i = 0, max = chars.length; i < max; i++) {
+				char character = chars[i];
+				switch(character) {
+					case '<':
+						buffer.append("&lt;"); //$NON-NLS-1$
+						break;
+					case '>':
+						buffer.append("&gt;"); //$NON-NLS-1$
+						break;
+					case '&':
+						buffer.append("&amp;"); //$NON-NLS-1$
+						break;
+					case '"':
+						buffer.append("&quot;"); //$NON-NLS-1$
+						break;
+					default:
+						buffer.append(character);
+				}
+			}
+			return String.valueOf(buffer);
+		}
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Problem : ").append(this.message).append(' ').append(this.severity); //$NON-NLS-1$
@@ -312,18 +336,18 @@ public class AnalysisReportConversionTask extends Task {
 				if ((i % 2) == 0) {
 					switch(problem.severity) {
 						case ApiPlugin.SEVERITY_ERROR :
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_error, new String[] { problem.message }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_error, new String[] { problem.getHtmlMessage() }));
 							break;
 						case ApiPlugin.SEVERITY_WARNING :
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_warning, new String[] { problem.message }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_warning, new String[] { problem.getHtmlMessage() }));
 					}
 				} else { 
 					switch(problem.severity) {
 						case ApiPlugin.SEVERITY_ERROR :
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_error, new String[] { problem.message }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_error, new String[] { problem.getHtmlMessage() }));
 							break;
 						case ApiPlugin.SEVERITY_WARNING :
-							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_warning, new String[] { problem.message }));
+							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_warning, new String[] { problem.getHtmlMessage() }));
 					}
 				}
 			}
