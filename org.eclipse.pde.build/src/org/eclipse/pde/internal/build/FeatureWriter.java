@@ -52,6 +52,10 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		parameters.put(ID, feature.getId());
 		parameters.put(VERSION, feature.getVersion());
 		parameters.put("label", feature.getLabel()); //$NON-NLS-1$
+		if (feature.getLicenseFeature() != null) {
+			parameters.put("license-feature", feature.getLicenseFeature()); //$NON-NLS-1$
+			parameters.put("license-feature-version", feature.getLicenseFeatureVersion()); //$NON-NLS-1$
+		}
 		parameters.put("provider-name", feature.getProviderName()); //$NON-NLS-1$
 		parameters.put("image", feature.getImage()); //$NON-NLS-1$
 		parameters.put("os", feature.getOS()); //$NON-NLS-1$

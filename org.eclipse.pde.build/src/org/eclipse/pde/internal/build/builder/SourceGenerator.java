@@ -265,6 +265,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		result.setCopyrightURL(featureExample.getCopyrightURL());
 		result.setLicense(featureExample.getLicense());
 		result.setLicenseURL(featureExample.getLicenseURL());
+		result.setLicenseFeature(featureExample.getLicenseFeature());
+		result.setLicenseFeatureVersion(featureExample.getLicenseFeatureVersion());
 		result.setUpdateSiteLabel(featureExample.getUpdateSiteLabel());
 		result.setUpdateSiteURL(featureExample.getUpdateSiteURL());
 
