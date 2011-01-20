@@ -1,4 +1,4 @@
-<project name="Build specific targets and properties" default="noDefault">
+<project name="customAssembly.template" default="noDefault">
 
 	<!-- =====================================================================
 	    
