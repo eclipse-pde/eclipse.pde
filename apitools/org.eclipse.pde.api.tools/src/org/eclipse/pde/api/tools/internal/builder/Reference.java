@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -333,7 +333,7 @@ public class Reference implements IReference {
 			case IReference.T_FIELD_REFERENCE:
 				return resolveField(type, getReferencedMemberName());
 			case IReference.T_METHOD_REFERENCE:
-				return resolveVirtualMethod0(sourceComponent, type, getReferencedMemberName(), getReferencedSignature());
+				return resolveMethod(sourceComponent, type, getReferencedMemberName(), getReferencedSignature());
 			}
 		}
 		return false;
@@ -401,7 +401,7 @@ public class Reference implements IReference {
 	}		
 
 	/**
-	 * Resolves a virtual method and returns whether the method lookup was successful.
+	 * Resolves a method and returns whether the method lookup was successful.
 	 * We need to resolve the actual type that implements the method - i.e. do the virtual
 	 * method lookup.
 	 * 
@@ -412,7 +412,7 @@ public class Reference implements IReference {
 	 * @returns whether the lookup succeeded
 	 * @throws CoreException if something goes terribly wrong
 	 */
-	private boolean resolveVirtualMethod0(IApiComponent sourceComponent, IApiType type, String methodName, String methodSignature) throws CoreException {
+	private boolean resolveMethod(IApiComponent sourceComponent, IApiType type, String methodName, String methodSignature) throws CoreException {
 		IApiMethod target = type.getMethod(methodName, methodSignature);
 		if (target != null) {
 			if (target.isSynthetic()) {
@@ -432,21 +432,34 @@ public class Reference implements IReference {
 								new IApiComponent[] { sourceComponent },
 								interfacesNames[i]);
 						IApiType superinterface = classFile.getStructure();
-						if (superinterface != null && resolveVirtualMethod0(sourceComponent, superinterface, methodName, methodSignature)) {
+						if (superinterface != null && resolveMethod(sourceComponent, superinterface, methodName, methodSignature)) {
 							return true;
 						}
 					}
 				}
 				break;
-			case IReference.REF_VIRTUALMETHOD :
-			case IReference.REF_SPECIALMETHOD :
+			case IReference.REF_STATICMETHOD :
 				String superclassName = type.getSuperclassName();
 				if (superclassName != null) {
 					IApiTypeRoot classFile = Util.getClassFile(
 							new IApiComponent[] { sourceComponent },
 							superclassName);
 					IApiType superclass = classFile.getStructure();
-					boolean resolved = resolveVirtualMethod0(sourceComponent, superclass, methodName, methodSignature);
+					boolean resolved = resolveMethod(sourceComponent, superclass, methodName, methodSignature);
+					if (resolved) {
+						return resolved;
+					}
+				}
+				break;
+			case IReference.REF_VIRTUALMETHOD :
+			case IReference.REF_SPECIALMETHOD :
+				superclassName = type.getSuperclassName();
+				if (superclassName != null) {
+					IApiTypeRoot classFile = Util.getClassFile(
+							new IApiComponent[] { sourceComponent },
+							superclassName);
+					IApiType superclass = classFile.getStructure();
+					boolean resolved = resolveMethod(sourceComponent, superclass, methodName, methodSignature);
 					if (resolved) {
 						return resolved;
 					}
@@ -459,7 +472,7 @@ public class Reference implements IReference {
 									new IApiComponent[] { sourceComponent },
 									interfacesNames[i]);
 							IApiType superinterface = classFile.getStructure();
-							if (superinterface != null && resolveVirtualMethod0(sourceComponent, superinterface, methodName, methodSignature)) {
+							if (superinterface != null && resolveMethod(sourceComponent, superinterface, methodName, methodSignature)) {
 								return true;
 							}
 						}
