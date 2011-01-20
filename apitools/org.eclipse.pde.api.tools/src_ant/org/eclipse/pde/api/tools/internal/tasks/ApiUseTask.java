@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,7 +261,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 			throw new BuildException(String.valueOf(out.getBuffer()));
 		}
 		//stop if we don't want to see anything
-		if(!considerapi && !considerinternal) {
+		if(!considerapi && !considerinternal && !considerillegaluse) {
 			throw new BuildException(Messages.UseTask_no_scan_both_types_not_searched_for);
 		}
 	}
