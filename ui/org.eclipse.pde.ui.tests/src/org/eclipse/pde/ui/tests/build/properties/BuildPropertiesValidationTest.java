@@ -62,10 +62,13 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 
 	public void testJavacEntries() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.6");
+		
 		setPreferences(project, CompilerFlags.WARNING);
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, "warning");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, "warning");
 
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
@@ -80,10 +83,13 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 
 	public void testJreCompliance() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.7");
+
 		setPreferences(project, CompilerFlags.ERROR);
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.2");
 		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, "warning");
+		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, "warning");
 
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
