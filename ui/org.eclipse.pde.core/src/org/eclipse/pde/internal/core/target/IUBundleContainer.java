@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,13 +175,24 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * as a result of a synchronization operation.
 	 */
 	IFeatureModel[] cacheFeatures() throws CoreException {
+		// Ideally we would compute the list of features specific to this container but that 
+		// would require running the slicer again to follow the dependencies from this 
+		// container's roots.  Instead, here we find all features in the shared profile.  This means
+		// that all IU containers will return the same thing for getFeatures.  In practice this is 
+		// ok because we remove duplicates in TargetDefinition#getAllFeatures.
+
 		Set features = new HashSet();
-		for (int i = 0; i < fUnits.length; i++) {
-			IInstallableUnit unit = fUnits[i];
+		IQueryResult queryResult = fSynchronizer.getProfile().query(QueryUtil.createIUAnyQuery(), null);
+		if (queryResult.isEmpty()) {
+			return new IFeatureModel[0];
+		}
+
+		for (Iterator i = queryResult.iterator(); i.hasNext();) {
+			IInstallableUnit unit = (IInstallableUnit) i.next();
 			String id = unit.getId();
-			// if theIU was explicitly added and the naming convention says it is a feature, then add it. 
+			// if the IU naming convention says it is a feature, then add it. 
 			// This is less than optimal but there is no clear way of identifying an IU as a feature.
-			if (isRoot(id, unit.getVersion()) && id.endsWith(FEATURE_ID_SUFFIX)) {
+			if (id.endsWith(FEATURE_ID_SUFFIX)) {
 				id = id.substring(0, id.length() - FEATURE_ID_SUFFIX.length());
 				String version = unit.getVersion().toString();
 				features.add(new NameVersionDescriptor(id, version, NameVersionDescriptor.TYPE_FEATURE));
@@ -205,15 +216,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 		fFeatures = (IFeatureModel[]) result.toArray(new IFeatureModel[result.size()]);
 		return fFeatures;
-	}
-
-	private boolean isRoot(String id, Version version) {
-		for (int i = 0; i < fIds.length; i++) {
-			String fid = fIds[i];
-			if (fid.equals(id) && fVersions[i].equals(version))
-				return true;
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)

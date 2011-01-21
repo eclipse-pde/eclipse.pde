@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -919,18 +919,22 @@ public class TargetDefinition implements ITargetDefinition {
 
 		IBundleContainer[] containers = getBundleContainers();
 
-		ArrayList features = new ArrayList();
-		// secondary containers are considered additional
+		// collect up all features from all containers and remove duplicates.
+		Map result = new HashMap();
 		if (containers != null && containers.length > 0) {
 			for (int i = 0; i < containers.length; i++) {
 				IFeatureModel[] currentFeatures = containers[i].getFeatures();
 				if (currentFeatures != null && currentFeatures.length > 0) {
-					features.addAll(Arrays.asList(currentFeatures));
+					for (int j = 0; j < currentFeatures.length; j++) {
+						IFeatureModel feature = currentFeatures[j];
+						NameVersionDescriptor key = new NameVersionDescriptor(feature.getFeature().getId(), feature.getFeature().getVersion());
+						result.put(key, feature);
+					}
 				}
 			}
 		}
 
-		fFeatureModels = (IFeatureModel[]) features.toArray(new IFeatureModel[features.size()]);
+		fFeatureModels = (IFeatureModel[]) result.values().toArray(new IFeatureModel[result.size()]);
 		return fFeatureModels;
 	}
 
