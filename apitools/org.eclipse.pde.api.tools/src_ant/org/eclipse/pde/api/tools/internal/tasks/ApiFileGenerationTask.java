@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,6 +250,7 @@ public class ApiFileGenerationTask extends Task {
 		File dotProjectFile = new File(root, ".project"); //$NON-NLS-1$
 		
 		if(!this.allowNonApiProject && !isAPIToolsNature(dotProjectFile)) {
+			System.out.println("The project does not have an api tooling nature so a api_description file will not be generated");
 			return;
 		}
 		// check if the .api_description file exists
