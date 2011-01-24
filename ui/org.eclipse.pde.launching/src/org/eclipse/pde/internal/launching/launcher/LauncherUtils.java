@@ -37,6 +37,7 @@ public class LauncherUtils {
 	public static final int DELETE_WORKSPACE = 2002;
 	public static final int GENERATE_CONFIG_INI = 2003;
 	public static final int ORGANIZE_MANIFESTS = 2004;
+	public static final int SELECT_WORKSPACE_FIELD = 2005;
 
 	private static final String TIMESTAMP = "timestamp"; //$NON-NLS-1$
 	private static final String FILE_NAME = "dep-timestamp.properties"; //$NON-NLS-1$
