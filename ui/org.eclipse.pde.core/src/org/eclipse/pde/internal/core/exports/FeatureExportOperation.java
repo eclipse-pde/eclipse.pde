@@ -1017,6 +1017,7 @@ public class FeatureExportOperation extends Job {
 							Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
 							plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
 							plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
+							plugin.setAttribute("unpack", "false"); //$NON-NLS-1$ //$NON-NLS-2$ 
 							root.appendChild(plugin);
 							BundleDescription[] fragments = bundle.getFragments();
 							for (int i = 0; i < configurations.length; i++) {
