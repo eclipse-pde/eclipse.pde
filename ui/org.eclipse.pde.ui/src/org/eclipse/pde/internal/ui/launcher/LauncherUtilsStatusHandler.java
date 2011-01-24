@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009 eXXcellent solutions gmbh, EclipseSource Corporation
- * and others.
+ * Copyright (c) 2009, 2011 eXXcellent solutions gmbh, EclipseSource Corporation,
+ * IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Contributors:
  *     Achim Demelt, eXXcellent solutions gmbh - initial API and implementation
  *     EclipseSource - initial API and implementation, ongoing enhancements
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -24,11 +25,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsProcessor;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.ui.launcher.MainTab;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -36,20 +40,45 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class LauncherUtilsStatusHandler implements IStatusHandler {
 
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-		if (status.getCode() == LauncherUtils.WORKSPACE_LOCKED) {
-			Object[] args = (Object[]) source;
-			handleWorkspaceLocked((String) args[0], (ILaunchConfiguration) args[1], (String) args[2]);
-		} else if (status.getCode() == LauncherUtils.CLEAR_LOG)
-			return clearLog();
-		else if (status.getCode() == LauncherUtils.DELETE_WORKSPACE)
-			return deleteWorkspace((String) source);
-		else if (status.getCode() == LauncherUtils.GENERATE_CONFIG_INI)
-			return generateConfigIni();
-		else if (status.getCode() == LauncherUtils.ORGANIZE_MANIFESTS) {
-			Object[] args = (Object[]) source;
-			organizeManifests((ArrayList) args[0], (IProgressMonitor) args[1], (Properties) args[2]);
+		int code = status.getCode();
+		switch (code) {
+			case LauncherUtils.WORKSPACE_LOCKED :
+				Object[] args = (Object[]) source;
+				handleWorkspaceLocked((String) args[0], (ILaunchConfiguration) args[1], (String) args[2]);
+				break;
+
+			case LauncherUtils.CLEAR_LOG :
+				return clearLog();
+
+			case LauncherUtils.DELETE_WORKSPACE :
+				return deleteWorkspace((String) source);
+
+			case LauncherUtils.GENERATE_CONFIG_INI :
+				return generateConfigIni();
+
+			case LauncherUtils.ORGANIZE_MANIFESTS :
+				Object[] args2 = (Object[]) source;
+				organizeManifests((ArrayList) args2[0], (IProgressMonitor) args2[1], (Properties) args2[2]);
+				break;
+
+			case LauncherUtils.SELECT_WORKSPACE_FIELD :
+				ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog) source;
+				selectWorkspaceField(dialog);
+				break;
 		}
 		return null;
+	}
+
+	private void selectWorkspaceField(ILaunchConfigurationDialog dialog) {
+		ILaunchConfigurationTab[] tabs = dialog.getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab tab = tabs[i];
+			if (tab instanceof MainTab) {
+				MainTab mainTab = (MainTab) tab;
+				dialog.setActiveTab(mainTab);
+				mainTab.applyData(IPDELauncherConstants.LOCATION);
+			}
+		}
 	}
 
 	private Boolean generateConfigIni() {
@@ -146,18 +175,14 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				Shell parentShell = getActiveShell();
-				if (launchConfig == null || mode == null) {
-					MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {IDialogConstants.OK_LABEL}, 0);
-					dialog.open();
-				} else {
-					MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {PDEUIMessages.LauncherUtils_edit, IDialogConstants.OK_LABEL}, 1);
-					int res = dialog.open();
-					if (res == 0) {
-						IStructuredSelection selection = new StructuredSelection(launchConfig);
-						ILaunchGroup group = DebugUITools.getLaunchGroup(launchConfig, mode);
-						String groupIdentifier = group == null ? IDebugUIConstants.ID_RUN_LAUNCH_GROUP : group.getIdentifier();
-						DebugUITools.openLaunchConfigurationDialogOnGroup(parentShell, selection, groupIdentifier);
-					}
+				MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {PDEUIMessages.LauncherUtils_edit, IDialogConstants.OK_LABEL}, 1);
+				int res = dialog.open();
+				if (res == 0) {
+					IStructuredSelection selection = new StructuredSelection(launchConfig);
+					ILaunchGroup group = DebugUITools.getLaunchGroup(launchConfig, mode);
+					String groupIdentifier = group == null ? IDebugUIConstants.ID_RUN_LAUNCH_GROUP : group.getIdentifier();
+					IStatus status = new Status(IStatus.OK, PDELaunchingPlugin.getPluginId(), LauncherUtils.SELECT_WORKSPACE_FIELD, "", null); //$NON-NLS-1$
+					DebugUITools.openLaunchConfigurationDialogOnGroup(parentShell, selection, groupIdentifier, status);
 				}
 			}
 		});

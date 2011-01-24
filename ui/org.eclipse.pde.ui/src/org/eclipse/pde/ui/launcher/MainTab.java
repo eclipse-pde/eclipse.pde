@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,6 +104,19 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		scrollContainer.setExpandHorizontal(true);
 		setControl(scrollContainer);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
+	}
+
+	/**
+	 * Applies the given data to this page.
+	 * 
+	 * @param data the data to apply
+	 * @since 3.7
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void applyData(Object data) {
+		if (data == LOCATION)
+			fDataBlock.selectWorkspaceLocation();
 	}
 
 	/*
