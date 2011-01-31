@@ -74,7 +74,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools" ; //$NON-NLS-1$
 	/**
-	 * The API tooling nature id
+	 * The API Tools nature id
 	 * (value <code>"org.eclipse.pde.api.tools.apiAnalysisNature"</code>).
 	 */
 	public static final String NATURE_ID = PLUGIN_ID + ".apiAnalysisNature" ; //$NON-NLS-1$

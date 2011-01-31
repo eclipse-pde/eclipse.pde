@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
 
 
 /**
- * Describes an element that can appear in the API tooling model.
+ * Describes an element that can appear in the API Tools model.
  * 
  * @since 1.0.0
  * 

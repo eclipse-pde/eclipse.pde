@@ -41,7 +41,7 @@ import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * This block is used to add the API tooling profile notification settings UI
+ * This block is used to add the API Tools profile notification settings UI
  * to a parent control
  * 
  * @since 1.0.0

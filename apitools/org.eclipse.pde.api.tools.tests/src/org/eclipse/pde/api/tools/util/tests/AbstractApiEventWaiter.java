@@ -11,7 +11,7 @@
 package org.eclipse.pde.api.tools.util.tests;
 
 /**
- * Abstract class for API tooling event waiters to extend
+ * Abstract class for API Tools event waiters to extend
  * @since 1.0.0
  */
 public abstract class AbstractApiEventWaiter {

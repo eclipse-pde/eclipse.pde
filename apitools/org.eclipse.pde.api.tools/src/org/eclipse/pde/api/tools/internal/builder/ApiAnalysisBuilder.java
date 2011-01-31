@@ -62,7 +62,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Builder for creating API tooling resource markers
+ * Builder for creating API Tools resource markers
  * @since 1.0.0
  */
 public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
@@ -98,7 +98,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	static final IProject[] NO_PROJECTS = new IProject[0];
 
 	/**
-	 * Constant representing the name of the 'source' attribute on API tooling markers.
+	 * Constant representing the name of the 'source' attribute on API Tools markers.
 	 * Value is <code>API Tools</code>
 	 */
 	static final String SOURCE = "API Tools"; //$NON-NLS-1$
@@ -136,7 +136,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	private BuildState buildstate = null;
 	
 	/**
-	 * Cleans up markers associated with API tooling on the given resource.
+	 * Cleans up markers associated with API Tools on the given resource.
 	 * 
 	 * @param resource
 	 */

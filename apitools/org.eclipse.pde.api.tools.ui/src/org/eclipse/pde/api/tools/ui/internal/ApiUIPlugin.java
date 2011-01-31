@@ -40,7 +40,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
- * API tooling UI plug-in class.
+ * API Tools UI plug-in class.
  * 
  * @since 1.0.0
  */
@@ -101,7 +101,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the singleton API UI Tooling plug-in.
+	 * Returns the singleton API Tools UI plug-in.
 	 * 
 	 * @return plug-in
 	 */

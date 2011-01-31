@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 			IProject project = jproject.getProject();
 			assertTrue("project must have the PDE nature", project.hasNature(PDE.PLUGIN_NATURE));
 			assertTrue("project must have the java nature", project.hasNature(JavaCore.NATURE_ID));
-			assertTrue("project must have additional nature for API tooling", project.hasNature(ApiPlugin.NATURE_ID));
+			assertTrue("project must have additional nature for API Tools", project.hasNature(ApiPlugin.NATURE_ID));
 			IFile file = project.getFile("build.properties"); //$NON-NLS-1$
 			assertTrue("the build.properties file must exist", file.exists());
 			file = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 /**
- * Interface that defines all the constants used to create the API tooling markers.
+ * Interface that defines all the constants used to create the API Tools markers.
  * 
  * This interface is not intended to be extended or implemented.
  *
@@ -21,12 +21,12 @@ package org.eclipse.pde.api.tools.internal.provisional;
 public interface IApiMarkerConstants {
 
 	/**
-	 * Constant representing the name of the 'problem' attribute on API tooling markers.
+	 * Constant representing the name of the 'problem' attribute on API Tools markers.
 	 * Value is: <code>problemid</code>
 	 */
 	public static final String MARKER_ATTR_PROBLEM_ID = "problemid"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name of the 'kind' attribute on API tooling markers.
+	 * Constant representing the name of the 'kind' attribute on API Tools markers.
 	 * Value is: <code>kind</code>
 	 */
 	public static final String MARKER_ATTR_KIND = "kind"; //$NON-NLS-1$
@@ -42,13 +42,13 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String MARKER_ATTR_FILTER_HANDLE_ID = "filterhandle"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name of the @since tag version attribute on API tooling markers,
+	 * Constant representing the name of the @since tag version attribute on API Tools markers,
 	 * or the new value for the bundle version.
 	 * Value is: <code>version</code>
 	 */
 	public static final String MARKER_ATTR_VERSION = "version"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name of the message arguments attribute on API tooling markers.
+	 * Constant representing the name of the message arguments attribute on API Tools markers.
 	 * Value is <code>messagearguments</code>
 	 */
 	public static final String MARKER_ATTR_MESSAGE_ARGUMENTS = "messagearguments"; //$NON-NLS-1$
@@ -100,7 +100,7 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String UNSUPPORTED_TAG_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".unsupported_tags"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name of the 'apiMarkerID' attribute on API tooling markers.
+	 * Constant representing the name of the 'apiMarkerID' attribute on API Tools markers.
 	 * Value is: <code>apiMarkerID</code>
 	 */
 	public static final String API_MARKER_ATTR_ID = "apiMarkerID"; //$NON-NLS-1$
@@ -155,7 +155,7 @@ public interface IApiMarkerConstants {
 	 */
 	public static final String VERSION_NUMBERING_ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 	/**
-	 * Constant representing the type name of the 'problem' attribute on API tooling markers.
+	 * Constant representing the type name of the 'problem' attribute on API Tools markers.
 	 * Value is: <code>problemTypeName</code>
 	 */
 	public static final String MARKER_ATTR_PROBLEM_TYPE_NAME = "problemTypeName"; //$NON-NLS-1$

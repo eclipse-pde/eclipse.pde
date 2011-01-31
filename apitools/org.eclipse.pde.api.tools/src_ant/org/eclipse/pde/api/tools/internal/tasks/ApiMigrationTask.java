@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 	 * to be reported. Each sub-folder contains a file called "report.xml". </p>
 	 * 
 	 * <p>A special folder called "allNonApiBundles" is also created in this folder that contains a xml file called
-	 * "report.xml". This file lists all the bundles that are not using the api tooling nature.</p>
+	 * "report.xml". This file lists all the bundles that are not using the API Tools nature.</p>
 	 * 
 	 * @param reportlocation the given location for the reference baseline to analyze
 	 */

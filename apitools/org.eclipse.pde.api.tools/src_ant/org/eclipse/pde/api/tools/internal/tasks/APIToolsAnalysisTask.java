@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -903,7 +903,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * Set the root directory of API filters to use during the analysis.
 	 * 
 	 * <p>The argument is the root directory of the .api_filters files that should be used to filter potential
-	 * problems created by the api tooling analysis. The root needs to contain the following structure:</p>
+	 * problems created by the API Tools analysis. The root needs to contain the following structure:</p>
 	 * <pre>
 	 * root
 	 *  |
@@ -1004,7 +1004,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 * to be reported. Each sub-folder contains a file called "report.xml". </p>
 	 * 
 	 * <p>A special folder called "allNonApiBundles" is also created in this folder that contains a xml file called
-	 * "report.xml". This file lists all the bundles that are not using the api tooling nature.</p>
+	 * "report.xml". This file lists all the bundles that are not using the API Tools nature.</p>
 	 * 
 	 * @param baselineLocation the given location for the reference baseline to analyze
 	 */

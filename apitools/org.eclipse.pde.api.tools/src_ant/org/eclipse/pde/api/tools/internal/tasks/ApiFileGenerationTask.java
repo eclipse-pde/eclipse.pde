@@ -250,7 +250,7 @@ public class ApiFileGenerationTask extends Task {
 		File dotProjectFile = new File(root, ".project"); //$NON-NLS-1$
 		
 		if(!this.allowNonApiProject && !isAPIToolsNature(dotProjectFile)) {
-			System.out.println("The project does not have an api tooling nature so a api_description file will not be generated");
+			System.err.println("The project does not have an API Tools nature so a api_description file will not be generated"); //$NON-NLS-1$
 			return;
 		}
 		// check if the .api_description file exists

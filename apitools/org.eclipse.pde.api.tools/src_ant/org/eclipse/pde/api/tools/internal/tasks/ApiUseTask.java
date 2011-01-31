@@ -157,7 +157,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * to be reported. Each sub-folder contains a file called "report.xml". </p>
 	 * 
 	 * <p>A special folder called "allNonApiBundles" is also created in this folder that contains a xml file called
-	 * "report.xml". This file lists all the bundles that are not using the api tooling nature.</p>
+	 * "report.xml". This file lists all the bundles that are not using the API Tools nature.</p>
 	 * 
 	 * @param baselineLocation the given location for the reference baseline to analyze
 	 */
