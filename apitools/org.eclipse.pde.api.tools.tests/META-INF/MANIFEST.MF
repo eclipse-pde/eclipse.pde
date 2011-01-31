@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: API Tooling Tests
+Bundle-Name: API Tools Tests
 Bundle-SymbolicName: org.eclipse.pde.api.tools.tests
 Bundle-Version: 1.0.100.qualifier
 Bundle-Vendor: Eclipse.org

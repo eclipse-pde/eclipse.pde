@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.pde.api.tools.util.tests;
 
 /**
- * Abstract class for Api tooling event waiters to extend
+ * Abstract class for API tooling event waiters to extend
  * @since 1.0.0
  */
 public abstract class AbstractApiEventWaiter {

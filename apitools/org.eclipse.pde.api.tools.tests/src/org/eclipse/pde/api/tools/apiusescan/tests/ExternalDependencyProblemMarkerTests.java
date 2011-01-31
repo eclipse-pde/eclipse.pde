@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			ExternalDependencyTestUtils.waitForBuild();
 			
 			IMarker[] markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			assertEquals("No Api Use Scan problem marker found for missing type IConstants", 1, markers.length);
+			assertEquals("No API Use Scan problem marker found for missing type IConstants", 1, markers.length);
 			String typeName = markers[0].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
 			assertEquals("Marker for missing type IConstants not found","tests.apiusescan.coretestproject.IConstants", typeName);
 			
@@ -59,7 +59,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			type.rename("IConstants", true, null);
 			ExternalDependencyTestUtils.waitForBuild();		
 			markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			assertEquals("Api Use Scan problem marker for missing type IConstants did not clear", 0, markers.length);			
+			assertEquals("API Use Scan problem marker for missing type IConstants did not clear", 0, markers.length);			
 		} catch (JavaModelException e) {
 			fail(e.getMessage());
 		} catch (CoreException e) {
@@ -75,7 +75,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			ExternalDependencyTestUtils.waitForBuild();
 			
 			IMarker[] markers = type.getUnderlyingResource().findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);			
-			assertEquals("No Api Use Scan problem marker found for missing method ITestInterface.performTask()", 1, markers.length);
+			assertEquals("No API Use Scan problem marker found for missing method ITestInterface.performTask()", 1, markers.length);
 			
 			String typeName = markers[0].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
 			assertEquals("Marker for missing method ITestInterface.performTask() not found","tests.apiusescan.coretestproject.ITestInterface", typeName);
@@ -86,7 +86,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			ExternalDependencyTestUtils.waitForBuild();	
 			
 			markers = type.getUnderlyingResource().findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			assertEquals("Api Use Scan problem marker for missing method ITestInterface.performTask() did not clear.", 0, markers.length);			
+			assertEquals("API Use Scan problem marker for missing method ITestInterface.performTask() did not clear.", 0, markers.length);			
 		} catch (JavaModelException e) {
 			fail(e.getMessage());
 		} catch (CoreException e) {
@@ -102,7 +102,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			ExternalDependencyTestUtils.waitForBuild();
 			
 			IMarker[] markers = type.getUnderlyingResource().findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);			
-			assertEquals("No Api Use Scan problem marker found for missing field TestInterfaceImpl.fField", 1, markers.length);
+			assertEquals("No API Use Scan problem marker found for missing field TestInterfaceImpl.fField", 1, markers.length);
 			
 			String typeName = markers[0].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
 			assertEquals("Marker for missing field TestInterfaceImpl.fField not found","tests.apiusescan.coretestproject.TestInterfaceImpl", typeName);
@@ -113,7 +113,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			ExternalDependencyTestUtils.waitForBuild();	
 			
 			markers = type.getUnderlyingResource().findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			assertEquals("Api Use Scan problem marker for missing field TestInterfaceImpl.fField did not clear.", 0, markers.length);			
+			assertEquals("API Use Scan problem marker for missing field TestInterfaceImpl.fField did not clear.", 0, markers.length);			
 		} catch (JavaModelException e) {
 			fail(e.getMessage());
 		} catch (CoreException e) {
@@ -129,7 +129,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			ExternalDependencyTestUtils.waitForBuild();
 			
 			IMarker[] markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			assertEquals("No Api Use Scan problem marker found for missing type IConstants", 1, markers.length);
+			assertEquals("No API Use Scan problem marker found for missing type IConstants", 1, markers.length);
 			String typeName = markers[0].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
 			assertEquals("Marker for missing type InnerType not found","tests.apiusescan.coretestproject.ClassWithInnerType.InnerType", typeName);
 			
@@ -137,7 +137,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 			type.rename("InnerType", true, null);
 			ExternalDependencyTestUtils.waitForBuild();		
 			markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-			assertEquals("Api Use Scan problem marker for missing type InnerType did not clear", 0, markers.length);			
+			assertEquals("API Use Scan problem marker for missing type InnerType did not clear", 0, markers.length);			
 		} catch (JavaModelException e) {
 			fail(e.getMessage());
 		} catch (CoreException e) {

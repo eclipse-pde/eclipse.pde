@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public class ApiProblemTests extends AbstractApiTest {
 	public void testNotEqualDifferentObjects() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.FIELD, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertNotNull("there should have been a new problem created", problem);
-		assertTrue("the two problems should not be equal", !problem.equals(new String("Api Problem")));
+		assertTrue("the two problems should not be equal", !problem.equals(new String("API Problem")));
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
 import org.eclipse.pde.internal.core.natures.PDE;
 
 /**
- * Abstract class with commonly used methods for API Tooling tests
+ * Abstract class with commonly used methods for API Tools tests
  * 
  * @since 1.0.0 
  */
