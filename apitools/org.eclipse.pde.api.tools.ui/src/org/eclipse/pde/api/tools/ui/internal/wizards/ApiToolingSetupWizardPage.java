@@ -266,6 +266,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		});
 
 		checkcount = SWTFactory.createText(bcomp, SWT.FLAT | SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
+		checkcount.setBackground(bcomp.getBackground());
 		
 		Object[] selected = getWorkbenchSelection();
 		if(selected.length > 0) {
