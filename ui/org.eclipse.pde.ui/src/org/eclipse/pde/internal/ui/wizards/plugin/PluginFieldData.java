@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,15 +74,15 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	}
 
 	/**
-	 * @return whether API Tooling should be enabled in the plugin when created
+	 * @return whether API Tools should be enabled in the plugin when created
 	 */
 	public boolean doEnableAPITooling() {
 		return fSetupAPITooling;
 	}
 
 	/**
-	 * Set whether API Tooling should be enabled in the plugin when created
-	 * @param enable whether to enable API tooling
+	 * Set whether API Tools should be enabled in the plugin when created
+	 * @param enable whether to enable API Tools
 	 */
 	public void setEnableAPITooling(boolean enable) {
 		fSetupAPITooling = enable;

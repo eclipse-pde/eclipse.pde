@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -321,7 +321,7 @@ public class PluginContentPage extends ContentPage {
 			fEELabel.setEnabled(allowEESelection);
 			fEEChoice.setEnabled(allowEESelection);
 			fExeEnvButton.setEnabled(allowEESelection);
-			// API tooling only works for osgi bundles with java natures
+			// API Tools only works for osgi bundles with java natures
 			fApiAnalysisButton.setEnabled(allowEESelection);
 
 			fRCPGroup.setVisible(!fData.isSimple() && !isPureOSGi());

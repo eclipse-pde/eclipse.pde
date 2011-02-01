@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--/*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/-->
 <cheatsheet
-      title="Setting up API Tooling for existing plug-in projects">
+      title="Setting up API Tools for existing plug-in projects">
    <intro href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
       <description>
-         This cheat sheet will help in setting up API Tooling for existing plug-in projects.
+         This cheat sheet will help in setting up API Tools for existing plug-in projects.
       </description>
    </intro>
    <item
@@ -25,24 +25,24 @@
    </item>
    <item
          href="/org.eclipse.pde.doc.user/reference/api-tooling/actions/ref-apitooling-setup-action.htm"
-         title="Setting up API Tooling">
+         title="Setting up API Tools">
       <description>
       </description>
       <subitem
-            label="Select any project in package explorer and invoke the &quot;API Tooling Setup&quot; wizard from &quot;PDE Tools&quot; in the right-click context menu.">
+            label="Select any project in package explorer and invoke the &quot;API Tools Setup&quot; wizard from &quot;PDE Tools&quot; in the right-click context menu.">
       </subitem>
       <subitem
-            label="Select all the projects for which API Tooling is to be enabled. Click &quot;Finish&quot;.">
+            label="Select all the projects for which API Tools is to be enabled. Click &quot;Finish&quot;.">
       </subitem>
       <subitem
             label="When prompted for setting up an API Baseline, select &quot;Yes&quot;.">
       </subitem>
       <subitem
-            label="You are now presented with the &quot;API Baseline&quot; preference page. Click &quot;Add Baseline&quot; to create a default baseline. Provide a name and location, where the location contains an older version of the bundle(s) you are enabling API Tooling for. Click &quot;Reset&quot;. Click &quot;Finish&quot;. This will trigger a full build.">
+            label="You are now presented with the &quot;API Baseline&quot; preference page. Click &quot;Add Baseline&quot; to create a default baseline. Provide a name and location, where the location contains an older version of the bundle(s) you are enabling API Tools for. Click &quot;Reset&quot;. Click &quot;Finish&quot;. This will trigger a full build.">
       </subitem>
    </item>
    <item
-         title="Testing API Tooling">
+         title="Testing API Tools">
       <description>
          This is optional and is there just to make sure everything is in place properly.
          
@@ -62,7 +62,7 @@
             label="Let the default baseline &quot;1.0&quot; be selected and click &quot;Finish&quot;.">
       </subitem>
       <subitem
-            label="The &quot;API Tooling&quot; view will open displaying the newly added method.">
+            label="The &quot;API Tools&quot; view will open displaying the newly added method.">
       </subitem>
    </item>
 </cheatsheet>
