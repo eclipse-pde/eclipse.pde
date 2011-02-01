@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -62,13 +61,8 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 
 	public void testJavacEntries() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.6");
-		
 		setPreferences(project, CompilerFlags.WARNING);
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.3");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, "warning");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, "warning");
+		// Other preferences are set by a .settings file in the example project, see bug 334241
 
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
@@ -83,13 +77,8 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 
 	public void testJreCompliance() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.7");
-
 		setPreferences(project, CompilerFlags.ERROR);
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_SOURCE, "1.3");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, "1.2");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_COMPLIANCE, "1.5");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, "warning");
-		setPreference(project, JavaCore.PLUGIN_ID, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, "warning");
+		// Other preferences are set by a .settings file in the example project, see bug 334241
 
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
