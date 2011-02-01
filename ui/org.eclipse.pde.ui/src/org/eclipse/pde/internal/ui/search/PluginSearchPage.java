@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.search;
 
 import java.util.*;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
@@ -27,8 +28,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 public class PluginSearchPage extends DialogPage implements ISearchPage {
 
@@ -183,6 +183,8 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 					if (item instanceof IResource)
 						result.add(((IResource) item).getProject());
 				}
+			} else if (container.getActiveEditorInput() != null) {
+				result.add(container.getActiveEditorInput().getAdapter(IFile.class));
 			}
 		} else if (scope == ISearchPageContainer.WORKING_SET_SCOPE) {
 			IWorkingSet[] workingSets = container.getSelectedWorkingSets();
@@ -308,6 +310,10 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			}
 			patternCombo.setFocus();
 		}
+
+		IEditorInput editorInput = container.getActiveEditorInput();
+		container.setActiveEditorCanProvideScopeSelection(editorInput != null && editorInput.getAdapter(IFile.class) != null);
+
 		super.setVisible(visible);
 	}
 
