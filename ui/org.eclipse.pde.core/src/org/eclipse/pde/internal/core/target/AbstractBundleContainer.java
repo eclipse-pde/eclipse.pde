@@ -520,8 +520,10 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
 				if (fwAdmin == null) {
 					Bundle fwAdminBundle = Platform.getBundle(FWK_ADMIN_EQ);
-					fwAdminBundle.start();
-					fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+					if (fwAdminBundle != null){
+						fwAdminBundle.start();
+						fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
+					}
 				}
 				if (fwAdmin != null) {
 					Manipulator manipulator = fwAdmin.getManipulator();
