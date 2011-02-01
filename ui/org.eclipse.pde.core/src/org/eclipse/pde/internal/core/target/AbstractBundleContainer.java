@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -523,20 +523,22 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 					fwAdminBundle.start();
 					fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
 				}
-				Manipulator manipulator = fwAdmin.getManipulator();
-				ConfigData configData = new ConfigData(null, null, null, null);
+				if (fwAdmin != null) {
+					Manipulator manipulator = fwAdmin.getManipulator();
+					ConfigData configData = new ConfigData(null, null, null, null);
 
-				String home = getLocation(true);
-				manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
-				File installDirectory = new File(home);
-				if (Platform.getOS().equals(Platform.OS_MACOSX))
-					installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
-				manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
-				manipulator.getLauncherData().setHome(new File(home));
+					String home = getLocation(true);
+					manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
+					File installDirectory = new File(home);
+					if (Platform.getOS().equals(Platform.OS_MACOSX))
+						installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+					manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
+					manipulator.getLauncherData().setHome(new File(home));
 
-				manipulator.setConfigData(configData);
-				manipulator.load();
-				fVMArgs = manipulator.getLauncherData().getJvmArgs();
+					manipulator.setConfigData(configData);
+					manipulator.load();
+					fVMArgs = manipulator.getLauncherData().getJvmArgs();
+				}
 			} catch (BundleException e) {
 				PDECore.log(e);
 			} catch (CoreException e) {
