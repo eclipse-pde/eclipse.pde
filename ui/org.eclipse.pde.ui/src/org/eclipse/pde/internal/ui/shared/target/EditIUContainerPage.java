@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.ui.Policy;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.IAction;
@@ -99,11 +100,13 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		setTitle(Messages.EditIUContainerPage_5);
 		setMessage(Messages.EditIUContainerPage_6);
 		fTarget = definition;
-		ProvisioningUI selfProvisioningUI = ProvisioningUI.getDefaultUI();
-		// TODO we use the service session from the self profile.  In the future we may want
-		// to set up our own services for the profile (separate repo managers, etc).
-		// We use our own new policy so we don't bash the SDK's settings.
-		profileUI = new ProvisioningUI(selfProvisioningUI.getSession(), P2TargetUtils.getProfileId(definition), new Policy());
+		ProvisioningSession session;
+		try {
+			session = new ProvisioningSession(P2TargetUtils.getAgent());
+		} catch (CoreException e) {
+			throw new IllegalStateException(Messages.EditIUContainerPage_UnableToGetProvisioningAgent, e);
+		}
+		profileUI = new ProvisioningUI(session, P2TargetUtils.getProfileId(definition), new Policy());
 	}
 
 	/**
@@ -331,7 +334,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * Creates a default query context to setup the available IU Group
 	 */
 	private void createQueryContext() {
-		fQueryContext = ProvUI.getQueryContext(ProvisioningUI.getDefaultUI().getPolicy());
+		fQueryContext = ProvUI.getQueryContext(profileUI.getPolicy());
 		fQueryContext.setInstalledProfileId(P2TargetUtils.getProfileId(fTarget));
 		fQueryContext.showAlreadyInstalled();
 	}
