@@ -512,6 +512,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		BundleSpecification[] specs = desc.getRequiredBundles();
+		if (specs.length != required.length) {
+			// If the bundle description has stale data in it, don't compare it to the header data, see bug 308741
+			specs = null;
+		}
+
 		for (int i = 0; i < required.length; i++) {
 			checkCanceled(monitor);
 
@@ -527,7 +532,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			boolean optional = isOptional(required[i]);
 			int severity = getRequireBundleSeverity(required[i], optional);
 
-			if (specs[i].getSupplier() == null) {
+			// It is possible for the bundle description to not match the headers
+			if (specs != null && specs[i].getSupplier() == null) {
 				if (desc.getContainingState().getBundle(specs[i].getName(), null) == null) {
 					IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistPDE, bundleID), getPackageLine(header, required[i]), severity, PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE, PDEMarkerFactory.CAT_FATAL);
 					try {
