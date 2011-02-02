@@ -88,6 +88,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 300;
 		fFeatureTable.getControl().setLayoutData(data);
+		fFeatureTable.getControl().setFont(tableComp.getFont());
 
 		fFeatureTable.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {

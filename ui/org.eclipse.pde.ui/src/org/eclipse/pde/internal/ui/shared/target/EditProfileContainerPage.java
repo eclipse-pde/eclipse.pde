@@ -101,6 +101,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fUseDefaultConfig.setLayoutData(gd);
+		fUseDefaultConfig.setFont(parent.getFont());
 		fUseDefaultConfig.setText(Messages.AddProfileContainerPage_2);
 		fUseDefaultConfig.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

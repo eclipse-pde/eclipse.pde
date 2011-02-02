@@ -183,6 +183,7 @@ public class TargetContentsGroup {
 		layout.marginWidth = layout.marginHeight = 0;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp.setFont(parent.getFont());
 
 		createTree(comp, toolkit);
 		createButtons(comp, toolkit);
@@ -225,9 +226,11 @@ public class TargetContentsGroup {
 		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, toolkit);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.getPatternFilter().setIncludeLeadingWildcard(true);
+		tree.getFilterControl().setFont(parent.getFont());
 
 		fTree = tree.getCheckboxTreeViewer();
 		((GridData) fTree.getControl().getLayoutData()).heightHint = 300;
+		fTree.getControl().setFont(parent.getFont());
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new TreeContentProvider());
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));

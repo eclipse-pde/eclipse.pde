@@ -152,6 +152,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		TabFolder tabs = new TabFolder(comp, SWT.NONE);
 		tabs.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tabs.setFont(comp.getFont());
 
 		fLocationTab = new TabItem(tabs, SWT.NONE);
 		fLocationTab.setText(PDEUIMessages.LocationSection_0);
@@ -538,6 +539,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		vmGroup.setLayout(new GridLayout(1, false));
 		vmGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		vmGroup.setText(PDEUIMessages.JavaArgumentsTab_vmArgsGroup);
+		vmGroup.setFont(container.getFont());
 
 		fVMArgs = SWTFactory.createText(vmGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
 		fVMArgs.addModifyListener(new ModifyListener() {
@@ -608,6 +610,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		GridLayout layout = new GridLayout(2, false);
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		container.setFont(parent.getFont());
 
 		createImpLabel(container);
 		createImpTable(container);
@@ -618,6 +621,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void createImpLabel(Composite container) {
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDEUIMessages.TargetImplicitPluginsTab_desc);
+		label.setFont(container.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -628,6 +632,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
 		fElementViewer.getControl().setLayoutData(gd);
+		fElementViewer.getControl().setFont(container.getFont());
 		fElementViewer.setContentProvider(new DefaultTableProvider() {
 			public Object[] getElements(Object inputElement) {
 				ITargetDefinition target = getTargetDefinition();

@@ -98,6 +98,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		// limit the width of the sash form to avoid the wizard opening very wide.
 		gd.widthHint = 300;
 		sashForm.setLayoutData(gd);
+		sashForm.setFont(comp.getFont());
 
 		TableViewer wizardSelectionViewer = new TableViewer(sashForm, SWT.BORDER);
 		wizardSelectionViewer.setContentProvider(new ArrayContentProvider());
@@ -135,6 +136,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			}
 		});
 		wizardSelectionViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		wizardSelectionViewer.getTable().setFont(sashForm.getFont());
 
 		fDescription = SWTFactory.createText(sashForm, SWT.READ_ONLY | SWT.BORDER | SWT.MULTI | SWT.WRAP, 1);
 

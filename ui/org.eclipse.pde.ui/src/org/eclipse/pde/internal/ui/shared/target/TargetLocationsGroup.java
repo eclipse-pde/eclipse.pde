@@ -149,6 +149,7 @@ public class TargetLocationsGroup {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 
 		Tree atree = new Tree(comp, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.MULTI);
+		atree.setFont(comp.getFont());
 		atree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
