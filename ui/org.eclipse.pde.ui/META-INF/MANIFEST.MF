@@ -77,7 +77,7 @@ Require-Bundle:
  org.eclipse.jdt.launching;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.jdt.ui;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.pde.build;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.search;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.search;bundle-version="[3.7.0,4.0.0)",
  org.eclipse.team.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.ui.forms;bundle-version="[3.2.0,4.0.0)",
