@@ -93,7 +93,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 	/**
 	 * Constructor for creating a new container
-	 * @param definition the target definintion we are editing
+	 * @param definition the target definition we are editing
 	 */
 	protected EditIUContainerPage(ITargetDefinition definition) {
 		super("AddP2Container"); //$NON-NLS-1$
@@ -104,7 +104,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		try {
 			session = new ProvisioningSession(P2TargetUtils.getAgent());
 		} catch (CoreException e) {
-			throw new IllegalStateException(Messages.EditIUContainerPage_UnableToGetProvisioningAgent, e);
+			PDEPlugin.log(e);
+			session = ProvisioningUI.getDefaultUI().getSession();
 		}
 		profileUI = new ProvisioningUI(session, P2TargetUtils.getProfileId(definition), new Policy());
 	}
