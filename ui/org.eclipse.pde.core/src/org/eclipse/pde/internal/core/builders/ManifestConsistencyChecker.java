@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,9 +199,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			fClassFileVisitor.reset();
 			delta.accept(fClassFileVisitor);
 			if (fClassFileVisitor.hasChanged()) {
-				type |= MANIFEST | EXTENSIONS;
+				type |= MANIFEST | EXTENSIONS | BUILD;
 				if (DEBUG) {
-					System.out.println("Class files changed due to dependency changes: Project [" + getProject().getName() + "] - rebuild manifest files"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("Class files changed due to dependency changes: Project [" + getProject().getName() + "] - rebuild manifest and properties files"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
