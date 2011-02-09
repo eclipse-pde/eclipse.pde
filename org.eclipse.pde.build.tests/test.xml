@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    Copyright (c) 2005, 2007 IBM Corporation and others.
+    Copyright (c) 2005, 2011 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -31,14 +31,19 @@
 
   <!-- This target defines the tests that need to be run. -->
   <target name="suite">
-    <property name="pdebuild_folder" 
-              value="${eclipse-home}/pdebuild_folder"/>
-    <delete dir="${jdt-folder}" quiet="true"/>
+    <property name="pdebuild_folder" value="${eclipse-home}/pdebuild_folder"/>
+    <delete dir="${pdebuild_folder}" quiet="true"/>
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${pdebuild_folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
-      <property name="classname" 
-                value="org.eclipse.pde.build.tests.PDEBuildTestSuite"/>
+      <property name="classname" value="org.eclipse.pde.build.tests.PDEBuildTestSuite"/>
+      <property name="extraVMargs" value="-XX:MaxPermSize=256m -Dpde.build.includeP2=false" />
+    </ant>
+  	
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${pdebuild_folder}"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" value="org.eclipse.pde.build.tests.P2TestSuite"/>
       <property name="extraVMargs" value="-XX:MaxPermSize=256m" />
     </ant>
   </target>
