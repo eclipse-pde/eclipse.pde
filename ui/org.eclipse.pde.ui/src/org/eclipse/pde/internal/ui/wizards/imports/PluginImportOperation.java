@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask("", fModels.length + 5); //$NON-NLS-1$
 			MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.ImportWizard_operation_multiProblem, null);
 
-			deleteConflictingProjects(new SubProgressMonitor(monitor, 2));
+			deleteConflictingProjects(multiStatus, new SubProgressMonitor(monitor, 2));
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
@@ -173,13 +173,14 @@ public class PluginImportOperation extends WorkspaceJob {
 	}
 
 	/**
-	 * If there are existing projects in the workspace with the same sybmolic name, open a dialog
+	 * If there are existing projects in the workspace with the same symbolic name, open a dialog
 	 * asking the user if they would like to delete those projects.  The projects are deleted before
 	 * the import continues so the individual imports can do a simple search for an allowed plug-in name.
 	 * 
-	 * @param monitor progress monitor, must not be null
+	 * @param status the multi-status used to report problems
+	 * @param monitor progress monitor, must not be <code>null</code>
 	 */
-	private void deleteConflictingProjects(IProgressMonitor monitor) throws CoreException {
+	private void deleteConflictingProjects(MultiStatus status, IProgressMonitor monitor) {
 		monitor.beginTask("", 5); //$NON-NLS-1$
 		try {
 			IPluginModelBase[] workspacePlugins = PluginRegistry.getWorkspaceModels();
@@ -267,12 +268,16 @@ public class PluginImportOperation extends WorkspaceJob {
 					IPluginModelBase plugin = (IPluginModelBase) overwriteProjectList.get(i);
 					monitor.setTaskName(NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, plugin.getPluginBase().getId()));
 					IProject project = plugin.getUnderlyingResource().getProject();
-					if (RepositoryProvider.isShared(project))
-						RepositoryProvider.unmap(project);
-					if (!safeDeleteCheck(project, monitor)) {
-						throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
+					try {
+						if (RepositoryProvider.isShared(project))
+							RepositoryProvider.unmap(project);
+						if (!safeDeleteCheck(project, monitor)) {
+							status.add(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
+						}
+						project.delete(true, true, monitor);
+					} catch (CoreException ex) {
+						status.add(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName()), ex));
 					}
-					project.delete(true, true, monitor);
 				}
 				monitor.worked(2);
 			} else {
