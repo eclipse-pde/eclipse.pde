@@ -700,15 +700,15 @@ public class LogView extends ViewPart implements ILogListener {
 					return;
 			}
 
-			Reader in = null;
-			Writer out = null;
+			BufferedReader in = null;
+			BufferedWriter out = null;
 			try {
-				out = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"); //$NON-NLS-1$
+				out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8")); //$NON-NLS-1$
 				if (exportWholeLog)
-					in = new InputStreamReader(new FileInputStream(fInputFile), "UTF-8"); //$NON-NLS-1$
+					in = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile), "UTF-8")); //$NON-NLS-1$
 				else {
 					String selectedEntryAsString = selectionToString(fFilteredTree.getViewer().getSelection());
-					in = new StringReader(selectedEntryAsString);
+					in = new BufferedReader(new StringReader(selectedEntryAsString));
 				}
 				copy(in, out);
 			} catch (IOException ex) {
@@ -717,20 +717,20 @@ public class LogView extends ViewPart implements ILogListener {
 				try {
 					if (in != null)
 						in.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+				try {
 					if (out != null)
 						out.close();
-				} catch (IOException e1) {
+				} catch (IOException e) {
 					// do nothing
 				}
 			}
 		}
 	}
 
-	private void copy(Reader input, Writer output) throws IOException {
-		BufferedReader reader = null;
-		BufferedWriter writer = null;
-		reader = new BufferedReader(input);
-		writer = new BufferedWriter(output);
+	private void copy(BufferedReader reader, BufferedWriter writer) throws IOException {
 		String line;
 		while (reader.ready() && ((line = reader.readLine()) != null)) {
 			writer.write(line);
@@ -1114,8 +1114,8 @@ public class LogView extends ViewPart implements ILogListener {
 		entry.write(pwriter);
 		pwriter.flush();
 		String textVersion = writer.toString();
+		pwriter.close();
 		try {
-			pwriter.close();
 			writer.close();
 		} catch (IOException e) {
 			// empty
