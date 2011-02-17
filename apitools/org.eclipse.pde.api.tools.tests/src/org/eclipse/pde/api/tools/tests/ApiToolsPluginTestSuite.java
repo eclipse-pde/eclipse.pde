@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
-import org.eclipse.pde.api.tools.apiusescan.tests.ExternalDependencyTestSuite;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
@@ -52,6 +51,6 @@ public class ApiToolsPluginTestSuite extends TestSuite {
 		addTest(new TestSuite(ApiProblemTests.class));
 		addTest(ApiBuilderTest.suite());
 		addTest(ApiToolsAntTasksTestSuite.suite());
-		addTest(ExternalDependencyTestSuite.suite());
+		//addTest(ExternalDependencyTestSuite.suite());
 	}
 }
