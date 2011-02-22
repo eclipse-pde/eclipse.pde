@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1149,6 +1149,17 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return bp;
 	}
 
+	/**
+	 * Creates a new marker with the given attributes.  May return <code>null</code> if no marker should be created because of severity level.
+	 * @param message
+	 * @param line
+	 * @param problemID
+	 * @param buildEntry
+	 * @param buildToken
+	 * @param severity
+	 * @param category
+	 * @return a new marker or <code>null</code>
+	 */
 	private IMarker report(String message, int line, int problemID, String buildEntry, String buildToken, int severity, String category) {
 		IMarker marker = report(message, line, severity, problemID, category);
 		if (marker != null) {
