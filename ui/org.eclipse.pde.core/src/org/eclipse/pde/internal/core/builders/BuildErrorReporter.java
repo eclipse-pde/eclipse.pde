@@ -1061,7 +1061,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 			if (lineNum > 0) {
 				IMarker marker = report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity, bp.fCategory);
-				if (bp.attributes != null) {
+				if (marker != null && bp.attributes != null) {
 					for (Iterator iterator = bp.attributes.keySet().iterator(); iterator.hasNext();) {
 						String attribute = (String) iterator.next();
 						try {

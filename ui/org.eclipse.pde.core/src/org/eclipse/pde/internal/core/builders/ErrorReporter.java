@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,14 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.filebuffers.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
@@ -98,6 +92,16 @@ public abstract class ErrorReporter {
 		}
 	}
 
+	/**
+	 * Return a new marker with the provided attributes.  May return <code>null</code> if no marker should be created because of severity settings.
+	 * 
+	 * @param message
+	 * @param line
+	 * @param severity
+	 * @param problemID
+	 * @param category
+	 * @return a new marker or <code>null</code>
+	 */
 	public IMarker report(String message, int line, int severity, int problemID, String category) {
 		if (severity == CompilerFlags.ERROR)
 			return addMarker(message, line, IMarker.SEVERITY_ERROR, problemID, category);
