@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
+import org.eclipse.team.core.Team;
 
-import org.eclipse.pde.internal.core.importing.IBundleImporter;
-
-import java.util.HashMap;
 import java.util.Map;
 import junit.framework.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.importing.CvsBundleImportDescription;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
+import org.eclipse.team.core.ScmUrlImportDescription;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
 
 /**
  * Tests for bundle importer extensions.
@@ -29,104 +27,36 @@ import org.eclipse.pde.internal.core.project.BundleProjectService;
  */
 public class BundleImporterTests extends TestCase {
 	
+	private static final String CVS_IMPORTER = "org.eclipse.team.core.cvs.importer";
+
 	public static Test suite() {
 		return new TestSuite(BundleImporterTests.class);
 	}
 	
-	/**
-	 * Returns the CVS importer or <code>null</code>
-	 * 
-	 * @return CVS importer or <code>null</code>
-	 */
-	protected IBundleImporter getCVSImporter() {
-		IBundleImporter[] importers = ((BundleProjectService)BundleProjectService.getDefault()).getBundleImporters();
-		for (int i = 0; i < importers.length; i++) {
-			if (importers[i].getId().equals("org.eclipse.pde.core.cvs.importer")) {
-				return importers[i];
-			}
-		}
-		return null;
+
+	public void testGetImportDescriptions() throws CoreException {
+		String bundleId = "org.eclipse.pde";
+		ModelEntry plugin = PluginRegistry.findEntry(bundleId);
+		IPluginModelBase[] models = new IPluginModelBase[] { plugin.getModel()};
+		Map descMap = ((BundleProjectService) BundleProjectService.getDefault()).getImportDescriptions(models);
+		assertEquals(1, descMap.size());
+		IBundleImporter	importer = (IBundleImporter) descMap.keySet().toArray()[0];
+		assertEquals(CVS_IMPORTER, importer.getId());
+		ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) descMap.get(importer);
+		assertEquals(1, descriptions.length);
+		ScmUrlImportDescription description = descriptions[0];
+		assertTrue(description.getUrl().startsWith("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:pde/ui/org.eclipse.pde;"));
+		assertEquals(bundleId, description.getProject());
+		assertTrue(description.getProperty(BundleProjectService.PLUGIN) instanceof IPluginModelBase);
+		assertEquals(bundleId, ((IPluginModelBase)description.getProperty(BundleProjectService.PLUGIN)).getBundleDescription().getSymbolicName());
+		assertTrue(description.getProperty(BundleProjectService.BUNDLE_IMPORTER) instanceof IBundleImporter);
 	}
 	
-	/**
-	 * Tests that a project can be created from a reference with no tag or project attributes.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testProjectSCMURL() throws CoreException {
-		IBundleImporter handler = getCVSImporter();
-		assertNotNull("Missing CVS source reference handler", handler);
-		
-		String header = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/rt:org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher";
-		Map manifest = new HashMap();
-		manifest.put(ICoreConstants.ECLIPSE_SOURCE_REFERENCES, header);
-		BundleImportDescription[] descriptions = handler.validateImport(new Map[]{manifest});
-		
-		assertEquals("Wrong number of descriptions", 1, descriptions.length);
-		BundleImportDescription bid = descriptions[0];
-		assertTrue("Wrong kind of description", bid instanceof CvsBundleImportDescription);
-		CvsBundleImportDescription cvsDes = (CvsBundleImportDescription) bid;
-		assertEquals("org.eclipse.equinox.p2.publisher", cvsDes.getProject());
-		assertNull("Wrong tag", cvsDes.getTag());
-		assertEquals("pserver", cvsDes.getProtocol());
-		assertEquals("dev.eclipse.org", cvsDes.getServer());
-		assertEquals("/cvsroot/rt", cvsDes.getPath());
-		assertEquals("org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher", cvsDes.getModule());
-		
+	public void testBundleImporters() {
+		IBundleImporter[] importers = Team.getBundleImporters();
+		assertEquals(1, importers.length);
+		assertEquals(CVS_IMPORTER, importers[0].getId());
+		assertEquals("CVS Bundle Importer", importers[0].getName());
 	}
-	
-	/**
-	 * Tests that a project can be created from a reference with a tag attribute.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testProjectSCMURLwithTagAndProject() throws CoreException {
-		IBundleImporter handler = getCVSImporter();
-		assertNotNull("Missing CVS source reference handler", handler);
-		
-		String header = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/rt:org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher;tag=v20100215;project=one.two.three";
-		Map manifest = new HashMap();
-		manifest.put(ICoreConstants.ECLIPSE_SOURCE_REFERENCES, header);
-		BundleImportDescription[] descriptions = handler.validateImport(new Map[]{manifest});
-		
-		assertEquals("Wrong number of descriptions", 1, descriptions.length);
-		BundleImportDescription bid = descriptions[0];
-		assertTrue("Wrong kind of description", bid instanceof CvsBundleImportDescription);
-		CvsBundleImportDescription cvsDes = (CvsBundleImportDescription) bid;
-		assertEquals("one.two.three", cvsDes.getProject());
-		assertEquals("v20100215", cvsDes.getTag());
-		assertEquals("pserver", cvsDes.getProtocol());
-		assertEquals("dev.eclipse.org", cvsDes.getServer());
-		assertEquals("/cvsroot/rt", cvsDes.getPath());
-		assertEquals("org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher", cvsDes.getModule());
-		
-	}	
-	
-	/**
-	 * Tests that a project can be created from a reference with a project attribute.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testProjectSCMURLwithProject() throws CoreException {
-		IBundleImporter handler = getCVSImporter();
-		assertNotNull("Missing CVS source reference handler", handler);
-		
-		String header = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/rt:org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher;project=a.b.c";
-		Map manifest = new HashMap();
-		manifest.put(ICoreConstants.ECLIPSE_SOURCE_REFERENCES, header);
-		BundleImportDescription[] descriptions = handler.validateImport(new Map[]{manifest});
-		
-		assertEquals("Wrong number of descriptions", 1, descriptions.length);
-		BundleImportDescription bid = descriptions[0];
-		assertTrue("Wrong kind of description", bid instanceof CvsBundleImportDescription);
-		CvsBundleImportDescription cvsDes = (CvsBundleImportDescription) bid;
-		assertEquals("a.b.c", cvsDes.getProject());
-		assertNull(cvsDes.getTag());
-		assertEquals("pserver", cvsDes.getProtocol());
-		assertEquals("dev.eclipse.org", cvsDes.getServer());
-		assertEquals("/cvsroot/rt", cvsDes.getPath());
-		assertEquals("org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher", cvsDes.getModule());
-		
-	}	
 
 }

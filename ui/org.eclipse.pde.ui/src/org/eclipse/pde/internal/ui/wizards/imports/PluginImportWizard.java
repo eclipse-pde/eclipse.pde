@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,9 +22,9 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ui.IScmUrlImportWizardPage;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -107,6 +107,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 			return false;
 		}
 		doImportOperation(page1.getImportType(), models, page2.forceAutoBuild(), launchedConfiguration > 0, page1.getAlternateSourceLocations(), page1.getImportDescriptions());
+
 		return true;
 	}
 
@@ -212,7 +213,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	 * @see org.eclipse.jface.dialogs.IPageChangingListener#handlePageChanging(org.eclipse.jface.dialogs.PageChangingEvent)
 	 */
 	public void handlePageChanging(PageChangingEvent event) {
-		if (event.getCurrentPage() instanceof BaseImportWizardSecondPage && event.getTargetPage() instanceof IBundeImportWizardPage) {
+		if (event.getCurrentPage() instanceof BaseImportWizardSecondPage && event.getTargetPage() instanceof IScmUrlImportWizardPage) {
 			IPluginModelBase[] models = getModelsToImport();
 			page1.configureBundleImportPages(models);
 		}

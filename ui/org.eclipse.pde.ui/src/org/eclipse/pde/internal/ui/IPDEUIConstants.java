@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,10 +49,4 @@ public interface IPDEUIConstants extends IPDEConstants {
 	 * TODO, move to IPDELauncherConstants in 3.4
 	 */
 	String GENERATED_CONFIG = "pde.generated.config"; //$NON-NLS-1$
-
-	/**
-	 * Extension point identifier for <code>org.eclipse.pde.ui.bundleImportPages</code>.
-	 */
-	public static final String EXTENSION_POINT_BUNDLE_IMPORT_PAGES = PLUGIN_ID + ".bundleImportPages"; //$NON-NLS-1$
-
 }

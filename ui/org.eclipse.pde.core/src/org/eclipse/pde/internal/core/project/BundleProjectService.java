@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,13 +23,12 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.importing.BundleImporterExtension;
-import org.eclipse.pde.internal.core.importing.IBundleImporter;
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
+import org.eclipse.team.core.ScmUrlImportDescription;
+import org.eclipse.team.core.Team;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
@@ -52,8 +51,6 @@ public final class BundleProjectService implements IBundleProjectService {
 	public static final String PLUGIN = "PLUGIN"; //$NON-NLS-1$
 
 	private static IBundleProjectService fgDefault;
-
-	private List fProjectFactories;
 
 	/**
 	 * Returns the bundle project service.
@@ -183,22 +180,6 @@ public final class BundleProjectService implements IBundleProjectService {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.project.IBundleProjectService#getBundleImporters()
-	 */
-	public synchronized IBundleImporter[] getBundleImporters() {
-		if (fProjectFactories == null) {
-			fProjectFactories = new ArrayList();
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ICoreConstants.EXTENSION_POINT_BUNDLE_IMPORTERS);
-			if (point != null) {
-				IConfigurationElement[] infos = point.getConfigurationElements();
-				for (int i = 0; i < infos.length; i++) {
-					fProjectFactories.add(new BundleImporterExtension(infos[i]));
-				}
-			}
-		}
-		return (IBundleImporter[]) fProjectFactories.toArray(new IBundleImporter[fProjectFactories.size()]);
-	}
 
 	/**
 	 * Creates and returns a map of bundle import descriptions for the given bundles.
@@ -228,21 +209,21 @@ public final class BundleProjectService implements IBundleProjectService {
 		if (!manifests.isEmpty()) {
 			Map[] marray = (Map[]) manifests.toArray(new Map[manifests.size()]);
 			Map result = new HashMap();
-			IBundleImporter[] importers = getBundleImporters();
+			IBundleImporter[] importers = Team.getBundleImporters();
 			for (int i = 0; i < importers.length; i++) {
 				IBundleImporter importer = importers[i];
-				BundleImportDescription[] descriptions = importer.validateImport(marray);
-				List valid = new ArrayList();
+				ScmUrlImportDescription[] descriptions = importer.validateImport(marray);
+				List descriptioonList = new ArrayList();
 				for (int j = 0; j < descriptions.length; j++) {
-					BundleImportDescription description = descriptions[j];
+					ScmUrlImportDescription description = descriptions[j];
 					if (description != null) {
-						valid.add(description);
+						descriptioonList.add(description);
 						description.setProperty(BUNDLE_IMPORTER, importer);
 						description.setProperty(PLUGIN, plugins.get(j));
 					}
 				}
-				if (!valid.isEmpty()) {
-					result.put(importer, valid.toArray(new BundleImportDescription[valid.size()]));
+				if (!descriptioonList.isEmpty()) {
+					result.put(importer, descriptioonList.toArray(new ScmUrlImportDescription[descriptioonList.size()]));
 				}
 			}
 			return result;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,19 +26,21 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.importing.IBundleImporter;
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
-import org.eclipse.pde.internal.ui.provisional.IBundeImportWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.ScmUrlImportDescription;
+import org.eclipse.team.core.Team;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
+import org.eclipse.team.ui.IScmUrlImportWizardPage;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
@@ -639,7 +641,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				while (iterator.hasNext()) {
 					if (!monitor.isCanceled()) {
 						Entry entry = (Entry) iterator.next();
-						BundleImportDescription[] descriptions = (BundleImportDescription[]) entry.getValue();
+						ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
 						for (int i = 0; i < descriptions.length; i++) {
 							repositoryModels.add(descriptions[i].getProperty(BundleProjectService.PLUGIN));
 						}
@@ -652,9 +654,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				while (iterator.hasNext()) {
 					Entry entry = (Entry) iterator.next();
 					IBundleImporter importer = (IBundleImporter) entry.getKey();
-					IBundeImportWizardPage page = (IBundeImportWizardPage) importIdToWizardPage.get(importer.getId());
+					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
+					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importer.getId());
 					if (page == null) {
-						page = getPage(importer.getId());
+						page = TeamUI.getPages(descriptions)[0];
+						//page = getPage(importer.getId());
 						if (page != null) {
 							importIdToWizardPage.put(importer.getId(), page);
 							((Wizard) getWizard()).addPage(page);
@@ -662,7 +666,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					}
 					if (page != null) {
 						nextPages.add(page);
-//						page.setSelection((BundleImportDescription[]) entry.getValue());
 					}
 				}
 			}
@@ -682,7 +685,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	boolean arePagesComplete() {
 		Iterator iterator = nextPages.iterator();
 		while (iterator.hasNext()) {
-			IBundeImportWizardPage page = (IBundeImportWizardPage) iterator.next();
+			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) iterator.next();
 			if (!page.isPageComplete()) {
 				return false;
 			}
@@ -698,7 +701,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	boolean finishPages() {
 		Iterator iterator = nextPages.iterator();
 		while (iterator.hasNext()) {
-			IBundeImportWizardPage page = (IBundeImportWizardPage) iterator.next();
+			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) iterator.next();
 			if (!page.finish()) {
 				return false;
 			}
@@ -714,11 +717,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	Map getImportDescriptions() {
 		Map map = new HashMap();
 		if (getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
-			IBundleImporter[] importers = ((BundleProjectService) BundleProjectService.getDefault()).getBundleImporters();
+			IBundleImporter[] importers = Team.getBundleImporters();
 			for (int i = 0; i < importers.length; i++) {
 				IBundleImporter importer = importers[i];
 				if (importerToInstructions.containsKey(importer)) {
-					IBundeImportWizardPage page = (IBundeImportWizardPage) importIdToWizardPage.get(importer.getId());
+					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importer.getId());
 					if (page != null && nextPages.contains(page)) {
 						map.put(importer, page.getSelection());
 					}
@@ -738,7 +741,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (nextPages.isEmpty()) {
 			return null;
 		}
-		if (page instanceof IBundeImportWizardPage) {
+		if (page instanceof IScmUrlImportWizardPage) {
 			int index = nextPages.indexOf(page);
 			if (index >= 0 && index < (nextPages.size() - 2)) {
 				return (IWizardPage) nextPages.get(index + 1);
@@ -757,36 +760,10 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return previous page or <code>null</code>
 	 */
 	IWizardPage getPreviousPage(IWizardPage page) {
-		if (page instanceof IBundeImportWizardPage) {
+		if (page instanceof IScmUrlImportWizardPage) {
 			int index = nextPages.indexOf(page);
 			if (index > 0) {
 				return (IWizardPage) nextPages.get(index - 1);
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Creates and returns a wizard page associated with the given bundle importer extension identifier
-	 * or <code>null</code> of none.
-	 * 
-	 * @param importerId org.eclipse.pde.core.bundleImporters extension identifier
-	 * @return associated bundle import wizard page or <code>null</code>
-	 */
-	private IBundeImportWizardPage getPage(String importerId) {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(IPDEUIConstants.EXTENSION_POINT_BUNDLE_IMPORT_PAGES);
-		if (point != null) {
-			IConfigurationElement[] infos = point.getConfigurationElements();
-			for (int i = 0; i < infos.length; i++) {
-				IConfigurationElement element = infos[i];
-				String id = element.getAttribute("bundleImporter"); //$NON-NLS-1$
-				if (id != null && importerId.equals(id)) {
-					try {
-						return (IBundeImportWizardPage) element.createExecutableExtension("class"); //$NON-NLS-1$
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
-				}
 			}
 		}
 		return null;
@@ -882,7 +859,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		while (iterator.hasNext()) {
 			Entry entry = (Entry) iterator.next();
 			IBundleImporter importer = (IBundleImporter) entry.getKey();
-			BundleImportDescription[] descriptions = (BundleImportDescription[]) entry.getValue();
+			ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
 			for (int i = 0; i < descriptions.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) descriptions[i].getProperty(BundleProjectService.PLUGIN);
 				if (modelsSet.contains(model)) {
@@ -900,8 +877,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			Entry entry = (Entry) iterator.next();
 			IBundleImporter importer = (IBundleImporter) entry.getKey();
 			List list = (List) entry.getValue();
-			BundleImportDescription[] descriptions = (BundleImportDescription[]) list.toArray(new BundleImportDescription[list.size()]);
-			IBundeImportWizardPage page = (IBundeImportWizardPage) importIdToWizardPage.get(importer.getId());
+			ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) list.toArray(new ScmUrlImportDescription[list.size()]);
+			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importer.getId());
 			if (page != null) {
 				page.setSelection(descriptions);
 			}

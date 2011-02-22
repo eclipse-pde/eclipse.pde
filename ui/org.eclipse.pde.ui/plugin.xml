@@ -21,7 +21,6 @@
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
    <extension-point id="targetProvisioners" name="%extension-point.name.0" schema="schema/targetProvisioners.exsd"/>
    <extension-point id="launchShortcuts" name="%extension-point.name.1" schema="schema/launchShortcuts.exsd"/>
-   <extension-point id="bundleImportPages" name="%expoint.bundleImportPages.name" schema="schema/bundleImportPages.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -2078,14 +2077,6 @@
             plugin="org.eclipse.pde.launching">
       </statusHandler>
    </extension>
- <extension
-       point="org.eclipse.pde.ui.bundleImportPages">
-    <page
-          bundleImporter="org.eclipse.pde.core.cvs.importer"
-          class="org.eclipse.pde.internal.ui.wizards.imports.CVSBundleImportPage"
-          id="org.eclipse.pde.ui.cvs.import.page">
-    </page>
- </extension>
  <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory

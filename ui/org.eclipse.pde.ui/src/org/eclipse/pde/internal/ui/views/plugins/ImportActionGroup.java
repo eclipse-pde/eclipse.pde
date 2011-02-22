@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,14 +18,14 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
-import org.eclipse.pde.internal.core.importing.provisional.IBundleImporterDelegate;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.imports.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.ScmUrlImportDescription;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -102,11 +102,11 @@ public class ImportActionGroup extends ActionGroup {
 	}
 
 	/**
-	 * Return a map of {@link IBundleImporterDelegate} > Array of {@link BundleImportDescription} to be imported.
+	 * Return a map of {@link IBundleImporter} > Array of {@link ScmUrlImportDescription} to be imported.
 	 * 
 	 * @param shell shell to open message dialogs on, if required
 	 * @param models candidate models
-	 * @return  map of importer delegates to import descriptions
+	 * @return  map of importer to import descriptions
 	 */
 	private Map getImportDescriptions(Shell shell, IPluginModelBase[] models) {
 		BundleProjectService service = (BundleProjectService) BundleProjectService.getDefault();

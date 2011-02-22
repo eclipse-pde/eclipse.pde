@@ -31,15 +31,13 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.importing.IBundleImporter;
-import org.eclipse.pde.internal.core.importing.provisional.BundleImportDescription;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.*;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.wizards.datatransfer.*;
@@ -137,7 +135,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				while (iterator.hasNext()) {
 					Entry entry = (Entry) iterator.next();
 					IBundleImporter importer = (IBundleImporter) entry.getKey();
-					BundleImportDescription[] descriptions = (BundleImportDescription[]) entry.getValue();
+					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
 					importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
 				}
 			} else {
