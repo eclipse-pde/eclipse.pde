@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 
 	private Set checkState = new HashSet();
+	private static final Object[] NO_ELEMENTS = new Object[0];
 
 	/**
 	 * Constructor for ContainerCheckedTreeViewer.
@@ -103,14 +104,17 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 
 		getTree().setRedraw(false);
 		// Call the super class so we don't mess up the cache
-		super.setCheckedElements(new Object[0]);
-		setGrayedElements(new Object[0]);
+		super.setCheckedElements(NO_ELEMENTS);
+		setGrayedElements(NO_ELEMENTS);
+		// The elements must be expanded to modify their check state
+		if (!checkState.isEmpty()) {
+			expandAll();
+		}
 		// Now we are only going to set the check state of the leaf nodes
 		// and rely on our container checked code to update the parents properly.
 		Iterator iter = checkState.iterator();
 		Object element = null;
-		if (iter.hasNext())
-			expandAll();
+
 		while (iter.hasNext()) {
 			element = iter.next();
 			// Call the super class as there is no need to update the check state
@@ -127,7 +131,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	 */
 	public Object[] getCheckedLeafElements() {
 		if (checkState == null) {
-			return new Object[0];
+			return NO_ELEMENTS;
 		}
 		return checkState.toArray(new Object[checkState.size()]);
 	}
