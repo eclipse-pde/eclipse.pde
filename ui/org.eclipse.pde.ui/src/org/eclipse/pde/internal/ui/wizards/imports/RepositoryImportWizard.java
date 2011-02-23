@@ -70,8 +70,7 @@ public class RepositoryImportWizard extends Wizard {
 				try {
 					page = TeamUI.getPages(descriptions)[0];
 				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					PDEPlugin.log(e);
 				}
 				if (page != null) {
 					fIdToPages.put(importer.getId(), page);

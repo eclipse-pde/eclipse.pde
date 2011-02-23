@@ -658,7 +658,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importer.getId());
 					if (page == null) {
 						page = TeamUI.getPages(descriptions)[0];
-						//page = getPage(importer.getId());
 						if (page != null) {
 							importIdToWizardPage.put(importer.getId(), page);
 							((Wizard) getWizard()).addPage(page);
