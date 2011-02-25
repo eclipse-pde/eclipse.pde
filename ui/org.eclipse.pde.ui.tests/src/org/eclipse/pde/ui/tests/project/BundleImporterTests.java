@@ -63,6 +63,7 @@ public class BundleImporterTests extends TestCase {
 		IBundleImporter[] importers = Team.getBundleImporters();
 		assertEquals(1, importers.length);
 		assertEquals(CVS_IMPORTER, importers[0].getId());
+		assertEquals("CVS Bundle Importer", importers[0].getName());
 	}
 
 }
