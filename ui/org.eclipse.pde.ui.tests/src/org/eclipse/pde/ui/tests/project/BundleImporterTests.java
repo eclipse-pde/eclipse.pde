@@ -34,8 +34,12 @@ public class BundleImporterTests extends TestCase {
 	}
 	
 
+	/**
+	 * Tests that a import description can be created for a known plug-in
+	 * @throws CoreException
+	 */
 	public void testGetImportDescriptions() throws CoreException {
-		String bundleId = "org.eclipse.pde";
+		String bundleId = "org.eclipse.jdt.core";
 		ModelEntry plugin = PluginRegistry.findEntry(bundleId);
 		IPluginModelBase[] models = new IPluginModelBase[] { plugin.getModel()};
 		Map descMap = ((BundleProjectService) BundleProjectService.getDefault()).getImportDescriptions(models);
@@ -45,18 +49,20 @@ public class BundleImporterTests extends TestCase {
 		ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) descMap.get(importer);
 		assertEquals(1, descriptions.length);
 		ScmUrlImportDescription description = descriptions[0];
-		assertTrue(description.getUrl().startsWith("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:pde/ui/org.eclipse.pde;"));
+		assertTrue(description.getUrl().startsWith("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core;"));
 		assertEquals(bundleId, description.getProject());
 		assertTrue(description.getProperty(BundleProjectService.PLUGIN) instanceof IPluginModelBase);
 		assertEquals(bundleId, ((IPluginModelBase)description.getProperty(BundleProjectService.PLUGIN)).getBundleDescription().getSymbolicName());
 		assertTrue(description.getProperty(BundleProjectService.BUNDLE_IMPORTER) instanceof IBundleImporter);
 	}
 	
+	/**
+	 * Tests that the team API returns all known bundle importers
+	 */
 	public void testBundleImporters() {
 		IBundleImporter[] importers = Team.getBundleImporters();
 		assertEquals(1, importers.length);
 		assertEquals(CVS_IMPORTER, importers[0].getId());
-		assertEquals("CVS Bundle Importer", importers[0].getName());
 	}
 
 }
