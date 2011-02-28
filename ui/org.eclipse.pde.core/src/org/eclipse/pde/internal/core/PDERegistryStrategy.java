@@ -241,6 +241,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 
 	private File getFile(IPluginModelBase base) {
 		String loc = base.getInstallLocation();
+		if (loc == null) {
+			return null;
+		}
 		File file = new File(loc);
 		if (!file.exists())
 			return null;
