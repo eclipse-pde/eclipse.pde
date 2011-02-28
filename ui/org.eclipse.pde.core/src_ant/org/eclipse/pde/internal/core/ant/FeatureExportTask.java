@@ -31,6 +31,8 @@ public class FeatureExportTask extends BaseExportTask {
 		info.zipFileName = fZipFilename;
 		info.items = fFeatures;
 		info.qualifier = fQualifier;
+		info.allowBinaryCycles = fAllowBinaryCycles;
+		info.useWorkspaceCompiledClasses = fUseWorkspaceCompiledClasses;
 		// if destination is relative, then make it absolute
 		if (!new File(fDestination).isAbsolute()) {
 			File home = new File(getLocation().getFileName()).getParentFile();

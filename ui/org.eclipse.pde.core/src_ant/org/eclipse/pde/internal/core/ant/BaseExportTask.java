@@ -24,6 +24,8 @@ public abstract class BaseExportTask extends Task {
 	protected boolean fUseJarFormat;
 	protected boolean fExportSource;
 	protected String fQualifier;
+	protected boolean fAllowBinaryCycles;
+	protected boolean fUseWorkspaceCompiledClasses;
 
 	public BaseExportTask() {
 	}
@@ -57,11 +59,11 @@ public abstract class BaseExportTask extends Task {
 	}
 
 	public void setUseJARFormat(String useJarFormat) {
-		fUseJarFormat = "true".equals(useJarFormat); //$NON-NLS-1$
+		fUseJarFormat = new Boolean(useJarFormat).booleanValue();
 	}
 
 	public void setExportSource(String doExportSource) {
-		fExportSource = "true".equals(doExportSource); //$NON-NLS-1$
+		fExportSource = new Boolean(doExportSource).booleanValue();
 	}
 
 	public void setDestination(String destination) {
@@ -74,6 +76,14 @@ public abstract class BaseExportTask extends Task {
 
 	public void setQualifier(String qualifier) {
 		fQualifier = qualifier;
+	}
+
+	public void setAllowBinaryCycles(String allowBinaryCycles) {
+		fAllowBinaryCycles = new Boolean(allowBinaryCycles).booleanValue();
+	}
+
+	public void setUseWorkspaceCompiledClasses(String useWorkspaceCompiledClasses) {
+		fUseWorkspaceCompiledClasses = new Boolean(useWorkspaceCompiledClasses).booleanValue();
 	}
 
 	public boolean isAntRunner() {
