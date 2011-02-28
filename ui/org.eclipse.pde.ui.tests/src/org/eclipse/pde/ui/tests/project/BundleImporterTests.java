@@ -40,6 +40,7 @@ public class BundleImporterTests extends TestCase {
 	 */
 	public void testGetImportDescriptions() throws CoreException {
 		String bundleId = "org.eclipse.jdt.core";
+		String expectedURL = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core;";
 		ModelEntry plugin = PluginRegistry.findEntry(bundleId);
 		IPluginModelBase[] models = new IPluginModelBase[] { plugin.getModel()};
 		Map descMap = ((BundleProjectService) BundleProjectService.getDefault()).getImportDescriptions(models);
@@ -49,7 +50,8 @@ public class BundleImporterTests extends TestCase {
 		ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) descMap.get(importer);
 		assertEquals(1, descriptions.length);
 		ScmUrlImportDescription description = descriptions[0];
-		assertTrue(description.getUrl().startsWith("scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core;"));
+		assertTrue("Incorrect URL Length: " + description.getUrl(),description.getUrl().length() >= expectedURL.length());
+		assertEquals(expectedURL,description.getUrl().substring(0,expectedURL.length()));
 		assertEquals(bundleId, description.getProject());
 		assertTrue(description.getProperty(BundleProjectService.PLUGIN) instanceof IPluginModelBase);
 		assertEquals(bundleId, ((IPluginModelBase)description.getProperty(BundleProjectService.PLUGIN)).getBundleDescription().getSymbolicName());
