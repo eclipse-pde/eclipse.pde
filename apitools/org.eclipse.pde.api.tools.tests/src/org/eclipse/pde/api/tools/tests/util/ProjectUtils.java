@@ -41,7 +41,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.Version;
 
 /**
- * Util class for a variety of project related operations
+ * Utility class for a variety of project related operations
  * 
  * @since 1.0.0
  */
@@ -73,7 +73,7 @@ public class ProjectUtils {
 	public static IJavaProject createPluginProject(String projectName, String[] additionalNatures) throws CoreException {
 		String[] resolvednatures = additionalNatures;
 		if(additionalNatures != null) {
-			ArrayList natures = new ArrayList(Arrays.asList(additionalNatures));
+			ArrayList<String> natures = new ArrayList<String>(Arrays.asList(additionalNatures));
 			if(!natures.contains(IBundleProjectDescription.PLUGIN_NATURE)) {
 				//need to always set this one first, in case others depend on it, like API Tools does
 				natures.add(0, IBundleProjectDescription.PLUGIN_NATURE);
@@ -285,7 +285,7 @@ public class ProjectUtils {
 	/**
 	 * Removes the given package from the exported packages header, if it exists.
 	 * 
-	 * This method is not safe to use in a headless manner.
+	 * This method is not safe to use in a head-less manner.
 	 * 
 	 * @param project the project to remove the package from
 	 * @param packagename the name of the package to remove from the export package header
@@ -294,7 +294,7 @@ public class ProjectUtils {
 		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
 		IPackageExportDescription[] exports = description.getPackageExports();
 		if (exports != null) {
-			List list = new ArrayList();
+			List<IPackageExportDescription> list = new ArrayList<IPackageExportDescription>();
 			for (int i = 0; i < exports.length; i++) {
 				if (!packagename.equals(exports[i].getName())) {
 					list.add(exports[i]);
@@ -310,7 +310,7 @@ public class ProjectUtils {
 	/**
 	 * Adds a new exported package to the manifest.
 	 * 
-	 * This method is not safe to use in a headless manner.
+	 * This method is not safe to use in a head-less manner.
 	 * 
 	 * @param project the project to get the manifest information from
 	 * @param packagename the fully qualified name of the package to add 
@@ -326,7 +326,7 @@ public class ProjectUtils {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription description = service.getDescription(project);
 		IPackageExportDescription[] exports = description.getPackageExports();
-		List list = new ArrayList();
+		List<IPackageExportDescription> list = new ArrayList<IPackageExportDescription>();
 		if (exports != null) {
 			for (int i = 0; i < exports.length; i++) {
 				list.add(exports[i]);

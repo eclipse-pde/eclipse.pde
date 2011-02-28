@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	protected IPackageFragment[] getAllPackages() throws CoreException {
 		IJavaProject project = JavaCore.create(getEnv().getProject("bundle.a"));
 		IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
-		List<IPackageFragment> pkgs = new ArrayList();
+		List<IPackageFragment> pkgs = new ArrayList<IPackageFragment>();
 		for (int i = 0; i < roots.length; i++) {
 			IPackageFragmentRoot root = roots[i];
 			if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
@@ -102,7 +102,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		return (IPackageFragment[]) pkgs.toArray(new IPackageFragment[pkgs.size()]);
 	}
 	
-	protected void collectAllPackages(IPackageFragment pkg, List collect) throws CoreException {
+	protected void collectAllPackages(IPackageFragment pkg, List<IPackageFragment> collect) throws CoreException {
 		IJavaElement[] children = pkg.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IJavaElement element = children[i];
@@ -229,8 +229,8 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 * @throws CoreException
 	 */
 	public void testVisitor() throws CoreException {
-		final Set pkgNames = new HashSet<String>();
-		final Set typeNames = new HashSet<String>();
+		final Set<String> pkgNames = new HashSet<String>();
+		final Set<String> typeNames = new HashSet<String>();
 		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
 			public boolean visitPackage(String packageName) {
 				pkgNames.add(packageName);

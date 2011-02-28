@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class ExternalDependencyTestUtils {
 
 	private static void enableExternalDependencyCheckOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);		;
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);		;
 		inode.put(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, value);
 		inode.put(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, value);
 		inode.put(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, value);

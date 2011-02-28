@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	}
 	
 	/**
-	 * Creates a new plugin project with the given name.
+	 * Creates a new plug-in project with the given name.
 	 * If a project with the same name already exists in the testing workspace
 	 * it will be deleted and new project created.
 	 * @param projectName
@@ -366,7 +366,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public IMarker[] getMarkersFor(IPath path, String additionalMarkerType){
 		IResource resource = getResource(path);
 		try {
-			ArrayList<IMarker> problems = new ArrayList<IMarker>();
+			List<Object> problems = new ArrayList<Object>();
 			addToList(problems, getAllUsageMarkers(resource));
 			addToList(problems, getAllCompatibilityMarkers(resource));
 			addToList(problems, getAllApiBaselineMarkers(resource));
@@ -413,7 +413,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @param list
 	 * @param objects
 	 */
-	private void addToList(List list, Object[] objects) {
+	private void addToList(List<Object> list, Object[] objects) {
 		if(list == null || objects == null) {
 			return;
 		}
@@ -449,7 +449,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		for(int i = 0; i < markers.length; i++) {
 			problems.add(new ApiProblem(markers[i]));
 		}
-		return (ApiProblem[]) problems.toArray(new ApiProblem[problems.size()]);
+		return problems.toArray(new ApiProblem[problems.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -540,7 +540,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		// remove each added file
 		Iterator<IPath> iterator = fAdded.iterator();
 		while (iterator.hasNext()) {
-			IPath path = (IPath) iterator.next();
+			IPath path = iterator.next();
 			deleteWorkspaceFile(path);
 		}
 		
@@ -550,14 +550,14 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		if(revert != null) {
 			IPath path= null;
 			while (iterator.hasNext()) {
-				path = (IPath) iterator.next();
+				path = iterator.next();
 				updateWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(ApiBuilderTest.TEST_SOURCE_ROOT).append(getRevertSourcePath()).append(path));
 			}
 			
 			// replace each deleted file
 			iterator = fRemoved.iterator();
 			while (iterator.hasNext()) {
-				path = (IPath) iterator.next();
+				path = iterator.next();
 				createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(ApiBuilderTest.TEST_SOURCE_ROOT).append(getRevertSourcePath()).append(path));
 			}
 		}

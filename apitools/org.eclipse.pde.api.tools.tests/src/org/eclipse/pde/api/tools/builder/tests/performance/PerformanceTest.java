@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,11 +217,11 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		// Modify resources workspace preferences to avoid disturbing tests while running them
-		IEclipsePreferences resourcesPreferences = new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		IEclipsePreferences resourcesPreferences = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 		resourcesPreferences.put(ResourcesPlugin.PREF_AUTO_REFRESH, "false");
 		
 		// do not show the dialog if a build fails...will lock the workspace
-		IEclipsePreferences antuiprefs = new InstanceScope().getNode("org.eclipse.ant.ui");
+		IEclipsePreferences antuiprefs = InstanceScope.INSTANCE.getNode("org.eclipse.ant.ui");
 		antuiprefs.put("errorDialog", "false");
 		
 		workspace.getDescription().setSnapshotInterval(Long.MAX_VALUE);

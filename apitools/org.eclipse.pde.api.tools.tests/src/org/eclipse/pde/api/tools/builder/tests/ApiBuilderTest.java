@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -446,7 +446,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			}
 		}
 		if(fLineMappings != null) {
-			ArrayList<LineMapping> mappings = new ArrayList(Arrays.asList(fLineMappings));
+			ArrayList<LineMapping> mappings = new ArrayList<LineMapping>(Arrays.asList(fLineMappings));
 			for(int i = 0; i < problems.length; i++) {
 				assertTrue("Missing expected problem line mapping: "+problems[i], mappings.remove(new LineMapping(problems[i])));
 			}
@@ -723,7 +723,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Resets all of the builder options to their defaults after each test run
 	 */
 	protected void resetBuilderOptions() {
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		// usage
 		inode.put(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);
 		inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
@@ -766,7 +766,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void enableUsageOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		// usage
 		inode.put(IApiProblemTypes.ILLEGAL_EXTEND, value);
 		inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, value);
@@ -788,7 +788,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void enableLeakOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		inode.put(IApiProblemTypes.LEAK_EXTEND, value);
 		inode.put(IApiProblemTypes.LEAK_FIELD_DECL, value);
 		inode.put(IApiProblemTypes.LEAK_IMPLEMENT, value);
@@ -882,7 +882,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * options to 'Ignore'
 	 */
 	protected void enableUnsupportedTagOptions(boolean enabled) {
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		inode.put(IApiProblemTypes.INVALID_JAVADOC_TAG, enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE);
 		try {
 			inode.flush();
@@ -898,7 +898,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void enableCompatibilityOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
 			inode.put(ApiPlugin.AllCompatibilityKeys[i], value);
 		}
@@ -916,7 +916,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void enableSinceTagOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		inode.put(IApiProblemTypes.MISSING_SINCE_TAG, value);
 		inode.put(IApiProblemTypes.MALFORMED_SINCE_TAG, value);
 		inode.put(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, value);
@@ -935,7 +935,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected void enableVersionNumberOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
 		String value2 = enabled ? ApiPlugin.VALUE_ENABLED : ApiPlugin.VALUE_DISABLED;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, value);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, value2);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, value2);
@@ -953,7 +953,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void enableBaselineOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		inode.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, value);
 		try {
 			inode.flush();
@@ -969,7 +969,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected void enableExternalDependencyCheckOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);		
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);		
 		inode.put(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, value);
 		inode.put(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, value);
 		inode.put(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, value);

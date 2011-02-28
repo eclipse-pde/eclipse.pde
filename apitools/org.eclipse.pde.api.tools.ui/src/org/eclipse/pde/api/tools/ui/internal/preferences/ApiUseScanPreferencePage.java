@@ -586,7 +586,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * @return the root preference node for the API tools core plugin
 	 */
 	private IEclipsePreferences getNode() {
-		IEclipsePreferences node = (new InstanceScope()).getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences node = (InstanceScope.INSTANCE).getNode(ApiPlugin.PLUGIN_ID);
 		if (fManager != null) {
 			return fManager.getWorkingCopy(node);
 		}

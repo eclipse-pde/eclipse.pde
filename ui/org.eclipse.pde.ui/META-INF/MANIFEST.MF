@@ -44,7 +44,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.search.dialogs;x-internal:=true,
  org.eclipse.pde.internal.ui.shared;x-internal:=true,
  org.eclipse.pde.internal.ui.shared.target;x-internal:=true,
- org.eclipse.pde.internal.ui.util;x-internal:=true,
+ org.eclipse.pde.internal.ui.util;x-friends:="org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.internal.ui.views.dependencies;x-internal:=true,
  org.eclipse.pde.internal.ui.views.plugins;x-internal:=true,
  org.eclipse.pde.internal.ui.views.target;x-internal:=true,

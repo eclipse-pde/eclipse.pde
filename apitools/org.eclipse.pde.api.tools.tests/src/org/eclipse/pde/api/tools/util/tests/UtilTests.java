@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
- * Tests the methods in our util class: {@link Util}
+ * Tests the methods in our utility class: {@link Util}
  * 
  * @since 1.0.0
  */
@@ -382,7 +382,7 @@ public class UtilTests extends TestCase {
 				return null;
 			}
 		}
-		List allComponents = new ArrayList();
+		List<IApiComponent> allComponents = new ArrayList<IApiComponent>();
 		String[] componentNames = new String[] {
 				"org.eclipse.swt",
 				"org.eclipse.equinox.simpleconfigurator.manipulator",

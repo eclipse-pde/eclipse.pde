@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 * to the test project
 	 */
 	public void testSetupSettings() {
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance node must exist", inode);
 		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_ERROR);
 		try {
@@ -56,7 +56,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 * tests that the default preferences are set of the ApiPlugin
 	 */
 	public void testGetDefaultSeverity() {
-		IEclipsePreferences dnode = new DefaultScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences dnode = DefaultScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("the default node must exist", dnode);
 		String value = dnode.get(IApiProblemTypes.ILLEGAL_EXTEND, null);
 		assertEquals("The default value for RESTRICTION_NOEXTEND should be 'Warning'", ApiPlugin.VALUE_WARNING, value);

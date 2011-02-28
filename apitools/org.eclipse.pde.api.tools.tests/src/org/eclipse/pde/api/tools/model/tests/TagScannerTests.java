@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("unchecked")
 public class TagScannerTests extends TestCase {
 
 	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source");
@@ -87,7 +88,7 @@ public class TagScannerTests extends TestCase {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, cfc, null, null);
 		}
 		catch(CoreException e) {
-			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
+			fail(MessageFormat.format("Error scanning: {0}", new Object[] {name}));
 		}
 	}
 	
@@ -101,7 +102,7 @@ public class TagScannerTests extends TestCase {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null, null, null);
 		}
 		catch(CoreException e) {
-			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
+			fail(MessageFormat.format("Error scanning: {0}", new Object[] {name}));
 		}
 	}
 	
@@ -116,7 +117,7 @@ public class TagScannerTests extends TestCase {
 			TagScanner.newScanner().scan(getCompilationUnit(name), manifest, null, options, null);
 		}
 		catch(CoreException e) {
-			fail(MessageFormat.format("Error scanning: {0}", new String[] {name}));
+			fail(MessageFormat.format("Error scanning: {0}", new Object[] {name}));
 		}
 	}
 	/**

@@ -391,13 +391,13 @@ public class ApiProblemTests extends AbstractApiTest {
 	 */
 	public void testGetSeverity() {
 		if(ApiPlugin.isRunningInFramework()) {
-			IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+			IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 			assertNotNull("The instance preference node must exist", inode);
 			inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_IGNORE);
 			IApiProblem problem = ApiProblemFactory.newApiProblem(new Path("x/y/z").toPortableString(), null, new String[] {"test1, test2, test3"}, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 			assertNotNull("there should have been a new problem created", problem);
 			assertEquals("the severity should be IGNORE", IMarker.SEVERITY_INFO, problem.getSeverity());
-			IEclipsePreferences dnode = new DefaultScope().getNode(ApiPlugin.PLUGIN_ID);
+			IEclipsePreferences dnode = DefaultScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 			assertNotNull("the default pref node must exist", dnode);
 			inode.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, dnode.get(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING));
 		}

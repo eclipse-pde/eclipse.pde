@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("unchecked")
 public class ApiDescriptionProcessorTests extends AbstractApiTest {
 
 	/**
@@ -238,7 +239,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			TextEdit edit = null;
 			for(Iterator<IFile> iter = map.keySet().iterator(); iter.hasNext();) {
 				file = iter.next();
-				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new String[] {file.getName()}), file);
+				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new Object[] {file.getName()}), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
 				alledits = map.get(file);

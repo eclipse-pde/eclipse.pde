@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,7 +176,7 @@ public class VersionTest extends CompatibilityTest {
 	 * Tests unneeded minor version increment with no API addition
 	 */
 	private void xFalseMinorInc(boolean incremental) throws Exception {
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("the instance pref node must exist", inode);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_ENABLED);
 		inode.flush();
@@ -221,7 +221,7 @@ public class VersionTest extends CompatibilityTest {
 	 * Tests unneeded major version increment with no API breakage
 	 */
 	private void xFalseMajorInc(boolean incremental) throws Exception {
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance pref node must exist", inode);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
 		inode.flush();
@@ -292,7 +292,7 @@ public class VersionTest extends CompatibilityTest {
 	 * warn of breakage regardless of major version change is set.
 	 */
 	private void xRegardlessMajorInc(boolean incremental) throws Exception {
-		IEclipsePreferences inode = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance pref node must exist", inode);
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
 		inode.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_ENABLED);

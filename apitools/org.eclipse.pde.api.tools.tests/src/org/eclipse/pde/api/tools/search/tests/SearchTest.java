@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
  * General Search test, which contains utility methods, etc for search tests
  * @since 1.0.1
  */
+@SuppressWarnings("unchecked")
 public abstract class SearchTest extends TestCase {
 	
 	static final String TEST_SOURCE = "test-search";

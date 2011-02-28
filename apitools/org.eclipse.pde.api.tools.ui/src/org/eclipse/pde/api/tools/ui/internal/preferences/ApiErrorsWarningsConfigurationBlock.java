@@ -839,14 +839,14 @@ public class ApiErrorsWarningsConfigurationBlock {
 		if(fProject != null) {
 			fLookupOrder = new IScopeContext[] {
 				new ProjectScope(fProject),
-				new InstanceScope(),
-				new DefaultScope()
+				InstanceScope.INSTANCE,
+				DefaultScope.INSTANCE
 			};
 		}
 		else {
 			fLookupOrder = new IScopeContext[] {
-				new InstanceScope(),
-				new DefaultScope()
+				InstanceScope.INSTANCE,
+				DefaultScope.INSTANCE
 			};
 		}
 		if(container == null) {
@@ -946,7 +946,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		//only look up the project and default scopes if the project
 		//already contains project-specific settings
 		if(hasProjectSpecificSettings(fProject)) {
-			currValue = key.getStoredValue(new IScopeContext[] {new ProjectScope(fProject), new DefaultScope()}, false, fManager);
+			currValue = key.getStoredValue(new IScopeContext[] {new ProjectScope(fProject), DefaultScope.INSTANCE}, false, fManager);
 		}
 		else {
 			currValue = key.getStoredValue(fLookupOrder, false, fManager);
