@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -368,7 +368,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 
 	public boolean isSeverityEnabled() {
-		IEclipsePreferences node = (new InstanceScope()).getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 
 		if (!node.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_IGNORE).equalsIgnoreCase(ApiPlugin.VALUE_IGNORE)) {
 			return true;

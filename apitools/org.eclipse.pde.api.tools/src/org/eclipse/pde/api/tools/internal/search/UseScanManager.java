@@ -220,7 +220,7 @@ public class UseScanManager {
 	 * @return
 	 */
 	public String[] getReportLocations() {
-		IEclipsePreferences node = (new InstanceScope()).getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		String apiUseScanPaths = node.get(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
 		if (apiUseScanPaths == null || apiUseScanPaths.length() == 0) {
 			return new String[0];

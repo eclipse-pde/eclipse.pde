@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -472,7 +472,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			sp = (ISaveParticipant) iter.next();
 			sp.saving(context);
 		}
-		IEclipsePreferences node = new InstanceScope().getNode(PLUGIN_ID);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 		if(node != null) {
 			try {
 				node.flush();
@@ -532,10 +532,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		IPreferencesService service = Platform.getPreferencesService();
 		IScopeContext[] context = null;
 		if(hasProjectSettings(project)) {
-			context = new IScopeContext[] {new ProjectScope(project), new DefaultScope()};
+			context = new IScopeContext[] {new ProjectScope(project), DefaultScope.INSTANCE};
 		}
 		else {
-			context = new IScopeContext[] {new InstanceScope(), new DefaultScope()};
+			context = new IScopeContext[] {InstanceScope.INSTANCE, DefaultScope.INSTANCE};
 		}
 		String value = service.get(prefkey, null, getPreferences(context));
 		if(VALUE_ERROR.equals(value)) {
@@ -617,10 +617,10 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		IPreferencesService service = Platform.getPreferencesService();
 		IScopeContext[] context = null;
 		if(hasProjectSettings(project)) {
-			context = new IScopeContext[] {new ProjectScope(project), new DefaultScope()};
+			context = new IScopeContext[] {new ProjectScope(project), DefaultScope.INSTANCE};
 		}
 		else {
-			context = new IScopeContext[] {new InstanceScope(), new DefaultScope()};
+			context = new IScopeContext[] {InstanceScope.INSTANCE, DefaultScope.INSTANCE};
 		}
 		String value = service.get(prefkey, null, getPreferences(context));
 		return VALUE_ENABLED.equals(value);

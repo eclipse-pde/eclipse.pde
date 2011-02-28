@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,7 +300,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	private String getDefaultProfilePref() {
 		IPreferencesService service = Platform.getPreferencesService();
-		return service.getString(ApiPlugin.PLUGIN_ID, DEFAULT_BASELINE, null, new IScopeContext[] {new InstanceScope()});
+		return service.getString(ApiPlugin.PLUGIN_ID, DEFAULT_BASELINE, null, new IScopeContext[] {InstanceScope.INSTANCE});
 	}
 	
 	/**
@@ -312,7 +312,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if(savelocation == null) {
 			return;
 		}
-		IEclipsePreferences node = new InstanceScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		if(defaultbaseline != null) {
 			node.put(DEFAULT_BASELINE, defaultbaseline);
 		}

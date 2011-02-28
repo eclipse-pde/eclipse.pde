@@ -29,7 +29,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 	}
 
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences node = new DefaultScope().getNode(ApiPlugin.PLUGIN_ID);
+		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		if(node == null) {
 			return;
 		}
