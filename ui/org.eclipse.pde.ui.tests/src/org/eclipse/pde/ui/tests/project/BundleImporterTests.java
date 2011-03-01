@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import java.util.Map;
 import junit.framework.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.project.BundleProjectService;
+import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
 
@@ -32,7 +37,7 @@ public class BundleImporterTests extends TestCase {
 	 * Tests that a import description can be created for a known plug-in
 	 * @throws CoreException
 	 */
-	/*	public void testGetImportDescriptions() throws CoreException {
+	public void testGetImportDescriptions() throws CoreException {
 		String bundleId = "org.eclipse.jdt.core";
 		String expectedURL = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core;";
 		ModelEntry plugin = PluginRegistry.findEntry(bundleId);
@@ -51,8 +56,6 @@ public class BundleImporterTests extends TestCase {
 		assertEquals(bundleId, ((IPluginModelBase)description.getProperty(BundleProjectService.PLUGIN)).getBundleDescription().getSymbolicName());
 		assertTrue(description.getProperty(BundleProjectService.BUNDLE_IMPORTER) instanceof IBundleImporter);
 	}
-	
-	*/
 	
 	/**
 	 * Tests that the team API returns all known bundle importers
