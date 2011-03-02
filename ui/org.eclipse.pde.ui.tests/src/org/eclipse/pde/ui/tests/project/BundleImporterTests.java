@@ -39,7 +39,7 @@ public class BundleImporterTests extends TestCase {
 	 */
 	public void testGetImportDescriptions() throws CoreException {
 		String bundleId = "org.eclipse.jdt.core";
-		String expectedURL = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core;";
+		String expectedURL = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core";
 		ModelEntry plugin = PluginRegistry.findEntry(bundleId);
 		IPluginModelBase[] models = new IPluginModelBase[] { plugin.getModel()};
 		Map descMap = ((BundleProjectService) BundleProjectService.getDefault()).getImportDescriptions(models);
