@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,16 +46,13 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.PartPane;
-import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.keys.SWTKeySupport;
 import org.w3c.dom.Node;
 
@@ -148,9 +145,7 @@ public class MacroUtil {
 				path = new Path("editor").append(site.getId()).append(inputName);
 			} else
 				return null;
-			PartSite partSite = (PartSite) site;
-			PartPane pane = partSite.getPane();
-			Composite paneComposite = (Composite) pane.getControl();
+			Composite paneComposite = (Composite) getPartControl(part);
 			// If the control we are looking for is a local tool bar,
 			// go up one level
 			if (part instanceof IViewPart && control instanceof ToolBar)
@@ -731,10 +726,10 @@ public class MacroUtil {
 			String id = wpath.segment(1);
 			IViewPart view = locateView(shell, id, line);
 			if (view != null) {
-				PartPane pane = getPartPane(view);
+				Control control = getPartControl(view);
 				processDisplayEvents(shell.getDisplay());
-				Composite parent = pane.getControl().getParent();
-				Control c = locateVisibleChild((Composite) parent, null, wpath.removeFirstSegments(2));
+				Composite parent = control.getParent();
+				Control c = locateVisibleChild(parent, null, wpath.removeFirstSegments(2));
 				if (c != null) {
 					//TODO bad cast
 					ToolBarManager mng = (ToolBarManager) view.getViewSite().getActionBars().getToolBarManager();
@@ -805,10 +800,17 @@ public class MacroUtil {
 		return null;
 	}
 
-	private static PartPane getPartPane(IViewPart part) {
+	/**
+	 * Retrieves the primary SWT control of the given workbench part.
+	 * <p>
+	 * <b>Note:</b> This method uses workbench internals that are not part of
+	 * the public Eclipse API. Changing the code contained within this method
+	 * may cause breakage across Eclipse 3.x and Eclipse 4.x.
+	 * </p>
+	 */
+	private static Control getPartControl(IWorkbenchPart part) {
 		IWorkbenchPartSite site = part.getSite();
-		PartPane pane = ((PartSite) site).getPane();
-		return pane;
+		return ((WorkbenchPartReference) site.getPage().getReference(part)).getPane().getControl();
 	}
 
 	private static ViewCommandTarget locateViewControl(Shell shell, String id, IPath wpath, int line) throws CoreException {
@@ -816,8 +818,7 @@ public class MacroUtil {
 
 		IViewPart view = locateView(shell, id, line);
 		if (view != null) {
-			PartPane pane = getPartPane(view);
-			Control c = pane.getControl();
+			Control c = getPartControl(view);
 			control = locateVisibleChild((Composite) c, null, wpath);
 			if (control != null) {
 				return new ViewCommandTarget(control, view);
@@ -850,9 +851,7 @@ public class MacroUtil {
 					}
 				}
 				if (editor != null) {
-					IEditorSite site = editor.getEditorSite();
-					PartPane pane = ((EditorSite) site).getPane();
-					Control c = pane.getControl();
+					Control c = getPartControl(editor);
 					control = locateVisibleChild((Composite) c, null, wpath);
 					if (control != null) {
 						return new EditorCommandTarget(control, editor);
