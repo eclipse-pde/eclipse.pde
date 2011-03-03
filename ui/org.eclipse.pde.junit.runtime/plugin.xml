@@ -59,6 +59,7 @@
          id="nonuithreadtestapplication"
          point="org.eclipse.core.runtime.applications">
       <application
+            cardinality="1"
             visible="false">
          <run
                class="org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication">
