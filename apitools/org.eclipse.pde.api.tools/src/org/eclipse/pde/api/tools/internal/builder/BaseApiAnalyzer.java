@@ -280,7 +280,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			Util.updateMonitor(localMonitor);
 			
 			if (component instanceof ProjectComponent) {
-				checkExternalDependencies(component, bcontext, localMonitor.newChild(1));
+				checkExternalDependencies(component, bcontext, null, localMonitor.newChild(1));
 			}
 		} catch(CoreException e) {
 			ApiPlugin.log(e);
@@ -305,13 +305,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	void checkExternalDependencies(IApiComponent apiComponent, IBuildContext bcontext, IProgressMonitor monitor) throws CoreException {
-		if (!isSeverityEnabled()) {
+	public void checkExternalDependencies(IApiComponent apiComponent, IBuildContext bcontext, Properties properties, IProgressMonitor monitor) throws CoreException {
+		if (!isSeverityEnabled(properties)) {
 			return;
 		}
 		String[] apiUseTypes = getApiUseTypes(bcontext);
 		if (DEBUG) {
-			System.out.println("Fetching external dependencies for the types : " + Arrays.asList(apiUseTypes)); //$NON-NLS-1$
+			if(apiUseTypes.length < 1) {
+				System.out.println("Checking use scan dependencies for: "+apiComponent.getSymbolicName()+" ("+apiComponent.getVersion()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			else {
+				System.out.println("Checking use scan dependencies for: " + Arrays.asList(apiUseTypes)); //$NON-NLS-1$
+			}
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.checking_external_dependencies, 10);
 		IReferenceDescriptor[] externalDependencies  = UseScanManager.getInstance().getExternalDependenciesFor(apiComponent, apiUseTypes, localmonitor.newChild(10));
@@ -367,19 +372,34 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
-	public boolean isSeverityEnabled() {
+	public boolean isSeverityEnabled(Properties properties) {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
+		if (properties == null) {
+			if (!isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_IGNORE)))
+				return true;
+			if (!isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, ApiPlugin.VALUE_IGNORE)))
+				return true;
+			if (isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, ApiPlugin.VALUE_IGNORE)))
+				return true;
+			return false;
+		} else {
+			if (properties.isEmpty())
+				return true; // preferences parameter not provided
+			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY))) 
+				return true;
+			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY))) 
+				return true;
+			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY))) 
+				return true;
+			return false;
+		}
+	}
 
-		if (!node.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_IGNORE).equalsIgnoreCase(ApiPlugin.VALUE_IGNORE)) {
-			return true;
+	private boolean isIgnore(Object value) {
+		if (value != null && (value.toString().equalsIgnoreCase(ApiPlugin.VALUE_ERROR) || value.toString().equalsIgnoreCase(ApiPlugin.VALUE_WARNING))) {
+			return false;
 		}
-		if (!node.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, ApiPlugin.VALUE_IGNORE).equalsIgnoreCase(ApiPlugin.VALUE_IGNORE)) {
-			return true;
-		}
-		if (!node.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, ApiPlugin.VALUE_IGNORE).equalsIgnoreCase(ApiPlugin.VALUE_IGNORE)) {
-			return true;
-		}
-		return false;
+		return true;
 	}
 	
 	/**
@@ -395,33 +415,36 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	protected IApiProblem createExternalDependenciesProblem(HashMap problems, IReferenceDescriptor dependency, String referenceTypeName, IMemberDescriptor referencedMember, int elementType, int flag) {	
 		String resource = referenceTypeName;
-		String primaryTypeName = referenceTypeName.replace('$', '.');
+		String primaryTypeName = referenceTypeName.replace('$', '.');		
 		int charStart = -1, charEnd = -1, lineNumber = -1; 
-		try {
-			IType type = fJavaProject.findType(primaryTypeName);
-			IResource res = Util.getResource(fJavaProject.getProject(), type);
-			if(res == null) {
-				return null;
-			}
-			if(!Util.isManifest(res.getProjectRelativePath())) {
-				resource = res.getProjectRelativePath().toString();
-			}
-			else {
-				resource = "."; //$NON-NLS-1$
-			}
-			if (type != null) {
-				ISourceRange range = type.getNameRange();
-				charStart = range.getOffset();
-				charEnd = charStart + range.getLength();
-				try {
-					IDocument document = Util.getDocument(type.getCompilationUnit());
-					lineNumber = document.getLineOfOffset(charStart);
-				} catch (BadLocationException e) {
-					// ignore
-				}			
-				catch (CoreException ce) {}
-			}
-		} catch (JavaModelException e) {}
+		if (fJavaProject != null) {
+			try {
+				
+				IType type = fJavaProject.findType(primaryTypeName);
+				IResource res = Util.getResource(fJavaProject.getProject(), type);
+				if(res == null) {
+					return null;
+				}
+				if(!Util.isManifest(res.getProjectRelativePath())) {
+					resource = res.getProjectRelativePath().toString();
+				}
+				else {
+					resource = "."; //$NON-NLS-1$
+				}
+				if (type != null) {
+					ISourceRange range = type.getNameRange();
+					charStart = range.getOffset();
+					charEnd = charStart + range.getLength();
+					try {
+						IDocument document = Util.getDocument(type.getCompilationUnit());
+						lineNumber = document.getLineOfOffset(charStart);
+					} catch (BadLocationException e) {
+						// ignore
+					}			
+					catch (CoreException ce) {}
+				}
+			} catch (JavaModelException e) {}
+		}
 		String[] msgArgs = new String[] {referenceTypeName, referencedMember.getName(), dependency.getComponent().getId()};
 		int kind = 0;
 		switch (elementType) {
@@ -441,7 +464,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		
 		int dependencyNameIndex = 2;	// the comma separated list of dependent plugins 
-		String problemKey = referenceTypeName +  resource + dependency.getReferenceKind() + elementType + kind + flag;
+		int problemId = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM, elementType, kind, flag);
+		String problemKey = referenceTypeName +  problemId;
 		IApiProblem similarProblem =  (IApiProblem) problems.get(problemKey);
 		if (similarProblem != null) {
 			String[] existingMsgArgs = similarProblem.getMessageArguments()[dependencyNameIndex].split(", "); //$NON-NLS-1$

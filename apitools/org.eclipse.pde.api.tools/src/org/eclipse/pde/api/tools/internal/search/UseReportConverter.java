@@ -59,6 +59,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Version;
@@ -1702,7 +1703,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @return
 	 * @throws Exception
 	 */
-	UseMetadata getMetadata() throws Exception {
+	IMetadata getMetadata() throws Exception {
 		if(this.metadata == null) {
 			File xml = null;
 			try {

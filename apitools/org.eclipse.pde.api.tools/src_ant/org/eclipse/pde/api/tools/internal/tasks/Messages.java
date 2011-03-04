@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,6 +107,14 @@ public class Messages extends NLS {
 	public static String deprecationReportTask_footer;
 	public static String deprecationReportTask_header;
 	public static String deprecationReportTask_missingXmlFileLocation;
+
+	public static String MissingRefProblemsTask_invalidApiUseScanLocation;
+
+	public static String MissingRefProblemsTask_missingArguments;
+
+	public static String no_html_location;
+
+	public static String no_xml_location;
 
 	static {
 		// initialize resource bundle

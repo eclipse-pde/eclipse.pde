@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
-	Copyright (c) IBM Corporation and others 2009. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
+	Copyright (c) IBM Corporation and others 2009, 2011. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page.
 	
 	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
 	All contexts are grouped by their relation, with all relations grouped alphabetically.
@@ -56,9 +56,12 @@
 		</h3>
 			<xsl:choose>
 				<xsl:when test="count(components/component) &gt; 0">
+				<xsl:variable name="ShowMissing" select="components/@ShowMissing" />
+				<xsl:if test="$ShowMissing != 'false'">
 				<p>
 					A summary of the missing required bundles is <a href="missing.html">available here</a>.
 				</p>
+				</xsl:if>
 				<p>
 					Click an entry in the table below to reveal the details of why it was not searched.
 				</p>

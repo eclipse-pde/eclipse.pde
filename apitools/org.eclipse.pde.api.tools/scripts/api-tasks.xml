@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	Copyright (c) IBM Corporation and others 2009 This page is made available under license. For full details see the LEGAL in the documentation book 		that contains this page.
+	Copyright (c) IBM Corporation and others 2009, 2011 This page is made available under license. For full details see the LEGAL in the documentation book 		that contains this page.
 
 	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
 	All contexts are grouped by their relation, with all relations grouped alphabetically.
@@ -19,6 +19,9 @@
 	- 'apimigration_reportconversion' org.eclipse.pde.api.tools.internal.tasks.ApiMigrationReportConversionTask
 	- 'apifile_generation' from org.eclipse.pde.api.tools.internal.tasks.ApiFileGenerationTask
 	- 'comparetask' from org.eclipse.pde.api.tools.internal.tasks.CompareTask
+	- 'apiconsumeruse_reportconversion' org.eclipse.pde.api.tools.internal.tasks.ApiConsumerUseReportConversionTask
+	- 'apiusescanproblems' org.eclipse.pde.api.tools.internal.tasks.MissingRefProblemsTask
+	- 'apiusescanproblem_reportconversion' org.eclipse.pde.api.tools.internal.tasks.MissingRefProblemsReportConversionTask
 -->
 <project name="apitask" basedir="." default="run">
 

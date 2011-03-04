@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,43 @@ public class SearchMessages extends NLS {
 	public static String MigrationReportConvertor_table_shows_unresolved;
 	public static String MigrationReportConvertor_type_migration_information;
 	public static String MigrationReportConvertor_type_with_unresolved_refs;
+	public static String MissingRefMetadata_CoreExceptionInParsing;
+	public static String MissingRefReportConverter_AddlBundleInfo;
+	public static String MissingRefReportConverter_ApiUseScanLocations;
+	public static String MissingRefReportConverter_BackToIndex;
+	public static String MissingRefReportConverter_Field;
+	public static String MissingRefReportConverter_IndexMetaTag;
+	public static String MissingRefReportConverter_MetadataTableTitle;
+	public static String MissingRefReportConverter_MetadataTitle;
+	public static String MissingRefReportConverter_Method;
+	public static String MissingRefReportConverter_NONE;
+	public static String MissingRefReportConverter_NotSearched;
+	public static String MissingRefReportConverter_ProblemDetails;
+	public static String MissingRefReportConverter_ProblemSummary;
+	public static String MissingRefReportConverter_ProblemSummaryTitle;
+	public static String MissingRefReportConverter_ProblemTable_ColumnMissingFields;
+	public static String MissingRefReportConverter_ProblemTable_ColumnMissingFieldsTooltip;
+	public static String MissingRefReportConverter_ProblemTable_ColumnMissingMethods;
+	public static String MissingRefReportConverter_ProblemTable_ColumnMissingMethodsTooltip;
+	public static String MissingRefReportConverter_ProblemTable_ColumnMissingTypes;
+	public static String MissingRefReportConverter_ProblemTable_ColumnMissingTypesTooltip;
+	public static String MissingRefReportConverter_ProblemTable_ColumnBundle;
+	public static String MissingRefReportConverter_ProblemTable_ColumnBundleTooltip;
+	public static String MissingRefReportConverter_ProblemTable_ColumnTotal;
+	public static String MissingRefReportConverter_ProblemTable_ColumnTotalTooltip;
+	public static String MissingRefReportConverter_ProblemTable_ColumnVersion;
+	public static String MissingRefReportConverter_ProblemTable_ColumnVersionTooltip;
+	public static String MissingRefReportConverter_ProblemTableHeader;
+	public static String MissingRefReportConverter_ProblemTitle;
+	public static String MissingRefReportConverter_ProblemTypes;
+	public static String MissingRefReportConverter_ProfileLocation;
+	public static String MissingRefReportConverter_ReportDate;
+	public static String MissingRefReportConverter_ReportLocation;
+	public static String MissingRefReportConverter_ReportTitle;
+	public static String MissingRefReportConverter_Summary;
+	public static String MissingRefReportConverter_SummaryDesc;
+	public static String MissingRefReportConverter_Type;
+	public static String no_use_scan_ref_problems;
 	public static String ReferenceLookupVisitor_0;
 	public static String SkippedComponent_component_was_excluded;
 	public static String UseReportConverter_xslt_file_not_valid;

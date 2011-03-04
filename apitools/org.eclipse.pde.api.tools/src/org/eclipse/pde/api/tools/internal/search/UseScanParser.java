@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public class UseScanParser {
 			
 	}
 	
-	private String[] getIdVersion(String value) {
+	protected String[] getIdVersion(String value) {
 		int index = value.indexOf(' ');
 		if (index > 0) {
 			String id = value.substring(0, index);
@@ -349,11 +349,11 @@ public class UseScanParser {
 	}
 	
 	/**
-	 * Returns all the child directories form the given directory
+	 * Returns all the child directories from the given directory
 	 * @param file
 	 * @return
 	 */
-	private File[] getDirectories(File file) {
+	File[] getDirectories(File file) {
 		File[] directories = file.listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
 				return pathname.isDirectory() && !pathname.isHidden();
@@ -475,7 +475,7 @@ public class UseScanParser {
 	 * @param files
 	 * @return sorted files
 	 */
-	private File[] sort(File[] files) {
+	File[] sort(File[] files) {
 		List sorted = new ArrayList(files.length + 2);
 		for (int i = 0; i < files.length; i++) {
 			sorted.add(files[i]);
