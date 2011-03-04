@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.pde.internal.launching.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	private ArrayList managedLaunches;
@@ -130,15 +131,16 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 				return;
 			}
 			// launch failed because the associated workspace is in use
-			// FIXME: I failed to come up with a constellation that produces this error.
-			// I suppose this no longer happens with PDE 3.6 since this error condition is detected earlier 
 			if (returnValue == 15) {
-				Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, returnValue, PDEMessages.Launcher_error_code15, null);
+				Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, LauncherUtils.WORKSPACE_LOCKED, null, null);
 				IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 				if (statusHandler == null)
 					PDELaunchingPlugin.log(status);
-				else
-					statusHandler.handleStatus(status, launch);
+				else {
+					ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+					String workspace = launchConfiguration.getAttribute(IPDELauncherConstants.LOCATION, ""); //$NON-NLS-1$
+					statusHandler.handleStatus(status, new Object[] {workspace, launchConfiguration, launch.getLaunchMode()});
+				}
 				return;
 			}
 			// launch failed for reasons printed to the log.
