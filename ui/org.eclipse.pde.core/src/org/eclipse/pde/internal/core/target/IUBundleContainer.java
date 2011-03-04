@@ -562,6 +562,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	protected void associateWithTarget(ITargetDefinition target) {
 		super.associateWithTarget(target);
 		fSynchronizer = getSynchronizer(target);
+		// The synchronizer is being made dirty because this IU container is being associated with it
+		fSynchronizer.markDirty();
 		fSynchronizer.setIncludeAllRequired((fFlags & INCLUDE_REQUIRED) == INCLUDE_REQUIRED);
 		fSynchronizer.setIncludeAllEnvironments((fFlags & INCLUDE_ALL_ENVIRONMENTS) == INCLUDE_ALL_ENVIRONMENTS);
 		fSynchronizer.setIncludeSource((fFlags & INCLUDE_SOURCE) == INCLUDE_SOURCE);
