@@ -569,6 +569,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printAttribute("binary", Utils.getPropertyFormat(PROPERTY_BINARY_FOLDERS), true); //$NON-NLS-1$
 		script.printAttribute("target", Utils.getPropertyFormat(PROPERTY_TARGET_FOLDER), true); //$NON-NLS-1$
 		script.printAttribute("extramanifests", Utils.getPropertyFormat(PROPERTY_EXTRA_MANIFESTS), true); //$NON-NLS-1$
+		script.printAttribute("allownonapiproject", Utils.getPropertyFormat(PROPERTY_ALLOW_NON_API_PROJECT), false); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}

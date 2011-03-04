@@ -171,6 +171,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BINARY_FOLDERS = "binary.folders"; //$NON-NLS-1$
 	public static final String PROPERTY_LAUNCHER_JAR = "equinoxLauncherJar"; //$NON-NLS-1$
 	public static final String PROPERTY_EXTRA_MANIFESTS = "extraManifests"; //$NON-NLS-1$
+	public static final String PROPERTY_ALLOW_NON_API_PROJECT = "allowNonApiProject"; //$NON-NLS-1$
 
 	//Jar processor properties
 	public static final String PROPERTY_SIGN_ALIAS = "sign.alias"; //$NON-NLS-1$
