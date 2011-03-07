@@ -338,4 +338,24 @@ public class BuildScriptGeneratorTask extends Task {
 		if (uris.size() > 0)
 			generator.setContextMetadataRepositories((URI[]) uris.toArray(new URI[uris.size()]));
 	}
+
+	public void setSourceBundleFeatureId(String value) {
+		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+			generator.setSourceBundleFeatureId(value);
+	}
+
+	public void setSourceBundleTemplateFeature(String value) {
+		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+			generator.setSourceBundleTemplateFeature(value);
+	}
+
+	public void setSourceBundleFeatureVersion(String value) {
+		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+			generator.setSourceBundleFeatureVersion(value);
+	}
+
+	public void setSourceBundleMode(String value) {
+		if (value != null && !value.startsWith("${")) //$NON-NLS-1$
+			generator.setSourceBundleMode(value);
+	}
 }

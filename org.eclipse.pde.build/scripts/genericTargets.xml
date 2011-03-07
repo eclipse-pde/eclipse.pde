@@ -104,6 +104,10 @@
 		parallelThreadsPerProcessor="${parallelThreadsPerProcessor}"
 		customEESources="${customEESources}"
 		contextRepository="${transformedRepoLocation},${p2.context.repos}"
+		sourceBundleMode="${sourceBundleMode}"
+		sourceBundleTemplateFeature="${sourceBundleTemplateFeature}"
+		sourceBundleFeatureId="${sourceBundleFeatureId}"
+		sourceBundleFeatureVersion="${sourceBundleFeatureVersion}"
 	/>
 </target>
 

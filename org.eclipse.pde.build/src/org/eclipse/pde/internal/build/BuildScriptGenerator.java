@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 import org.eclipse.pde.internal.build.site.*;
 import org.eclipse.pde.internal.build.site.compatibility.Feature;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Version;
 
 public class BuildScriptGenerator extends AbstractScriptGenerator {
@@ -81,6 +82,20 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	private BundleDescription[] bundlesToBuild;
 	private boolean flatten = false;
 	private boolean sourceReferences = false;
+
+	// what kind of source bundles to auto output.  See #generateSourceBundles()
+	private String sourceBundleMode = null;
+
+	// the default id is a generic feature name as uber source features have no inherent 
+	// semantics or scope.
+	private String sourceBundleTemplateFeature = "org.eclipse.pde.build.uber.feature"; //$NON-NLS-1$
+	private String sourceBundleFeatureId = null;  //default is sourceBundleTemplateFeature + ".source"
+
+	// the default version is simply time-based as uber source features have no inherent 
+	// semantics or scope.
+	// XXX need a better way to version this feature.  Ideally the feature would not even 
+	// be persisted in the p2 metadata so this would not matter.
+	private String sourceBundleFeatureVersion = "1.0.0." + System.currentTimeMillis(); //$NON-NLS-1$
 
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
@@ -238,6 +253,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					generator.generate(feature);
 				}
 
+				if (sourceBundleMode != null)
+					generateSourceBundles(generator);
+
 				if (features.size() != 1)
 					featureInfo = new String[] {"all"}; //$NON-NLS-1$
 
@@ -258,6 +276,42 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				getSite(false).getRegistry().cleanupOriginalState();
 			}
 		}
+	}
+
+	/**
+	 * Generate source bundles for this build.  The exact set of source bundles generated depends on 
+	 * the source output mode ((see {@link #setSourceBundleMode(String)}), the set of features
+	 * and bundles being built and the pre-existence of related source bundles. 
+	 * 
+	 * This step may result in the creation of an "uber source feature" that captures
+	 * a list of the generated source bundles.  
+	 * 
+	 * @param generator the build director to use when generating the source bundles
+	 */
+	private void generateSourceBundles(BuildDirector generator) throws CoreException {
+		Set allBundles = "all".equalsIgnoreCase(sourceBundleMode) ? generator.getAssemblyData().getAllPlugins() : generator.getAssemblyData().getAllCompiledPlugins(); //$NON-NLS-1$
+
+		BuildTimeFeature feature = getSite(false).findFeature(sourceBundleTemplateFeature, null, false);
+		if (feature == null)
+			feature = new BuildTimeFeature(sourceBundleTemplateFeature, sourceBundleFeatureVersion);
+
+		if (sourceBundleFeatureId == null)
+			sourceBundleFeatureId = sourceBundleTemplateFeature + ".source"; //$NON-NLS-1$
+
+		for (Iterator iterator = allBundles.iterator(); iterator.hasNext();) {
+			BundleDescription bundle = (BundleDescription) iterator.next();
+			if (!Utils.isSourceBundle(bundle))
+				feature.addEntry(new FeatureEntry(bundle.getSymbolicName(), bundle.getVersion().toString(), true));
+		}
+
+		SourceGenerator sourceGenerator = new SourceGenerator();
+		sourceGenerator.setExtraEntries(new String[] {}); //TODO set extra entries to include more, or exclude something
+		sourceGenerator.setDirector(generator);
+		sourceGenerator.setIndividual(true);
+		sourceGenerator.generateSourceFeature(feature, sourceBundleFeatureId);
+
+		BuildTimeFeature sourceFeature = getSite(false).findFeature(sourceBundleFeatureId, feature.getVersion(), true);
+		generator.generate(sourceFeature);
 	}
 
 	protected void generateVersionsLists(AssemblyInformation assemblageInformation) throws CoreException {
@@ -463,6 +517,38 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	public void setGenerateVersionsList(boolean generateVersionsList) {
 		this.generateVersionsList = generateVersionsList;
+	}
+
+	/**
+	 * Whether or not to automatically output source bundles corresponding to the bundles involved in 
+	 * the build.  If set to null, no special source bundle generation is done.  If set to "built", only the
+	 * source bundles corresponding to bundles actually compiled are output.  If set to "all" then all 
+	 * available source related to bundles in the build are output.
+	 * 
+	 * @param value the source bundle output mode.
+	 */
+	public void setSourceBundleMode(String value) {
+		sourceBundleMode = value;
+	}
+
+	/**
+	 * Sets the id to use for the uber source feature if needed.  See {@link #setSourceBundleMode(String)}
+	 * @param value the id of the generated source feature
+	 */
+	public void setSourceBundleFeatureId(String value) {
+		sourceBundleFeatureId = value;
+	}
+
+	public void setSourceBundleTemplateFeature(String value) {
+		sourceBundleTemplateFeature = value;
+	}
+
+	/**
+	 * Sets the version to use for the uber source feature if needed.  See {@link #setSourceBundleMode(String)}
+	 * @param value the version of the generated source feature
+	 */
+	public void setSourceBundleFeatureVersion(String value) {
+		sourceBundleFeatureVersion = value;
 	}
 
 	/**

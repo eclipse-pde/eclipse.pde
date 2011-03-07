@@ -1987,4 +1987,49 @@ public class PublishingTests extends P2TestCase {
 		assertZipPermissions(zip, "eclipse/meToo.txt", "-rwxr-xr-x");
 		assertZipPermissions(zip, "eclipse/file.txt", "-rwxr-xr-x");
 	}
+
+	public void testBug329162() throws Exception {
+		IFolder buildFolder = newTest("329162");
+
+		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
+		Utils.writeBuffer(bundle.getFile("src/A.java"), new StringBuffer("import b.B; public class A { B b = new B(); public void Bar(){}}"));
+		Utils.writeBuffer(bundle.getFile("src/b/B.java"), new StringBuffer("package b; public class B { public int i = 0; public void Foo(){}}"));
+		Utils.generateBundle(bundle, "bundle");
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"bundle", "org.eclipse.osgi"});
+
+		IFolder templateFolder = Utils.createFolder(buildFolder, "features/template");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"template\" label=\"FooSource\" version=\"1.0.0.v123\">		\n");
+		buffer.append(" <description>generated source</description>		\n");
+		buffer.append("</feature>											\n");
+		Utils.writeBuffer(templateFolder.getFile("feature.xml"), buffer);
+		IFolder sourceTemplate = Utils.createFolder(templateFolder, "sourceTemplateFeature");
+		buffer = new StringBuffer();
+		buffer.append("requires.0.namespace=org.eclipse.equinox.p2.iu	\n");
+		buffer.append("requires.0.name=testid0							\n");
+		buffer.append("requires.0.range=[1.2.3,1.3)						\n");
+		Utils.writeBuffer(sourceTemplate.getFile("p2.inf"), buffer);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("p2.gathering", "true");
+		properties.put("sourceBundleMode", "all");
+		properties.put("sourceBundleTemplateFeature", "template");
+		properties.put("sourceBundleFeatureVersion", "1.0.0.v123");
+		properties.put("individualSourceBundles", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+		runBuild(buildFolder);
+
+		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		IInstallableUnit iu = getIU(repo, "template.source.feature.group");
+		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "bundle.source");
+		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "org.eclipse.osgi.source");
+		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "testid0");
+		assertEquals(iu.getProperty("org.eclipse.equinox.p2.name"), "FooSource");
+		assertEquals(iu.getProperty("org.eclipse.equinox.p2.description"), "generated source");
+
+		getIU(repo, "org.eclipse.osgi.source");
+		getIU(repo, "bundle.source");
+	}
 }
