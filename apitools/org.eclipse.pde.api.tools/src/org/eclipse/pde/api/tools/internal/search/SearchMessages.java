@@ -162,7 +162,6 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_required_bundles;
 	public static String UseReportConverter_root_index_description;
 	public static String UseReportConverter_summary;
-	public static String UseReportConverter_terminology;
 	public static String UseReportConverter_to_filter_patterns;
 	public static String UseReportConverter_types_used_in;
 	public static String UseReportConverter_usage_details;

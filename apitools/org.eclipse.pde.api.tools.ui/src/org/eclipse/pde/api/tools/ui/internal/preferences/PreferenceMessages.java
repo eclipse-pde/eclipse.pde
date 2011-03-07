@@ -192,8 +192,6 @@ public class PreferenceMessages extends NLS {
 	public static String ApiUseScanPreferencePage_9;
 	public static String archives__zip;
 	public static String jars__jar;
-	public static String options;
-	public static String xml;
 
 	static {
 		// initialize resource bundle
