@@ -198,6 +198,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public static Properties readProperties(String location, String fileName, int errorLevel) throws CoreException {
+		if (location == null) {
+			if (errorLevel != IStatus.INFO && errorLevel != IStatus.OK) {
+				String message = NLS.bind(Messages.exception_missingFile, fileName);
+				BundleHelper.getDefault().getLog().log(new Status(errorLevel, PI_PDEBUILD, EXCEPTION_READING_FILE, message, null));
+			}
+			return MissingProperties.getInstance();
+		}
+
 		Properties result = new Properties();
 		File file = new File(location, fileName);
 		try {
