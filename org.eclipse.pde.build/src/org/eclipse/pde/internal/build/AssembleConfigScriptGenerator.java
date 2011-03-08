@@ -326,8 +326,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printTargetEnd();
 
 			script.printTargetDeclaration("_" + TARGET_CLEANUP_ASSEMBLY, null, PROPERTY_ASSEMBLY_TMP + ".exists", null, null); //$NON-NLS-1$//$NON-NLS-2$
-			String toDir = Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + "."; //$NON-NLS-1$
-			toDir += Utils.getPropertyFormat(PROPERTY_OS) + "." + Utils.getPropertyFormat(PROPERTY_WS) + "." + Utils.getPropertyFormat(PROPERTY_ARCH); //$NON-NLS-1$ //$NON-NLS-2$
+			String toDir = Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + "." + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$ //$NON-NLS-2$
 			FileSet fromDir = new FileSet(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null, null, null, null, null);
 			script.printMoveTask(toDir, new FileSet[] {fromDir}, true);
 			script.printDeleteTask(toDir, null, TRUE, null);
