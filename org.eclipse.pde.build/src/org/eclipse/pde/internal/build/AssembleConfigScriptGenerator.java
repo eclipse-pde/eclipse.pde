@@ -319,18 +319,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected void generateCleanupAssembly(boolean assembling) {
 		String condition = (assembling && BuildDirector.p2Gathering) ? PROPERTY_RUN_PACKAGER : null;
 		script.printTargetDeclaration(TARGET_CLEANUP_ASSEMBLY, null, null, condition, null);
-
-		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) {
-			script.printAvailableTask(PROPERTY_ASSEMBLY_TMP + ".exists", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP)); //$NON-NLS-1$
-			script.printAntCallTask("_" + TARGET_CLEANUP_ASSEMBLY, true, null); //$NON-NLS-1$
-			script.printTargetEnd();
-
-			script.printTargetDeclaration("_" + TARGET_CLEANUP_ASSEMBLY, null, PROPERTY_ASSEMBLY_TMP + ".exists", null, null); //$NON-NLS-1$//$NON-NLS-2$
-			String toDir = Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + "." + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$ //$NON-NLS-2$
-			FileSet fromDir = new FileSet(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null, null, null, null, null);
-			script.printMoveTask(toDir, new FileSet[] {fromDir}, true);
-			script.printDeleteTask(toDir, null, TRUE, null);
-		}
+		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
+			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
 		script.println();
 	}
