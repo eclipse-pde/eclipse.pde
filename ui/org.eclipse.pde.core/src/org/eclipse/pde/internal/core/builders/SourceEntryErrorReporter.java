@@ -421,14 +421,16 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					}
 				} else {
 					if (outputFolderLibs.size() == 0) {
-						//class folder does not have an output.<library> entry
+						//class folder does not have an output.<library> entry, only continue if we have a plugin model for the project
 						IPluginModelBase model = PluginRegistry.findModel(fProject);
-						IPluginLibrary[] libs = model.getPluginBase().getLibraries();
-						String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputLibForClassFolder, outputPath.toString());
-						if (libs.length > 0) {
-							prepareError(PROPERTY_OUTPUT_PREFIX, null, message, PDEMarkerFactory.NO_RESOLUTION, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
-						} else {
-							prepareError(DEF_OUTPUT_ENTRY, outputPath.toString(), message, PDEMarkerFactory.B_ADDITION, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
+						if (model != null) {
+							IPluginLibrary[] libs = model.getPluginBase().getLibraries();
+							String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputLibForClassFolder, outputPath.toString());
+							if (libs.length > 0) {
+								prepareError(PROPERTY_OUTPUT_PREFIX, null, message, PDEMarkerFactory.NO_RESOLUTION, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
+							} else {
+								prepareError(DEF_OUTPUT_ENTRY, outputPath.toString(), message, PDEMarkerFactory.B_ADDITION, fOututLibSeverity, PDEMarkerFactory.CAT_OTHER);
+							}
 						}
 
 					}
