@@ -259,6 +259,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		PermissiveSlicer slicer = new PermissiveSlicer(metadata, new HashMap(), true, false, true, onlyStrict, false);
 		IQueryable slice = slicer.slice(fUnits, new NullProgressMonitor());
 
+		if (slicer.getStatus().getSeverity() == IStatus.ERROR) {
+			// If the slicer has an error, report it instead of returning an empty set
+			throw new CoreException(slicer.getStatus());
+		}
+
 		// query for bundles
 		IFileArtifactRepository artifacts = null;
 		try {
@@ -275,6 +280,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			if (DEBUG_PROFILE) {
 				System.out.println("Profile does not contain any bundles or artifacts were missing"); //$NON-NLS-1$
 			}
+			if (slicer.getStatus().getSeverity() == IStatus.WARNING) {
+				// If the slicer has warnings, they probably caused there to be no bundles available
+				throw new CoreException(slicer.getStatus());
+			}
+			
 			return fBundles = null;
 		}
 
