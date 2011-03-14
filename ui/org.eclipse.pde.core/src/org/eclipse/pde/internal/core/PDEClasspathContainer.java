@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -67,6 +67,13 @@ public class PDEClasspathContainer {
 			if (srcPath == null)
 				srcPath = new Path(model.getInstallLocation());
 			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
+
+			// If the jarred plugin contains any jarred libraries they must be extracted as the compiler can't handle nested jar files
+			File[] extractedLibraries = PDECore.getDefault().getModelManager().getExternalModelManager().getExtractedLibraries(model);
+			for (int i = 0; i < extractedLibraries.length; i++) {
+				Path path = new Path(extractedLibraries[i].getAbsolutePath());
+				addLibraryEntry(path, path, rules, getClasspathAttributes(model), entries);
+			}
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
