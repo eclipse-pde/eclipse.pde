@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -93,6 +94,45 @@ public abstract class AbstractPluginBlock {
 
 	private PluginStatusDialog fDialog;
 
+	class PluginModelNameBuffer {
+		private List nameList;
+
+		PluginModelNameBuffer() {
+			super();
+			nameList = new ArrayList();
+		}
+
+		void add(IPluginModelBase model) {
+			nameList.add(getPluginName(model));
+		}
+
+		private String getPluginName(IPluginModelBase model) {
+			String startLevel = null;
+			String autoStart = null;
+			if (fPluginTreeViewer.getChecked(model)) {
+				startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
+				autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
+			}
+			return BundleLauncherHelper.writeBundleEntry(model, startLevel, autoStart);
+		}
+
+		public String toString() {
+			Collections.sort(nameList);
+			StringBuffer result = new StringBuffer();
+			for (Iterator iterator = nameList.iterator(); iterator.hasNext();) {
+				String name = (String) iterator.next();
+				if (result.length() > 0)
+					result.append(',');
+				result.append(name);
+			}
+
+			if (result.length() == 0)
+				return null;
+
+			return result.toString();
+		}
+	}
+
 	/**
 	 * Label provider for the tree.
 	 */
@@ -103,15 +143,16 @@ public abstract class AbstractPluginBlock {
 		}
 
 		public String getColumnText(Object obj, int index) {
+			boolean isChecked = fPluginTreeViewer.getChecked(obj);
 			switch (index) {
 				case 0 :
 					return super.getColumnText(obj, index);
 				case 1 :
-					if (levelColumnCache != null && levelColumnCache.containsKey(obj))
+					if (isChecked && levelColumnCache != null && levelColumnCache.containsKey(obj))
 						return (String) levelColumnCache.get(obj);
 					return ""; //$NON-NLS-1$
 				case 2 :
-					if (autoColumnCache != null && autoColumnCache.containsKey(obj))
+					if (isChecked && autoColumnCache != null && autoColumnCache.containsKey(obj))
 						return (String) autoColumnCache.get(obj);
 					return ""; //$NON-NLS-1$
 				default :
@@ -596,35 +637,34 @@ public abstract class AbstractPluginBlock {
 	protected void resetText(IPluginModelBase model) {
 		String levelText = ""; //$NON-NLS-1$
 		String autoText = ""; //$NON-NLS-1$
-		String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
-		boolean isSystemBundle = systemBundleId.equals(model.getPluginBase().getId());
-		if (model.isFragmentModel()) {
-			autoText = "false"; //$NON-NLS-1$
-		} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(model.getPluginBase().getId()) || "org.eclipse.equinox.ds".equals(model.getPluginBase().getId())) { //$NON-NLS-1$
-			autoText = "true"; //$NON-NLS-1$
-		}
+
 		Widget widget = fPluginTreeViewer.testFindItem(model);
 		if (fPluginTreeViewer.getChecked(model)) {
-			if (levelColumnCache.containsKey(model) && !isSystemBundle) {
-				levelText = (String) levelColumnCache.get(model);
-				levelText = levelText.length() > 0 ? levelText : "default"; //$NON-NLS-1$
-			}
-			if (autoColumnCache.containsKey(model) && !isSystemBundle) {
-				autoText = (String) autoColumnCache.get(model);
-				autoText = autoText.length() > 0 ? autoText : "default"; //$NON-NLS-1$
-			}
-		}
-		if (levelText != null) {
+			levelText = (String) levelColumnCache.get(model);
+			levelText = levelText == null || levelText.length() == 0 ? "default" : levelText; //$NON-NLS-1$
+			autoText = (String) autoColumnCache.get(model);
+			autoText = autoText == null || autoText.length() == 0 ? "default" : autoText; //$NON-NLS-1$
+
+			// Replace run levels and auto start values for certain important system bundles
+			String systemValue = BundleLauncherHelper.resolveSystemRunLevelText(model);
+			levelText = systemValue != null ? systemValue : levelText;
+
+			systemValue = BundleLauncherHelper.resolveSystemAutoText(model);
+			autoText = systemValue != null ? systemValue : autoText;
+
+			// Recache the values in case they changed.  I believe the code to only recache
+			// if they actually changed takes more time than just setting the value.
 			levelColumnCache.put(model, levelText);
-			if (widget instanceof TreeItem) {
-				((TreeItem) widget).setText(1, levelText);
-			}
-		}
-		if (autoText != null) {
 			autoColumnCache.put(model, autoText);
-			if (widget instanceof TreeItem) {
-				((TreeItem) widget).setText(2, autoText);
-			}
+		}
+
+		// Set values in UI (although I'm not sure why we don't use the label provider here)
+		if (widget instanceof TreeItem) {
+			((TreeItem) widget).setText(1, levelText);
+		}
+
+		if (widget instanceof TreeItem) {
+			((TreeItem) widget).setText(2, autoText);
 		}
 	}
 
@@ -987,20 +1027,6 @@ public abstract class AbstractPluginBlock {
 		if (autoColumnEditor != null && autoColumnEditor.getEditor() != null && !autoColumnEditor.getEditor().isDisposed()) {
 			autoColumnEditor.getEditor().dispose();
 		}
-	}
-
-	protected void appendToBuffer(StringBuffer buffer, IPluginModelBase model) {
-		if (buffer.length() > 0)
-			buffer.append(","); //$NON-NLS-1$ 
-
-		String startLevel = null;
-		String autoStart = null;
-		if (fPluginTreeViewer.getChecked(model)) {
-			startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
-			autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
-		}
-		String value = BundleLauncherHelper.writeBundleEntry(model, startLevel, autoStart);
-		buffer.append(value);
 	}
 
 	protected void resetGroup(NamedElement group) {

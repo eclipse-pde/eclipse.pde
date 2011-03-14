@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,9 @@ public class BundleLauncherHelper {
 	 * simple configurator and update configurator, we change the start level as they 
 	 * shouldn't be started together.
 	 */
-	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL = "3:true"; //$NON-NLS-1$
+	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT = "3"; //$NON-NLS-1$
+	public static final String DEFAULT_UPDATE_CONFIGURATOR_AUTO_START_TEXT = "true"; //$NON-NLS-1$
+	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL = DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT + ":" + DEFAULT_UPDATE_CONFIGURATOR_AUTO_START_TEXT; //$NON-NLS-1$
 
 	public static final char VERSION_SEPARATOR = '*';
 
@@ -358,6 +360,54 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
+	public static String resolveSystemRunLevelText(IPluginModelBase model) {
+		BundleDescription description = model.getBundleDescription();
+		String modelName = description.getSymbolicName();
+
+		if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
+			return "1"; //$NON-NLS-1$ 
+		} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
+			return "1"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
+			return "2"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
+			return "-1"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
+			return DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT;
+		} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
+			if (TargetPlatformHelper.getTargetVersion() > 3.1) {
+				return "default"; //$NON-NLS-1$
+			}
+			return "2"; //$NON-NLS-1$
+		} else {
+			return null;
+		}
+	}
+
+	public static String resolveSystemAutoText(IPluginModelBase model) {
+		BundleDescription description = model.getBundleDescription();
+		String modelName = description.getSymbolicName();
+
+		if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
+			return "true"; //$NON-NLS-1$ 
+		} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
+			return "true"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
+			return "true"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
+			return "true"; //$NON-NLS-1$
+		} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
+			return DEFAULT_UPDATE_CONFIGURATOR_AUTO_START_TEXT;
+		} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
+			if (TargetPlatformHelper.getTargetVersion() > 3.1) {
+				return "true"; //$NON-NLS-1$
+			}
+			return "true"; //$NON-NLS-1$
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Adds the given bundle and start information to the map.  This will override anything set
 	 * for system bundles, and set their start level to the appropriate level
@@ -369,23 +419,10 @@ public class BundleLauncherHelper {
 		BundleDescription desc = bundle.getBundleDescription();
 		boolean defaultsl = (sl == null || sl.equals("default:default")); //$NON-NLS-1$
 		if (desc != null && defaultsl) {
-			String modelName = desc.getSymbolicName();
-			if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
-				map.put(bundle, "1:true"); //$NON-NLS-1$ 
-			} else if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
-				map.put(bundle, "1:true"); //$NON-NLS-1$
-			} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
-				map.put(bundle, "2:true"); //$NON-NLS-1$
-			} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
-				map.put(bundle, "-1:true"); //$NON-NLS-1$
-			} else if (IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR.equals(modelName)) {
-				map.put(bundle, DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL);
-			} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
-				if (TargetPlatformHelper.getTargetVersion() > 3.1) {
-					map.put(bundle, "default:true"); //$NON-NLS-1$
-				} else {
-					map.put(bundle, "2:true"); //$NON-NLS-1$
-				}
+			String runLevelText = resolveSystemRunLevelText(bundle);
+			String autoText = resolveSystemAutoText(bundle);
+			if (runLevelText != null && autoText != null) {
+				map.put(bundle, runLevelText + ":" + autoText); //$NON-NLS-1$
 			} else {
 				map.put(bundle, sl);
 			}

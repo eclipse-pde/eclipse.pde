@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 	private Button fUseDefaultLocationButton;
 	private Button fClearConfig;
 	private String fLastEnteredConfigArea;
-	private String fConfigName;
+	private String fLastKnownConfigName;
 	private static String DEFAULT_DIR = "${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/"; //$NON-NLS-1$
 
 	public ConfigurationAreaBlock(AbstractLauncherTab tab) {
@@ -51,7 +51,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 			public void widgetSelected(SelectionEvent e) {
 				boolean useDefaultArea = fUseDefaultLocationButton.getSelection();
 				if (useDefaultArea)
-					fLocationText.setText(DEFAULT_DIR + fConfigName);
+					fLocationText.setText(DEFAULT_DIR + fLastKnownConfigName);
 				else
 					fLocationText.setText(fLastEnteredConfigArea);
 				enableBrowseSection(!useDefaultArea);
@@ -80,7 +80,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
-		fConfigName = configuration.getName();
+		fLastKnownConfigName = configuration.getName();
 		boolean useDefaultArea = configuration.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true);
 		fUseDefaultLocationButton.setSelection(useDefaultArea);
 		enableBrowseSection(!useDefaultArea);
@@ -92,14 +92,24 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		fLastEnteredConfigArea = configuration.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, ""); //$NON-NLS-1$
 
 		if (useDefaultArea)
-			fLocationText.setText(DEFAULT_DIR + fConfigName);
+			fLocationText.setText(DEFAULT_DIR + fLastKnownConfigName);
 		else
 			fLocationText.setText(fLastEnteredConfigArea);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, fUseDefaultLocationButton.getSelection());
-		fLastEnteredConfigArea = getLocation();
+
+		if (!fLastKnownConfigName.equals(configuration.getName())) {
+			fLastKnownConfigName = configuration.getName();
+			if (fUseDefaultLocationButton.getSelection()) {
+				fLastEnteredConfigArea = DEFAULT_DIR + fLastKnownConfigName;
+				fLocationText.setText(fLastEnteredConfigArea);
+			} else {
+				fLastEnteredConfigArea = getLocation();
+			}
+		}
+
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, fLastEnteredConfigArea);
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, fClearConfig.getSelection());
 	}
@@ -132,5 +142,4 @@ public class ConfigurationAreaBlock extends BaseBlock {
 			return null;
 		return super.validate();
 	}
-
 }

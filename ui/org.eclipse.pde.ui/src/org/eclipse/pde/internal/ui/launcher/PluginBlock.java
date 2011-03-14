@@ -143,8 +143,8 @@ public class PluginBlock extends AbstractPluginBlock {
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {
 		// If the table is populated, store what is checked.  If we are lazy loading and need to init, store the default checkstate
 		if (isEnabled() || fInitDefaultCheckState) {
-			StringBuffer wBuffer = new StringBuffer();
-			StringBuffer tBuffer = new StringBuffer();
+			PluginModelNameBuffer wBuffer = new PluginModelNameBuffer();
+			PluginModelNameBuffer tBuffer = new PluginModelNameBuffer();
 
 			// If this is the first time the table is enabled, default the checkstate to all workspace plug-ins
 			if (fInitDefaultCheckState) {
@@ -162,9 +162,9 @@ public class PluginBlock extends AbstractPluginBlock {
 					IPluginModelBase model = externalModels[i];
 					boolean masked = checkedWorkspace.contains(model.getPluginBase().getId());
 					if (masked) {
-						appendToBuffer(wBuffer, model);
+						wBuffer.add(model);
 					} else if (model.isEnabled()) {
-						appendToBuffer(tBuffer, model);
+						tBuffer.add(model);
 					}
 				}
 				fInitDefaultCheckState = false;
@@ -175,27 +175,27 @@ public class PluginBlock extends AbstractPluginBlock {
 					if (selected[i] instanceof IPluginModelBase) {
 						IPluginModelBase model = (IPluginModelBase) selected[i];
 						if (model.getUnderlyingResource() == null) {
-							appendToBuffer(tBuffer, model);
+							tBuffer.add(model);
 						} else {
-							appendToBuffer(wBuffer, model);
+							wBuffer.add(model);
 						}
 					}
 				}
 
 			}
-			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wBuffer.length() == 0 ? (String) null : wBuffer.toString());
-			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, tBuffer.length() == 0 ? (String) null : tBuffer.toString());
+			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wBuffer.toString());
+			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, tBuffer.toString());
 
-			StringBuffer buffer = new StringBuffer();
+			PluginModelNameBuffer buffer = new PluginModelNameBuffer();
 			if (fAddWorkspaceButton.getSelection()) {
 				IPluginModelBase[] workspaceModels = getWorkspaceModels();
 				for (int i = 0; i < workspaceModels.length; i++) {
 					if (!fPluginTreeViewer.getChecked(workspaceModels[i])) {
-						appendToBuffer(buffer, workspaceModels[i]);
+						buffer.add(workspaceModels[i]);
 					}
 				}
 			}
-			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.length() > 0 ? buffer.toString() : (String) null);
+			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.toString());
 		}
 	}
 

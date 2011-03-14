@@ -11,15 +11,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.launcher.*;
-
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.BundlesTab;
 
 public class OSGiBundleBlock extends AbstractPluginBlock {
@@ -32,31 +30,34 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {
 		Object[] selected = fPluginTreeViewer.getCheckedElements();
-		StringBuffer wBuffer = new StringBuffer();
-		StringBuffer tBuffer = new StringBuffer();
+
+		PluginModelNameBuffer wBuffer = new PluginModelNameBuffer();
+		PluginModelNameBuffer tBuffer = new PluginModelNameBuffer();
+
 		for (int i = 0; i < selected.length; i++) {
 			if (selected[i] instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) selected[i];
 				if (model.getUnderlyingResource() == null) {
-					appendToBuffer(tBuffer, model);
+					tBuffer.add(model);
 				} else {
-					appendToBuffer(wBuffer, model);
+					wBuffer.add(model);
 				}
 			}
 		}
-		config.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wBuffer.length() == 0 ? (String) null : wBuffer.toString());
-		config.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, tBuffer.length() == 0 ? (String) null : tBuffer.toString());
 
-		StringBuffer buffer = new StringBuffer();
+		config.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wBuffer.toString());
+		config.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, tBuffer.toString());
+
+		PluginModelNameBuffer buffer = new PluginModelNameBuffer();
 		if (fAddWorkspaceButton.getSelection()) {
 			IPluginModelBase[] workspaceModels = getWorkspaceModels();
 			for (int i = 0; i < workspaceModels.length; i++) {
 				if (!fPluginTreeViewer.getChecked(workspaceModels[i])) {
-					appendToBuffer(buffer, workspaceModels[i]);
+					buffer.add(workspaceModels[i]);
 				}
 			}
 		}
-		config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.length() > 0 ? buffer.toString() : (String) null);
+		config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.toString());
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
