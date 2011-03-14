@@ -438,14 +438,20 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		return fResult;
 	}
 
+	/**
+	 * Attempts to select the given file in the active workbench part and open the file
+	 * in its default editor.  Uses asyncExec to join with the UI thread.
+	 * 
+	 * @param file file to open the editor on
+	 */
 	private void openFile(final IFile file) {
-		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
-		final IWorkbenchPage page = ww.getActivePage();
-		if (page == null)
-			return;
-		final IWorkbenchPart focusPart = page.getActivePart();
-		ww.getShell().getDisplay().asyncExec(new Runnable() {
+		PDEPlugin.getDefault().getWorkbench().getDisplay().asyncExec(new Runnable() {
 			public void run() {
+				final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
+				final IWorkbenchPage page = ww.getActivePage();
+				if (page == null)
+					return;
+				IWorkbenchPart focusPart = page.getActivePart();
 				if (focusPart instanceof ISetSelectionTarget) {
 					ISelection selection = new StructuredSelection(file);
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
