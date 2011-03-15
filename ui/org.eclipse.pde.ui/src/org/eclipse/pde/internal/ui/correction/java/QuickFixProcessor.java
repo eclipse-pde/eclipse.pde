@@ -167,7 +167,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				className = ((ImportDeclaration) node).getName().getFullyQualifiedName();
 
 				// always add the search repositories proposal
-				packageName = className.substring(0, className.lastIndexOf('.'));
+				int lastPeriod = className.lastIndexOf('.'); // if there is no period assume we are importing a single name package
+				packageName = className.substring(0, lastPeriod >= 0 ? lastPeriod : className.length());
 				result.add(JavaResolutionFactory.createSearchRepositoriesProposal(packageName));
 			}
 
