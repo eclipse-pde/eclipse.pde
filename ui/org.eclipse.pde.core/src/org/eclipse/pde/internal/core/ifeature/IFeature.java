@@ -61,7 +61,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	public static final int INFO_COPYRIGHT = 1;
 	public static final int INFO_LICENSE = 2;
 
-	public static final String[] INFO_TAGS = {"description", "copyright", "license"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	static final String[] INFO_TAGS = {"description", "copyright", "license"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	/**
 	 * Adds a plug-in reference to this feature.
@@ -166,7 +166,14 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 
 	public void setInstallHandler(IFeatureInstallHandler handler) throws CoreException;
 
-	public IFeatureInfo getFeatureInfo(int index);
+	/**
+	 * Return the feature info for the given info type or <code>null</code> if
+	 * the expected information does not exist.
+	 * 
+	 * @param infoType One of {@link IFeature#INFO_LICENSE}, {@link IFeature#INFO_COPYRIGHT} or {@link IFeature#INFO_DESCRIPTION}
+	 * @return the requested feature info or <code>null</code>
+	 */
+	public IFeatureInfo getFeatureInfo(int infoType);
 
 	public void setFeatureInfo(IFeatureInfo info, int index) throws CoreException;
 

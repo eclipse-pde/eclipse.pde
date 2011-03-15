@@ -274,11 +274,17 @@ public class LicenseFeatureSection extends PDESection {
 		fIgnoreChange = true;
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
-		IFeatureInfo info = feature.getFeatureInfo(2);
 		fLicenseFeatureIDText.setText(feature.getLicenseFeatureID());
 		fLicenseFeatureVersionText.setText(feature.getLicenseFeatureVersion());
-		fUrlText.setText(info.getURL() != null ? info.getURL() : ""); //$NON-NLS-1$
-		fDocument.set(info.getDescription());
+		IFeatureInfo info = feature.getFeatureInfo(IFeature.INFO_LICENSE);
+		String url = null;
+		String description = null;
+		if (info != null) {
+			url = info.getURL();
+			description = info.getDescription();
+		}
+		fUrlText.setText(url != null ? url : ""); //$NON-NLS-1$
+		fDocument.set(description != null ? description : ""); //$NON-NLS-1$
 		super.refresh();
 		fIgnoreChange = false;
 	}

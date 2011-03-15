@@ -151,8 +151,14 @@ public class Feature extends VersionableObject implements IFeature {
 		return fHandler;
 	}
 
-	public IFeatureInfo getFeatureInfo(int index) {
-		return fInfos[index];
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ifeature.IFeature#getFeatureInfo(int)
+	 */
+	public IFeatureInfo getFeatureInfo(int infoType) {
+		if (infoType < 0 || infoType > (fInfos.length - 1)) {
+			return null;
+		}
+		return fInfos[infoType];
 	}
 
 	public boolean isPrimary() {
