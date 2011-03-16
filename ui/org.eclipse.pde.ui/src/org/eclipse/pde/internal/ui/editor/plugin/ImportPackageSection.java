@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2010 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.*;
@@ -425,6 +426,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (fHeader != null) {
+				Set names = new HashSet(); // set of String names, do not allow the same package to be added twice
 				for (int i = 0; i < selected.length; i++) {
 					ImportPackageObject impObject = null;
 					if (selected[i] instanceof ImportItemWrapper)
@@ -440,7 +442,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						ExportPackageObject epo = (ExportPackageObject) selected[i];
 						impObject = new ImportPackageObject(fHeader, epo.getName(), epo.getVersion(), getVersionAttribute());
 					}
-					if (impObject != null)
+					if (impObject != null && names.add(impObject.getName()))
 						fHeader.addPackage(impObject);
 				}
 			} else {
@@ -476,7 +478,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		ArrayList elements = new ArrayList();
 		ArrayList conditional = new ArrayList();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
-		Set names = new HashSet();
+		Set nameVersions = new HashSet(); // Set of NameVersionDescriptors, used to remove duplicate entries
 
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
@@ -487,9 +489,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			ExportPackageDescription[] exported = desc.getExportPackages();
 			for (int j = 0; j < exported.length; j++) {
 				String name = exported[j].getName();
+				NameVersionDescriptor nameVersion = new NameVersionDescriptor(exported[j].getName(), exported[j].getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
 				if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 					continue;
-				if (names.add(name) && (fHeader == null || !fHeader.hasPackage(name)))
+				if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
 					elements.add(new ImportItemWrapper(exported[j]));
 			}
 			IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
@@ -501,7 +504,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						ExportPackageObject[] pkgs = header.getPackages();
 						for (int j = 0; j < pkgs.length; j++) {
 							String name = pkgs[j].getName();
-							if (names.add(name) && (fHeader == null || !fHeader.hasPackage(name)))
+							NameVersionDescriptor nameVersion = new NameVersionDescriptor(pkgs[j].getName(), pkgs[j].getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
+							if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
 								elements.add(new ImportItemWrapper(pkgs[j]));
 						}
 					}
@@ -524,9 +528,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						for (int k = 0; k < children.length; k++) {
 							IPackageFragment f = (IPackageFragment) children[k];
 							String name = f.getElementName();
+							NameVersionDescriptor nameVersion = new NameVersionDescriptor(name, null, NameVersionDescriptor.TYPE_PACKAGE);
 							if (name.equals("")) //$NON-NLS-1$
 								name = "."; //$NON-NLS-1$
-							if ((f.hasChildren() || f.getNonJavaResources().length > 0) && names.add(name))
+							if (nameVersions.add(nameVersion) && (f.hasChildren() || f.getNonJavaResources().length > 0))
 								conditional.add(new ImportItemWrapper(f));
 						}
 					}
