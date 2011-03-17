@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
-
-import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
@@ -27,11 +23,13 @@ import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
@@ -40,6 +38,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -349,6 +349,12 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			manager.add(new Separator());
 		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	protected void registerPopupMenu(MenuManager popupMenuManager) {
+		IEditorSite site = (IEditorSite) getPage().getSite();
+		site.registerContextMenu(site.getId() + ".plugins", popupMenuManager, fViewerPart.getViewer(), false); //$NON-NLS-1$
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {

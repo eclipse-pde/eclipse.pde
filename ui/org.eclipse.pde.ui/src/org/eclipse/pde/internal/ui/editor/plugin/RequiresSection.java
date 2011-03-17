@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
-
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
@@ -30,6 +28,7 @@ import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNodeFactory;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
@@ -44,7 +43,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -336,6 +335,12 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 			manager.add(new Separator());
 			manager.add(fPropertiesAction);
 		}
+		manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	protected void registerPopupMenu(MenuManager popupMenuManager) {
+		IEditorSite site = (IEditorSite) getPage().getSite();
+		site.registerContextMenu(site.getId() + ".requires", popupMenuManager, fViewerPart.getViewer(), false); //$NON-NLS-1$
 	}
 
 	private void handleOpen(ISelection sel) {

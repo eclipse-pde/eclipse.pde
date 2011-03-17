@@ -61,6 +61,7 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 		Control control = fViewerPart.getControl();
 		Menu menu = popupMenuManager.createContextMenu(control);
 		control.setMenu(menu);
+		registerPopupMenu(popupMenuManager);
 		// Initialize drag and drop
 		if (isDragAndDropEnabled()) {
 			initializeDragAndDrop();
@@ -68,6 +69,15 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 			fDragAdapter = null;
 			fDropAdapter = null;
 		}
+	}
+
+	/**
+	 * If the context menu for this section should be registered, do it here
+	 * with the appropriate id etc.  By default do nothing.
+	 * @param popupMenuManager the menu manager to be registered
+	 */
+	protected void registerPopupMenu(MenuManager popupMenuManager) {
+		// do nothing by default
 	}
 
 	protected Composite createClientContainer(Composite parent, int span, FormToolkit toolkit) {
