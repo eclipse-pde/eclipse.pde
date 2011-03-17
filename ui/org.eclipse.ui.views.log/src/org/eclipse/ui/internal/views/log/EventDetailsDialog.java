@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,12 +165,16 @@ public class EventDetailsDialog extends TrayDialog {
 	public int open() {
 		isOpen = true;
 		if (sashWeights == null) {
-			int width = getSashForm().getClientArea().width;
-			if (width - 100 > 0)
-				width -= 100;
-			else
-				width = width / 2;
-			sashWeights = new int[] {width, getSashForm().getClientArea().width - width};
+			int a, b, c;
+			int height = getSashForm().getClientArea().height;
+			if (height < 250) {
+				a = b = c = height / 3;
+			} else {
+				a = 100; // Details section needs about 100
+				c = 100; // Text area gets 100
+				b = height - a - c; // Stack trace should take up majority of room 
+			}
+			sashWeights = new int[] {a, b, c};
 		}
 		getSashForm().setWeights(sashWeights);
 		return super.open();
@@ -512,8 +516,8 @@ public class EventDetailsDialog extends TrayDialog {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
 
-		createDetailsSection(container);
 		createSashForm(container);
+		createDetailsSection(getSashForm());
 		createStackSection(getSashForm());
 		createSessionSection(getSashForm());
 
@@ -528,6 +532,7 @@ public class EventDetailsDialog extends TrayDialog {
 		layout.marginHeight = layout.marginWidth = 0;
 		sashForm.setLayout(layout);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		sashForm.setSashWidth(10);
 	}
 
 	private void createToolbarButtonBar(Composite parent) {
@@ -617,7 +622,9 @@ public class EventDetailsDialog extends TrayDialog {
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = 200;
+		container.setLayoutData(data);
 
 		createTextSection(container);
 		createToolbarButtonBar(container);
@@ -629,7 +636,7 @@ public class EventDetailsDialog extends TrayDialog {
 		layout.numColumns = 3;
 		layout.marginHeight = layout.marginWidth = 0;
 		textContainer.setLayout(layout);
-		textContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		textContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(textContainer, SWT.NONE);
 		label.setText(Messages.EventDetailsDialog_date);
@@ -653,7 +660,6 @@ public class EventDetailsDialog extends TrayDialog {
 		msgText.setEditable(false);
 		gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);
 		gd.horizontalSpan = 2;
-		gd.heightHint = 44;
 		gd.grabExcessVerticalSpace = true;
 		msgText.setLayoutData(gd);
 	}
@@ -662,10 +668,10 @@ public class EventDetailsDialog extends TrayDialog {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
-		layout.marginWidth = 6;
+		layout.marginWidth = 0;
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 100;
+		gd.heightHint = 200;
 		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NONE);
@@ -686,16 +692,11 @@ public class EventDetailsDialog extends TrayDialog {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
-		layout.marginWidth = 6;
+		layout.marginWidth = 0;
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 100;
 		container.setLayoutData(gd);
-
-		Label line = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.widthHint = 1;
-		line.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NONE);
 		label.setText(Messages.EventDetailsDialog_session);
@@ -806,10 +807,10 @@ public class EventDetailsDialog extends TrayDialog {
 			y = s.getInt("height"); //$NON-NLS-1$
 			dialogSize = new Point(x, y);
 
-			sashWeights = new int[2];
+			sashWeights = new int[3];
 			sashWeights[0] = s.getInt("sashWidth1"); //$NON-NLS-1$
 			sashWeights[1] = s.getInt("sashWidth2"); //$NON-NLS-1$
-
+			sashWeights[2] = s.getInt("sashWidth3"); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			dialogLocation = null;
 			dialogSize = null;
@@ -830,6 +831,7 @@ public class EventDetailsDialog extends TrayDialog {
 		sashWeights = getSashForm().getWeights();
 		s.put("sashWidth1", sashWeights[0]); //$NON-NLS-1$
 		s.put("sashWidth2", sashWeights[1]); //$NON-NLS-1$
+		s.put("sashWidth3", sashWeights[2]); //$NON-NLS-1$
 	}
 
 	/**
