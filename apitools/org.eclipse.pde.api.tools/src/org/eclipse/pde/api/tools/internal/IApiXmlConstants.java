@@ -415,4 +415,14 @@ public interface IApiXmlConstants {
 	 * resolved. Value is: <code>alternate</code>
 	 */
 	public static final String ATTR_ALTERNATE = "alternate"; //$NON-NLS-1$
+	/**
+	 * Constant representing the root element of a reference count xml file
+	 * Value is: <code>referenceCount</code>
+	 */
+	public static final String ELEMENT_REPORTED_COUNT = "reportedcount"; //$NON-NLS-1$
+	/**
+	 * XML attribute name for the total number of references or problems found
+	 * Value is: <code>total</code>
+	 */
+	public static final String ATTR_TOTAL = "total"; //$NON-NLS-1$	
 }

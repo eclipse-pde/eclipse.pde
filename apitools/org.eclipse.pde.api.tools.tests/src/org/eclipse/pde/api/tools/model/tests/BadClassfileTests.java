@@ -143,6 +143,7 @@ public class BadClassfileTests extends TestCase {
 			public void reportResults(IApiElement element, IReference[] references) {}
 			public void reportNotSearched(IApiElement[] elements) {}
 			public void reportMetadata(IMetadata data) {}
+			public void reportCounts() {}
 		};
 		engine.search(baseline, requestor, reporter, null);
 	}

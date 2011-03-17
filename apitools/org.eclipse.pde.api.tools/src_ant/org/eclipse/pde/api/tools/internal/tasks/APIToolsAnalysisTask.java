@@ -455,6 +455,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		return new Summary(componentID, apiProblems);
 	}
 	private void dumpReport(Summary[] summaries, List bundlesNames) {
+		int totalProblems = 0;
 		for (int i = 0, max = summaries.length; i < max; i++) {
 			Summary summary = summaries[i];
 			String contents = null;
@@ -469,6 +470,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 						|| this.includedElements.containsPartialMatch(componentID))) {
 				continue;
 			}
+			totalProblems += summary.apiBundleVersionProblems.size();
+			totalProblems += summary.apiCompatibilityProblems.size();
+			totalProblems += summary.apiUsageProblems.size();
 			try {
 				Document document = Util.newDocument();
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
@@ -531,6 +535,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				saveReport("allNonApiBundles", contents, "report.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		// Write out problem count file
+		writeCountReport(totalProblems, "counts.xml"); //$NON-NLS-1$
 	}
 	private void dumpSummaries(Summary[] summaries) {
 		for (int i = 0, max = summaries.length; i < max; i++) {

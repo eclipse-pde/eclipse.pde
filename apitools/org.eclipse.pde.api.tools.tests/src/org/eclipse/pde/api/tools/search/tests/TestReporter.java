@@ -178,4 +178,10 @@ public class TestReporter implements IApiSearchReporter {
 	 */
 	public void reportMetadata(IMetadata data) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportCounts()
+	 */
+	public void reportCounts() {
+	}
 }

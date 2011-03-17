@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,6 +213,7 @@ public final class ApiSearchEngine {
 	 * Searches for all accepted {@link IReference}s from the given {@link IApiElement}
 	 * @param requestor
 	 * @param element
+	 * @param reporter search reporter to output xml results as references are found
 	 * @param monitor
 	 * @return the collection of accepted {@link IReference}s or an empty list, never <code>null</code>
 	 * @throws CoreException

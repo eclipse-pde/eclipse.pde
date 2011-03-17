@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	private String fLocation = null;
 	private DocumentBuilder parser = null;
 	private boolean debug = false; 
+	private int referenceCounts = 0;
 	
 	/**
 	 * Constructor
@@ -75,6 +76,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
 	 */
 	public void reportResults(IApiElement element, final IReference[] references) {
+		referenceCounts += references.length;
 		if(fLocation != null) {
 			XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(fLocation);
 			List descriptors = new ArrayList(references.length + 1);
@@ -180,6 +182,45 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		}
 		catch (CoreException ce) {
 			ApiPlugin.log(ce);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportCounts()
+	 */
+	public void reportCounts(){
+		BufferedWriter writer = null;
+		try {
+			if(this.debug) {
+				System.out.println("Writing file for counting total references..."); //$NON-NLS-1$
+			}
+			File rootfile = new File(fLocation);
+			if(!rootfile.exists()) {
+				rootfile.mkdirs();
+			}
+			File file = new File(rootfile, "counts.xml"); //$NON-NLS-1$
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			
+			Document doc = Util.newDocument();
+			Element root = doc.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
+			doc.appendChild(root);
+			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(referenceCounts));
+			
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
+			writer.write(Util.serializeDocument(doc));
+			writer.flush();
+		}
+		catch(FileNotFoundException fnfe) {}
+		catch(IOException ioe) {}
+		catch(CoreException ce) {}
+		finally {
+			if(writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {}
+			}
 		}
 	}
 }

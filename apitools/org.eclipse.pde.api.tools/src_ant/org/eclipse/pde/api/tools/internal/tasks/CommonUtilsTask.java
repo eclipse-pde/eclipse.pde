@@ -21,6 +21,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -28,6 +29,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Common code for API Tools Ant tasks.
@@ -229,6 +232,45 @@ public abstract class CommonUtilsTask extends Task {
 			writer.flush();
 		} catch (IOException e) {
 			ApiPlugin.log(e);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Writes an xml report containing the total number of problems found and reported
+	 * 
+	 * @param count total count of problems
+	 * @param reportname name of the file to create
+	 */
+	protected void writeCountReport(int count, String reportname){
+		File dir = new File(this.reportLocation);
+		if (!dir.exists()) {
+			if (!dir.mkdirs()) {
+				throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
+			}
+		}
+		File reportFile = new File(dir, reportname);
+		BufferedWriter writer = null;
+		try {
+			Document doc = Util.newDocument();
+			Element root = doc.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
+			doc.appendChild(root);
+			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(count));
+			
+			writer = new BufferedWriter(new FileWriter(reportFile));
+			writer.write(Util.serializeDocument(doc));
+			writer.flush();
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		} catch (CoreException e) {
+			throw new BuildException(e);
 		} finally {
 			if (writer != null) {
 				try {

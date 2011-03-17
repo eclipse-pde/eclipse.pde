@@ -324,6 +324,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 			}
 			reporter.reportNotSearched((IApiElement[]) this.notsearched.toArray(new IApiElement[this.notsearched.size()]));
 			reporter.reportMetadata(data);
+			reporter.reportCounts();
 		}
 	}
 	
