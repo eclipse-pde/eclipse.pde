@@ -165,6 +165,7 @@ public class ApiUseScanJob extends Job {
 				finally {
 					reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
 					reporter.reportMetadata(data);
+					reporter.reportCounts();
 					// Dispose the baseline if it's not managed (it's temporary)
 					ApiBaselineManager apiManager = ApiBaselineManager.getManager();
 					IApiBaseline[] baselines = apiManager.getApiBaselines();
