@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
@@ -49,7 +51,9 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	private String fLocation = null;
 	private DocumentBuilder parser = null;
 	private boolean debug = false; 
-	private int referenceCounts = 0;
+	private int referenceCount = 0;
+	private int illegalCount = 0;
+	private int internalCount = 0;
 	
 	/**
 	 * Constructor
@@ -76,20 +80,39 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
 	 */
 	public void reportResults(IApiElement element, final IReference[] references) {
-		referenceCounts += references.length;
-		if(fLocation != null) {
-			XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(fLocation);
-			List descriptors = new ArrayList(references.length + 1);
-			for (int i = 0; i < references.length; i++) {
-				Reference reference = (Reference) references[i];
-				try {
-					descriptors.add(reference.getReferenceDescriptor());
-				} catch (CoreException e) {
-					ApiPlugin.log(e.getStatus());
-				}
-			}
-			writer.writeReferences((IReferenceDescriptor[]) descriptors.toArray(new IReferenceDescriptor[descriptors.size()]));
+		if (references.length == 0){
+			// This reporter does not create xml for components with no references
+			return;
 		}
+		// Use a hashset for counting to remove any duplicate references that the writer would remove
+		HashSet writtenReferences = new HashSet();
+		XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(fLocation);
+		List descriptors = new ArrayList(references.length + 1);
+		for (int i = 0; i < references.length; i++) {
+			Reference reference = (Reference) references[i];
+			try {
+				IReferenceDescriptor descriptor = reference.getReferenceDescriptor();
+				descriptors.add(descriptor);
+				
+				// Update counters
+				if (!writtenReferences.contains(descriptor)){
+					referenceCount++;
+					if((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
+						illegalCount++;
+					}
+					// Though visibility is a bit flag, we want to match the xml output exactly, which separates into folders by visibility equality
+					if (descriptor.getVisibility() == VisibilityModifiers.PRIVATE){
+						internalCount++;
+					}
+					writtenReferences.add(descriptor);
+				}
+			
+			} catch (CoreException e) {
+				ApiPlugin.log(e.getStatus());
+			}
+		}
+		
+		writer.writeReferences((IReferenceDescriptor[]) descriptors.toArray(new IReferenceDescriptor[descriptors.size()]));
 	}
 		
 	/**
@@ -206,7 +229,9 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			Document doc = Util.newDocument();
 			Element root = doc.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
 			doc.appendChild(root);
-			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(referenceCounts));
+			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(referenceCount));
+			root.setAttribute(IApiXmlConstants.ATTR_COUNT_ILLEGAL, Integer.toString(illegalCount));
+			root.setAttribute(IApiXmlConstants.ATTR_COUNT_INTERNAL, Integer.toString(internalCount));
 			
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));

@@ -21,7 +21,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -29,8 +28,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.TarException;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Common code for API Tools Ant tasks.
@@ -205,11 +202,11 @@ public abstract class CommonUtilsTask extends Task {
 	}
 
 	/**
-	 * Saves the report with the given name in the report location in a child directory with 
-	 * the componentID name
-	 * @param componentID
-	 * @param contents
-	 * @param reportname
+	 * Saves the report with the given name in the report location.  If a componentID is provided, a child
+	 * directory using that name will be created to put the report in.
+	 * @param componentID Name of the component to create a child directory for or <code>null<code> to put the report in the xml root
+	 * @param contents contents to output to the report
+	 * @param reportname name of the file to output to
 	 */
 	protected void saveReport(String componentID, String contents, String reportname) {
 		File dir = new File(this.reportLocation);
@@ -218,13 +215,16 @@ public abstract class CommonUtilsTask extends Task {
 				throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
 			}
 		}
-		File reportComponentIDDir = new File(dir, componentID);
-		if (!reportComponentIDDir.exists()) {
-			if (!reportComponentIDDir.mkdirs()) {
-				throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, reportComponentIDDir));
+		// If the caller has provided a component id, create a child directory
+		if (componentID != null){
+			dir = new File(dir, componentID);
+			if (!dir.exists()) {
+				if (!dir.mkdirs()) {
+					throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, dir));
+				}
 			}
 		}
-		File reportFile = new File(reportComponentIDDir, reportname);
+		File reportFile = new File(dir, reportname);
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(reportFile));
@@ -232,45 +232,6 @@ public abstract class CommonUtilsTask extends Task {
 			writer.flush();
 		} catch (IOException e) {
 			ApiPlugin.log(e);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Writes an xml report containing the total number of problems found and reported
-	 * 
-	 * @param count total count of problems
-	 * @param reportname name of the file to create
-	 */
-	protected void writeCountReport(int count, String reportname){
-		File dir = new File(this.reportLocation);
-		if (!dir.exists()) {
-			if (!dir.mkdirs()) {
-				throw new BuildException(NLS.bind(Messages.errorCreatingReportDirectory, this.reportLocation));
-			}
-		}
-		File reportFile = new File(dir, reportname);
-		BufferedWriter writer = null;
-		try {
-			Document doc = Util.newDocument();
-			Element root = doc.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
-			doc.appendChild(root);
-			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(count));
-			
-			writer = new BufferedWriter(new FileWriter(reportFile));
-			writer.write(Util.serializeDocument(doc));
-			writer.flush();
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		} catch (CoreException e) {
-			throw new BuildException(e);
 		} finally {
 			if (writer != null) {
 				try {

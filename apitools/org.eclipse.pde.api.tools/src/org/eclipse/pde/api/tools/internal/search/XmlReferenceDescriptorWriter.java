@@ -120,7 +120,16 @@ public class XmlReferenceDescriptorWriter {
 	}
 	
 	/**
-	 * Collates the results into like reference kinds
+	 * Collates the results into like reference kinds.  If two references have the same reference, referencer, type,
+	 * visibility, and member, one will be removed (even if the line numbers differ).  Updates {@link #fReferenceMap}
+	 * with a map based tree structure as follows:
+	 * <pre>
+	 * Returned Map (Referenced Component ID -> rmap)
+	 * rmap (Referencing Component ID -> mmap)
+	 * mmap (Visibility -> vmap)
+	 * vmap (Reference Type -> tmap)
+	 * tmap (Referenced Member -> Reference Descriptor) 
+	 * </pre>
 	 * @param references
 	 */
 	private void collateResults(IReferenceDescriptor[] references) throws CoreException {

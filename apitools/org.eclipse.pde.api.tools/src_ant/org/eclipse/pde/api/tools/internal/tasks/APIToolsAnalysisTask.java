@@ -414,6 +414,23 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			return String.valueOf(writer.getBuffer());
 		}
 	}
+	/**
+	 * Stores integer counts for types of problems reported
+	 */
+	private static class ProblemCounter{
+		int total, warnings, errors;
+		public ProblemCounter() {
+			total = warnings = errors = 0;
+		}
+		public void addProblem(int severity){
+			total++;
+			if (severity == ApiPlugin.SEVERITY_ERROR){
+				errors++;
+			} else if (severity == ApiPlugin.SEVERITY_WARNING){
+				warnings++;
+			}
+		}
+	}
 	public static final String BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
 	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
 	
@@ -455,7 +472,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		return new Summary(componentID, apiProblems);
 	}
 	private void dumpReport(Summary[] summaries, List bundlesNames) {
-		int totalProblems = 0;
+		ProblemCounter counter = new ProblemCounter();
 		for (int i = 0, max = summaries.length; i < max; i++) {
 			Summary summary = summaries[i];
 			String contents = null;
@@ -470,9 +487,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 						|| this.includedElements.containsPartialMatch(componentID))) {
 				continue;
 			}
-			totalProblems += summary.apiBundleVersionProblems.size();
-			totalProblems += summary.apiCompatibilityProblems.size();
-			totalProblems += summary.apiUsageProblems.size();
 			try {
 				Document document = Util.newDocument();
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
@@ -483,19 +497,19 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				Element category = document.createElement(IApiXmlConstants.ATTR_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_COMPATIBILITY));
 				category.setAttribute(IApiXmlConstants.ATTR_VALUE, COMPATIBILITY);
-				insertAPIProblems(category, document, summary.apiCompatibilityProblems);
+				insertAPIProblems(category, document, summary.apiCompatibilityProblems, counter);
 				report.appendChild(category);
 
 				category = document.createElement(IApiXmlConstants.ATTR_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_USAGE));
 				category.setAttribute(IApiXmlConstants.ATTR_VALUE, USAGE);
-				insertAPIProblems(category, document, summary.apiUsageProblems);
+				insertAPIProblems(category, document, summary.apiUsageProblems, counter);
 				report.appendChild(category);
 				
 				category = document.createElement(IApiXmlConstants.ATTR_CATEGORY);
 				category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_VERSION));
 				category.setAttribute(IApiXmlConstants.ATTR_VALUE, BUNDLE_VERSION);
-				insertAPIProblems(category, document, summary.apiBundleVersionProblems);
+				insertAPIProblems(category, document, summary.apiBundleVersionProblems, counter);
 				report.appendChild(category);
 
 				contents = Util.serializeDocument(document);
@@ -536,7 +550,23 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			}
 		}
 		// Write out problem count file
-		writeCountReport(totalProblems, "counts.xml"); //$NON-NLS-1$
+		String contents = null;
+		try {
+			Document document = Util.newDocument();
+			Element root = document.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
+			document.appendChild(root);
+			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(counter.total));
+			root.setAttribute(IApiXmlConstants.ATTR_COUNT_WARNINGS, Integer.toString(counter.warnings));
+			root.setAttribute(IApiXmlConstants.ATTR_COUNT_ERRORS, Integer.toString(counter.errors));
+			contents = Util.serializeDocument(document);
+		} catch (DOMException e) {
+			throw new BuildException(e);
+		} catch (CoreException e) {
+			throw new BuildException(e);
+		}
+		if (contents != null) {
+			saveReport(null, contents, "counts.xml"); //$NON-NLS-1$
+		}
 	}
 	private void dumpSummaries(Summary[] summaries) {
 		for (int i = 0, max = summaries.length; i < max; i++) {
@@ -754,9 +784,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 *
 	 * @param document the given xml document
 	 * @param problems the given problem to dump into the document
+	 * @param counter a counter object to which the reported problems can be added
 	 * @return an element that contains all the api problem nodes or null if an error occured
 	 */
-	private void insertAPIProblems(Element root, Document document, List problems) throws CoreException {
+	private void insertAPIProblems(Element root, Document document, List problems, ProblemCounter counter) throws CoreException {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);
 		root.appendChild(apiProblems);
 		Element element = null;
@@ -770,6 +801,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		});
 		for(Iterator iterator = problems.iterator(); iterator.hasNext(); ) {
 			IApiProblem problem = (IApiProblem) iterator.next();
+			int severity = getSeverity(problem);
+			counter.addProblem(severity);
 			element = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM);
 			element.setAttribute(IApiXmlConstants.ATTR_TYPE_NAME, String.valueOf(problem.getTypeName()));
 			element.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));
@@ -777,7 +810,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_START, Integer.toString(problem.getCharStart()));
 			element.setAttribute(IApiXmlConstants.ATTR_CHAR_END, Integer.toString(problem.getCharEnd()));
 			element.setAttribute(IApiXmlConstants.ATTR_ELEMENT_KIND, Integer.toString(problem.getElementKind()));
-			element.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(getSeverity(problem)));
+			element.setAttribute(IApiXmlConstants.ATTR_SEVERITY, Integer.toString(severity));
 			element.setAttribute(IApiXmlConstants.ATTR_KIND, Integer.toString(problem.getKind()));
 			element.setAttribute(IApiXmlConstants.ATTR_FLAGS, Integer.toString(problem.getFlags()));
 			element.setAttribute(IApiXmlConstants.ATTR_MESSAGE, problem.getMessage());
@@ -808,6 +841,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			apiProblems.appendChild(element);
 		}
 	}
+	
 	/**
 	 * By default, we return a warning severity.
 	 * @param problem the given problem

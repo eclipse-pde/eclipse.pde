@@ -424,5 +424,25 @@ public interface IApiXmlConstants {
 	 * XML attribute name for the total number of references or problems found
 	 * Value is: <code>total</code>
 	 */
-	public static final String ATTR_TOTAL = "total"; //$NON-NLS-1$	
+	public static final String ATTR_TOTAL = "total"; //$NON-NLS-1$
+	/**
+	 * XML attribute name for the total number of problems with severity 'warning' found
+	 * Value is: <code>warnings</code>
+	 */
+	public static final String ATTR_COUNT_WARNINGS = "warnings"; //$NON-NLS-1$
+	/**
+	 * XML attribute name for the total number of problems with severity 'error' found
+	 * Value is: <code>errors</code>
+	 */
+	public static final String ATTR_COUNT_ERRORS = "errors"; //$NON-NLS-1$
+	/**
+	 * XML attribute name for the total number of illegal references found
+	 * Value is: <code>illegal</code>
+	 */
+	public static final String ATTR_COUNT_ILLEGAL = "illegal"; //$NON-NLS-1$
+	/**
+	 * XML attribute name for the total number of internal references found
+	 * Value is: <code>internal</code>
+	 */
+	public static final String ATTR_COUNT_INTERNAL = "internal"; //$NON-NLS-1$
 }
