@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2011 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -739,10 +739,12 @@ public class P2TargetUtils {
 		((TargetDefinition) fTarget).flushCaches(P2TargetUtils.BUNDLE_POOL.toOSString());
 		// Now proactively recompute all the related container caches.
 		IBundleContainer[] containers = fTarget.getBundleContainers();
-		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
-			if (container instanceof IUBundleContainer) {
-				((IUBundleContainer) container).synchronizerChanged();
+		if (containers != null) {
+			for (int i = 0; i < containers.length; i++) {
+				IBundleContainer container = containers[i];
+				if (container instanceof IUBundleContainer) {
+					((IUBundleContainer) container).synchronizerChanged();
+				}
 			}
 		}
 	}
