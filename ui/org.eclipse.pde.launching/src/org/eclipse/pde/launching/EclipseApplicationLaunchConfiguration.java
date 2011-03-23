@@ -105,7 +105,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
 			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
-			TargetPlatform.createPlatformConfiguration(getConfigDir(configuration), (IPluginModelBase[]) fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]), brandingId != null ? (IPluginModelBase) fAllBundles.get(brandingId) : null);
 			TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
 			programArgs.add("-configuration"); //$NON-NLS-1$
 			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$

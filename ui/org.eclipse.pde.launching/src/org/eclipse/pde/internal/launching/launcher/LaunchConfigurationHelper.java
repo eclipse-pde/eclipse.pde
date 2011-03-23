@@ -87,6 +87,19 @@ public class LaunchConfigurationHelper {
 		return mgr.performStringSubstitution(text);
 	}
 
+	/**
+	 * Writes out the config.ini and other configuration files based on the bundles being launched.  This includes
+	 * writing out bundles.info if the simple configurator is being used or platform.xml if update configurator
+	 * is being used. 
+	 * 
+	 * @param configuration launch configuration
+	 * @param productID id of the product being launched, may be <code>null</code>
+	 * @param bundles map of bundle id to plug-in model, these are the bundles being launched
+	 * @param bundlesWithStartLevels map of plug-in model to a string containing start level information
+	 * @param configurationDirectory config directory where the created files will be placed
+	 * @return a properties object containing the properties written out to config.ini 
+	 * @throws CoreException
+	 */
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map bundles, Map bundlesWithStartLevels, File configurationDirectory) throws CoreException {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
@@ -126,7 +139,7 @@ public class LaunchConfigurationHelper {
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
 
-		// Special processing for launching with p2
+		// Special processing for launching with p2 (simple configurator)
 		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 
 			// If update configurator is set to its default start level, override it as simple/update configurators should not be autostarted together
@@ -172,6 +185,11 @@ public class LaunchConfigurationHelper {
 				}
 				properties.setProperty("eclipse.p2.profile", profileID); //$NON-NLS-1$
 			}
+		} else {
+			// Special processing for update manager (update configurator)
+			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
+			// Create a platform.xml
+			TargetPlatform.createPlatformConfiguration(configurationDirectory, (IPluginModelBase[]) bundles.values().toArray(new IPluginModelBase[bundles.size()]), brandingId != null ? (IPluginModelBase) bundles.get(brandingId) : null);
 		}
 
 		setBundleLocations(bundles, properties, autostart);
