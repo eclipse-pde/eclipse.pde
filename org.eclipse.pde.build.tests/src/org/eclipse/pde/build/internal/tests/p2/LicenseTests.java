@@ -440,4 +440,43 @@ public class LicenseTests extends P2TestCase {
 		}
 		source.copy(dest.getFullPath(), true, null);
 	}
+
+	public void testBug338835_MissingLicenseSection() throws Exception {
+		IFolder buildFolder = newTest("338835");
+		IFolder featureFolder = Utils.createFolder(buildFolder, "feature");
+		IFolder licenseFolder = Utils.createFolder(buildFolder, "license");
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<feature id=\"org.eclipse.ptp\" version=\"5.0.0.qualifier\"								\n");
+		buffer.append(" license-feature=\"org.eclipse.ptp.license\" license-feature-version=\"1.0.0.qualifier\">\n");
+		buffer.append("	<description url=\"http://eclipse.org/ptp\">%description</description> 					\n");
+		buffer.append("	<copyright>%copyright</copyright>  														\n");
+		buffer.append("	<url> 																					\n");
+		buffer.append("		<update label=\"%updateSiteName\" url=\"http://download.eclipse.org/updates\"/> 	\n");
+		buffer.append("	</url> 																					\n");
+		buffer.append("</feature> 																				\n");
+		Utils.writeBuffer(featureFolder.getFile("feature.xml"), buffer);
+
+		buffer.append("<feature id=\"license\" version=\"5.0.0.qualifier\" >\n");
+		buffer.append("	<license url=\"http://eclipse.org/license.html\"> 	\n");
+		buffer.append("		This is legal stuff 							\n");
+		buffer.append("	</license> 											\n");
+		buffer.append("</feature> 											\n");
+		Utils.writeBuffer(licenseFolder.getFile("feature.xml"), buffer);
+
+		buffer = new StringBuffer();
+		buffer.append("<project name=\"build\" basedir=\".\" >														\n");
+		buffer.append("	<target name=\"test\">																	 	\n");
+		buffer.append("		<eclipse.licenseReplacer featureFilePath=\"" + featureFolder.getLocation().toOSString() + "\"	\n");
+		buffer.append("			licenseFilePath=\"" + licenseFolder.getLocation().toOSString() + "\" /> 					\n");
+		buffer.append("	</target>																					\n");
+		buffer.append("</project>																					\n");
+		IFile buildXml = buildFolder.getFile("build.xml");
+		Utils.writeBuffer(buildXml, buffer);
+
+		runAntScript(buildXml.getLocation().toOSString(), new String[] {"test"}, buildFolder.getLocation().toOSString(), null);
+		BuildTimeFeature feature = new BuildTimeFeatureFactory().parseBuildFeature(featureFolder.getFile("feature.xml").getLocationURI().toURL());
+
+		assertEquals(feature.getLicense().trim(), "This is legal stuff");
+	}
 }

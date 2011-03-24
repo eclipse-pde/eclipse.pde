@@ -34,6 +34,7 @@ public class LicenseReplaceTask extends Task {
 
 	private class Feature {
 		private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
+		private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
 		private static final String LICENSE_START_TAG = "<license"; //$NON-NLS-1$;
 		private static final String LICENSE_END_TAG = "</license>"; //$NON-NLS-1$;
 		private static final String URL_ATTR = "url";//$NON-NLS-1$
@@ -45,12 +46,13 @@ public class LicenseReplaceTask extends Task {
 		private String urlText;
 		private String license;
 		private StringBuffer buffer;
-		private int startLicenseText;
-		private int endLicenseText;
-		private int startURLText;
-		private int endURLText;
-		private int startURLWord;
-		private int endURLWord;
+		private int startLicenseText = -1;
+		private int endLicenseText = -1;
+		private int startURLText = -1;
+		private int endURLText = -1;
+		private int startURLWord = -1;
+		private int endURLWord = -1;
+		private int insertionPoint = -1;
 		private boolean contentChanged;
 
 		public String getUrl() {
@@ -72,9 +74,27 @@ public class LicenseReplaceTask extends Task {
 				throw new IllegalStateException(TaskMessages.error_noCallAfterReplace);
 			}
 
-			// Replace license text
-			buffer.replace(startLicenseText, endLicenseText, licenseText);
-			contentChanged = true;
+			if (startLicenseText > 0 && endLicenseText > startLicenseText) {
+				// Replace license text
+				buffer.replace(startLicenseText, endLicenseText, licenseText);
+				contentChanged = true;
+			} else if (insertionPoint > -1) {
+				//insert new license after <feature>
+				StringBuffer newLicense = new StringBuffer();
+				newLicense.append('\n');
+				newLicense.append(LICENSE_START_TAG + " " + URL_ATTR + "="); //$NON-NLS-1$//$NON-NLS-2$
+				if (licenseURL != null)
+					newLicense.append(licenseURL);
+				newLicense.append(" >"); //$NON-NLS-1$
+				newLicense.append(licenseText);
+				newLicense.append(LICENSE_END_TAG);
+
+				buffer.insert(insertionPoint, newLicense.toString());
+				contentChanged = true;
+				return;
+			} else {
+				return;
+			}
 
 			if (startURLText == endURLText) {
 				// Replace empty payload URL
@@ -148,17 +168,14 @@ public class LicenseReplaceTask extends Task {
 				throw new BuildException(e);
 			}
 
-			//Skip feature declaration because it contains the word "plugin"
-			int startComment = scan(buffer, 0, COMMENT_START_TAG);
-			int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
-			int startLicense = scan(buffer, 0, LICENSE_START_TAG, false);
+			int startFeature = scanNoComment(buffer, 0, FEATURE_START_TAG, true);
+			if (startFeature == -1)
+				return;
 
-			while (startComment != -1 && startLicense > startComment && startLicense < endComment) {
-				startLicense = scan(buffer, endComment, LICENSE_START_TAG, true);
-				startComment = scan(buffer, endComment, COMMENT_START_TAG);
-				endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
-			}
+			int endFeature = scan(buffer, startFeature, ">"); //$NON-NLS-1$
+			insertionPoint = endFeature + 1;
 
+			int startLicense = scanNoComment(buffer, 0, LICENSE_START_TAG, false);
 			if (startLicense == -1)
 				return;
 
@@ -196,10 +213,10 @@ public class LicenseReplaceTask extends Task {
 					urlText = (buffer.substring(startURLText, endURLText + 1));
 				}
 				urlFound = true;
-				startLicenseText = scan(buffer, endURLText, ">") + 1; //$NON-NLS-1$
-				endLicenseText = scan(buffer, startLicenseText, LICENSE_END_TAG, true) - 1;
-				license = buffer.substring(startLicenseText, endLicenseText);
 			}
+			startLicenseText = scan(buffer, endURLText, ">") + 1; //$NON-NLS-1$
+			endLicenseText = scan(buffer, startLicenseText, LICENSE_END_TAG, true) - 1;
+			license = buffer.substring(startLicenseText, endLicenseText);
 		}
 
 		private StringBuffer readFile(File targetName) throws IOException {
@@ -245,6 +262,19 @@ public class LicenseReplaceTask extends Task {
 				}
 			}
 			return -1;
+		}
+
+		private int scanNoComment(StringBuffer bug, int start, String target, boolean wholeWord) {
+			int startComment = scan(buffer, start, COMMENT_START_TAG);
+			int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+			int startTarget = scan(buffer, start, target, wholeWord);
+
+			while (startComment != -1 && startTarget > startComment && startTarget < endComment) {
+				startTarget = scan(buffer, endComment, target, wholeWord);
+				startComment = scan(buffer, endComment, COMMENT_START_TAG);
+				endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+			}
+			return startTarget;
 		}
 	}
 
