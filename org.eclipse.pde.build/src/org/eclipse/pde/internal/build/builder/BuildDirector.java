@@ -86,6 +86,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 */
 	protected Set computeElements(BuildTimeFeature feature) throws CoreException {
 		Set computedElements = new LinkedHashSet(5);
+		Properties featureProperties = getBuildProperties(feature);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
 			FeatureEntry entry = pluginList[i];
@@ -95,7 +96,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 			String versionRequested = entry.getVersion();
 			model = getSite(false).getRegistry().getResolvedBundle(entry.getId(), versionRequested);
-			Properties featureProperties = getBuildProperties(feature);
 			//we prefer a newly generated source plugin over a preexisting binary one. 
 			if ((model == null || Utils.isBinary(model)) && featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + entry.getId())) {
 				boolean individual = useIndividualSource(featureProperties);
