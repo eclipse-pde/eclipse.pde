@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui;
 
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.*;
+import org.eclipse.ui.console.IConsoleConstants;
 
 public class PDEPerspective implements IPerspectiveFactory {
 
@@ -39,8 +40,13 @@ public class PDEPerspective implements IPerspectiveFactory {
 		bottom.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 
 		factory.addView(IPageLayout.ID_OUTLINE, IPageLayout.RIGHT, 0.75f, factory.getEditorArea());
+
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewProjectWizard"); //$NON-NLS-1$
+		factory.addNewWizardShortcut("org.eclipse.pde.ui.NewFeatureProjectWizard"); //$NON-NLS-1$
+
 	}
 
 }
