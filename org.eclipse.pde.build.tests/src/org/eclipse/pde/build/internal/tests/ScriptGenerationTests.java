@@ -1722,7 +1722,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		// check the excludes directive for copying files over
 		Target dot = (Target) antProject.getTargets().get("@dot");
 		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
-		Enumeration rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		Enumeration rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
 		RuntimeConfigurable configurable = (RuntimeConfigurable) rc.nextElement();
 		assertEquals(configurable.getElementTag(), "exclude");
 		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
@@ -1734,7 +1734,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		// check the includes directive for copying source files
 		Target copySource = (Target) antProject.getTargets().get("copy.src.zip");
 		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
-		rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
 		configurable = (RuntimeConfigurable) rc.nextElement();
 		assertEquals(configurable.getElementTag(), "include");
 		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
@@ -1745,7 +1745,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		// check the includes directive for zipping source files
 		Target zipSource = (Target) antProject.getTargets().get("zip.src.zip");
 		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
-		rc = (Enumeration) ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		rc = ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
 		configurable = (RuntimeConfigurable) rc.nextElement();
 		assertEquals(configurable.getElementTag(), "include");
 		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
@@ -1778,7 +1778,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		// check the excludes directive for copying files over
 		Target dot = (Target) antProject.getTargets().get("@dot");
 		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
-		Enumeration rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		Enumeration rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
 		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
 		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/package.htm*");
 		assertFalse("Should have only found 2 filter elements", rc.hasMoreElements());
@@ -1786,14 +1786,14 @@ public class ScriptGenerationTests extends PDETestCase {
 		// check the includes directive for copying source files
 		Target copySource = (Target) antProject.getTargets().get("copy.src.zip");
 		copyChild = (Copy) AntUtils.getFirstChildByName(copySource, "copy");
-		rc = (Enumeration) ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		rc = ((RuntimeConfigurable) copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
 		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
 		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
 
 		// check the includes directive for zipping source files
 		Target zipSource = (Target) antProject.getTargets().get("zip.src.zip");
 		Zip zipChild = (Zip) AntUtils.getFirstChildByName(zipSource, "zip");
-		rc = (Enumeration) ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
+		rc = ((RuntimeConfigurable) zipChild.getRuntimeConfigurableWrapper().getChildren().nextElement()).getChildren();
 		assertEquals(((RuntimeConfigurable) rc.nextElement()).getAttributeMap().get("name"), "**/*.java");
 		assertFalse("Should have only found 1 filter elements", rc.hasMoreElements());
 	}
