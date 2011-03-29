@@ -378,6 +378,28 @@ public class AntScript implements IAntScript {
 		}
 	}
 
+	public void printUnzipTask(String zipFile, String destDir, boolean overWrite, String includePatterns, String excludePatterns) {
+		printTab();
+		output.print("<unzip"); //$NON-NLS-1$
+		printAttribute("src", zipFile, true); //$NON-NLS-1$
+		printAttribute("dest", destDir, true); //$NON-NLS-1$
+		printAttribute("overwrite", Boolean.toString(overWrite), true); //$NON-NLS-1$
+		if (includePatterns == null && excludePatterns == null) {
+			output.println("/>"); //$NON-NLS-1$
+		} else {
+			output.println(">"); //$NON-NLS-1$
+			indent++;
+			printTab();
+			output.print("<patternset"); //$NON-NLS-1$
+			printAttribute("includes", includePatterns, false); //$NON-NLS-1$
+			printAttribute("excludes", excludePatterns, false); //$NON-NLS-1$
+			output.println("/>"); //$NON-NLS-1$
+			indent--;
+			printTab();
+			output.println("</unzip>"); //$NON-NLS-1$
+		}
+	}
+
 	public void printTarTask(String zipfile, String basedir, boolean filesOnly, boolean update, FileSet[] fileSets) {
 		printTab();
 		output.print("<tar"); //$NON-NLS-1$

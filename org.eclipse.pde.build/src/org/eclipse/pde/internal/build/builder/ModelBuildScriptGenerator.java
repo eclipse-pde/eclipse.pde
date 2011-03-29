@@ -1433,8 +1433,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					if (classpath.size() > 0 && classpath.get(0) instanceof ClasspathElement) {
 						for (Iterator iterator = classpath.iterator(); iterator.hasNext();) {
 							ClasspathElement element = (ClasspathElement) iterator.next();
-							if (element.getPath() != null && element.getPath().length() > 0 && element.getAccessRules().length() > 0) {
-								String path = element.getPath();
+							if (element.getPath() != null && element.getAccessRules().length() > 0) {
+								String path = null;
+								if (element.getSubPath() == null)
+									path = element.getPath();
+								else
+									path = featureGenerator.getExtractedRoot(element) + '/' + element.getSubPath();
+
 								if (path.startsWith(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) {
 									//remove leading ${build.result.folder}/
 									path = path.substring(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER).length() + 1);
@@ -1460,6 +1465,39 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	/**
+	 * Add a target to extract any nested jars we need to compile against
+	 * @param classpath
+	 * @param entry
+	 * @return a new classpath list containing the extracted locations
+	 */
+	private List generateExtractNestedJars(List classpath, CompiledEntry entry) {
+		script.printTargetDeclaration(entry.getName(false) + TARGET_NESTED_JARS, null, null, null, null);
+
+		if (classpath == null || classpath.size() == 0 || !(classpath.get(0) instanceof ClasspathElement)) {
+			script.printTargetEnd();
+			return classpath;
+		}
+
+		List extracted = new ArrayList(classpath.size());
+		for (Iterator iterator = classpath.iterator(); iterator.hasNext();) {
+			ClasspathElement element = (ClasspathElement) iterator.next();
+
+			if (element.getSubPath() == null)
+				extracted.add(element);
+			else {
+				String destPath = featureGenerator.getExtractedRoot(element);
+				String destDir = Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + "nestedJars" + '/' + destPath.toString(); //$NON-NLS-1$
+				script.printMkdirTask(destDir);
+				script.printUnzipTask(element.getPath(), destDir, false, element.getSubPath(), null);
+				extracted.add(destDir + '/' + element.getSubPath());
+			}
+		}
+		script.printTargetEnd();
+
+		return extracted;
+	}
+
+	/**
 	 * Add the "jar" target to the given Ant script using the given classpath and
 	 * jar as parameters.
 	 * 
@@ -1469,11 +1507,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateCompilationTarget(List classpath, CompiledEntry entry) {
 		script.println();
 		String name = entry.getName(false);
-		script.printTargetDeclaration(name, TARGET_INIT, null, entry.getName(true), NLS.bind(Messages.build_plugin_jar, model.getSymbolicName() + ' ' + name));
+
+		//extract nested jars and update the classpath with the new locations
+		List extractedPath = generateExtractNestedJars(classpath, entry);
+
+		String depends = TARGET_INIT + "," + name + TARGET_NESTED_JARS; //$NON-NLS-1$
+		script.printTargetDeclaration(name, depends, null, entry.getName(true), NLS.bind(Messages.build_plugin_jar, model.getSymbolicName() + ' ' + name));
 		String destdir = (entry.getType() == CompiledEntry.FOLDER) ? getJARLocation(entry.getName(true)) : getTempJARFolderLocation(entry.getName(true));
 		script.printDeleteTask(destdir, null, null);
 		script.printMkdirTask(destdir);
-		script.printPathStructure("path", name + PROPERTY_CLASSPATH, classpath); //$NON-NLS-1$
+		script.printPathStructure("path", name + PROPERTY_CLASSPATH, extractedPath); //$NON-NLS-1$
 
 		String[] sources = entry.getSource();
 		Map params = null, references = null;

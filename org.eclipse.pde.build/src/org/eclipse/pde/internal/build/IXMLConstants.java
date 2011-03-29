@@ -50,6 +50,7 @@ public interface IXMLConstants {
 	public static final String TARGET_ASSEMBLE_ARCHIVE_CONDITION = "assemble.archive.condition"; //$NON-NLS-1$
 	public static final String TARGET_CLEANUP_ASSEMBLY = "cleanup.assembly"; //$NON-NLS-1$
 	public static final String TARGET_COPY_SRC_INCLUDES = "copy.src.includes"; //$NON-NLS-1$
+	public static final String TARGET_NESTED_JARS = ".nestedJars"; //$NON-NLS-1$
 	public static final String TARGET_INIT = "init"; //$NON-NLS-1$
 	public static final String TARGET_MAIN = "main"; //$NON-NLS-1$
 	public static final String TARGET_GZIP_RESULTS = "gzipResults"; //$NON-NLS-1$

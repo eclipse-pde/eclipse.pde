@@ -25,8 +25,9 @@ import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.Filter;
 
 public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
-	public static class ClasspathElement {
+	public class ClasspathElement {
 		private final String path;
+		private final String subPath;
 		private String accessRules;
 
 		/**
@@ -35,8 +36,11 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		 * @param accessRules
 		 * @throws NullPointerException if path is null
 		 */
-		public ClasspathElement(String path, String accessRules) {
+		protected ClasspathElement(String path, String subPath, String accessRules) {
+			if (path == null)
+				throw new NullPointerException();
 			this.path = path;
+			this.subPath = subPath;
 			this.accessRules = accessRules;
 		}
 
@@ -48,8 +52,19 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			return path;
 		}
 
+		public String getSubPath() {
+			return subPath;
+		}
+
 		public String getAccessRules() {
 			return accessRules;
+		}
+
+		public String getAbsolutePath() {
+			if (new File(path).isAbsolute())
+				return path;
+
+			return modelLocation + '/' + path;
 		}
 
 		public void addRules(String newRule) {
@@ -70,19 +85,26 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		public boolean equals(Object obj) {
 			if (obj instanceof ClasspathElement) {
 				ClasspathElement element = (ClasspathElement) obj;
-				return (path != null && path.equals(element.getPath()));
+				if (!path.equals(element.getPath()))
+					return false;
+				if (subPath != null && subPath.equals(element.getSubPath()))
+					return false;
+				return true;
 			}
 			return false;
 		}
 
 		public int hashCode() {
-			return path.hashCode();
+			int result = path.hashCode();
+			return 13 * result + ((subPath == null) ? 0 : subPath.hashCode());
 		}
 
-		public static String normalize(String path) {
-			//always use '/' as a path separator to help with comparing paths in equals
-			return path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+	}
+	private static String normalize(String path) {
+		if (path == null)
+			return null;
+		//always use '/' as a path separator to help with comparing paths in equals
+		return path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static final String EXCLUDE_ALL_RULE = "?**/*"; //$NON-NLS-1$
@@ -92,6 +114,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private Map pathElements = null;
 	private boolean allowBinaryCycles = false;
 	private Set requiredIds = null;
+	protected String modelLocation = null;
 
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
@@ -109,7 +132,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	public List getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
 		List classpath = new ArrayList(20);
 		List pluginChain = new ArrayList(10); //The list of plugins added to detect cycle
-		String location = generator.getLocation(model);
+		modelLocation = generator.getLocation(model);
 		Set addedPlugins = new HashSet(10); //The set of all the plugins already added to the classpath (this allows for optimization)
 		pathElements = new HashMap();
 		visiblePackages = getVisiblePackages(model);
@@ -117,10 +140,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		allowBinaryCycles = AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
 
 		//PREREQUISITE
-		addPrerequisites(model, classpath, location, pluginChain, addedPlugins);
+		addPrerequisites(model, classpath, modelLocation, pluginChain, addedPlugins);
 
 		//SELF
-		addSelf(model, jar, classpath, location, pluginChain, addedPlugins);
+		addSelf(model, jar, classpath, modelLocation, pluginChain, addedPlugins);
 
 		recordRequiredIds(model);
 
@@ -327,14 +350,16 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 
 		String path = null;
-		if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
+		String subPath = null;
+		Path libraryPath = new Path(libraryName);
+		if (libraryPath.isAbsolute()) {
+			path = libraryPath.toOSString();
+		} else if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
+			if ("jar".equalsIgnoreCase(libraryPath.getFileExtension())) //$NON-NLS-1$
+				subPath = libraryPath.toOSString();
 			path = basePath.toOSString();
 		} else {
-			Path libraryPath = new Path(libraryName);
-			if (libraryPath.isAbsolute())
-				path = libraryPath.toOSString();
-			else
-				path = basePath.append(libraryPath).toOSString();
+			path = basePath.append(libraryPath).toOSString();
 		}
 		path = ModelBuildScriptGenerator.replaceVariables(path, pluginKey == null ? false : generator.getCompiledElements().contains(pluginKey));
 		String secondaryPath = null;
@@ -345,21 +370,24 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		}
 
-		addClasspathElementWithRule(classpath, path, rules);
+		addClasspathElementWithRule(classpath, path, subPath, rules);
 		if (secondaryPath != null) {
-			addClasspathElementWithRule(classpath, secondaryPath, rules);
+			addClasspathElementWithRule(classpath, secondaryPath, null, rules);
 		}
 	}
 
-	private void addClasspathElementWithRule(List classpath, String path, String rules) {
-		String normalizedPath = ClasspathElement.normalize(path);
-		ClasspathElement existing = (ClasspathElement) pathElements.get(normalizedPath);
+	private void addClasspathElementWithRule(List classpath, String path, String subPath, String rules) {
+		path = normalize(path);
+		subPath = normalize(subPath);
+		
+		String elementsKey = subPath != null ? path + '/' + subPath : path;
+		ClasspathElement existing = (ClasspathElement) pathElements.get(elementsKey);
 		if (existing != null) {
 			existing.addRules(rules);
 		} else {
-			ClasspathElement element = new ClasspathElement(normalizedPath, rules);
+			ClasspathElement element = new ClasspathElement(path, subPath, rules);
 			classpath.add(element);
-			pathElements.put(normalizedPath, element);
+			pathElements.put(elementsKey, element);
 		}
 	}
 
@@ -424,9 +452,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			for (int i = 0; i < extra.length; i++) {
 				//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 				//the user will get $basexx instead of $ws 
-				String toAdd = computeExtraPath(extra[i], classpath, location);
-				if (toAdd != null)
-					addPathAndCheck(null, new Path(toAdd), "", modelProperties, classpath); //$NON-NLS-1$
+				String[] toAdd = computeExtraPath(extra[i], classpath, location);
+				if (toAdd != null && toAdd.length == 2)
+					addPathAndCheck(null, new Path(toAdd[0]), toAdd[1], modelProperties, classpath);
 			}
 		}
 
@@ -435,9 +463,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 
-			String toAdd = computeExtraPath(jarSpecificExtraClasspath[i], classpath, location);
-			if (toAdd != null)
-				addPathAndCheck(null, new Path(toAdd), "", modelProperties, classpath); //$NON-NLS-1$
+			String[] toAdd = computeExtraPath(jarSpecificExtraClasspath[i], classpath, location);
+			if (toAdd != null && toAdd.length == 2)
+				addPathAndCheck(null, new Path(toAdd[0]), toAdd[1], modelProperties, classpath);
 		}
 	}
 
@@ -448,14 +476,14 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @return String the relative path 
 	 * @throws CoreException
 	 */
-	private String computeExtraPath(String url, List classpath, String location) throws CoreException {
+	private String[] computeExtraPath(String url, List classpath, String location) throws CoreException {
 		String relativePath = null;
 
 		String[] urlfragments = Utils.getArrayFromString(url, "/"); //$NON-NLS-1$
 
 		// A valid platform url for a plugin has a leat 3 segments.
 		if (urlfragments.length > 2 && urlfragments[0].equals(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR)) {
-			String modelLocation = null;
+			String bundleLocation = null;
 			BundleDescription bundle = null;
 			if (urlfragments[1].equalsIgnoreCase(PLUGIN) || urlfragments[1].equalsIgnoreCase(FRAGMENT)) {
 				bundle = generator.getSite(false).getRegistry().getResolvedBundle(urlfragments[2]);
@@ -472,12 +500,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					return null;
 				}
 
-				modelLocation = generator.getLocation(bundle);
-				if (modelLocation != null) {
-					for (int i = 3; i < urlfragments.length; i++) {
-						modelLocation += '/' + urlfragments[i];
+				bundleLocation = generator.getLocation(bundle);
+				if (bundleLocation != null) {
+					String entry = urlfragments[3];
+					for (int i = 4; i < urlfragments.length; i++) {
+						entry += '/' + urlfragments[i];
 					}
-					return Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
+					return new String[] {Utils.makeRelative(new Path(bundleLocation), new Path(location)).toOSString(), entry};
 				}
 			} else if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
 				String message = NLS.bind(Messages.exception_url, generator.getModel().getSymbolicName() + '/' + generator.getPropertiesFileName() + ": " + url); //$NON-NLS-1$
@@ -500,7 +529,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			//		String message = Policy.bind("exception.url", PROPERTIES_FILE + "::"+url); //$NON-NLS-1$  //$NON-NLS-2$
 			//		throw new CoreException(new Status(IStatus.ERROR,PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, message,e));
 		}
-		return relativePath;
+		return new String[] {relativePath, ""}; //$NON-NLS-1$
 	}
 
 	//Add the prerequisite of a given plugin (target)

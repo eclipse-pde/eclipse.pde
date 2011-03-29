@@ -2153,4 +2153,86 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 	}
+
+	public void testBug157375_NestedJars() throws Exception {
+		IFolder root = newTest("157375");
+		IFolder buildFolder = Utils.createFolder(root, "first");
+
+		IFolder host = Utils.createFolder(buildFolder, "plugins/Host");
+		Attributes additional = new Attributes();
+		additional.put(new Attributes.Name("Bundle-Classpath"), "a.jar, c.jar");
+		Utils.generateBundleManifest(host, "Host", "1.0.0", additional);
+		Properties properties = new Properties();
+		properties.put("source.a.jar", "src_a");
+		properties.put("source.b.jar", "src_b");
+		properties.put("bin.includes", "META-INF/, a.jar, b.jar");
+		Utils.storeBuildProperties(host, properties);
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("package a;				\n");
+		buffer.append("public class A { }		\n");
+		Utils.writeBuffer(host.getFile("src_a/a/A.java"), buffer);
+
+		buffer = new StringBuffer();
+		buffer.append("package b;			\n");
+		buffer.append("public class B { } 	\n");
+		Utils.writeBuffer(host.getFile("src_b/b/B.java"), buffer);
+
+		IFolder fragment = Utils.createFolder(buildFolder, "plugins/fragment");
+		additional = new Attributes();
+		additional.put(new Attributes.Name("Fragment-Host"), "Host");
+		Utils.generateBundleManifest(fragment, "fragment", "1.0.0", additional);
+		properties = new Properties();
+		properties.put("source.c.jar", "src_c");
+		properties.put("bin.includes", "META-INF/, c.jar");
+		Utils.storeBuildProperties(fragment, properties);
+
+		buffer = new StringBuffer();
+		buffer.append("package c;			\n");
+		buffer.append("public class C { } 	\n");
+		Utils.writeBuffer(fragment.getFile("src_c/c/C.java"), buffer);
+
+		Utils.generateFeature(buildFolder, "F", null, new String[] {"Host", "fragment"});
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("topLevelElementId", "F");
+		properties.put("p2.gathering", "true");
+		properties.put("baseLocation", "");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runBuild(buildFolder);
+
+		IFolder second = Utils.createFolder(root, "second");
+		IFolder plugins = Utils.createFolder(second, "target/plugins");
+		buildFolder.getFile("buildRepo/plugins/fragment_1.0.0.jar").getLocation().toFile().renameTo(plugins.getFile("Host_1.0.0.jar").getLocation().toFile());
+
+		Utils.generateFeature(second, "F", null, new String[] {"D"});
+
+		IFolder d = Utils.createFolder(second, "plugins/d");
+		additional = new Attributes();
+		additional.put(new Attributes.Name("Require-Bundle"), "Host");
+		Utils.generateBundleManifest(d, "D", "1.0.0", additional);
+		properties = new Properties();
+		properties.put("jars.extra.classpath", "platform:/plugin/Host/b.jar");
+		Utils.generatePluginBuildProperties(d, properties);
+
+		buffer = new StringBuffer();
+		buffer.append("package d;					\n");
+		buffer.append("import a.A;					\n");
+		buffer.append("import b.B;					\n");
+		buffer.append("import c.C;					\n");
+		buffer.append("public class D { 			\n");
+		buffer.append("  public A a = new A();		\n");
+		buffer.append("  public B b = new B();		\n");
+		buffer.append("  public C c = new C();		\n");
+		buffer.append("}							\n");
+		Utils.writeBuffer(d.getFile("src/d/D.java"), buffer);
+
+		properties = BuildConfiguration.getBuilderProperties(second);
+		properties.put("topLevelElementId", "F");
+		properties.put("pluginPath", buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		properties.put("baseLocation", second.getFolder("target").getLocation().toOSString());
+		Utils.storeBuildProperties(second, properties);
+		runBuild(second);
+	}
 }

@@ -89,7 +89,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	// the default id is a generic feature name as uber source features have no inherent 
 	// semantics or scope.
 	private String sourceBundleTemplateFeature = "org.eclipse.pde.build.uber.feature"; //$NON-NLS-1$
-	private String sourceBundleFeatureId = null;  //default is sourceBundleTemplateFeature + ".source"
+	private String sourceBundleFeatureId = null; //default is sourceBundleTemplateFeature + ".source"
 
 	// the default version is simply time-based as uber source features have no inherent 
 	// semantics or scope.
@@ -164,7 +164,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				String[] modelInfo = getNameAndVersion((String) iterator.next());
 				generator.setBuildSiteFactory(siteFactory);
 				generator.setModelId(modelInfo[0], modelInfo[1]);
-
+				generator.setFeatureGenerator(new BuildDirector());
 				generator.setPluginPath(pluginPath);
 				generator.setDevEntries(devEntries);
 				generator.setCompiledElements(generator.getCompiledElements());
@@ -181,7 +181,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					//Filtering is not required here, since we are only generating the build for a plugin or a fragment
 					generator.setBuildSiteFactory(siteFactory);
 					generator.setModel(bundlesToBuild[i]);
-
+					generator.setFeatureGenerator(new BuildDirector());
 					generator.setPluginPath(pluginPath);
 					generator.setDevEntries(devEntries);
 					generator.setCompiledElements(generator.getCompiledElements());
