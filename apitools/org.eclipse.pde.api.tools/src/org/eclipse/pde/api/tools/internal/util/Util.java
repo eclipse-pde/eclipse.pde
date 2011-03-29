@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2341,5 +2341,22 @@ public final class Util {
 	public static boolean isAPI(int visibility, IApiType typeDescriptor) {
 		int access = typeDescriptor.getModifiers();
 		return VisibilityModifiers.isAPI(visibility) && (Flags.isPublic(access) || Flags.isProtected(access));
+	}
+	
+	/**
+	 * Simple method to walk an array and call <code>toString()</code> on each of the entries. Does not descend into sub-collections.
+	 * @param array the array
+	 * @return the comma-separated string representation of the the array
+	 * @since 1.0.3
+	 */
+	public static String deepToString(Object[] array) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < array.length; i++) {
+			buffer.append(array[i].toString());
+			if(i < array.length-1) {
+				buffer.append(',');
+			}
+		}
+		return buffer.toString();
 	}
 }

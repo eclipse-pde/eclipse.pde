@@ -11,13 +11,19 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.jar.JarFile;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,6 +51,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
@@ -56,8 +63,12 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.osgi.framework.Constants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -80,12 +91,41 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Project relative path to the build.properties file
 	 */
-	static final IPath BUILD_PROPERTIES_PATH = new Path("build.properties"); //$NON-NLS-1$
+	public static final IPath BUILD_PROPERTIES_PATH = new Path("build.properties"); //$NON-NLS-1$
 
 	/**
 	 * Project relative path to the manifest file.
 	 */
-	static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
+	public static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
+	
+	/**
+	 * {@link Comparator} to sort {@link ManifestElement}s
+	 * @since 1.0.3
+	 */
+	static final Comparator fgManifestElementComparator = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			if(o1 instanceof ManifestElement && o2 instanceof ManifestElement) {
+				return ((ManifestElement)o1).getValue().compareTo(((ManifestElement)o2).getValue());
+			}
+			return 0;
+		}
+	};
+	
+	/**
+	 * Array of header names that we care about when a manifest delta is discovered
+	 * @since 1.0.3
+	 */
+	public static final HashSet IMPORTANT_HEADERS = new HashSet(7);
+	
+	static {
+		IMPORTANT_HEADERS.add(Constants.SYSTEM_BUNDLE_SYMBOLICNAME);
+		IMPORTANT_HEADERS.add(Constants.BUNDLE_VERSION);
+		IMPORTANT_HEADERS.add(Constants.REQUIRE_BUNDLE);
+		IMPORTANT_HEADERS.add(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		IMPORTANT_HEADERS.add(Constants.EXPORT_PACKAGE);
+		IMPORTANT_HEADERS.add(Constants.IMPORT_PACKAGE);
+		IMPORTANT_HEADERS.add(Constants.BUNDLE_CLASSPATH);
+	}
 	
 	/**
 	 * Project relative path to the .api_filters file
@@ -150,7 +190,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Cleans up api use scan breakage related markers on the specified resource
+	 * Cleans up API use scan breakage related markers on the specified resource
 	 * @param resource
 	 */
 	void cleanApiUseScanMarkers(IResource resource) {
@@ -309,17 +349,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							buildAll(baseline, wbaseline, localMonitor.newChild(1));
 						}
 						else {	
-							IResourceDelta manifest = null;
-							IResourceDelta buildProperties = null;
 							IResourceDelta filters = null;
-							boolean filterbuild = false;
+							boolean full = false;
 							for (int i = 0; i < deltas.length; i++) {
-								manifest = deltas[i].findMember(MANIFEST_PATH);
-								if(manifest != null) {
-									break;
-								}
-								buildProperties = deltas[i].findMember(BUILD_PROPERTIES_PATH);
-								if(buildProperties != null) {
+								full = shouldFullBuild(deltas[i]);
+								if(full) {
 									break;
 								}
 								filters = deltas[i].findMember(FILTER_PATH);
@@ -327,20 +361,20 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 									switch(filters.getKind()) {
 										case IResourceDelta.ADDED:
 										case IResourceDelta.REMOVED: {
-											filterbuild = true;
+											full = true;
 											break;
 										}
 										case IResourceDelta.CHANGED: {
-											filterbuild = (filters.getFlags() & IResourceDelta.REPLACED) > 0;
+											full = (filters.getFlags() & IResourceDelta.REPLACED) > 0;
 											break;
 										}
 									}
-									if(filterbuild) {
+									if(full) {
 										break;
 									}
 								}
 							}
-							if (manifest != null || buildProperties != null || filterbuild) {
+							if (full) {
 								if (DEBUG) {
 									System.out.println("Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
 		 						}
@@ -399,6 +433,27 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						}
 					}
 					this.buildstate.setBuildPathCRC(BuildState.computeBuildPathCRC(this.currentproject));
+					IFile manifest = (IFile) currentproject.findMember(MANIFEST_PATH);
+					if(manifest != null && manifest.exists()) {
+						try {
+							this.buildstate.setManifestState(ManifestElement.parseBundleManifest(manifest.getContents(), null));
+						}
+						catch (Exception e) {
+							ApiPlugin.log(e);
+						}
+					}
+					IPluginModelBase base = PluginRegistry.findModel(currentproject);
+					if(base != null) {
+						try {
+							IBuildModel model = PluginRegistry.createBuildModel(base);
+							if(model != null) {
+								this.buildstate.setBuildPropertiesState(model);
+							}
+						}
+						catch(CoreException ce) {
+							ApiPlugin.log(ce);
+						}
+					}
 					BuildState.saveBuiltState(this.currentproject, this.buildstate);
 					this.buildstate = null;
 					Util.updateMonitor(monitor, 0);
@@ -419,6 +474,149 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			System.out.println("Finished build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return projects;
+	}
+	
+	/**
+	 * Returns if the backing project should be fully built, based on the delta
+	 * 
+	 * @param delta the {@link IResourceDelta} to examine
+	 * @return <code>true</code> if the project should have a full build, <code>false</code> otherwise
+	 * @since 1.0.3
+	 */
+	boolean shouldFullBuild(IResourceDelta delta) {
+		switch(delta.getKind()) {
+			case IResourceDelta.CHANGED: {
+				IResourceDelta subdelta = delta.findMember(MANIFEST_PATH);
+				if(subdelta != null) {
+					IFile file = (IFile) subdelta.getResource();
+					return file.getProject().equals(currentproject) && compareManifest(file, buildstate);
+				}
+				subdelta = delta.findMember(BUILD_PROPERTIES_PATH);
+				if(subdelta != null) {
+					IFile file = (IFile) subdelta.getResource();
+					return file.getProject().equals(currentproject) && compareBuildProperties(buildstate);
+				}
+				break;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Compares the current <code>MANIFEST.MF</code> against the saved state. If the {@link BuildState} is <code>null</code>
+	 * or there is no saved state for the current project context a full build is assumed.
+	 * 
+	 * @param manifest the handle to the <code>MANIFEST.MF</code> file
+	 * @param state the current {@link BuildState} or <code>null</code>
+	 * @return <code>true</code> if there are changes that require a full build, <code>false</code> otherwise
+	 * @since 1.0.3
+	 */
+	boolean compareManifest(IFile manifest, BuildState state) {
+		if(state != null) {
+			try {
+				Map stateheaders = state.getManifestState();
+				if(stateheaders != null) {
+					Map headers = ManifestElement.parseBundleManifest(manifest.getContents(), null);
+					Entry entry = null;
+					for (Iterator i = stateheaders.entrySet().iterator(); i.hasNext();) {
+						entry = (Entry) i.next();
+						String key = (String) entry.getKey();
+						String value = (String) headers.get(key);
+						ManifestElement[] e1 = ManifestElement.parseHeader(key, value);
+						ManifestElement[] e2 = ManifestElement.parseHeader(key, (String) entry.getValue());
+						if(e1 != null && e2!= null && e1.length == e2.length) {
+							Arrays.sort(e1, fgManifestElementComparator);
+							Arrays.sort(e2, fgManifestElementComparator);
+							for (int j = 0; j < e1.length; j++) {
+								String[] v1 = e1[j].getValueComponents();
+								String[] v2 = e2[j].getValueComponents();
+								//compare value bits
+								if(v1.length == v2.length) {
+									Arrays.sort(v1);
+									Arrays.sort(v2);
+									for (int k = 0; k < v2.length; k++) {
+										if(!v1[k].equals(v2[k])) {
+											return true;
+										}
+									}
+								}
+								else {
+									return true;
+								}
+								//compare directives
+								Enumeration e = e1[j].getDirectiveKeys();
+								if(e != null) {
+									while (e.hasMoreElements()) {
+										String key2 = (String) e.nextElement();
+										if(!Util.equalsOrNull(e1[j].getDirective(key2), e2[j].getDirective(key2))) {
+											return true;
+										}
+									}
+								}
+								//compare attributes
+								e = e1[j].getKeys();
+								if(e != null) {
+									while (e.hasMoreElements()) {
+										String key2 = (String) e.nextElement();
+										if(!Util.equalsOrNull(e1[j].getAttribute(key2), e2[j].getAttribute(key2))) {
+											return true;
+										}
+									}
+								}
+							}
+						}
+						else {
+							return true;
+						}
+					}
+					return false;
+				}
+			}
+			catch(Exception e) {
+				ApiPlugin.log(e);
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Compares the current <code>build.properties</code> against the saved one. If the given {@link BuildState} is <code>null</code>
+	 * or there is no saved state for the current project context a full build is assumed.
+	 * 
+	 * @param state the current {@link BuildState} or <code>null</code> 
+	 * @return <code>true</code> if there are changes that require a full build, <code>false</code> otherwise
+	 * @since 1.0.3
+	 */
+	boolean compareBuildProperties(BuildState state) {
+		if(state != null) {
+			Map map = state.getBuildPropertiesState();
+			if(map != null) {
+				IPluginModelBase base = PluginRegistry.findModel(currentproject);
+				if(base != null) {
+					try {
+						IBuildModel model = PluginRegistry.createBuildModel(base);
+						if(model != null) {
+							IBuild ibuild = model.getBuild();
+							Entry entry;
+							for (Iterator i = map.keySet().iterator(); i.hasNext();) {
+								entry = (Entry) i.next();
+								IBuildEntry be = ibuild.getEntry((String) entry.getKey());
+								if(be != null && !entry.getValue().equals(Util.deepToString(be.getTokens()))) {
+									return true;
+								}
+							}
+						}
+					}
+					catch(CoreException ce) {
+						ApiPlugin.log(ce);
+						return false;
+					}
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 	
 	/**

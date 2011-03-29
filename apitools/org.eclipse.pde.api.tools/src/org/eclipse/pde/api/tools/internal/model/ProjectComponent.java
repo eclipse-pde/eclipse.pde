@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,18 @@ import org.osgi.framework.BundleException;
  */
 public class ProjectComponent extends BundleComponent {
 	
+	/**
+	 * Constant used to describe the custom build.properties entry
+	 * @since 1.0.3
+	 */
+	public static final String ENTRY_CUSTOM = "custom"; //$NON-NLS-1$
+
+	/**
+	 * Constant used to describe build.properties that start with <code>extra.</code>
+	 * @since 1.0.3
+	 */
+	public static final String EXTRA_PREFIX = "extra."; //$NON-NLS-1$
+
 	/**
 	 * Constant used for controlling tracing in the plug-in workspace component
 	 */
@@ -215,7 +227,7 @@ public class ProjectComponent extends BundleComponent {
 				IBuildModel buildModel = PluginRegistry.createBuildModel(model);
 				if (buildModel != null) {
 					IBuild build = buildModel.getBuild();
-					IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
+					IBuildEntry entry = build.getEntry(ENTRY_CUSTOM); 
 					if (entry != null) {
 						String[] tokens = entry.getTokens();
 						if (tokens.length == 1 && tokens[0].equals("true")) { //$NON-NLS-1$
@@ -268,8 +280,8 @@ public class ProjectComponent extends BundleComponent {
 							String name = buildEntry.getName();
 							if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
 								retrieveContainers(name, IBuildEntry.JAR_PREFIX, buildEntry);
-							} else if (name.startsWith("extra.")) { //$NON-NLS-1$
-								retrieveContainers(name, "extra.", buildEntry); //$NON-NLS-1$
+							} else if (name.startsWith(EXTRA_PREFIX)) { 
+								retrieveContainers(name, EXTRA_PREFIX, buildEntry); 
 							}
 						}
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.CRC32;
 
@@ -40,10 +41,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
+import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 
 /**
  * The API tools build state
@@ -57,6 +61,16 @@ public class BuildState {
 	
 	private Map compatibleChanges;
 	private Map breakingChanges;
+	/**
+	 * Map of the last saved state of the manifest file
+	 * @since 1.0.3
+	 */
+	private Map manifestChanges;
+	/**
+	 * Map of the last saved state of the build.properties file
+	 * @since 1.0.3
+	 */
+	private Map buildPropChanges;
 	private String[] reexportedComponents;
 	private Set apiToolingDependentProjects;
 	private long buildpathCRC = -1L;
@@ -67,6 +81,8 @@ public class BuildState {
 	BuildState() {
 		this.compatibleChanges = new HashMap();
 		this.breakingChanges = new HashMap();
+		this.manifestChanges = new HashMap();
+		this.buildPropChanges = new HashMap();
 	}
 	
 	/**
@@ -92,26 +108,50 @@ public class BuildState {
 			// continue to read
 			BuildState state = new BuildState();
 			state.buildpathCRC = in.readLong();
-			int numberOfCompatibleDeltas = in.readInt();
+			int count = in.readInt();
 			// read all compatible deltas
-			for (int i = 0; i < numberOfCompatibleDeltas; i++) {
+			for (int i = 0; i < count; i++) {
 				state.addCompatibleChange(readDelta(in));
 			}
-			int numberOfBreakingDeltas = in.readInt();
+			count = in.readInt();
 			// read all breaking deltas
-			for (int i = 0; i < numberOfBreakingDeltas; i++) {
+			for (int i = 0; i < count; i++) {
 				state.addBreakingChange(readDelta(in));
 			}
-			int numberOfReexportedComponents = in.readInt();
-			// read all reexported component names
-			String[] components = new String[numberOfReexportedComponents];
-			for (int i = 0; i < numberOfReexportedComponents; i++) {
+			count = in.readInt();
+			// read all re-exported component names
+			String[] components = new String[count];
+			for (int i = 0; i < count; i++) {
 				components[i] = in.readUTF();
 			}
 			state.reexportedComponents = components;
-			int numberOfApiToolingDependents = in.readInt();
-			for (int i = 0; i < numberOfApiToolingDependents; i++) {
+			count = in.readInt();
+			for (int i = 0; i < count; i++) {
 				state.addApiToolingDependentProject(in.readUTF());
+			}
+			if(in.available() > 0) {
+				count = in.readInt();
+				if(count > 0) {
+					//read the saved headers
+					HashMap map = new HashMap(count);
+					for(int i = 0; i < count; i++) {
+						String key = in.readUTF();
+						String value = in.readUTF();
+						map.put(key, value);
+					}
+					state.setManifestState(map);
+				}
+				count = in.readInt();
+				if(count > 0) {
+					//read the saved headers
+					HashMap map = new HashMap(count);
+					for(int i = 0; i < count; i++) {
+						String key = in.readUTF();
+						String value = in.readUTF();
+						map.put(key, value);
+					}
+					state.setBuildPropertiesState(map);
+				}
 			}
 			return state;
 		}
@@ -153,6 +193,22 @@ public class BuildState {
 		out.writeInt(length);
 		for (Iterator iterator = apiToolingDependentsProjects.iterator(); iterator.hasNext(); ) {
 			out.writeUTF((String) iterator.next());
+		}
+		Map map = state.getManifestState();
+		out.writeInt(map.size());
+		Entry entry = null;
+		for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
+			entry = (Entry) i.next();
+			out.writeUTF((String) entry.getKey());
+			out.writeUTF((String) entry.getValue());
+		}
+		map = state.getBuildPropertiesState();
+		out.writeInt(map.size());
+		entry = null;
+		for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
+			entry = (Entry) i.next();
+			out.writeUTF((String) entry.getKey());
+			out.writeUTF((String) entry.getValue());
 		}
 	}
 	
@@ -346,6 +402,100 @@ public class BuildState {
 	 */
 	public Set getApiToolingDependentProjects() {
 		return this.apiToolingDependentProjects == null ? Collections.EMPTY_SET : this.apiToolingDependentProjects;
+	}
+	
+	/**
+	 * Allows the last built state of the manifest to be saved. This method will perform compaction of the manifest,
+	 * removing headers that we not need to care about.
+	 * 
+	 * @param state the last built state of the manifest
+	 * @since 1.0.3
+	 */
+	public void setManifestState(Map state) {
+		if(state != null) {
+			Map compact = new HashMap(7);
+			for (Iterator i = ApiAnalysisBuilder.IMPORTANT_HEADERS.iterator(); i.hasNext();) {
+				String key = (String) i.next();
+				Object val = state.get(key);
+				if(val != null) {
+					compact.put(key, val);
+				}
+			}
+			this.manifestChanges = compact;
+		}
+		else {
+			this.manifestChanges.clear();
+		}
+	}
+	
+	/**
+	 * Returns the last saved state of the manifest or an empty {@link Map}, never <code>null</code>
+	 * 
+	 * @return the last built state of the manifest or an empty {@link Map}, never <code>null</code>
+	 * @since 1.0.3
+	 */
+	public Map getManifestState() {
+		return this.manifestChanges;
+	}
+	
+	/**
+	 * Allows the last built state of the build.properties file to be saved. This method will only save 
+	 * entries that we care about, not an entire build.properties file snap-shot.
+	 * <br><br>
+	 * The retained entries are:
+	 * <ul>
+	 * <li>names that match: <code>custom</code></li>
+	 * <li>names that start with: {@link IBuildEntry#JAR_PREFIX}</li>
+	 * <li>names that start with: <code>extra.</code></li>
+	 * </ul>
+	 * 
+	 * @param model the {@link IBuildModel} to save
+	 * @since 1.0.3
+	 */
+	public void setBuildPropertiesState(IBuildModel model) {
+		if(model != null) {
+			IBuildEntry[] entries = model.getBuild().getBuildEntries();
+			String name = null;
+			for (int i = 0; i < entries.length; i++) {
+				name = entries[i].getName();
+				if(ProjectComponent.ENTRY_CUSTOM.equals(name)) {
+					this.buildPropChanges.put(ProjectComponent.ENTRY_CUSTOM, Util.deepToString(entries[i].getTokens()));
+				}
+				else if(name.startsWith(IBuildEntry.JAR_PREFIX)) {
+					this.buildPropChanges.put(name, Util.deepToString(entries[i].getTokens()));
+				}
+				else if(name.startsWith(ProjectComponent.EXTRA_PREFIX)) {
+					this.buildPropChanges.put(name, Util.deepToString(entries[i].getTokens()));
+				}
+			}
+		}
+		else {
+			this.buildPropChanges.clear();
+		}
+	}
+	
+	/**
+	 * Allows the map to be reset to the given map, passing in <code>null</code> clears the current mapping.
+	 * @param map the map to set
+	 * @since 1.0.3
+	 */
+	void setBuildPropertiesState(Map map) {
+		if(map != null) {
+			this.buildPropChanges = map;
+		}
+		else {
+			this.buildPropChanges.clear();
+		}
+	}
+	
+	/**
+	 * Returns the last built state of the build.properties file or an empty {@link Map}, never <code>null</code>
+	 * 
+	 * @return the last built state of the build.properties file or an empty {@link Map}, never <code>null</code>
+	 * @since 1.0.3
+	 */
+	public Map getBuildPropertiesState() {
+		return this.buildPropChanges;
 	}
 	
 	/**
