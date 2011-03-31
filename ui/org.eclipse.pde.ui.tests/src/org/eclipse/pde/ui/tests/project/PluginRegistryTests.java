@@ -145,7 +145,8 @@ public class PluginRegistryTests extends TestCase {
 	}
 	
 	public void testMutliMatches() {
-		IPluginModelBase[] models = PluginRegistry.findModels("org.junit", new VersionRange("[3.8.2,4.8.2]"), null);
+		// Expected Junit versions are 3.8.x and 4.8.x
+		IPluginModelBase[] models = PluginRegistry.findModels("org.junit", new VersionRange("[3.8.2,5.0.0)"), null);
 		assertNotNull(models);
 		assertEquals(2, models.length);
 		assertEquals("org.junit", models[0].getPluginBase().getId());
