@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui;
 
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.ui.*;
-import org.eclipse.ui.console.IConsoleConstants;
 
 public class PDEPerspective implements IPerspectiveFactory {
 
@@ -40,7 +39,6 @@ public class PDEPerspective implements IPerspectiveFactory {
 		bottom.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
-		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 
 		factory.addView(IPageLayout.ID_OUTLINE, IPageLayout.RIGHT, 0.75f, factory.getEditorArea());
 
