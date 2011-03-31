@@ -15,10 +15,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.publisher.eclipse.Feature;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.compatibility.*;
+import org.eclipse.pde.internal.build.site.compatibility.FeatureReference;
 import org.osgi.framework.Filter;
 import org.osgi.framework.Version;
 

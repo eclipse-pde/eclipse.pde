@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
@@ -23,7 +24,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeSite;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
@@ -398,34 +398,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		copy(source, destination);
 	}
 
-	/**
-	 * Transfers all available bytes from the given input stream to the given output stream. 
-	 * Regardless of failure, this method closes both streams.
-	 * @throws IOException 
-	 */
-	static public void copy(File source, File destination) throws IOException {
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			in = new BufferedInputStream(new FileInputStream(source));
-			out = new BufferedOutputStream(new FileOutputStream(destination));
-			final byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				bytesRead = in.read(buffer);
-				if (bytesRead == -1)
-					break;
-				out.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-			} finally {
-				if (out != null)
-					out.close();
-			}
-		}
+	public static void copy(File source, File destination) throws IOException {
+		org.eclipse.pde.internal.publishing.Utils.copy(source, destination);
 	}
 
 	public static void writeBuffer(StringBuffer buffer, File outputFile) throws IOException {
@@ -1015,31 +989,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static boolean guessUnpack(BundleDescription bundle, String[] classpath) {
-		if (bundle == null)
-			return true;
-
-		Dictionary properties = (Dictionary) bundle.getUserObject();
-		String shape = null;
-		if (properties != null && (shape = (String) properties.get(ECLIPSE_BUNDLE_SHAPE)) != null) {
-			return shape.equals("dir"); //$NON-NLS-1$
-		}
-
-		// launcher fragments are a special case, they have no bundle-classpath and they must
-		//be unpacked
-		if (bundle.getHost() != null && bundle.getName().startsWith(BUNDLE_EQUINOX_LAUNCHER))
-			return true;
-
-		if (new File(bundle.getLocation()).isFile())
-			return false;
-
-		if (classpath.length == 0)
-			return false;
-
-		for (int i = 0; i < classpath.length; i++) {
-			if (classpath[i].equals(".")) //$NON-NLS-1$
-				return false;
-		}
-		return true;
+		return org.eclipse.pde.internal.publishing.Utils.guessUnpack(bundle, classpath);
 	}
 
 	public static Version extract3Segments(String s) {

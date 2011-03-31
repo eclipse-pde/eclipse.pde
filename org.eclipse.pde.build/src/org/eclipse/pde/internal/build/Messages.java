@@ -95,9 +95,6 @@ public class Messages extends NLS {
 	public static String unsatisfied_host;
 	public static String unsatisfied_nativeSpec;
 
-	public static String feature_parse_invalidIdOrVersion;
-	public static String feature_parse_emptyRequires;
-
 	public static String fetching_p2Repo;
 	public static String includedFromFeature;
 

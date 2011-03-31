@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import org.eclipse.pde.internal.publishing.Constants;
+
 /**
  * Generic constants for this plug-in classes.
  */
@@ -101,7 +103,7 @@ public interface IPDEBuildConstants {
 	public final static int EXCEPTION_CLASSPATH_CYCLE = 14;
 	public final static int EXCEPTION_STATE_PROBLEM = 15;
 	public final static int EXCEPTION_GENERIC = 16;
-	public final static int EXCEPTION_FEATURE_PARSE = 17;
+	public final static int EXCEPTION_FEATURE_PARSE = Constants.EXCEPTION_FEATURE_PARSE;
 	public final static int WARNING_MISSING_SOURCE = 20;
 	public final static int WARNING_ELEMENT_NOT_FETCHED = 21;
 	public final static int EXCEPTION_CONFIG_FORMAT = 22;
@@ -127,13 +129,13 @@ public interface IPDEBuildConstants {
 	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
 	public final static String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
 	public final static String ECLIPSE_PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
-	public final static String ECLIPSE_BUNDLE_SHAPE = "Eclipse-BundleShape"; //$NON-NLS-1$
+	public final static String ECLIPSE_BUNDLE_SHAPE = Constants.ECLIPSE_BUNDLE_SHAPE;
 	public final static String ECLIPSE_SOURCE_REF = "Eclipse-SourceReferences"; //$NON-NLS-1$
 	public final static String PDE_SOURCE_REF = "${PDE_SOURCE_REF}"; //$NON-NLS-1$
 
 	//Some Bundle IDs we care about
 	public final static String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
-	public static final String BUNDLE_EQUINOX_LAUNCHER = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
+	public static final String BUNDLE_EQUINOX_LAUNCHER = Constants.BUNDLE_EQUINOX_LAUNCHER;
 	public static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
 	public static final String BUNDLE_CORE_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	public static final String BUNDLE_UPDATE_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$

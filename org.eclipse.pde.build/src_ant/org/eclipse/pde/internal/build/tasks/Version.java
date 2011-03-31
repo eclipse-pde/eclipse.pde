@@ -1,5 +1,4 @@
 /*
- * $Header: /cvsroot/eclipse/org.eclipse.pde.build/src_ant/org/eclipse/pde/internal/build/tasks/Version.java,v 1.1 2007/02/04 17:03:16 prapicau Exp $
  * 
  * Copyright (c) OSGi Alliance (2004, 2006). All Rights Reserved.
  * 
@@ -37,7 +36,7 @@ import java.util.StringTokenizer;
  * <p>
  * <code>Version</code> objects are immutable.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.4 $
  * @since 1.3
  */
 

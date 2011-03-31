@@ -14,9 +14,9 @@ package org.eclipse.pde.internal.build;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 public class ShapeAdvisor implements IPDEBuildConstants {
 	public static final String UPDATEJAR = "updateJar"; //$NON-NLS-1$

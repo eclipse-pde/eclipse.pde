@@ -18,7 +18,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.core.*;
 import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
 
 public class BundleHelper {
@@ -180,34 +179,10 @@ public class BundleHelper {
 	}
 
 	public static String[] getClasspath(Dictionary manifest) {
-		String fullClasspath = getManifestHeader(manifest, Constants.BUNDLE_CLASSPATH);
-		String[] result = new String[0];
-		try {
-			if (fullClasspath != null) {
-				ManifestElement[] classpathEntries;
-				classpathEntries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, fullClasspath);
-				result = new String[classpathEntries.length];
-				for (int i = 0; i < classpathEntries.length; i++) {
-					result[i] = classpathEntries[i].getValue();
-				}
-			}
-		} catch (BundleException e) {
-			//Ignore
-		}
-		return result;
+		return org.eclipse.pde.internal.publishing.Utils.getBundleClasspath(manifest);
 	}
 
 	public static String getManifestHeader(Dictionary manifest, String header) {
-		String value = (String) manifest.get(header);
-		if (value != null)
-			return value;
-
-		Enumeration keys = manifest.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			if (key.equalsIgnoreCase(header))
-				return (String) manifest.get(key);
-		}
-		return null;
+		return org.eclipse.pde.internal.publishing.Utils.getBundleManifestHeader(manifest, header);
 	}
 }

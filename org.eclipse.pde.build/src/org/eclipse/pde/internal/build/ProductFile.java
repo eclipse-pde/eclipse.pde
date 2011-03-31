@@ -16,8 +16,8 @@ import java.util.*;
 import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 

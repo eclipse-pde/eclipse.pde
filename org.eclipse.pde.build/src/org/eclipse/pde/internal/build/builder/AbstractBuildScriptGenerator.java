@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.equinox.p2.publisher.eclipse.IPlatformEntry;
 import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.compatibility.IPlatformEntry;
 
 /**
  * Instance of this class and subclasses are created on a plugin / feature basis. 

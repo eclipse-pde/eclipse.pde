@@ -11,6 +11,7 @@ package org.eclipse.pde.internal.build.site.compatibility;
 
 import java.util.StringTokenizer;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.p2.publisher.eclipse.IPlatformEntry;
 
 public class SiteManager {
 	private static String os;

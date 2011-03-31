@@ -15,11 +15,11 @@ import java.util.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 
 /**
  * Used to create a build manifest file describing what plug-ins and versions

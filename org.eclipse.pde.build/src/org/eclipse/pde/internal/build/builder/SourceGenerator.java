@@ -17,13 +17,13 @@ import java.util.*;
 import java.util.jar.*;
 import java.util.jar.Attributes.Name;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.publisher.eclipse.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.CompiledEntry;
 import org.eclipse.pde.internal.build.site.*;
-import org.eclipse.pde.internal.build.site.compatibility.*;
 import org.osgi.framework.Version;
 
 public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesConstants {

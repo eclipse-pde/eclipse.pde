@@ -21,6 +21,7 @@ import org.apache.tools.ant.taskdefs.*;
 import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
@@ -28,7 +29,7 @@ import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.*;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
+import org.eclipse.pde.internal.publishing.Messages;
 import org.osgi.framework.Version;
 
 public class ScriptGenerationTests extends PDETestCase {

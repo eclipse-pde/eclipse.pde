@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
@@ -21,7 +22,6 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
 import org.eclipse.pde.internal.build.site.ProfileManager;
-import org.eclipse.pde.internal.build.site.compatibility.FeatureEntry;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 

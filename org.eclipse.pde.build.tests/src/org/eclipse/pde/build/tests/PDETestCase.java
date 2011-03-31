@@ -223,7 +223,7 @@ public abstract class PDETestCase extends TestCase {
 			zip.close();
 		}
 		if (assertEmpty)
-			assertTrue(entries.size() == 0);
+			assertTrue("Missing entry in archive: " + entries, entries.size() == 0);
 	}
 
 	public static void assertZipContents(IFolder buildFolder, String archive, Set entries, boolean assertEmpty) throws Exception {
