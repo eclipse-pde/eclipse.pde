@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -238,12 +238,15 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 					IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);
 					for (int i = 0; i < children.length; i++) {
 						resource = children[i].getResource();
-						if (children[i].getResource().getType() == IResource.PROJECT && Util.isApiProject((IProject) resource)) {
-							if ((children[i].getFlags() & IResourceDelta.DESCRIPTION) != 0) {
-								IJavaProject jp = (IJavaProject) JavaCore.create(resource);
-								dmanager.clean(jp, true, true);
-								bmanager.disposeWorkspaceBaseline();
-								break;
+						if (children[i].getResource().getType() == IResource.PROJECT) {
+							IProject project = (IProject) resource;
+							if (Util.isApiProject(project) || Util.isJavaProject(project)) {
+								if ((children[i].getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+									IJavaProject jp = (IJavaProject) JavaCore.create(resource);
+									dmanager.clean(jp, true, true);
+									bmanager.disposeWorkspaceBaseline();
+									break;
+								}
 							}
 						}
 					}
@@ -252,21 +255,24 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 			}
 			case IResourceChangeEvent.PRE_CLOSE: 
 			case IResourceChangeEvent.PRE_DELETE:{
-				if(resource.getType() == IResource.PROJECT && Util.isApiProject((IProject) resource)) {
-					if(DEBUG) {
-						if(event.getType() == IResourceChangeEvent.PRE_CLOSE) {
-							System.out.println("processed PRE_CLOSE delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-						else {
-							if(DEBUG) {
-								System.out.println("processed PRE_DELETE delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				if(resource.getType() == IResource.PROJECT) {
+					IProject project = (IProject) resource;
+					if (Util.isApiProject(project) || Util.isJavaProject(project)) {
+						if(DEBUG) {
+							if(event.getType() == IResourceChangeEvent.PRE_CLOSE) {
+								System.out.println("processed PRE_CLOSE delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+							else {
+								if(DEBUG) {
+									System.out.println("processed PRE_DELETE delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+								}
 							}
 						}
+						bmanager.disposeWorkspaceBaseline();
+						IJavaProject javaProject = (IJavaProject) JavaCore.create(resource);
+						dmanager.clean(javaProject, false, true);
+						dmanager.flushElementCache(javaProject);
 					}
-					bmanager.disposeWorkspaceBaseline();
-					IJavaProject project = (IJavaProject) JavaCore.create(resource);
-					dmanager.clean(project, false, true);
-					dmanager.flushElementCache(project);
 				}
 				break;
 			}

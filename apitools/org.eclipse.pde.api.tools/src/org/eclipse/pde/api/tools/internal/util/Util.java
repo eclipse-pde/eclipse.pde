@@ -1316,7 +1316,7 @@ public final class Util {
 	}
 	/**
 	 * Returns if the given project is API enabled
-	 * @param project
+	 * @param project the given project
 	 * @return true if the project is API enabled, false otherwise
 	 */
 	public static boolean isApiProject(IProject project) {
@@ -1328,8 +1328,21 @@ public final class Util {
 	}
 	
 	/**
+	 * Returns if the given project is a java project
+	 * @param project the given project
+	 * @return <code>true</code> if the project is a java project, <code>false</code> otherwise
+	 */
+	public static boolean isJavaProject(IProject project) {
+		try {
+			return project.hasNature(JavaCore.NATURE_ID);
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	
+	/**
 	 * Returns if the given project is API enabled
-	 * @param project
+	 * @param project the given project
 	 * @return true if the project is API enabled, false otherwise
 	 */
 	public static boolean isApiProject(IJavaProject project) {
@@ -1338,7 +1351,7 @@ public final class Util {
 	
 	/**
 	 * Returns if the given {@link IApiComponent} is a valid {@link IApiComponent}
-	 * @param apiComponent
+	 * @param apiComponent the given component
 	 * @return true if the given {@link IApiComponent} is valid, false otherwise
 	 */
 	public static boolean isApiToolsComponent(IApiComponent apiComponent) {
@@ -1382,7 +1395,7 @@ public final class Util {
 	
 	/**
 	 * Returns if the flags are for a class
-	 * @param accessFlags
+	 * @param accessFlags the given access flags
 	 * @return
 	 */
 	public static boolean isClass(int accessFlags) {
