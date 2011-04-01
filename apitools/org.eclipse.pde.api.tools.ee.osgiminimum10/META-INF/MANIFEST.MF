@@ -4,7 +4,7 @@ Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.pde.api.tools.ee.osgiminimum10
 Bundle-Version: 1.0.100.qualifier
 Bundle-Vendor: %providerName
-Fragment-Host: org.eclipse.pde.api.tools;bundle-version="[1.0.201,2.0.0)"
+Fragment-Host: org.eclipse.pde.api.tools
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-Localization: fragmentosgiminimum10
 Eclipse-BundleShape: dir
