@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,9 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleFragment;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
 import org.osgi.framework.BundleException;
@@ -41,6 +39,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 				return versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : version;
 			}
 		} catch (NumberFormatException e) {
+		} catch (IllegalArgumentException e) {
 		}
 		return version;
 	}
