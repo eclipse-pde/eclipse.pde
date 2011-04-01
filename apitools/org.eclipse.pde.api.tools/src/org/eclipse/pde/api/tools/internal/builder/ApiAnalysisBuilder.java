@@ -599,7 +599,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						if(model != null) {
 							IBuild ibuild = model.getBuild();
 							Entry entry;
-							for (Iterator i = map.keySet().iterator(); i.hasNext();) {
+							for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
 								entry = (Entry) i.next();
 								IBuildEntry be = ibuild.getEntry((String) entry.getKey());
 								if(be != null && !entry.getValue().equals(Util.deepToString(be.getTokens()))) {
