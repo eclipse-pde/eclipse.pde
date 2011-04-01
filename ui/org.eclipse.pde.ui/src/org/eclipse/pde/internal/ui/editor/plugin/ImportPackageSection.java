@@ -482,6 +482,11 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
+
+			// If the current model is a fragment, it can export packages only if its parent has hasExtensibleAPI set
+			if (isFragmentThatCannotExportPackages(models[i]))
+				continue;
+
 			String id = desc == null ? null : desc.getSymbolicName();
 			if (id == null || forbidden.contains(id))
 				continue;
@@ -520,6 +525,11 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 				IProject project = resource != null ? resource.getProject() : null;
 				if (project == null || !project.hasNature(JavaCore.NATURE_ID) || WorkspaceModelManager.isBinaryProject(project) || !PDEProject.getManifest(project).exists())
 					continue;
+
+				// If the current model is a fragment, it can export packages only if its parent has hasExtensibleAPI set
+				if (isFragmentThatCannotExportPackages(models[i]))
+					continue;
+
 				IJavaProject jp = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
 				for (int j = 0; j < roots.length; j++) {
@@ -541,6 +551,39 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
 		dialog.setElements(elements.toArray());
 		dialog.setConditionalElements(conditional.toArray());
+	}
+
+	/**
+	 * Returns whether the provided plug-in model is a fragment that cannot export
+	 * its packages to other bundles (<code>hasExtensibleAPI</code> is not set).  Will
+	 * return false if the model does not represent a fragment.
+	 * 
+	 * @param fragment the model to test 
+	 * @return <code>true</code> if the model is a fragment that cannot export packages
+	 */
+	private boolean isFragmentThatCannotExportPackages(IPluginModelBase fragment) {
+		if (!fragment.isFragmentModel()) {
+			// Not a fragment
+			return false;
+		}
+		BundleDescription bundleDescription = fragment.getBundleDescription();
+		if (bundleDescription == null) {
+			// Classic plugin, do not change the behavior
+			return false;
+		}
+		HostSpecification hostSpec = bundleDescription.getHost();
+		if (hostSpec == null) {
+			// Not a fragment
+			return false;
+		}
+		BundleDescription[] hosts = hostSpec.getHosts();
+		// At least one of fragment hosts has to have extensible API
+		for (int i = 0; i < hosts.length; i++) {
+			if (ClasspathUtilCore.hasExtensibleAPI(PluginRegistry.findModel(hosts[i])))
+				return false;
+		}
+		// Fragment that cannot export
+		return true;
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
