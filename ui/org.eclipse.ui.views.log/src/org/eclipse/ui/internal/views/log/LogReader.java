@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,10 +50,10 @@ class LogReader {
 
 			reader = new BufferedReader(new InputStreamReader(new TailInputStream(file, MAX_FILE_LENGTH), "UTF-8")); //$NON-NLS-1$
 			for (;;) {
-				String line = reader.readLine();
-				if (line == null)
+				String line0 = reader.readLine();
+				if (line0 == null)
 					break;
-				line = line.trim();
+				String line = line0.trim();
 
 				if (line.startsWith(LogSession.SESSION)) {
 					state = SESSION_STATE;
@@ -69,8 +69,11 @@ class LogReader {
 					state = TEXT_STATE;
 
 				if (state == TEXT_STATE) {
-					if (writer != null)
-						writer.println(line);
+					if (writer != null) {
+						if (swriter.getBuffer().length() > 0)
+							writer.println();
+						writer.print(line0);
+					}
 					continue;
 				}
 
@@ -129,8 +132,7 @@ class LogReader {
 					writer = new PrintWriter(swriter, true);
 					String message = ""; //$NON-NLS-1$
 					if (line.length() > 8)
-						message = line.substring(9).trim();
-					message = message.trim();
+						message = line.substring(9);
 					if (current != null)
 						current.setMessage(message);
 					writerState = MESSAGE_STATE;
@@ -169,8 +171,10 @@ class LogReader {
 			session.setSessionData(swriter.toString());
 		} else if (writerState == MESSAGE_STATE && current != null) {
 			StringBuffer sb = new StringBuffer(current.getMessage());
-			sb.append(swriter.toString());
-			current.setMessage(sb.toString().trim());
+			String continuation = swriter.toString();
+			if (continuation.length() > 0)
+				sb.append(System.getProperty("line.separator")).append(continuation); //$NON-NLS-1$
+			current.setMessage(sb.toString());
 		}
 	}
 
