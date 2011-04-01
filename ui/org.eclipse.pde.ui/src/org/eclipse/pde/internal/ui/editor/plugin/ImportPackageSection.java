@@ -509,7 +509,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						ExportPackageObject[] pkgs = header.getPackages();
 						for (int j = 0; j < pkgs.length; j++) {
 							String name = pkgs[j].getName();
-							NameVersionDescriptor nameVersion = new NameVersionDescriptor(pkgs[j].getName(), pkgs[j].getVersion().toString(), NameVersionDescriptor.TYPE_PACKAGE);
+							String version = pkgs[j].getVersion();
+							NameVersionDescriptor nameVersion = new NameVersionDescriptor(name, version, NameVersionDescriptor.TYPE_PACKAGE);
 							if (nameVersions.add(nameVersion) && (fHeader == null || !fHeader.hasPackage(name)))
 								elements.add(new ImportItemWrapper(pkgs[j]));
 						}
