@@ -24,15 +24,26 @@ public class NonUIThreadTestApplication implements IApplication {
 	private static final String DEFAULT_HEADLESSAPP = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 
 	protected IApplication fApplication;
+	protected Object fTestHarness;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
-		Object app = getApplication(args);
+
+		String appId = getApplicationToRun(args);
+		Object app = getApplication(appId);
 
 		Assert.assertNotNull(app);
+
+		if (!DEFAULT_HEADLESSAPP.equals(appId)) {
+			// this means we are running a different application, which potentially can be UI application;
+			// non-ui thread test app can also mean we are running UI tests but outside the UI thread;
+			// this is a pattern used by SWT bot and worked before; we continue to support this
+			// (see bug 340906 for details)
+			installPlatformUITestHarness();
+		}
 
 		return runApp(app, context, args);
 	}
@@ -45,23 +56,39 @@ public class NonUIThreadTestApplication implements IApplication {
 		return ((IPlatformRunnable) app).run(args);
 	}
 
+	private void installPlatformUITestHarness() throws Exception {
+		// the non-UI thread test application also supports launching headless applications;
+		// this may mean that no UI bundle will be available; thus, in order to not
+		// introduce any dependency on UI code we use reflection but don't fail when Platform UI
+		// is not available
+		try {
+			Class platformUIClass = Class.forName("org.eclipse.ui.PlatformUI", true, getClass().getClassLoader()); //$NON-NLS-1$
+			Object testableObject = platformUIClass.getMethod("getTestableObject", null).invoke(null, null); //$NON-NLS-1$
+			fTestHarness = new PlatformUITestHarness(testableObject, true);
+		} catch (ClassNotFoundException e) {
+			// PlatformUI is not available
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	public void stop() {
 		if (fApplication != null)
 			fApplication.stop();
+		if (fTestHarness != null)
+			fTestHarness = null;
 	}
 
 	/*
 	 * return the application to run, or null if not even the default application
 	 * is found.
 	 */
-	private Object getApplication(String[] args) throws CoreException {
+	private Object getApplication(String appId) throws CoreException {
 		// Find the name of the application as specified by the PDE JUnit launcher.
 		// If no application is specified, the 3.0 default workbench application
 		// is returned.
-		IExtension extension = Platform.getExtensionRegistry().getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, getApplicationToRun(args));
+		IExtension extension = Platform.getExtensionRegistry().getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, appId);
 
 		Assert.assertNotNull(extension);
 
