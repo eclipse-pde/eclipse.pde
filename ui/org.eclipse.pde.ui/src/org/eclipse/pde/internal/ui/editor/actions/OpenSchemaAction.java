@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
@@ -187,11 +187,20 @@ public class OpenSchemaAction extends Action {
 		// Get the raw URL, determine if it is stored in a JAR, and handle 
 		// accordingly
 		String rawURL = schemaURL.toString();
-		if (rawURL.startsWith("jar")) { //$NON-NLS-1$
-			// Call to getPath removes the 'jar:' qualifier
-			openSchemaJar(schemaURL.getPath());
+		String path = null;
+		try {
+			path = URLDecoder.decode(schemaURL.getPath(), "UTF-8"); //$NON-NLS-1$
+		} catch (UnsupportedEncodingException e) {
+		}
+		if (path != null) {
+			if (rawURL.startsWith("jar")) { //$NON-NLS-1$
+				// Call to getPath removes the 'jar:' qualifier
+				openSchemaJar(path);
+			} else {
+				openSchemaFile(path);
+			}
 		} else {
-			openSchemaFile(schemaURL.getPath());
+			displayErrorDialog();
 		}
 
 	}
@@ -216,7 +225,8 @@ public class OpenSchemaAction extends Action {
 			}
 		} catch (MalformedURLException e) {
 		}
-		SchemaEditor.openSchema(new File(path));
+		if (!SchemaEditor.openSchema(new File(path)))
+			displayErrorDialog();
 	}
 
 	/**
@@ -248,7 +258,8 @@ public class OpenSchemaAction extends Action {
 			schemaEntryName = schemaEntryName.substring(1);
 		}
 		// Open the schema in a new editor
-		SchemaEditor.openSchema(new File(jarFileName), schemaEntryName);
+		if (!SchemaEditor.openSchema(new File(jarFileName), schemaEntryName))
+			displayErrorDialog();
 	}
 
 }
