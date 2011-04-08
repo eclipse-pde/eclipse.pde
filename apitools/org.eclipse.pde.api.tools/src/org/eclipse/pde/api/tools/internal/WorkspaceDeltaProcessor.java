@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
@@ -24,6 +25,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -89,6 +91,9 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 									}
 									bmanager.disposeWorkspaceBaseline();
 									dmanager.projectClasspathChanged(proj);
+									try {
+										BuildState.setLastBuiltState(proj.getProject(), null);
+									} catch (CoreException e) {}
 									dmanager.flushElementCache(delta.getElement());
 							}
 							else if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
