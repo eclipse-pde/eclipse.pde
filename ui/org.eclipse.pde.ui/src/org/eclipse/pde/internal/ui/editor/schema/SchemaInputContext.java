@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.io.*;
+import java.net.URI;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
@@ -73,6 +74,14 @@ public class SchemaInputContext extends XMLInputContext {
 
 	private IBaseModel createExternalModel(FileStoreEditorInput input) {
 		File file = (File) input.getAdapter(File.class);
+		if (file == null) {
+			URI uri = input.getURI();
+			if (uri != null)
+				file = new File(uri);
+			else
+				return null;
+		}
+
 		SchemaDescriptor sd = new SchemaDescriptor(file);
 
 		ISchema schema = sd.getSchema(false);
