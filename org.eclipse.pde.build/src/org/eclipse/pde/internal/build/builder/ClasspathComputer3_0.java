@@ -61,10 +61,21 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 
 		public String getAbsolutePath() {
-			if (new File(path).isAbsolute())
-				return path;
+			File f = new File(path);
+			if (f.isAbsolute()) {
+				try {
+					return f.getCanonicalPath();
+				} catch (IOException e) {
+					return path;
+				}
+			}
 
-			return modelLocation + '/' + path;
+			f = new File(modelLocation, path);
+			try {
+				return f.getCanonicalPath();
+			} catch (IOException e) {
+				return f.getPath();
+			}
 		}
 
 		public void addRules(String newRule) {
@@ -100,6 +111,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 
 	}
+
 	private static String normalize(String path) {
 		if (path == null)
 			return null;
@@ -379,7 +391,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private void addClasspathElementWithRule(List classpath, String path, String subPath, String rules) {
 		path = normalize(path);
 		subPath = normalize(subPath);
-		
+
 		String elementsKey = subPath != null ? path + '/' + subPath : path;
 		ClasspathElement existing = (ClasspathElement) pathElements.get(elementsKey);
 		if (existing != null) {
