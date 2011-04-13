@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.preferences;
 
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-
 import junit.framework.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,12 +21,12 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
+
 
 /**
  * Tests to ensure that the PDE Preferences manager, added in 3.5, is working
- * correctly and is compatable with the existing preference story.
+ * correctly and is compatible with the existing preference story.
  */
 public class PDEPreferencesTestCase extends TestCase {
 
@@ -69,33 +66,47 @@ public class PDEPreferencesTestCase extends TestCase {
 	}
 	
 	public void testPreferenceChangeListener1(){
-		IEclipsePreferences preferences = new InstanceScope().getNode(PLUGIN_ID);
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+		final String key = "stringKey";
+		String originalValue = preferences.get(key, key);
+
 		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
 		
 			public void preferenceChange(PreferenceChangeEvent event) {
-				assertEquals(event.getKey(), "stringKey");
+				assertEquals(event.getKey(), key);
 				assertEquals(event.getNewValue(), "stringValue");				
 			}
 		};
 		preferences.addPreferenceChangeListener(listener);
-		preferences.put("stringKey", "stringValue");
+		preferences.put(key, "stringValue");
 		preferences.removePreferenceChangeListener(listener);
+
+		// Restore original value
+		if (originalValue != key)
+			preferences.put(key, originalValue);
 	}
 	
 	public void testPreferenceChangeListner2(){
-		IEclipsePreferences preferences = new InstanceScope().getNode(PLUGIN_ID);
-		preferences.put("stringKey", "oldStringValue");
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+		final String key = "stringKey";
+		String originalValue = preferences.get(key, key);
+
+		preferences.put(key, "oldStringValue");
 		
 		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
 		
 			public void preferenceChange(PreferenceChangeEvent event) {
-				assertEquals(event.getKey(), "stringKey");
+				assertEquals(event.getKey(), key);
 				assertEquals(event.getOldValue(), "oldStringValue");
 				assertEquals(event.getNewValue(), "newStringValue");			
 			}
 		};
-		preferences.put("stringKey", "newStringValue");
-		preferences.removePreferenceChangeListener(listener);				
+		preferences.put(key, "newStringValue");
+		preferences.removePreferenceChangeListener(listener);
+
+		// Restore original value
+		if (originalValue != key)
+			preferences.put(key, originalValue);
 	}
 	
 	public void testPDECoreDefaultPreferences(){
