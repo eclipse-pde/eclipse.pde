@@ -96,31 +96,39 @@ public class AnalysisReportConversionTask extends Task {
 				String name, Attributes attributes) throws SAXException {
 			if (IApiXmlConstants.ELEMENT_API_TOOL_REPORT.equals(name)) {
 				String componentID = attributes.getValue(IApiXmlConstants.ATTR_COMPONENT_ID);
-				if (debug) {
+				if (this.debug) {
 					System.out.println("component id : " + String.valueOf(componentID)); //$NON-NLS-1$
 				}
 				this.report = new Report(componentID);
 			} else if (IApiXmlConstants.ATTR_CATEGORY.equals(name)) {
 				this.category = attributes.getValue(IApiXmlConstants.ATTR_VALUE);
-				if (debug) {
+				if (this.debug) {
 					System.out.println("category : " + this.category); //$NON-NLS-1$
 				}
 			} else if (IApiXmlConstants.ELEMENT_API_PROBLEM.equals(name)) {
 				String message = attributes.getValue(IApiXmlConstants.ATTR_MESSAGE);
-				if (debug) {
+				if (this.debug) {
 					System.out.println("problem message : " + message); //$NON-NLS-1$
 				}
 				int severity = Integer.parseInt(attributes.getValue(IApiXmlConstants.ATTR_SEVERITY));
-				if (debug) {
+				if (this.debug) {
 					System.out.println("problem severity : " + severity); //$NON-NLS-1$
 				}
 				this.report.addProblem(this.category, new Problem(message, severity));
 			} else if (IApiXmlConstants.ELEMENT_BUNDLE.equals(name)) {
 				String bundleName = attributes.getValue(IApiXmlConstants.ATTR_NAME);
-				if (debug) {
+				if (this.debug) {
 					System.out.println("bundle name : " + bundleName); //$NON-NLS-1$
 				}
 				this.report.addNonApiBundles(bundleName);
+			} else if (this.debug) {
+				if (!IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS.equals(name)
+						&& !IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT.equals(name)
+						&& !IApiXmlConstants.ELEMENT_API_PROBLEMS.equals(name)
+						&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENT.equals(name)
+						&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENTS.equals(name)) {
+					System.out.println("unknown element : " + String.valueOf(name)); //$NON-NLS-1$
+				}
 			}
 		}
 	}
@@ -453,6 +461,13 @@ public class AnalysisReportConversionTask extends Task {
 					ConverterDefaultHandler defaultHandler = new ConverterDefaultHandler(this.debug);
 					parser.parse(file, defaultHandler);
 					Report report = defaultHandler.getReport();
+					if (report == null) {
+						// ignore that file. It could be the counts.xml file.
+						if (this.debug) {
+							System.out.println("Skipped file : " + file.getAbsolutePath()); //$NON-NLS-1$
+						}
+						continue;
+					}
 					dumpReport(file, report);
 					if (report.isNonApiBundlesReport()) {
 						nonApiBundleSummary = new Summary(report);
