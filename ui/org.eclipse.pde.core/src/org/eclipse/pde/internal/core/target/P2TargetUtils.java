@@ -99,15 +99,15 @@ public class P2TargetUtils {
 	 */
 	static final String PROP_AUTO_INCLUDE_SOURCE = PDECore.PLUGIN_ID + ".autoIncludeSource"; //$NON-NLS-1$	
 
+	/**
+	 * Table mapping target location to synchronizer (P2TargetUtils) instance.
+	 */
+	private static Map synchronizers = new HashMap();
+
 	/** 
 	 * The profile to be synchronized
 	 */
 	private IProfile fProfile;
-
-	/**
-	 * The target to be synchronized.
-	 */
-	private ITargetDefinition fTarget;
 
 	/**
 	 * Whether this container must have all required IUs of the selected IUs available and included
@@ -143,7 +143,11 @@ public class P2TargetUtils {
 	private boolean fDirty = false;
 
 	public P2TargetUtils(ITargetDefinition target) {
-		fTarget = target;
+		try {
+			synchronizers.put(target.getHandle().getMemento(), this);
+		} catch (CoreException e) {
+			// This should never happen
+		}
 	}
 
 	/**
@@ -423,7 +427,7 @@ public class P2TargetUtils {
 	 * @return whether or not the profile and target definitions match
 	 * @throws CoreException in unable to retrieve profile
 	 */
-	private boolean checkProfile() throws CoreException {
+	private boolean checkProfile(ITargetDefinition target) throws CoreException {
 		// make sure we have a profile to validate
 		if (fProfile == null) {
 			return false;
@@ -434,7 +438,7 @@ public class P2TargetUtils {
 		// check that the target and profiles are in sync. If they are then life is good.
 		// If they are not equal, there is still a chance that everything is ok.
 		String profileNumber = fProfile.getProperty(PROP_SEQUENCE_NUMBER);
-		if (Integer.toString(((TargetDefinition) fTarget).getSequenceNumber()).equals(profileNumber)) {
+		if (Integer.toString(((TargetDefinition) target).getSequenceNumber()).equals(profileNumber)) {
 			return true;
 		}
 
@@ -451,20 +455,20 @@ public class P2TargetUtils {
 		// ensure environment & NL settings are still the same (else we need a new profile)
 		String property = null;
 		if (!all) {
-			property = generateEnvironmentProperties(fTarget);
+			property = generateEnvironmentProperties(target);
 			value = fProfile.getProperty(IProfile.PROP_ENVIRONMENTS);
 			if (!property.equals(value)) {
 				return false;
 			}
 		}
-		property = generateNLProperty(fTarget);
+		property = generateNLProperty(target);
 		value = fProfile.getProperty(IProfile.PROP_NL);
 		if (!property.equals(value)) {
 			return false;
 		}
 
 		// check provisioning mode: slice versus plan
-		if (!getProvisionMode(fTarget).equals(fProfile.getProperty(PROP_PROVISION_MODE))) {
+		if (!getProvisionMode(target).equals(fProfile.getProperty(PROP_PROVISION_MODE))) {
 			return false;
 		}
 
@@ -483,7 +487,7 @@ public class P2TargetUtils {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
 		}
-		IBundleContainer[] containers = fTarget.getBundleContainers();
+		IBundleContainer[] containers = target.getBundleContainers();
 		if (containers == null) {
 			return installedIUs.isEmpty();
 		}
@@ -595,7 +599,7 @@ public class P2TargetUtils {
 		if (synchronizer == null)
 			return false;
 		try {
-			return synchronizer.checkProfile();
+			return synchronizer.checkProfile(target);
 		} catch (CoreException e) {
 			return false;
 		}
@@ -614,35 +618,19 @@ public class P2TargetUtils {
 	 * @return the discovered or created synchronizer
 	 */
 	static synchronized P2TargetUtils getSynchronizer(ITargetDefinition target) {
-		IBundleContainer[] containers = target.getBundleContainers();
-		P2TargetUtils result = null;
-		// if there are no containers then just create/return the synchronizer
-		if (containers == null) {
-			return new P2TargetUtils(target);
-		}
+		try {
+			String memento = target.getHandle().getMemento();
+			P2TargetUtils result = (P2TargetUtils) synchronizers.get(memento);
+			if (result != null)
+				return result;
 
-		// Otherwise, look for a pre-existing synchronizer
-		for (int i = 0; i < containers.length; i++) {
-			if (containers[i] instanceof IUBundleContainer) {
-				result = ((IUBundleContainer) containers[i]).getSynchronizer(null);
-				if (result != null) {
-					break;
-				}
-			}
-		}
-
-		// still no luck?  create a new one
-		if (result == null) {
 			result = new P2TargetUtils(target);
+			synchronizers.put(memento, result);
+			return result;
+		} catch (CoreException e) {
+			// Should never happen
+			throw new IllegalStateException(e.toString());
 		}
-
-		// finally set all the other IU containers to use the same synchronizer
-		for (int i = 0; i < containers.length; i++) {
-			if (containers[i] instanceof IUBundleContainer) {
-				((IUBundleContainer) containers[i]).setSynchronizer(result);
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -658,7 +646,7 @@ public class P2TargetUtils {
 		P2TargetUtils synchronizer = getSynchronizer(target);
 		if (synchronizer == null)
 			return null;
-		synchronizer.synchronize(monitor);
+		synchronizer.synchronize(target, monitor);
 		return synchronizer.getProfile().query(QueryUtil.createIUAnyQuery(), null);
 	}
 
@@ -676,25 +664,23 @@ public class P2TargetUtils {
 	 * 
 	 * @throws CoreException if there was a problem synchronizing
 	 */
-	public synchronized void synchronize(IProgressMonitor monitor) throws CoreException {
+	public synchronized void synchronize(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 
 		// Happiness if we have a profile and it checks out or if we can load one and it checks out.
-		if (fProfile == null) {
-			fProfile = getProfileRegistry().getProfile(getProfileId(fTarget));
-			if (fProfile != null && checkProfile()) {
-				// if we just loaded the profile for the first time, refresh the container caches
-				notify(progress.newChild(25));
-				return;
-			}
-		} else if (checkProfile()) {
+		if (fProfile == null)
+			fProfile = getProfileRegistry().getProfile(getProfileId(target));
+		if (fProfile != null && checkProfile(target)) {
+			// always push the changes to the target because there can be many target objects
+			// for the same synchronizer (doh!)
+			notify(target, progress.newChild(25));
 			return;
 		}
 
 		// Either no profile was found or it was stale.  Delete the current profile and recreate.  
 		// This keeps the internal agent data clean and does not cost us much.
-		deleteProfile(fTarget.getHandle());
-		createProfile();
+		deleteProfile(target.getHandle());
+		createProfile(target);
 
 		if (progress.isCanceled())
 			return;
@@ -702,16 +688,16 @@ public class P2TargetUtils {
 
 		// Now resolve the profile and refresh the relate IU containers
 		if (getIncludeAllRequired())
-			resolveWithPlanner(progress.newChild(60));
+			resolveWithPlanner(target, progress.newChild(60));
 		else
-			resolveWithSlicer(progress.newChild(60));
+			resolveWithSlicer(target, progress.newChild(60));
 
 		// If we are updating a profile then delete the old snapshot on success.
-		notify(progress.newChild(15));
+		notify(target, progress.newChild(15));
 		fDirty = false;
 	}
 
-	private void createProfile() throws CoreException, ProvisionException {
+	private void createProfile(ITargetDefinition target) throws CoreException, ProvisionException {
 		// create a new profile
 		IProfileRegistry registry = getProfileRegistry();
 		if (registry == null) {
@@ -721,29 +707,29 @@ public class P2TargetUtils {
 		properties.put(IProfile.PROP_INSTALL_FOLDER, INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
 		properties.put(IProfile.PROP_CACHE, BUNDLE_POOL.toOSString());
 		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
-		properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties(fTarget));
-		properties.put(IProfile.PROP_NL, generateNLProperty(fTarget));
-		properties.put(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) fTarget).getSequenceNumber()));
-		properties.put(PROP_PROVISION_MODE, getProvisionMode(fTarget));
+		properties.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties(target));
+		properties.put(IProfile.PROP_NL, generateNLProperty(target));
+		properties.put(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) target).getSequenceNumber()));
+		properties.put(PROP_PROVISION_MODE, getProvisionMode(target));
 		properties.put(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
 		properties.put(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
-		fProfile = registry.addProfile(getProfileId(fTarget), properties);
+		fProfile = registry.addProfile(getProfileId(target), properties);
 	}
 
 	/**
 	 * Signal the relevant bundle containers that the given profile has changed.
 	 */
-	private void notify(IProgressMonitor monitor) throws CoreException {
+	private void notify(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
 		// flush the target caches first since some of them are used in rebuilding
 		// the container caches (e.g., featureModels)
-		((TargetDefinition) fTarget).flushCaches(P2TargetUtils.BUNDLE_POOL.toOSString());
+		((TargetDefinition) target).flushCaches(P2TargetUtils.BUNDLE_POOL.toOSString());
 		// Now proactively recompute all the related container caches.
-		IBundleContainer[] containers = fTarget.getBundleContainers();
+		IBundleContainer[] containers = target.getBundleContainers();
 		if (containers != null) {
 			for (int i = 0; i < containers.length; i++) {
 				IBundleContainer container = containers[i];
 				if (container instanceof IUBundleContainer) {
-					((IUBundleContainer) container).synchronizerChanged();
+					((IUBundleContainer) container).synchronizerChanged(target);
 				}
 			}
 		}
@@ -862,11 +848,11 @@ public class P2TargetUtils {
 	 * @param monitor for reporting progress
 	 * @throws CoreException if there is a problem with the requirements or there is a problem downloading
 	 */
-	private void resolveWithPlanner(IProgressMonitor monitor) throws CoreException {
+	private void resolveWithPlanner(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 200);
 
 		// Get the root IUs for every relevant container in the target definition
-		IInstallableUnit[] units = getRootIUs(fTarget);
+		IInstallableUnit[] units = getRootIUs(target);
 		if (subMonitor.isCanceled()) {
 			return;
 		}
@@ -884,8 +870,8 @@ public class P2TargetUtils {
 		}
 
 		ProvisioningContext context = new ProvisioningContext(getAgent());
-		context.setMetadataRepositories(getMetadataRepositories(fTarget));
-		context.setArtifactRepositories(getArtifactRepositories(fTarget));
+		context.setMetadataRepositories(getMetadataRepositories(target));
+		context.setArtifactRepositories(getArtifactRepositories(target));
 
 		if (subMonitor.isCanceled()) {
 			return;
@@ -896,7 +882,7 @@ public class P2TargetUtils {
 		if (!status.isOK()) {
 			throw new CoreException(status);
 		}
-		setPlanProperties(plan, fTarget, TargetDefinitionPersistenceHelper.MODE_PLANNER);
+		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_PLANNER);
 		IProvisioningPlan installerPlan = plan.getInstallerPlan();
 		if (installerPlan != null) {
 			// this plan requires an update to the installer first, log the fact and attempt
@@ -1062,16 +1048,16 @@ public class P2TargetUtils {
 	 * @param monitor for reporting progress
 	 * @throws CoreException if there is a problem interacting with the repositories
 	 */
-	private void resolveWithSlicer(IProgressMonitor monitor) throws CoreException {
+	private void resolveWithSlicer(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 100);
 
 		// resolve IUs
-		IInstallableUnit[] units = getRootIUs(fTarget);
+		IInstallableUnit[] units = getRootIUs(target);
 		if (subMonitor.isCanceled()) {
 			return;
 		}
 
-		URI[] repositories = getMetadataRepositories(fTarget);
+		URI[] repositories = getMetadataRepositories(target);
 		int repoCount = repositories.length;
 		if (repoCount == 0) {
 			return;
@@ -1079,7 +1065,7 @@ public class P2TargetUtils {
 		IQueryable allMetadata = getQueryableMetadata(repositories, subMonitor.newChild(10));
 
 		// do an initial slice to add everything the user requested
-		IQueryResult queryResult = slice(units, allMetadata, fTarget, subMonitor.newChild(10));
+		IQueryResult queryResult = slice(units, allMetadata, target, subMonitor.newChild(10));
 		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 			return;
 		}
@@ -1093,7 +1079,7 @@ public class P2TargetUtils {
 			System.arraycopy(units, 0, units2, 0, units.length);
 			units2[units.length] = sourceIU;
 
-			queryResult = slice(units2, allMetadata, fTarget, subMonitor.newChild(10));
+			queryResult = slice(units2, allMetadata, target, subMonitor.newChild(10));
 			if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 				return;
 			}
@@ -1102,9 +1088,9 @@ public class P2TargetUtils {
 		IEngine engine = getEngine();
 		ProvisioningContext context = new ProvisioningContext(getAgent());
 		context.setMetadataRepositories(repositories);
-		context.setArtifactRepositories(getArtifactRepositories(fTarget));
+		context.setArtifactRepositories(getArtifactRepositories(target));
 		IProvisioningPlan plan = engine.createPlan(fProfile, context);
-		setPlanProperties(plan, fTarget, TargetDefinitionPersistenceHelper.MODE_SLICER);
+		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
 
 		Set newSet = queryResult.toSet();
 		Iterator itor = newSet.iterator();
@@ -1394,12 +1380,12 @@ public class P2TargetUtils {
 		return fProfile;
 	}
 
-	/**
-	 * @return the target definition associated with this synchronizer
-	 */
-	ITargetDefinition getTargetDefinition() {
-		return fTarget;
-	}
+//	/**
+//	 * @return the target definition associated with this synchronizer
+//	 */
+//	ITargetDefinition getTargetDefinition() {
+//		return fTarget;
+//	}
 
 	void markDirty() {
 		fDirty = true;

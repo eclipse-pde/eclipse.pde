@@ -165,7 +165,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		fSynchronizer.synchronize(monitor);
+		fSynchronizer.synchronize(definition, monitor);
 		return fFeatures;
 	}
 
@@ -174,7 +174,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * NOTE: this method expects the synchronizer to be synchronized and is called
 	 * as a result of a synchronization operation.
 	 */
-	IFeatureModel[] cacheFeatures() throws CoreException {
+	IFeatureModel[] cacheFeatures(ITargetDefinition target) throws CoreException {
 		// Ideally we would compute the list of features specific to this container but that 
 		// would require running the slicer again to follow the dependencies from this 
 		// container's roots.  Instead, here we find all features in the shared profile.  This means
@@ -203,8 +203,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		}
 
 		// Now get feature models for all known features
-		TargetDefinition definition = (TargetDefinition) fSynchronizer.getTargetDefinition();
-		IFeatureModel[] allFeatures = definition.getFeatureModels(getLocation(false), new NullProgressMonitor());
+		IFeatureModel[] allFeatures = ((TargetDefinition) target).getFeatureModels(getLocation(false), new NullProgressMonitor());
 
 		// Build a final set of the models for the features in the profile.
 		List result = new ArrayList();
@@ -222,7 +221,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
-		fSynchronizer.synchronize(monitor);
+		fSynchronizer.synchronize(definition, monitor);
 		return fBundles;
 	}
 
@@ -231,7 +230,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * NOTE: this method expects the synchronizer to be synchronized and is called
 	 * as a result of a synchronization operation.
 	 */
-	IInstallableUnit[] cacheIUs() throws CoreException {
+	IInstallableUnit[] cacheIUs(ITargetDefinition target) throws CoreException {
 		IProfile profile = fSynchronizer.getProfile();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < fIds.length; i++) {
@@ -250,7 +249,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * NOTE: this method expects the synchronizer to be synchronized and is called
 	 * as a result of a synchronization operation.
 	 */
-	IResolvedBundle[] cacheBundles() throws CoreException {
+	IResolvedBundle[] cacheBundles(ITargetDefinition target) throws CoreException {
 		// slice the profile to find the bundles attributed to this container.
 		// Look only for strict dependencies if we are using the slicer.
 		// We can always consider all platforms since the profile wouldn't contain it if it was not interesting
@@ -284,7 +283,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				// If the slicer has warnings, they probably caused there to be no bundles available
 				throw new CoreException(slicer.getStatus());
 			}
-			
+
 			return fBundles = null;
 		}
 
@@ -297,17 +296,17 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * This is a callback method used by the synchronizer.
 	 * It should NOT be called any other time.
 	 */
-	void synchronizerChanged() throws CoreException {
+	void synchronizerChanged(ITargetDefinition target) throws CoreException {
 		// cache the IUs first as they are used to slice the profile for the other caches.
-		cacheIUs();
-		cacheBundles();
-		cacheFeatures();
+		cacheIUs(target);
+		cacheBundles(target);
+		cacheFeatures(target);
 	}
 
 	/**
 	 * Update the root IUs to the latest available in the repos associated with this container.
 	 * 
-	 * @param toUpdate the set of IU ids in this container to consider updating.  If null
+	 * @param toUpdate the set of IU ids in this container to consider updating.  If empty
 	 * then update everything
 	 * @return a bitmasked int indicating how/if this container changed.  See DIRTY and UPDATED. 
 	 * @exception CoreException if unable to retrieve IU's

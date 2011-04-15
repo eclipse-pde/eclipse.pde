@@ -48,7 +48,8 @@ public class UpdateTargetJob extends Job {
 	 * previously running update jobs will be cancelled.  If a listener is provided it will be added to
 	 * the scheduled job.
 	 * 
-	 * @param toUpdate maps {@link IBundleContainer}s that to the {@link Set} of {@link IInstallableUnit}s that should be updated.  If the container maps to <code>null</code> all IUs from the container will be updated.
+	 * @param toUpdate maps {@link IBundleContainer}s that to the {@link Set} of {@link IInstallableUnit}s 
+	 * that should be updated.  If the container maps to an empty set, all IUs from the container will be updated.
 	 * @param listener job change listener that will be added to the created job, can be <code>null</code>
 	 */
 	public static void update(Map toUpdate, IJobChangeListener listener) {
