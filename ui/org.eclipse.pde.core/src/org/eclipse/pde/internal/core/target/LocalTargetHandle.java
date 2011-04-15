@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,15 +38,20 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	private static long fgLastStamp = -1;
 
 	/**
+	 * Path to the local directory where API descriptions are cached
+	 * per project.
+	 */
+	private static IPath fgLocalContainerPath;
+
+	/**
 	 * URI scheme for local targets
 	 */
 	static final String SCHEME = "local"; //$NON-NLS-1$
 
 	/**
-	 * Path to the local directory where API descriptions are cached
-	 * per project.
+	 * Folder name where local targets are stored
 	 */
-	static final IPath LOCAL_TARGET_CONTAINER_PATH = PDECore.getDefault().getStateLocation().append(".local_targets"); //$NON-NLS-1$
+	static final String LOCAL_TARGET_FOLDER = ".local_targets"; //$NON-NLS-1$
 
 	/**
 	 * Returns the next unique ID for target handle.
@@ -60,6 +65,29 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		}
 		fgLastStamp = stamp;
 		return stamp;
+	}
+
+	/**
+	 * Returns the path to the folder that contains all locally saved targets
+	 * or {@link Path#EMPTY} if no local path is available because OSGi is
+	 * not running.
+	 * 
+	 * @return path to target directory or {@link Path#EMPTY}
+	 */
+	static IPath getLocalTargetContainerPath() {
+		if (fgLocalContainerPath != null) {
+			return fgLocalContainerPath;
+		}
+		try {
+			if (PDECore.getDefault() != null) {
+				fgLocalContainerPath = PDECore.getDefault().getStateLocation().append(LOCAL_TARGET_FOLDER);
+				return fgLocalContainerPath;
+			}
+		} catch (IllegalStateException e) {
+			// Cannot create local folder
+		}
+		fgLocalContainerPath = Path.EMPTY;
+		return fgLocalContainerPath;
 	}
 
 	/**
@@ -141,7 +169,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		name.append(Long.toString(fTimeStamp));
 		name.append('.');
 		name.append(ICoreConstants.TARGET_FILE_EXTENSION);
-		return LOCAL_TARGET_CONTAINER_PATH.append(name.toString()).toFile();
+		return getLocalTargetContainerPath().append(name.toString()).toFile();
 	}
 
 	/* (non-Javadoc)

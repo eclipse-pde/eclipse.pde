@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 	private TargetPlatformService() {
 	}
 
+	/**
+	 * The target service should be obtained by requesting the {@link ITargetPlatformService} from OSGi.  If
+	 * OSGi is not running, this method can be run directly to get an instance of the service implementation.
+	 * 
+	 * @return The singleton implementation of this service
+	 */
 	public synchronized static ITargetPlatformService getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new TargetPlatformService();
@@ -166,8 +172,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @return all local target definition handles
 	 */
 	private List findLocalTargetDefinitions() {
-		IPath containerPath = LocalTargetHandle.LOCAL_TARGET_CONTAINER_PATH;
 		List handles = new ArrayList(10);
+		IPath containerPath = LocalTargetHandle.getLocalTargetContainerPath();
+		if (containerPath.isEmpty()) {
+			// Not running with OSGi, no local targets are available
+			return handles;
+		}
 		final File directory = containerPath.toFile();
 		if (directory.isDirectory()) {
 			FilenameFilter filter = new FilenameFilter() {
