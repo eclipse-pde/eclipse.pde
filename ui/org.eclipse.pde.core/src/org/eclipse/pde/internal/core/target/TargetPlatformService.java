@@ -70,8 +70,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/**
-	 * The target service should be obtained by requesting the {@link ITargetPlatformService} from OSGi.  If
-	 * OSGi is not running, this method can be run directly to get an instance of the service implementation.
+	 * The target service should be obtained by requesting the {@link ITargetPlatformService} from OSGi. This
+	 * method should only be used internally be PDE.
 	 * 
 	 * @return The singleton implementation of this service
 	 */
@@ -172,12 +172,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @return all local target definition handles
 	 */
 	private List findLocalTargetDefinitions() {
+		IPath containerPath = LocalTargetHandle.LOCAL_TARGET_CONTAINER_PATH;
 		List handles = new ArrayList(10);
-		IPath containerPath = LocalTargetHandle.getLocalTargetContainerPath();
-		if (containerPath.isEmpty()) {
-			// Not running with OSGi, no local targets are available
-			return handles;
-		}
 		final File directory = containerPath.toFile();
 		if (directory.isDirectory()) {
 			FilenameFilter filter = new FilenameFilter() {
