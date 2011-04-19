@@ -278,7 +278,7 @@ public final class Util {
 	 */
 	private static boolean DELETE_DEBUG = false;
 	/**
-	 * Maximum of time in ms to wait in deletion operation while running JDT/Core tests.
+	 * Maximum of time in milliseconds to wait in deletion operation while running JDT/Core tests.
 	 * Default is 10 seconds. This number cannot exceed 1 minute (i.e. 60000).
 	 * <br>
 	 * To avoid too many loops while waiting, the ten first ones are done waiting
@@ -841,7 +841,7 @@ public final class Util {
 	}
 
 	/**
-	 * Returns the details of the api delta as a string
+	 * Returns the details of the API delta as a string
 	 * @param delta
 	 * @return the details of the delta as a string
 	 */
@@ -949,7 +949,7 @@ public final class Util {
 	
 	/**
 	 * Returns the number of fragments for the given version value, -1 if the format is unknown.
-	 * The version is formed like: [optional plugin name] major.minor.micro.qualifier.
+	 * The version is formed like: [optional plug-in name] major.minor.micro.qualifier.
 	 * 
 	 * @param version the given version value
 	 * @return the number of fragments for the given version value or -1 if the format is unknown
@@ -1271,7 +1271,7 @@ public final class Util {
 		byteBuffer.put(contents);
 		byteBuffer.flip();
 		CharBuffer charBuffer = charsetDecoder.decode(byteBuffer);
-		charBuffer.compact(); // ensure payload starting at 0
+		charBuffer.compact(); // ensure pay-load starting at 0
 		char[] array = charBuffer.array();
 		int lengthToBe = charBuffer.position();
 		if (array.length > lengthToBe) {
@@ -1389,8 +1389,33 @@ public final class Util {
 	 * @return true if the file name is an archive name false otherwise
 	 */
 	public static boolean isArchive(String fileName) {
+		return isZipJarFile(fileName) || isTGZFile(fileName);
+	}
+	
+	/**
+	 * Returns if the given file name represents a 'standard' archive, where the name
+	 * has an extension of *.zip or *.jar
+	 * 
+	 * @param fileName
+	 * @return true if the given file name is that of a 'standard' archive, false otherwise
+	 */
+	public static boolean isZipJarFile(String fileName) {
 		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(".zip") || normalizedFileName.endsWith(".jar"); //$NON-NLS-1$ //$NON-NLS-2$
+		return normalizedFileName.endsWith(".zip") //$NON-NLS-1$
+			|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns if the given file name represents a G-zip file name, where the name 
+	 * has an extension of *.tar.gz or *.tgz
+	 * 
+	 * @param fileName
+	 * @return true if the given file name is that of a G-zip archive, false otherwise
+	 */
+	public static boolean isTGZFile(String fileName) {
+		String normalizedFileName = fileName.toLowerCase();
+		return normalizedFileName.endsWith(".tar.gz") //$NON-NLS-1$
+			|| normalizedFileName.endsWith(".tgz"); //$NON-NLS-1$
 	}
 	
 	/**

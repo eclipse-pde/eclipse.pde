@@ -114,6 +114,34 @@ public class UtilTests extends TestCase {
 	public void testIsArchive() {
 		assertTrue("Test.zip is an archive", Util.isArchive("Test.zip"));
 		assertTrue("Test.jar is an archive", Util.isArchive("Test.jar"));
+		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.tar.gz"));
+		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.tgz"));
+	}
+	
+	/**
+	 * Tests that the isTGZFile method works as expected
+	 */
+	public void testIsTar() {
+		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.tar.gz"));
+		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.TAR.GZ"));
+		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.Tar.Gz"));
+		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.tar.GZ"));
+		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.TAR.gz"));
+		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.tgz"));
+		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.TGZ"));
+		assertTrue("Test.tgz is an archive", Util.isTGZFile("Test.Tgz"));
+	}
+	
+	/**
+	 * Tests that the isZipJarFile method works as expected
+	 */
+	public void testIsJar() {
+		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.zip"));
+		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.ZIP"));
+		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.Zip"));
+		assertTrue("Test.tgz is an archive", Util.isZipJarFile("Test.jar"));
+		assertTrue("Test.tgz is an archive", Util.isZipJarFile("Test.JAR"));
+		assertTrue("Test.tgz is an archive", Util.isZipJarFile("Test.Jar"));
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
@@ -43,6 +43,21 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
  */
 public class ApiModelFactory {
 
+	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
+	public static final IApiComponent[] NO_COMPONENTS = new IApiComponent[0];
+	
+	/**
+	 * {@link FilenameFilter} for CVS files
+	 * @since 1.0.1
+	 */
+	static class CVSNameFilter implements FilenameFilter {
+		public boolean accept(File dir, String name) {
+			return !name.equalsIgnoreCase(CVS_FOLDER_NAME);
+		}
+	}
+	
+	private static CVSNameFilter fgCvsFilter = new CVSNameFilter();
+	
 	/**
 	 * Next available bundle id
 	 */
@@ -196,56 +211,73 @@ public class ApiModelFactory {
 	}
 	
 	/**
-	 * Collects api components for the bundles part of the specified installation and adds them to the baseline. The
+	 * Collects API components for the bundles part of the specified installation and adds them to the baseline. The
 	 * components that were added to the baseline are returned.
 	 * 
 	 * @param baseline The baseline to add the components to
-	 * @param installLocation Location of an installation that components are collected from
+	 * @param installLocation location of an installation that components are collected from
 	 * @param monitor progress monitor or <code>null</code>, the caller is responsible for calling {@link IProgressMonitor#done()} 
-	 * @return List of api components that were added to the baseline, possibly empty
+	 * @return List of API components that were added to the baseline, possibly empty, never <code>null</code>
 	 * @throws CoreException If problems occur getting components or modifying the baseline
 	 */
 	public static IApiComponent[] addComponents(IApiBaseline baseline, String installLocation, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50); 
-		
-		// Acquire the service
-		ITargetPlatformService service = null;
-		ApiPlugin plugin = ApiPlugin.getDefault();
-		if (plugin != null){
-			service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
-		} else {
-			// If we are running without osgi, services are unavailable so use the class directly
-			service = TargetPlatformService.getDefault();
-		}
-		Util.updateMonitor(subMonitor, 1);
-		IBundleContainer container = service.newProfileContainer(installLocation, null);
-		// treat as an installation, if that fails, try plug-ins directory
-		ITargetDefinition definition = service.newTarget();
-		subMonitor.subTask(Messages.resolving_target_definition);
-		container.resolve(definition, subMonitor.newChild(30));
-		Util.updateMonitor(subMonitor, 1);
-		IResolvedBundle[] bundles = container.getBundles();
-		
-		List components = new ArrayList();
-		if (bundles.length > 0) {
-			subMonitor.setWorkRemaining(bundles.length);
-			for (int i = 0; i < bundles.length; i++) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50);
+		IApiComponent[] result = null;
+		try {
+			// Acquire the service
+			ITargetPlatformService service = null;
+			ApiPlugin plugin = ApiPlugin.getDefault();
+			if (plugin != null){
+				service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
 				Util.updateMonitor(subMonitor, 1);
-					if (!bundles[i].isSourceBundle()) {
-						IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
-						if (component != null) {
-							subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
+				IBundleContainer container = service.newProfileContainer(installLocation, null);
+				ITargetDefinition definition = service.newTarget();
+				subMonitor.subTask(Messages.resolving_target_definition);
+				container.resolve(definition, subMonitor.newChild(30));
+				Util.updateMonitor(subMonitor, 1);
+				IResolvedBundle[] bundles = container.getBundles();
+				List components = new ArrayList();
+				if (bundles.length > 0) {
+					subMonitor.setWorkRemaining(bundles.length);
+					for (int i = 0; i < bundles.length; i++) {
+						Util.updateMonitor(subMonitor, 1);
+							if (!bundles[i].isSourceBundle()) {
+								IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
+								if (component != null) {
+									subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
+									components.add(component);
+								}
+							}
+					}
+				}
+				result = (IApiComponent[])components.toArray(new IApiComponent[components.size()]);
+			} else {
+				// The target platform service is unavailable (OSGi isn't running), add components by searching the plug-ins directory
+				File dir = new File(installLocation);
+				if(dir.exists()) {
+					File[] files = dir.listFiles(fgCvsFilter);
+					if(files == null) {
+						return NO_COMPONENTS;
+					}
+					List components = new ArrayList();
+					for (int i = 0; i < files.length; i++) {
+						File bundle = files[i];
+						IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
+						if(component != null) {
 							components.add(component);
 						}
 					}
+					result = (IApiComponent[]) components.toArray(new IApiComponent[components.size()]);
+				}
 			}
+			if(result != null) {
+				baseline.addApiComponents(result);
+				return result;
+			}
+			return NO_COMPONENTS;
 		}
-		
-		IApiComponent[] result = (IApiComponent[])components.toArray(new IApiComponent[components.size()]);
-		baseline.addApiComponents(result);
-		
-		subMonitor.done();
-		
-		return result;
+		finally {
+			subMonitor.done();
+		}
 	}
 }

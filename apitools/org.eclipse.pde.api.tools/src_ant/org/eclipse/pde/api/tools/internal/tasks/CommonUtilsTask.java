@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * Common code for API Tools Ant tasks.
  * 
  * @since 1.0.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public abstract class CommonUtilsTask extends Task {
 	private static final String ECLIPSE_FOLDER_NAME = "eclipse"; //$NON-NLS-1$
@@ -53,12 +53,12 @@ public abstract class CommonUtilsTask extends Task {
 	protected String reportLocation;
 	
 	/**
-	 * Creates a baseline with the given name and ee file location in the given directory.  The installLocation
+	 * Creates a baseline with the given name and EE file location in the given directory.  The installLocation
 	 * will be searched for bundles to add as API components.
 	 * 
 	 * @param baselineName Name to use for the new baseline
-	 * @param installLocation Location of an installation or directory of bundles to add as api components
-	 * @param eeFileLocation execution environment location or <code>null</code> to have the EE determined from api components
+	 * @param installLocation Location of an installation or directory of bundles to add as API components
+	 * @param eeFileLocation execution environment location or <code>null</code> to have the EE determined from API components
 	 * @return a new {@link IApiBaseline}
 	 */
 	protected IApiBaseline createBaseline(String baselineName, String installLocation, String eeFileLocation) {
@@ -89,7 +89,7 @@ public abstract class CommonUtilsTask extends Task {
 	 * @param folder
 	 */
 	protected void deleteBaseline(String referenceLocation, File folder) {
-		if (isArchive(referenceLocation)) {
+		if (Util.isArchive(referenceLocation)) {
 			Util.delete(folder.getParentFile());
 		}
 	}
@@ -106,7 +106,7 @@ public abstract class CommonUtilsTask extends Task {
 		if (!locationFile.exists()) {
 			throw new BuildException(NLS.bind(Messages.fileDoesnotExist, location));
 		}
-		if (isArchive(location)) {
+		if (Util.isArchive(location)) {
 			File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
 			File installDir = new File(tempDir, installDirName);
 			if (installDir.exists()) {
@@ -125,9 +125,9 @@ public abstract class CommonUtilsTask extends Task {
 								installDir.getAbsolutePath()));
 			}
 			try {
-				if (isZipJarFile(location)) {
+				if (Util.isZipJarFile(location)) {
 					Util.unzip(location, installDir.getAbsolutePath());
-				} else if (isTGZFile(location)) {
+				} else if (Util.isTGZFile(location)) {
 					Util.guntar(location, installDir.getAbsolutePath());
 				}
 			} catch (IOException e) {
@@ -154,43 +154,6 @@ public abstract class CommonUtilsTask extends Task {
 	}
 	
 	/**
-	 * Returns if the given file name is the name of an archive file, 
-	 * where an archive file is described as *.zip, *.jar, *.tar.gz or *.tgz
-	 * 
-	 * @param fileName
-	 * @return true if the file name if that of an archive, false otherwise
-	 */
-	private boolean isArchive(String fileName) {
-		return isZipJarFile(fileName) || isTGZFile(fileName);
-	}
-	
-	/**
-	 * Returns if the given file name represents a G-zip file name, where the name 
-	 * has an extension of *.tar.gz or *.tgz
-	 * 
-	 * @param fileName
-	 * @return true if the given file name is that of a G-zip archive, false otherwise
-	 */
-	private boolean isTGZFile(String fileName) {
-		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(".tar.gz") //$NON-NLS-1$
-			|| normalizedFileName.endsWith(".tgz"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Returns if the given file name represents a 'standard' archive, where the name
-	 * has an extension of *.zip or *.jar
-	 * 
-	 * @param fileName
-	 * @return true if the given file name is that of a 'standard' archive, false otherwise
-	 */
-	private boolean isZipJarFile(String fileName) {
-		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(".zip") //$NON-NLS-1$
-			|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
-	}
-	
-	/**
 	 * Initializes the include/exclude list from the given file location, and returns
 	 * a {@link Set} of project names that should be include/excluded.
 	 * 
@@ -204,7 +167,7 @@ public abstract class CommonUtilsTask extends Task {
 	/**
 	 * Saves the report with the given name in the report location.  If a componentID is provided, a child
 	 * directory using that name will be created to put the report in.
-	 * @param componentID Name of the component to create a child directory for or <code>null<code> to put the report in the xml root
+	 * @param componentID Name of the component to create a child directory for or <code>null<code> to put the report in the XML root
 	 * @param contents contents to output to the report
 	 * @param reportname name of the file to output to
 	 */
