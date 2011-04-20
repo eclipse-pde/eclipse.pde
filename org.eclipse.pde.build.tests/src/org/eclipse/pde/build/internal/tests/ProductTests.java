@@ -529,7 +529,7 @@ public class ProductTests extends PDETestCase {
 		IFile config = buildFolder.getFile("features/container/productRootFiles/win32.win32.x86/configuration/config.ini");
 
 		assertLogContainsLine(config, "org.eclipse.update.reconcile=false");
-		assertLogContainsLine(config, "osgi.bundles=org.eclipse.core.runtime,org.eclipse.update.configurator,org.eclipse.equinox.common@start");
+		assertLogContainsLines(config, new String[] {"osgi.bundles=org.eclipse.core.runtime,", "org.eclipse.update.configurator,", "org.eclipse.equinox.common@start"});
 
 	}
 

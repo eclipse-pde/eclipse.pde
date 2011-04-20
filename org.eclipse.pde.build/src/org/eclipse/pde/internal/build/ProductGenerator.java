@@ -461,6 +461,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	}
 
 	private void printAllBundles(StringBuffer buffer, Config config, byte style) {
+		String newline = "win32".equals(config.getOs()) ? "\r\n" : "\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
 
 		//When the plugins are all listed.
@@ -487,7 +489,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				if (first)
 					first = false;
 				else
-					buffer.append(',');
+					buffer.append(",\\" + newline + "  "); //$NON-NLS-1$ //$NON-NLS-2$
 				if (infos.size() > 0) {
 					if (infos.containsKey(id))
 						printBundleInfo(buffer, (BundleInfo) infos.get(id));
