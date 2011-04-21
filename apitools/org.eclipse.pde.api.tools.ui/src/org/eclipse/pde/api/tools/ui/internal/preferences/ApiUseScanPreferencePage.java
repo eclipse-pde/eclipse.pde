@@ -78,7 +78,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class ApiUseScanPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiusescan.prefpage"; //$NON-NLS-1$
-	public static final String NAME_REGEX = "^.* (.*)$"; //$NON-NLS-1$
+	public static final String NAME_REGEX = "^.* \\(.*\\)$"; //$NON-NLS-1$
 	
 	private IWorkingCopyManager fManager;
 	CheckboxTableViewer fTableViewer;
@@ -178,7 +178,11 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			public void widgetSelected(SelectionEvent e) {
 				String loc = getDirectory(null);
 				if(loc != null) {
-					addLocation(loc);
+					String exactLocation = getExactScanDirectory(loc);
+					if (exactLocation == null)
+						addLocation(loc);
+					else
+						addLocation(exactLocation);
 				}
 			}
 		});
@@ -346,9 +350,37 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		if (location != null && location.length() > 0) {
 			IPath path = new Path(location);		
 			File file = path.toFile();
-			return validDirectory(file) || validArchive(file);
+			if (file.exists() && file.isDirectory()) {
+				return isValidDirectory(file);
+			}
+			else if (file.exists() && file.isFile()) {
+				return true; //validArchive(file);
+			}
 		}
 		return false;
+	}
+	
+	public String getExactScanDirectory(String location) {
+		File file = new File(location);
+		if (isValidDirectory(file)) {
+			return location;
+		}
+		IPath path = new Path(location);
+		File reportDir = path.append(IApiCoreConstants.XML).toFile();
+		if (reportDir.exists()) {
+			if (reportDir.isDirectory() && isValidDirectory(reportDir)) {
+					return reportDir.getAbsolutePath();
+			}
+		} else {
+			reportDir = path.toFile();
+			File[] reportDirChildren = reportDir.listFiles();
+			if (reportDirChildren != null && reportDirChildren.length == 1) {
+				reportDir = path.append(reportDirChildren[0].getName()).toFile();
+				if (reportDir.isDirectory() && isValidDirectory(reportDir) ) 
+					return reportDir.getAbsolutePath();
+			}
+		} 
+		return null;
 	}
 
 	/**
@@ -357,27 +389,25 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * The {@link File} is considered valid iff:
 	 * <ul>
 	 * <li>it is a folder</li>
-	 * <li>the folder has child folder that matches the name pattern <code>^.* (.*)$</code></li>
-	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* (.*)$</code></li>
+	 * <li>the folder has child folder that matches the name pattern <code>^.* \(.*\)$</code></li>
+	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* \(.*\)$</code></li>
 	 * </ul>
 	 * @param file
 	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
 	 */
-	boolean validDirectory(File file) {
-		if(file.exists() && file.isDirectory()) {
+	boolean isValidDirectory(File file) {
+		try {
+			file.listFiles(filter);
+		}
+		catch(RuntimeException rte) {
+			File f = new File(file, rte.getMessage());
 			try {
-				file.listFiles(filter);
+				if(f.exists() && f.isDirectory()) {
+					f.listFiles(filter);
+				}
 			}
-			catch(RuntimeException rte) {
-				File f = new File(file, rte.getMessage());
-				try {
-					if(f.exists() && f.isDirectory()) {
-						f.listFiles(filter);
-					}
-				}
-				catch(RuntimeException re) {
-					return true;
-				}
+			catch(RuntimeException re) {
+				return true;
 			}
 		}
 		return false;

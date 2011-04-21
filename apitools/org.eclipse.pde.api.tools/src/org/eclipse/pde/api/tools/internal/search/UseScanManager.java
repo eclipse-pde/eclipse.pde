@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -24,6 +25,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.internal.core.OverflowingLRUCache;
 import org.eclipse.jdt.internal.core.util.LRUCache;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -153,7 +155,7 @@ public class UseScanManager {
 					}
 					if (file.isFile()) {
 						if (Util.isArchive(file.getName())) {
-							String destDirPath = tempLocation + file.getName();
+							String destDirPath = tempLocation + file.getName() + '.' + file.getAbsolutePath().hashCode();
 							if (stringManager == null) {
 								stringManager = VariablesPlugin.getDefault().getStringVariableManager();
 							}
@@ -176,6 +178,15 @@ public class UseScanManager {
 					}
 					try {
 						locations[i] = getExactScanLocation(locations[i]);
+						if (locations[i] == null) {
+							String message;
+							if (file.isDirectory()) {
+								message = NLS.bind(SearchMessages.UseScanManager_InvalidDir, file.getAbsolutePath());
+							} else {
+								message = NLS.bind(SearchMessages.UseScanManager_InvalidArchive, file.getAbsolutePath());
+							}
+							throw new Exception(message);
+						}
 						parser.parse(locations[i], localmonitor.newChild(2), visitor);
 						Util.updateMonitor(localmonitor);
 					} catch (Exception e) {
@@ -194,25 +205,68 @@ public class UseScanManager {
 	}
 
 	public String getExactScanLocation(String location) {
-		IPath path = new Path(location);
-		if (path.lastSegment().equalsIgnoreCase(IApiCoreConstants.XML)) {
+		File file = new File(location);
+		if (isValidDirectory(file)) {
 			return location;
 		}
+		IPath path = new Path(location);
 		File reportDir = path.append(IApiCoreConstants.XML).toFile();
 		if (reportDir.exists()) {
-			if (reportDir.isDirectory()) {
+			if (reportDir.isDirectory() && isValidDirectory(reportDir)) {
 					return reportDir.getAbsolutePath();
 			}
 		} else {
 			reportDir = path.toFile();
 			File[] reportDirChildren = reportDir.listFiles();
 			if (reportDirChildren != null && reportDirChildren.length == 1) {
-				reportDir = path.append(reportDirChildren[0].getName()).append(IApiCoreConstants.XML).toFile();
-				if (reportDir.isDirectory()) 
+				reportDir = path.append(reportDirChildren[0].getName()).toFile();
+				if (reportDir.isDirectory() && isValidDirectory(reportDir) ) 
 					return reportDir.getAbsolutePath();
 			}
 		} 
 		return null;
+	}
+	
+	/**
+	 * Validate if the given {@link File} is a folder that contains a use scan.
+	 * <br><br> 
+	 * The {@link File} is considered valid iff:
+	 * <ul>
+	 * <li>it is a folder</li>
+	 * <li>the folder has child folder that matches the name pattern <code>^.* \(.*\)$</code></li>
+	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* \(.*\)$</code></li>
+	 * </ul>
+	 * @param file
+	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
+	 */
+	boolean isValidDirectory(File file) {
+		final String NAME_REGEX = "^.* \\(.*\\)$"; //$NON-NLS-1$
+		FileFilter filter = new FileFilter() {
+			public boolean accept(File pathname) {
+				if(pathname.getName().matches(NAME_REGEX)) {
+					throw new RuntimeException(pathname.getName());
+				}
+				return false;
+			}
+		};
+		
+		if(file.exists() && file.isDirectory()) {
+			try {
+				file.listFiles(filter);
+			}
+			catch(RuntimeException rte) {
+				File f = new File(file, rte.getMessage());
+				try {
+					if(f.exists() && f.isDirectory()) {
+						f.listFiles(filter);
+					}
+				}
+				catch(RuntimeException re) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
