@@ -11,20 +11,12 @@
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
@@ -78,21 +70,12 @@ import org.osgi.service.prefs.BackingStoreException;
 public class ApiUseScanPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiusescan.prefpage"; //$NON-NLS-1$
-	public static final String NAME_REGEX = "^.* \\(.*\\)$"; //$NON-NLS-1$
 	
 	private IWorkingCopyManager fManager;
 	CheckboxTableViewer fTableViewer;
 	HashSet fLocationList = new HashSet();
 	Button remove = null;
 	Button editbutton = null;
-	FileFilter filter = new FileFilter() {
-		public boolean accept(File pathname) {
-			if(pathname.getName().matches(NAME_REGEX)) {
-				throw new RuntimeException(pathname.getName());
-			}
-			return false;
-		}
-	};
 
 	/**
 	 * Column provider for the use scan table
@@ -178,7 +161,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			public void widgetSelected(SelectionEvent e) {
 				String loc = getDirectory(null);
 				if(loc != null) {
-					String exactLocation = getExactScanDirectory(loc);
+					String exactLocation = UseScanManager.getExactScanLocation(loc);
 					if (exactLocation == null)
 						addLocation(loc);
 					else
@@ -330,7 +313,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			String loc = null;
 			for (Iterator iterator = fLocationList.iterator(); iterator.hasNext();) {
 				loc = (String) iterator.next();
-				if (!isValidScanLocation(loc)) {
+				if (!UseScanManager.isValidScanLocation(loc)) {
 					setErrorMessage(NLS.bind(PreferenceMessages.ApiUseScanPreferencePage_8, loc));
 					setValid(false);
 					return;
@@ -339,127 +322,6 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		}
 		setValid(true);
 		setErrorMessage(null);
-	}
-	
-	/**
-	 * Returns if the scan if a valid API use scan
-	 * @param location
-	 * @return true if the scan is valid false otherwise
-	 */
-	public boolean isValidScanLocation(String location) {
-		if (location != null && location.length() > 0) {
-			IPath path = new Path(location);		
-			File file = path.toFile();
-			if (file.exists() && file.isDirectory()) {
-				return isValidDirectory(file);
-			}
-			else if (file.exists() && file.isFile()) {
-				return true; //validArchive(file);
-			}
-		}
-		return false;
-	}
-	
-	public String getExactScanDirectory(String location) {
-		File file = new File(location);
-		if (isValidDirectory(file)) {
-			return location;
-		}
-		IPath path = new Path(location);
-		File reportDir = path.append(IApiCoreConstants.XML).toFile();
-		if (reportDir.exists()) {
-			if (reportDir.isDirectory() && isValidDirectory(reportDir)) {
-					return reportDir.getAbsolutePath();
-			}
-		} else {
-			reportDir = path.toFile();
-			File[] reportDirChildren = reportDir.listFiles();
-			if (reportDirChildren != null && reportDirChildren.length == 1) {
-				reportDir = path.append(reportDirChildren[0].getName()).toFile();
-				if (reportDir.isDirectory() && isValidDirectory(reportDir) ) 
-					return reportDir.getAbsolutePath();
-			}
-		} 
-		return null;
-	}
-
-	/**
-	 * Validate if the given {@link File} is a folder that contains a use scan.
-	 * <br><br> 
-	 * The {@link File} is considered valid iff:
-	 * <ul>
-	 * <li>it is a folder</li>
-	 * <li>the folder has child folder that matches the name pattern <code>^.* \(.*\)$</code></li>
-	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* \(.*\)$</code></li>
-	 * </ul>
-	 * @param file
-	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
-	 */
-	boolean isValidDirectory(File file) {
-		try {
-			file.listFiles(filter);
-		}
-		catch(RuntimeException rte) {
-			File f = new File(file, rte.getMessage());
-			try {
-				if(f.exists() && f.isDirectory()) {
-					f.listFiles(filter);
-				}
-			}
-			catch(RuntimeException re) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Validate if the given {@link File} is an archive that contains a use scan.
-	 * <br><br> 
-	 * The {@link File} is considered valid iff:
-	 * <ul>
-	 * <li>it has an xml folder</li>
-	 * <li>the xml folder has child folder that matches the name pattern <code>^.* (.*)$</code></li>
-	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* (.*)$</code></li>
-	 * </ul>
-	 * @param file
-	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
-	 */
-	boolean validArchive(File file) {
-		String fname = file.getName().toLowerCase();
-		if(file.exists() && Util.isArchive(fname)) {
-			Enumeration entries = null;
-			if(fname.endsWith("jar")) { //$NON-NLS-1$
-				try {
-					JarFile jfile = new JarFile(file);
-					entries = jfile.entries();
-				}
-				catch(IOException ioe) {
-					return false;
-				}
-			}
-			else if(fname.endsWith("zip")) { //$NON-NLS-1$
-				try {
-					ZipFile zfile = new ZipFile(file);
-					entries = zfile.entries();
-				} catch (IOException e) {
-					return false;
-				}
-			}
-			if(entries != null) {
-				while(entries.hasMoreElements()) {
-					ZipEntry o = (ZipEntry) entries.nextElement();
-					if(o.isDirectory() && o.getName().toLowerCase().startsWith("xml")) { //$NON-NLS-1$
-						IPath path = new Path(o.getName());
-						int count = path.segmentCount();
-						if(count > 2) {
-							return path.segment(count-1).matches(NAME_REGEX) && path.segment(count-2).matches(NAME_REGEX);
-						}
-					}
-				}
-			}
-		}
-		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -613,7 +475,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	}
 
 	/**
-	 * @return the root preference node for the API tools core plugin
+	 * @return the root preference node for the API tools core plug-in
 	 */
 	private IEclipsePreferences getNode() {
 		IEclipsePreferences node = (InstanceScope.INSTANCE).getNode(ApiPlugin.PLUGIN_ID);

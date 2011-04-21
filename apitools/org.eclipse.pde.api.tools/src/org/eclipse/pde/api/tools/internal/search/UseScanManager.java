@@ -12,8 +12,13 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,7 +46,12 @@ public class UseScanManager {
 	public static final String STATE_DELIM = "*"; //$NON-NLS-1$
 	public static final String LOCATION_DELIM = "|"; //$NON-NLS-1$
 	public static final String ESCAPE_REGEX = "\\"; //$NON-NLS-1$
-	
+	/**
+	 * Regular expression for finding use scan directories
+	 * <br><br>
+	 * Value is: <code>^.* \\(.*\\)$</code>
+	 */
+	public static final Pattern NAME_REGEX = Pattern.compile("^.* \\(.*\\)$"); //$NON-NLS-1$
 	/**
 	 * Number of entries to cache in the {@link UseScanCache}
 	 */
@@ -74,10 +84,27 @@ public class UseScanManager {
 
 	private String[] fLocations = null;
 
+	/**
+	 * {@link FileFilter} for finding use scan directories
+	 */
+	static FileFilter USESCAN_FILTER = new FileFilter() {
+		public boolean accept(File pathname) {
+			if(NAME_REGEX.matcher(pathname.getName()).matches()) {
+				throw new RuntimeException(pathname.getName());
+			}
+			return false;
+		}
+	};
+	
 	//Singleton
 	private UseScanManager() {
 	}
 
+	/**
+	 * Returns a handle to the singleton instance
+	 * 
+	 * @return the singleton {@link UseScanManager}
+	 */
 	public synchronized static UseScanManager getInstance() {
 		if (fUseScanProcessor == null) {
 			fUseScanProcessor = new UseScanManager();
@@ -204,26 +231,20 @@ public class UseScanManager {
 		}
 	}
 
-	public String getExactScanLocation(String location) {
+	/**
+	 * Returns the scan 
+	 * @param location
+	 * @return
+	 */
+	public static String getExactScanLocation(String location) {
 		File file = new File(location);
 		if (isValidDirectory(file)) {
 			return location;
 		}
-		IPath path = new Path(location);
-		File reportDir = path.append(IApiCoreConstants.XML).toFile();
-		if (reportDir.exists()) {
-			if (reportDir.isDirectory() && isValidDirectory(reportDir)) {
-					return reportDir.getAbsolutePath();
-			}
-		} else {
-			reportDir = path.toFile();
-			File[] reportDirChildren = reportDir.listFiles();
-			if (reportDirChildren != null && reportDirChildren.length == 1) {
-				reportDir = path.append(reportDirChildren[0].getName()).toFile();
-				if (reportDir.isDirectory() && isValidDirectory(reportDir) ) 
-					return reportDir.getAbsolutePath();
-			}
-		} 
+		file = new File(location, IApiCoreConstants.XML);
+		if (isValidDirectory(file)) {
+			return file.getAbsolutePath();
+		}
 		return null;
 	}
 	
@@ -233,32 +254,22 @@ public class UseScanManager {
 	 * The {@link File} is considered valid iff:
 	 * <ul>
 	 * <li>it is a folder</li>
-	 * <li>the folder has child folder that matches the name pattern <code>^.* \(.*\)$</code></li>
-	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* \(.*\)$</code></li>
+	 * <li>the folder has child folder that matches the name pattern <code>^.* (.*)$</code></li>
+	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* (.*)$</code></li>
 	 * </ul>
 	 * @param file
 	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
 	 */
-	boolean isValidDirectory(File file) {
-		final String NAME_REGEX = "^.* \\(.*\\)$"; //$NON-NLS-1$
-		FileFilter filter = new FileFilter() {
-			public boolean accept(File pathname) {
-				if(pathname.getName().matches(NAME_REGEX)) {
-					throw new RuntimeException(pathname.getName());
-				}
-				return false;
-			}
-		};
-		
+	public static boolean isValidDirectory(File file) {
 		if(file.exists() && file.isDirectory()) {
 			try {
-				file.listFiles(filter);
+				file.listFiles(USESCAN_FILTER);
 			}
 			catch(RuntimeException rte) {
 				File f = new File(file, rte.getMessage());
 				try {
 					if(f.exists() && f.isDirectory()) {
-						f.listFiles(filter);
+						f.listFiles(USESCAN_FILTER);
 					}
 				}
 				catch(RuntimeException re) {
@@ -269,6 +280,69 @@ public class UseScanManager {
 		return false;
 	}
 
+	/**
+	 * Validate if the given {@link File} is an archive that contains a use scan.
+	 * <br><br> 
+	 * The {@link File} is considered valid iff:
+	 * <ul>
+	 * <li>it has an XML folder</li>
+	 * <li>the XML folder has child folder that matches the name pattern <code>{@link #NAME_REGEX}</code></li>
+	 * <li>the previous child directory has its own child directory that matches the name pattern <code>{@link #NAME_REGEX}</code></li>
+	 * </ul>
+	 * @param file
+	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
+	 */
+	public static boolean isValidArchive(File file) {
+		String fname = file.getName().toLowerCase();
+		if(file.exists() && Util.isArchive(fname)) {
+			Enumeration entries = null;
+			if(fname.endsWith(Util.DOT_JAR)) {
+				try {
+					JarFile jfile = new JarFile(file);
+					entries = jfile.entries();
+				}
+				catch(IOException ioe) {
+					return false;
+				}
+			}
+			else if(fname.endsWith(Util.DOT_ZIP)) {
+				try {
+					ZipFile zfile = new ZipFile(file);
+					entries = zfile.entries();
+				} catch (IOException e) {
+					return false;
+				}
+			}
+			if(entries != null) {
+				while(entries.hasMoreElements()) {
+					ZipEntry o = (ZipEntry) entries.nextElement();
+					if(o.isDirectory()) {
+						IPath path = new Path(o.getName());
+						int count = path.segmentCount();
+						if(count > 2) {
+							return NAME_REGEX.matcher(path.segment(0)).matches() || NAME_REGEX.matcher(path.segment(1)).matches();
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns if the scan if a valid API use scan
+	 * @param location
+	 * @return true if the scan is valid false otherwise
+	 */
+	public static boolean isValidScanLocation(String location) {
+		if (location != null && location.length() > 0) {
+			IPath path = new Path(location);		
+			File file = path.toFile();
+			return isValidDirectory(file) || isValidArchive(file);
+		}
+		return false;
+	}
+	
 	/**
 	 * Returns the report locations from the preferences
 	 * @return

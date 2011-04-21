@@ -133,6 +133,11 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public final class Util {
 
+	public static final String DOT_TGZ = ".tgz"; //$NON-NLS-1$
+	public static final String DOT_TAR_GZ = ".tar.gz"; //$NON-NLS-1$
+	public static final String DOT_JAR = ".jar"; //$NON-NLS-1$
+	public static final String DOT_ZIP = ".zip"; //$NON-NLS-1$
+
 	public static final char VERSION_SEPARATOR = '(';
 
 	/**
@@ -1401,8 +1406,8 @@ public final class Util {
 	 */
 	public static boolean isZipJarFile(String fileName) {
 		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(".zip") //$NON-NLS-1$
-			|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
+		return normalizedFileName.endsWith(DOT_ZIP) 
+			|| normalizedFileName.endsWith(DOT_JAR); 
 	}
 	
 	/**
@@ -1414,8 +1419,8 @@ public final class Util {
 	 */
 	public static boolean isTGZFile(String fileName) {
 		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(".tar.gz") //$NON-NLS-1$
-			|| normalizedFileName.endsWith(".tgz"); //$NON-NLS-1$
+		return normalizedFileName.endsWith(DOT_TAR_GZ) 
+			|| normalizedFileName.endsWith(DOT_TGZ); 
 	}
 	
 	/**
@@ -1853,7 +1858,7 @@ public final class Util {
 			if ("DRLVM".equals(vmName)) { //$NON-NLS-1$
 				FilenameFilter jarFilter = new FilenameFilter() {
 					public boolean accept(File dir, String name) {
-						return name.endsWith(".jar") & !name.endsWith("-src.jar");  //$NON-NLS-1$//$NON-NLS-2$
+						return name.endsWith(DOT_JAR) & !name.endsWith("-src.jar");  //$NON-NLS-1$
 					}
 				};
 				jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter); //$NON-NLS-1$
