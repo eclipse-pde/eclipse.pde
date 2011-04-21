@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,19 @@ import org.w3c.dom.*;
  */
 public class TargetPersistence36Helper {
 
+	/* Example of Software location in Target XML
+
+	<?xml version="1.0" encoding="UTF-8"?><?pde version="3.6"?><target name="SoftwareSiteTarget" sequenceNumber="6">
+	<locations>
+	<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+	<unit id="org.eclipse.egit.feature.group" version="0.11.3"/>
+	<unit id="org.eclipse.jgit.feature.group" version="0.11.3"/>
+	<repository location="http://download.eclipse.org/releases/indigo"/>
+	</location>
+	</locations>
+	</target>
+	
+	*/
 	public static void initFromDoc(ITargetDefinition definition, Element root) throws CoreException {
 		String name = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
 		if (name.length() > 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
+
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
+
+import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 
 import java.io.*;
 import java.net.*;
@@ -637,4 +641,52 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		assertTrue(clazz.isInstance(container));
 		assertEquals(rawLocation, container.getLocation(false));
 	}
+	
+	/**
+	 * Tests that we increment the sequence number correctly when target is modified
+	 * contents.
+	 * 
+	 * @throws Exception
+	 */
+	public void testSequenceNumberChange() throws Exception {
+		ITargetDefinition target = readOldTarget("featureLocations");
+		
+		assertEquals("Wrong name", "Features", target.getName());
+		TargetDefinition targetDef = (TargetDefinition) target;
+		int currentSeqNo = targetDef.getSequenceNumber();
+		target.setArch("x86");
+		asssrtSequenceNumber("Arch", currentSeqNo, targetDef);
+		
+		currentSeqNo = targetDef.getSequenceNumber();
+		target.setOS("win32");
+		asssrtSequenceNumber("OS", currentSeqNo, targetDef);
+
+		currentSeqNo = targetDef.getSequenceNumber();
+		target.setNL("hi_IN");
+		asssrtSequenceNumber("NL", currentSeqNo, targetDef);
+		
+		currentSeqNo = targetDef.getSequenceNumber();
+		target.setWS("carbon");
+		asssrtSequenceNumber("WS", currentSeqNo, targetDef);
+		
+		IBundleContainer[] newContainers = new IBundleContainer[1];
+		newContainers[0] = new DirectoryBundleContainer("Path");
+		currentSeqNo = targetDef.getSequenceNumber();
+		target.setBundleContainers(newContainers);
+		asssrtSequenceNumber("Bundle Containers", currentSeqNo, targetDef);
+	}
+
+	private void asssrtSequenceNumber(String name, int currentSeqNo, TargetDefinition targetDef) {
+		assertEquals("Sequence number did not increment after updating '" + name + "'", currentSeqNo + 1, targetDef.getSequenceNumber());
+	}
+	
+	public void testIncludeSource() throws Exception {
+		ITargetDefinition target = readOldTarget("SoftwareSiteTarget");
+		IBundleContainer[] containers = target.getBundleContainers();
+		assertEquals(1, containers.length);
+		assertTrue(containers[0] instanceof IUBundleContainer);
+		IUBundleContainer iubc = (IUBundleContainer) containers[0];
+		assertTrue(iubc.getIncludeSource());
+	}
+
 }
