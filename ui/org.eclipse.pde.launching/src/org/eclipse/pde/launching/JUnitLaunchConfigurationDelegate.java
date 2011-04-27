@@ -427,7 +427,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// if we are using JUnit4, we need to include the junit4 specific bundles
 		ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
 		if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId()))
-			return new String[] {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime", "org.eclipse.jdt.junit4.runtime"}; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			return new String[] {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime", "org.eclipse.jdt.junit4.runtime"}; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		return new String[] {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
