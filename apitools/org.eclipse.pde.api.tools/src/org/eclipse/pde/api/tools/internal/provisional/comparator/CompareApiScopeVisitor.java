@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
@@ -104,18 +105,21 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 				return false;
 			}
 			Util.updateMonitor(this.monitor);
-			IDelta delta = ApiComparator.compare(referenceComponent, component, this.visibilityModifiers, null);
-			if (delta != null) {
-				delta.accept(new DeltaVisitor() {
-					public void endVisit(IDelta localDelta) {
-						if (localDelta.getChildren().length == 0) {
-							CompareApiScopeVisitor.this.deltas.add(localDelta);
-						}
-					}
-				});
-			} else {
-				this.containsErrors = true;
+			final Delta globalDelta = new Delta();
+			globalDelta.add(ApiComparator.compare(referenceComponent, component, this.visibilityModifiers, null));
+			String versionString = referenceComponent.getVersion();
+			String versionString2 = component.getVersion();
+			IDelta bundleVersionChangesDelta = ApiComparator.checkBundleVersionChanges(component, referenceComponent.getSymbolicName(), versionString, versionString2);
+			if (bundleVersionChangesDelta != null) {
+				globalDelta.add(bundleVersionChangesDelta);
 			}
+			globalDelta.accept(new DeltaVisitor() {
+				public void endVisit(IDelta localDelta) {
+					if (localDelta.getChildren().length == 0) {
+						CompareApiScopeVisitor.this.deltas.add(localDelta);
+					}
+				}
+			});
 			return false;
 		} finally {
 			this.monitor.worked(1);

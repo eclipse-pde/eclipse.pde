@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,13 +19,17 @@ import java.io.StringWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
+import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 
 /**
@@ -132,7 +136,9 @@ public class APIFreezeTask extends CommonUtilsTask {
 			time = System.currentTimeMillis();
 		}
 		try {
-			delta = ApiComparator.compare(referenceBaseline, currentBaseline, VisibilityModifiers.API, true, null);
+			delta = ApiComparator.compare(getScope(currentBaseline), referenceBaseline, VisibilityModifiers.API, true, null);
+		} catch (CoreException e) {
+			// ignore
 		} finally {
 			if (this.debug) {
 				System.out.println("API freeze check : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -185,6 +191,29 @@ public class APIFreezeTask extends CommonUtilsTask {
 				System.out.println("Report generation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+	}
+	private IApiScope getScope(IApiBaseline currentBaseline) {
+		IApiComponent[] apiComponents = currentBaseline.getApiComponents();
+		ApiScope scope = new ApiScope();
+		for (int i = 0, max = apiComponents.length; i < max; i++) {
+			IApiComponent apiComponent = apiComponents[i];
+			try {
+				ResolverError[] errors = apiComponent.getErrors();
+				if (errors != null) {
+					if (this.debug) {
+						System.out.println("Errors for component : " + apiComponent.getSymbolicName()); //$NON-NLS-1$
+						for (int j = 0, max2 = errors.length; j < max2; j++) {
+							System.out.println(errors[j]);
+						}
+					}
+					continue;
+				}
+				scope.addElement(apiComponent);
+			} catch (CoreException e) {
+				// ignore
+			}
+		}
+		return scope;
 	}
 	/**
 	 * Set the debug value.

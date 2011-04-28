@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,14 +54,14 @@ public class ApiComparator {
 	public static final IDelta NO_DELTA = new Delta();
 	
 	/**
-	 * Reports a delta for a API component version change
+	 * Returns a delta for a API component version change
+	 * 
 	 * @param apiComponent2
 	 * @param id
 	 * @param apiComponentVersion
 	 * @param apiComponentVersion2
-	 * @param globalDelta
 	 */
-	private static void checkBundleVersionChanges(IApiComponent apiComponent2, String id, String apiComponentVersion, String apiComponentVersion2, Delta globalDelta) {
+	static IDelta checkBundleVersionChanges(IApiComponent apiComponent2, String id, String apiComponentVersion, String apiComponentVersion2) {
 		Version version = null;
 		try {
 			version = new Version(apiComponentVersion);
@@ -77,7 +77,7 @@ public class ApiComparator {
 		if (version != null && version2 != null) {
 			// add check for bundle versions
 			if (version.getMajor() != version2.getMajor()) {
-				globalDelta.add(
+				return
 					new Delta(
 						Util.getDeltaComponentVersionsId(apiComponent2),
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
@@ -93,9 +93,9 @@ public class ApiComparator {
 							id,
 							apiComponentVersion,
 							apiComponentVersion2
-						}));
+						});
 			} else if (version.getMinor() != version2.getMinor()) {
-				globalDelta.add(
+				return
 					new Delta(
 						Util.getDeltaComponentVersionsId(apiComponent2),
 						IDelta.API_COMPONENT_ELEMENT_TYPE,
@@ -111,9 +111,10 @@ public class ApiComparator {
 							id,
 							apiComponentVersion,
 							apiComponentVersion2
-						}));
+						});
 			}
 		}
+		return null;
 	}
 
 	/**
@@ -165,7 +166,10 @@ public class ApiComparator {
 						apiComponentsIds.add(id);
 						String versionString = apiComponent.getVersion();
 						String versionString2 = apiComponent2.getVersion();
-						checkBundleVersionChanges(apiComponent2, id, versionString, versionString2, globalDelta);
+						IDelta bundleVersionChangesDelta = checkBundleVersionChanges(apiComponent2, id, versionString, versionString2);
+						if (bundleVersionChangesDelta != null) {
+							globalDelta.add(bundleVersionChangesDelta);
+						}
 						if (!versionString.equals(versionString2)
 								|| force) {
 							long time = System.currentTimeMillis();
