@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2011 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
@@ -37,16 +28,32 @@ import org.eclipse.pde.internal.ds.ui.wizards.DSNewClassCreationWizard;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaUI;
 
 public class DSComponentSection extends PDESection {
 
@@ -143,13 +150,17 @@ public class DSComponentSection extends PDESection {
 		}
 
 		if (fNameEntry != null) {
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					updateUIFields();
-				}
-			});
+			Display display= fNameEntry.getText().getDisplay();
+			if (display.getThread() == Thread.currentThread())
+				updateUIFields();
+			else
+				display.asyncExec(new Runnable() {
+					public void run() {
+						if (!fNameEntry.getText().isDisposed())
+							updateUIFields();
+					}
+				});
 		}
-
 	}
 
 	public void updateUIFields() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2011 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui.editor.sections;
 
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
@@ -24,6 +23,7 @@ import org.eclipse.pde.internal.ds.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ds.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,6 +35,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.jface.layout.GridDataFactory;
+
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -146,11 +149,16 @@ IFormColors.TITLE));
 			markStale();
 		}
 
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				updateUIFields();
-			}
-		});
+		Display display= fEnabledButton.getDisplay();
+		if (display.getThread() == Thread.currentThread())
+			updateUIFields();
+		else
+			display.asyncExec(new Runnable() {
+				public void run() {
+					if (!fEnabledButton.isDisposed())
+						updateUIFields();
+				}
+			});
 	}
 
 	public void updateUIFields() {
