@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2011 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -24,6 +25,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.widgets.*;
 
 public class GeneralInfoSection extends PDESection {
@@ -94,6 +96,7 @@ public class GeneralInfoSection extends PDESection {
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getProduct().setId(entry.getValue().trim());
+				validateProductId();
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -101,6 +104,17 @@ public class GeneralInfoSection extends PDESection {
 		gd.horizontalSpan = 2;
 		fIdEntry.getText().setLayoutData(gd);
 		fIdEntry.setEditable(isEditable());
+		validateProductId();
+	}
+
+	private void validateProductId() {
+		String pluginId = getProduct().getDefiningPluginId();
+		IMessageManager messageManager = getManagedForm().getForm().getMessageManager();
+		if (pluginId != null && pluginId.equals(getProduct().getId())) {
+			messageManager.addMessage(PDEUIMessages.GeneralInfoSection_IdWarning, PDEUIMessages.GeneralInfoSection_IdWarning, null, IMessageProvider.WARNING);
+		} else {
+			messageManager.removeMessage(PDEUIMessages.GeneralInfoSection_IdWarning);
+		}
 	}
 
 	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
