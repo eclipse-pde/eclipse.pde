@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,6 +300,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		long timeStamp = 0;
 		for (int i = 0; i < bases.length; i++) {
 			String loc = bases[i].getInstallLocation();
+			if (loc == null)
+				continue;
+
 			File location = new File(loc);
 			if (location.exists()) {
 				if (location.isFile()) {
