@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -359,19 +359,21 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fImportViewer.getSelection();
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginBase pluginBase = model.getPluginBase();
-		IPluginImport[] imports = new IPluginImport[ssel.size()];
-		int i = 0;
-		for (Iterator iter = ssel.iterator(); iter.hasNext(); i++)
-			imports[i] = ((ImportObject) iter.next()).getImport();
+		if (!ssel.isEmpty()) {
+			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			IPluginBase pluginBase = model.getPluginBase();
+			IPluginImport[] imports = new IPluginImport[ssel.size()];
+			int i = 0;
+			for (Iterator iter = ssel.iterator(); iter.hasNext(); i++)
+				imports[i] = ((ImportObject) iter.next()).getImport();
 
-		try {
-			removeImports(pluginBase, imports);
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
+			try {
+				removeImports(pluginBase, imports);
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+			updateButtons();
 		}
-		updateButtons();
 	}
 
 	private void removeImports(IPluginBase base, IPluginImport[] imports) throws CoreException {
