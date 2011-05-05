@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,7 +251,7 @@ public class ClasspathHelper {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals(PDECore.getDefault().getModelManager().getSystemBundleId()), false);
 				IFile file = PDEProject.getBuildProperties(project);
-				boolean searchBuild = file.exists();
+				boolean searchBuild = file.getFullPath().toFile().exists();
 				if (searchBuild) {
 					WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
 					IBuild build = bModel.getBuild();
