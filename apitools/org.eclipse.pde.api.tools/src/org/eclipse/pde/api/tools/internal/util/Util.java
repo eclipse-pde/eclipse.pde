@@ -2294,7 +2294,8 @@ public final class Util {
 					LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
 					String line = null;
 					try {
-						while ((line = reader.readLine().trim()) != null) {
+						while ((line = reader.readLine()) != null) {
+							line = line.trim();
 							if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
 								continue; 
 							}

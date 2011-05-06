@@ -97,6 +97,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 				return false;
 			}
 			IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(component.getSymbolicName());
+			// referenceComponent can be null if this is an added component
 			if (referenceComponent != null && referenceComponent.getErrors() != null) {
 				this.containsErrors = true;
 				return false;
@@ -107,11 +108,13 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			Util.updateMonitor(this.monitor);
 			final Delta globalDelta = new Delta();
 			globalDelta.add(ApiComparator.compare(referenceComponent, component, this.visibilityModifiers, null));
-			String versionString = referenceComponent.getVersion();
-			String versionString2 = component.getVersion();
-			IDelta bundleVersionChangesDelta = ApiComparator.checkBundleVersionChanges(component, referenceComponent.getSymbolicName(), versionString, versionString2);
-			if (bundleVersionChangesDelta != null) {
-				globalDelta.add(bundleVersionChangesDelta);
+			if (referenceComponent != null) {
+				String versionString = referenceComponent.getVersion();
+				String versionString2 = component.getVersion();
+				IDelta bundleVersionChangesDelta = ApiComparator.checkBundleVersionChanges(component, referenceComponent.getSymbolicName(), versionString, versionString2);
+				if (bundleVersionChangesDelta != null) {
+					globalDelta.add(bundleVersionChangesDelta);
+				}
 			}
 			globalDelta.accept(new DeltaVisitor() {
 				public void endVisit(IDelta localDelta) {
