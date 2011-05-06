@@ -365,7 +365,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 											break;
 										}
 										case IResourceDelta.CHANGED: {
-											full = (filters.getFlags() & IResourceDelta.REPLACED) > 0;
+											full = (filters.getFlags() & (IResourceDelta.REPLACED | IResourceDelta.CONTENT)) > 0;
 											break;
 										}
 									}
