@@ -7,6 +7,10 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Compuware Corporation - Sebastien Angers <sebastien.angers@compuware.com> 
+ *     		- Enabled additional mirror slicingOptions in Headless PDE Build
+ *     		- Enabled 'raw' attribute for mirror step in Headless PDE Build
+ *     		- https://bugs.eclipse.org/338878
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
@@ -104,6 +108,15 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_P2_METADATA_REPO_NAME = "p2.metadata.repo.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_ARTIFACT_REPO_NAME = "p2.artifact.repo.name"; //$NON-NLS-1$
 	public static final String PROPERTY_P2_GATHERING = "p2.gathering"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_RAW = "p2.mirror.raw"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_FILTER = "p2.mirror.slicing.filter"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_FOLLOW_ONLY_FILTERED_REQS = "p2.mirror.slicing.followOnlyFilteredRequirements"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_FOLLOW_STRICT = "p2.mirror.slicing.followStrict"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_INCLUDE_FEATURES = "p2.mirror.slicing.includeFeatures"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_INCLUDE_NON_GREEDY = "p2.mirror.slicing.includeNonGreedy"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_INCLUDE_OPTIONAL = "p2.mirror.slicing.includeOptional"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_LATEST_VERSION_ONLY = "p2.mirror.slicing.latestVersionOnly"; //$NON-NLS-1$
+	public static final String PROPERTY_P2_MIRROR_SLICING_PLATFORM_FILTER = "p2.mirror.slicing.platformFilter"; //$NON-NLS-1$
 	public static final String PROPERTY_SKIP_MIRRORING = "skipMirroring"; //$NON-NLS-1$
 	public static final String PROPERTY_SKIP_DIRECTOR = "skipDirector"; //$NON-NLS-1$
 

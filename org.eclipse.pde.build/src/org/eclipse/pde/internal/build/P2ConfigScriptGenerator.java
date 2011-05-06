@@ -7,6 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Compuware Corporation - Sebastien Angers <sebastien.angers@compuware.com> 
+ *     		- Enabled additional mirror slicingOptions in Headless PDE Build
+ *     		- Enabled 'raw' attribute for mirror step in Headless PDE Build
+ *     		- https://bugs.eclipse.org/338878
  *******************************************************************************/
 
 package org.eclipse.pde.internal.build;
@@ -93,6 +97,16 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 		if (productQualifier != null)
 			script.printProperty(PROPERTY_P2_PRODUCT_QUALIFIER, productQualifier);
+
+		script.printProperty(PROPERTY_P2_MIRROR_RAW, FALSE);
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_FILTER, ""); //$NON-NLS-1$
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_FOLLOW_ONLY_FILTERED_REQS, FALSE);
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_FOLLOW_STRICT, FALSE);
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_INCLUDE_FEATURES, TRUE);
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_INCLUDE_NON_GREEDY, FALSE);
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_INCLUDE_OPTIONAL, havePDEUIState() ? FALSE : TRUE);
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_LATEST_VERSION_ONLY, FALSE);
+		script.printProperty(PROPERTY_P2_MIRROR_SLICING_PLATFORM_FILTER, ""); //$NON-NLS-1$
 
 		script.println();
 		generateCustomGatherMacro();
@@ -297,10 +311,22 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		if (product == null && (binaryFeatures == null || binaryFeatures.size() == 0))
 			return;
 
-		script.printStartTag("p2.mirror"); //$NON-NLS-1$
+		Map args = new HashMap();
+		// note that if the raw attribute (p2.mirror.raw) has not been set in the build.properties, then the default was set in #generatePrologue()
+		args.put("raw", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_RAW)); //$NON-NLS-1$
+		script.printStartTag("p2.mirror", args); //$NON-NLS-1$
+
 		script.printTab();
+		// note that if a slicingOption has not been set in the build.properties, then the default was set in #generatePrologue()
 		script.print("\t<slicingOptions"); //$NON-NLS-1$
-		script.printAttribute("includeNonGreedy", FALSE, true); //$NON-NLS-1$
+		script.printAttribute("includeNonGreedy", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_INCLUDE_NON_GREEDY), true); //$NON-NLS-1$
+		script.printAttribute("filter", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_FILTER), true); //$NON-NLS-1$
+		script.printAttribute("followOnlyFilteredRequirements", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_FOLLOW_ONLY_FILTERED_REQS), true); //$NON-NLS-1$
+		script.printAttribute("followStrict", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_FOLLOW_STRICT), true); //$NON-NLS-1$
+		script.printAttribute("includeFeatures", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_INCLUDE_FEATURES), true); //$NON-NLS-1$
+		script.printAttribute("includeOptional", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_INCLUDE_OPTIONAL), true); //$NON-NLS-1$
+		script.printAttribute("latestVersionOnly", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_LATEST_VERSION_ONLY), true); //$NON-NLS-1$
+		script.printAttribute("platformFilter", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_SLICING_PLATFORM_FILTER), true); //$NON-NLS-1$			
 		script.println("/>"); //$NON-NLS-1$
 
 		script.printTab();
