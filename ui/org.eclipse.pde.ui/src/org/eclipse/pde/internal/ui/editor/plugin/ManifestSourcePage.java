@@ -204,6 +204,9 @@ public class ManifestSourcePage extends XMLSourcePage {
 
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IPluginBase base = ((IPluginModelBase) getInputContext().getModel()).getPluginBase(false);
+		if (base == null)
+			return null;
+
 		IDocumentRange node = findNode(base.getLibraries(), offset, searchChildren);
 		if (node == null)
 			node = findNode(base.getImports(), offset, searchChildren);
