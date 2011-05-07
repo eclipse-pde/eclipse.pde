@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -216,6 +216,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		int offset = attr.getValueOffset();
 		Object newValue = event.getNewValue();
 		Object changedObject = attr;
+		TextEdit oldOp = (TextEdit) fOperationTable.get(changedObject);
 		TextEdit op = null;
 		if (offset > -1) {
 			// Attribute exists, replace the old value with the new value
@@ -223,7 +224,13 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				int length = attr.getValueOffset() + attr.getValueLength() + 1 - attr.getNameOffset();
 				op = getAttributeDeleteEditOperation(attr.getNameOffset(), length);
 			} else {
-				int oldLength = ((String) event.getOldValue()).length();
+				int oldLength;
+				if (oldOp instanceof ReplaceEdit)
+					oldLength = oldOp.getLength();
+				else if (oldOp instanceof DeleteEdit)
+					oldLength = oldOp.getOffset() + oldOp.getLength() - offset - 1;
+				else
+					oldLength = ((String) event.getOldValue()).length();
 				op = new ReplaceEdit(offset, oldLength, getWritableAttributeNodeValue(event.getNewValue().toString()));
 			}
 		}
@@ -242,7 +249,6 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				return;
 			}
 		}
-		TextEdit oldOp = (TextEdit) fOperationTable.get(changedObject);
 		if (oldOp != null)
 			ops.remove(oldOp);
 		ops.add(op);
@@ -490,19 +496,11 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 	}
 
-	/**
-	 * @param source
-	 * @return
-	 */
 	protected String getWritableAttributeNodeValue(String source) {
 		// TODO: MP: TEO: LOW: Shouldn't it be getWritableAttributeString ?
 		return PDEXMLHelper.getWritableString(source);
 	}
 
-	/**
-	 * @param source
-	 * @return
-	 */
 	protected String getWritableTextNodeString(IDocumentTextNode textNode) {
 		return textNode.write();
 	}
