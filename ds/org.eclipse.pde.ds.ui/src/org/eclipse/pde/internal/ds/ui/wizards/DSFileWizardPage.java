@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2011 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,6 +108,9 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 			IProject project = getProject(element);
 			if (project != null)
 				setComponentNameText(project);
+		}
+		if (fDSComponentNameText.getText().trim().length() == 0) {
+			fDSComponentNameText.setText(Messages.DSFileWizardPage_ExampleComponentName);
 		}
 	}
 
@@ -237,7 +240,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		classTextGridData.horizontalSpan = 1;
 		classTextGridData.horizontalIndent = 3;
 		fDSImplementationClassText.setLayoutData(classTextGridData);
-		fDSImplementationClassText.setText(""); //$NON-NLS-1$
+		fDSImplementationClassText.setText("Component"); //$NON-NLS-1$
 		fDSImplementationClassText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(isPageComplete());
@@ -291,14 +294,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		return fDSImplementationClassText.getText();
 	}
 
-	private boolean checkPageComplete() {
-		if (fDSComponentNameText == null || fDSImplementationClassText == null) {
-			return false;
-		}
-		return fDSComponentNameText.getText().length() > 0
-				&& fDSImplementationClassText.getText().length() > 0;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -318,23 +313,43 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 		Dialog.applyDialogFont(fGroup);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
+	 */
 	public boolean isPageComplete() {
-		return checkPageComplete() && validatePage();
+		return validatePage();
 	}
 
 	public void saveSettings(IDialogSettings settings) {
 		settings.put(S_COMPONENT_NAME, getFileName());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
+	 */
 	protected boolean validatePage() {
-		if (fDSImplementationClassText != null) {
-			IStatus status = ResourcesPlugin.getWorkspace().validateName(
-					fDSImplementationClassText.getText(), IResource.FILE);
-			if (!status.isOK()) {
-				setErrorMessage(status.getMessage());
-				return false;
-			}
+		if (fDSComponentNameText == null || fDSImplementationClassText == null) {
+			return false;
 		}
+		
+		if (getFileName() == null || getFileName().length() == 0) {
+			setErrorMessage(Messages.DSFileWizardPage_ComponentNeedsFileName);
+			return false;
+		}
+
+		if (fDSComponentNameText.getText().trim().length() == 0) {
+			setErrorMessage(Messages.DSFileWizardPage_ComponentNeedsName);
+			return false;
+		}
+		
+		IStatus status = ResourcesPlugin.getWorkspace().validateName(fDSImplementationClassText.getText().trim(),IResource.FILE);
+		if (!status.isOK()) {
+			setErrorMessage(Messages.DSFileWizardPage_ComponentNeedsClass);
+			return false;
+		}
+		
 		return super.validatePage();
 	}
 
