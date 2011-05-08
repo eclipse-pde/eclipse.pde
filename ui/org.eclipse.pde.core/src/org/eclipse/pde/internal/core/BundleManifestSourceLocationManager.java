@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2009 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -213,7 +213,8 @@ public class BundleManifestSourceLocationManager {
 									try {
 										version = new Version(versionEntry);
 									} catch (IllegalArgumentException e) {
-										PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
+										PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, new Object[] {currentPlugin.getName(), versionEntry, path.toString()}), e));
+
 									}
 									fPluginToSourceBundle.put(new SourceLocationKey(binaryPluginName, version), externalModels[i]);
 								} else {
@@ -226,5 +227,4 @@ public class BundleManifestSourceLocationManager {
 			}
 		}
 	}
-
 }
