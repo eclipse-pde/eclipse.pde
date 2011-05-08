@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,9 @@ public class ServiceName extends ModelObject implements Comparable {
 	}
 
 	public ModelObject[] getChildren() {
+		if (model == null) {
+			return new ModelObject[0];
+		}
 		return model.getServices(classes);
 	}
 

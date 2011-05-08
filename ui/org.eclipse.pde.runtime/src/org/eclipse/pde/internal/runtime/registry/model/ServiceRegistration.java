@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2009 IBM Corporation and others.
+ *  Copyright (c) 2008, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -68,8 +68,9 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 	}
 
 	public Bundle[] getUsingBundles() {
-		if (usingBundles.length == 0)
+		if (usingBundles.length == 0 || model == null) {
 			return new Bundle[0];
+		}
 
 		Set bundles = new HashSet();
 		for (int i = 0; i < usingBundles.length; i++) {
