@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -276,9 +277,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				try {
 					if (includedSchema == null)
 						continue;
-					String includedSchemaUrl = includedSchema.getURL().toString();
-					String computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation).toString();
-					if (includedSchemaUrl != null && includedSchemaUrl.equals(computedUrl)) {
+					URL includedSchemaUrl = includedSchema.getURL();
+					URL computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation);
+					if (includedSchemaUrl != null && computedUrl != null && includedSchemaUrl.equals(computedUrl)) {
 						if (!includedSchema.isValid())
 							report(NLS.bind(PDECoreMessages.Builders_Schema_includeNotValid, schemaLocation), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_OTHER);
 					}
