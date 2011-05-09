@@ -230,7 +230,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				else if (oldOp instanceof DeleteEdit)
 					oldLength = oldOp.getOffset() + oldOp.getLength() - offset - 1;
 				else
-					oldLength = ((String) event.getOldValue()).length();
+					oldLength = getWritableAttributeNodeValue(((String) event.getOldValue())).length();
 				op = new ReplaceEdit(offset, oldLength, getWritableAttributeNodeValue(event.getNewValue().toString()));
 			}
 		}
