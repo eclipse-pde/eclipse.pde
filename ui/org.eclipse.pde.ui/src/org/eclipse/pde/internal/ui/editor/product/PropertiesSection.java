@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,12 +153,16 @@ public class PropertiesSection extends TableSection {
 		}
 
 		protected void okPressed() {
-			if (fEdit == null) {
-				IProductModelFactory factory = getModel().getFactory();
-				fEdit = factory.createConfigurationProperty();
+			if (fEdit != null) {
+				// Product properties are stored in a map that isn't updated on edit, remove the property and add a new one
+				getProduct().removeConfigurationProperties(new IConfigurationProperty[] {fEdit});
 			}
+
+			IProductModelFactory factory = getModel().getFactory();
+			fEdit = factory.createConfigurationProperty();
 			fEdit.setName(fName.getText().trim());
 			fEdit.setValue(fValue.getText().trim());
+			getProduct().addConfigurationProperties(new IConfigurationProperty[] {fEdit});
 			super.okPressed();
 		}
 
@@ -281,7 +285,6 @@ public class PropertiesSection extends TableSection {
 		if (dialog.open() == Window.OK) {
 			IConfigurationProperty result = dialog.getResult();
 			if (result != null) {
-				getProduct().addConfigurationProperties(new IConfigurationProperty[] {result});
 				fPropertiesTable.refresh();
 				fPropertiesTable.setSelection(new StructuredSelection(result));
 				updateButtons();
@@ -300,6 +303,8 @@ public class PropertiesSection extends TableSection {
 				IConfigurationProperty result = dialog.getResult();
 				if (result != null) {
 					fPropertiesTable.refresh();
+					fPropertiesTable.setSelection(new StructuredSelection(result));
+					updateButtons();
 				}
 			}
 		}
