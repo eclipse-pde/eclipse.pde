@@ -85,7 +85,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getPluginBase(boolean)
 	 */
 	public IPluginBase getPluginBase(boolean createIfMissing) {
-		if (!fHasTriedToCreateModel && createIfMissing) {
+		if (!fLoaded && !fHasTriedToCreateModel && createIfMissing) {
 			try {
 				createPluginBase();
 				load();
