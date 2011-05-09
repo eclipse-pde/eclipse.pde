@@ -22,6 +22,7 @@ import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.core.target.provisional.*;
@@ -149,6 +150,16 @@ public class TargetEditor extends FormEditor {
 	 */
 	public boolean isDirty() {
 		return fDirty || super.isDirty();
+	}
+
+	/*
+	 * @see org.eclipse.ui.forms.editor.FormEditor#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 * @since 3.7
+	 */
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		if (!(input instanceof IFileEditorInput) && !(input instanceof IURIEditorInput))
+			throw new PartInitException(NLS.bind(PDEUIMessages.TargetEditor_6, input.getClass().getName()));
+		super.init(site, input);
 	}
 
 	/* (non-Javadoc)
