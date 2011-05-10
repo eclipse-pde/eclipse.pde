@@ -214,9 +214,11 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			for(int i = 0; i < resources.getLength(); i++) {
 				Element element = (Element) resources.item(i);
 				String typeName = element.getAttribute(IApiXmlConstants.ATTR_TYPE);
-				if(typeName == null || typeName.length() == 0) {
-					continue;
+				if (typeName.length() == 0) {
+					// if there is no type attribute, an empty string is returned
+					typeName = null;
 				}
+				String path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
 				NodeList filters = element.getElementsByTagName(IApiXmlConstants.ELEMENT_FILTER);
 				for(int j = 0; j < filters.getLength(); j++) {
 					element = (Element) filters.item(j);
@@ -237,7 +239,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 						Element messageArgument = (Element) arguments.item(k);
 						messageargs[k] = messageArgument.getAttribute(IApiXmlConstants.ATTR_VALUE);
 					}
-					newfilters.add(ApiProblemFactory.newApiProblem(null, typeName, messageargs, null, null, -1, -1, -1, id));
+					newfilters.add(ApiProblemFactory.newApiProblem(path, typeName, messageargs, null, null, -1, -1, -1, id));
 				}
 			}
 			internalAddFilters(componentID, (IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]),
@@ -276,8 +278,13 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		public boolean isFiltered(IApiProblem problem) {
 			if (this.fFilterMap == null || this.fFilterMap.isEmpty()) return false;
 			String typeName = problem.getTypeName();
+			if (typeName == null || typeName.length() == 0) {
+				typeName = GLOBAL;
+			}
 			Set filters = (Set) this.fFilterMap.get(typeName);
-			if (filters == null) return false;
+			if (filters == null) {
+				return false;
+			}
 			for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
 				IApiProblemFilter filter = (IApiProblemFilter) iterator.next();
 				if (problem.getCategory() == IApiProblem.CATEGORY_USAGE) {

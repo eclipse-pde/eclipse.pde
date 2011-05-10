@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class ComponentManifestTests extends TestCase {
 		baseline.addApiComponents(new IApiComponent[] { component });
 		assertEquals("Id: ", "org.eclipse.debug.ui" , component.getSymbolicName());
 		assertEquals("Name: ", "Debug Platform UI" , component.getName());
-		assertEquals("Version: ", "3.3.100.qualifier" , component.getVersion());
+		assertEquals("Version: ", "3.3.100" , component.getVersion());
 		String[] envs = component.getExecutionEnvironments();
 		assertEquals("Wrong number of execution environments", 1, envs.length);
 		assertEquals("Version: ", "J2SE-1.4" , envs[0]);

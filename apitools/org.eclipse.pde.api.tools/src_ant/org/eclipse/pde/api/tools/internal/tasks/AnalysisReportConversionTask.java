@@ -212,7 +212,7 @@ public class AnalysisReportConversionTask extends Task {
 		}
 		
 		public String toString() {
-			return MessageFormat.format("{0} : compatibility {1}, api usage {2}, bundler version {3}, link {4}", //$NON-NLS-1$
+			return MessageFormat.format("{0} : compatibility {1}, api usage {2}, bundle version {3}, link {4}", //$NON-NLS-1$
 					new String[] {
 						this.componentID,
 						Integer.toString(this.compatibilityNumber),

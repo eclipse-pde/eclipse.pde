@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -318,7 +318,7 @@ public class ApiProblem implements IApiProblem {
 		buffer.append(ApiProblem.getProblemFlagsName(getCategory(), getFlags())).append("\n"); //$NON-NLS-1$
 		buffer.append("\tmessage id: "); //$NON-NLS-1$
 		buffer.append(getMessageid());
-		buffer.append("\n\tmessage:"); //$NON-NLS-1$
+		buffer.append("\n\tmessage: "); //$NON-NLS-1$
 		buffer.append(getMessage());
 		return buffer.toString();
 	}	
