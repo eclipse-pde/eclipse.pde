@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.File;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.internal.launching.IPDEConstants;
@@ -31,6 +29,14 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class WorkspaceDataBlock extends BaseBlock {
 
+	/**
+	 * Transient launch configuration attribute key that tells whether the launch configuration has been newly created but
+	 * <em>not duplicated</em>.
+	 * 
+	 * @since 3.7
+	 */
+	private static final String ATTR_IS_NEWLY_CREATED = "isNewlyCreated"; //$NON-NLS-1$
+
 	private Button fClearWorkspaceCheck;
 	private Button fAskClearCheck;
 	private Button fClearWorkspaceRadio;
@@ -38,6 +44,11 @@ public class WorkspaceDataBlock extends BaseBlock {
 
 	private String fLastKnownName;
 	private String fLastKnownLocation;
+
+	/**
+	 * Tells whether the current launch configuration was newly created (excluding duplication).
+	 */
+	private boolean fIsCreatedLaunchConfiguration;
 
 	public WorkspaceDataBlock(AbstractLauncherTab tab) {
 		super(tab);
@@ -116,26 +127,19 @@ public class WorkspaceDataBlock extends BaseBlock {
 
 	public void performApply(ILaunchConfigurationWorkingCopy config, boolean isJUnit) {
 		/*
-		 * Goals:
-		 * - Update the workspace location when the configuration name changes and ...
-		 *   - the workspace location matches the default location
-		 *   - the workspace location doesn't exist on the file system
-		 * - Renaming the config should not set the workspace location to an already existing location
+		 * Update the workspace location when the configuration name changed and ...
+		 * - the workspace location has not been changed manually
+		 * - the launch configuration is new but not created as duplicate
 		 */
 		String currentLocation = getLocation();
 		String currentName = config.getName();
 		if (fLastKnownName != null && !fLastKnownName.equals(currentName)) {
 			if (currentLocation.equals(fLastKnownLocation)) {
-				try {
-					File workspaceDir = new File(LaunchArgumentsHelper.getWorkspaceLocation(config));
-					if (!workspaceDir.exists()) {
-						currentLocation = getUnusedWorkspaceLocation(currentName, isJUnit);
-						fLocationText.setText(currentLocation);
-						fLastKnownName = currentName;
-						fLastKnownLocation = currentLocation;
-					}
-				} catch (CoreException e) {
-					// don't change workspace location
+				if (fIsCreatedLaunchConfiguration) {
+					currentLocation = LaunchArgumentsHelper.getDefaultWorkspaceLocation(currentName, isJUnit);
+					fLocationText.setText(currentLocation);
+					fLastKnownName = currentName;
+					fLastKnownLocation = currentLocation;
 				}
 			}
 		}
@@ -143,27 +147,6 @@ public class WorkspaceDataBlock extends BaseBlock {
 		config.setAttribute(IPDELauncherConstants.DOCLEAR, fClearWorkspaceCheck.getSelection());
 		config.setAttribute(IPDELauncherConstants.ASKCLEAR, fAskClearCheck.getSelection());
 		config.setAttribute(IPDEConstants.DOCLEARLOG, fClearWorkspaceLogRadio.getSelection());
-	}
-
-	private String getUnusedWorkspaceLocation(String name, boolean isJUnit) {
-		String location = LaunchArgumentsHelper.getDefaultWorkspaceLocation(name, isJUnit);
-		String resolvedLocation;
-		try {
-			resolvedLocation = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(location);
-		} catch (CoreException e) {
-			return location;
-		}
-		File workspaceDir = new File(resolvedLocation);
-		if (!workspaceDir.exists())
-			return location;
-
-		String resolvedLocation2;
-		int i = 1;
-		do {
-			i++;
-			resolvedLocation2 = resolvedLocation + '-' + i;
-		} while (new File(resolvedLocation2).exists());
-		return location + '-' + i;
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration, boolean isJUnit) throws CoreException {
@@ -177,6 +160,11 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceLogRadio.setSelection(configuration.getAttribute(IPDEConstants.DOCLEARLOG, false));
 		fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
 		fClearWorkspaceRadio.setSelection(!configuration.getAttribute(IPDEConstants.DOCLEARLOG, false));
+
+		if (configuration instanceof ILaunchConfigurationWorkingCopy)
+			fIsCreatedLaunchConfiguration = ((ILaunchConfigurationWorkingCopy) configuration).removeAttribute(ATTR_IS_NEWLY_CREATED) != null;
+		else
+			fIsCreatedLaunchConfiguration = configuration.getAttribute(ATTR_IS_NEWLY_CREATED, false);
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {
@@ -186,6 +174,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, isJUnit);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, !isJUnit);
 		configuration.setAttribute(IPDEConstants.DOCLEARLOG, false);
+		configuration.setAttribute(ATTR_IS_NEWLY_CREATED, true);
 	}
 
 	protected String getName() {
