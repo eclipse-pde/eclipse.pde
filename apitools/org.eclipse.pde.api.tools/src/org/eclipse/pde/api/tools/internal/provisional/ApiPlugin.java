@@ -11,6 +11,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -531,7 +532,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public int getSeverityLevel(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
 		IScopeContext[] context = null;
-		if(hasProjectSettings(project)) {
+		if(hasProjectSettings(prefkey, project)) {
 			context = new IScopeContext[] {new ProjectScope(project), DefaultScope.INSTANCE};
 		}
 		else {
@@ -577,12 +578,17 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	}
 	
 	/**
-	 * Returns if the given project has project-specific settings
+	 * Returns if the given project has project-specific settings.
+	 * 
+	 * @param preferenceKey preference key
 	 * @param project
 	 * @return true if the project has specific settings, false otherwise
 	 * @since 1.1
 	 */
-	boolean hasProjectSettings(IProject project) {
+	boolean hasProjectSettings(String preferenceKey, IProject project) {
+		if (Arrays.binarySearch(IApiProblemTypes.WORKSPACE_ONLY_PROBLEM_TYPES, preferenceKey) >= 0) {
+			return false;
+		}
 		if(project != null) {
 			ProjectScope scope = new ProjectScope(project);
 			IEclipsePreferences node = scope.getNode(PLUGIN_ID);
@@ -616,7 +622,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public boolean getEnableState(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
 		IScopeContext[] context = null;
-		if(hasProjectSettings(project)) {
+		if(hasProjectSettings(prefkey, project)) {
 			context = new IScopeContext[] {new ProjectScope(project), DefaultScope.INSTANCE};
 		}
 		else {

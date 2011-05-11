@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IApiProblemTypes {
-
+	
 	// Compatibility problems
 	public static final String API_COMPONENT_REMOVED_TYPE =
 		Util.getDeltaPrefererenceKey(IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE);
@@ -265,4 +265,9 @@ public interface IApiProblemTypes {
 	 * Key for the severity of API Use Scan Field breakage problems.
 	 */
 	public static final String API_USE_SCAN_FIELD_SEVERITY = "API_USE_SCAN_FIELD_SEVERITY"; //$NON-NLS-1$
+	
+	/**
+	 * Keys which are only defined in the workspace i.e. not project specific.
+	 */
+	public static final String[] WORKSPACE_ONLY_PROBLEM_TYPES= { MISSING_DEFAULT_API_BASELINE };
 }
