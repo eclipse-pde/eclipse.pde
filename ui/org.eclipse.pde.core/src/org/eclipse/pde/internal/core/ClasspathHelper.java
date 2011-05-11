@@ -251,7 +251,8 @@ public class ClasspathHelper {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals(PDECore.getDefault().getModelManager().getSystemBundleId()), false);
 				IFile file = PDEProject.getBuildProperties(project);
-				boolean searchBuild = file.getFullPath().toFile().exists();
+				IPath filePath = file.getLocation();
+				boolean searchBuild = filePath != null && filePath.toFile().exists();
 				if (searchBuild) {
 					WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
 					IBuild build = bModel.getBuild();
