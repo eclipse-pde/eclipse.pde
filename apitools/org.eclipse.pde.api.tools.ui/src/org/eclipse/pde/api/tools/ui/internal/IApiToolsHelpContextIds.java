@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,10 +87,17 @@ public interface IApiToolsHelpContextIds {
 	 * Constant representing the help id for the {@link PatternSelectionPage}
 	 */
 	public static final String APITOOLS_PATTERN_SELECTION_WIZARD_PAGE = PREFIX + "apitools_pattern_selection_wizard_page"; //$NON-NLS-1$
-	
-	//LAUNCH CONFIGS
-	
+	/**
+	 * Constant representing the help id for the {@link ApiUseScanPreferencePage}}.
+	 */
+	public static final String APIUSESCANS_PREF_PAGE = PREFIX + "apiusescans_preference_page"; //$NON-NLS-1$
+	/**
+	 * Constant representing the help id for the Pattern tab on the use scan reporting tool config
+	 */
 	public static final String API_USE_PATTERN_TAB = PREFIX + "api_use_pattern_tab"; //$NON-NLS-1$
+	/**
+	 * Constant representing the help id for the Use Scan tab on the use scan reporting tool config
+	 */
 	public static final String API_USE_SCAN_TAB = PREFIX + "api_use_main_tab"; //$NON-NLS-1$
 	
 }

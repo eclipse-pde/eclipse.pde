@@ -38,6 +38,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.search.UseScanManager;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -217,6 +218,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		data.horizontalSpan = 2;
 		apiErrorLinkArea.getControl().setLayoutData(data);
 		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APIUSESCANS_PREF_PAGE);
 		performInit();
 		validateScans();
 		Dialog.applyDialogFont(comp);
