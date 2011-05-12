@@ -41,14 +41,16 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		public boolean equals(Object obj) {
 			if (obj instanceof Entry) {
 				Entry objEntry = (Entry) obj;
-				return id.equals(((Entry) obj).id) && version.equals(objEntry.version);
+				if (!(id.equals(((Entry) obj).id) && version.equals(objEntry.version)))
+					return false;
+				return getAttributes().equals(objEntry.getAttributes());
 			}
 
 			return id.equals(obj);
 		}
 
 		public int hashCode() {
-			return id.hashCode() + version.hashCode();
+			return id.hashCode() + version.hashCode() + getAttributes().hashCode();
 		}
 
 		public Map getAttributes() {
