@@ -14,12 +14,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.List;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
@@ -36,6 +41,11 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.*;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.ui.*;
@@ -115,6 +125,43 @@ public class PluginImportOperation extends WorkspaceJob {
 		fAlternateSource = alternate;
 	}
 
+	class NotimportedProjectsMessageDialogs extends MessageDialog {
+
+		private String[] fProjects;
+
+		public NotimportedProjectsMessageDialogs(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
+			super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
+		 */
+		protected Control createCustomArea(Composite parent) {
+			Composite composite = new Composite(parent, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 1;
+			composite.setLayout(layout);
+
+			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+			Table table = new Table(composite, SWT.V_SCROLL | SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.heightHint = 50;
+			gd.widthHint = 25;
+			table.setLayoutData(gd);
+
+			TableViewer viewer = new TableViewer(table);
+			viewer.setContentProvider(new ArrayContentProvider());
+			viewer.setInput(fProjects);
+			return composite;
+
+		}
+
+		public void setProjects(String[] projects) {
+			fProjects = projects;
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -128,15 +175,43 @@ public class PluginImportOperation extends WorkspaceJob {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-			// TODO: more than one importer
 
 			if (fImportType == IMPORT_FROM_REPOSITORY) {
+				final StringBuffer projectsNotImported = new StringBuffer();
 				Iterator iterator = fImportDescriptions.entrySet().iterator();
 				while (iterator.hasNext()) {
 					Entry entry = (Entry) iterator.next();
 					IBundleImporter importer = (IBundleImporter) entry.getKey();
 					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
-					importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
+					IProject[] projects = importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
+					if (projects.length == descriptions.length)
+						continue;
+					ArrayList projectList = new ArrayList(projects.length);
+					for (int i = 0; i < projects.length; i++) {
+						projectList.add(projects[i].getName());
+					}
+					for (int i = 0; i < descriptions.length; i++) {
+						if (!projectList.contains(descriptions[i].getProject())) {
+							projectsNotImported.append(descriptions[i].getProject()).append(',');
+						}
+					}
+				}
+				if (projectsNotImported.length() > 0) {
+					UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_WarningDialogJob) {
+
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							NotimportedProjectsMessageDialogs dialog = new NotimportedProjectsMessageDialogs(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(), PDEUIMessages.ImportWizard_title, null, PDEUIMessages.PluginImportOperation_WarningDialogMessage, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL}, 0);
+							dialog.setProjects(projectsNotImported.toString().split(",")); //$NON-NLS-1$
+							dialog.open();
+							return Status.OK_STATUS;
+						}
+					};
+
+					try {
+						job.schedule();
+						job.join();
+					} catch (InterruptedException e1) {
+					}
 				}
 			} else {
 				for (int i = 0; i < fModels.length; i++) {
