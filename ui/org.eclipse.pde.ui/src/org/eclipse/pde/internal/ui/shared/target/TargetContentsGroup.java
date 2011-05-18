@@ -1177,13 +1177,11 @@ public class TargetContentsGroup {
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
 				List result = new ArrayList();
-				boolean refreshCheckstate = false;
 
 				// Check if there are any errors for missing features/bundles to display
 				if (fMissing == null) {
 					fMissing = new ArrayList();
 				} else {
-					refreshCheckstate = true;
 					fMissing.clear();
 				}
 				IResolvedBundle[] bundles = fTargetDefinition.getBundles();
@@ -1216,12 +1214,6 @@ public class TargetContentsGroup {
 					result.addAll(Arrays.asList(getFileBundleMapping().keySet().toArray()));
 				}
 
-				// When the tree is filtered, getElements is called which can replace missing plug-ins with new equivalent objects
-				// The cache in the tree viewer must be updated with the new objects, so we use the inefficient option of redoing the entire cache.
-				if (refreshCheckstate) {
-					updateCheckState();
-					updateButtons();
-				}
 				return result.toArray();
 			}
 			return new Object[] {inputElement};
