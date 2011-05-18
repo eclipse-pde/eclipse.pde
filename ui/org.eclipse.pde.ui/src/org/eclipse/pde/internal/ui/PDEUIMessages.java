@@ -2373,7 +2373,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginImportOperation_WarningDialogJob;
 
-	public static String PluginImportOperation_WarningDialogMessage;
+	public static String PluginImportOperation_WarningDialogMessageSingular;
+
+	public static String PluginImportOperation_WarningDialogMessagePlural;
 
 	public static String PluginImportWizard_runningConfigDesc;
 

@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
@@ -42,7 +40,6 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -125,12 +122,32 @@ public class PluginImportOperation extends WorkspaceJob {
 		fAlternateSource = alternate;
 	}
 
-	class NotimportedProjectsMessageDialogs extends MessageDialog {
+	/**
+	 * This custom message box class is used for warning the user about the projects that did not get imported.
+	 * see bug 337730
+	 * 
+	 * This class should get removed when Bug 346078 is fixed.
+	 *
+	 */
+	private class NotImportedProjectsWarningDialog extends MessageDialog {
 
-		private String[] fProjects;
+		/**
+		 * The list of the projects that did not get imported.
+		 */
+		private List fNamesOfNotImportedProjects;
 
-		public NotimportedProjectsMessageDialogs(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
-			super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
+		/**
+		 * Creates a warning message dialog. The message area will contain the scrollable
+		 * text box that will show the list of the projects supplied.
+		 * 
+		 * @param warningMessage
+		 * 				the warning message to be shown on the dialog.
+		 * @param namesOfNotImportedProjects
+		 * 				the list of the project names that did not get imported.
+		 */
+		public NotImportedProjectsWarningDialog(String warningMessage, List namesOfNotImportedProjects) {
+			super(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(), PDEUIMessages.ImportWizard_title, null, warningMessage, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL}, 0);
+			fNamesOfNotImportedProjects = namesOfNotImportedProjects;
 		}
 
 		/* (non-Javadoc)
@@ -144,21 +161,21 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-			Table table = new Table(composite, SWT.V_SCROLL | SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			gd.heightHint = 50;
-			gd.widthHint = 25;
-			table.setLayoutData(gd);
+			Text projectText = new Text(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY | SWT.BORDER);
+			projectText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.widthHint = convertWidthInCharsToPixels(60);
+			gd.heightHint = convertHeightInCharsToPixels(10);
+			projectText.setLayoutData(gd);
 
-			TableViewer viewer = new TableViewer(table);
-			viewer.setContentProvider(new ArrayContentProvider());
-			viewer.setInput(fProjects);
+			StringBuffer projectListBuffer = new StringBuffer();
+			for (Iterator iterator = fNamesOfNotImportedProjects.iterator(); iterator.hasNext();) {
+				String project = (String) iterator.next();
+				projectListBuffer.append(project).append('\n');
+			}
+			projectText.setText(projectListBuffer.toString());
 			return composite;
 
-		}
-
-		public void setProjects(String[] projects) {
-			fProjects = projects;
 		}
 	}
 
@@ -177,31 +194,33 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			if (fImportType == IMPORT_FROM_REPOSITORY) {
-				final StringBuffer projectsNotImported = new StringBuffer();
+				final List namesOfNotImportedProjects = new ArrayList();
 				Iterator iterator = fImportDescriptions.entrySet().iterator();
 				while (iterator.hasNext()) {
 					Entry entry = (Entry) iterator.next();
 					IBundleImporter importer = (IBundleImporter) entry.getKey();
 					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
-					IProject[] projects = importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
-					if (projects.length == descriptions.length)
+					IProject[] importedProjects = importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
+					if (importedProjects.length == descriptions.length)
 						continue;
-					ArrayList projectList = new ArrayList(projects.length);
-					for (int i = 0; i < projects.length; i++) {
-						projectList.add(projects[i].getName());
+
+					ArrayList namesOfImportedProjects = new ArrayList(importedProjects.length);
+					for (int i = 0; i < importedProjects.length; i++) {
+						namesOfImportedProjects.add(importedProjects[i].getName());
 					}
 					for (int i = 0; i < descriptions.length; i++) {
-						if (!projectList.contains(descriptions[i].getProject())) {
-							projectsNotImported.append(descriptions[i].getProject()).append(',');
+						String projectName = descriptions[i].getProject();
+						if (!namesOfImportedProjects.contains(projectName)) {
+							namesOfNotImportedProjects.add(projectName);
 						}
 					}
 				}
-				if (projectsNotImported.length() > 0) {
+				if (namesOfNotImportedProjects.size() > 0) {
 					UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_WarningDialogJob) {
 
 						public IStatus runInUIThread(IProgressMonitor monitor) {
-							NotimportedProjectsMessageDialogs dialog = new NotimportedProjectsMessageDialogs(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(), PDEUIMessages.ImportWizard_title, null, PDEUIMessages.PluginImportOperation_WarningDialogMessage, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL}, 0);
-							dialog.setProjects(projectsNotImported.toString().split(",")); //$NON-NLS-1$
+							String dialogMessage = namesOfNotImportedProjects.size() == 1 ? PDEUIMessages.PluginImportOperation_WarningDialogMessageSingular : PDEUIMessages.PluginImportOperation_WarningDialogMessagePlural;
+							NotImportedProjectsWarningDialog dialog = new NotImportedProjectsWarningDialog(dialogMessage, namesOfNotImportedProjects);
 							dialog.open();
 							return Status.OK_STATUS;
 						}
