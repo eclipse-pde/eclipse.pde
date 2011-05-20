@@ -290,9 +290,26 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				if (problem.getCategory() == IApiProblem.CATEGORY_USAGE) {
 					// write our own matching implementation
 					return matchUsageProblem(filter.getUnderlyingProblem(), problem);
-				} else if (filter.getUnderlyingProblem().equals(problem)) {
+				} else if (matchFilters(filter.getUnderlyingProblem(), problem)) {
 					return true;
 				}
+			}
+			return false;
+		}
+
+		private boolean matchFilters(IApiProblem filterProblem, IApiProblem problem) {
+			if (problem.getId() == filterProblem.getId() && argumentsEquals(problem.getMessageArguments(), filterProblem.getMessageArguments())) {
+				String typeName = problem.getTypeName();
+				String filteredProblemTypeName = filterProblem.getTypeName();
+				if (typeName == null) {
+					if (filteredProblemTypeName != null) {
+						return false;
+					}
+					return true;
+				} else if (filteredProblemTypeName == null) {
+					return false;
+				}
+				return typeName.equals(filteredProblemTypeName);
 			}
 			return false;
 		}
