@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -309,7 +309,7 @@ public class TargetPlatformHelper {
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
 		if (model == null)
-			return ICoreConstants.TARGET36;
+			return ICoreConstants.TARGET37;
 
 		String version = model.getPluginBase().getVersion();
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
@@ -328,8 +328,10 @@ public class TargetPlatformHelper {
 				return ICoreConstants.TARGET34;
 			if (major == 3 && minor == 5)
 				return ICoreConstants.TARGET35;
+			if (major == 3 && minor == 6)
+				return ICoreConstants.TARGET36;
 		}
-		return ICoreConstants.TARGET36;
+		return ICoreConstants.TARGET37;
 	}
 
 	public static double getHostVersion() {
@@ -337,7 +339,7 @@ public class TargetPlatformHelper {
 		Bundle bundle = context.getBundle(0);
 		String version = (String) bundle.getHeaders().get(Constants.BUNDLE_VERSION);
 		if (version == null)
-			return Double.parseDouble(ICoreConstants.TARGET36);
+			return Double.parseDouble(ICoreConstants.TARGET37);
 
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
 			Version vid = new Version(version);
@@ -355,8 +357,10 @@ public class TargetPlatformHelper {
 				return Double.parseDouble(ICoreConstants.TARGET34);
 			if (major == 3 && minor == 5)
 				return Double.parseDouble(ICoreConstants.TARGET35);
+			if (major == 3 && minor == 6)
+				return Double.parseDouble(ICoreConstants.TARGET36);
 		}
-		return Double.parseDouble(ICoreConstants.TARGET36);
+		return Double.parseDouble(ICoreConstants.TARGET37);
 	}
 
 	public static double getTargetVersion() {
