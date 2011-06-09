@@ -636,19 +636,13 @@ public class PublishingTests extends P2TestCase {
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 		//bug 274527 - cocoa.x86_64
-		properties.put("configs", "win32,win32,x86 & macosx, carbon, ppc & macosx, cocoa, x86_64");
+		properties.put("configs", "win32,win32,x86 & macosx, cocoa, x86_64");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		runProductBuild(buildFolder);
 
 		Set entries = new HashSet();
-		entries.add("branded.app/Contents/Info.plist");
-		entries.add("branded.app/Contents/MacOS/branded.ini");
-		entries.add("branded.app/Contents/MacOS/branded");
-		entries.add("branded.app/Contents/Resources/mail.icns");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.carbon.macosx.ppc_" + executableVersion, entries);
-
 		entries.add("branded.app/Contents/Info.plist");
 		entries.add("branded.app/Contents/MacOS/branded.ini");
 		entries.add("branded.app/Contents/MacOS/branded");
@@ -668,13 +662,9 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", OSGI);
 
 		//bug 218377
-		iu = getIU(repository, "org.example.rcp_root.carbon.macosx.ppc");
-		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
-
 		iu = getIU(repository, "org.example.rcp_root.cocoa.macosx.x86_64");
 		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
 
-		assertResourceFile(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
 
 		iu = getIU(repository, "org.eclipse.equinox.launcher.cocoa.macosx.x86_64");
@@ -1596,7 +1586,7 @@ public class PublishingTests extends P2TestCase {
 		properties.put("product", product.getLocation().toOSString());
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
-		properties.put("configs", "macosx, cocoa, x86 & macosx, carbon, ppc");
+		properties.put("configs", "macosx, cocoa, x86");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 
@@ -1604,12 +1594,12 @@ public class PublishingTests extends P2TestCase {
 
 		IFile ini = buildFolder.getFile("eclipse.ini");
 		boolean lowerCase = true;
-		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
+		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
 			lowerCase = false;
-			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.carbon.ppc.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
+			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
 		}
 
-		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.carbon.ppc.zip");
+		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.cocoa.x86.zip");
 		String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
 		assertZipPermissions(zip, exeString, "-rwxr-xr-x");
 

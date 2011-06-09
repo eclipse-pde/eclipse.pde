@@ -49,7 +49,7 @@ public class ProductTests extends PDETestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/rcp/rcp.product");
-		properties.put("configs", "macosx,carbon,x86");
+		properties.put("configs", "macosx,cocoa,x86");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/allElements.xml"), null);
@@ -68,7 +68,7 @@ public class ProductTests extends PDETestCase {
 		entries.add("eclipse/Eclipse.app/");
 
 		//bug 206788 names the archive .zip
-		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.carbon.x86.zip", entries, false);
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", entries, false);
 		assertTrue(entries.contains("eclipse/Eclipse.app/"));
 		assertTrue(entries.size() == 1);
 	}
@@ -115,8 +115,8 @@ public class ProductTests extends PDETestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "test.product");
-		properties.put("configs", "macosx,carbon,ppc");
-		properties.put("archivesFormat", "macosx,carbon,ppc-folder");
+		properties.put("configs", "macosx,cocoa,x86");
+		properties.put("archivesFormat", "macosx,cocoa,x86-folder");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, properties);
