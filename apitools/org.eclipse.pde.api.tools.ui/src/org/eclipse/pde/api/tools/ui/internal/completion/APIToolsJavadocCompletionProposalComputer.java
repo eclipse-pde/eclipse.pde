@@ -344,7 +344,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionStarted()
 	 */
 	public void sessionStarted() {
-		fParser = ASTParser.newParser(AST.JLS3);
+		fParser = ASTParser.newParser(AST.JLS4);
 		fErrorMessage = null;
 	}
 

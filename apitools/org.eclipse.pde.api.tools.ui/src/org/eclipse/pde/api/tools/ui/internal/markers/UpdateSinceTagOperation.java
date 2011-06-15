@@ -81,7 +81,7 @@ public class UpdateSinceTagOperation {
 					// open an editor of the corresponding unit to "show" the quickfix change
 					JavaUI.openInEditor(compilationUnit);
 				}
-				ASTParser parser = ASTParser.newParser(AST.JLS3);
+				ASTParser parser = ASTParser.newParser(AST.JLS4);
 				parser.setSource(compilationUnit);
 				if (intValue <= 0) {
 					// try to use the name range of the corresponding element
