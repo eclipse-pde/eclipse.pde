@@ -5,6 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -1232,9 +1236,11 @@ public class BundleComponent extends Component {
 						temp = new String[] { ProfileModifiers.J2SE_1_4_NAME };
 					} else if (ProfileModifiers.isJ2SE_1_5(values)) {
 						temp = new String[] { ProfileModifiers.J2SE_1_5_NAME };
-					} else {
-						// this is 1.6
+					} else if (ProfileModifiers.isJAVASE_1_6(values)) {
 						temp = new String[] { ProfileModifiers.JAVASE_1_6_NAME };
+					} else {
+						// this is 1.7
+						temp = new String[] { ProfileModifiers.JAVASE_1_7_NAME };
 					}
 				}
 				if (ProfileModifiers.isCDC_Foundation(values)) {

@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.model;
-
-
 
 /**
  * A method type member.
@@ -70,4 +72,10 @@ public interface IApiMethod extends IApiMember {
 	 */
 	public boolean isSynthetic();
 
+	/**
+	 * Returns whether this method is polymorphic.
+	 * 
+	 * @return whether this method is polymorphic
+	 */
+	public boolean isPolymorphic();
 }

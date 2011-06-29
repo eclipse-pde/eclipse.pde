@@ -5,6 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -453,6 +457,13 @@ public class Reference implements IReference {
 				break;
 			case IReference.REF_VIRTUALMETHOD :
 			case IReference.REF_SPECIALMETHOD :
+				// check polymorphic methods: polymorphic method signature is ([Ljava/lang/Object;)Ljava/lang/Object;
+				target = type.getMethod(methodName, "([Ljava/lang/Object;)Ljava/lang/Object;"); //$NON-NLS-1$
+				if (target != null) {
+					if (methodName.equals(target.getName()) && target.isPolymorphic()) {
+						return true;
+					}
+				}
 				superclassName = type.getSuperclassName();
 				if (superclassName != null) {
 					IApiTypeRoot classFile = Util.getClassFile(
