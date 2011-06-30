@@ -67,7 +67,6 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		x1(true);
 	}
 	
-	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
@@ -99,7 +98,6 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		x2(true);
 	}
 	
-	
 	private void x2(boolean inc) {
 		String exceptionTypeName = "ExceptionA";
 		setExpectedProblemIds(new int[] {
@@ -130,7 +128,6 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		x3(true);
 	}
 	
-	
 	private void x3(boolean inc) {
 		String resourceTypeName = "TryWithResourcesClass";
 		setExpectedProblemIds(new int[] {
@@ -145,4 +142,31 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		deployUsageTest(typename, inc);
 	}
 	
+	/**
+	 * Tests illegal use of classes instantiated with the diamond operator
+	 * (full)
+	 */
+	public void testDiamondF() {
+		x4(false);
+	}
+	
+	/**
+	 * Tests illegal use of classes instantiated with the diamond operator
+	 * (incremental)
+	 */
+	public void testDiamondI() {
+		x4(true);
+	}
+	
+	private void x4(boolean inc) {
+		String resourceTypeName = "GenericClassUsageClass<T>";
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
+		});
+		String typename = "testCDiamond";
+		setExpectedMessageArgs(new String[][] {
+				{resourceTypeName, typename}
+		});
+		deployUsageTest(typename, inc);
+	}
 }
