@@ -1393,36 +1393,30 @@ public class ApiErrorsWarningsConfigurationBlock {
 				link.addSelectionListener(new SelectionAdapter(){
 					public void widgetSelected(SelectionEvent e) {
 						IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-						if(handlerService != null) {
-							try {
-								command.executeWithChecks(handlerService.createExecutionEvent(command, null));
-							} catch (ExecutionException ex) {
-								MessageDialog.openError(
-										ApiUIPlugin.getShell(),
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
-							} catch (NotDefinedException ex) {
-								MessageDialog.openError(
-										ApiUIPlugin.getShell(),
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
-							} catch (NotEnabledException ex) {
-								MessageDialog.openError(
-										ApiUIPlugin.getShell(),
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
-							} catch (NotHandledException ex) {
-								MessageDialog.openError(
-										ApiUIPlugin.getShell(),
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
-										PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
-							}
+						try {
+							handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
+						} catch (ExecutionException ex) {
+							handleCommandException();
+						} catch (NotDefinedException ex) {
+							handleCommandException();
+						} catch (NotEnabledException ex) {
+							handleCommandException();
+						} catch (NotHandledException ex) {
+							handleCommandException();
 						}
 					};
 				});
 				this.fSystemLibraryControls.add(link);
 			}
 		}
+	}
+
+	static void handleCommandException() {
+		MessageDialog.openError(
+				PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(),
+				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
+				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_description);
+
 	}
 
 	/**
